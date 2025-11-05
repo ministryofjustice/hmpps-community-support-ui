@@ -8,7 +8,7 @@ export default class ExamplePage extends AbstractPage {
 
   private constructor(page: Page) {
     super(page)
-    this.header = page.locator('h1', { hasText: 'This site is under construction...' })
+    this.header = page.locator('h1', { hasText: 'Welcome to the Community Support service.' })
     this.timestamp = page.getByTestId('timestamp')
   }
 
