@@ -1,7 +1,7 @@
 {
   "name": "hmpps-community-support-ui",
   "version": "0.0.1",
-  "description": "HMPPS Community Support Ui",
+  "description": "Community Support",
   "repository": "git@github.com:ministryofjustice/hmpps-community-support-ui.git",
   "license": "MIT",
   "scripts": {

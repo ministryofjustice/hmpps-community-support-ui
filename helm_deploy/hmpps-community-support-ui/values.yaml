@@ -1,5 +1,5 @@
 generic-service:
-  nameOverride: hmpps-community-support-ui
+  nameOverride: hmpps-community-support
   productId: 'HMPPS545' # productId for the product that this belongs too, i.e. DPS001, see README.md for details
 
   # the IRSA service account name for accessing AWS resources
