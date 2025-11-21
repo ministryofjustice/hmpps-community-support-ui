@@ -7,10 +7,9 @@ export default function routes({ auditService }: Services): Router {
   const router = Router()
 
   router.get('/', async (req, res, next) => {
-    await auditService.logPageView(Page.EXAMPLE_PAGE, { who: res.locals.user.username, correlationId: req.id })
+    await auditService.logPageView(Page.INDEX_PAGE, { who: res.locals.user.username, correlationId: req.id })
 
-    const currentTime = new Date().toISOString()
-    return res.render('pages/index', { currentTime })
+    return res.render('pages/index', {})
   })
 
   return router
