@@ -1,0 +1,6 @@
+#!/usr/bin/env bash -e
+
+# Generates Types from the Backend API OpenAPI spec
+#
+
+npx openapi-typescript https://community-support-api-dev.hmpps.service.justice.gov.uk/v3/api-docs --output ./server/@types/communitySupportApi/imported/index.d.ts

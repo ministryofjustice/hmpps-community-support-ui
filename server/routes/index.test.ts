@@ -32,7 +32,7 @@ describe('GET /', () => {
       .expect(200)
       .expect(res => {
         expect(res.text).toContain('Welcome to the Community Support service.')
-        expect(auditService.logPageView).toHaveBeenCalledWith(Page.EXAMPLE_PAGE, {
+        expect(auditService.logPageView).toHaveBeenCalledWith(Page.INDEX_PAGE, {
           who: user.username,
           correlationId: expect.any(String),
         })
