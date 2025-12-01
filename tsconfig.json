@@ -14,7 +14,7 @@
     "experimentalDecorators": true,
     "typeRoots": ["./server/@types", "./node_modules/@types"],
     "paths": {
-      "@community-support-api": ["/server/@types/communitySupportApi/index.d.ts"]
+      "@community-support-api": ["./server/@types/communitySupportApi/index.d.ts"]
     }
   },
   "exclude": ["node_modules", "assets/**/*.js", "integration_tests", "dist", "esbuild", "eslint.config.mjs"],

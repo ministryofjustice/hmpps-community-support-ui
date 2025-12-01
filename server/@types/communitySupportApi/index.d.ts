@@ -2,4 +2,5 @@ import type { components } from './imported'
 
 type Referral = components['schemas']['ReferralDto']
 
-export default { Referral }
+// eslint-disable-next-line import/prefer-default-export
+export type { Referral }
