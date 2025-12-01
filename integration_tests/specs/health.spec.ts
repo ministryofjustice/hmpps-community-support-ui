@@ -3,6 +3,7 @@ import hmppsAuth from '../mockApis/hmppsAuth'
 import tokenVerification from '../mockApis/tokenVerification'
 
 import { resetStubs } from '../testUtils'
+import communitySupport from '../mockApis/communitySupport'
 
 test.describe('Health', () => {
   test.afterEach(async () => {
@@ -11,12 +12,13 @@ test.describe('Health', () => {
 
   test.describe('All healthy', () => {
     test.beforeEach(async () => {
-      await Promise.all([hmppsAuth.stubPing(), tokenVerification.stubPing()])
+      await Promise.all([hmppsAuth.stubPing(), tokenVerification.stubPing(), communitySupport.stubPing()])
     })
 
     test('Health check is accessible and status is UP', async ({ page }) => {
       const response = await page.request.get('/health')
       const payload = await response.json()
+
       expect(payload.status).toBe('UP')
     })
 

@@ -1,0 +1,61 @@
+{% extends "../partials/layout.njk" %}
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
+{% set pageTitle = applicationName + " - Referral" %}
+{% set mainClasses = "govuk-body" %}
+
+{% block content %}
+
+<h1>Referral Details</h1>
+
+{{ govukSummaryList({
+  rows: [
+    {
+      key: {
+        text: "First Name"
+      },
+      value: {
+        text: referral.firstName
+      },
+      actions: {
+        items: []
+      }
+    },
+        {
+      key: {
+        text: "Last Name"
+      },
+      value: {
+        text: referral.lastName
+      },
+      actions: {
+        items: []
+      }
+    },
+    {
+      key: {
+        text: "CRN"
+      },
+      value: {
+        text: referral.crn
+      },
+      actions: {
+        items: []
+      }
+    },
+    {
+      key: {
+        text: "Reference Number"
+      },
+      value: {
+        text: referral.referenceNumber
+      },
+      actions: {
+        items: []
+      }
+    }
+  ]
+}) }}
+
+{% endblock %}
