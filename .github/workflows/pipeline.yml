@@ -81,36 +81,36 @@ jobs:
       app_version: '${{ needs.build.outputs.app_version }}'
       helm_timeout: '10m'
       slack_notification: "true"
-  deploy_preprod:
-    name: Deploy to pre-production environment
-    needs:
-     - build
-     - deploy_dev
-    uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v2 # WORKFLOW_VERSION
-    secrets: inherit
-    with:
-      environment: 'preprod'
-      app_version: '${{ needs.build.outputs.app_version }}'
-      slack_notification: "true"
-  notify_prod_approval:
-    name: Send Prod Manual Deployment Approval
-    needs: deploy_preprod
-    if: github.ref == 'refs/heads/main'
-    uses: ./.github/workflows/notify_prod_approval.yml
-    with:
-      environment: "prod"
-      run_id: ${{ github.run_id }}
-      gh_to_slack_mapping: ${{ toJSON(vars.GH_TO_SLACK_MAPPING) }}
-    secrets:
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-  deploy_prod:
-    name: Deploy to production environment
-    needs:
-     - build
-     - deploy_preprod
-    uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v2 # WORKFLOW_VERSION
-    secrets: inherit
-    with:
-      environment: 'prod'
-      app_version: '${{ needs.build.outputs.app_version }}'
-      slack_notification: "true"
+#  deploy_preprod:
+#    name: Deploy to pre-production environment
+#    needs:
+#     - build
+#     - deploy_dev
+#    uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v2 # WORKFLOW_VERSION
+#    secrets: inherit
+#    with:
+#      environment: 'preprod'
+#      app_version: '${{ needs.build.outputs.app_version }}'
+#      slack_notification: "true"
+#  notify_prod_approval:
+#    name: Send Prod Manual Deployment Approval
+#    needs: deploy_preprod
+#    if: github.ref == 'refs/heads/main'
+#    uses: ./.github/workflows/notify_prod_approval.yml
+#    with:
+#      environment: "prod"
+#      run_id: ${{ github.run_id }}
+#      gh_to_slack_mapping: ${{ toJSON(vars.GH_TO_SLACK_MAPPING) }}
+#    secrets:
+#      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+#  deploy_prod:
+#    name: Deploy to production environment
+#    needs:
+#     - build
+#     - deploy_preprod
+#    uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v2 # WORKFLOW_VERSION
+#    secrets: inherit
+#    with:
+#      environment: 'prod'
+#      app_version: '${{ needs.build.outputs.app_version }}'
+#      slack_notification: "true"
