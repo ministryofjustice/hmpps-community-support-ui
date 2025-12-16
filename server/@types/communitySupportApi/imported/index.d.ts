@@ -4,6 +4,23 @@
  */
 
 export interface paths {
+  '/referrals': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Create a referral */
+    post: operations['createReferral']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/referrals/{referralId}': {
     parameters: {
       query?: never
@@ -21,17 +38,104 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/person/{personIdentifier}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Find a person by an identifier i.e Prison ID or CRN */
+    get: operations['getPersonDetails']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/referral-select-a-service': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get community support services for referral select-a-service */
+    get: operations['getServices']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
 }
 export type webhooks = Record<string, never>
 export interface components {
   schemas: {
-    ReferralDto: {
-      /** Format: uuid */
-      id: string
+    CreateReferralRequest: {
       firstName?: string
       lastName?: string
       crn?: string
       referenceNumber?: string
+      sex?: string
+      /** Format: date */
+      dateOfBirth?: string
+      ethnicity?: string
+    }
+    ReferralDto: {
+      /** Format: uuid */
+      id?: string
+      firstName?: string
+      lastName?: string
+      crn?: string
+      referenceNumber?: string
+    }
+    PersonDto: {
+      personIdentifier?: string
+    }
+    CommunitySupportServiceDto: {
+      id?: string
+      region?: string
+      name?: string
+      providerName?: string
+      description?: string
+    }
+    CommunitySupportServicesDto: {
+      personId?: string
+      communitySupportServices?: components['schemas']['CommunitySupportServiceDto'][]
+    }
+    ErrorResponse: {
+      /**
+       * Format: int32
+       * @description The HTTP status code returned by the server
+       * @example 404
+       */
+      status: number
+      /**
+       * Format: int32
+       * @description An application-specific error code
+       * @example 404
+       */
+      errorCode?: number
+      /**
+       * @description A human readable message for the error
+       * @example Referral Not found
+       */
+      userMessage?: string
+      /**
+       * @description A developer friendly message for the error
+       * @example null
+       */
+      developerMessage?: string
+      /**
+       * @description Additional information about the error
+       * @example null
+       */
+      moreInfo?: string
     }
   }
   responses: never
@@ -42,6 +146,30 @@ export interface components {
 }
 export type $defs = Record<string, never>
 export interface operations {
+  createReferral: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateReferralRequest']
+      }
+    }
+    responses: {
+      /** @description Referral created */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ReferralDto']
+        }
+      }
+    }
+  }
   getReferral: {
     parameters: {
       query?: never
@@ -69,6 +197,77 @@ export interface operations {
         }
         content: {
           'application/json': unknown
+        }
+      }
+    }
+  }
+  getPersonDetails: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        personIdentifier: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Person found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['PersonDto']
+        }
+      }
+      /** @description Person not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getServices: {
+    parameters: {
+      query: {
+        personDetailsId: string
+      }
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description List of community support services */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['CommunitySupportServicesDto']
+        }
+      }
+      /** @description The request was unauthorised */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden. The client is not authorised to access to select a referral service. */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': components['schemas']['ErrorResponse']
         }
       }
     }

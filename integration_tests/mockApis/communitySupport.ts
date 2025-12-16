@@ -14,4 +14,17 @@ export default {
         jsonBody: { status: httpStatus === 200 ? 'UP' : 'DOWN' },
       },
     }),
+  stubGetPerson: (httpStatus = 200): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: '/community-support/person/.*',
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: { personIdentifier: '{{request.path.[2]}}' },
+        transformers: ['response-template'],
+      },
+    }),
 }

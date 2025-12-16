@@ -1,0 +1,43 @@
+{% extends "../partials/layout.njk" %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% set pageTitle = applicationName + " - Find a Person" %}
+{% set mainClasses = "govuk-body" %}
+
+{% block content %}
+  {% if errors.list.length %}
+    {{ govukErrorSummary({
+      titleText: "There is a problem",
+      errorList: errors.list
+    }) }}
+  {% endif %}
+  <div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+  <h1 class="govuk-heading-l">Find a Person</h1>
+
+  <form method="post" novalidate action="/referral/new/find-a-person">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    {{ govukInput({
+        label: {
+          text: "Please enter the person's unique identifier",
+          classes: "govuk-label--m",
+          isPageHeading: true
+        },
+        classes: "govuk-input--width-10",
+        id: "personIdentifier",
+        name: "personIdentifier",
+        errorMessage: errors.messages.personIdentifier
+    }) }}
+
+    <div class="govuk-button-group">
+        {{ govukButton({ text: "Search", preventDoubleClick: true }) }}
+        <a class="govuk-link" href="/">Cancel</a>
+    </div>
+
+  </form>
+  </div>
+  </div>
+
+{% endblock %}
