@@ -1,4 +1,3 @@
-import * as nunjucks from 'nunjucks'
 import { runtime } from 'nunjucks'
 import { ListStyle } from './summaryList'
 import ViewUtils from './viewUtils'

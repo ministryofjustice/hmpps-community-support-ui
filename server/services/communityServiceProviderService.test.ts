@@ -1,4 +1,4 @@
-import { CommunitySupportServicesProvider, Referral } from '@community-support-api'
+import { CommunitySupportServicesProvider } from '@community-support-api'
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
 import CommunityServiceProviderService from './communityServiceProviderService'
 
