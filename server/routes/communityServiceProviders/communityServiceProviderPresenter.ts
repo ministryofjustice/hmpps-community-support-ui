@@ -1,5 +1,6 @@
 import type { CommunitySupportServiceProviders } from '@community-support-api'
 import { SummaryListItem } from '../../utils/summaryList'
+import { GovukFrontendSummaryListRow } from '../../@types/govukFrontend'
 
 export default class CommunityServiceProviderPresenter {
   constructor(private readonly communitySupportServiceProvider: CommunitySupportServiceProviders) {}
@@ -26,15 +27,15 @@ export default class CommunityServiceProviderPresenter {
     return `${firstLine.substring(0, 500)}${firstLine.length > 500 ? '...' : ''}`
   }
 
-  get summary(): SummaryListItem[] {
+  get summary(): GovukFrontendSummaryListRow[] {
     const summary = [
       {
-        key: 'Location',
-        lines: [this.communitySupportServiceProvider.region],
+        key: { text: 'Location' },
+        value: { text: this.communitySupportServiceProvider.region },
       },
       {
-        key: 'Delivery Partner',
-        lines: [this.communitySupportServiceProvider.providerName],
+        key: { text: 'Delivery Partner' },
+        value: { text: this.communitySupportServiceProvider.providerName },
       },
     ]
     return summary

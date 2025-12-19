@@ -40,11 +40,8 @@ describe('ViewUtils', () => {
     it('returns a summary list args object for passing to the govukSummaryList macro', () => {
       expect(
         ViewUtils.summaryListArgs([
-          { key: 'Risks', lines: ['No risk'], changeLink: '/risks' },
-          { key: 'Needs', lines: ['Accommodation', 'Social inclusion'], listStyle: ListStyle.noMarkers },
-          { key: 'Needs', lines: ['Accommodation', 'Social inclusion'], listStyle: ListStyle.bulleted },
-          { key: 'Gender', lines: ['Male'] },
-          { key: 'Address', lines: ['Flat 2', '27 Test Walk', 'SY16 1AQ'] },
+          { key: { text: 'Risks' }, value: { text: 'No risk' }, actions: { items: [] } },
+          { key: { text: 'Gender' }, value: { text: 'Male' }, actions: { items: [] } },
         ]),
       ).toEqual({
         classes: undefined,
@@ -54,34 +51,7 @@ describe('ViewUtils', () => {
               text: 'Risks',
             },
             value: {
-              html: '<p class="govuk-body">No risk</p>',
-            },
-            actions: {
-              items: [
-                {
-                  href: '/risks',
-                  text: 'Change',
-                  attributes: { id: `change-link-0` },
-                  visuallyHiddenText: undefined,
-                },
-              ],
-            },
-          },
-          {
-            key: {
-              text: 'Needs',
-            },
-            value: {
-              html: `<ul class="govuk-list"><li>Accommodation</li>\n<li>Social inclusion</li></ul>`,
-            },
-            actions: { items: [] },
-          },
-          {
-            key: {
-              text: 'Needs',
-            },
-            value: {
-              html: `<ul class="govuk-list govuk-list--bullet"><li>Accommodation</li>\n<li>Social inclusion</li></ul>`,
+              text: 'No risk',
             },
             actions: { items: [] },
           },
@@ -90,16 +60,7 @@ describe('ViewUtils', () => {
               text: 'Gender',
             },
             value: {
-              html: '<p class="govuk-body">Male</p>',
-            },
-            actions: { items: [] },
-          },
-          {
-            key: {
-              text: 'Address',
-            },
-            value: {
-              html: '<p class="govuk-body">Flat 2</p>\n<p class="govuk-body">27 Test Walk</p>\n<p class="govuk-body">SY16 1AQ</p>',
+              text: 'Male',
             },
             actions: { items: [] },
           },
@@ -122,8 +83,18 @@ describe('ViewUtils', () => {
   it('escapes special characters passed iin', () => {
     expect(
       ViewUtils.summaryListArgs([
-        { key: 'Needs', lines: ['Accommodation&', 'Social inclusion'], listStyle: ListStyle.noMarkers },
-        { key: 'Address', lines: ['Flat 2', "27 St James's Road", 'SY16 1AQ'] },
+        {
+          key: { text: 'Needs' },
+          value: { html: '<ul class="govuk-list"><li>Accommodation&amp;</li>\n<li>Social inclusion</li></ul>' },
+          actions: { items: [] },
+        },
+        {
+          key: { text: 'Address' },
+          value: {
+            html: '<p class="govuk-body">Flat 2</p>\n<p class="govuk-body">27 St James&#39;s Road</p>\n<p class="govuk-body">SY16 1AQ</p>',
+          },
+          actions: { items: [] },
+        },
       ]),
     ).toEqual({
       rows: [

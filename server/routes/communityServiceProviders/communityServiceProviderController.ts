@@ -3,7 +3,7 @@ import CommunityServiceProviderService from '../../services/communityServiceProv
 import CommunityServiceProviderPresenter from './communityServiceProviderPresenter'
 import { SummaryListItem } from '../../utils/summaryList'
 import ViewUtils from '../../utils/viewUtils'
-import { GovukFrontendSummaryList } from '../../@types/govukFrontend'
+import { GovukFrontendSummaryList, GovukFrontendSummaryListRow } from '../../@types/govukFrontend'
 
 class CommunityServiceProviderController {
   constructor(private readonly communityServiceProviderService: CommunityServiceProviderService) {}
@@ -24,7 +24,7 @@ class CommunityServiceProviderController {
     })
   }
 
-  static summaryListArgs(items: SummaryListItem[]): GovukFrontendSummaryList {
+  static summaryListArgs(items: GovukFrontendSummaryListRow[]): GovukFrontendSummaryList {
     return {
       ...ViewUtils.summaryListArgs(items),
       classes: 'govuk-summary-list--no-border refer-and-monitor__intervention-summary-list',
