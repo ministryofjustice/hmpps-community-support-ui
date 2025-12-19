@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import CommunityServiceProviderService from '../../services/communityServiceProviderService'
 import CommunityServiceProviderPresenter from './communityServiceProviderPresenter'
-import { SummaryListItem } from '../../utils/summaryList'
 import ViewUtils from '../../utils/viewUtils'
 import { GovukFrontendSummaryList, GovukFrontendSummaryListRow } from '../../@types/govukFrontend'
 

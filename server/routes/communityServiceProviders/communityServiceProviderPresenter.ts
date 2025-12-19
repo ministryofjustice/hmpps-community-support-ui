@@ -1,5 +1,4 @@
 import type { CommunitySupportServiceProviders } from '@community-support-api'
-import { SummaryListItem } from '../../utils/summaryList'
 import { GovukFrontendSummaryListRow } from '../../@types/govukFrontend'
 
 export default class CommunityServiceProviderPresenter {

@@ -1,10 +1,5 @@
 import * as nunjucks from 'nunjucks'
-import { ListStyle, SummaryListItem, SummaryListItemContent } from './summaryList'
-import {
-  GovukFrontendSummaryList,
-  GovukFrontendSummaryListRow,
-  GovukFrontendSummaryListRowActionsItem,
-} from '../@types/govukFrontend'
+import { GovukFrontendSummaryList, GovukFrontendSummaryListRow } from '../@types/govukFrontend'
 
 const environment = new nunjucks.Environment()
 export default class ViewUtils {
@@ -17,10 +12,6 @@ export default class ViewUtils {
     if (typeof val !== 'string') return val
     const nl2br = environment.getFilter('nl2br')
     return nl2br(val)
-  }
-
-  private static summaryListItemLine(line: SummaryListItemContent): string {
-    return `${ViewUtils.escape(line)}`
   }
 
   static summaryListArgs(

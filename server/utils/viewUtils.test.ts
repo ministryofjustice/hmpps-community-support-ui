@@ -1,5 +1,4 @@
 import { runtime } from 'nunjucks'
-import { ListStyle } from './summaryList'
 import ViewUtils from './viewUtils'
 
 describe('ViewUtils', () => {
