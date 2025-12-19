@@ -1,1 +1,9 @@
 # The Fingerprint of false positive alerts can be added here to be excluded from future scans.
+
+[allowlist]
+paths = [
+  # Ignore gitleaks matches inside unit tests directory
+  '''.*\.test\.[jt]sx?$''',
+  # Ignore compose files if they only contain service URLs/usernames
+  '''^docker-compose\.y  '''^docker-compose\.yml$'''
+]

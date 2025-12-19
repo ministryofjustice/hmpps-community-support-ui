@@ -4,9 +4,10 @@ import type { Services } from '../services'
 import { Page } from '../services/auditService'
 
 import ReferralController from '../referral/referralController'
+import CommunityServiceProviderController from './communityServiceProviders/communityServiceProviderController'
 import asyncMiddleware from '../middleware/asyncMiddleware'
 
-export default function routes({ auditService, communitySupportService }: Services): Router {
+export default function routes({ auditService, referralService, communitySupportService }: Services): Router {
   const router = Router()
   const get = (path: string | string[], handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
 
@@ -17,7 +18,8 @@ export default function routes({ auditService, communitySupportService }: Servic
   const getOrPost = (path: string, handler: RequestHandler) =>
     router.route(path).get(asyncMiddleware(handler)).post(asyncMiddleware(handler))
 
-  const referralController = new ReferralController(communitySupportService)
+  const referralController = new ReferralController(referralService)
+  const communityServiceProviderController = new CommunityServiceProviderController(communitySupportService)
 
   router.get('/', async (req, res, next) => {
     await auditService.logPageView(Page.INDEX_PAGE, { who: res.locals.user.username, correlationId: req.id })
@@ -27,6 +29,10 @@ export default function routes({ auditService, communitySupportService }: Servic
 
   get('/referral/:id', async (req, res, next) => {
     await referralController.showReferralPage(req, res, next)
+  })
+
+  get('/referral/new/select-a-service', async (req, res, next) => {
+    await communityServiceProviderController.showCommunityServiceProviderPage(req, res, next)
   })
 
   return router
