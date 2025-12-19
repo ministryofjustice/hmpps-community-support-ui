@@ -1,3 +1,10 @@
 title = "HMPPS Gitleaks configuration"
+
 [extend]
 path = "./node_modules/@ministryofjustice/hmpps-precommit-hooks/config.toml"
+
+[allowlist]
+paths = [
+   '^server/utils/.*\.test\.ts$',
+  '^docker-compose\.yml$'
+]
