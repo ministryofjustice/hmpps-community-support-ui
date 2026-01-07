@@ -102,7 +102,7 @@ services:
       - POSTGRES_DB=auth-db
     healthcheck:
       test: ['CMD', 'pg_isready', '--username=admin', '--dbname=auth-db']
-    image: postgres:15
+    image: postgres:18
     networks:
       - hmpps
     ports:
