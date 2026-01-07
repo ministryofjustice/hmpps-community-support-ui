@@ -1,46 +1,173 @@
+version: '3.1'
 services:
+  redis:
+    image: 'cimg/redis:8.2'
+    networks:
+      - hmpps
+    container_name: redis
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - '6379:6379'
 
   hmpps-auth:
-    image: ghcr.io/ministryofjustice/hmpps-auth:latest
+    image: quay.io/hmpps/hmpps-auth:latest
     networks:
       - hmpps
     container_name: hmpps-auth
+    depends_on:
+        - auth-db
     ports:
-      - "9090:8080"
+      - '8090:8090'
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/auth/health"]
+      test: ['CMD', 'curl', '-f', 'http://localhost:8090/auth/health']
     environment:
-      - SPRING_PROFILES_ACTIVE=dev
+      - SERVER_PORT=8090
+      - SPRING_PROFILES_ACTIVE=dev,delius,local-postgres
+      - DELIUS_ENDPOINT_URL=http://wiremock:8080/delius
       - APPLICATION_AUTHENTICATION_UI_ALLOWLIST=0.0.0.0/0
+      - DELIUS_ENABLED=true
+      - MANAGE_USERS_API_ENABLED=true
+      - MANAGE_USERS_API_ENDPOINT_URL=http://hmpps-manage-users:8096
+      # gitleaks:allow (jdbc postgres URL; not a secret)
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://auth-db:5432/auth-db
 
-  app:
-    build:
-      context: .
-      args:
-        BUILD_NUMBER: "1.0.0"
-        GIT_REF: "a1b2c3"
-        GIT_BRANCH: main
+  hmpps-manage-users:
+    image: quay.io/hmpps/hmpps-manage-users-api:latest
+    networks:
+      - hmpps
+    container_name: hmpps-manage-users
+    depends_on:
+      - hmpps-auth
+      - nomis-user-roles-api
+      - hmpps-external-users-api
+    ports:
+      - "8096:8096"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8096/health" ]
+    environment:
+      - SERVER_PORT=8096
+      - HMPPS_AUTH_ENDPOINT_URL=http://hmpps-auth:8090/auth
+      - API_BASE_URL_OAUTH=http://hmpps-auth:8090/auth
+      - SPRING_PROFILES_ACTIVE=dev
+      - EXTERNAL_USERS_ENDPOINT_URL=http://hmpps-external-users-api:8098
+      - NOMIS_ENDPOINT_URL=http://nomis-user-roles-api:8097
+      - DELIUS_ENDPOINT_URL=http://wiremock:8080/delius
+      - AUTHORIZATION_SERVER_TOKEN_ENDPOINT_URL=http://hmpps-auth:8090/auth/oauth/token
+
+  nomis-user-roles-api:
+    image: quay.io/hmpps/nomis-user-roles-api:latest
+    networks:
+      - hmpps
+    container_name: nomis-user-roles-api
+    depends_on:
+      - hmpps-auth
+    ports:
+      - "8097:8097"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8097/health" ]
+    environment:
+      - SERVER_PORT=8097
+      - SPRING_PROFILES_ACTIVE=dev
+      - API_BASE_URL_OAUTH=http://hmpps-auth:8090/auth
+  
+  hmpps-external-users-api:
+      image: quay.io/hmpps/hmpps-external-users-api:latest
+      networks:
+        - hmpps
+      container_name: hmpps-external-users-api
+      depends_on:
+        - auth-db
+        - hmpps-auth
+      ports:
+        - "8098:8098"
+      healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:8098/health/ping"]
+      environment:
+        - SERVER_PORT=8098
+        - SPRING_PROFILES_ACTIVE=dev
+        - API_BASE_URL_OAUTH=http://hmpps-auth:8090/auth
+        - SPRING_R2DBC_URL=r2dbc:postgresql://auth-db:5432/auth-db?sslmode=prefer
+        - SPRING_FLYWAY_URL=jdbc:postgresql://auth-db:5432/auth-db?sslmode=prefer
+        - SPRING_R2DBC_USERNAME=admin
+        - SPRING_R2DBC_PASSWORD=admin_password
+        - HMPPS_SQS_PROVIDER=localstack
+        - HMPPS_SQS_LOCALSTACKURL=http://localstack:4566  
+
+  auth-db:
+    container_name: auth-db
+    environment:
+      - POSTGRES_PASSWORD=admin_password
+      - POSTGRES_USER=admin
+      - POSTGRES_DB=auth-db
+    healthcheck:
+      test: ['CMD', 'pg_isready', '--username=admin', '--dbname=auth-db']
+    image: postgres:15
     networks:
       - hmpps
     ports:
-      - "3000:3000"
+      - '5434:5432'
+    restart: always
+
+  postgresql:
+    image: postgres:18.1
+    container_name: postgres
+    networks:
+      - hmpps
+    restart: always
+    ports:
+      - '5432:5432'
     healthcheck:
-      test: ["CMD", "wget", "-q", "-O", "-", "http://localhost:3000/health"]
+      test: [ "CMD", "pg_isready", "--username=admin", "--dbname=postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     environment:
-      - PRODUCT_ID=UNASSIGNED
-      - REDIS_ENABLED=false
-      - REDIS_HOST=localhost
-      - HMPPS_AUTH_EXTERNAL_URL=http://localhost:9090/auth
-      - HMPPS_AUTH_URL=http://hmpps-auth:8080/auth
-      # These will need to match new creds in the seed auth service auth
-      - AUTH_CODE_CLIENT_ID=hmpps-community-support-ui-1
-      - AUTH_CODE_CLIENT_SECRET=clientsecret
-      - CLIENT_CREDS_CLIENT_ID=hmpps-community-support-ipb-ui-client-1
-      - CLIENT_CREDS_CLIENT_SECRET=clientsecret
-      - SESSION_SECRET=somesecretvalue
-      - TOKEN_VERIFICATION_API_URL=http://hmpps-auth:8080/auth
-      - TOKEN_VERIFICATION_ENABLED=false
-      - INGRESS_URL=http://localhost:3000
-      - NO_HTTPS=true
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin_password
+
+  community-support-service:
+    image: quay.io/hmpps/hmpps-community-support-api
+    build:
+      context: ../hmpps-community-support-api
+      dockerfile: Dockerfile
+    restart: always
+    networks:
+      - hmpps
+    container_name: community-support-service
+    depends_on:
+      - postgresql
+    ports:
+      - '8092:8080'
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:8080/health']
+    environment:
+      - SERVER_PORT=8080
+      - HMPPS_AUTH_URL=http://hmpps-auth:8090/auth
+      - SPRING_PROFILES_ACTIVE=dev,local
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresql:5432/postgres
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=admin_password      
+
+  wiremock:
+    image: wiremock/wiremock
+    networks:
+      - hmpps
+    restart: always
+    ports:
+      - "9091:8080"
+    volumes:
+      - ./wiremock_mappings:/home/wiremock/mappings
+    command: '--verbose'
+  localstack:
+      image: localstack/localstack:4
+      networks:
+        - hmpps
+      container_name: localstack
+      ports:
+        - "4566:4566"
+      environment:
+        - SERVICES=sqs
+
 networks:
   hmpps:

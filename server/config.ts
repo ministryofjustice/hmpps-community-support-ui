@@ -49,17 +49,17 @@ export default {
   },
   apis: {
     hmppsAuth: {
-      url: get('HMPPS_AUTH_URL', 'http://localhost:9090/auth', requiredInProduction),
+      url: get('HMPPS_AUTH_URL', 'http://localhost:8090/auth', requiredInProduction),
       healthPath: '/health/ping',
-      externalUrl: get('HMPPS_AUTH_EXTERNAL_URL', get('HMPPS_AUTH_URL', 'http://localhost:9090/auth')),
+      externalUrl: get('HMPPS_AUTH_EXTERNAL_URL', get('HMPPS_AUTH_URL', 'http://localhost:8090/auth')),
       timeout: {
         response: Number(get('HMPPS_AUTH_TIMEOUT_RESPONSE', 10000)),
         deadline: Number(get('HMPPS_AUTH_TIMEOUT_DEADLINE', 10000)),
       },
       agent: new AgentConfig(Number(get('HMPPS_AUTH_TIMEOUT_RESPONSE', 10000))),
-      authClientId: get('AUTH_CODE_CLIENT_ID', 'clientid', requiredInProduction),
+      authClientId: get('AUTH_CODE_CLIENT_ID', 'hmpps-community-support-ui-1', requiredInProduction),
       authClientSecret: get('AUTH_CODE_CLIENT_SECRET', 'clientsecret', requiredInProduction),
-      systemClientId: get('CLIENT_CREDS_CLIENT_ID', 'clientid', requiredInProduction),
+      systemClientId: get('CLIENT_CREDS_CLIENT_ID', 'hmpps-community-support-ipb-ui-client-1', requiredInProduction),
       systemClientSecret: get('CLIENT_CREDS_CLIENT_SECRET', 'clientsecret', requiredInProduction),
     },
     tokenVerification: {
@@ -73,7 +73,7 @@ export default {
       enabled: get('TOKEN_VERIFICATION_ENABLED', 'false') === 'true',
     },
     communitySupportService: {
-      url: get('COMMUNITY_SUPPORT_API_URL', 'http://localhost:8080', requiredInProduction),
+      url: get('COMMUNITY_SUPPORT_API_URL', 'http://localhost:8092', requiredInProduction),
       healthPath: '/health',
       timeout: {
         response: 10000,
@@ -87,5 +87,5 @@ export default {
   },
   ingressUrl: get('INGRESS_URL', 'http://localhost:3000', requiredInProduction),
   environmentName: get('ENVIRONMENT_NAME', ''),
-  allowedRoles: ['ROLE_COMMUNITY_SUPPORT_REFERRER', 'ROLE_COMMUNITY_SUPPORT_PROVIDER'],
+  allowedRoles: ['ROLE_COMMUNITY_SUPPORT_REFERRER', 'ROLE_COMMUNITY_SUPPORT_PROVIDER', 'ROLE_PROBATION'],
 }

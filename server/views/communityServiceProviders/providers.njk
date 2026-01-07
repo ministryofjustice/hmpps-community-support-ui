@@ -1,0 +1,24 @@
+{% extends "../partials/layout.njk" %}
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
+{% set pageTitle = applicationName + " - Referral" %}
+{% set mainClasses = "govuk-body" %}
+
+{% block content %}
+
+<h1 class="govuk-heading-xl">Select a Community Service Provider to make a referral</h1>
+
+  {% for result in communityServiceProviderPresenter %}
+    <h2 class="govuk-heading-l">
+      <a class="govuk-link" href="#">{{ result.title }}</a>
+    </h2>
+
+    <p class="govuk-body">{{ result.truncatedDescription | striptags(true) | escape | nl2br }}</p>
+
+    {{ govukSummaryList(summaryListArgs(result.summary)) }}
+
+    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+  {% endfor %}
+
+{% endblock %}
