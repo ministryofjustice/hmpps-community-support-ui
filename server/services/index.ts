@@ -1,5 +1,6 @@
 import { dataAccess } from '../data'
 import AuditService from './auditService'
+import PersonService from './personService'
 import ReferralService from './referralService'
 import CommunityServiceProviderService from './communityServiceProviderService'
 
@@ -9,8 +10,9 @@ export const services = () => {
   return {
     applicationInfo,
     auditService: new AuditService(hmppsAuditClient),
+    personService: new PersonService(communitySupportApiClient),
     referralService: new ReferralService(communitySupportApiClient),
-    communitySupportService: new CommunityServiceProviderService(communitySupportApiClient),
+    communityServiceProviderService: new CommunityServiceProviderService(communitySupportApiClient),
   }
 }
 
