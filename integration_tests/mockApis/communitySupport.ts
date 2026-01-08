@@ -27,4 +27,24 @@ export default {
         transformers: ['response-template'],
       },
     }),
+
+  stubGetReferral: (httpStatus = 200): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: '/community-support/referral/.*',
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: {
+          id: '{{request.path.[2]}}',
+          referenceNumber: 'QD0878DE',
+          crn: 'CRN123',
+          firstName: 'John',
+          lastName: 'Doe',
+        },
+        transformers: ['response-template'],
+      },
+    }),
 }

@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express'
-import CommunityServiceProviderService from '../../services/communityServiceProviderService'
+import CommunityServiceProviderService from '../services/communityServiceProviderService'
 import CommunityServiceProviderPresenter from './communityServiceProviderPresenter'
-import ViewUtils from '../../utils/viewUtils'
-import { GovukFrontendSummaryList, GovukFrontendSummaryListRow } from '../../@types/govukFrontend'
+import ViewUtils from '../utils/viewUtils'
+import { GovukFrontendSummaryList, GovukFrontendSummaryListRow } from '../@types/govukFrontend'
 
 class CommunityServiceProviderController {
   constructor(private readonly communityServiceProviderService: CommunityServiceProviderService) {}

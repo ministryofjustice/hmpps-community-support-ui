@@ -1,6 +1,9 @@
 import { Request, Response, NextFunction } from 'express'
 import ReferralService from '../services/referralService'
 import PersonService from '../services/personService'
+import ConfirmationPresenter from './confirmation/confirmationPresenter'
+import { GovukFrontendPanel } from '../@types/govukFrontend'
+import ViewUtils from '../utils/viewUtils'
 
 class ReferralController {
   constructor(
@@ -32,6 +35,22 @@ class ReferralController {
       }
     }
     return res.render('referral/findPerson', {})
+  }
+
+  async viewConfirmation(req: Request, res: Response): Promise<void> {
+    const referralId = req.params.id
+    const { username } = res.locals.user
+    const referral = await this.referralService.getReferralById(referralId, username)
+
+    const presenter = new ConfirmationPresenter(referral)
+    const panelArgs: GovukFrontendPanel = {
+      titleText: presenter.text.title,
+      html: `${ViewUtils.escape(presenter.text.referenceNumberIntro)}<br><strong>${ViewUtils.escape(
+        presenter.text.referenceNumber,
+      )}</strong>`,
+    }
+
+    return res.render('referral/confirmation', { presenter, panelArgs })
   }
 }
 

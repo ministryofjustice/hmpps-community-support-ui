@@ -1,0 +1,22 @@
+{% extends "../partials/layout.njk" %}
+
+{% from "govuk/components/panel/macro.njk" import govukPanel %}
+
+
+{% set pageTitle = applicationName + " - Referral Confirmation page" %}
+{% set mainClasses = "govuk-body" %}
+
+
+{% block content %}
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {{ govukPanel(panelArgs) }}
+
+      <p class="govuk-body">
+      <a href="{{ presenter.text.startAReferralLink }}">Start a new referral</a></p>`
+      </p>
+
+    </div>
+  </div>
+{% endblock %}
