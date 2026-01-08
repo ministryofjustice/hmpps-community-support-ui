@@ -10,9 +10,9 @@ export default class ReferralConfirmationPage extends AbstractPage {
 
   private constructor(page: Page) {
     super(page)
-    this.header = page.locator('h1', { hasText: 'Referral Confirmation page' })
-    this.panelMessage = page.locator('//h1.govuk-panel__title', { hasText: 'The referral has been sent' })
-    this.referenceNumber = page.locator('//div[@class="govuk-panel__body"]/strong', { hasText: 'QD0878DE' })
+    this.header = page.locator('h1', { hasText: 'The referral has been sent' })
+    this.panelMessage = page.locator('text=Your reference number')
+    this.referenceNumber = page.locator('strong', { hasText: 'QD0878DE' })
   }
 
   static async verifyOnPage(page: Page): Promise<ReferralConfirmationPage> {

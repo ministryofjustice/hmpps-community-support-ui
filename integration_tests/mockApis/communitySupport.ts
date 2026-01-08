@@ -32,7 +32,7 @@ export default {
     stubFor({
       request: {
         method: 'GET',
-        urlPathPattern: '/community-support/referral/.*',
+        urlPathPattern: '/community-support/referrals/.*',
       },
       response: {
         status: httpStatus,
