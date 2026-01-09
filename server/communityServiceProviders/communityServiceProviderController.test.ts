@@ -1,10 +1,10 @@
 import { Request, Response } from 'express'
 import { CommunitySupportServicesProvider } from '@community-support-api'
-import CommunityServiceProviderService from '../../services/communityServiceProviderService'
+import CommunityServiceProviderService from '../services/communityServiceProviderService'
 import CommunityServiceProviderController from './communityServiceProviderController'
 import CommunityServiceProviderPresenter from './communityServiceProviderPresenter'
 
-jest.mock('../../services/communityServiceProviderService')
+jest.mock('../services/communityServiceProviderService')
 
 describe('CommunityServiceProviderController', () => {
   let communityServiceProviderService: jest.Mocked<CommunityServiceProviderService>

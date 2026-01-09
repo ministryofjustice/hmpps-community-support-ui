@@ -1,5 +1,5 @@
 import type { CommunitySupportServiceProviders } from '@community-support-api'
-import { GovukFrontendSummaryListRow } from '../../@types/govukFrontend'
+import { GovukFrontendSummaryListRow } from '../@types/govukFrontend'
 
 export default class CommunityServiceProviderPresenter {
   constructor(private readonly communitySupportServiceProvider: CommunitySupportServiceProviders) {}

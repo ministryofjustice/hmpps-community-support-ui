@@ -4,7 +4,7 @@ import type { Services } from '../services'
 import { Page } from '../services/auditService'
 
 import ReferralController from '../referral/referralController'
-import CommunityServiceProviderController from './communityServiceProviders/communityServiceProviderController'
+import CommunityServiceProviderController from '../communityServiceProviders/communityServiceProviderController'
 import asyncMiddleware from '../middleware/asyncMiddleware'
 
 export default function routes({
@@ -39,9 +39,12 @@ export default function routes({
   getOrPost('/referral/new/find-a-person', async (req, res, next) => {
     await referralController.showFindPersonPage(req, res, next)
   })
+
   get('/referral/new/select-a-service', async (req, res, next) => {
     await communityServiceProviderController.showCommunityServiceProviderPage(req, res, next)
   })
+
+  get('/referral/:id/confirmation', async (req, res) => referralController.viewConfirmation(req, res))
 
   return router
 }
