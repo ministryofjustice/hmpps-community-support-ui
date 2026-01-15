@@ -96,6 +96,9 @@ export interface components {
     }
     PersonDto: {
       personIdentifier?: string
+      firstName?: string
+      lastName?: string
+      sex?: string
     }
     CommunitySupportServiceDto: {
       id?: string

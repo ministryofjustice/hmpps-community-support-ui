@@ -8,8 +8,8 @@ export default class FoundPersonPage extends AbstractPage {
 
   private constructor(page: Page) {
     super(page)
-    this.header = page.locator('h1', { hasText: 'Person Details' })
-    this.personDetails = page.locator('#person-details')
+    this.header = page.locator('h1', { hasText: 'Confirm this is the correct person for referral' })
+    this.personDetails = page.locator('[data-testid="personsummary"]')
   }
 
   static async verifyOnPage(page: Page): Promise<FoundPersonPage> {

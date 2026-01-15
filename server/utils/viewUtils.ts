@@ -1,5 +1,9 @@
 import * as nunjucks from 'nunjucks'
-import { GovukFrontendSummaryList, GovukFrontendSummaryListRow } from '../@types/govukFrontend'
+import {
+  GovukFrontendSummaryList,
+  GovukFrontendSummaryListRow,
+  GovukFrontendSummaryListRowActionsItem,
+} from '../@types/govukFrontend'
 
 const environment = new nunjucks.Environment()
 export default class ViewUtils {
@@ -14,13 +18,27 @@ export default class ViewUtils {
     return nl2br(val)
   }
 
-  static summaryListArgs(
+  static summaryListRow(
+    key: string,
+    value: string,
+    actions: Array<GovukFrontendSummaryListRowActionsItem> = null,
+  ): GovukFrontendSummaryListRow {
+    return {
+      key: { text: key },
+      value: { text: value },
+      actions: actions ? { items: actions } : null,
+    }
+  }
+
+  static summaryList(
     summaryListItems: GovukFrontendSummaryListRow[],
     options: { showBorders: boolean } = { showBorders: true },
+    attributes?: GovukFrontendSummaryList['attributes'],
   ): GovukFrontendSummaryList {
     return {
       classes: options.showBorders ? undefined : 'govuk-summary-list--no-border',
       rows: summaryListItems,
+      attributes,
     }
   }
 }

@@ -4,6 +4,7 @@ import PersonService from '../services/personService'
 import ConfirmationPresenter from './confirmation/confirmationPresenter'
 import { GovukFrontendPanel } from '../@types/govukFrontend'
 import ViewUtils from '../utils/viewUtils'
+import FoundPersonPresenter from './foundPerson/foundPersonPresenter'
 
 class ReferralController {
   constructor(
@@ -24,7 +25,8 @@ class ReferralController {
       const { username } = res.locals.user
       try {
         const foundPerson = await this.personService.getPersonByIdentifier(personIdentifier, username)
-        return res.render('referral/foundPerson', { person: foundPerson })
+        const presenter = new FoundPersonPresenter({}, foundPerson)
+        return presenter.renderPage(res, req, next)
       } catch (error) {
         if (error.responseStatus === 404) {
           req.flash('personIdentifierError', `No person with identifier '${personIdentifier}' found`)
@@ -37,20 +39,14 @@ class ReferralController {
     return res.render('referral/findPerson', {})
   }
 
-  async viewConfirmation(req: Request, res: Response): Promise<void> {
+  async viewConfirmation(req: Request, res: Response, next: NextFunction): Promise<void> {
     const referralId = req.params.id
     const { username } = res.locals.user
     const referral = await this.referralService.getReferralById(referralId, username)
 
-    const presenter = new ConfirmationPresenter(referral)
-    const panelArgs: GovukFrontendPanel = {
-      titleText: presenter.text.title,
-      html: `${ViewUtils.escape(presenter.text.referenceNumberIntro)}<br><strong>${ViewUtils.escape(
-        presenter.text.referenceNumber,
-      )}</strong>`,
-    }
+    const presenter = new ConfirmationPresenter({}, referral)
 
-    return res.render('referral/confirmation', { presenter, panelArgs })
+    return presenter.renderPage(res, req, next)
   }
 }
 

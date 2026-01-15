@@ -1,16 +1,22 @@
 {% extends "../partials/layout.njk" %}
 
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
 {% set pageTitle = applicationName + " - Found a Person" %}
 {% set mainClasses = "govuk-body" %}
 
 {% block content %}
 
   <div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
-  <h1 class="govuk-heading-l">Person Details</h1>
-
-    <div id="person-details">{{person.personIdentifier}}</div>
- </div>
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-l">{{content.pageHeader}}</h1>
+        {{ govukSummaryList(content.personSummary) }}
+        {{ govukButton({
+          text: content.continueButtonText,
+          href: content.continueButtonLink
+        }) }}
+    </div>
  </div>
 
 {% endblock %}

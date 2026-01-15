@@ -3,14 +3,18 @@ import { Person } from '@community-support-api'
 import ReferralController from './referralController'
 import ReferralService from '../services/referralService'
 import PersonService from '../services/personService'
+import FoundPersonPresenter from './foundPerson/foundPersonPresenter'
+import { FoundPersonViewModel } from './foundPerson/foundPersonViewModel'
 
 jest.mock('../services/referralService')
 jest.mock('../middleware/formValidationMiddleware')
+jest.mock('../referral/foundPerson/foundPersonPresenter')
 
 describe('ReferralController', () => {
   let referralService: jest.Mocked<ReferralService>
   let personService: jest.Mocked<PersonService>
   let referralController: ReferralController
+  let foundPersonPresenter: jest.Mocked<FoundPersonPresenter>
   let req: Request
   let res: Response
   let next: jest.Mock
@@ -23,6 +27,9 @@ describe('ReferralController', () => {
       getPersonByIdentifier: jest.fn(),
     } as unknown as jest.Mocked<PersonService>
     referralController = new ReferralController(referralService, personService)
+    foundPersonPresenter = {
+      buildPageContent: jest.fn(),
+    } as unknown as jest.Mocked<FoundPersonPresenter>
 
     req = {
       params: { id: 'referral123' },
@@ -57,15 +64,21 @@ describe('ReferralController', () => {
         method: 'POST',
         body: { personIdentifier: 'person123' },
       } as unknown as Request
-      const mockPersonData = { personIdentifier: 'person123' } as Person
+      const mockPersonData = {
+        personIdentifier: 'person123',
+        firstName: 'John',
+        lastName: 'Doe',
+        sex: 'Male',
+      } as Person
+      const mockPageContent = {} as FoundPersonViewModel
       personService.getPersonByIdentifier.mockResolvedValue(mockPersonData)
+      foundPersonPresenter.buildPageContent.mockReturnValue(mockPageContent)
 
-      await referralController.showFindPersonPage(req, res, next)
+      const result = await referralController.showFindPersonPage(req, res, next)
 
       expect(personService.getPersonByIdentifier).toHaveBeenCalledWith('person123', 'user1')
-      expect(res.render).toHaveBeenCalledWith('referral/foundPerson', { person: mockPersonData })
+      expect(result).toBe(foundPersonPresenter.renderPage)
     })
-
     it('should flash not found error redirect when no person is found', async () => {
       req = {
         method: 'POST',

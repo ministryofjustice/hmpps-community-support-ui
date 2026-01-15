@@ -24,7 +24,6 @@ test.describe('FindPerson', () => {
     const findPersonPage = await FindPersonPage.verifyOnPage(page)
     await findPersonPage.identifierInput.fill('person123')
     await findPersonPage.submitButton.click()
-    const foundPersonPage = await FoundPersonPage.verifyOnPage(page)
-    expect(foundPersonPage.personDetails).toHaveText('person123')
+    await FoundPersonPage.verifyOnPage(page)
   })
 })

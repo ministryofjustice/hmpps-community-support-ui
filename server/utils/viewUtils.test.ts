@@ -38,7 +38,7 @@ describe('ViewUtils', () => {
   describe('summaryListArgs', () => {
     it('returns a summary list args object for passing to the govukSummaryList macro', () => {
       expect(
-        ViewUtils.summaryListArgs([
+        ViewUtils.summaryList([
           { key: { text: 'Risks' }, value: { text: 'No risk' }, actions: { items: [] } },
           { key: { text: 'Gender' }, value: { text: 'Male' }, actions: { items: [] } },
         ]),
@@ -71,7 +71,7 @@ describe('ViewUtils', () => {
   describe('with provided options', () => {
     describe('when show borders is set to false', () => {
       it('should add a hide borders class', () => {
-        expect(ViewUtils.summaryListArgs([], { showBorders: false })).toEqual({
+        expect(ViewUtils.summaryList([], { showBorders: false })).toEqual({
           classes: 'govuk-summary-list--no-border',
           rows: [],
         })
@@ -81,7 +81,7 @@ describe('ViewUtils', () => {
 
   it('escapes special characters passed iin', () => {
     expect(
-      ViewUtils.summaryListArgs([
+      ViewUtils.summaryList([
         {
           key: { text: 'Needs' },
           value: { html: '<ul class="govuk-list"><li>Accommodation&amp;</li>\n<li>Social inclusion</li></ul>' },
