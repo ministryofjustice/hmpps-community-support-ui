@@ -11,6 +11,10 @@ describe(ConfirmationPresenter, () => {
         referenceNumberIntro: 'Your reference number',
         referenceNumber: referral.referenceNumber,
         startAReferralLink: `/referral/new/select-a-service?personDetailsId=${referral.crn}`,
+        panel: {
+          html: 'Your reference number<br><strong>ABCABCA1</strong>',
+          titleText: 'The referral has been sent',
+        },
       }
 
       expect(presenter.buildPageContent()).toEqual(viewModel)

@@ -2,8 +2,6 @@ import { Request, Response, NextFunction } from 'express'
 import ReferralService from '../services/referralService'
 import PersonService from '../services/personService'
 import ConfirmationPresenter from './confirmation/confirmationPresenter'
-import { GovukFrontendPanel } from '../@types/govukFrontend'
-import ViewUtils from '../utils/viewUtils'
 import FoundPersonPresenter from './foundPerson/foundPersonPresenter'
 
 class ReferralController {
