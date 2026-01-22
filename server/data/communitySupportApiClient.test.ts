@@ -1,7 +1,8 @@
 import nock from 'nock'
-import type { CommunitySupportServicesProvider, Referral } from '@community-support-api'
+import type { CommunitySupportServicesProvider, CreateReferralRequest, Referral } from '@community-support-api'
 import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import { AgentConfig, ApiConfig } from '@ministryofjustice/hmpps-rest-client'
+import { CreateContextOptions } from 'vm'
 import CommunitySupportApiClient from './communitySupportApiClient'
 
 describe('CommunitySupportApiClient tests', () => {
@@ -27,7 +28,7 @@ describe('CommunitySupportApiClient tests', () => {
       nock('http://localhost:8080', {
         reqheaders: { authorization: 'Bearer dummy-token' },
       })
-        .get('/referrals/referral123')
+        .get('/bff/referral-details/referral123')
         .reply(200, mockReferral)
 
       const result = communitySupportApiClient.getReferralById('referral123', 'user1')
@@ -53,6 +54,54 @@ describe('CommunitySupportApiClient tests', () => {
       const result = communitySupportApiClient.getCommunitySupportServiceProviders('provider123', 'user1')
 
       expect(result).resolves.toEqual(mockCommunityServiceProviderData)
+    })
+  })
+
+  describe('createReferral tests', () => {
+    it('should create a referral on a 200 response', () => {
+      const referralInformationDto = {
+        crn: 'CRN123',
+        firstName: 'John',
+        lastName: 'Doe',
+        sex: 'Male',
+        personId: 'person-id-123',
+        communityServiceProviderId: 'csp-id-123',
+        communityServiceProviderName: 'Community Support Provider',
+        region: 'North West',
+        deliveryPartner: 'Delivery Partner Ltd',
+      }
+      const referralRequestData = {
+        personId: 'person123',
+        crn: 'CRN123',
+        communityServiceProviderId: 'csp-id-123',
+        urgency: false,
+      } as CreateReferralRequest
+      nock('http://localhost:8080', {
+        reqheaders: { authorization: 'Bearer dummy-token' },
+      })
+        .post('/bff/referral', referralRequestData)
+        .reply(200, referralInformationDto)
+
+      const result = communitySupportApiClient.createReferral(referralRequestData, 'user1')
+
+      expect(result).resolves.toEqual(referralInformationDto)
+    })
+  })
+  describe('submitReferralById tests', () => {
+    it('should submit a referral on a 200 response', () => {
+      const submitReferralResponseDto = {
+        referralId: 'referral-id-123',
+        referenceNumber: 'REF123456',
+      }
+      nock('http://localhost:8080', {
+        reqheaders: { authorization: 'Bearer dummy-token' },
+      })
+        .post('/bff/referral-id-123/submit-a-referral')
+        .reply(200, submitReferralResponseDto)
+
+      const result = communitySupportApiClient.submitReferralById('referral-id-123', 'user1')
+
+      expect(result).resolves.toEqual(submitReferralResponseDto)
     })
   })
 })

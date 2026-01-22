@@ -26,7 +26,7 @@ class CommunityServiceProviderController {
   static summaryListArgs(items: GovukFrontendSummaryListRow[]): GovukFrontendSummaryList {
     return {
       ...ViewUtils.summaryListArgs(items),
-      classes: 'govuk-summary-list--no-border refer-and-monitor__intervention-summary-list',
+      classes: 'govuk-summary-list--no-border',
     }
   }
 }

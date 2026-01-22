@@ -4,6 +4,7 @@ import PersonService from '../services/personService'
 import ConfirmationPresenter from './confirmation/confirmationPresenter'
 import { GovukFrontendPanel } from '../@types/govukFrontend'
 import ViewUtils from '../utils/viewUtils'
+import CheckReferralInformationPresenter from './check-referral-information/checkReferralInformationPresenter'
 
 class ReferralController {
   constructor(
@@ -51,6 +52,35 @@ class ReferralController {
     }
 
     return res.render('referral/confirmation', { presenter, panelArgs })
+  }
+
+  async checkReferralInformation(req: Request, res: Response): Promise<void> {
+    const { username } = res.locals.user
+    const createReferralRequest = {
+      personId: '46abce04-e137-41e5-b18f-606a35375b33',
+      communityServiceProviderId: 'bc852b9d-1997-4ce4-ba7f-cd1759e15d2b',
+      crn: 'CRN0001' as string,
+      urgency: req.query.urgency !== 'false',
+    }
+    // This is a temporary call to make a referral until make a referral workflow is finalised and implemented
+    let referralInformation
+    try {
+      referralInformation = await this.referralService.createReferral(createReferralRequest, username)
+    } catch (error) {
+      req.flash('create referral', 'An unexpected error when creating a referral. Please try again.')
+    }
+    const presenter = new CheckReferralInformationPresenter(referralInformation)
+
+    return res.render('referral/checkReferralInformation', { presenter })
+  }
+
+  async submitReferralInformation(req: Request, res: Response): Promise<void> {
+    const { username } = res.locals.user
+    const { referralId } = req.params
+
+    const submitReferralResponse = await this.referralService.submitReferralById(referralId, username)
+
+    return res.redirect(`/referral/${submitReferralResponse.referralId}/confirmation`)
   }
 }
 
