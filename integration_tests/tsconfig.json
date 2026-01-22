@@ -3,9 +3,13 @@
   "compilerOptions": {
     "noEmit": true,
     "lib": ["es5", "dom", "es2015.promise"],
-    "types": ["@playwright/test"],
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "typeRoots": ["./server/@types", "./node_modules/@types"],
+    "paths": {
+      "@community-support-api": ["../server/@types/communitySupportApi/index.d.ts"],
+      "@govuk-frontend": ["../server/@types/govukFrontend/index.d.ts"]
+    }
   },
   "include": ["**/*.ts"]
 }

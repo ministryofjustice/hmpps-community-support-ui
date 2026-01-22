@@ -20,6 +20,8 @@ export interface ReferralUserAssignmentsResponse {
   succeededList?: CaseWorkerDto[]
   failureList?: AssignmentFailureDto[]
 }
+import { duplicateData } from '../testUtils'
+import referralDetailsPageData from '../mockData/referralDetailsPageData'
 
 export default {
   stubPing: (httpStatus = 200): SuperAgentRequest =>
@@ -205,6 +207,117 @@ export default {
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: expectedResponse,
         transformers: ['response-template'],
+      },
+    }),
+  stubGetReferralDetailsPage: (httpStatus = 200): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: '/community-support/bff/referral-details-pages/.*',
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: referralDetailsPageData,
+        transformers: ['response-template'],
+      },
+    }),
+
+  stubGetUnassignedCases: (httpStatus = 200): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: '/community-support/bff/case-list/unassigned.*',
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: {
+          content: [
+            {
+              referralId: 'referral123',
+              personName: 'John Doe',
+              personIdentifier: 'CRN123',
+              date: '01/06/24',
+              caseWorkers: [],
+            },
+          ],
+          page: 0,
+          size: 10,
+          totalElements: 10,
+          totalPages: 1,
+        },
+      },
+    }),
+  stubGetInProgressCase: (httpStatus = 200): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: '/community-support/bff/case-list/in-progress.*',
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: {
+          content: [
+            {
+              referralId: 'referral123',
+              personName: 'John Doe',
+              personIdentifier: 'CRN123',
+              date: '01/06/24',
+              caseWorkers: ['Worker 1', 'Worker 2'],
+            },
+          ],
+          page: 0,
+          size: 10,
+          totalElements: 10,
+          totalPages: 1,
+        },
+      },
+    }),
+  stubGetInProgressFiftyCases: (httpStatus = 200): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: '/community-support/bff/case-list/in-progress.*',
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: {
+          content: duplicateData(
+            {
+              referralId: 'referral123',
+              personName: 'John Doe',
+              personIdentifier: 'CRN123',
+              date: '01/06/24',
+              caseWorkers: ['Worker 1', 'Worker 2'],
+            },
+            10,
+          ),
+          page: 2,
+          size: 10,
+          totalElements: 50,
+          totalPages: 5,
+        },
+      },
+    }),
+  stubGetUnassignedNoCases: (httpStatus = 200): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: '/community-support/bff/case-list/unassigned.*',
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: {
+          content: [],
+          page: 0,
+          size: 0,
+          totalElements: 0,
+          totalPages: 0,
+        },
       },
     }),
 }

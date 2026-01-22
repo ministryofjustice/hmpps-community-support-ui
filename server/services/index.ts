@@ -1,8 +1,8 @@
 import { dataAccess } from '../data'
 import AuditService from './auditService'
 import PersonService from './personService'
-import ReferralService from './referralService'
 import CommunityServiceProviderService from './communityServiceProviderService'
+import ReferralService from './referralService'
 import CaseListService from './caseListService'
 
 export const services = () => {

@@ -1,0 +1,17 @@
+{% extends "../partials/layout.njk" %}
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
+{% set pageTitle = applicationName + " - Referral" %}
+{% set mainClasses = "govuk-body" %}
+
+{% block content %}
+
+<h1>Referral for {{ content.name }}</h1>
+<h2>Case details</h2>
+
+{{ govukSummaryList(content.personal) }}
+{{ govukSummaryList(content.equality) }}
+{{ govukSummaryList(content.contact) }}
+{{ govukSummaryList(content.referral) }}
+{% endblock %}
