@@ -1,4 +1,4 @@
-import { Referral, ReferralInformationDto } from '@community-support-api'
+import { ReferralInformationDto } from '@community-support-api'
 import { GovukFrontendSummaryList } from '@govuk-frontend'
 
 export default class CheckReferralInformationPresenter {

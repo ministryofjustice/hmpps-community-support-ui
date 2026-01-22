@@ -32,7 +32,6 @@ export default class CommunitySupportApiClient extends RestClient {
   }
 
   async createReferral(referralData: CreateReferralRequest, username: string): Promise<ReferralInformationDto> {
-    console.log('Creating referral with data:', referralData)
     return this.post({ path: '/bff/referral', data: referralData }, asSystem(username))
   }
 

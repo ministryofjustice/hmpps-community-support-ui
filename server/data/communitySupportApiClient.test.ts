@@ -2,7 +2,6 @@ import nock from 'nock'
 import type { CommunitySupportServicesProvider, CreateReferralRequest, Referral } from '@community-support-api'
 import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import { AgentConfig, ApiConfig } from '@ministryofjustice/hmpps-rest-client'
-import { CreateContextOptions } from 'vm'
 import CommunitySupportApiClient from './communitySupportApiClient'
 
 describe('CommunitySupportApiClient tests', () => {

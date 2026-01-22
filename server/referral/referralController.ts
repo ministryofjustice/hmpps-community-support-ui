@@ -66,7 +66,7 @@ class ReferralController {
     let referralInformation
     try {
       referralInformation = await this.referralService.createReferral(createReferralRequest, username)
-    } catch (error) {
+    } catch {
       req.flash('create referral', 'An unexpected error when creating a referral. Please try again.')
     }
     const presenter = new CheckReferralInformationPresenter(referralInformation)

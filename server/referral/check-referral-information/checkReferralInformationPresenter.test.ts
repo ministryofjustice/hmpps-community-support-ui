@@ -1,5 +1,4 @@
 import CheckReferralInformationPresenter from './checkReferralInformationPresenter'
-import ReferralFactory from '../../testutils/factories/Referral'
 
 describe(CheckReferralInformationPresenter, () => {
   describe('text', () => {
