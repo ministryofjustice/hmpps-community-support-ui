@@ -8,7 +8,7 @@ class CommunityServiceProviderController {
   constructor(private readonly communityServiceProviderService: CommunityServiceProviderService) {}
 
   async showCommunityServiceProviderPage(req: Request, res: Response, next: NextFunction) {
-    const { personDetailsId } = req.params
+    const { personDetailsId } = req.params as { personDetailsId: string }
     const { username } = res.locals.user
     const communitySupportServiceProviders = await this.communityServiceProviderService.getCommunityServiceProviders(
       personDetailsId,

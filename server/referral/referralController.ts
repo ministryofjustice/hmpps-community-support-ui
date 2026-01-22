@@ -13,7 +13,7 @@ class ReferralController {
   ) {}
 
   async showReferralPage(req: Request, res: Response, next: NextFunction) {
-    const referralId = req.params.id
+    const referralId = req.params.id as string
     const { username } = res.locals.user
     const referral = await this.referralService.getReferralById(referralId, username)
     return res.render('referral/referral', { referral })
@@ -39,7 +39,7 @@ class ReferralController {
   }
 
   async viewConfirmation(req: Request, res: Response): Promise<void> {
-    const referralId = req.params.id
+    const referralId = req.params.id as string
     const { username } = res.locals.user
     const referral = await this.referralService.getReferralById(referralId, username)
 
@@ -76,7 +76,7 @@ class ReferralController {
 
   async submitReferralInformation(req: Request, res: Response): Promise<void> {
     const { username } = res.locals.user
-    const { referralId } = req.params
+    const { referralId } = req.params as { referralId: string }
 
     const submitReferralResponse = await this.referralService.submitReferralById(referralId, username)
 
