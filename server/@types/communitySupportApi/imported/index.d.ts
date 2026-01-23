@@ -4,7 +4,24 @@
  */
 
 export interface paths {
-  '/referrals': {
+  '/bff/{referralId}/submit-a-referral': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Submit a referral */
+    post: operations['submitReferral']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/referral': {
     parameters: {
       query?: never
       header?: never
@@ -15,40 +32,6 @@ export interface paths {
     put?: never
     /** Create a referral */
     post: operations['createReferral']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/referrals/{referralId}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get a referral by ID */
-    get: operations['getReferral']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/person/{personIdentifier}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Find a person by an identifier i.e Prison ID or CRN */
-    get: operations['getPersonDetails']
-    put?: never
-    post?: never
     delete?: never
     options?: never
     head?: never
@@ -72,41 +55,83 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/bff/referral-details/{referralId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get a referral by ID */
+    get: operations['getReferral']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/person/{personIdentifier}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Find a person by an identifier i.e prison number or CRN */
+    get: operations['getPersonDetails']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
 }
 export type webhooks = Record<string, never>
 export interface components {
   schemas: {
-    CreateReferralRequest: {
-      firstName?: string
-      lastName?: string
-      crn?: string
-      referenceNumber?: string
-      sex?: string
-      /** Format: date */
-      dateOfBirth?: string
-      ethnicity?: string
-    }
-    ReferralDto: {
+    SubmitReferralResponseDto: {
       /** Format: uuid */
-      id?: string
-      firstName?: string
-      lastName?: string
-      crn?: string
+      referralId: string
       referenceNumber?: string
     }
-    PersonDto: {
-      personIdentifier?: string
+    CreateReferralRequest: {
+      /** Format: uuid */
+      personId: string
+      /** Format: uuid */
+      communityServiceProviderId: string
+      crn: string
+      urgency: boolean
+    }
+    ReferralInformationDto: {
+      /** Format: uuid */
+      personId: string
+      /** Format: uuid */
+      referralId: string
+      firstName?: string
+      lastName?: string
+      sex?: string
+      crn: string
+      /** Format: uuid */
+      communityServiceProviderId: string
+      communityServiceProviderName: string
+      region: string
+      referenceNumber?: string
+      deliveryPartner: string
     }
     CommunitySupportServiceDto: {
-      id?: string
-      region?: string
-      name?: string
-      providerName?: string
-      description?: string
+      id: string
+      region: string
+      name: string
+      providerName: string
+      description: string
     }
     CommunitySupportServicesDto: {
-      personId?: string
-      communitySupportServices?: components['schemas']['CommunitySupportServiceDto'][]
+      personId: string
+      communitySupportServices: components['schemas']['CommunitySupportServiceDto'][]
     }
     ErrorResponse: {
       /**
@@ -137,6 +162,32 @@ export interface components {
        */
       moreInfo?: string
     }
+    ReferralDto: {
+      /** Format: uuid */
+      id: string
+      crn?: string
+      referenceNumber?: string
+    }
+    PersonAdditionalDetails: {
+      ethnicity?: string
+      preferredLanguage?: string
+      neurodiverseConditions?: string
+      religionOrBelief?: string
+      transgender?: string
+      sexualOrientation?: string
+      address?: string
+      phoneNumber?: string
+      emailAddress?: string
+    }
+    PersonDto: {
+      personIdentifier?: string
+      firstName: string
+      lastName: string
+      /** Format: date */
+      dateOfBirth: string
+      sex?: string
+      additionalDetails?: components['schemas']['PersonAdditionalDetails']
+    }
   }
   responses: never
   parameters: never
@@ -146,6 +197,28 @@ export interface components {
 }
 export type $defs = Record<string, never>
 export interface operations {
+  submitReferral: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Referral created */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['SubmitReferralResponseDto']
+        }
+      }
+    }
+  }
   createReferral: {
     parameters: {
       query?: never
@@ -165,7 +238,47 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          'application/json': components['schemas']['ReferralDto']
+          'application/json': components['schemas']['ReferralInformationDto']
+        }
+      }
+    }
+  }
+  getServices: {
+    parameters: {
+      query: {
+        personDetailsId: string
+      }
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description List of community support services */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['CommunitySupportServicesDto']
+        }
+      }
+      /** @description The request was unauthorised */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden. The client is not authorised to access to select a referral service. */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': components['schemas']['ErrorResponse']
         }
       }
     }
@@ -228,46 +341,6 @@ export interface operations {
         }
         content: {
           'application/json': unknown
-        }
-      }
-    }
-  }
-  getServices: {
-    parameters: {
-      query: {
-        personDetailsId: string
-      }
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description List of community support services */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['CommunitySupportServicesDto']
-        }
-      }
-      /** @description The request was unauthorised */
-      401: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          '*/*': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Forbidden. The client is not authorised to access to select a referral service. */
-      403: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          '*/*': components['schemas']['ErrorResponse']
         }
       }
     }
