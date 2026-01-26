@@ -6,11 +6,8 @@ import { ReferralConfirmationViewModel } from './confirmationViewModel'
 import ViewUtils from '../../utils/viewUtils'
 
 export default class ConfirmationPresenter extends PresenterBase<ReferralConfirmationViewModel> {
-  constructor(
-    staticContent: Record<string, string>,
-    private readonly referral: Referral,
-  ) {
-    super(staticContent)
+  constructor(private readonly referral: Referral) {
+    super()
   }
 
   buildPageContent(): ReferralConfirmationViewModel {

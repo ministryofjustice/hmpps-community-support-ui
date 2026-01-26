@@ -1,0 +1,7 @@
+{
+  "/referral/new/find-a-person": {
+    "pageHeader": "Confirm this is the correct person for referral",
+    "continueButtonText": "Continue",
+    "continueButtonLink": "/referral/new/select-a-service"
+  }
+}

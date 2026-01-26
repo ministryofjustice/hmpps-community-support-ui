@@ -5,7 +5,7 @@ describe(ConfirmationPresenter, () => {
   describe('buildPageContent', () => {
     it('returns viewmodel to be rendered', () => {
       const referral = ReferralFactory.build()
-      const presenter = new ConfirmationPresenter({}, referral)
+      const presenter = new ConfirmationPresenter(referral)
       const viewModel = {
         title: 'The referral has been sent',
         referenceNumberIntro: 'Your reference number',

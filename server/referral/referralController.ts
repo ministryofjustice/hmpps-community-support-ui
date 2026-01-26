@@ -23,12 +23,13 @@ class ReferralController {
       const { username } = res.locals.user
       try {
         const foundPerson = await this.personService.getPersonByIdentifier(personIdentifier, username)
-        const presenter = new FoundPersonPresenter({}, foundPerson)
+        const presenter = new FoundPersonPresenter(foundPerson)
         return presenter.renderPage(res, req, next)
       } catch (error) {
         if (error.responseStatus === 404) {
           req.flash('personIdentifierError', `No person with identifier '${personIdentifier}' found`)
         } else {
+          console.log('Error finding person by identifier:', error)
           req.flash('personIdentifierError', 'An unexpected error occurred. Please try again.')
         }
         return res.redirect('/referral/new/find-a-person')
@@ -42,7 +43,7 @@ class ReferralController {
     const { username } = res.locals.user
     const referral = await this.referralService.getReferralById(referralId, username)
 
-    const presenter = new ConfirmationPresenter({}, referral)
+    const presenter = new ConfirmationPresenter(referral)
 
     return presenter.renderPage(res, req, next)
   }

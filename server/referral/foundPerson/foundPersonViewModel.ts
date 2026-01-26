@@ -1,8 +1,12 @@
 import { GovukFrontendSummaryList } from '@govuk-frontend'
 
 export type FoundPersonViewModel = {
-  pageHeader: string
+  staticContent: FoundPersonContent
   personSummary: GovukFrontendSummaryList
+}
+
+export type FoundPersonContent = {
+  pageHeader: string
   continueButtonText: string
   continueButtonLink: string
 }
