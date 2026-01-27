@@ -1,3 +1,4 @@
+import { CreateReferralRequest } from '@community-support-api'
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
 
 export default class ReferralService {
@@ -5,5 +6,13 @@ export default class ReferralService {
 
   async getReferralById(referralId: string, username: string) {
     return this.communitySupportApiClient.getReferralById(referralId, username)
+  }
+
+  async createReferral(referralData: CreateReferralRequest, username: string) {
+    return this.communitySupportApiClient.createReferral(referralData, username)
+  }
+
+  async submitReferralById(referralId: string, username: string) {
+    return this.communitySupportApiClient.submitReferralById(referralId, username)
   }
 }

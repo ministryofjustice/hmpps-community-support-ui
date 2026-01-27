@@ -1,6 +1,13 @@
 import { ApiConfig, RestClient, asSystem } from '@ministryofjustice/hmpps-rest-client'
 import type { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
-import type { CommunitySupportServicesProvider, Referral, Person } from '@community-support-api'
+import type {
+  CommunitySupportServicesProvider,
+  Referral,
+  Person,
+  CreateReferralRequest,
+  ReferralInformationDto,
+  SubmitReferralResponseDto,
+} from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
 
@@ -10,7 +17,7 @@ export default class CommunitySupportApiClient extends RestClient {
   }
 
   async getReferralById(referralId: string, username: string): Promise<Referral> {
-    return this.get({ path: `/referrals/${referralId}` }, asSystem(username))
+    return this.get({ path: `/bff/referral-details/${referralId}` }, asSystem(username))
   }
 
   async getCommunitySupportServiceProviders(

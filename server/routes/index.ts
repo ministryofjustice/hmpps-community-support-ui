@@ -17,7 +17,7 @@ export default function routes({
   const get = (path: string | string[], handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
 
   // unused for now but added for future expansion
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   const post = (path: string, handler: RequestHandler): Router => router.post(path, asyncMiddleware(handler))
 
   const getOrPost = (path: string, handler: RequestHandler) =>
@@ -32,9 +32,7 @@ export default function routes({
     return res.render('pages/index', {})
   })
 
-  get('/referral/:id', async (req, res, next) => {
-    await referralController.showReferralPage(req, res, next)
-  })
+  // NOTE: Generic `:id` route is declared after more-specific `/referral/*` routes
 
   getOrPost('/referral/new/find-a-person', async (req, res, next) => {
     await referralController.showFindPersonPage(req, res, next)
@@ -45,6 +43,16 @@ export default function routes({
   })
 
   get('/referral/:id/confirmation', async (req, res, next) => referralController.viewConfirmation(req, res, next))
+
+  get('/referral/check-referral-information', async (req, res) => referralController.checkReferralInformation(req, res))
+
+  post('/referral/:referralId/submit-referral-information', async (req, res) =>
+    referralController.submitReferralInformation(req, res),
+  )
+
+  get('/referral/:id', async (req, res, next) => {
+    await referralController.showReferralPage(req, res, next)
+  })
 
   return router
 }

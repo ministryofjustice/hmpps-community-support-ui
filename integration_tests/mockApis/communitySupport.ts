@@ -40,13 +40,13 @@ export default {
     stubFor({
       request: {
         method: 'GET',
-        urlPathPattern: '/community-support/referrals/.*',
+        urlPathPattern: '/community-support/bff/referral-details/.*',
       },
       response: {
         status: httpStatus,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: {
-          id: '{{request.path.[2]}}',
+          id: '{{request.path.[3]}}',
           referenceNumber: 'QD0878DE',
           crn: 'CRN123',
           firstName: 'John',
