@@ -1,6 +1,7 @@
 import express, { Router, Request, Response, NextFunction } from 'express'
 import fs from 'fs'
 import path from 'path'
+import logger from '../../logger'
 
 function loadContentData(): Record<string, Record<string, string>> {
   const contentFilePath = path.join(process.cwd(), 'assets/content', 'content.json')
@@ -9,7 +10,7 @@ function loadContentData(): Record<string, Record<string, string>> {
     const raw = fs.readFileSync(contentFilePath, 'utf8')
     contentData = JSON.parse(raw) as Record<string, Record<string, string>>
   } catch {
-    console.error(`Could not read content file at ${contentFilePath}`)
+    logger.error(`Could not read content file at ${contentFilePath}`)
   }
   return contentData
 }

@@ -1,5 +1,5 @@
 import { Referral } from '@community-support-api'
-import { Response, Request, NextFunction } from 'express'
+import { Response } from 'express'
 import { GovukFrontendPanel } from '@govuk-frontend'
 import PresenterBase from '../../presenter/presenterBase'
 import { ReferralConfirmationViewModel } from './confirmationViewModel'
@@ -31,7 +31,7 @@ export default class ConfirmationPresenter extends PresenterBase<ReferralConfirm
     }
   }
 
-  renderPage(res: Response, req: Request, next: NextFunction): void {
+  renderPage(res: Response): void {
     return res.render(this.getTemplatePath(), {
       content: this.buildPageContent(),
     })

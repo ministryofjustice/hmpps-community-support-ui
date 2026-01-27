@@ -1,4 +1,4 @@
-import { Response, Request, NextFunction } from 'express'
+import { Response } from 'express'
 import { Person } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
 import { FoundPersonContent, FoundPersonViewModel } from './foundPersonViewModel'
@@ -35,9 +35,8 @@ export default class FoundPersonPresenter extends PresenterBase<FoundPersonViewM
     return 'referral/foundPerson'
   }
 
-  renderPage(res: Response, req: Request, next: NextFunction): void {
+  renderPage(res: Response): void {
     const pageContent = this.buildPageContent(res)
-    console.log('FoundPersonPresenter - rendering page with content:', pageContent)
     return res.render(this.getTemplatePath(), {
       content: pageContent,
     })

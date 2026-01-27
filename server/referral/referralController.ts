@@ -3,6 +3,7 @@ import ReferralService from '../services/referralService'
 import PersonService from '../services/personService'
 import ConfirmationPresenter from './confirmation/confirmationPresenter'
 import FoundPersonPresenter from './foundPerson/foundPersonPresenter'
+import logger from '../../logger'
 
 class ReferralController {
   constructor(
@@ -24,12 +25,12 @@ class ReferralController {
       try {
         const foundPerson = await this.personService.getPersonByIdentifier(personIdentifier, username)
         const presenter = new FoundPersonPresenter(foundPerson)
-        return presenter.renderPage(res, req, next)
+        return presenter.renderPage(res)
       } catch (error) {
         if (error.responseStatus === 404) {
           req.flash('personIdentifierError', `No person with identifier '${personIdentifier}' found`)
         } else {
-          console.log('Error finding person by identifier:', error)
+          logger.error('Error finding person by identifier:', error)
           req.flash('personIdentifierError', 'An unexpected error occurred. Please try again.')
         }
         return res.redirect('/referral/new/find-a-person')
