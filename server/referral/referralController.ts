@@ -46,7 +46,7 @@ class ReferralController {
 
     const presenter = new ConfirmationPresenter(referral)
 
-    return presenter.renderPage(res, req, next)
+    return presenter.renderPage(res)
   }
 }
 
