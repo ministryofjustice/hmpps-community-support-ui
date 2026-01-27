@@ -30,4 +30,12 @@ export default class CommunitySupportApiClient extends RestClient {
   async getPersonDetailsForPersonSearch(personIdentifier: string, username: string): Promise<Person> {
     return this.get({ path: `/bff/person/${personIdentifier}` }, asSystem(username))
   }
+
+  async createReferral(referralData: CreateReferralRequest, username: string): Promise<ReferralInformationDto> {
+    return this.post({ path: '/bff/referral', data: referralData }, asSystem(username))
+  }
+
+  async submitReferralById(referralId: string, username: string): Promise<SubmitReferralResponseDto> {
+    return this.post({ path: `/bff/${referralId}/submit-a-referral` }, asSystem(username))
+  }
 }

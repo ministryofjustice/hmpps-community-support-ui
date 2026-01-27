@@ -4,8 +4,6 @@ import PersonService from '../services/personService'
 import ConfirmationPresenter from './confirmation/confirmationPresenter'
 import FoundPersonPresenter from './foundPerson/foundPersonPresenter'
 import logger from '../../logger'
-import { GovukFrontendPanel } from '../@types/govukFrontend'
-import ViewUtils from '../utils/viewUtils'
 import CheckReferralInformationPresenter from './check-referral-information/checkReferralInformationPresenter'
 
 class ReferralController {
@@ -43,7 +41,7 @@ class ReferralController {
   }
 
   async viewConfirmation(req: Request, res: Response, next: NextFunction): Promise<void> {
-    const referralId = req.params.id
+    const referralId = req.params.id as string
     const { username } = res.locals.user
     const referral = await this.referralService.getReferralById(referralId, username)
 
