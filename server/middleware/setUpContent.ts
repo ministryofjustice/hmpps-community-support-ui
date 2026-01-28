@@ -22,7 +22,7 @@ function getContentForPath(
   return contentData[reqPath] || {}
 }
 
-export default function setUpContentMiddleware(): Router {
+export default function setUpContent(): Router {
   const router = express.Router()
 
   router.use((req: Request, res: Response, next: NextFunction) => {
