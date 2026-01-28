@@ -16,7 +16,7 @@ import setUpWebRequestParsing from './middleware/setupRequestParsing'
 import setUpWebSecurity from './middleware/setUpWebSecurity'
 import setUpWebSession from './middleware/setUpWebSession'
 import setUpFormValidation from './middleware/setUpFormValidation'
-import setupContentMiddleware from './middleware/setUpContentMiddleware'
+import setUpContentMiddleware from './middleware/setUpContentMiddleware'
 
 import routes from './routes'
 import type { Services } from './services'
@@ -38,7 +38,7 @@ export default function createApp(services: Services): express.Application {
   nunjucksSetup(app)
   app.use(setUpAuthentication())
   app.use(authorisationMiddleware(config.allowedRoles))
-  app.use(setupContentMiddleware())
+  app.use(setUpContentMiddleware())
   app.use(setUpCsrf())
   app.use(setUpCurrentUser())
   app.use(setUpFormValidation())
