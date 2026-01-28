@@ -4,7 +4,7 @@ import path from 'path'
 import logger from '../../logger'
 
 function loadContentData(): Record<string, Record<string, string>> {
-  const contentFilePath = path.join(process.cwd(), 'assets/content', 'content.json')
+  const contentFilePath = path.join(process.cwd(), '/dist/assets/content', 'content.json')
   let contentData: Record<string, Record<string, string>> = {}
   try {
     const raw = fs.readFileSync(contentFilePath, 'utf8')
@@ -22,7 +22,7 @@ function getContentForPath(
   return contentData[reqPath] || {}
 }
 
-export default function setUpContentMiddleware(): Router {
+export default function setUpContent(): Router {
   const router = express.Router()
 
   router.use((req: Request, res: Response, next: NextFunction) => {
