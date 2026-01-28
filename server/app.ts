@@ -16,7 +16,7 @@ import setUpWebRequestParsing from './middleware/setupRequestParsing'
 import setUpWebSecurity from './middleware/setUpWebSecurity'
 import setUpWebSession from './middleware/setUpWebSession'
 import setUpFormValidation from './middleware/setUpFormValidation'
-import setupContentMiddleware from './middleware/setupContentMiddleware'
+import setupContentMiddleware from './middleware/setUpContentMiddleware'
 
 import routes from './routes'
 import type { Services } from './services'

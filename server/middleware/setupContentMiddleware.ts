@@ -4,7 +4,7 @@ import path from 'path'
 import logger from '../../logger'
 
 function loadContentData(): Record<string, Record<string, string>> {
-  const contentFilePath = path.join(process.cwd(), 'assets/content', 'content.json')
+  const contentFilePath = path.join(process.cwd(), '/dist/assets/content', 'content.json')
   let contentData: Record<string, Record<string, string>> = {}
   try {
     const raw = fs.readFileSync(contentFilePath, 'utf8')
