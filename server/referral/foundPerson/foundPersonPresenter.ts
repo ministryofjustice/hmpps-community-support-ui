@@ -18,7 +18,7 @@ export default class FoundPersonPresenter extends PresenterBase<FoundPersonViewM
       ViewUtils.summaryListRow('Sex', this.foundPerson.sex),
     ]
     const attributes = { 'data-testid': 'personsummary' }
-    viewModel.personSummary = ViewUtils.summaryList(personSummaryItems, { showBorders: false }, attributes)
+    viewModel.personSummary = ViewUtils.summaryList(personSummaryItems, { showBorders: true }, attributes)
     return viewModel
   }
 
