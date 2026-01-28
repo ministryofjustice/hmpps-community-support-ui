@@ -16,10 +16,10 @@ describe('Referral service tests', () => {
   describe('getPersonByIdentifier', () => {
     it('should return person data from API client', async () => {
       const mockPersonData = { personIdentifier: 'person123' } as Person
-      communitySupportApiClient.getPersonByIdentifier.mockResolvedValue(mockPersonData)
+      communitySupportApiClient.getPersonDetailsForPersonSearch.mockResolvedValue(mockPersonData)
       const result = await personService.getPersonByIdentifier('person123', 'user1')
       expect(result).toBe(mockPersonData)
-      expect(communitySupportApiClient.getPersonByIdentifier).toHaveBeenCalledWith('person123', 'user1')
+      expect(communitySupportApiClient.getPersonDetailsForPersonSearch).toHaveBeenCalledWith('person123', 'user1')
     })
   })
 })

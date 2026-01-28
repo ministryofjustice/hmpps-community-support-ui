@@ -79,7 +79,7 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /** Find a person by an identifier i.e prison number or CRN */
+    /** Find a person by an identifier i.e Prison Number or CRN */
     get: operations['getPersonDetails']
     put?: never
     post?: never
@@ -104,7 +104,7 @@ export interface components {
       /** Format: uuid */
       communityServiceProviderId: string
       crn: string
-      urgency: boolean
+      urgency?: boolean
     }
     ReferralInformationDto: {
       /** Format: uuid */
@@ -180,6 +180,8 @@ export interface components {
       emailAddress?: string
     }
     PersonDto: {
+      /** Format: uuid */
+      id: string
       personIdentifier?: string
       firstName: string
       lastName: string

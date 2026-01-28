@@ -42,7 +42,7 @@ export default function routes({
     await communityServiceProviderController.showCommunityServiceProviderPage(req, res, next)
   })
 
-  get('/referral/:id/confirmation', async (req, res) => referralController.viewConfirmation(req, res))
+  get('/referral/:id/confirmation', async (req, res, next) => referralController.viewConfirmation(req, res, next))
 
   get('/referral/check-referral-information', async (req, res) => referralController.checkReferralInformation(req, res))
 

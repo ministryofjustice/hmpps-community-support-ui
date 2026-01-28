@@ -27,7 +27,7 @@ export default class CommunitySupportApiClient extends RestClient {
     return this.get({ path: `/bff/referral-select-a-service?personDetailsId=${personDetailsId}` }, asSystem(username))
   }
 
-  async getPersonByIdentifier(personIdentifier: string, username: string): Promise<Person> {
+  async getPersonDetailsForPersonSearch(personIdentifier: string, username: string): Promise<Person> {
     return this.get({ path: `/bff/person/${personIdentifier}` }, asSystem(username))
   }
 

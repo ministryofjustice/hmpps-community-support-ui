@@ -23,7 +23,15 @@ export default {
       response: {
         status: httpStatus,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: { personIdentifier: '{{request.path.[3]}}' },
+        jsonBody: {
+          personIdentifier: '{{request.path.[2]}}',
+          id: '11ea5182-09a2-4f3a-b07c-76ad5e6b765a',
+          firstName: 'Valerie',
+          lastName: 'Wyman',
+          dateOfBirth: '1984-04-20',
+          sex: 'Female',
+          additionalDetails: {},
+        },
         transformers: ['response-template'],
       },
     }),
