@@ -1,9 +1,12 @@
 import { GovukFrontendPanel } from '@govuk-frontend'
 
 export type ReferralConfirmationViewModel = {
-  title: string
-  referenceNumberIntro: string
-  referenceNumber: string
+  staticContent: ReferralConfirmationContent
   startAReferralLink: string
   panel: GovukFrontendPanel
+}
+
+export type ReferralConfirmationContent = {
+  pageHeader: string
+  referenceNumberIntro: string
 }

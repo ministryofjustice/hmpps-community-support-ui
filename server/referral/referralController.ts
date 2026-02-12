@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
+import { CreateReferralRequest } from '@community-support-api'
 import ReferralService from '../services/referralService'
 import PersonService from '../services/personService'
 import ConfirmationPresenter from './confirmation/confirmationPresenter'
@@ -19,13 +20,14 @@ class ReferralController {
     return res.render('referral/referral', { referral })
   }
 
-  async showFindPersonPage(req: Request, res: Response, next: NextFunction) {
+  async handleFindPersonRequest(req: Request, res: Response, next: NextFunction) {
     if (req.method === 'POST') {
       const { personIdentifier } = req.body
       const { username } = res.locals.user
       try {
         const foundPerson = await this.personService.getPersonByIdentifier(personIdentifier, username)
         const presenter = new FoundPersonPresenter(foundPerson)
+        req.session.referralCreationDetails = { personDetails: foundPerson } as CreateReferralRequest
         return presenter.renderPage(res)
       } catch (error) {
         if (error.responseStatus === 404) {
@@ -52,22 +54,29 @@ class ReferralController {
 
   async checkReferralInformation(req: Request, res: Response): Promise<void> {
     const { username } = res.locals.user
-    const createReferralRequest = {
-      personId: '46abce04-e137-41e5-b18f-606a35375b33',
-      communityServiceProviderId: 'bc852b9d-1997-4ce4-ba7f-cd1759e15d2b',
-      crn: 'CRN0001' as string,
-      urgency: req.query.urgency !== 'false',
+    const referralCreationDetails = req.session ? req.session.referralCreationDetails : null
+
+    if (!referralCreationDetails || !referralCreationDetails.personDetails) {
+      return res.redirect('/referral/new/find-a-person')
     }
-    // This is a temporary call to make a referral until make a referral workflow is finalised and implemented
+
+    const createReferralRequest = {
+      personDetails: referralCreationDetails.personDetails,
+      communityServiceProviderId: req.params.id as string,
+      crn: referralCreationDetails.personDetails.personIdentifier,
+      urgency: false,
+    } as CreateReferralRequest
     let referralInformation
     try {
       referralInformation = await this.referralService.createReferral(createReferralRequest, username)
-    } catch {
+    } catch (error) {
+      logger.error('Error creating referral:', error)
       req.flash('create referral', 'An unexpected error when creating a referral. Please try again.')
+      return res.redirect('/referral/new/find-a-person')
     }
     const presenter = new CheckReferralInformationPresenter(referralInformation)
 
-    return res.render('referral/checkReferralInformation', { presenter })
+    return presenter.renderPage(res)
   }
 
   async submitReferralInformation(req: Request, res: Response): Promise<void> {

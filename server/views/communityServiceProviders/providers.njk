@@ -9,16 +9,15 @@
 
 <h1 class="govuk-heading-xl">Select a Community Service Provider to make a referral</h1>
 
-  {% for result in communityServiceProviderPresenter %}
+  {% for summary in content.serviceProviderItems %}
     <h2 class="govuk-heading-l">
-      <a class="govuk-link" href="#">{{ result.title }}</a>
+      <a class="govuk-link" href="{{summary.url}}">{{ summary.title }}</a>
     </h2>
 
-    <p class="govuk-body">{{ result.truncatedDescription | striptags(true) | escape | nl2br }}</p>
+    <p class="govuk-body">{{ summary.truncatedDescription | striptags(true) | escape | nl2br }}</p>
 
-    {{ govukSummaryList(summaryListArgs(result.summary)) }}
+    {{ govukSummaryList(summary.summary) }}
 
-    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
   {% endfor %}
 
 {% endblock %}

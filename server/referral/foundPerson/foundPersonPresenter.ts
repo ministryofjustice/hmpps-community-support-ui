@@ -9,7 +9,7 @@ export default class FoundPersonPresenter extends PresenterBase<FoundPersonViewM
     super()
   }
 
-  buildPageContent(res: Response): FoundPersonViewModel {
+  protected override buildPageContent(res: Response): FoundPersonViewModel {
     const viewModel = {} as FoundPersonViewModel
     viewModel.staticContent = this.buildStaticContent(res)
     const personSummaryItems = [
@@ -22,7 +22,7 @@ export default class FoundPersonPresenter extends PresenterBase<FoundPersonViewM
     return viewModel
   }
 
-  buildStaticContent(res: Response): FoundPersonContent {
+  protected buildStaticContent(res: Response): FoundPersonContent {
     const { content } = res.locals
     return {
       pageHeader: content.pageHeader,
@@ -31,7 +31,7 @@ export default class FoundPersonPresenter extends PresenterBase<FoundPersonViewM
     }
   }
 
-  getTemplatePath(): string {
+  protected override getTemplatePath(): string {
     return 'referral/foundPerson'
   }
 

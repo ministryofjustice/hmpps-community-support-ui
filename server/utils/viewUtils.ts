@@ -36,7 +36,9 @@ export default class ViewUtils {
     attributes?: GovukFrontendSummaryList['attributes'],
   ): GovukFrontendSummaryList {
     return {
-      classes: options.showBorders ? undefined : 'govuk-summary-list--no-border',
+      classes: options.showBorders
+        ? 'govuk-summary-list refer-and-monitor__intervention-summary-list'
+        : 'govuk-summary-list--no-border refer-and-monitor__intervention-summary-list',
       rows: summaryListItems,
       attributes,
     }

@@ -8,14 +8,14 @@
 
 {% block content %}
 
-<h1 class="govuk-heading-xl">{{ presenter.text.title }}</h1>
-    {{ govukSummaryList(presenter.personalDetailsSummary) }}
-    {{ govukSummaryList(presenter.referralDetailsSummary) }}
+<h1 class="govuk-heading-xl">{{ pageHeader }}</h1>
+    {{ govukSummaryList(personalDetailsSummary) }}
+    {{ govukSummaryList(referralDetailsSummary) }}
 
-    <form method="post" action="{{ presenter.submitHref }}">
+    <form method="post" action="{{ submitHref }}">
     <input type="hidden" name="_csrf" value="{{csrfToken}}">
     {{ govukButton({
-        text: presenter.text.buttonText,
+        text: submitButtonText,
         classes: "govuk-!-margin-top-6"
     }) }}
     </form>
