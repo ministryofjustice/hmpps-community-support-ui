@@ -1,10 +1,11 @@
 import { Request, Response } from 'express'
 import { CommunitySupportServicesProvider } from '@community-support-api'
-import CommunityServiceProviderService from '../services/communityServiceProviderService'
+import CommunityServiceProviderService from '../../services/communityServiceProviderService'
 import CommunityServiceProviderController from './communityServiceProviderController'
 import CommunityServiceProviderPresenter from './communityServiceProviderPresenter'
 
-jest.mock('../services/communityServiceProviderService')
+jest.mock('../../services/communityServiceProviderService')
+jest.mock('./communityServiceProviderPresenter')
 
 describe('CommunityServiceProviderController', () => {
   let communityServiceProviderService: jest.Mocked<CommunityServiceProviderService>
@@ -38,19 +39,13 @@ describe('CommunityServiceProviderController', () => {
           { id: 'service2', region: 'Region 2', name: 'Service 2' },
         ],
       } as CommunitySupportServicesProvider
-      const results: CommunityServiceProviderPresenter[] =
-        mockCommunityServiceProviderData.communitySupportServices.map(
-          provider => new CommunityServiceProviderPresenter(provider),
-        )
+
       communityServiceProviderService.getCommunityServiceProviders.mockResolvedValue(mockCommunityServiceProviderData)
 
       await communityServiceProviderController.showCommunityServiceProviderPage(req, res, next)
 
       expect(communityServiceProviderService.getCommunityServiceProviders).toHaveBeenCalledWith('CRN123', 'user1')
-      expect(res.render).toHaveBeenCalledWith('communityServiceProviders/providers', {
-        communityServiceProviderPresenter: results,
-        summaryListArgs: CommunityServiceProviderController.summaryListArgs,
-      })
+      expect(CommunityServiceProviderPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
     })
   })
 })

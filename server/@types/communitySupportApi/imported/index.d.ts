@@ -72,6 +72,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/bff/referral-details-page/{referralId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get referral details page data */
+    get: operations['getReferralDetailsPage']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/bff/person/{personIdentifier}': {
     parameters: {
       query?: never
@@ -81,6 +98,23 @@ export interface paths {
     }
     /** Find a person by an identifier i.e Prison Number or CRN */
     get: operations['getPersonDetails']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/case-list/unassigned': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get unassigned referrals for a community service provider */
+    get: operations['getUnassignedCases']
     put?: never
     post?: never
     delete?: never
@@ -99,12 +133,33 @@ export interface components {
       referenceNumber?: string
     }
     CreateReferralRequest: {
-      /** Format: uuid */
-      personId: string
+      personDetails: components['schemas']['PersonDto']
       /** Format: uuid */
       communityServiceProviderId: string
       crn: string
       urgency?: boolean
+    }
+    PersonAdditionalDetails: {
+      ethnicity?: string
+      preferredLanguage?: string
+      neurodiverseConditions?: string
+      religionOrBelief?: string
+      transgender?: string
+      sexualOrientation?: string
+      address?: string
+      phoneNumber?: string
+      emailAddress?: string
+    }
+    PersonDto: {
+      /** Format: uuid */
+      id: string
+      personIdentifier?: string
+      firstName: string
+      lastName: string
+      /** Format: date */
+      dateOfBirth: string
+      sex?: string
+      additionalDetails?: components['schemas']['PersonAdditionalDetails']
     }
     ReferralInformationDto: {
       /** Format: uuid */
@@ -162,33 +217,57 @@ export interface components {
        */
       moreInfo?: string
     }
-    ReferralDto: {
-      /** Format: uuid */
-      id: string
-      crn?: string
-      referenceNumber?: string
+    ContactDetailsTableDataDto: {
+      phoneNumber: string
+      mobileNumber: string
+      email: string
+      address: string
     }
-    PersonAdditionalDetails: {
+    EqualityDetailsTableDataDto: {
       ethnicity?: string
-      preferredLanguage?: string
-      neurodiverseConditions?: string
       religionOrBelief?: string
-      transgender?: string
-      sexualOrientation?: string
-      address?: string
-      phoneNumber?: string
-      emailAddress?: string
+      sex: string
+      genderIdentity: string
+      sexualOrientation: string
+      transgender: string
     }
-    PersonDto: {
+    PersonDetailsTableDataDto: {
+      name: string
+      CRN?: string
+      dateOfBirth: string
+      preferredLanguage: string
+      disabilities: string
+      crn: string
+    }
+    ReferralDetailsBffResponseDto: {
       /** Format: uuid */
       id: string
-      personIdentifier?: string
-      firstName: string
-      lastName: string
-      /** Format: date */
-      dateOfBirth: string
-      sex?: string
-      additionalDetails?: components['schemas']['PersonAdditionalDetails']
+      referenceNumber?: string
+      /** Format: date-time */
+      createdDate: string
+      personDetailsTableData: components['schemas']['PersonDetailsTableDataDto']
+      equalityDetailsTableData: components['schemas']['EqualityDetailsTableDataDto']
+      contactDetailsTableData: components['schemas']['ContactDetailsTableDataDto']
+      referralDetailsTableData: components['schemas']['ReferralDetailsTableDataDto']
+    }
+    ReferralDetailsTableDataDto: {
+      referralDate: string
+      assignedTo: string[]
+    }
+    Pageable: {
+      /** Format: int32 */
+      page?: number
+      /** Format: int32 */
+      size?: number
+      sort?: string[]
+    }
+    ReferralCaseListDto: {
+      /** Format: uuid */
+      referralId: string
+      personName: string
+      personIdentifier: string
+      /** Format: date-time */
+      dateReceived: string
     }
   }
   responses: never
@@ -302,7 +381,38 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          'application/json': components['schemas']['ReferralDto']
+          'application/json': components['schemas']['ReferralDetailsBffResponseDto']
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getReferralDetailsPage: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Referral Details found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ReferralDetailsBffResponseDto']
         }
       }
       /** @description Referral not found */
@@ -343,6 +453,46 @@ export interface operations {
         }
         content: {
           'application/json': unknown
+        }
+      }
+    }
+  }
+  getUnassignedCases: {
+    parameters: {
+      query: {
+        page: components['schemas']['Pageable']
+      }
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description List of unassigned referrals for the provider */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ReferralCaseListDto'][]
+        }
+      }
+      /** @description The request was unauthorised */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden. The client is not authorised to access the case list. */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': components['schemas']['ErrorResponse']
         }
       }
     }

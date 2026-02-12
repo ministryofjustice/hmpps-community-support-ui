@@ -15,18 +15,25 @@ function loadContentData(): Record<string, Record<string, string>> {
   return contentData
 }
 
-function getContentForPath(
-  reqPath: string,
-  contentData: Record<string, Record<string, string>>,
-): Record<string, string> {
-  return contentData[reqPath] || {}
+function getContentForPath(req: Request, contentData: Record<string, Record<string, string>>): Record<string, string> {
+  const parsedPath = replaceUUIDWithPlaceholder(req.path)
+  return contentData[parsedPath] || {}
+}
+
+function replaceUUIDWithPlaceholder(pathToParse: string): string {
+  const uuidRegex = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi
+  return pathToParse.replace(uuidRegex, ':id')
 }
 
 export default function setUpContent(): Router {
   const router = express.Router()
 
   router.use((req: Request, res: Response, next: NextFunction) => {
-    res.locals.content = getContentForPath(req.path, loadContentData())
+    const content = getContentForPath(req, loadContentData())
+    if (Object.keys(content).length === 0) {
+      logger.warn(`No content found for path ${req.path} (parsed as ${replaceUUIDWithPlaceholder(req.path)})`)
+    }
+    res.locals.content = content
     next()
   })
 

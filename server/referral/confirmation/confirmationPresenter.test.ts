@@ -1,23 +1,29 @@
+import { Response } from 'express'
+import { ReferralInformationDto } from '@community-support-api'
+import type { ReferralConfirmationContent, ReferralConfirmationViewModel } from './confirmationViewModel'
 import ConfirmationPresenter from './confirmationPresenter'
-import ReferralFactory from '../../testutils/factories/Referral'
+import ConfirmationContentFactory from '../../testutils/factories/ConfirmationContent'
 
-describe(ConfirmationPresenter, () => {
-  describe('buildPageContent', () => {
-    it('returns viewmodel to be rendered', () => {
-      const referral = ReferralFactory.build()
-      const presenter = new ConfirmationPresenter(referral)
-      const viewModel = {
-        title: 'The referral has been sent',
-        referenceNumberIntro: 'Your reference number',
-        referenceNumber: referral.referenceNumber,
-        startAReferralLink: `/referral/new/select-a-service?personDetailsId=${referral.crn}`,
-        panel: {
-          html: 'Your reference number<br><strong>ABCABCA1</strong>',
-          titleText: 'The referral has been sent',
-        },
-      }
-
-      expect(presenter.buildPageContent()).toEqual(viewModel)
+describe('confirmationPresenter', () => {
+  let res: Response
+  let content: ReferralConfirmationContent
+  beforeEach(() => {
+    content = ConfirmationContentFactory.build()
+    res = {
+      locals: { content },
+      render: jest.fn(),
+      redirect: jest.fn(),
+    } as unknown as Response
+  })
+  describe('renderPage', () => {
+    it('should render the found person page with the correct content and summary list', () => {
+      const confirmation: ReferralInformationDto = {} as unknown as ReferralInformationDto
+      const presenter = new ConfirmationPresenter(confirmation)
+      presenter.renderPage(res)
+      expect(res.render).toHaveBeenCalledWith(
+        'referral/confirmation',
+        expect.objectContaining({} as ReferralConfirmationViewModel),
+      )
     })
   })
 })

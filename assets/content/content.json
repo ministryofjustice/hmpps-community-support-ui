@@ -3,5 +3,19 @@
     "pageHeader": "Confirm this is the correct person for referral",
     "continueButtonText": "Continue",
     "continueButtonLink": "/referral/new/select-a-service"
+  },
+  "/referral/new/select-a-service": {
+    "pageHeader": "Select the Community Support service to make a referral",
+    "continueButtonText": "Continue",
+    "regionLabel": "Location",
+    "providerLabel": "Delivery Partner"
+  },
+  "/referral/check-referral-information/:id": {
+    "pageHeader": "Check referral information",
+    "submitButtonText": "Submit referral"
+  },
+  "/referral/:id/confirmation": {
+    "pageHeader": "The referral has been sent",
+    "referenceNumberIntro": "Your reference number"
   }
 }

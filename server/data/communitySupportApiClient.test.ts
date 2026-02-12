@@ -69,11 +69,9 @@ describe('CommunitySupportApiClient tests', () => {
         region: 'North West',
         deliveryPartner: 'Delivery Partner Ltd',
       }
-      const referralRequestData = {
-        personId: 'person123',
-        crn: 'CRN123',
+      const referralRequestData: CreateReferralRequest = {
+        personDetails: {} as CreateReferralRequest['personDetails'],
         communityServiceProviderId: 'csp-id-123',
-        urgency: false,
       } as CreateReferralRequest
       nock('http://localhost:8080', {
         reqheaders: { authorization: 'Bearer dummy-token' },

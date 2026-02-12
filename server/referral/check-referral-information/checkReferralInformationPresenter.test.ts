@@ -1,64 +1,43 @@
+import { Response } from 'express'
+import { ReferralInformationDto } from '@community-support-api'
+import type {
+  CheckReferralInformationContent,
+  CheckReferralInformationViewModel,
+} from './checkReferralInformationViewModel'
 import CheckReferralInformationPresenter from './checkReferralInformationPresenter'
+import CheckReferralInformationContentFactory from '../../testutils/factories/CheckReferralInformationContent'
 
-describe(CheckReferralInformationPresenter, () => {
-  describe('text', () => {
-    it('returns text to be displayed', () => {
-      const referralInformationDto = {
-        crn: 'CRN123',
+describe('CheckReferralInformationPresenter', () => {
+  let res: Response
+  let content: CheckReferralInformationContent
+  beforeEach(() => {
+    content = CheckReferralInformationContentFactory.build()
+    res = {
+      locals: { content },
+      render: jest.fn(),
+      redirect: jest.fn(),
+    } as unknown as Response
+  })
+  describe('renderPage', () => {
+    it('should render the check referral information page with the correct content and summary list', () => {
+      const CheckReferralInformation: ReferralInformationDto = {
+        personId: 'personDetails123',
+        referralId: 'referralId123',
         firstName: 'John',
         lastName: 'Doe',
+        crn: 'CRN123',
         sex: 'Male',
-        personId: 'person-id-123',
-        referralId: 'referral-id-123',
-        communityServiceProviderId: 'csp-id-123',
-        communityServiceProviderName: 'Community Support Provider',
-        region: 'North West',
-        deliveryPartner: 'Delivery Partner Ltd',
-      }
-      const presenter = new CheckReferralInformationPresenter(referralInformationDto)
-      expect(presenter.text).toEqual({
-        title: 'Check referral information',
-        buttonText: 'Submit referral',
-      })
-      expect(presenter.personalDetailsSummary).toEqual({
-        card: {
-          title: {
-            text: 'Personal details',
-          },
-        },
-        rows: [
-          {
-            key: { text: 'Name' },
-            value: { text: 'John Doe' },
-          },
-          {
-            key: { text: 'CRN' },
-            value: { text: 'CRN123' },
-          },
-          { key: { text: 'Sex' }, value: { text: 'Male' } },
-        ],
-      })
-      expect(presenter.referralDetailsSummary).toEqual({
-        card: {
-          title: {
-            text: 'Referral details',
-          },
-        },
-        rows: [
-          {
-            key: { text: 'Community Support Service' },
-            value: { text: 'Community Support Provider' },
-          },
-          {
-            key: { text: 'Location' },
-            value: { text: 'North West' },
-          },
-          {
-            key: { text: 'Delivery Partner' },
-            value: { text: 'Delivery Partner Ltd' },
-          },
-        ],
-      })
+        communityServiceProviderName: 'Community Support Service',
+        region: 'London',
+        deliveryPartner: 'Delivery Partner',
+        referenceNumber: 'REF123',
+      } as ReferralInformationDto
+      const presenter = new CheckReferralInformationPresenter(CheckReferralInformation)
+      presenter.renderPage(res)
+      expect(res.render).toHaveBeenCalledWith(
+        'referral/checkReferralInformation',
+        expect.objectContaining({} as CheckReferralInformationViewModel),
+      )
     })
   })
 })

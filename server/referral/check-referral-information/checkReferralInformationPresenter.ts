@@ -1,21 +1,39 @@
 import { ReferralInformationDto } from '@community-support-api'
 import { GovukFrontendSummaryList } from '@govuk-frontend'
+import { Response } from 'express'
+import PresenterBase from '../../presenter/presenterBase'
+import { CheckReferralInformationContent, CheckReferralInformationViewModel } from './checkReferralInformationViewModel'
 
-export default class CheckReferralInformationPresenter {
-  constructor(private readonly referralInformation: ReferralInformationDto) {}
-
-  get text() {
-    return {
-      title: 'Check referral information',
-      buttonText: 'Submit referral',
-    }
+export default class CheckReferralInformationPresenter extends PresenterBase<CheckReferralInformationViewModel> {
+  constructor(private readonly referralInformation: ReferralInformationDto) {
+    super()
   }
 
-  get submitHref(): string {
-    return `/referral/${this.referralInformation.referralId}/submit-referral-information`
+  buildPageContent(res: Response): CheckReferralInformationViewModel {
+    const viewModel = {} as CheckReferralInformationViewModel
+    const content = this.buildStaticContent(res)
+    viewModel.pageHeader = content.pageHeader
+    viewModel.submitButtonText = content.submitButtonText
+    viewModel.personalDetailsSummary = this.buildPersonalDetailsSummary()
+    viewModel.referralDetailsSummary = this.buildReferralDetailsSummary()
+    viewModel.submitHref = `/referral/${this.referralInformation.referralId}/submit-referral-information`
+    return viewModel
   }
 
-  get personalDetailsSummary(): GovukFrontendSummaryList {
+  buildStaticContent(res: Response): CheckReferralInformationContent {
+    const { content } = res.locals
+    return content as CheckReferralInformationContent
+  }
+
+  getTemplatePath(): string {
+    return `referral/checkReferralInformation`
+  }
+
+  renderPage(res: Response): void {
+    return res.render(this.getTemplatePath(), this.buildPageContent(res))
+  }
+
+  private buildPersonalDetailsSummary(): GovukFrontendSummaryList {
     const summary = [
       {
         key: { text: 'Name' },
@@ -40,7 +58,7 @@ export default class CheckReferralInformationPresenter {
     }
   }
 
-  get referralDetailsSummary(): GovukFrontendSummaryList {
+  private buildReferralDetailsSummary(): GovukFrontendSummaryList {
     const summary = [
       {
         key: { text: 'Community Support Service' },

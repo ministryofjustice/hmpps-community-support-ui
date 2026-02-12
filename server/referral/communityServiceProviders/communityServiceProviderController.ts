@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express'
-import CommunityServiceProviderService from '../services/communityServiceProviderService'
+import CommunityServiceProviderService from '../../services/communityServiceProviderService'
 import CommunityServiceProviderPresenter from './communityServiceProviderPresenter'
-import ViewUtils from '../utils/viewUtils'
-import { GovukFrontendSummaryList, GovukFrontendSummaryListRow } from '../@types/govukFrontend'
+import ViewUtils from '../../utils/viewUtils'
+import { GovukFrontendSummaryList, GovukFrontendSummaryListRow } from '../../@types/govukFrontend'
 
 class CommunityServiceProviderController {
   constructor(private readonly communityServiceProviderService: CommunityServiceProviderService) {}
@@ -14,13 +14,9 @@ class CommunityServiceProviderController {
       personDetailsId,
       username,
     )
-    const results: CommunityServiceProviderPresenter[] = communitySupportServiceProviders.communitySupportServices.map(
-      provider => new CommunityServiceProviderPresenter(provider),
-    )
-    return res.render('communityServiceProviders/providers', {
-      communityServiceProviderPresenter: results,
-      summaryListArgs: CommunityServiceProviderController.summaryListArgs,
-    })
+
+    const presenter = new CommunityServiceProviderPresenter(communitySupportServiceProviders.communitySupportServices)
+    return presenter.renderPage(res)
   }
 
   static summaryListArgs(items: GovukFrontendSummaryListRow[]): GovukFrontendSummaryList {

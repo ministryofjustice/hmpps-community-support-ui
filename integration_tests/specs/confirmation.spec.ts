@@ -12,7 +12,7 @@ test.describe('ConfirmationPage', () => {
   })
 
   test('should display the confirmation message with reference number', async ({ page }) => {
-    await page.goto('/referral/referral123/confirmation')
+    await page.goto('/referral/b190ac1e-1e2a-41c2-a4ac-3ceb9d2dcb1e/confirmation')
     const referralConfirmationPage = await ReferralConfirmationPage.verifyOnPage(page)
     expect(referralConfirmationPage.header).toBeVisible()
   })

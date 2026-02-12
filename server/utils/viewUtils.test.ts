@@ -43,7 +43,8 @@ describe('ViewUtils', () => {
           { key: { text: 'Gender' }, value: { text: 'Male' }, actions: { items: [] } },
         ]),
       ).toEqual({
-        classes: undefined,
+        attributes: undefined,
+        classes: 'govuk-summary-list refer-and-monitor__intervention-summary-list',
         rows: [
           {
             key: {
@@ -72,7 +73,7 @@ describe('ViewUtils', () => {
     describe('when show borders is set to false', () => {
       it('should add a hide borders class', () => {
         expect(ViewUtils.summaryList([], { showBorders: false })).toEqual({
-          classes: 'govuk-summary-list--no-border',
+          classes: 'govuk-summary-list--no-border refer-and-monitor__intervention-summary-list',
           rows: [],
         })
       })
@@ -96,6 +97,8 @@ describe('ViewUtils', () => {
         },
       ]),
     ).toEqual({
+      attributes: undefined,
+      classes: 'govuk-summary-list refer-and-monitor__intervention-summary-list',
       rows: [
         {
           key: {
