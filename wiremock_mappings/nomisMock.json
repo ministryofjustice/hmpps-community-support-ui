@@ -1,0 +1,36 @@
+{
+  "mappings": [
+    {
+      "name": "Nomis prisoner details",
+      "request": {
+        "method": "GET",
+        "urlPathPattern": "/nomis/prisoner/.*"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "prisonerNumber": "A1234BC",
+          "firstName": "Alex",
+          "lastName": "River",
+          "dateOfBirth": "1988-01-01",
+          "gender": "Female",
+          "aliases": [],
+          "alerts": [],
+          "personalCareNeeds": [],
+          "languages": [],
+          "tattoos": [],
+          "scars": [],
+          "marks": [],
+          "addresses": [],
+          "emailAddresses": [],
+          "phoneNumbers": [],
+          "identifiers": [],
+          "allConvictedOffences": []
+        }
+      }
+    }
+  ]
+}
