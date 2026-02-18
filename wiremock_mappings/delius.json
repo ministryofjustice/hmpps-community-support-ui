@@ -66,6 +66,105 @@
       "response": {
         "status": 200
       }
+    },
+    {
+      "name": "Delius search by CRN",
+      "request": {
+        "method": "POST",
+        "urlPath": "/delius/search",
+        "bodyPatterns": [{ "matchesJsonPath": "$[?(@.crn)]" }]
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": [
+          {
+            "previousSurname": null,
+            "offenderId": 123456,
+            "title": "Mr",
+            "firstName": "Alex",
+            "middleNames": ["Albert"],
+            "surname": "River",
+            "dateOfBirth": "1988-01-01",
+            "gender": "Male",
+            "otherIds": {
+              "crn": "X320741",
+              "pncNumber": "PNC/1234567"
+            },
+            "contactDetails": {
+              "address": {
+                "buildingName": "1",
+                "streetName": "Test Street",
+                "town": "Testville",
+                "postcode": "TE1 1ST"
+              }
+            },
+            "offenderProfile": {
+              "ethnicity": "White British",
+              "nationality": "British",
+              "secondaryNationality": "Irish",
+              "notes": "No additional notes",
+              "immigrationStatus": "Citizen",
+              "offenderLanguages": {
+                "primaryLanguage": "English",
+                "otherLanguages": ["French"],
+                "languageConcerns": "None",
+                "requiresInterpreter": false
+              },
+              "religion": "None",
+              "sexualOrientation": "Heterosexual",
+              "offenderDetails": "Low risk",
+              "remandStatus": "Not on remand",
+              "previousConviction": {
+                "convictionDate": "2019-05-10",
+                "detail": {
+                  "offence": "Theft",
+                  "sentence": "Community order"
+                }
+              },
+              "riskColour": "GREEN",
+              "disabilities": [
+                {
+                  "disabilityId": 1,
+                  "disabilityType": { "code": "HEAR", "description": "Hearing" },
+                  "condition": { "code": "MILD", "description": "Mild" },
+                  "startDate": "2020-01-01",
+                  "endDate": null,
+                  "notes": "Uses hearing aid"
+                }
+              ],
+              "provisions": [
+                {
+                  "provisionId": 2,
+                  "provisionType": { "code": "INT", "description": "Interpreter" },
+                  "category": { "code": "LANG", "description": "Language" },
+                  "startDate": "2021-06-15",
+                  "endDate": null,
+                  "notes": "Available on request"
+                }
+              ]
+            },
+            "offenderAliases": [],
+            "offenderManagers": [],
+            "softDeleted": false,
+            "currentDisposal": null,
+            "partitionArea": "N07",
+            "currentRestriction": false,
+            "restrictionMessage": null,
+            "currentExclusion": false,
+            "exclusionMessage": null,
+            "highlight": null,
+            "accessDenied": false,
+            "currentTier": "B1",
+            "activeProbationManagedSentence": true,
+            "mappa": null,
+            "probationStatus": null,
+            "age": 36
+          }
+        ]
+      }
     }
   ]
 }

@@ -1,0 +1,39 @@
+{
+  "mappings": [
+    {
+      "name": "Manage Users - auth user groups",
+      "request": {
+        "method": "GET",
+        "urlPathPattern": "/manage-users/externalusers/.*/groups"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": [{ "groupCode": "INT_SP_TEST", "groupName": "Test Provider Group" }]
+      }
+    },
+    {
+      "name": "Manage Users - user details",
+      "request": {
+        "method": "GET",
+        "urlPathPattern": "/manage-users/users/.*"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "username": "test-user",
+          "active": true,
+          "authSource": "auth",
+          "name": "Test User",
+          "userId": "12345678-1234-1234-1234-1234567890ab",
+          "uuid": "12345678-1234-1234-1234-1234567890ab"
+        }
+      }
+    }
+  ]
+}
