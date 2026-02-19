@@ -1,0 +1,468 @@
+{
+  "mappings": [
+    {
+      "request": {
+        "method": "GET",
+        "urlPathPattern": "/bff/referral-assignments/referral-found"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8"
+        },
+        "jsonBody": [
+          {
+            "userType": "EXTERNAL",
+            "userId": "assigned-user-id-1",
+            "fullName": "Assigned User 1",
+            "emailAddress": "assignedUser1@email.com"
+          },
+          {
+            "userType": "EXTERNAL",
+            "userId": "assigned-user-id-2",
+            "fullName": "Assigned User 2",
+            "emailAddress": "assignedUser2@email.com"
+          }
+        ],
+        "transformers": ["response-template"]
+      },
+      "name": "get-referral-user-assignments-success",
+      "priority": 10
+    },
+    {
+      "request": {
+        "method": "GET",
+        "urlPathPattern": "/bff/referral-assignments/referral-not-found"
+      },
+      "response": {
+        "status": 404,
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8"
+        },
+        "jsonBody": {
+          "error": "Not Found",
+          "message": "Referral not found"
+        },
+        "transformers": ["response-template"]
+      },
+      "name": "get-referral-user-assignments-not-found",
+      "priority": 5
+    },
+    {
+      "request": {
+        "method": "GET",
+        "urlPathPattern": "/bff/referral-assignments/referral-id-1"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8"
+        },
+        "jsonBody": [
+          {
+            "userType": "EXTERNAL",
+            "userId": "assigned-user-id-1",
+            "fullName": "Assigned User 1",
+            "emailAddress": "assignedUser1@email.com"
+          }
+        ],
+        "transformers": ["response-template"]
+      },
+      "name": "get-referral-user-assignments-success",
+      "priority": 10
+    },
+    {
+      "request": {
+        "method": "GET",
+        "urlPathPattern": "/bff/referral-assignments/referral-id-2"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8"
+        },
+        "jsonBody": [
+          {
+            "userType": "EXTERNAL",
+            "userId": "assigned-user-id-1",
+            "fullName": "Assigned User 1",
+            "emailAddress": "assignedUser1@email.com"
+          },
+          {
+            "userType": "EXTERNAL",
+            "userId": "assigned-user-id-2",
+            "fullName": "Assigned User 2",
+            "emailAddress": "assignedUser2@email.com"
+          }
+        ],
+        "transformers": ["response-template"]
+      },
+      "name": "get-referral-user-assignments-success",
+      "priority": 10
+    },
+    {
+      "request": {
+        "method": "GET",
+        "urlPathPattern": "/bff/referral-assignments/referral-id-3"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8"
+        },
+        "jsonBody": [
+          {
+            "userType": "EXTERNAL",
+            "userId": "assigned-user-id-1",
+            "fullName": "Assigned User 1",
+            "emailAddress": "assignedUser1@email.com"
+          },
+          {
+            "userType": "EXTERNAL",
+            "userId": "assigned-user-id-2",
+            "fullName": "Assigned User 2",
+            "emailAddress": "assignedUser2@email.com"
+          },
+          {
+            "userType": "EXTERNAL",
+            "userId": "assigned-user-id-3",
+            "fullName": "Assigned User 3",
+            "emailAddress": "assignedUser3@email.com"
+          }
+        ],
+        "transformers": ["response-template"]
+      },
+      "name": "get-referral-user-assignments-success",
+      "priority": 10
+    },
+    {
+      "request": {
+        "method": "GET",
+        "urlPathPattern": "/bff/referral-assignments/referral-id-4"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8"
+        },
+        "jsonBody": [
+          {
+            "userType": "EXTERNAL",
+            "userId": "assigned-user-id-1",
+            "fullName": "Assigned User 1",
+            "emailAddress": "assignedUser1@email.com"
+          },
+          {
+            "userType": "EXTERNAL",
+            "userId": "assigned-user-id-2",
+            "fullName": "Assigned User 2",
+            "emailAddress": "assignedUser2@email.com"
+          },
+          {
+            "userType": "EXTERNAL",
+            "userId": "assigned-user-id-3",
+            "fullName": "Assigned User 3",
+            "emailAddress": "assignedUser3@email.com"
+          },
+          {
+            "userType": "EXTERNAL",
+            "userId": "assigned-user-id-4",
+            "fullName": "Assigned User 4",
+            "emailAddress": "assignedUser4@email.com"
+          }
+        ],
+        "transformers": ["response-template"]
+      },
+      "name": "get-referral-user-assignments-success",
+      "priority": 10
+    },
+    {
+      "request": {
+        "method": "GET",
+        "urlPathPattern": "/bff/referral-assignments/referral-id-5"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8"
+        },
+        "jsonBody": [
+          {
+            "userType": "EXTERNAL",
+            "userId": "assigned-user-id-1",
+            "fullName": "Assigned User 1",
+            "emailAddress": "assignedUser1@email.com"
+          },
+          {
+            "userType": "EXTERNAL",
+            "userId": "assigned-user-id-2",
+            "fullName": "Assigned User 2",
+            "emailAddress": "assignedUser2@email.com"
+          },
+          {
+            "userType": "EXTERNAL",
+            "userId": "assigned-user-id-3",
+            "fullName": "Assigned User 3",
+            "emailAddress": "assignedUser3@email.com"
+          },
+          {
+            "userType": "EXTERNAL",
+            "userId": "assigned-user-id-4",
+            "fullName": "Assigned User 4",
+            "emailAddress": "assignedUser4@email.com"
+          },
+          {
+            "userType": "EXTERNAL",
+            "userId": "assigned-user-id-5",
+            "fullName": "Assigned User 5",
+            "emailAddress": "assignedUser5@email.com"
+          }
+        ],
+        "transformers": ["response-template"]
+      },
+      "name": "get-referral-user-assignments-success",
+      "priority": 10
+    },
+    {
+      "request": {
+        "method": "GET",
+        "urlPathPattern": "/bff/referral-assignments/referral-id-6"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8"
+        },
+        "jsonBody": [
+          {
+            "userType": "EXTERNAL",
+            "userId": "assigned-user-id-1",
+            "fullName": "Assigned User 1",
+            "emailAddress": "assignedUser1@email.com"
+          }
+        ],
+        "transformers": ["response-template"]
+      },
+      "name": "get-referral-user-assignments-success",
+      "priority": 10
+    },
+    {
+      "request": {
+        "method": "POST",
+        "urlPathPattern": "/bff/referral/referral-id-1/assign"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8"
+        },
+        "jsonBody": {
+          "success": true,
+          "message": "The case has been assigned to a caseworker.",
+          "succeededList": [
+            {
+              "userType": "EXTERNAL",
+              "userId": "test-user-1",
+              "fullName": "Test User 1",
+              "emailAddress": "testuser1@email.com"
+            }
+          ]
+        }
+      },
+      "name": "post-referral-single-user-assignment-success",
+      "priority": 10
+    },
+    {
+      "request": {
+        "method": "POST",
+        "urlPathPattern": "/bff/referral/referral-id-2/assign"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8"
+        },
+        "jsonBody": {
+          "success": true,
+          "message": "The case has been assigned to caseworkers.",
+          "succeededList": [
+            {
+              "userType": "EXTERNAL",
+              "userId": "test-user-1",
+              "fullName": "Test User 1",
+              "emailAddress": "testuser1@email.com"
+            },
+            {
+              "userType": "EXTERNAL",
+              "userId": "test-user-2",
+              "fullName": "Test User 2",
+              "emailAddress": "testuser2@email.com"
+            }
+          ]
+        }
+      },
+      "name": "post-referral-multiple-user-assignment-success",
+      "priority": 10
+    },
+    {
+      "request": {
+        "method": "POST",
+        "urlPathPattern": "/bff/referral/referral-id-3/assign"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8"
+        },
+        "jsonBody": {
+          "success": true,
+          "message": "The caseworker assigned to this case has changed.",
+          "succeededList": [
+            {
+              "userType": "EXTERNAL",
+              "userId": "test-user-1",
+              "fullName": "Test User 1",
+              "emailAddress": "testuser1@email.com"
+            },
+            {
+              "userType": "EXTERNAL",
+              "userId": "test-user-2",
+              "fullName": "Test User 2",
+              "emailAddress": "testuser2@email.com"
+            },
+            {
+              "userType": "EXTERNAL",
+              "userId": "test-user-3",
+              "fullName": "Test User 3",
+              "emailAddress": "testuser3@email.com"
+            }
+          ]
+        }
+      },
+      "name": "post-referral-update-single-user-assignment-success",
+      "priority": 10
+    },
+    {
+      "request": {
+        "method": "POST",
+        "urlPathPattern": "/bff/referral/referral-id-4/assign"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8"
+        },
+        "jsonBody": {
+          "success": true,
+          "message": "The caseworkers assigned to this case have changed.",
+          "succeededList": [
+            {
+              "userType": "EXTERNAL",
+              "userId": "test-user-1",
+              "fullName": "Test User 1",
+              "emailAddress": "testuser1@email.com"
+            },
+            {
+              "userType": "EXTERNAL",
+              "userId": "test-user-2",
+              "fullName": "Test User 2",
+              "emailAddress": "testuser2@email.com"
+            },
+            {
+              "userType": "EXTERNAL",
+              "userId": "test-user-3",
+              "fullName": "Test User 3",
+              "emailAddress": "testuser3@email.com"
+            },
+            {
+              "userType": "EXTERNAL",
+              "userId": "test-user-4",
+              "fullName": "Test User 4",
+              "emailAddress": "testuser4@email.com"
+            }
+          ]
+        }
+      },
+      "name": "post-referral-update-single-user-assignment-success",
+      "priority": 10
+    },
+    {
+      "request": {
+        "method": "POST",
+        "urlPathPattern": "/bff/referral/referral-id-5/assign"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8"
+        },
+        "jsonBody": {
+          "success": true,
+          "message": "The caseworkers assigned to this case have changed.",
+          "succeededList": [
+            {
+              "userType": "EXTERNAL",
+              "userId": "test-user-1",
+              "fullName": "Test User 1",
+              "emailAddress": "testuser1@email.com"
+            },
+            {
+              "userType": "EXTERNAL",
+              "userId": "test-user-2",
+              "fullName": "Test User 2",
+              "emailAddress": "testuser2@email.com"
+            },
+            {
+              "userType": "EXTERNAL",
+              "userId": "test-user-3",
+              "fullName": "Test User 3",
+              "emailAddress": "testuser3@email.com"
+            },
+            {
+              "userType": "EXTERNAL",
+              "userId": "test-user-4",
+              "fullName": "Test User 4",
+              "emailAddress": "testuser4@email.com"
+            },
+            {
+              "userType": "EXTERNAL",
+              "userId": "test-user-5",
+              "fullName": "Test User 5",
+              "emailAddress": "testuser5@email.com"
+            }
+          ]
+        }
+      },
+      "name": "post-referral-update-single-user-assignment-success",
+      "priority": 10
+    },
+    {
+      "request": {
+        "method": "POST",
+        "urlPathPattern": "/bff/referral/referral-id-6/assign"
+      },
+      "response": {
+        "status": 400,
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8"
+        },
+        "jsonBody": {
+          "success": false,
+          "message": "Failed to assign case worker(s)",
+          "failureList": [
+            {
+              "emailAddress": "testuser1@email",
+              "reason": "Enter an email address in the correct format, like name@example.com"
+            },
+            {
+              "emailAddress": "",
+              "reason": "Enter the caseworker's email address"
+            }
+          ]
+        }
+      },
+      "name": "post-referral-invalid-email-address",
+      "priority": 10
+    }
+  ]
+}

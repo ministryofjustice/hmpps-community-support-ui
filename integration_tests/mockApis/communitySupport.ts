@@ -154,4 +154,31 @@ export default {
         },
       },
     }),
+  stubGetReferralUserAssignments: (httpStatus = 200): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: '/community-support/bff/referral-assignments/.*',
+      },
+      response: {
+        status: httpStatus,
+        jsonBody: {
+          succeededList: [
+            {
+              userType: 'EXTERNAL',
+              userId: 'assigned-user-id-1',
+              fullName: 'Assigned User 1',
+              emailAddress: 'assignedUser1@email.com',
+            },
+            {
+              userType: 'EXTERNAL',
+              userId: 'assigned-user-id-2',
+              fullName: 'Assigned User 2',
+              emailAddress: 'assignedUser2@email.com',
+            },
+          ],
+        },
+        transformers: ['response-template'],
+      },
+    }),
 }

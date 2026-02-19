@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { Person, ReferralInformation } from '@community-support-api'
+import { Person, ReferralInformation, CaseWorkerDto } from '@community-support-api'
 import ReferralController from './referralController'
 import ReferralService from '../services/referralService'
 import PersonService from '../services/personService'
@@ -27,6 +27,7 @@ describe('ReferralController', () => {
     referralService = {
       getReferralById: jest.fn(),
       createReferral: jest.fn(),
+      getReferralUserAssignments: jest.fn(),
     } as unknown as jest.Mocked<ReferralService>
     personService = {
       getPersonByIdentifier: jest.fn(),
@@ -195,6 +196,60 @@ describe('ReferralController', () => {
       expect(referralService.getReferralById).toHaveBeenCalledWith('referral123', 'user1')
       expect(ConfirmationPresenter).toHaveBeenCalledWith(mockReferralData)
       expect(ConfirmationPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+    })
+  })
+  describe('showAssignCaseWorkersPage', () => {
+    it('should render the case assignment page on a GET request for a new referral', async () => {
+      await referralController.showAssignCaseWorkersPage(req, res, next)
+      expect(res.render).toHaveBeenCalledWith('referral/assign')
+    })
+    it('should flash not found error redirect when no referral is found', async () => {
+      req = {
+        method: 'GET',
+        params: { referralId: 'referral-id-123' },
+        flash: jest.fn(),
+      } as unknown as Request
+      const mockErrorData = { responseStatus: 404 }
+      const errorsList = [
+        {
+          href: '#referralIdError',
+          text: `No referral with identifier 'referral-id-123' found`,
+        },
+      ]
+      referralService.getReferralUserAssignments.mockRejectedValue(mockErrorData)
+
+      await referralController.showAssignCaseWorkersPage(req, res, next)
+
+      expect(referralService.getReferralUserAssignments).toHaveBeenCalledWith('referral-id-123', 'user1')
+      expect(req.flash).toHaveBeenCalledWith('referralIdError', "No referral with identifier 'referral-id-123' found")
+      expect(res.render).toHaveBeenCalledWith('referral/assign', {
+        referralId: 'referral-id-123',
+        errorsList,
+      })
+    })
+    it('should refer the assigned case workers for the referral with existing assignments', async () => {
+      req = {
+        method: 'GET',
+        params: { referralId: 'referral-id-123' },
+        flash: jest.fn(),
+      } as unknown as Request
+      const caseworkers = [
+        {
+          userType: 'INTERNAL',
+          userId: 'test-user-id-123',
+          fullName: 'Test User Fullname',
+          emailAddress: 'testuser1@email.com',
+        },
+      ] as CaseWorkerDto[]
+      referralService.getReferralUserAssignments.mockResolvedValue(caseworkers)
+
+      await referralController.showAssignCaseWorkersPage(req, res, next)
+
+      expect(referralService.getReferralUserAssignments).toHaveBeenCalledWith('referral-id-123', 'user1')
+      expect(res.render).toHaveBeenCalledWith('referral/assign', {
+        referralId: 'referral-id-123',
+        caseworkers,
+      })
     })
   })
 })

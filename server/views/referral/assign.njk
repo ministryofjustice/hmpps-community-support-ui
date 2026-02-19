@@ -1,0 +1,68 @@
+{% extends "../partials/layout.njk" %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/fieldset/macro.njk" import govukFieldset -%}
+
+{% set pageTitle = applicationName + " - Who do you want to assign this case to? - Referral - [service name] " %}
+{% set mainClasses = "govuk-body" %}
+
+{% block content %}
+  {% if errorsList and errorsList | length > 0 %}
+    {{ govukErrorSummary({
+      titleText: "There is a problem",
+      errorList: errorsList
+    }) }}
+  {% endif %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-l">Who do you want to assign this case to?</h1>
+      <form method="post" novalidate action="/referral/{{referralId}}/assign">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
+        <div data-module="moj-add-another" id="caseworker-container">
+          {% for caseworker in caseworkers or [{}] %}
+            {% set index = loop.index0 %}
+            {% set labelText = "Caseworker" %}
+            {% if caseworkers | length > 1 %}
+              {% set labelText = labelText ~ " " ~ (index + 1) %}
+            {% endif %}
+            {% call govukFieldset({
+              classes: "moj-add-another__item",
+              legend: {
+                text: labelText,
+                classes: "moj-add-another__title govuk-fieldset__legend--m",
+                isPageHeading: false
+              }
+            }) %}
+              {{ govukInput({
+                id: "caseworkers[" ~ index ~ "][email_address]",
+                name: "caseworkers[" ~ index ~ "][email_address]",
+                label: { html: "Enter the caseworker's email address", classes: "govuk-!-font-weight-bold" },
+                value: caseworker.emailAddress or "",
+                errorMessage: errors["caseworkers[" ~ index ~ "][email_address]"],
+                attributes: {
+                  "data-name": "caseworkers[%index%][email_address]",
+                  "data-id": "caseworkers[%index%][email_address]"
+                }
+              }) }}
+              {# Remove button — outside fieldset, from second item onward #}
+              {% if loop.index >= 1 %}
+                <button type="button" class="govuk-button govuk-button--secondary moj-add-another__remove-button">Remove</button>
+              {% endif %}
+            {% endcall %}
+          {% endfor %}
+          <div class="moj-button-action">
+            {{ govukButton({
+              text: "Add another caseworker",
+              classes: "govuk-button--secondary moj-add-another__add-button govuk-!-margin-bottom-4"
+            }) }}
+          </div>
+          <div class="moj-button-action">
+            {{ govukButton({ text: "Submit" }) }}
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script type="module" src="{{ '/assets/js/add-another-caseworker.js' | assetMap }}"></script>
+{% endblock %}

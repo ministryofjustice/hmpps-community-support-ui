@@ -56,17 +56,18 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/bff/referral/{referralId}/assign': {
+  '/bff/referral/{referralId}/ics': {
     parameters: {
       query?: never
       header?: never
       path?: never
       cookie?: never
     }
-    get?: never
+    /** Get all ICS appointments for a referral */
+    get: operations['getIcsAppointments']
     put?: never
-    /** Assign case workers to a referral */
-    post: operations['assignCaseWorkers']
+    /** Book an ICS appointment for a referral */
+    post: operations['createIcsAppointment']
     delete?: never
     options?: never
     head?: never
@@ -226,6 +227,40 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/referral/{referralId}/assign': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Assign case workers to a referral */
+    post: operations['assignCaseWorkers']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/referral-assignments/{referralId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get referral assignments by ID */
+    get: operations['getReferralUserAssignments']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
 }
 export type webhooks = Record<string, never>
 export interface components {
@@ -346,6 +381,12 @@ export interface components {
     } & (Omit<WithRequired<components['schemas']['SessionMethod'], 'type'>, 'appointmentCategory'> & {
       whyNotInPersonReason?: string
     })
+    ReferralUserAssignmentDto: {
+      userType: string
+      userId: string
+      fullName: string
+      emailAddress: string
+    }
     AssignCaseWorkersRequest: {
       emails: string[]
     }
@@ -366,6 +407,15 @@ export interface components {
       userId?: string
       fullName?: string
       emailAddress: string
+    }
+    ReferralUserAssignmentsRequest: {
+      emails: string[]
+    }
+    ReferralUserAssignmentsResponse: {
+      success: boolean
+      message: string
+      succeededList: CaseWorkerDto[]
+      failureList: AssignmentFailureDto[]
     }
     CommunitySupportServiceDto: {
       id: string
@@ -519,6 +569,81 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['ReferralInformationDto']
+        }
+      }
+    }
+  }
+  getIcsAppointments: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description List of ICS appointments */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['AppointmentIcsResponse'][]
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  createIcsAppointment: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateAppointmentRequest']
+      }
+    }
+    responses: {
+      /** @description Appointment created successfully */
+      201: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['AppointmentIcsResponse']
+        }
+      }
+      /** @description Invalid request body */
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
         }
       }
     }
