@@ -1,11 +1,11 @@
-import { ReferralInformationDto } from '@community-support-api'
+import { ReferralInformation } from '@community-support-api'
 import { GovukFrontendSummaryList } from '@govuk-frontend'
 import { Response } from 'express'
 import PresenterBase from '../../presenter/presenterBase'
 import { CheckReferralInformationContent, CheckReferralInformationViewModel } from './checkReferralInformationViewModel'
 
 export default class CheckReferralInformationPresenter extends PresenterBase<CheckReferralInformationViewModel> {
-  constructor(private readonly referralInformation: ReferralInformationDto) {
+  constructor(private readonly referralInformation: ReferralInformation) {
     super()
   }
 

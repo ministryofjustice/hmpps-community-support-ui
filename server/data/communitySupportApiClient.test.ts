@@ -101,4 +101,52 @@ describe('CommunitySupportApiClient tests', () => {
       expect(result).resolves.toEqual(submitReferralResponseDto)
     })
   })
+  describe('getCaseList tests', () => {
+    it('should return an unassigned case list on a 200 response', () => {
+      const caseListDto = {
+        cases: [
+          {
+            referralId: 'referral-id-123',
+            referenceNumber: 'REF123456',
+            personName: 'John Doe',
+            status: 'Open',
+          },
+        ],
+      }
+      const page = { page: 0, size: 10 }
+
+      nock('http://localhost:8080', {
+        reqheaders: { authorization: 'Bearer dummy-token' },
+      })
+        .get(`/bff/case-list/unassigned?page=${page.page}&size=${page.size}`)
+        .reply(200, caseListDto)
+
+      const result = communitySupportApiClient.getCaseList('user1', page, false)
+
+      expect(result).resolves.toEqual(caseListDto)
+    })
+    it('should return an in progress case list on a 200 response', () => {
+      const caseListDto = {
+        cases: [
+          {
+            referralId: 'referral-id-123',
+            referenceNumber: 'REF123456',
+            personName: 'John Doe',
+            status: 'Open',
+          },
+        ],
+      }
+      const page = { page: 0, size: 10 }
+
+      nock('http://localhost:8080', {
+        reqheaders: { authorization: 'Bearer dummy-token' },
+      })
+        .get(`/bff/case-list/in-progress?page=${page.page}&size=${page.size}`)
+        .reply(200, caseListDto)
+
+      const result = communitySupportApiClient.getCaseList('user1', page, true)
+
+      expect(result).resolves.toEqual(caseListDto)
+    })
+  })
 })

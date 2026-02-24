@@ -1,0 +1,27 @@
+{% extends "../partials/layout.njk" %}
+
+{%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
+{%- from "govuk/components/pagination/macro.njk" import govukPagination -%}
+{%- from "govuk/components/table/macro.njk" import govukTable -%}
+
+
+{% set pageTitle = applicationName + " - Case List" %}
+{% set mainClasses = "govuk-body" %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <h1 class="govuk-heading-l">{{ content.staticContent.pageHeader }}</h1>
+  <br />
+  {{ mojSubNavigation(content.navBar) }}
+  <div class="govuk-grid-column-two-thirds govuk-!-padding-left-0">
+  {% if not content.hasCases %}
+    <h2 class="govuk-heading-m" data-testid="no-cases-title">{{ content.noCasesTitle }}</h2>
+    <p data-testid="no-cases-message">{{ content.staticContent.noCasesMessage }}</p>
+  {% endif %}
+
+  {{ govukTable(content.caseListTable) }}
+
+  {{ govukPagination(content.pagination) }}
+</div>
+
+{% endblock %}

@@ -4,6 +4,7 @@ import type { Services } from '../services'
 import { Page } from '../services/auditService'
 
 import ReferralController from '../referral/referralController'
+import CaseListController from '../caseList/caseListController'
 import CommunityServiceProviderController from '../referral/communityServiceProviders/communityServiceProviderController'
 import asyncMiddleware from '../middleware/asyncMiddleware'
 
@@ -12,6 +13,7 @@ export default function routes({
   communityServiceProviderService,
   personService,
   referralService,
+  caseListService,
 }: Services): Router {
   const router = Router()
   const get = (path: string | string[], handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
@@ -25,6 +27,7 @@ export default function routes({
 
   const referralController = new ReferralController(referralService, personService)
   const communityServiceProviderController = new CommunityServiceProviderController(communityServiceProviderService)
+  const caseListController = new CaseListController(caseListService)
 
   router.get('/', async (req, res, next) => {
     await auditService.logPageView(Page.INDEX_PAGE, { who: res.locals.user.username, correlationId: req.id })
@@ -54,6 +57,10 @@ export default function routes({
 
   get('/referral/:id', async (req, res, next) => {
     await referralController.showReferralPage(req, res, next)
+  })
+
+  get('/caselist', async (req, res, next) => {
+    await caseListController.showCaseList(req, res)
   })
 
   return router

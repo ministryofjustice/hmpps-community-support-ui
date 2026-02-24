@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { Person, ReferralInformationDto } from '@community-support-api'
+import { Person, ReferralInformation } from '@community-support-api'
 import ReferralController from './referralController'
 import ReferralService from '../services/referralService'
 import PersonService from '../services/personService'
@@ -138,7 +138,7 @@ describe('ReferralController', () => {
       }
       req.params.id = 'service123'
       res.locals.content = CheckReferralInformationContent.build()
-      const mockReferralInformation = {} as ReferralInformationDto
+      const mockReferralInformation = {} as ReferralInformation
       referralService.createReferral.mockResolvedValue(mockReferralInformation)
 
       await referralController.checkReferralInformation(req, res)

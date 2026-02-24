@@ -38,6 +38,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/bff/referral/{referralId}/assign': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Assign case workers to a referral */
+    post: operations['assignCaseWorkers']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/bff/referral-select-a-service': {
     parameters: {
       query?: never
@@ -89,6 +106,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/bff/referral-assignments/{referralId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get assigned case workers of a referral */
+    get: operations['getAssignedCaseWorkers']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/bff/person/{personIdentifier}': {
     parameters: {
       query?: never
@@ -115,6 +149,23 @@ export interface paths {
     }
     /** Get unassigned referrals for a community service provider */
     get: operations['getUnassignedCases']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/case-list/in-progress': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get in-progress referrals for a community service provider */
+    get: operations['getInProgressCases']
     put?: never
     post?: never
     delete?: never
@@ -176,6 +227,27 @@ export interface components {
       region: string
       referenceNumber?: string
       deliveryPartner: string
+    }
+    AssignCaseWorkersRequest: {
+      emails: string[]
+    }
+    AssignCaseWorkersResult: {
+      success: boolean
+      message: string
+      succeededList?: components['schemas']['CaseWorkerDto'][]
+      failureList?: components['schemas']['AssignmentFailureDto'][]
+    }
+    AssignmentFailureDto: {
+      emailAddress: string
+      reason: string
+    }
+    CaseWorkerDto: {
+      /** @enum {string} */
+      userType: 'INTERNAL' | 'EXTERNAL'
+      /** Format: uuid */
+      userId?: string
+      fullName?: string
+      emailAddress: string
     }
     CommunitySupportServiceDto: {
       id: string
@@ -267,7 +339,8 @@ export interface components {
       personName: string
       personIdentifier: string
       /** Format: date-time */
-      dateReceived: string
+      date: string
+      caseWorkers: string[]
     }
   }
   responses: never
@@ -320,6 +393,50 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['ReferralInformationDto']
+        }
+      }
+    }
+  }
+  assignCaseWorkers: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AssignCaseWorkersRequest']
+      }
+    }
+    responses: {
+      /** @description Assign case workers to a referral */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['AssignCaseWorkersResult']
+        }
+      }
+      /** @description Failed to assign case worker(s) */
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['AssignCaseWorkersResult']
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
         }
       }
     }
@@ -426,6 +543,37 @@ export interface operations {
       }
     }
   }
+  getAssignedCaseWorkers: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Assignments found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['CaseWorkerDto'][]
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
   getPersonDetails: {
     parameters: {
       query?: never
@@ -460,7 +608,7 @@ export interface operations {
   getUnassignedCases: {
     parameters: {
       query: {
-        page: components['schemas']['Pageable']
+        pageable: components['schemas']['Pageable']
       }
       header?: never
       path?: never
@@ -469,6 +617,46 @@ export interface operations {
     requestBody?: never
     responses: {
       /** @description List of unassigned referrals for the provider */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ReferralCaseListDto'][]
+        }
+      }
+      /** @description The request was unauthorised */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden. The client is not authorised to access the case list. */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  getInProgressCases: {
+    parameters: {
+      query: {
+        pageable: components['schemas']['Pageable']
+      }
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description List of in-progress referrals for the provider */
       200: {
         headers: {
           [name: string]: unknown
