@@ -173,9 +173,6 @@ class ReferralController {
   }
 
   async showAssignedCaseWorkersPage(req: Request, res: Response, next: NextFunction) {
-    const { username } = res.locals.user
-    const { referralId } = req.params as { referralId: string }
-
     return res.render('referral/assign')
   }
 }
