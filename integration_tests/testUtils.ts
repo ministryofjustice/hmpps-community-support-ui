@@ -27,3 +27,12 @@ export const login = async (
   ])
   await attemptHmppsAuthLogin(page)
 }
+
+export const duplicateData = (dataToDuplicate: unknown, timesToDuplicates: number): Array<unknown> => {
+  const duplicatedData = []
+  // eslint-disable-next-line no-plusplus
+  for (let i = 0; i < timesToDuplicates; i++) {
+    duplicatedData.push(dataToDuplicate)
+  }
+  return duplicatedData
+}

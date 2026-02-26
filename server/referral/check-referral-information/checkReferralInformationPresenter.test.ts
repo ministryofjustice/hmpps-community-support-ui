@@ -1,5 +1,5 @@
 import { Response } from 'express'
-import { ReferralInformationDto } from '@community-support-api'
+import { ReferralInformation } from '@community-support-api'
 import type {
   CheckReferralInformationContent,
   CheckReferralInformationViewModel,
@@ -20,7 +20,7 @@ describe('CheckReferralInformationPresenter', () => {
   })
   describe('renderPage', () => {
     it('should render the check referral information page with the correct content and summary list', () => {
-      const CheckReferralInformation: ReferralInformationDto = {
+      const CheckReferralInformation: ReferralInformation = {
         personId: 'personDetails123',
         referralId: 'referralId123',
         firstName: 'John',
@@ -31,7 +31,7 @@ describe('CheckReferralInformationPresenter', () => {
         region: 'London',
         deliveryPartner: 'Delivery Partner',
         referenceNumber: 'REF123',
-      } as ReferralInformationDto
+      } as ReferralInformation
       const presenter = new CheckReferralInformationPresenter(CheckReferralInformation)
       presenter.renderPage(res)
       expect(res.render).toHaveBeenCalledWith(

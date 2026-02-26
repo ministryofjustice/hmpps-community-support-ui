@@ -1,4 +1,4 @@
-import type { Request, Response, NextFunction } from 'express'
+import type { Response } from 'express'
 
 export default abstract class PresenterBase<T> {
   constructor() {}
@@ -12,5 +12,9 @@ export default abstract class PresenterBase<T> {
     throw new Error('This method must be overridden by subclasses')
   }
 
-  abstract renderPage(res: Response, req: Request, next: NextFunction): void
+  renderPage(res: Response): void {
+    return res.render(this.getTemplatePath(), {
+      content: this.buildPageContent(res),
+    })
+  }
 }

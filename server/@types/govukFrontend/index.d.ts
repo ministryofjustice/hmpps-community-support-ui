@@ -1268,7 +1268,7 @@ export interface GovukFrontendFooter {
   navigation?: GovukFrontendFooterNavigationElement[] | null
 
   /*
-    The content licence information within the footer component. Defaults to Open Government Licence (OGL) v3 licence.
+    The content licence information within the footer component. If your service provides its information under a different license than OGL, use `null` to hide both the OGL logo and licence text. Defaults to Open Government Licence (OGL) v3 licence.
   */
   contentLicence?: GovukFrontendFooterContentLicence | null
 

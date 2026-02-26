@@ -5,11 +5,14 @@ import type {
   Referral,
   Person,
   CreateReferralRequest,
-  ReferralInformationDto,
-  SubmitReferralResponseDto,
+  ReferralInformation,
+  SubmitReferralResponse,
+  CaseList,
+  PagedRequest,
 } from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
+import { PagedResponse } from '../@types/communitySupportApi/derived'
 
 export default class CommunitySupportApiClient extends RestClient {
   constructor(authenticationClient: AuthenticationClient, apiConfig: ApiConfig = null) {
@@ -31,11 +34,18 @@ export default class CommunitySupportApiClient extends RestClient {
     return this.get({ path: `/bff/person/${personIdentifier}` }, asSystem(username))
   }
 
-  async createReferral(referralData: CreateReferralRequest, username: string): Promise<ReferralInformationDto> {
+  async createReferral(referralData: CreateReferralRequest, username: string): Promise<ReferralInformation> {
     return this.post({ path: '/bff/referral', data: referralData }, asSystem(username))
   }
 
-  async submitReferralById(referralId: string, username: string): Promise<SubmitReferralResponseDto> {
+  async submitReferralById(referralId: string, username: string): Promise<SubmitReferralResponse> {
     return this.post({ path: `/bff/${referralId}/submit-a-referral` }, asSystem(username))
+  }
+
+  async getCaseList(username: string, page: PagedRequest, assigned: boolean = false): Promise<PagedResponse<CaseList>> {
+    return this.get(
+      { path: `/bff/case-list/${!assigned ? 'unassigned' : 'in-progress'}?page=${page.page}&size=${page.size}` },
+      asSystem(username),
+    )
   }
 }

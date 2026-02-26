@@ -1,5 +1,5 @@
 import { Response } from 'express'
-import { ReferralInformationDto } from '@community-support-api'
+import { ReferralInformation } from '@community-support-api'
 import type { ReferralConfirmationContent, ReferralConfirmationViewModel } from './confirmationViewModel'
 import ConfirmationPresenter from './confirmationPresenter'
 import ConfirmationContentFactory from '../../testutils/factories/ConfirmationContent'
@@ -17,7 +17,7 @@ describe('confirmationPresenter', () => {
   })
   describe('renderPage', () => {
     it('should render the found person page with the correct content and summary list', () => {
-      const confirmation: ReferralInformationDto = {} as unknown as ReferralInformationDto
+      const confirmation: ReferralInformation = {} as unknown as ReferralInformation
       const presenter = new ConfirmationPresenter(confirmation)
       presenter.renderPage(res)
       expect(res.render).toHaveBeenCalledWith(
