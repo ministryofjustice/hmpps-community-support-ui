@@ -29,10 +29,6 @@ export default class CheckReferralInformationPresenter extends PresenterBase<Che
     return `referral/checkReferralInformation`
   }
 
-  renderPage(res: Response): void {
-    return res.render(this.getTemplatePath(), this.buildPageContent(res))
-  }
-
   private buildPersonalDetailsSummary(): GovukFrontendSummaryList {
     const summary = [
       {

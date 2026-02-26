@@ -50,12 +50,6 @@ export default class CommunityServiceProviderPresenter extends PresenterBase<Com
     return 'communityServiceProviders/providers'
   }
 
-  renderPage(res: Response): void {
-    return res.render(this.getTemplatePath(), {
-      content: this.buildPageContent(res),
-    })
-  }
-
   private truncateDescription(description: string): string {
     // take just the first line of the description, up to a maximum of 500 characters
     const firstLine = description.split('\n')[0]

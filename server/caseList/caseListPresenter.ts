@@ -171,10 +171,4 @@ export default class CaseListPresenter extends PresenterBase<CaseListViewModel> 
   protected override getTemplatePath(): string {
     return 'caseList/caseList'
   }
-
-  renderPage(res: Response): void {
-    return res.render(this.getTemplatePath(), {
-      content: this.buildPageContent(res),
-    })
-  }
 }
