@@ -1,4 +1,4 @@
-import type { Request, Response, NextFunction } from 'express'
+import type { Response } from 'express'
 
 export default abstract class PresenterBase<T> {
   constructor() {}
