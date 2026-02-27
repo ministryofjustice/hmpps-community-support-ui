@@ -42,7 +42,8 @@
                 errorMessage: errors["caseworkers[" ~ index ~ "][email_address]"],
                 attributes: {
                   "data-name": "caseworkers[%index%][email_address]",
-                  "data-id": "caseworkers[%index%][email_address]"
+                  "data-id": "caseworkers[%index%][email_address]",
+                  "data-testid": "caseWorkerInput"
                 }
               }) }}
               {# Remove button — outside fieldset, from second item onward #}
@@ -54,7 +55,10 @@
           <div class="moj-button-action">
             {{ govukButton({
               text: "Add another caseworker",
-              classes: "govuk-button--secondary moj-add-another__add-button govuk-!-margin-bottom-4"
+              classes: "govuk-button--secondary moj-add-another__add-button govuk-!-margin-bottom-4",
+              attributes: {
+                "data-testid": "addAnotherCaseWorker"
+              }
             }) }}
           </div>
           <div class="moj-button-action">
