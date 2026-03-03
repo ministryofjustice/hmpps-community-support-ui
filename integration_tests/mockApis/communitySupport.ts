@@ -154,30 +154,35 @@ export default {
         },
       },
     }),
-  stubGetReferralUserAssignments: (httpStatus = 200): SuperAgentRequest =>
+  stubNewReferralUserAssignments: (referralId: string, httpStatus = 200): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'GET',
-        urlPathPattern: '/community-support/bff/referral-assignments/.*',
+        urlPathPattern: `/community-support/bff/referral-assignments/${referralId}`,
       },
       response: {
         status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: {
-          succeededList: [
-            {
-              userType: 'EXTERNAL',
-              userId: 'assigned-user-id-1',
-              fullName: 'Assigned User 1',
-              emailAddress: 'assignedUser1@email.com',
-            },
-            {
-              userType: 'EXTERNAL',
-              userId: 'assigned-user-id-2',
-              fullName: 'Assigned User 2',
-              emailAddress: 'assignedUser2@email.com',
-            },
-          ],
+          succeededList: [],
         },
+        transformers: ['response-template'],
+      },
+    }),
+  stubPostReferralUserAssignments: (
+    referralId: string,
+    expectedResponse: unknown,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'POST',
+        url: `/community-support/bff/referral/${referralId}/assign`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: expectedResponse,
         transformers: ['response-template'],
       },
     }),

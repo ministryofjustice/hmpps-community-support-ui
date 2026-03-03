@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import { CreateReferralRequest, CaseWorkerDto } from '@community-support-api'
+import { CreateReferralRequest, CaseWorkerDto, ReferralUserAssignmentsResponse } from '@community-support-api'
 import ReferralService from '../services/referralService'
 import PersonService from '../services/personService'
 import ConfirmationPresenter from './confirmation/confirmationPresenter'
@@ -110,7 +110,7 @@ class ReferralController {
     if (caseworkers?.length > 0) {
       return res.render('referral/assign', { referralId, caseworkers })
     }
-    return res.render('referral/assign')
+    return res.render('referral/assign', { referralId })
   }
 
   async submitReferralUserAssignments(req: Request, res: Response): Promise<void> {
@@ -132,12 +132,10 @@ class ReferralController {
         username,
       )
       if (referralUserAssignmentsResponse.success) {
+        req.session.assignmentResults = referralUserAssignmentsResponse as ReferralUserAssignmentsResponse
         return res.redirect(`/referral/${referralId}/assigned`)
       }
-      req.flash('assignmentError', 'An unexpected error when assigning case workers. Please try again.')
-      errorsList = [
-        { href: '#assignmentError', text: `An unexpected error when assigning case workers. Please try again.` },
-      ]
+      req.session.assignmentResults = referralUserAssignmentsResponse as ReferralUserAssignmentsResponse
       return res.redirect(`/referral/${referralId}/assign`)
     } catch (error) {
       if (error.responseStatus === 400) {
@@ -173,7 +171,18 @@ class ReferralController {
   }
 
   async showAssignedCaseWorkersPage(req: Request, res: Response, next: NextFunction) {
-    return res.render('referral/assign')
+    const { referralId } = req.params as { referralId: string }
+    const results = req.session ? req.session.assignmentResults : null
+
+    if (!results || !results.success) {
+      if (referralId) {
+        return res.render('referral/assign', { referralId })
+      }
+      return res.render('referral/assign')
+    }
+    delete req.session.assignmentResults
+    const { success, message } = results
+    return res.render('referral/assign', { referralId, success, message })
   }
 }
 

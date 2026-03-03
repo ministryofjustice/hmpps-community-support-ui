@@ -463,6 +463,32 @@
       },
       "name": "post-referral-invalid-email-address",
       "priority": 10
+    },
+    {
+      "request": {
+        "method": "POST",
+        "urlPathPattern": "/bff/referral/00e53608-bf1c-4a57-9ae6-02db8017a698/assign"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json;charset=UTF-8"
+        },
+        "jsonBody": {
+          "success": true,
+          "message": "The case has been assigned to a caseworker.",
+          "succeededList": [
+            {
+              "userType": "EXTERNAL",
+              "userId": "test-user-1",
+              "fullName": "Test User 1",
+              "emailAddress": "testuser1@email.com"
+            }
+          ]
+        }
+      },
+      "name": "post-referral-single-user-assignment-success",
+      "priority": 10
     }
   ]
 }

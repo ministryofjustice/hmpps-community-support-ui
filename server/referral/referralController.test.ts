@@ -200,8 +200,13 @@ describe('ReferralController', () => {
   })
   describe('showAssignCaseWorkersPage', () => {
     it('should render the case assignment page on a GET request for a new referral', async () => {
+      req = {
+        method: 'GET',
+        params: { referralId: 'referral-id-1' },
+        flash: jest.fn(),
+      } as unknown as Request
       await referralController.showAssignCaseWorkersPage(req, res, next)
-      expect(res.render).toHaveBeenCalledWith('referral/assign')
+      expect(res.render).toHaveBeenCalledWith('referral/assign', { referralId: 'referral-id-1' })
     })
     it('should flash not found error redirect when no referral is found', async () => {
       req = {
