@@ -1,11 +1,5 @@
 import nock from 'nock'
-import type {
-  CommunitySupportServicesProvider,
-  CreateReferralRequest,
-  Referral,
-  CaseWorkerDto,
-  AssignmentFailureDto,
-} from '@community-support-api'
+import type { CommunitySupportServicesProvider, CreateReferralRequest, Referral } from '@community-support-api'
 import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import { AgentConfig, ApiConfig } from '@ministryofjustice/hmpps-rest-client'
 import CommunitySupportApiClient from './communitySupportApiClient'
