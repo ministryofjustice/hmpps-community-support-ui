@@ -1,4 +1,4 @@
-import { CreateReferralRequest } from '@community-support-api'
+import { CreateReferralRequest, CreateAppointmentRequest } from '@community-support-api'
 import { HmppsUser } from '../../interfaces/hmppsUser'
 
 export declare module 'express-session' {
@@ -7,6 +7,7 @@ export declare module 'express-session' {
     returnTo: string
     formKeys: string[]
     referralCreationDetails: CreateReferralRequest
+    createAppointmentRequest: CreateAppointmentRequest
   }
 }
 

@@ -5,6 +5,7 @@ type CommunitySupportServicesProvider = components['schemas']['CommunitySupportS
 type CommunitySupportServiceProviders = components['schemas']['CommunitySupportServiceDto']
 type Person = components['schemas']['PersonDto']
 type CreateReferralRequest = components['schemas']['CreateReferralRequest']
+type CreateAppointmentRequest = components['schemas']['CreateAppointmentRequest']
 type ReferralInformation = components['schemas']['ReferralInformationDto']
 type SubmitReferralResponse = components['schemas']['SubmitReferralResponseDto']
 type CaseList = components['schemas']['ReferralCaseListDto']
@@ -16,6 +17,7 @@ export type {
   CommunitySupportServiceProviders,
   Person,
   CreateReferralRequest,
+  CreateAppointmentRequest,
   ReferralInformation,
   SubmitReferralResponse,
   CaseList,
