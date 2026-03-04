@@ -38,6 +38,24 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/bff/referral/{referralId}/ics': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get all ICS appointments for a referral */
+    get: operations['getIcsAppointments']
+    put?: never
+    /** Book an ICS appointment for a referral */
+    post: operations['createIcsAppointment']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/bff/referral/{referralId}/assign': {
     parameters: {
       query?: never
@@ -49,6 +67,23 @@ export interface paths {
     put?: never
     /** Assign case workers to a referral */
     post: operations['assignCaseWorkers']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/referral/{referralId}/ics/{icsId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get a single ICS appointment by ID */
+    get: operations['getIcsAppointment']
+    put?: never
+    post?: never
     delete?: never
     options?: never
     head?: never
@@ -115,6 +150,23 @@ export interface paths {
     }
     /** Get assigned case workers of a referral */
     get: operations['getAssignedCaseWorkers']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/reference-data/probation-offices': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get all Probation Offices Information */
+    get: operations['getProbationOffices']
     put?: never
     post?: never
     delete?: never
@@ -228,6 +280,72 @@ export interface components {
       referenceNumber?: string
       deliveryPartner: string
     }
+    AppointmentTimeRequest: {
+      /** Format: int32 */
+      hour: number
+      /** Format: int32 */
+      minute?: number
+      amPm: string
+    }
+    CreateAppointmentRequest: {
+      /** Format: date */
+      date: string
+      time: components['schemas']['AppointmentTimeRequest']
+      sessionMethodRequest: components['schemas']['SessionMethodRequest']
+      sessionCommunication: string[]
+    }
+    SessionMethodRequest: {
+      /** @enum {string} */
+      type: 'PHONE' | 'VIDEO' | 'PROBATION_OFFICE' | 'OTHER_LOCATION'
+      additionalDetails?: string
+      addressLine1?: string
+      addressLine2?: string
+      townOrCity?: string
+      county?: string
+      postcode?: string
+    }
+    AppointmentIcsResponse: {
+      /** Format: uuid */
+      appointmentIcsId: string
+      /** Format: uuid */
+      appointmentId: string
+      /** Format: uuid */
+      referralId: string
+      appointmentType: string
+      /** Format: date */
+      appointmentDate: string
+      appointmentTime: components['schemas']['AppointmentTimeResponse']
+      sessionMethod: components['schemas']['InPersonAppointment'] | components['schemas']['VirtualAppointment']
+      sessionCommunications: string[]
+      /** Format: date-time */
+      createdAt: string
+    }
+    AppointmentTimeResponse: {
+      /** Format: int32 */
+      hour: number
+      /** Format: int32 */
+      minute: number
+      amPm: string
+    }
+    InPersonAppointment: {
+      appointmentCategory: 'InPersonAppointment'
+    } & (Omit<WithRequired<components['schemas']['SessionMethod'], 'type'>, 'appointmentCategory'> & {
+      probationOfficeName?: string
+      addressLine1?: string
+      addressLine2?: string
+      townOrCity?: string
+      county?: string
+      postcode?: string
+    })
+    SessionMethod: {
+      type: string
+      appointmentCategory: string
+    }
+    VirtualAppointment: {
+      appointmentCategory: 'VirtualAppointment'
+    } & (Omit<WithRequired<components['schemas']['SessionMethod'], 'type'>, 'appointmentCategory'> & {
+      whyNotInPersonReason?: string
+    })
     AssignCaseWorkersRequest: {
       emails: string[]
     }
@@ -326,6 +444,15 @@ export interface components {
       referralDate: string
       assignedTo: string[]
     }
+    ProbationOffice: {
+      /** Format: int32 */
+      probationOfficeId: number
+      name: string
+      address: string
+      probationRegionId: string
+      govUkUrl?: string
+      deliusCRSLocationId?: string
+    }
     Pageable: {
       /** Format: int32 */
       page?: number
@@ -338,7 +465,6 @@ export interface components {
       referralId: string
       personName: string
       personIdentifier: string
-      /** Format: date-time */
       date: string
       caseWorkers: string[]
     }
@@ -397,6 +523,81 @@ export interface operations {
       }
     }
   }
+  getIcsAppointments: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description List of ICS appointments */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['AppointmentIcsResponse'][]
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  createIcsAppointment: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateAppointmentRequest']
+      }
+    }
+    responses: {
+      /** @description Appointment created successfully */
+      201: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['AppointmentIcsResponse']
+        }
+      }
+      /** @description Invalid request body */
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
   assignCaseWorkers: {
     parameters: {
       query?: never
@@ -431,6 +632,38 @@ export interface operations {
         }
       }
       /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getIcsAppointment: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+        icsId: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description ICS appointment found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['AppointmentIcsResponse']
+        }
+      }
+      /** @description Appointment not found */
       404: {
         headers: {
           [name: string]: unknown
@@ -574,6 +807,35 @@ export interface operations {
       }
     }
   }
+  getProbationOffices: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Returns the list of Probation Offices Information. */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ProbationOffice'][]
+        }
+      }
+      /** @description Failed to retrieve Probation Offices Information */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
   getPersonDetails: {
     parameters: {
       query?: never
@@ -685,4 +947,7 @@ export interface operations {
       }
     }
   }
+}
+type WithRequired<T, K extends keyof T> = T & {
+  [P in K]-?: T[P]
 }
