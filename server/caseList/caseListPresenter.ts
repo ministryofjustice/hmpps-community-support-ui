@@ -1,6 +1,6 @@
 import { Response } from 'express'
 import { CaseList } from '@community-support-api'
-import { GovukFrontendPagination, GovukFrontendTable, GovukFrontendTableRow } from '@govuk-frontend'
+import { GovukFrontendTable, GovukFrontendTableRow } from '@govuk-frontend'
 import PresenterBase from '../presenter/presenterBase'
 import { CaseListCase, CaseListContent, CaseListViewModel } from './caseListViewModel'
 import { MojPagination, MojSubNavigation } from '../@types/mojFrontend'
