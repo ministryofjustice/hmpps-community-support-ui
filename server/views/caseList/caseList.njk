@@ -20,8 +20,9 @@
   {% endif %}
 
   {{ govukTable(content.caseListTable) }}
-
+{%- if content.hasCases and content.pagination %}
   {{ govukPagination(content.pagination) }}
+{%- endif %}
 </div>
 
 {% endblock %}

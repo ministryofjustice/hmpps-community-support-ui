@@ -73,6 +73,9 @@ export default class CaseListPresenter extends PresenterBase<CaseListViewModel> 
   private buildPagination(): GovukFrontendPagination {
     const currentPage = this.caseListResponse.page + 1
     const { totalPages } = this.caseListResponse
+    if (totalPages <= 1) {
+      return null
+    }
     const pagination = {} as GovukFrontendPagination
     if (currentPage > 1) {
       pagination.previous = {
