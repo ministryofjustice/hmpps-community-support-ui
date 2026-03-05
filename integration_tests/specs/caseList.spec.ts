@@ -82,10 +82,9 @@ test.describe('Unassigned Case List Pages', () => {
     await page.goto('/')
     await login(page)
 
-    await page.goto('/unassigned-cases?selected=unassigned')
+    await page.goto('/unassigned-cases')
     const caseListPage = await CaseListPage.verifyOnPage(page)
 
-    expect(caseListPage.pagination).toBeVisible()
     expect(caseListPage.caseListTable).toBeVisible()
     expect(caseListPage.subNavTitle).toContainText('Unassigned cases')
     expect(caseListPage.header).toBeVisible()

@@ -11,11 +11,14 @@ export default class CaseListPresenter extends PresenterBase<CaseListViewModel> 
 
   private parsedCaseList: Array<CaseListCase>
 
+  private readonly currentPath: string
+
   constructor(
     private readonly caseListResponse: PagedResponse<CaseList>,
     private readonly selectedTab: string,
   ) {
     super()
+    this.currentPath = this.selectedTab === 'inProgress' ? '/cases-in-progress' : '/unassigned-cases'
     this.caseList = this.caseListResponse.content
     this.parsedCaseList = this.buildCaseList(this.caseList)
   }
@@ -79,12 +82,12 @@ export default class CaseListPresenter extends PresenterBase<CaseListViewModel> 
     const pagination = {} as GovukFrontendPagination
     if (currentPage > 1) {
       pagination.previous = {
-        href: `/caselist?page=${currentPage - 1}&selected=${this.selectedTab}`,
+        href: `${this.currentPath}?page=${currentPage - 1}&selected=${this.selectedTab}`,
       }
     }
     if (this.caseListResponse.totalPages > currentPage) {
       pagination.next = {
-        href: `/caselist?page=${currentPage + 1}&selected=${this.selectedTab}`,
+        href: `${this.currentPath}?page=${currentPage + 1}&selected=${this.selectedTab}`,
       }
     }
     pagination.attributes = {
@@ -103,7 +106,7 @@ export default class CaseListPresenter extends PresenterBase<CaseListViewModel> 
       items.push({
         number: i.toString(),
         current: i === current,
-        href: `/caselist?page=${i}&selected=${this.selectedTab}`,
+        href: `${this.currentPath}?page=${i}&selected=${this.selectedTab}`,
       })
     }
     return items
