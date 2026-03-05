@@ -146,6 +146,9 @@ export default class CaseListPresenter extends PresenterBase<CaseListViewModel> 
       {
         html: `<a href="/case/${caseItem.crnOrPrisonNumber}"><strong>${caseItem.name}</strong></a>`,
         classes: 'govuk-!-width-one-quarter',
+        attributes: {
+          'data-sort-value': `${caseItem.name.toLowerCase().split(', ')[0]}`,
+        },
       },
       {
         text: caseItem.crnOrPrisonNumber,
@@ -161,6 +164,9 @@ export default class CaseListPresenter extends PresenterBase<CaseListViewModel> 
       {
         html: `<a href="/case/${caseItem.crnOrPrisonNumber}"><strong>${caseItem.name}</strong></a>`,
         classes: 'govuk-!-width-one-quarter',
+        attributes: {
+          'data-sort-value': `${caseItem.name.toLowerCase().split(', ')[0]}`,
+        },
       },
       {
         text: caseItem.crnOrPrisonNumber,
