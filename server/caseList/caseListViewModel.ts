@@ -1,4 +1,4 @@
-import { GovukFrontendPagination, GovukFrontendTable } from '@govuk-frontend'
+import { GovukFrontendBackLink, GovukFrontendPagination, GovukFrontendTable } from '@govuk-frontend'
 import { MojSubNavigation } from '../@types/mojFrontend'
 
 export type CaseListViewModel = {
@@ -8,6 +8,7 @@ export type CaseListViewModel = {
   pagination: GovukFrontendPagination
   caseListTable: GovukFrontendTable
   noCasesTitle: string
+  backLink: GovukFrontendBackLink
 }
 
 export type CaseListContent = {

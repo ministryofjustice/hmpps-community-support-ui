@@ -3,7 +3,7 @@ import { CaseList } from '@community-support-api'
 import { GovukFrontendPagination, GovukFrontendTable, GovukFrontendTableRow } from '@govuk-frontend'
 import PresenterBase from '../presenter/presenterBase'
 import { CaseListCase, CaseListContent, CaseListViewModel } from './caseListViewModel'
-import { MojSubNavigation } from '../@types/mojFrontend'
+import { MojPagination, MojSubNavigation } from '../@types/mojFrontend'
 import { PagedResponse } from '../@types/communitySupportApi/derived'
 
 export default class CaseListPresenter extends PresenterBase<CaseListViewModel> {
@@ -41,6 +41,9 @@ export default class CaseListPresenter extends PresenterBase<CaseListViewModel> 
       '{0}',
       this.selectedTab === 'inProgress' ? 'in progress' : 'unassigned',
     )
+    viewModel.backLink = {
+      href: '/',
+    }
     return viewModel
   }
 
@@ -73,13 +76,11 @@ export default class CaseListPresenter extends PresenterBase<CaseListViewModel> 
     }))
   }
 
-  private buildPagination(): GovukFrontendPagination {
+  private buildPagination(): MojPagination {
     const currentPage = this.caseListResponse.page + 1
     const { totalPages } = this.caseListResponse
-    if (totalPages <= 1) {
-      return null
-    }
-    const pagination = {} as GovukFrontendPagination
+
+    const pagination = {} as MojPagination
     if (currentPage > 1) {
       pagination.previous = {
         href: `${this.currentPath}?page=${currentPage - 1}&selected=${this.selectedTab}`,
@@ -94,7 +95,23 @@ export default class CaseListPresenter extends PresenterBase<CaseListViewModel> 
       'data-testid': 'caselist-pagination',
     }
     pagination.items = this.buildPaginationItems(currentPage, totalPages)
+    pagination.results = this.buildPaginationResults(
+      currentPage,
+      this.caseListResponse.size,
+      this.caseListResponse.totalElements,
+    )
     return pagination
+  }
+
+  buildPaginationResults(currentPage: number, size: number, totalElements: number) {
+    const from = (currentPage - 1) * size + 1
+    const to = Math.min(currentPage * size, totalElements)
+    return {
+      count: totalElements.toString(),
+      from: from.toString(),
+      to: to.toString(),
+      text: 'results',
+    }
   }
 
   private buildPaginationItems(current: number, total: number) {
