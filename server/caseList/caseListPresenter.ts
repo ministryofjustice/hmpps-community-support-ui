@@ -1,9 +1,9 @@
 import { Response } from 'express'
 import { CaseList } from '@community-support-api'
-import { GovukFrontendPagination, GovukFrontendTable, GovukFrontendTableRow } from '@govuk-frontend'
+import { GovukFrontendTable, GovukFrontendTableRow } from '@govuk-frontend'
 import PresenterBase from '../presenter/presenterBase'
 import { CaseListCase, CaseListContent, CaseListViewModel } from './caseListViewModel'
-import { MojSubNavigation } from '../@types/mojFrontend'
+import { MojPagination, MojSubNavigation } from '../@types/mojFrontend'
 import { PagedResponse } from '../@types/communitySupportApi/derived'
 
 export default class CaseListPresenter extends PresenterBase<CaseListViewModel> {
@@ -11,11 +11,14 @@ export default class CaseListPresenter extends PresenterBase<CaseListViewModel> 
 
   private parsedCaseList: Array<CaseListCase>
 
+  private readonly currentPath: string
+
   constructor(
     private readonly caseListResponse: PagedResponse<CaseList>,
     private readonly selectedTab: string,
   ) {
     super()
+    this.currentPath = this.selectedTab === 'inProgress' ? '/cases-in-progress' : '/unassigned-cases'
     this.caseList = this.caseListResponse.content
     this.parsedCaseList = this.buildCaseList(this.caseList)
   }
@@ -38,6 +41,9 @@ export default class CaseListPresenter extends PresenterBase<CaseListViewModel> 
       '{0}',
       this.selectedTab === 'inProgress' ? 'in progress' : 'unassigned',
     )
+    viewModel.backLink = {
+      href: '/',
+    }
     return viewModel
   }
 
@@ -70,25 +76,42 @@ export default class CaseListPresenter extends PresenterBase<CaseListViewModel> 
     }))
   }
 
-  private buildPagination(): GovukFrontendPagination {
+  private buildPagination(): MojPagination {
     const currentPage = this.caseListResponse.page + 1
     const { totalPages } = this.caseListResponse
-    const pagination = {} as GovukFrontendPagination
+
+    const pagination = {} as MojPagination
     if (currentPage > 1) {
       pagination.previous = {
-        href: `/caselist?page=${currentPage - 1}&selected=${this.selectedTab}`,
+        href: `${this.currentPath}?page=${currentPage - 1}&selected=${this.selectedTab}`,
       }
     }
     if (this.caseListResponse.totalPages > currentPage) {
       pagination.next = {
-        href: `/caselist?page=${currentPage + 1}&selected=${this.selectedTab}`,
+        href: `${this.currentPath}?page=${currentPage + 1}&selected=${this.selectedTab}`,
       }
     }
     pagination.attributes = {
       'data-testid': 'caselist-pagination',
     }
     pagination.items = this.buildPaginationItems(currentPage, totalPages)
+    pagination.results = this.buildPaginationResults(
+      currentPage,
+      this.caseListResponse.size,
+      this.caseListResponse.totalElements,
+    )
     return pagination
+  }
+
+  buildPaginationResults(currentPage: number, size: number, totalElements: number) {
+    const from = (currentPage - 1) * size + 1
+    const to = Math.min(currentPage * size, totalElements)
+    return {
+      count: totalElements.toString(),
+      from: from.toString(),
+      to: to.toString(),
+      text: 'results',
+    }
   }
 
   private buildPaginationItems(current: number, total: number) {
@@ -100,7 +123,7 @@ export default class CaseListPresenter extends PresenterBase<CaseListViewModel> 
       items.push({
         number: i.toString(),
         current: i === current,
-        href: `/caselist?page=${i}&selected=${this.selectedTab}`,
+        href: `${this.currentPath}?page=${i}&selected=${this.selectedTab}`,
       })
     }
     return items
@@ -140,6 +163,9 @@ export default class CaseListPresenter extends PresenterBase<CaseListViewModel> 
       {
         html: `<a href="/case/${caseItem.crnOrPrisonNumber}"><strong>${caseItem.name}</strong></a>`,
         classes: 'govuk-!-width-one-quarter',
+        attributes: {
+          'data-sort-value': `${caseItem.name.toLowerCase().split(', ')[0]}`,
+        },
       },
       {
         text: caseItem.crnOrPrisonNumber,
@@ -155,6 +181,9 @@ export default class CaseListPresenter extends PresenterBase<CaseListViewModel> 
       {
         html: `<a href="/case/${caseItem.crnOrPrisonNumber}"><strong>${caseItem.name}</strong></a>`,
         classes: 'govuk-!-width-one-quarter',
+        attributes: {
+          'data-sort-value': `${caseItem.name.toLowerCase().split(', ')[0]}`,
+        },
       },
       {
         text: caseItem.crnOrPrisonNumber,

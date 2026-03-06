@@ -59,7 +59,11 @@ export default function routes({
     await referralController.showReferralPage(req, res, next)
   })
 
-  get('/caselist', async (req, res, next) => {
+  get('/unassigned-cases', async (req, res, next) => {
+    await caseListController.showCaseList(req, res)
+  })
+
+  get('/cases-in-progress', async (req, res, next) => {
     await caseListController.showCaseList(req, res)
   })
 
