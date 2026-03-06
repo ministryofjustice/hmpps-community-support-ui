@@ -6,7 +6,7 @@ export default class AssignPage extends AbstractPage {
 
   public readonly errorHeader: Locator
 
-  public readonly subheader: Locator
+  public readonly subheaders: Locator
 
   public emailAddressInputs: Locator[]
 
@@ -26,28 +26,32 @@ export default class AssignPage extends AbstractPage {
     super(page)
     this.header = page.locator('h1')
     this.errorHeader = page.locator('h2', { hasText: 'There is a problem' })
-    this.subheader = page.locator('legend')
+    this.subheaders = page.locator('legend')
     this.addAnotherCaseWorkerButton = page.locator('[data-testid="addAnotherCaseWorker"]')
     this.removeCaseWorkerButtons = []
     this.emailAddressInputs = []
     this.submitButton = page.getByRole('button', { name: 'Submit' })
-    this.invalidEmailMessage = page.locator(
-      'a:has-text("Enter an email address in the correct format")[href*="#caseworkers"]',
-    )
-    this.blankEmailMessage = page.locator(`a:has-text("Enter the caseworker's email address")[href*="#caseworkers"]`)
-    this.unrecognisedEmailMessage = page.locator(
-      `a:has-text("Could not find a caseworker with that email address")[href*="#caseworkers"]`,
-    )
+    this.invalidEmailMessage = page
+      .locator('[data-testid="error-messages"] a[href*="#caseworkers"]')
+      .filter({ hasText: 'Enter an email address in the correct format' })
+    this.blankEmailMessage = page
+      .locator('[data-testid="error-messages"] a[href*="#caseworkers"]')
+      .filter({ hasText: `Enter the caseworker's email address` })
+    this.unrecognisedEmailMessage = page
+      .locator('[data-testid="error-messages"] a[href*="#caseworkers"]')
+      .filter({ hasText: 'Could not find a caseworker with that email address' })
   }
 
   async updateInputs() {
-    const inputs = this.page.locator('[data-testid="caseWorkerInput"]')
+    const inputs = this.page.locator('[data-testid="caseWorkerInput"]:visible')
     this.emailAddressInputs = await inputs.count().then(count =>
       Array(count)
         .fill(0)
         .map((_, i) => inputs.nth(i)),
     )
-    const removeButtons = this.page.locator('[data-testid="removeCaseWorkerButton"]')
+    const removeButtons = this.page.locator(
+      '[data-testid="removeCaseWorkerButton"]:not(.govuk-visually-hidden):visible',
+    )
     this.removeCaseWorkerButtons = await removeButtons.count().then(count =>
       Array(count)
         .fill(0)

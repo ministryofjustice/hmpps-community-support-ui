@@ -14,23 +14,30 @@ export default class AssignedPage extends AbstractPage {
     super(page)
     this.header = page.locator('h2', { hasText: 'Success' })
     this.subheader = page.locator('h3', { hasText: 'Case assigned' })
-    this.singleAssignmentMessage = page.locator('p', { hasText: 'The case has been assigned to a caseworker' })
-    this.multipleAssignmentsMessage = page.locator('p', { hasText: 'The case has been assigned to caseworkers' })
+    this.singleAssignmentMessage = page
+      .locator('[data-testid="success-message"] p')
+      .filter({ hasText: 'The case has been assigned to a caseworker' })
+    this.multipleAssignmentsMessage = page
+      .locator('[data-testid="success-message"] p')
+      .filter({ hasText: 'The case has been assigned to caseworkers' })
   }
 
-  static async verifySingleAssignmentOnPage(page: Page): Promise<AssignedPage> {
+  static async verifyAssignmentOnPage(page: Page, messageType: string = 'single'): Promise<AssignedPage> {
     const assignedPage = new AssignedPage(page)
     await expect(assignedPage.header).toBeVisible()
     await expect(assignedPage.subheader).toBeVisible()
-    await expect(assignedPage.singleAssignmentMessage).toBeVisible()
-    return assignedPage
-  }
+    if (messageType === 'single') {
+      await expect(
+        assignedPage.singleAssignmentMessage,
+        `Expected ${messageType} assignment message to be visible`,
+      ).toBeVisible()
+    } else {
+      await expect(
+        assignedPage.multipleAssignmentsMessage,
+        `Expected ${messageType} assignment message to be visible`,
+      ).toBeVisible()
+    }
 
-  static async verifyMultipleAssignmentOnPage(page: Page): Promise<AssignedPage> {
-    const assignedPage = new AssignedPage(page)
-    await expect(assignedPage.header).toBeVisible()
-    await expect(assignedPage.subheader).toBeVisible()
-    await expect(assignedPage.multipleAssignmentsMessage).toBeVisible()
     return assignedPage
   }
 }

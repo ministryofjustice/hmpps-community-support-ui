@@ -31,7 +31,7 @@ test.describe('AssignPage', () => {
     const assignPage = await AssignPage.verifyOnPage(page)
     await test.step('check content', async () => {
       await expect(assignPage.header).toHaveText('Who do you want to assign this case to?')
-      await expect(assignPage.subheader).toHaveText('Caseworker')
+      await expect(assignPage.subheaders.first()).toHaveText('Caseworker')
     })
   })
   // IPB-2010:AC2 - !!! No back link yet!!!
@@ -41,6 +41,21 @@ test.describe('AssignPage', () => {
       When I select the Back option
       Then I am taken back to the specific case’s referral details screen
       */
+  })
+  // IPB-2010:additional
+  test('ACXX: Adding the second caseworkers', async ({ page }) => {
+    const assignPage = await AssignPage.verifyOnPage(page)
+    await test.step('adding case worker 1', async () => {
+      await expect(assignPage.emailAddressInputs).toHaveLength(1)
+      await assignPage.emailAddressInputs[0].fill('testuser1@email.com')
+      await assignPage.addAnotherCaseWorkerButton.click()
+      await assignPage.updateInputs()
+    })
+    await test.step('adding case worker 2', async () => {
+      await assignPage.emailAddressInputs[1].fill('testuser2@email.com')
+      await assignPage.addAnotherCaseWorkerButton.click()
+      await assignPage.updateInputs()
+    })
   })
   // IPB-2010:AC3
   test('AC3: Adding Multiple Caseworkers', async ({ page }) => {
@@ -102,9 +117,10 @@ test.describe('AssignPage', () => {
       await expect(assignPage.emailAddressInputs).toHaveLength(1)
       await assignPage.submitButton.click()
       await expect(page).toHaveURL(`/referral/${referralId}/assigned`)
-      await AssignedPage.verifySingleAssignmentOnPage(page)
+      await AssignedPage.verifyAssignmentOnPage(page, 'single')
     })
   })
+
   // IPB-2010:AC5
   test('AC5: Assign multiple caseworkers', async ({ page }) => {
     await communitySupport.stubPostReferralUserAssignments(referralId, {
@@ -140,7 +156,7 @@ test.describe('AssignPage', () => {
     await test.step('assign case workers', async () => {
       await assignPage.submitButton.click()
       await expect(page).toHaveURL(`/referral/${referralId}/assigned`)
-      await AssignedPage.verifyMultipleAssignmentOnPage(page)
+      await AssignedPage.verifyAssignmentOnPage(page, 'multipe')
     })
   })
   // IPB-2010:AC6 - !!! integration needed !!!
@@ -320,7 +336,7 @@ test.describe('AssignPage', () => {
       await assignPage.emailAddressInputs[1].fill('testuser1@email.com')
       await assignPage.submitButton.click()
       await expect(page).toHaveURL(`/referral/${referralId}/assigned`)
-      await AssignedPage.verifySingleAssignmentOnPage(page)
+      await AssignedPage.verifyAssignmentOnPage(page, 'single')
     })
   })
 })
