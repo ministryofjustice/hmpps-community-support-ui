@@ -414,8 +414,8 @@ export interface components {
     ReferralUserAssignmentsResponse: {
       success: boolean
       message: string
-      succeededList: CaseWorkerDto[]
-      failureList: AssignmentFailureDto[]
+      succeededList?: CaseWorkerDto[]
+      failureList?: AssignmentFailureDto[]
     }
     CommunitySupportServiceDto: {
       id: string

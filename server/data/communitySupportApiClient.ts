@@ -61,6 +61,6 @@ export default class CommunitySupportApiClient extends RestClient {
     assignmentsData: ReferralUserAssignmentsRequest,
     username: string,
   ): Promise<ReferralUserAssignmentsResponse> {
-    return this.post({ path: `/bff/referral/${referralId}/assign`, data: assignmentsData }, asSystem(username))
+    return this.post({ path: `/referral/${referralId}/assign`, data: assignmentsData }, asSystem(username))
   }
 }
