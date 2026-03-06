@@ -237,7 +237,7 @@ export interface paths {
     get?: never
     put?: never
     /** Assign case workers to a referral */
-    post: operations['assignCaseWorkers']
+    post: operations['submitReferralUserAssignments']
     delete?: never
     options?: never
     head?: never
@@ -901,37 +901,6 @@ export interface operations {
       }
     }
   }
-  getAssignedCaseWorkers: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        referralId: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Assignments found */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['CaseWorkerDto'][]
-        }
-      }
-      /** @description Referral not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
   getProbationOffices: {
     parameters: {
       query?: never
@@ -1068,6 +1037,63 @@ export interface operations {
         }
         content: {
           '*/*': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  submitReferralUserAssignments: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CaseWorkerDto'][]
+      }
+    }
+    responses: {
+      /** @description Assigned case workers for referral */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ReferralUserAssignmentsResponse']
+        }
+      }
+    }
+  }
+  getReferralUserAssignments: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Get referral user assignments found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['CaseWorkerDto'][]
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
         }
       }
     }
