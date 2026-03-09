@@ -3,7 +3,7 @@ import CaseListService from '../services/caseListService'
 import CaseListPresenter from './caseListPresenter'
 
 class CaseListController {
-  constructor(private caseListService: CaseListService) { }
+  constructor(private caseListService: CaseListService) {}
 
   async showCaseList(req: Request, res: Response) {
     const selectedTab = req.path === '/cases-in-progress' ? 'inProgress' : 'unassigned'

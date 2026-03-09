@@ -15,11 +15,7 @@ type AssignmentFailureDto = components['schemas']['AssignmentFailureDto']
 type CaseWorkerDto = components['schemas']['CaseWorkerDto']
 type ReferralUserAssignmentsResponse = components['schemas']['ReferralUserAssignmentsResponse']
 type ReferralUserAssignmentsDto = components['schemas']['ReferralUserAssignmentsDto']
-type ReferralInformation = components['schemas']['ReferralInformationDto']
-type SubmitReferralResponse = components['schemas']['SubmitReferralResponseDto']
 type ReferralDetailsResponseDto = components['schemas']['ReferralDetailsBffResponseDto']
-type CaseList = components['schemas']['ReferralCaseListDto']
-type PagedRequest = components['schemas']['Pagable']
 
 export type {
   Referral,
@@ -37,9 +33,5 @@ export type {
   ReferralUserAssignmentsDto,
   AssignmentFailureDto,
   CaseWorkerDto,
-  ReferralInformation,
-  SubmitReferralResponse,
-  CaseList,
-  PagedRequest,
   ReferralDetailsResponseDto,
 }

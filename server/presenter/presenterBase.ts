@@ -1,7 +1,7 @@
 import type { Response } from 'express'
 
 export default abstract class PresenterBase<T> {
-  constructor() { }
+  constructor() {}
 
   protected buildPageContent(res: Response): T {
     return this.buildPageContent(res)

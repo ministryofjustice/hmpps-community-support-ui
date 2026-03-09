@@ -1,7 +1,7 @@
 import { Factory } from 'fishery'
 import { CaseListContent } from '../../caseList/caseListViewModel'
 
-class CaselistContentFactory extends Factory<CaseListContent> { }
+class CaselistContentFactory extends Factory<CaseListContent> {}
 
 export default CaselistContentFactory.define(({ transientParams }) => ({
   inProgressSubNavTitle: transientParams.inProgressSubNavTitle || 'In progress cases',
