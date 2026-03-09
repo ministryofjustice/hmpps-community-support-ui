@@ -9,6 +9,9 @@ import type {
   SubmitReferralResponse,
   CaseList,
   PagedRequest,
+  ReferralUserAssignmentsRequest,
+  ReferralUserAssignmentsResponse,
+  CaseWorkerDto,
 } from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
@@ -47,5 +50,17 @@ export default class CommunitySupportApiClient extends RestClient {
       { path: `/bff/case-list/${!assigned ? 'unassigned' : 'in-progress'}?page=${page.page}&size=${page.size}` },
       asSystem(username),
     )
+  }
+
+  async getReferralUserAssignments(referralId: string, username: string): Promise<CaseWorkerDto[]> {
+    return this.get({ path: `/bff/referral-assignments/${referralId}` }, asSystem(username))
+  }
+
+  async submitReferralUserAssignments(
+    referralId: string,
+    assignmentsData: ReferralUserAssignmentsRequest,
+    username: string,
+  ): Promise<ReferralUserAssignmentsResponse> {
+    return this.post({ path: `/referral/${referralId}/assign`, data: assignmentsData }, asSystem(username))
   }
 }
