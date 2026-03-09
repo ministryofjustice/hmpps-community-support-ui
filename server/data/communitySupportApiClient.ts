@@ -12,10 +12,6 @@ import type {
   ReferralUserAssignmentsRequest,
   ReferralUserAssignmentsResponse,
   CaseWorkerDto,
-  ReferralInformation,
-  SubmitReferralResponse,
-  CaseList,
-  PagedRequest,
   ReferralDetailsResponseDto,
 } from '@community-support-api'
 import config from '../config'

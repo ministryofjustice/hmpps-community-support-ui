@@ -5,7 +5,6 @@ import { Page } from '../services/auditService'
 
 import ReferralController from '../referral/referralController'
 import CaseListController from '../caseList/caseListController'
-import CaseListController from '../caseList/caseListController'
 import CommunityServiceProviderController from '../referral/communityServiceProviders/communityServiceProviderController'
 import asyncMiddleware from '../middleware/asyncMiddleware'
 
