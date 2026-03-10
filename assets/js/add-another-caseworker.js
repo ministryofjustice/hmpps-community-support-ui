@@ -46,6 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     })
+    syncInputHiddenState()
     updateLegends()
   }
 
@@ -70,6 +71,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     block.hidden = true
     updateVisibilityAndButton()
+  }
+
+  function syncInputHiddenState() {
+    blocks.forEach(block => {
+      const input = block.querySelector('input[data-testid="caseWorkerInput"]')
+      if (!input) return
+
+      if (block.hidden) {
+        input.setAttribute('disabled', '')
+        input.value = ''
+      } else {
+        input.removeAttribute('disabled')
+      }
+    })
   }
 
   if (addButton) {
