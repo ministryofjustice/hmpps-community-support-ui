@@ -28,6 +28,13 @@ export const login = async (
   await attemptHmppsAuthLogin(page)
 }
 
+export const seedAppointmentSession = async (page: Page, appointmentRequest: object): Promise<void> => {
+  await page.request.post('/test/setup-appointment-session', {
+    data: appointmentRequest,
+    headers: { 'Content-Type': 'application/json' },
+  })
+}
+
 export const duplicateData = (dataToDuplicate: unknown, timesToDuplicates: number): Array<unknown> => {
   const duplicatedData = []
   // eslint-disable-next-line no-plusplus

@@ -41,5 +41,9 @@
     "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
     "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
     "noCasesMessage": "There are no {0} cases to view."
+  },
+  "/referral/:id/appointment/confirm-ics": {
+    "pageHeader": "Check the details before scheduling the ICS",
+    "submitButtonText": "Submit"
   }
 }
