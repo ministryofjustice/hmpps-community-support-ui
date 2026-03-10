@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from 'express'
-import { CreateAppointmentRequest } from '@community-support-api'
 import ConfirmIcsPresenter from './confirm-ics/confirmIcsPresenter'
 
 class AppointmentController {
