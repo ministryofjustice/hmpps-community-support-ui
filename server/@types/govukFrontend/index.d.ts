@@ -202,57 +202,52 @@ export interface GovukFrontendBreadcrumbsItem {
 // The button component is described at https://design-system.service.gov.uk/components/button.
 export interface GovukFrontendButton {
   /*
-    HTML element for the button component – `input`, `button` or `a`. In most cases you will not need to set this as it will be configured automatically if `href` is provided.
-  */
-  element?: string | null
-
-  /*
-    If `html` is set, this is not required. Text for the `input`, `button` or `a` element. If `html` is provided, the `text` option will be ignored and `element` will be automatically set to `"button"` unless `href` is also set, or it has already been defined.
+    If `html` is set, this is not required. Text for the button. If `html` is provided, the `text` option will be ignored.
   */
   text?: string | null
 
   /*
-    If `text` is set, this is not required. HTML for the `button` or `a` element only. If `html` is provided, the `text` option will be ignored and `element` will be automatically set to `"button"` unless `href` is also set, or it has already been defined. This option has no effect if `element` is set to `"input"`.
+    If `text` is set, this is not required. HTML for the button. If `html` is provided, the `text` option will be ignored.
   */
   html?: string | null
 
   /*
-    Name for the `input` or `button`. This has no effect on `a` elements.
-  */
-  name?: string | null
-
-  /*
-    Type for the `input` or `button` element – `"button"`, `"submit"` or `"reset"`. Defaults to `"submit"`. This has no effect on `a` elements.
+    Type of the button, determining its behaviour in forms – `"button"`, `"submit"` or `"reset"`. Defaults to `"submit"`. This has no effect if `href` is set.
   */
   type?: string | null
 
   /*
-    Value for the `button` element only. This has no effect on `a` or `input` elements.
+    Name of the button, sent when a form is submitted. This has no effect if `href` is set.
+  */
+  name?: string | null
+
+  /*
+    Value of the button, sent when a form is submitted. This has no effect if `href` is set.
   */
   value?: string | null
 
   /*
-    Whether the button component should be disabled. For `input` and `button` elements, `disabled` and `aria-disabled` attributes will be set automatically. This has no effect on `a` elements.
+    Whether the button should be disabled. `disabled` and `aria-disabled` attributes will be set automatically. This has no effect if `href` is set.
   */
   disabled?: boolean | null
 
   /*
-    The URL that the button component should link to. If this is set, `element` will be automatically set to `"a"` if it has not already been defined.
+    The URL that the button should link to.
   */
   href?: string | null
 
   /*
-    Classes to add to the button component.
+    Classes to add to the button.
   */
   classes?: string | null
 
   /*
-    HTML attributes (for example data attributes) to add to the button component.
+    HTML attributes (for example data attributes) to add to the button.
   */
   attributes?: Record<string, unknown> | null
 
   /*
-    Prevent accidental double clicks on submit buttons from submitting forms multiple times.
+    Prevent accidental double clicks on submit buttons from submitting forms multiple times. This has no effect if `href` is set.
   */
   preventDoubleClick?: boolean | null
 
@@ -1124,11 +1119,6 @@ export interface GovukFrontendFileUpload {
   id?: string | null
 
   /*
-    Optional initial value of the input.
-  */
-  value?: string | null
-
-  /*
     If `true`, file input will be disabled.
   */
   disabled?: boolean | null
@@ -1291,11 +1281,6 @@ export interface GovukFrontendFooter {
     HTML attributes (for example data attributes) to add to the footer component container.
   */
   attributes?: Record<string, unknown> | null
-
-  /*
-    If `true`, use the redesigned footer with the GOV.UK crown. Default is `false`.
-  */
-  rebrand?: boolean | null
 }
 
 export interface GovukFrontendFooterMeta {
@@ -1403,49 +1388,14 @@ export interface GovukFrontendFooterCopyright {
 // The header component is described at https://design-system.service.gov.uk/components/header.
 export interface GovukFrontendHeader {
   /*
-    The URL of the homepage. Defaults to `"/"`.
+    The URL of the homepage. Defaults to the GOV.UK homepage.
   */
   homepageUrl?: string | null
 
   /*
-    Product name, used when the product name follows on directly from ‘GOV.UK’. For example, GOV.UK Pay or GOV.UK Design System. In most circumstances, you should use `serviceName`.
+    Product name, used when the product name follows on directly from ‘GOV.UK’. For example, GOV.UK Pay or GOV.UK Design System. In most circumstances, you should use the [Service navigation component](https://design-system.service.gov.uk/components/service-navigation/).
   */
   productName?: string | null
-
-  /*
-    The name of your service, included in the header.
-  */
-  serviceName?: string | null
-
-  /*
-    URL for the service name anchor.
-  */
-  serviceUrl?: string | null
-
-  /*
-    Can be used to add navigation to the header component.
-  */
-  navigation?: GovukFrontendHeaderNavigationElement[] | null
-
-  /*
-    Classes for the navigation section of the header.
-  */
-  navigationClasses?: string | null
-
-  /*
-    Text for the `aria-label` attribute of the navigation. Defaults to the same value as `menuButtonText`.
-  */
-  navigationLabel?: string | null
-
-  /*
-    Text for the `aria-label` attribute of the button that opens the mobile navigation, if there is a mobile navigation menu.
-  */
-  menuButtonLabel?: string | null
-
-  /*
-    Text of the button that opens the mobile navigation menu, if there is a mobile navigation menu. There is no enforced character limit, but there is a limited display space so keep text as short as possible. By default, this is set to 'Menu'.
-  */
-  menuButtonText?: string | null
 
   /*
     Classes for the container, useful if you want to make the header fixed width.
@@ -1459,43 +1409,6 @@ export interface GovukFrontendHeader {
 
   /*
     HTML attributes (for example data attributes) to add to the header container.
-  */
-  attributes?: Record<string, unknown> | null
-
-  /*
-    If `true`, uses the Tudor crown from King Charles III's royal cypher. Otherwise, uses the St. Edward's crown. Default is `true`.
-  */
-  useTudorCrown?: boolean | null
-
-  /*
-    If `true`, use the redesigned header and new GOV.UK logotype. Default is `false`.
-  */
-  rebrand?: boolean | null
-}
-
-export interface GovukFrontendHeaderNavigationElement {
-  /*
-    Text for the navigation item. If `html` is provided, the `text` option will be ignored.
-  */
-  text?: string | null
-
-  /*
-    HTML for the navigation item. If `html` is provided, the `text` option will be ignored.
-  */
-  html?: string | null
-
-  /*
-    URL of the navigation item anchor.
-  */
-  href?: string | null
-
-  /*
-    Flag to mark the navigation item as active or not.
-  */
-  active?: boolean | null
-
-  /*
-    HTML attributes (for example data attributes) to add to the navigation item anchor.
   */
   attributes?: Record<string, unknown> | null
 }
