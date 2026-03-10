@@ -39,6 +39,16 @@ export default function createApp(services: Services): express.Application {
   app.use(setUpAuthentication())
   app.use(authorisationMiddleware(config.allowedRoles))
   app.use(setUpContent())
+
+  if (process.env.NODE_ENV !== 'production') {
+    // Test-only route: seeds the session with a createAppointmentRequest for integration tests.
+    // Registered before CSRF middleware so it is not blocked by CSRF protection.
+    app.post('/test/setup-appointment-session', (req, res) => {
+      req.session.createAppointmentRequest = req.body
+      res.status(200).json({ ok: true })
+    })
+  }
+
   app.use(setUpCsrf())
   app.use(setUpCurrentUser())
   app.use(setUpFormValidation())

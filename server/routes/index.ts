@@ -6,6 +6,7 @@ import { Page } from '../services/auditService'
 import ReferralController from '../referral/referralController'
 import CaseListController from '../caseList/caseListController'
 import CommunityServiceProviderController from '../referral/communityServiceProviders/communityServiceProviderController'
+import AppointmentController from '../appointment/appointmentController'
 import asyncMiddleware from '../middleware/asyncMiddleware'
 
 export default function routes({
@@ -28,6 +29,7 @@ export default function routes({
   const referralController = new ReferralController(referralService, personService)
   const communityServiceProviderController = new CommunityServiceProviderController(communityServiceProviderService)
   const caseListController = new CaseListController(caseListService)
+  const appointmentController = new AppointmentController()
 
   router.get('/', async (req, res, next) => {
     await auditService.logPageView(Page.INDEX_PAGE, { who: res.locals.user.username, correlationId: req.id })
@@ -82,6 +84,10 @@ export default function routes({
   get('/referral/:referralId/assigned', async (req, res, next) => {
     await referralController.showAssignedCaseWorkersPage(req, res, next)
   })
+
+  get('/referral/:referralId/appointment/confirm-ics', async (req, res, next) =>
+    appointmentController.checkIcs(req, res, next),
+  )
 
   return router
 }
