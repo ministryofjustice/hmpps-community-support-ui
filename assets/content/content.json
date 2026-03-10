@@ -34,8 +34,17 @@
         "href": "/cases-in-progress"
       }
     ],
-    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
-    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
+    "unassignedColumnHeaders": [
+      "Name",
+      "CRN/prison number",
+      "Date received"
+    ],
+    "inProgressColumnHeaders": [
+      "Name",
+      "CRN/prison number",
+      "Assigned to",
+      "Date received"
+    ],
     "noCasesMessage": "There are no {0} cases to view."
   },
   "/cases-in-progress": {
@@ -54,8 +63,17 @@
         "href": "/cases-in-progress"
       }
     ],
-    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
-    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
+    "unassignedColumnHeaders": [
+      "Name",
+      "CRN/prison number",
+      "Date received"
+    ],
+    "inProgressColumnHeaders": [
+      "Name",
+      "CRN/prison number",
+      "Assigned to",
+      "Date received"
+    ],
     "noCasesMessage": "There are no {0} cases to view."
   },
   "/referral-details/:id": {
@@ -90,25 +108,6 @@
       "referralDateLabel": "Referral date",
       "assignedToLabel": "Assigned to",
       "link": "Assign to caseworker"
-    },
-    "cards": [
-      {
-        "heading": "Personal details",
-        "labels": ["Name", "CRN", "Date of Birth", "Preferred language", "Disabilities"]
-      },
-      {
-        "heading": "Equality monitoring",
-        "labels": ["Ethnicity", "Religion or belief", "Sex", "Gender identity", "Sexual orientation", "Transgender"]
-      },
-      {
-        "heading": "Contact details",
-        "labels": ["Phone number", "Mobile number", "Email address", "Main address"]
-      },
-      {
-        "heading": "Referral details",
-        "labels": ["Referral date", "Assigned to"],
-        "link": "Assign to caseworker"
-      }
-    ]
+    }
   }
 }
