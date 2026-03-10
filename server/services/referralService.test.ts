@@ -1,4 +1,4 @@
-import { Referral } from '@community-support-api'
+import { Referral, CaseWorkerDto, AssignmentFailureDto } from '@community-support-api'
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
 import ReferralService from './referralService'
 
@@ -20,6 +20,68 @@ describe('Referral service tests', () => {
       const result = await referralService.getReferralById('referral123', 'user1')
       expect(result).toBe(mockReferralData)
       expect(communitySupportApiClient.getReferralById).toHaveBeenCalledWith('referral123', 'user1')
+    })
+  })
+
+  describe('getReferralUserAssignments', () => {
+    it('should return referral user assignments from API client', async () => {
+      const mockReferralUserAssignments = [
+        {
+          userType: 'EXTERNAL',
+          userId: 'test-user-id-123',
+          fullName: 'Test User 1 Fullname',
+          emailAddress: 'testuser1@email.com',
+        },
+        {
+          userType: 'EXTERNAL',
+          userId: 'test-user-id-124',
+          fullName: 'Test User 2 Fullname',
+          emailAddress: 'testuser2@email.com',
+        },
+      ] satisfies CaseWorkerDto[]
+      communitySupportApiClient.getReferralUserAssignments.mockResolvedValue(mockReferralUserAssignments)
+      const result = await referralService.getReferralUserAssignments('referral123', 'user1')
+      expect(result).toBe(mockReferralUserAssignments)
+      expect(communitySupportApiClient.getReferralUserAssignments).toHaveBeenCalledWith('referral123', 'user1')
+    })
+  })
+
+  describe('submitReferralUserAssignments', () => {
+    it('should return referral user assignments from API client', async () => {
+      const mockReferralUserAssignmentsRequest = {
+        emails: ['assignedUser1@email.com', 'assignedUser2@email.com'],
+      }
+      const mockReferralUserAssignmentsResponse = {
+        success: true,
+        message: 'The case has been assigned to caseworkers.',
+        succeededList: [
+          {
+            userType: 'EXTERNAL',
+            userId: 'assigned-user-id-1',
+            fullName: 'Assigned User 1',
+            emailAddress: 'assignedUser1@email.com',
+          },
+          {
+            userType: 'EXTERNAL',
+            userId: 'assigned-user-id-2',
+            fullName: 'Assigned User 2',
+            emailAddress: 'assignedUser2@email.com',
+          },
+        ] as CaseWorkerDto[],
+        failureList: [] as AssignmentFailureDto[],
+      }
+      communitySupportApiClient.submitReferralUserAssignments.mockResolvedValue(mockReferralUserAssignmentsResponse)
+      const result = await referralService.submitReferralUserAssignments(
+        'referral123',
+        mockReferralUserAssignmentsRequest,
+        'user1',
+      )
+      expect(result).toBe(mockReferralUserAssignmentsResponse)
+      expect(communitySupportApiClient.submitReferralUserAssignments).toHaveBeenCalledWith(
+        'referral123',
+        mockReferralUserAssignmentsRequest,
+        'user1',
+      )
     })
   })
 })

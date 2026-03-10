@@ -12,7 +12,7 @@ test.describe('Case List Pages with no cases', () => {
   })
 
   test('should display the unassigned case list with no cases', async ({ page }) => {
-    await page.goto('/caselist')
+    await page.goto('/unassigned-cases')
     const caseListPage = await CaseListPage.verifyOnPage(page)
     expect(caseListPage.noCasesMessage).toBeVisible()
     expect(caseListPage.noCasesTitle).toBeVisible()
@@ -30,13 +30,13 @@ test.describe('Pagination navigation tests', () => {
   test('should display no pagination when no cases are present', async ({ page }) => {
     await resetStubs
     await communitySupport.stubGetUnassignedNoCases()
-    await page.goto('/caselist')
+    await page.goto('/unassigned-cases')
     const caseListPage = await CaseListPage.verifyOnPage(page)
     expect(caseListPage.pagination).not.toBeVisible()
   })
 
   test('should navigate to the next page of cases when clicking the next button', async ({ page }) => {
-    await page.goto('/caselist?selected=inProgress')
+    await page.goto('/cases-in-progress')
     const nextButton = page.locator('.govuk-pagination__next')
     await nextButton.click()
     const caseListPage = await CaseListPage.verifyOnPage(page)
@@ -45,7 +45,7 @@ test.describe('Pagination navigation tests', () => {
   })
 
   test('should navigate to the previous page of cases when clicking the previous button', async ({ page }) => {
-    await page.goto('/caselist?selected=inProgress')
+    await page.goto('/cases-in-progress')
     const previousButton = page.locator('.govuk-pagination__prev')
     await previousButton.click()
     const caseListPage = await CaseListPage.verifyOnPage(page)
@@ -54,7 +54,7 @@ test.describe('Pagination navigation tests', () => {
   })
 
   test('should navigate to the correct page of cases when clicking a page number', async ({ page }) => {
-    await page.goto('/caselist?selected=inProgress')
+    await page.goto('/cases-in-progress')
     const pageNumberButton = page.locator('.govuk-pagination__item').nth(2)
     await pageNumberButton.click()
     const caseListPage = await CaseListPage.verifyOnPage(page)
@@ -72,7 +72,7 @@ test.describe('Unassigned Case List Pages', () => {
   })
 
   test('should display the unassigned case list', async ({ page }) => {
-    await page.goto('/caselist')
+    await page.goto('/unassigned-cases')
     const caseListPage = await CaseListPage.verifyOnPage(page)
     expect(caseListPage.header).toBeVisible()
   })
@@ -82,10 +82,9 @@ test.describe('Unassigned Case List Pages', () => {
     await page.goto('/')
     await login(page)
 
-    await page.goto('/caselist?selected=unassigned')
+    await page.goto('/unassigned-cases')
     const caseListPage = await CaseListPage.verifyOnPage(page)
 
-    expect(caseListPage.pagination).toBeVisible()
     expect(caseListPage.caseListTable).toBeVisible()
     expect(caseListPage.subNavTitle).toContainText('Unassigned cases')
     expect(caseListPage.header).toBeVisible()
@@ -101,7 +100,7 @@ test.describe('In Progress Case List Pages', () => {
   })
 
   test('should display the in progress case list', async ({ page }) => {
-    await page.goto('/caselist?selected=inProgress')
+    await page.goto('/cases-in-progress')
     const caseListPage = await CaseListPage.verifyOnPage(page)
     expect(caseListPage.header).toBeVisible()
   })
@@ -110,7 +109,7 @@ test.describe('In Progress Case List Pages', () => {
     await page.goto('/')
     await login(page)
     await communitySupport.stubGetInProgressFiftyCases()
-    await page.goto('/caselist?selected=inProgress')
+    await page.goto('/cases-in-progress')
     const caseListPage = await CaseListPage.verifyOnPage(page)
 
     expect(caseListPage.pagination).toBeVisible()

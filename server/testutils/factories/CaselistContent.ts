@@ -8,8 +8,8 @@ export default CaselistContentFactory.define(({ transientParams }) => ({
   unassignedSubNavTitle: transientParams.unassignedSubNavTitle || 'Unassigned cases',
   pageHeader: transientParams.pageHeader || 'Cases',
   subNavItems: transientParams.subNavItems || [
-    { id: 'unassigned', title: 'Unassigned cases', href: '/caselist?selected=unassigned' },
-    { id: 'inProgress', title: 'Cases in progress', href: '/caselist?selected=inProgress' },
+    { id: 'unassigned', title: 'Unassigned cases', href: '/unassigned-cases?selected=unassigned' },
+    { id: 'inProgress', title: 'Cases in progress', href: '/in-progress-cases' },
   ],
   unassignedColumnHeaders: transientParams.unassignedColumnHeaders || ['Name', 'CRN/Prison number', 'Date received'],
   inProgressColumnHeaders: transientParams.inProgressColumnHeaders || [

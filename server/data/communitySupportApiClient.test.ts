@@ -1,5 +1,12 @@
 import nock from 'nock'
-import type { CommunitySupportServicesProvider, CreateReferralRequest, Referral } from '@community-support-api'
+import type {
+  CommunitySupportServicesProvider,
+  CreateReferralRequest,
+  Referral,
+  ReferralUserAssignmentsRequest,
+  ReferralUserAssignmentsResponse,
+  CaseWorkerDto,
+} from '@community-support-api'
 import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import { AgentConfig, ApiConfig } from '@ministryofjustice/hmpps-rest-client'
 import CommunitySupportApiClient from './communitySupportApiClient'
@@ -147,6 +154,60 @@ describe('CommunitySupportApiClient tests', () => {
       const result = communitySupportApiClient.getCaseList('user1', page, true)
 
       expect(result).resolves.toEqual(caseListDto)
+    })
+  })
+  describe('getReferralUserAssignments tests', () => {
+    it('should return a referral user assignments on a 200 response', () => {
+      const mockCaseWorkers = [
+        {
+          userType: 'EXTERNAL',
+          userId: 'test-user-id-1',
+          fullName: 'Test user 1 full name',
+          emailAddress: 'testuser1@email.com',
+        },
+      ] as CaseWorkerDto[]
+      nock('http://localhost:8080', {
+        reqheaders: { authorization: 'Bearer dummy-token' },
+      })
+        .get('/bff/referral-assignments/referral-id-1')
+        .reply(200, mockCaseWorkers)
+
+      const result = communitySupportApiClient.getReferralUserAssignments('referral-id-1', 'user1')
+
+      expect(result).resolves.toEqual(mockCaseWorkers)
+    })
+  })
+  describe('postReferralUserAssignments tests', () => {
+    it('should submit referral user assignments on a 200 response', () => {
+      const mockReferralUserAssignmentRequestData = {
+        emails: ['testuser1@email.com'],
+      } as ReferralUserAssignmentsRequest
+      const mockReferralUserAssignmentsResponseData = {
+        success: true,
+        message: '',
+        succeededList: [
+          {
+            userType: 'EXTERNAL',
+            userId: 'test-user-id-1',
+            fullName: 'Test user 1 full name',
+            emailAddress: 'testuser1@email.com',
+          },
+        ],
+        failureList: [],
+      } as ReferralUserAssignmentsResponse
+      nock('http://localhost:8080', {
+        reqheaders: { authorization: 'Bearer dummy-token' },
+      })
+        .post('/referral/referral-id-1/assign', mockReferralUserAssignmentRequestData)
+        .reply(200, mockReferralUserAssignmentsResponseData)
+
+      const result = communitySupportApiClient.submitReferralUserAssignments(
+        'referral-id-1',
+        mockReferralUserAssignmentRequestData,
+        'user1',
+      )
+
+      expect(result).resolves.toEqual(mockReferralUserAssignmentsResponseData)
     })
   })
 })

@@ -1,5 +1,8 @@
 {% extends "govuk/template.njk" %}
 
+{% from "govuk/components/phase-banner/macro.njk" import govukPhaseBanner %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+
 {% block head %}
   <link href="{{ '/assets/css/index.css' | assetMap }}" rel="stylesheet"/>
 {% endblock %}
@@ -11,6 +14,22 @@
 {% endblock %}
 
 {% block bodyStart %}
+{% endblock %}
+
+{% block beforeContent %}
+<div>
+{{ govukPhaseBanner({
+  tag: {
+    text: "Alpha"
+  },
+  html: 'This is a new service. Help us improve it and <a class="govuk-link" href="#">give your feedback by email</a>.'
+}) }}
+{%- if content and content.backLink -%}
+  <nav>
+    {{ govukBackLink(content.backLink) }}
+  </nav>
+  {%- endif -%}
+</div>
 {% endblock %}
 
 {% block bodyEnd %}

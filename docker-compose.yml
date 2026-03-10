@@ -1,6 +1,6 @@
 services:
   redis:
-    image: 'cimg/redis:8.4'
+    image: 'cimg/redis:8.6'
     networks:
       - hmpps
     container_name: redis
@@ -109,7 +109,7 @@ services:
     restart: always
 
   postgresql:
-    image: postgres:18.1
+    image: postgres:18.3
     container_name: postgres
     networks:
       - hmpps

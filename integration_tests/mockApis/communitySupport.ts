@@ -2,6 +2,25 @@ import type { SuperAgentRequest } from 'superagent'
 import { stubFor } from './wiremock'
 import { duplicateData } from '../testUtils'
 
+export interface AssignmentFailureDto {
+  emailAddress: string
+  reason: string
+}
+export interface CaseWorkerDto {
+  /** @enum {string} */
+  userType: 'INTERNAL' | 'EXTERNAL'
+  /** Format: uuid */
+  userId?: string
+  fullName?: string
+  emailAddress: string
+}
+export interface ReferralUserAssignmentsResponse {
+  success: boolean
+  message: string
+  succeededList?: CaseWorkerDto[]
+  failureList?: AssignmentFailureDto[]
+}
+
 export default {
   stubPing: (httpStatus = 200): SuperAgentRequest =>
     stubFor({
@@ -152,6 +171,40 @@ export default {
           totalElements: 0,
           totalPages: 0,
         },
+      },
+    }),
+  stubNewReferralUserAssignments: (
+    referralId: string,
+    responseBody: ReferralUserAssignmentsResponse = { success: true, message: '', succeededList: [], failureList: [] },
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: `/community-support/bff/referral-assignments/${referralId}`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: responseBody,
+        transformers: ['response-template'],
+      },
+    }),
+  stubPostReferralUserAssignments: (
+    referralId: string,
+    expectedResponse: ReferralUserAssignmentsResponse,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'POST',
+        url: `/community-support/referral/${referralId}/assign`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: expectedResponse,
+        transformers: ['response-template'],
       },
     }),
 }

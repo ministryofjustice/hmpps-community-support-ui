@@ -1,3 +1,5 @@
+import { GovukFrontendPagination } from '@govuk-frontend'
+
 export type MojSubNavigation = {
   label: string
   items: Array<MojSubNavigationItem>
@@ -7,4 +9,13 @@ export type MojSubNavigationItem = {
   text: string
   href: string
   active?: boolean
+}
+
+export type MojPagination = GovukFrontendPagination & {
+  results: {
+    count: string
+    from: string
+    to: string
+    text: string
+  }
 }

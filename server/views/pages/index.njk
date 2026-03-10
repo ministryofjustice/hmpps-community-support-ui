@@ -4,9 +4,33 @@
 {% set mainClasses = "govuk-body" %}
 
 {% block content %}
-
-  <h1>Welcome to the Community Support service.</h1>
-  <p>Please check back later when there is content to view.</p>
-  <p data-qa="timestamp">The time is currently {{ currentTime }}</p>
-
+<h1 class="govuk-heading-l">Welcome to the Community Support service.</h1>
+    <div class="govuk-width-container">
+        <ul class="govuk-grid-row card-group">
+            <li class="govuk-grid-column-one-third card-group__item">
+                <div class="card card--clickable" data-test="global-search">
+                    <h2 class="govuk-heading-m card__heading">
+                        <a class="govuk-link card__link govuk-link--no-visited-state" href="/referral/new/find-a-person" onclick="showAlert()">Make a Referral</a>
+                    </h2>
+                    <p class="govuk-body card__description">Create a new referral.</p>
+                </div>
+            </li>
+            <li class="govuk-grid-column-one-third card-group__item">
+                <div class="card card--clickable" data-test="manage-prisoner-whereabouts">
+                    <h2 class="govuk-heading-m card__heading">
+                        <a class="govuk-link card__link govuk-link--no-visited-state" href="/unassigned-cases" onclick="showAlert()">Unassigned Cases</a>
+                    </h2>
+                    <p class="govuk-body card__description">View and assign cases.</p>
+                </div>
+            </li>
+            <li class="govuk-grid-column-one-third card-group__item">
+                <div class="card card--clickable" data-test="manage-prisoner-whereabouts">
+                    <h2 class="govuk-heading-m card__heading">
+                        <a class="govuk-link card__link govuk-link--no-visited-state" href="/cases-in-progress" onclick="showAlert()">Cases In Progress</a>
+                    </h2>
+                    <p class="govuk-body card__description">View cases in progress</p>
+                </div>
+            </li>
+        </ul>
+    </div>
 {% endblock %}

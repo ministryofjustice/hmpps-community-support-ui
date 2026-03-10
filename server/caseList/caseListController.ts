@@ -6,7 +6,7 @@ class CaseListController {
   constructor(private caseListService: CaseListService) {}
 
   async showCaseList(req: Request, res: Response) {
-    const selectedTab = (req.query.selected as string) || 'unassigned'
+    const selectedTab = req.path === '/cases-in-progress' ? 'inProgress' : 'unassigned'
     const currentPage = parseInt(req.query.page as string, 10) || 1
     const caseListResponse = await this.caseListService.getCaseList(
       res.locals.user.username,
