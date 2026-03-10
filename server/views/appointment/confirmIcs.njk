@@ -1,0 +1,29 @@
+{% extends "../partials/layout.njk" %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+
+{% set pageTitle = applicationName + " - Confirm ICS" %}
+{% set mainClasses = "govuk-body" %}
+
+{% block content %}
+{{ govukBackLink({ href: content.backlinkHref }) }}
+
+<h1 class="govuk-heading-xl">{{ content.pageHeader }}</h1>
+
+    {% if content.notificationBanner %}
+      {{ govukNotificationBanner(content.notificationBanner) }}
+    {% endif %}
+
+    {{ govukSummaryList(content.icsDetailsSummary) }}
+
+    <form method="post" action="{{ content.submitHref }}">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    {{ govukButton({
+        text: content.submitButtonText,
+        classes: "govuk-!-margin-top-6"
+    }) }}
+    </form>
+
+{% endblock %}
