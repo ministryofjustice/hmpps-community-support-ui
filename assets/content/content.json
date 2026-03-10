@@ -109,6 +109,7 @@
       "assignedToLabel": "Assigned to",
       "link": "Assign to caseworker"
     }
+  },
   "/referral/:id/appointment/confirm-ics": {
     "pageHeader": "Check the details before scheduling the ICS",
     "submitButtonText": "Submit"
