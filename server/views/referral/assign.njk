@@ -42,9 +42,24 @@
           {% for i in range(0, 5) %}
             {% set index = i %}
             {% set caseworker = caseworkers[i] if caseworkers and caseworkers | length > i else {} %}
+            {% set inputAttributes = {
+              "data-name": "caseworkers[%index%][email_address]",
+              "data-id": "caseworkers[%index%][email_address]",
+              "data-testid": "caseWorkerInput",
+              "autocomplete": "email"
+            } %}
             {% set labelText = "Caseworker" %}
             {% if index > 0 %}
               {% set labelText = labelText ~ " " ~ (index + 1) %}
+            {% endif %}
+            {% if index >= 1 %}
+              {% set inputAttributes = {
+                "data-name": "caseworkers[%index%][email_address]",
+                "data-id": "caseworkers[%index%][email_address]",
+                "data-testid": "caseWorkerInput",
+                "autocomplete": "email",
+                "disabled": ""
+              } %}
             {% endif %}
             <div class="moj-add-another__item caseworker-block"
                  data-caseworker-index="{{ index }}"
@@ -63,12 +78,7 @@
                   label: { html: "Enter the caseworker's email address", classes: "govuk-!-font-weight-bold" },
                   value: caseworker.emailAddress or "",
                   errorMessage: errors["caseworkers[" ~ index ~ "][email_address]"],
-                  attributes: {
-                    "data-name": "caseworkers[%index%][email_address]",
-                    "data-id": "caseworkers[%index%][email_address]",
-                    "data-testid": "caseWorkerInput",
-                    "autocomplete": "email"
-                  }
+                  attributes: inputAttributes
                 }) }}
                 {# Remove button – shown only for visible blocks after the first #}
                 {% if index >= 0 %}
