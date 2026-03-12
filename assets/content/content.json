@@ -23,11 +23,28 @@
     "unassignedSubNavTitle": "Unassigned cases",
     "inProgressSubNavTitle": "Cases in progress",
     "subNavItems": [
-      { "id": "unassigned", "title": "Unassigned", "href": "/unassigned-cases" },
-      { "id": "inProgress", "title": "In progress", "href": "/cases-in-progress" }
+      {
+        "id": "unassigned",
+        "title": "Unassigned",
+        "href": "/unassigned-cases"
+      },
+      {
+        "id": "inProgress",
+        "title": "In progress",
+        "href": "/cases-in-progress"
+      }
     ],
-    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
-    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
+    "unassignedColumnHeaders": [
+      "Name",
+      "CRN/prison number",
+      "Date received"
+    ],
+    "inProgressColumnHeaders": [
+      "Name",
+      "CRN/prison number",
+      "Assigned to",
+      "Date received"
+    ],
     "noCasesMessage": "There are no {0} cases to view."
   },
   "/cases-in-progress": {
@@ -35,12 +52,63 @@
     "unassignedSubNavTitle": "Unassigned cases",
     "inProgressSubNavTitle": "Cases in progress",
     "subNavItems": [
-      { "id": "unassigned", "title": "Unassigned", "href": "/unassigned-cases" },
-      { "id": "inProgress", "title": "In progress", "href": "/cases-in-progress" }
+      {
+        "id": "unassigned",
+        "title": "Unassigned",
+        "href": "/unassigned-cases"
+      },
+      {
+        "id": "inProgress",
+        "title": "In progress",
+        "href": "/cases-in-progress"
+      }
     ],
-    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
-    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
+    "unassignedColumnHeaders": [
+      "Name",
+      "CRN/prison number",
+      "Date received"
+    ],
+    "inProgressColumnHeaders": [
+      "Name",
+      "CRN/prison number",
+      "Assigned to",
+      "Date received"
+    ],
     "noCasesMessage": "There are no {0} cases to view."
+  },
+  "/referral-details/:id": {
+    "pageHeader": "Referral for ",
+    "pageSubHeader": "Case details",
+    "personalDetailsCard": {
+      "heading": "Personal details",
+      "nameLabel": "Name",
+      "crnLabel": "CRN",
+      "dobLabel": "Date of Birth",
+      "languageLabel": "Preferred language",
+      "disabilitiesLabel": "Disabilities"
+    },
+    "equalityMonitoringCard": {
+      "heading": "Equality monitoring",
+      "ethnicityLabel": "Ethnicity",
+      "religionLabel": "Religion or belief",
+      "sexLabel": "Sex",
+      "genderLabel": "Gender identity",
+      "sexualOrientationLabel": "Sexual orientation",
+      "transgenderLabel": "Transgender"
+    },
+    "contactDetailsCard": {
+      "heading": "Contact details",
+      "phoneNumberLabel": "Phone number",
+      "mobileNumberLabel": "Mobile number",
+      "emailAddressLabel": "Email address",
+      "mainAddressLabel": "Main address"
+    },
+    "referralDetailsCard": {
+      "heading": "Referral details",
+      "referralDateLabel": "Referral date",
+      "assignedToLabel": "Assigned to",
+      "link": "Assign to caseworker"
+    }
   },
   "/referral/:id/appointment/confirm-ics": {
     "pageHeader": "Check the details before scheduling the ICS",

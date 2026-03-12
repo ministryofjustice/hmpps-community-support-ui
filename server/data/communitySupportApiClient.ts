@@ -12,6 +12,7 @@ import type {
   ReferralUserAssignmentsRequest,
   ReferralUserAssignmentsResponse,
   CaseWorkerDto,
+  ReferralDetailsResponseDto,
 } from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
@@ -20,6 +21,10 @@ import { PagedResponse } from '../@types/communitySupportApi/derived'
 export default class CommunitySupportApiClient extends RestClient {
   constructor(authenticationClient: AuthenticationClient, apiConfig: ApiConfig = null) {
     super('Community Support API', apiConfig || config.apis.communitySupportService, logger, authenticationClient)
+  }
+
+  getCaseDetailsById(referralId: string, username: string): Promise<ReferralDetailsResponseDto> {
+    return this.get({ path: `/bff/referral-details-pages/${referralId}` }, asSystem(username))
   }
 
   async getReferralById(referralId: string, username: string): Promise<Referral> {

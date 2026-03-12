@@ -6,6 +6,7 @@ import ConfirmationPresenter from './confirmation/confirmationPresenter'
 import FoundPersonPresenter from './foundPerson/foundPersonPresenter'
 import logger from '../../logger'
 import CheckReferralInformationPresenter from './check-referral-information/checkReferralInformationPresenter'
+import ReferralDetailsPresenter from './referralDetails/ReferralDetailsPresenter'
 
 class ReferralController {
   constructor(
@@ -18,6 +19,15 @@ class ReferralController {
     const { username } = res.locals.user
     const referral = await this.referralService.getReferralById(referralId, username)
     return res.render('referral/referral', { referral })
+  }
+
+  async showReferralDetailsPage(req: Request, res: Response) {
+    const referralId = req.params.id
+    const { username } = res.locals.user
+    return this.referralService
+      .getCaseDetailsById(referralId.toString(), username)
+      .then(dto => new ReferralDetailsPresenter(dto))
+      .then(presenter => presenter.renderPage(res))
   }
 
   async handleFindPersonRequest(req: Request, res: Response, next: NextFunction) {

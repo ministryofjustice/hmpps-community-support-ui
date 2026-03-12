@@ -44,3 +44,28 @@ export default class ViewUtils {
     }
   }
 }
+
+export const escapeSpecialHtmlCharacters = (str: string): string => environment.getFilter('escape')(str).val
+
+export const newlineToHtmlBreak = (val: unknown): unknown =>
+  typeof val !== 'string' ? val : environment.getFilter('nl2br')(val)
+
+export const govFrontendSummaryListRow = (
+  key: string,
+  value: string,
+  actions: Array<GovukFrontendSummaryListRowActionsItem> = null,
+): GovukFrontendSummaryListRow => ({
+  key: { text: key },
+  value: { text: value },
+  actions: actions && actions.length > 0 ? { items: actions } : null,
+})
+
+export const govFrontendSummaryList = (
+  summaryListItems: GovukFrontendSummaryListRow[],
+  options: { showBorders: boolean } = { showBorders: true },
+  attributes?: GovukFrontendSummaryList['attributes'],
+): GovukFrontendSummaryList => ({
+  classes: options.showBorders ? undefined : 'govuk-summary-list--no-border',
+  rows: summaryListItems,
+  attributes,
+})

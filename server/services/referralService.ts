@@ -1,8 +1,16 @@
-import { CreateReferralRequest, ReferralUserAssignmentsRequest } from '@community-support-api'
+import {
+  CreateReferralRequest,
+  ReferralUserAssignmentsRequest,
+  ReferralDetailsResponseDto,
+} from '@community-support-api'
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
 
 export default class ReferralService {
   constructor(private readonly communitySupportApiClient: CommunitySupportApiClient) {}
+
+  getCaseDetailsById(referralId: string, username: string): Promise<ReferralDetailsResponseDto> {
+    return this.communitySupportApiClient.getCaseDetailsById(referralId, username)
+  }
 
   async getReferralById(referralId: string, username: string) {
     return this.communitySupportApiClient.getReferralById(referralId, username)

@@ -39,6 +39,8 @@ export default function routes({
 
   // NOTE: Generic `:id` route is declared after more-specific `/referral/*` routes
 
+  get('/referral-details/:id', async (req, res) => referralController.showReferralDetailsPage(req, res))
+
   getOrPost('/referral/new/find-a-person', async (req, res, next) => {
     await referralController.handleFindPersonRequest(req, res, next)
   })
