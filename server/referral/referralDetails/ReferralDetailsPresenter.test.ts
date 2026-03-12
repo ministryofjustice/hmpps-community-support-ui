@@ -1,11 +1,15 @@
 import { Response } from 'express'
 import { ReferralDetailsResponseDto } from '@community-support-api'
-import ReferralDetailsPresenter from './ReferralDetailsPresenter'
+import ReferralDetailsPresenter, { ReferralDetailsViewModel } from './ReferralDetailsPresenter'
 import ReferralDetailsContent from '../../testutils/factories/ReferralDetailsContent'
 
 describe('ReferralDetailsPresenter', () => {
-  test('construction from dto', () => {
-    const dto: ReferralDetailsResponseDto = {
+  let dto: ReferralDetailsResponseDto | null = null
+  let expected: ReferralDetailsViewModel | null = null
+  const today = new Date('2026-02-09T11:23:00.780Z')
+  jest.useFakeTimers().setSystemTime(today)
+  beforeEach(() => {
+    dto = {
       id: 'id-1',
       referenceNumber: 'QD0878DE',
       createdDate: '2026-02-10T11:23:00.780Z',
@@ -15,6 +19,7 @@ describe('ReferralDetailsPresenter', () => {
         preferredLanguage: 'English',
         disabilities: 'None',
         crn: 'CRN123',
+        CRN: 'CRN123',
       },
       equalityDetailsTableData: {
         ethnicity: 'White British',
@@ -35,13 +40,7 @@ describe('ReferralDetailsPresenter', () => {
         assignedTo: ['assigned1', 'assigned2'],
       },
     }
-    const today = new Date('2026-02-09T11:23:00.780Z')
-    jest.useFakeTimers().setSystemTime(today)
-    const presenter = new ReferralDetailsPresenter(dto)
-    const content = ReferralDetailsContent.build()
-    const response = { locals: { content } } as unknown as Response
-    const pageContent = presenter.buildPageContent(response)
-    expect(pageContent).toStrictEqual({
+    expected = {
       name: 'John Doe',
       personal: {
         card: {
@@ -243,6 +242,50 @@ describe('ReferralDetailsPresenter', () => {
           },
         ],
       },
-    })
+    }
+  })
+  test('rendering', () => {
+    const presenter = new ReferralDetailsPresenter(dto)
+    const content = ReferralDetailsContent.build()
+    const response = { locals: { content } } as unknown as Response
+    const pageContent = presenter.buildPageContent(response)
+    expect(pageContent).toStrictEqual(expected)
+  })
+  test('default values', () => {
+    dto.contactDetailsTableData.phoneNumber = ''
+    dto.contactDetailsTableData.mobileNumber = ' '
+    dto.contactDetailsTableData.email = null
+    dto.contactDetailsTableData.address = undefined
+    dto.referralDetailsTableData.assignedTo = []
+
+    const presenter = new ReferralDetailsPresenter(dto)
+    const content = ReferralDetailsContent.build()
+    const response = { locals: { content } } as unknown as Response
+    const pageContent = presenter.buildPageContent(response)
+
+    expected.referral.rows[1].value.text = 'Unassigned'
+    expected.contact.rows[0].value.text = 'No phone number'
+    expected.contact.rows[1].value.text = 'No mobile number'
+    expected.contact.rows[2].value.text = 'No email address'
+    expected.contact.rows[3].value.text = 'No main address'
+    expect(pageContent).toStrictEqual(expected)
+  })
+  test('default assign to value', () => {
+    dto.contactDetailsTableData.phoneNumber = ''
+    dto.contactDetailsTableData.mobileNumber = ' '
+    dto.contactDetailsTableData.email = null
+    dto.contactDetailsTableData.address = undefined
+    dto.referralDetailsTableData.assignedTo = null
+
+    const presenter = new ReferralDetailsPresenter(dto)
+    const content = ReferralDetailsContent.build()
+    const response = { locals: { content } } as unknown as Response
+    const pageContent = presenter.buildPageContent(response)
+    expected.referral.rows[1].value.text = 'Unassigned'
+    expected.contact.rows[0].value.text = 'No phone number'
+    expected.contact.rows[1].value.text = 'No mobile number'
+    expected.contact.rows[2].value.text = 'No email address'
+    expected.contact.rows[3].value.text = 'No main address'
+    expect(pageContent).toStrictEqual(expected)
   })
 })

@@ -21,6 +21,9 @@ export interface ReferralDetailsViewModel {
   referral: GovukFrontendSummaryList
 }
 
+const nonEmptyStringOrDefault = (str: string | undefined | null, defaultValue: string): string =>
+  (str ?? '').trim() || defaultValue
+
 export default class ReferralDetailsPresenter extends PresenterBase<ReferralDetailsViewModel> {
   private readonly assignReferalHref: string
 
@@ -41,7 +44,7 @@ export default class ReferralDetailsPresenter extends PresenterBase<ReferralDeta
 
   private buildPersonalDetails(cardContent: PersonalDetailsCard): GovukFrontendSummaryList {
     const { personDetailsTableData } = this.referralDetails
-    const { name, crn, dateOfBirth, preferredLanguage } = personDetailsTableData
+    const { name, CRN, dateOfBirth, preferredLanguage } = personDetailsTableData
     return {
       card: {
         title: { text: cardContent.heading },
@@ -49,7 +52,7 @@ export default class ReferralDetailsPresenter extends PresenterBase<ReferralDeta
       },
       rows: [
         govFrontendSummaryListRow(cardContent.nameLabel, name),
-        govFrontendSummaryListRow(cardContent.crnLabel, crn),
+        govFrontendSummaryListRow(cardContent.crnLabel, CRN),
         govFrontendSummaryListRow(cardContent.dobLabel, `${dateFormat(new Date(dateOfBirth))} (${this.age} years old)`),
         govFrontendSummaryListRow(cardContent.languageLabel, preferredLanguage),
         govFrontendSummaryListRow(
@@ -83,6 +86,10 @@ export default class ReferralDetailsPresenter extends PresenterBase<ReferralDeta
   private buildContactDetails(cardContent: ContactDetailsCard): GovukFrontendSummaryList {
     const { contactDetailsTableData } = this.referralDetails
     const { address, phoneNumber, mobileNumber, email } = contactDetailsTableData
+    const phoneNumberValue = nonEmptyStringOrDefault(phoneNumber, cardContent.phoneNumberDefaultValue)
+    const mobileNumberValue = nonEmptyStringOrDefault(mobileNumber, cardContent.mobileNumberDefaultValue)
+    const emailValue = nonEmptyStringOrDefault(email, cardContent.emailAddressDefaultValue)
+    const addressValue = nonEmptyStringOrDefault(address, cardContent.mainAddressDefaultValue)
     return {
       card: {
         title: {
@@ -91,10 +98,10 @@ export default class ReferralDetailsPresenter extends PresenterBase<ReferralDeta
         attributes: { 'data-testid': 'contact-details' },
       },
       rows: [
-        govFrontendSummaryListRow(cardContent.phoneNumberLabel, phoneNumber),
-        govFrontendSummaryListRow(cardContent.mobileNumberLabel, mobileNumber),
-        govFrontendSummaryListRow(cardContent.emailAddressLabel, email),
-        govFrontendSummaryListRow(cardContent.mainAddressLabel, address),
+        govFrontendSummaryListRow(cardContent.phoneNumberLabel, phoneNumberValue),
+        govFrontendSummaryListRow(cardContent.mobileNumberLabel, mobileNumberValue),
+        govFrontendSummaryListRow(cardContent.emailAddressLabel, emailValue),
+        govFrontendSummaryListRow(cardContent.mainAddressLabel, addressValue),
       ],
     }
   }
@@ -102,6 +109,8 @@ export default class ReferralDetailsPresenter extends PresenterBase<ReferralDeta
   private buildReferralDetails(cardContent: ReferralDetailsCard): GovukFrontendSummaryList {
     const { referralDetailsTableData } = this.referralDetails
     const { referralDate, assignedTo } = referralDetailsTableData
+    const assignedToArray = assignedTo || []
+    const assignedToValue = assignedToArray.length > 0 ? assignedTo.join(', ') : cardContent.assignedToDefaultValue
     return {
       card: {
         title: { text: cardContent.heading },
@@ -109,7 +118,7 @@ export default class ReferralDetailsPresenter extends PresenterBase<ReferralDeta
       },
       rows: [
         govFrontendSummaryListRow(cardContent.referralDateLabel, dateFormat(new Date(referralDate))),
-        govFrontendSummaryListRow(cardContent.assignedToLabel, assignedTo.join(', '), [
+        govFrontendSummaryListRow(cardContent.assignedToLabel, assignedToValue, [
           {
             text: cardContent.link,
             href: this.assignReferalHref,
@@ -132,11 +141,5 @@ export default class ReferralDetailsPresenter extends PresenterBase<ReferralDeta
 
   getTemplatePath(): string {
     return 'referral/referralDetails'
-  }
-
-  renderPage(res: Response) {
-    return res.render(this.getTemplatePath(), {
-      content: this.buildPageContent(res),
-    })
   }
 }

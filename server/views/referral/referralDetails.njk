@@ -7,6 +7,10 @@
 
 {% block content %}
 
+<div class="govuk-width-container">
+<div class="govuk-grid-row">
+<div class="govuk-grid-column-two-thirds">
+
 <h1>Referral for {{ content.name }}</h1>
 <h2>Case details</h2>
 
@@ -14,4 +18,9 @@
 {{ govukSummaryList(content.equality) }}
 {{ govukSummaryList(content.contact) }}
 {{ govukSummaryList(content.referral) }}
+
+</div>
+</div>
+</div>
+
 {% endblock %}

@@ -34,17 +34,8 @@
         "href": "/cases-in-progress"
       }
     ],
-    "unassignedColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Date received"
-    ],
-    "inProgressColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Assigned to",
-      "Date received"
-    ],
+    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
+    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
     "noCasesMessage": "There are no {0} cases to view."
   },
   "/cases-in-progress": {
@@ -63,17 +54,8 @@
         "href": "/cases-in-progress"
       }
     ],
-    "unassignedColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Date received"
-    ],
-    "inProgressColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Assigned to",
-      "Date received"
-    ],
+    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
+    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
     "noCasesMessage": "There are no {0} cases to view."
   },
   "/referral-details/:id": {
@@ -101,12 +83,17 @@
       "phoneNumberLabel": "Phone number",
       "mobileNumberLabel": "Mobile number",
       "emailAddressLabel": "Email address",
-      "mainAddressLabel": "Main address"
+      "mainAddressLabel": "Main address",
+      "phoneNumberDefaultValue": "No phone number",
+      "mobileNumberDefaultValue": "No mobile number",
+      "emailAddressDefaultValue": "No email address",
+      "mainAddressDefaultValue": "No main address"
     },
     "referralDetailsCard": {
       "heading": "Referral details",
       "referralDateLabel": "Referral date",
       "assignedToLabel": "Assigned to",
+      "assignedToDefaultValue": "Unassigned",
       "link": "Assign to caseworker"
     }
   },

@@ -29,12 +29,16 @@ export default referralDetailsContentFactory.define(({ transientParams }) => ({
     mobileNumberLabel: 'Mobile number',
     emailAddressLabel: 'Email address',
     mainAddressLabel: 'Main address',
-    labels: ['Phone number', 'Mobile number', 'Email address', 'Main address'],
+    phoneNumberDefaultValue: 'No phone number',
+    mobileNumberDefaultValue: 'No mobile number',
+    emailAddressDefaultValue: 'No email address',
+    mainAddressDefaultValue: 'No main address',
   },
   referralDetailsCard: {
     heading: 'Referral details',
     referralDateLabel: 'Referral date',
     assignedToLabel: 'Assigned to',
     link: 'Assign to caseworker',
+    assignedToDefaultValue: 'Unassigned',
   },
 }))
