@@ -256,7 +256,7 @@ test.describe('AssignPage', () => {
       await assignPage.emailAddressInputs[0].fill('testuser1@email.com')
       await assignPage.submitButton.click()
       await expect(page).toHaveURL(`/referral/${referralId}/assign`)
-      await AssignPage.verifyInvalidEmailOnPage(page)
+      await AssignPage.verifyInvalidEmailOnPage(assignPage, 0)
     })
   })
   // IPB-2010:AC9
@@ -281,7 +281,7 @@ test.describe('AssignPage', () => {
       await assignPage.emailAddressInputs[0].fill('')
       await assignPage.submitButton.click()
       await expect(page).toHaveURL(`/referral/${referralId}/assign`)
-      await AssignPage.verifyBlankEmailOnPage(page)
+      await AssignPage.verifyBlankEmailOnPage(assignPage, 0)
     })
   })
   // IPB-2010:AC10
@@ -306,7 +306,7 @@ test.describe('AssignPage', () => {
       await assignPage.emailAddressInputs[0].fill('unknownuear@email.com')
       await assignPage.submitButton.click()
       await expect(page).toHaveURL(`/referral/${referralId}/assign`)
-      await AssignPage.verifyUnrecognisedEmailOnPage(page)
+      await AssignPage.verifyUnrecognisedEmailOnPage(assignPage, 0)
     })
   })
   // IPB-2010: what happen if we fill the first input in the second again and then do the assignment
@@ -337,6 +337,82 @@ test.describe('AssignPage', () => {
       await assignPage.submitButton.click()
       await expect(page).toHaveURL(`/referral/${referralId}/assigned`)
       await AssignedPage.verifyAssignmentOnPage(page, 'single')
+    })
+  })
+  // IPB-2010: retrieve user assignments
+  test('Retrieve user assignments', async ({ page }) => {
+    await communitySupport.stubGetReferralUserAssignments(referralId, [
+      {
+        userType: 'EXTERNAL',
+        userId: 'test-user-id-1',
+        fullName: 'Test User Name',
+        emailAddress: 'testuser1@email.com',
+      },
+      {
+        userType: 'EXTERNAL',
+        userId: 'test-user-id-2',
+        fullName: 'Test User 2 Name',
+        emailAddress: 'testuser2@email.com',
+      },
+      {
+        userType: 'EXTERNAL',
+        userId: 'test-user-id-3',
+        fullName: 'Test User 3 Name',
+        emailAddress: 'testuser3@email.com',
+      },
+    ])
+    await test.step('retrieve user assignment', async () => {
+      await page.goto(`/referral/referral-assignments/${referralId}`)
+      const assignPage = await AssignPage.verifyOnPage(page)
+      await expect(assignPage.emailAddressInputs).toHaveLength(3)
+    })
+  })
+  // IPB-2010: what happen if we fill empty in first input, valid email in the second input, and invalid email in the third input then do the assignment
+  test('Adding an empty email, an valid email, and an invalid email in the inputs', async ({ page }) => {
+    await communitySupport.stubPostReferralUserAssignments(
+      referralId,
+      {
+        success: false,
+        message: 'Failed to assign case workers',
+        failureList: [
+          {
+            emailAddress: '',
+            reason: "Enter the caseworker's email address",
+          },
+          {
+            emailAddress: 'testuser1@email.com',
+            reason: '',
+          },
+          {
+            emailAddress: 'testuser2email.com',
+            reason: 'Enter an email address in the correct format, like name@example.com',
+          },
+        ],
+      },
+      400,
+    )
+    const assignPage = await AssignPage.verifyOnPage(page)
+    await test.step('assign an empty email address', async () => {
+      await expect(assignPage.emailAddressInputs).toHaveLength(1)
+      await assignPage.emailAddressInputs[0].fill('')
+      await assignPage.addAnotherCaseWorkerButton.click()
+      await assignPage.updateInputs()
+      await expect(assignPage.emailAddressInputs).toHaveLength(2)
+    })
+    await test.step('assign a valid case worker', async () => {
+      await expect(assignPage.emailAddressInputs).toHaveLength(2)
+      await assignPage.emailAddressInputs[1].fill('testuser1@email.com')
+      await assignPage.addAnotherCaseWorkerButton.click()
+      await assignPage.updateInputs()
+      await expect(assignPage.emailAddressInputs).toHaveLength(3)
+    })
+    await test.step('assign an invalid email address', async () => {
+      await expect(assignPage.emailAddressInputs).toHaveLength(3)
+      await assignPage.emailAddressInputs[2].fill('testuser2email.com')
+      await assignPage.submitButton.click()
+      await expect(page).toHaveURL(`/referral/${referralId}/assign`)
+      await AssignPage.verifyBlankEmailOnPage(assignPage, 0)
+      await AssignPage.verifyInvalidEmailOnPage(assignPage, 2)
     })
   })
 })

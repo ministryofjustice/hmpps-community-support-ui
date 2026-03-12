@@ -16,11 +16,11 @@ export default class AssignPage extends AbstractPage {
 
   public readonly submitButton: Locator
 
-  public readonly invalidEmailMessage: Locator
+  public readonly invalidEmailInputErrorMessage: string
 
-  public readonly blankEmailMessage: Locator
+  public readonly blankEmailInputErrorMessage: string
 
-  public readonly unrecognisedEmailMessage: Locator
+  public readonly unrecognisedEmailInputErrorMessage: string
 
   private constructor(page: Page) {
     super(page)
@@ -31,15 +31,9 @@ export default class AssignPage extends AbstractPage {
     this.removeCaseWorkerButtons = []
     this.emailAddressInputs = []
     this.submitButton = page.getByRole('button', { name: 'Submit' })
-    this.invalidEmailMessage = page
-      .locator('[data-testid="error-messages"] a[href*="#caseworkers"]')
-      .filter({ hasText: 'Enter an email address in the correct format' })
-    this.blankEmailMessage = page
-      .locator('[data-testid="error-messages"] a[href*="#caseworkers"]')
-      .filter({ hasText: `Enter the caseworker's email address` })
-    this.unrecognisedEmailMessage = page
-      .locator('[data-testid="error-messages"] a[href*="#caseworkers"]')
-      .filter({ hasText: 'Could not find a caseworker with that email address' })
+    this.invalidEmailInputErrorMessage = 'Enter an email address in the correct format, like name@example.com'
+    this.blankEmailInputErrorMessage = "Enter the caseworker's email address"
+    this.unrecognisedEmailInputErrorMessage = 'Could not find a caseworker with that email address'
   }
 
   async updateInputs() {
@@ -66,30 +60,30 @@ export default class AssignPage extends AbstractPage {
     return assignPage
   }
 
-  static async verifyInvalidEmailOnPage(page: Page): Promise<AssignPage> {
-    const assignPage = new AssignPage(page)
-    await expect(assignPage.header).toBeVisible()
-    await expect(assignPage.errorHeader).toBeVisible()
-    await expect(assignPage.invalidEmailMessage).toBeVisible()
-    await assignPage.updateInputs()
-    return assignPage
+  async verifyInputErrorMessage(inputIndex: number, expectedInputErrorMessage: string): Promise<AssignPage> {
+    const errorMessageLocator = this.page
+      .locator(`[data-testid="error-messages"] a[href*="#caseworkers\\[${inputIndex}\\]\\[email_address\\]"]`)
+      .filter({ hasText: expectedInputErrorMessage })
+    const errorInputLocator = this.page
+      .locator(`#caseworkers\\[${inputIndex}\\]\\[email_address\\]-error`)
+      .filter({ hasText: expectedInputErrorMessage })
+    await expect(this.header).toBeVisible()
+    await expect(this.errorHeader).toBeVisible()
+    await expect(errorMessageLocator).toBeVisible()
+    await expect(errorInputLocator).toBeVisible()
+    await this.updateInputs()
+    return this
   }
 
-  static async verifyBlankEmailOnPage(page: Page): Promise<AssignPage> {
-    const assignPage = new AssignPage(page)
-    await expect(assignPage.header).toBeVisible()
-    await expect(assignPage.errorHeader).toBeVisible()
-    await expect(assignPage.blankEmailMessage).toBeVisible()
-    await assignPage.updateInputs()
-    return assignPage
+  static async verifyInvalidEmailOnPage(page: AssignPage, inputIndex: number = 0): Promise<AssignPage> {
+    return page.verifyInputErrorMessage(inputIndex, page.invalidEmailInputErrorMessage)
   }
 
-  static async verifyUnrecognisedEmailOnPage(page: Page): Promise<AssignPage> {
-    const assignPage = new AssignPage(page)
-    await expect(assignPage.header).toBeVisible()
-    await expect(assignPage.errorHeader).toBeVisible()
-    await expect(assignPage.unrecognisedEmailMessage).toBeVisible()
-    await assignPage.updateInputs()
-    return assignPage
+  static async verifyBlankEmailOnPage(page: AssignPage, inputIndex: number = 0): Promise<AssignPage> {
+    return page.verifyInputErrorMessage(inputIndex, page.blankEmailInputErrorMessage)
+  }
+
+  static async verifyUnrecognisedEmailOnPage(page: AssignPage, inputIndex: number = 0): Promise<AssignPage> {
+    return page.verifyInputErrorMessage(inputIndex, page.unrecognisedEmailInputErrorMessage)
   }
 }

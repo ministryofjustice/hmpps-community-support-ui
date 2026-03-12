@@ -1,5 +1,10 @@
 import { Request, Response, NextFunction } from 'express'
-import { CreateReferralRequest, CaseWorkerDto, ReferralUserAssignmentsResponse } from '@community-support-api'
+import {
+  CreateReferralRequest,
+  CaseWorkerDto,
+  ReferralUserAssignmentsResponse,
+  AssignmentFailureDto,
+} from '@community-support-api'
 import ReferralService from '../services/referralService'
 import PersonService from '../services/personService'
 import ConfirmationPresenter from './confirmation/confirmationPresenter'
@@ -127,7 +132,7 @@ class ReferralController {
     const { username } = res.locals.user
     const { referralId } = req.params as { referralId: string }
     const { caseworkers } = req.body
-    let errorsList: unknown
+    let errorsList: Array<{ href: string; text: string }> = []
 
     const referralUserAssignmentsRequest = {
       emails: caseworkers
@@ -154,17 +159,24 @@ class ReferralController {
           emailAddress: item?.email_address,
         }))
 
-        errorsList = referralUserAssignmentsResponse.failureList.map(
-          (item: { emailAddress?: string; reason?: string }) => ({
-            href: `#caseworkers-email-${item.emailAddress?.replace(/[^a-zA-Z0-9]/g, '-') || 'unknown'}`,
-            text: item.reason,
-          }),
-        )
+        const fieldErrors: Record<string, { text: string }> = {}
+        referralUserAssignmentsResponse.failureList.forEach((failure: AssignmentFailureDto, index: number) => {
+          if (!failure.reason?.trim()) {
+            return
+          }
+          const key = `caseworkers[${index}][email_address]`
+          fieldErrors[key] = { text: failure.reason.trim() }
+          errorsList.push({
+            href: `#caseworkers[${index}][email_address]`,
+            text: failure.reason.trim(),
+          })
+        })
 
         return res.render('referral/assign', {
           referralId,
           caseworkers: formattedCaseworkers,
           errorsList,
+          errors: fieldErrors,
         })
       }
       if (error.responseStatus === 404) {
