@@ -15,6 +15,7 @@ describe('ReferralDetailsPresenter', () => {
         preferredLanguage: 'English',
         disabilities: 'None',
         crn: 'CRN123',
+        CRN: 'CRN123',
       },
       equalityDetailsTableData: {
         ethnicity: 'White British',
