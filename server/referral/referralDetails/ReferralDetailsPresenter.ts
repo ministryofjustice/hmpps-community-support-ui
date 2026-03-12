@@ -142,10 +142,4 @@ export default class ReferralDetailsPresenter extends PresenterBase<ReferralDeta
   getTemplatePath(): string {
     return 'referral/referralDetails'
   }
-
-  renderPage(res: Response) {
-    return res.render(this.getTemplatePath(), {
-      content: this.buildPageContent(res),
-    })
-  }
 }
