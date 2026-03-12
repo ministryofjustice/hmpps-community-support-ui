@@ -24,7 +24,7 @@ export default class CommunitySupportApiClient extends RestClient {
   }
 
   getCaseDetailsById(referralId: string, username: string): Promise<ReferralDetailsResponseDto> {
-    return this.get({ path: `/bff/referral-details-pages/${referralId}` }, asSystem(username))
+    return this.get({ path: `/bff/referral-details-page/${referralId}` }, asSystem(username))
   }
 
   async getReferralById(referralId: string, username: string): Promise<Referral> {
