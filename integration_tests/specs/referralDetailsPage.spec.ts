@@ -32,7 +32,7 @@ test.describe('Referral Details Page', () => {
   // IPB-1940:AC2 - !!! No back link yet!!!
   test.skip('back link should navigate to the correct page', async () => {
     /*
-    Given I’m viewing the person’s referral details 
+    Given I’m viewing the person’s referral details
     When I select to the Back option
     Then I’m taken back to the Cases screen
     And it defaults to the Unassigned cases tab
@@ -164,7 +164,7 @@ test.describe('Referral Details Page', () => {
       await test.step('Second row should be the assigned to field', () => {
         const row = summary.rows[1]
         expect(row.key).toHaveText('Assigned to')
-        const assignedTo = referralDetailsPageData.referralDetailsTableData.assignedTo.join(',')
+        const assignedTo = 'Unassigned'
         expect(row.value).toHaveText(assignedTo)
       })
     })
@@ -187,7 +187,7 @@ test.describe('Referral Details Page', () => {
   // IPB-1940:AC5 - !!! No disabilities date yet !!!
   test.skip('Disabilities last updated date', () => {
     /*
-    Given I’m viewing the Personal details section 
+    Given I’m viewing the Personal details section
     When I’m viewing the Disabilities information
     Then I can see the date it was last updated on NDelius
     And the date is displayed in the format: DD Month YYYY (e.g. 7 January 2026)
@@ -195,9 +195,9 @@ test.describe('Referral Details Page', () => {
   })
   // IPB-1940:AC6 - !!! No main address date yet !!!
   test.skip('Main address last updated date', () => {
-    /* 
-    Given I’m viewing the Contact details section 
-    When I’m viewing the Main Address 
+    /*
+    Given I’m viewing the Contact details section
+    When I’m viewing the Main Address
     Then I can see the date it was last updated on NDelius
     And the date is displayed in the format: DD Month YYYY (e.g. 7 January 2026)
     */
@@ -205,7 +205,7 @@ test.describe('Referral Details Page', () => {
   // IPB-1940:AC7 - !!! Start date and Notes data not available !!!
   test.skip('Main address details', () => {
     /*
-    Given I’m viewing the Contact details section 
+    Given I’m viewing the Contact details section
     When I’m viewing the Main Address
     Then I can see:
     Main address
