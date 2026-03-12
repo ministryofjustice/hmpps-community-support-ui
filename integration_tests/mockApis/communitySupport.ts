@@ -212,7 +212,7 @@ export default {
     stubFor({
       request: {
         method: 'GET',
-        urlPathPattern: '/community-support/bff/referral-details-pages/.*',
+        urlPathPattern: '/community-support/bff/referral-details-page/.*',
       },
       response: {
         status: httpStatus,
