@@ -42,6 +42,7 @@
           {% for i in range(0, 5) %}
             {% set index = i %}
             {% set caseworker = caseworkers[i] if caseworkers and caseworkers | length > i else {} %}
+            {% set isUsed = caseworker.emailAddress | default("") | trim | length > 0 %}
             {% set inputAttributes = {
               "data-name": "caseworkers[%index%][email_address]",
               "data-id": "caseworkers[%index%][email_address]",
@@ -52,7 +53,7 @@
             {% if index > 0 %}
               {% set labelText = labelText ~ " " ~ (index + 1) %}
             {% endif %}
-            {% if index >= 1 %}
+            {% if not isUsed and index >= 1 %}
               {% set inputAttributes = {
                 "data-name": "caseworkers[%index%][email_address]",
                 "data-id": "caseworkers[%index%][email_address]",
@@ -63,7 +64,7 @@
             {% endif %}
             <div class="moj-add-another__item caseworker-block"
                  data-caseworker-index="{{ index }}"
-                 {% if index >= 1 %}hidden{% endif %}>
+                 {% if not isUsed and index >= 1 %}hidden{% endif %}>
               {% call govukFieldset({
                 classes: "govuk-fieldset",
                 legend: {

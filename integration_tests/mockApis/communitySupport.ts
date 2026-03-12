@@ -2,6 +2,9 @@ import type { SuperAgentRequest } from 'superagent'
 import { stubFor } from './wiremock'
 import { duplicateData } from '../testUtils'
 
+export interface AssignCaseWorkersRequest {
+  emails: string[]
+}
 export interface AssignmentFailureDto {
   emailAddress: string
   reason: string
@@ -176,6 +179,23 @@ export default {
   stubNewReferralUserAssignments: (
     referralId: string,
     responseBody: ReferralUserAssignmentsResponse = { success: true, message: '', succeededList: [], failureList: [] },
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: `/community-support/bff/referral-assignments/${referralId}`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: responseBody,
+        transformers: ['response-template'],
+      },
+    }),
+  stubGetReferralUserAssignments: (
+    referralId: string,
+    responseBody: CaseWorkerDto[],
     httpStatus = 200,
   ): SuperAgentRequest =>
     stubFor({
