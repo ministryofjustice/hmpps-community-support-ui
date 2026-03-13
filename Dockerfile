@@ -1,5 +1,5 @@
 # Stage: base image
-FROM node:24-alpine AS base
+FROM ghcr.io/ministryofjustice/hmpps-node:24-alpine AS base
 
 LABEL maintainer="HMPPS Digital Studio <info@digital.justice.gov.uk>"
 
@@ -10,14 +10,19 @@ RUN apk --update-cache upgrade --available \
 ENV TZ=Europe/London
 RUN ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime && echo "$TZ" > /etc/timezone
 
-RUN addgroup --gid 2000 --system appgroup && \
-        adduser --uid 2000 --system appuser --ingroup appgroup
+RUN set -eux; \
+                if ! grep -qE '^appgroup:' /etc/group; then \
+                        addgroup --gid 2000 --system appgroup; \
+                fi; \
+                if ! grep -qE '^appuser:' /etc/passwd; then \
+                        adduser --uid 2000 --system appuser --ingroup appgroup; \
+                fi
 
 WORKDIR /app
 
-ARG BUILD_NUMBER
-ARG GIT_REF
-ARG GIT_BRANCH
+ARG BUILD_NUMBER=local
+ARG GIT_REF=unknown
+ARG GIT_BRANCH=local
 
 # Cache breaking and ensure required build / git args defined
 RUN test -n "$BUILD_NUMBER" || (echo "BUILD_NUMBER not set" && false)
@@ -32,9 +37,9 @@ ENV GIT_BRANCH=${GIT_BRANCH}
 # Stage: build assets
 FROM base AS build
 
-ARG BUILD_NUMBER
-ARG GIT_REF
-ARG GIT_BRANCH
+ARG BUILD_NUMBER=local
+ARG GIT_REF=unknown
+ARG GIT_BRANCH=local
 
 COPY package*.json ./
 RUN npm ci --no-audit
@@ -47,6 +52,14 @@ RUN npm prune --no-audit --omit=dev
 
 # Stage: copy production assets and dependencies
 FROM base
+
+RUN set -eux; \
+    if ! grep -qE '^appgroup:' /etc/group; then \
+      addgroup --gid 2000 --system appgroup; \
+    fi; \
+    if ! grep -qE '^appuser:' /etc/passwd; then \
+      adduser --uid 2000 --system appuser --ingroup appgroup; \
+    fi
 
 COPY --from=build --chown=appuser:appgroup \
         /app/package.json \
