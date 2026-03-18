@@ -7,7 +7,7 @@ export default class ReferralDetailsPage extends AbstractPage {
     page: Page,
     readonly header: Locator,
     readonly personalDetailsSummary: SummaryList,
-    readonly equalityMonteringSummary: SummaryList,
+    readonly equalityMonitoringSummary: SummaryList,
     readonly contactDetailsSummary: SummaryList,
     readonly referralDetailsSummary: SummaryList,
   ) {
@@ -18,14 +18,14 @@ export default class ReferralDetailsPage extends AbstractPage {
     const header = page.locator('h1')
     await expect(header).toBeVisible()
     const personalDetailsSummary = await SummaryList.create(page.locator('[data-testid="personal-details"]'))
-    const equalityMonteringSummary = await SummaryList.create(page.locator('[data-testid="equality-details"]'))
+    const equalityMonitoringSummary = await SummaryList.create(page.locator('[data-testid="equality-details"]'))
     const contactDetailsSummary = await SummaryList.create(page.locator('[data-testid="contact-details"]'))
     const referralDetailsSummary = await SummaryList.create(page.locator('[data-testid="referral-details"]'))
     const referralDetailsPage = new ReferralDetailsPage(
       page,
       header,
       personalDetailsSummary,
-      equalityMonteringSummary,
+      equalityMonitoringSummary,
       contactDetailsSummary,
       referralDetailsSummary,
     )

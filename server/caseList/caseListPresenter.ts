@@ -58,6 +58,8 @@ export default class CaseListPresenter extends PresenterBase<CaseListViewModel> 
       crnOrPrisonNumber: caseItem.personIdentifier,
       caseWorkers: caseItem.caseWorkers,
       dateReceived: caseItem.date,
+      id: caseItem.referralId,
+      caseIdentifier: caseItem.referenceNumber,
     }))
   }
 
@@ -161,7 +163,7 @@ export default class CaseListPresenter extends PresenterBase<CaseListViewModel> 
   private buildUnassignedTableRows(): Array<GovukFrontendTableRow> {
     return this.parsedCaseList.map(caseItem => [
       {
-        html: `<a href="/case/${caseItem.crnOrPrisonNumber}"><strong>${caseItem.name}</strong></a>`,
+        html: `<a href="/referral-details/${caseItem.caseIdentifier}"><strong>${caseItem.name}</strong></a>`,
         classes: 'govuk-!-width-one-quarter',
         attributes: {
           'data-sort-value': `${caseItem.name.toLowerCase().split(', ')[0]}`,
@@ -179,7 +181,7 @@ export default class CaseListPresenter extends PresenterBase<CaseListViewModel> 
   private buildInProgressTableRows(): GovukFrontendTableRow[] {
     return this.parsedCaseList.map(caseItem => [
       {
-        html: `<a href="/case/${caseItem.crnOrPrisonNumber}"><strong>${caseItem.name}</strong></a>`,
+        html: `<a href="/referral-details/${caseItem.caseIdentifier}"><strong>${caseItem.name}</strong></a>`,
         classes: 'govuk-!-width-one-quarter',
         attributes: {
           'data-sort-value': `${caseItem.name.toLowerCase().split(', ')[0]}`,

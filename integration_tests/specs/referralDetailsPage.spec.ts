@@ -41,7 +41,7 @@ test.describe('Referral Details Page', () => {
   // IPB-1940:AC3
   test('Referral Details Sections', async ({ page }) => {
     const referralDetailsPage = await ReferralDetailsPage.verifyOnPage(page)
-    await test.step('persional details summary', async () => {
+    await test.step('personal details summary', async () => {
       const summary = referralDetailsPage.personalDetailsSummary
       await test.step('title should be "Personal details"', () => {
         expect(summary.title).toHaveText('Personal details')
@@ -79,7 +79,7 @@ test.describe('Referral Details Page', () => {
       })
     })
     await test.step('equality monitoring summary', async () => {
-      const summary = referralDetailsPage.equalityMonteringSummary
+      const summary = referralDetailsPage.equalityMonitoringSummary
       await test.step('title should be "Equality monitoring"', () => {
         expect(summary.title).toHaveText('Equality monitoring')
       })
@@ -128,22 +128,22 @@ test.describe('Referral Details Page', () => {
       await test.step('First row should be the phone number field', () => {
         const row = summary.rows[0]
         expect(row.key).toHaveText('Phone number')
-        expect(row.value).toHaveText(referralDetailsPageData.contactDetailsTableData.phoneNumber)
+        expect(row.value).toHaveText(referralDetailsPageData.contactDetailsTableData.phoneNumber as string)
       })
       await test.step('Second row should be the mobile number field', () => {
         const row = summary.rows[1]
         expect(row.key).toHaveText('Mobile number')
-        expect(row.value).toHaveText(referralDetailsPageData.contactDetailsTableData.mobileNumber)
+        expect(row.value).toHaveText(referralDetailsPageData.contactDetailsTableData.mobileNumber as string)
       })
       await test.step('Third row should be the email address field', () => {
         const row = summary.rows[2]
         expect(row.key).toHaveText('Email address')
-        expect(row.value).toHaveText(referralDetailsPageData.contactDetailsTableData.email)
+        expect(row.value).toHaveText(referralDetailsPageData.contactDetailsTableData.email as string)
       })
       await test.step('Fourth row should be the main address field', () => {
         const row = summary.rows[3]
         expect(row.key).toHaveText('Main address')
-        expect(row.value).toHaveText(referralDetailsPageData.contactDetailsTableData.address)
+        expect(row.value).toHaveText(referralDetailsPageData.contactDetailsTableData.address as string)
       })
     })
     await test.step('referral details summary', async () => {
@@ -172,7 +172,7 @@ test.describe('Referral Details Page', () => {
   // IPB-1940:AC4
   test('Calculated age', async ({ page }) => {
     const referralDetailsPage = await ReferralDetailsPage.verifyOnPage(page)
-    await test.step('persional details summary', async () => {
+    await test.step('personal details summary', async () => {
       const summary = referralDetailsPage.personalDetailsSummary
       await test.step('Age should be displayed along with date of birth', () => {
         const row = summary.rows[2]

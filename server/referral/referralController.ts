@@ -27,10 +27,10 @@ class ReferralController {
   }
 
   async showReferralDetailsPage(req: Request, res: Response) {
-    const referralId = req.params.id
+    const referralId = req.params.id as string
     const { username } = res.locals.user
     return this.referralService
-      .getCaseDetailsById(referralId.toString(), username)
+      .getCaseDetailsByCaseIdentifier(referralId, username)
       .then(dto => new ReferralDetailsPresenter(dto))
       .then(presenter => presenter.renderPage(res))
   }

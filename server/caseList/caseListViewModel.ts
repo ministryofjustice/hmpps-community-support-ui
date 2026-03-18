@@ -32,4 +32,6 @@ export type CaseListCase = {
   crnOrPrisonNumber: string
   caseWorkers: Array<string>
   dateReceived: string
+  id: string
+  caseIdentifier: string
 }
