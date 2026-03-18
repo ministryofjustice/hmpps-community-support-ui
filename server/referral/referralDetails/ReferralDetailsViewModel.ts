@@ -20,13 +20,9 @@ export interface EqualityMonitoringCard {
 export interface ContactDetailsCard {
   heading: string
   phoneNumberLabel: string
-  phoneNumberDefaultValue: string
   mobileNumberLabel: string
-  mobileNumberDefaultValue: string
   emailAddressLabel: string
-  emailAddressDefaultValue: string
   mainAddressLabel: string
-  mainAddressDefaultValue: string
 }
 
 export interface ReferralDetailsCard {
@@ -35,11 +31,14 @@ export interface ReferralDetailsCard {
   assignedToLabel: string
   assignedToDefaultValue: string
   link: string
+  linkChange: string
 }
 
 export interface ReferralDetailsContent {
   pageHeader: string
   pageSubHeader: string
+  backLink: string
+  defaultFieldValue: string
   personalDetailsCard: PersonalDetailsCard
   equalityMonitoringCard: EqualityMonitoringCard
   contactDetailsCard: ContactDetailsCard

@@ -42,6 +42,7 @@ describe('ReferralDetailsPresenter', () => {
     }
     expected = {
       name: 'John Doe',
+      backLink: { href: '/unassigned-cases' },
       personal: {
         card: {
           title: {
@@ -234,7 +235,7 @@ describe('ReferralDetailsPresenter', () => {
             actions: {
               items: [
                 {
-                  text: 'Assign to caseworker',
+                  text: 'Change',
                   href: '/referral/id-1/assign',
                 },
               ],
@@ -264,10 +265,11 @@ describe('ReferralDetailsPresenter', () => {
     const pageContent = presenter.buildPageContent(response)
 
     expected.referral.rows[1].value.text = 'Unassigned'
-    expected.contact.rows[0].value.text = 'No phone number'
-    expected.contact.rows[1].value.text = 'No mobile number'
-    expected.contact.rows[2].value.text = 'No email address'
-    expected.contact.rows[3].value.text = 'No main address'
+    expected.contact.rows[0].value.text = 'Not available'
+    expected.contact.rows[1].value.text = 'Not available'
+    expected.contact.rows[2].value.text = 'Not available'
+    expected.contact.rows[3].value.text = 'Not available'
+    expected.referral.rows[1].actions.items[0].text = 'Assign to caseworker'
     expect(pageContent).toStrictEqual(expected)
   })
   test('default assign to value', () => {
@@ -282,10 +284,11 @@ describe('ReferralDetailsPresenter', () => {
     const response = { locals: { content } } as unknown as Response
     const pageContent = presenter.buildPageContent(response)
     expected.referral.rows[1].value.text = 'Unassigned'
-    expected.contact.rows[0].value.text = 'No phone number'
-    expected.contact.rows[1].value.text = 'No mobile number'
-    expected.contact.rows[2].value.text = 'No email address'
-    expected.contact.rows[3].value.text = 'No main address'
+    expected.contact.rows[0].value.text = 'Not available'
+    expected.contact.rows[1].value.text = 'Not available'
+    expected.contact.rows[2].value.text = 'Not available'
+    expected.contact.rows[3].value.text = 'Not available'
+    expected.referral.rows[1].actions.items[0].text = 'Assign to caseworker'
     expect(pageContent).toStrictEqual(expected)
   })
 })
