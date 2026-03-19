@@ -49,7 +49,7 @@ export default class ReferralDetailsPresenter extends PresenterBase<ReferralDeta
 
   private buildPersonalDetails(cardContent: PersonalDetailsCard, defaultFieldValue: string): GovukFrontendSummaryList {
     const { personDetailsTableData } = this.referralDetails
-    const { name, CRN, dateOfBirth, preferredLanguage, disabilities } = personDetailsTableData
+    const { name, crn, dateOfBirth, preferredLanguage, disabilities } = personDetailsTableData
     return {
       card: {
         title: { text: cardContent.heading },
@@ -57,7 +57,7 @@ export default class ReferralDetailsPresenter extends PresenterBase<ReferralDeta
       },
       rows: [
         govFrontendSummaryListRow(cardContent.nameLabel, nonEmptyStringOrDefault(name, defaultFieldValue)),
-        govFrontendSummaryListRow(cardContent.crnLabel, nonEmptyStringOrDefault(CRN, defaultFieldValue)),
+        govFrontendSummaryListRow(cardContent.crnLabel, nonEmptyStringOrDefault(crn, defaultFieldValue)),
         govFrontendSummaryListRow(
           cardContent.dobLabel,
           nonEmptyStringOrDefault(`${dateFormat(new Date(dateOfBirth))} (${this.age} years old)`, defaultFieldValue),

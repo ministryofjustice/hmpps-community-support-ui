@@ -8,8 +8,8 @@ import CommunitySupportApiClient from '../data/communitySupportApiClient'
 export default class ReferralService {
   constructor(private readonly communitySupportApiClient: CommunitySupportApiClient) {}
 
-  getCaseDetailsById(referralId: string, username: string): Promise<ReferralDetailsResponseDto> {
-    return this.communitySupportApiClient.getCaseDetailsById(referralId, username)
+  getCaseDetailsByCaseIdentifier(caseIdentifier: string, username: string): Promise<ReferralDetailsResponseDto> {
+    return this.communitySupportApiClient.getCaseDetailsById(caseIdentifier, username)
   }
 
   async getReferralById(referralId: string, username: string) {

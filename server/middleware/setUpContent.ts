@@ -16,13 +16,20 @@ function loadContentData(): Record<string, Record<string, string>> {
 }
 
 function getContentForPath(req: Request, contentData: Record<string, Record<string, string>>): Record<string, string> {
-  const parsedPath = replaceUUIDWithPlaceholder(req.path)
+  const parsedPath = parsePlaceholdersFromPath(req.path)
   return contentData[parsedPath] || {}
 }
 
-function replaceUUIDWithPlaceholder(pathToParse: string): string {
-  const uuidRegex = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi
-  return pathToParse.replace(uuidRegex, ':id')
+function parsePlaceholdersFromPath(pathToParse: string): string {
+  const uuidRegex = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i
+  const caseReferenceRegex = /[a-z]{2}\d{4}[a-z]{2}$/i
+  if (pathToParse.match(uuidRegex)) {
+    return pathToParse.replace(uuidRegex, ':id')
+  }
+  if (pathToParse.match(caseReferenceRegex)) {
+    return pathToParse.replace(caseReferenceRegex, ':id')
+  }
+  return pathToParse
 }
 
 export default function setUpContent(): Router {
@@ -31,7 +38,7 @@ export default function setUpContent(): Router {
   router.use((req: Request, res: Response, next: NextFunction) => {
     const content = getContentForPath(req, loadContentData())
     if (Object.keys(content).length === 0) {
-      logger.warn(`No content found for path ${req.path} (parsed as ${replaceUUIDWithPlaceholder(req.path)})`)
+      logger.warn(`No content found for path ${req.path} (parsed as ${parsePlaceholdersFromPath(req.path)})`)
     }
     res.locals.content = content
     next()

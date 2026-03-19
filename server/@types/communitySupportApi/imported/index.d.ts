@@ -4,6 +4,23 @@
  */
 
 export interface paths {
+  '/referral/{referralId}/assign': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Assign case workers to a referral */
+    post: operations['assignCaseWorkers']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/bff/{referralId}/submit-a-referral': {
     parameters: {
       query?: never
@@ -32,24 +49,6 @@ export interface paths {
     put?: never
     /** Create a referral */
     post: operations['createReferral']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/bff/referral/{referralId}/ics': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get all ICS appointments for a referral */
-    get: operations['getIcsAppointments']
-    put?: never
-    /** Book an ICS appointment for a referral */
-    post: operations['createIcsAppointment']
     delete?: never
     options?: never
     head?: never
@@ -125,7 +124,24 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/bff/referral-details-page/{referralId}': {
+  '/bff/referral-details/{referralId}/progress': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get referral progress page data */
+    get: operations['getReferralProgressDetails']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/referral-details-page/{caseIdentifier}': {
     parameters: {
       query?: never
       header?: never
@@ -227,44 +243,31 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/referral/{referralId}/assign': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** Assign case workers to a referral */
-    post: operations['submitReferralUserAssignments']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/bff/referral-assignments/{referralId}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get referral assignments by ID */
-    get: operations['getReferralUserAssignments']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
 }
 export type webhooks = Record<string, never>
 export interface components {
   schemas: {
+    AssignCaseWorkersRequest: {
+      emails: string[]
+    }
+    AssignCaseWorkersResult: {
+      success: boolean
+      message: string
+      succeededList?: components['schemas']['CaseWorkerDto'][]
+      failureList?: components['schemas']['AssignmentFailureDto'][]
+    }
+    AssignmentFailureDto: {
+      emailAddress: string
+      reason: string
+    }
+    CaseWorkerDto: {
+      /** @enum {string} */
+      userType: 'INTERNAL' | 'EXTERNAL'
+      /** Format: uuid */
+      userId?: string
+      fullName?: string
+      emailAddress: string
+    }
     SubmitReferralResponseDto: {
       /** Format: uuid */
       referralId: string
@@ -346,10 +349,13 @@ export interface components {
       appointmentId: string
       /** Format: uuid */
       referralId: string
-      appointmentType: string
+      /** @enum {string} */
+      appointmentType: 'ICS'
       /** Format: date */
       appointmentDate: string
       appointmentTime: components['schemas']['AppointmentTimeResponse']
+      /** @enum {string} */
+      appointmentStatus: 'SCHEDULED' | 'ATTENDED'
       sessionMethod: components['schemas']['InPersonAppointment'] | components['schemas']['VirtualAppointment']
       sessionCommunications: string[]
       /** Format: date-time */
@@ -381,42 +387,6 @@ export interface components {
     } & (Omit<WithRequired<components['schemas']['SessionMethod'], 'type'>, 'appointmentCategory'> & {
       whyNotInPersonReason?: string
     })
-    ReferralUserAssignmentDto: {
-      userType: string
-      userId: string
-      fullName: string
-      emailAddress: string
-    }
-    AssignCaseWorkersRequest: {
-      emails: string[]
-    }
-    AssignCaseWorkersResult: {
-      success: boolean
-      message: string
-      succeededList?: components['schemas']['CaseWorkerDto'][]
-      failureList?: components['schemas']['AssignmentFailureDto'][]
-    }
-    AssignmentFailureDto: {
-      emailAddress: string
-      reason: string
-    }
-    CaseWorkerDto: {
-      /** @enum {string} */
-      userType: 'INTERNAL' | 'EXTERNAL'
-      /** Format: uuid */
-      userId?: string
-      fullName?: string
-      emailAddress: string
-    }
-    ReferralUserAssignmentsRequest: {
-      emails: string[]
-    }
-    ReferralUserAssignmentsResponse: {
-      success: boolean
-      message: string
-      succeededList?: CaseWorkerDto[]
-      failureList?: AssignmentFailureDto[]
-    }
     CommunitySupportServiceDto: {
       id: string
       region: string
@@ -458,10 +428,10 @@ export interface components {
       moreInfo?: string
     }
     ContactDetailsTableDataDto: {
-      phoneNumber: string
-      mobileNumber: string
-      email: string
-      address: string
+      phoneNumber?: string
+      mobileNumber?: string
+      email?: string
+      address?: string
     }
     EqualityDetailsTableDataDto: {
       ethnicity?: string
@@ -473,11 +443,10 @@ export interface components {
     }
     PersonDetailsTableDataDto: {
       name: string
-      CRN?: string
+      crn: string
       dateOfBirth: string
       preferredLanguage: string
       disabilities: string
-      crn: string
     }
     ReferralDetailsBffResponseDto: {
       /** Format: uuid */
@@ -513,6 +482,7 @@ export interface components {
     ReferralCaseListDto: {
       /** Format: uuid */
       referralId: string
+      referenceNumber: string
       personName: string
       personIdentifier: string
       date: string
@@ -527,6 +497,50 @@ export interface components {
 }
 export type $defs = Record<string, never>
 export interface operations {
+  assignCaseWorkers: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AssignCaseWorkersRequest']
+      }
+    }
+    responses: {
+      /** @description Assign case workers to a referral */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['AssignCaseWorkersResult']
+        }
+      }
+      /** @description Failed to assign case worker(s) */
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['AssignCaseWorkersResult']
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
   submitReferral: {
     parameters: {
       query?: never
@@ -648,125 +662,6 @@ export interface operations {
       }
     }
   }
-  getIcsAppointments: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        referralId: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description List of ICS appointments */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['AppointmentIcsResponse'][]
-        }
-      }
-      /** @description Referral not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  createIcsAppointment: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        referralId: string
-      }
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['CreateAppointmentRequest']
-      }
-    }
-    responses: {
-      /** @description Appointment created successfully */
-      201: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['AppointmentIcsResponse']
-        }
-      }
-      /** @description Invalid request body */
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-      /** @description Referral not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  assignCaseWorkers: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        referralId: string
-      }
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['AssignCaseWorkersRequest']
-      }
-    }
-    responses: {
-      /** @description Assign case workers to a referral */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['AssignCaseWorkersResult']
-        }
-      }
-      /** @description Failed to assign case worker(s) */
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['AssignCaseWorkersResult']
-        }
-      }
-      /** @description Referral not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
   getIcsAppointment: {
     parameters: {
       query?: never
@@ -870,7 +765,7 @@ export interface operations {
       }
     }
   }
-  getReferralDetailsPage: {
+  getReferralProgressDetails: {
     parameters: {
       query?: never
       header?: never
@@ -888,6 +783,68 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['ReferralDetailsBffResponseDto']
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getReferralDetailsPage: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        caseIdentifier: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Referral Details found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ReferralDetailsBffResponseDto']
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getAssignedCaseWorkers: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Assignments found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['CaseWorkerDto'][]
         }
       }
       /** @description Referral not found */
@@ -1037,99 +994,6 @@ export interface operations {
         }
         content: {
           '*/*': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  submitReferralUserAssignments: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        referralId: string
-      }
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['CaseWorkerDto'][]
-      }
-    }
-    responses: {
-      /** @description Assigned case workers for referral */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ReferralUserAssignmentsResponse']
-        }
-      }
-      /** @description Failed to assign case worker(s) */
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ReferralUserAssignmentsResponse']
-        }
-      }
-      /** @description The request was unauthorised */
-      401: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          '*/*': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Forbidden. The client is not authorised. */
-      403: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          '*/*': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Referral not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          '*/*': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  getReferralUserAssignments: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        referralId: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Get referral user assignments found */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['CaseWorkerDto'][]
-        }
-      }
-      /** @description Referral not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
         }
       }
     }
