@@ -61,11 +61,13 @@
   "/referral-details/:id": {
     "pageHeader": "Referral for ",
     "pageSubHeader": "Case details",
+    "backLink": "/unassigned-cases",
+    "defaultFieldValue": "Not available",
     "personalDetailsCard": {
       "heading": "Personal details",
       "nameLabel": "Name",
       "crnLabel": "CRN",
-      "dobLabel": "Date of Birth",
+      "dobLabel": "Date of birth",
       "languageLabel": "Preferred language",
       "disabilitiesLabel": "Disabilities"
     },
@@ -83,18 +85,15 @@
       "phoneNumberLabel": "Phone number",
       "mobileNumberLabel": "Mobile number",
       "emailAddressLabel": "Email address",
-      "mainAddressLabel": "Main address",
-      "phoneNumberDefaultValue": "No phone number",
-      "mobileNumberDefaultValue": "No mobile number",
-      "emailAddressDefaultValue": "No email address",
-      "mainAddressDefaultValue": "No main address"
+      "mainAddressLabel": "Main address"
     },
     "referralDetailsCard": {
       "heading": "Referral details",
       "referralDateLabel": "Referral date",
       "assignedToLabel": "Assigned to",
       "assignedToDefaultValue": "Unassigned",
-      "link": "Assign to caseworker"
+      "link": "Assign to caseworker",
+      "linkChange": "Change"
     }
   },
   "/referral/:id/appointment/confirm-ics": {
