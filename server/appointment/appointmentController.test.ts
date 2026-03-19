@@ -1,16 +1,19 @@
-import { Request, Response, NextFunction } from 'express'
+import { Request, Response } from 'express'
 import { CreateAppointmentRequest } from '@community-support-api'
 import AppointmentController from './appointmentController'
 import ConfirmIcsPresenter from './confirm-ics/confirmIcsPresenter'
 import ConfirmIcsContentFactory from '../testutils/factories/ConfirmIcsContent'
+import AppointmentService from '../services/AppointmentService'
+import CommunitySupportApiClient from '../data/communitySupportApiClient'
 
 jest.mock('./confirm-ics/confirmIcsPresenter')
+jest.mock('../services/AppointmentService')
 
 describe('AppointmentController', () => {
+  let appointmentService: AppointmentService
   let appointmentController: AppointmentController
   let req: Request
   let res: Response
-  let next: NextFunction
 
   const referralId = 'referral-123'
 
@@ -22,7 +25,9 @@ describe('AppointmentController', () => {
   }
 
   beforeEach(() => {
-    appointmentController = new AppointmentController()
+    const communitySupportApiClient = {} as unknown as CommunitySupportApiClient
+    appointmentService = new AppointmentService(communitySupportApiClient)
+    appointmentController = new AppointmentController(appointmentService)
 
     ConfirmIcsPresenter.prototype.renderPage = jest.fn()
 
@@ -37,20 +42,18 @@ describe('AppointmentController', () => {
       render: jest.fn(),
       redirect: jest.fn(),
     } as unknown as Response
-
-    next = jest.fn()
   })
 
   describe('checkIcs', () => {
     it('should redirect to schedule-ics page when createAppointmentRequest is not in session', async () => {
-      await appointmentController.checkIcs(req, res, next)
+      await appointmentController.checkIcs(req, res)
       expect(res.redirect).toHaveBeenCalledWith(`/referral/${referralId}/appointment/schedule-ics`)
     })
 
     it('should create presenter with createAppointmentRequest from session and render page', async () => {
       req.session.createAppointmentRequest = mockCreateAppointmentRequest
 
-      await appointmentController.checkIcs(req, res, next)
+      await appointmentController.checkIcs(req, res)
 
       expect(ConfirmIcsPresenter).toHaveBeenCalledWith(mockCreateAppointmentRequest, referralId)
       expect(ConfirmIcsPresenter.prototype.renderPage).toHaveBeenCalledWith(res)

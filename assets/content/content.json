@@ -100,5 +100,23 @@
   "/referral/:id/appointment/confirm-ics": {
     "pageHeader": "Check the details before scheduling the ICS",
     "submitButtonText": "Submit"
+  },
+  "/referral/:id/appointment/:id": {
+    "title": "View or change session details",
+    "heading": "View or change session details",
+    "details": {
+      "heading": "ICS details",
+      "changeLink": "Change",
+      "dateLabel": "Date",
+      "startTimeLabel": "Start time",
+      "methodLabel": "Method",
+      "reasonLabel": "Reason session is not in person",
+      "locationLabel": "Location",
+      "informedLabel": "How {{ name }} was informed about the session"
+    },
+    "links": {
+      "change": "/referral/{{ id }}/appointment/change-ics",
+      "back": "/referral/{{ id }}/appointment/change-ics"
+    }
   }
 }
