@@ -6,6 +6,8 @@ class referralDetailsContentFactory extends Factory<ReferralDetailsContent> {}
 export default referralDetailsContentFactory.define(({ transientParams }) => ({
   pageHeader: transientParams.pageHeader || 'Referral for ',
   pageSubHeader: transientParams.pageSubHeader || 'Case details',
+  backLink: '/unassigned-cases',
+  defaultFieldValue: 'Not available',
   personalDetailsCard: {
     heading: 'Personal details',
     nameLabel: 'Name',
@@ -29,16 +31,13 @@ export default referralDetailsContentFactory.define(({ transientParams }) => ({
     mobileNumberLabel: 'Mobile number',
     emailAddressLabel: 'Email address',
     mainAddressLabel: 'Main address',
-    phoneNumberDefaultValue: 'No phone number',
-    mobileNumberDefaultValue: 'No mobile number',
-    emailAddressDefaultValue: 'No email address',
-    mainAddressDefaultValue: 'No main address',
   },
   referralDetailsCard: {
     heading: 'Referral details',
     referralDateLabel: 'Referral date',
     assignedToLabel: 'Assigned to',
-    link: 'Assign to caseworker',
     assignedToDefaultValue: 'Unassigned',
+    link: 'Assign to caseworker',
+    linkChange: 'Change',
   },
 }))

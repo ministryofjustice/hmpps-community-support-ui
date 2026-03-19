@@ -29,14 +29,15 @@ test.describe('Referral Details Page', () => {
     const referralDetailsPage = await ReferralDetailsPage.verifyOnPage(page)
     expect(referralDetailsPage.header).toHaveText(`Referral for ${referralDetailsPageData.personDetailsTableData.name}`)
   })
-  // IPB-1940:AC2 - !!! No back link yet!!!
-  test.skip('back link should navigate to the correct page', async () => {
-    /*
-    Given I’m viewing the person’s referral details
-    When I select to the Back option
-    Then I’m taken back to the Cases screen
-    And it defaults to the Unassigned cases tab
-    */
+  // IPB-1940:AC2
+  test('back link should navigate to the correct page', async ({ page }) => {
+    const referralDetailsPage = await ReferralDetailsPage.verifyOnPage(page)
+    await test.step('click back link', async () => {
+      await referralDetailsPage.backLink.click()
+    })
+    await test.step('should be on cases screen', async () => {
+      await expect(page).toHaveURL('/unassigned-cases')
+    })
   })
   // IPB-1940:AC3
   test('Referral Details Sections', async ({ page }) => {
@@ -61,7 +62,7 @@ test.describe('Referral Details Page', () => {
       })
       await test.step('Third row should be the date of birth field', () => {
         const row = summary.rows[2]
-        expect(row.key).toHaveText('Date of Birth')
+        expect(row.key).toHaveText('Date of birth')
         const { dateOfBirth } = referralDetailsPageData.personDetailsTableData
         const age = differenceInYears(new Date(), dateOfBirth)
         const date = format(dateOfBirth, dateFormatStr)
@@ -176,7 +177,7 @@ test.describe('Referral Details Page', () => {
       const summary = referralDetailsPage.personalDetailsSummary
       await test.step('Age should be displayed along with date of birth', () => {
         const row = summary.rows[2]
-        expect(row.key).toHaveText('Date of Birth')
+        expect(row.key).toHaveText('Date of birth')
         const { dateOfBirth } = referralDetailsPageData.personDetailsTableData
         const age = differenceInYears(new Date(), dateOfBirth)
         const date = format(dateOfBirth, dateFormatStr)

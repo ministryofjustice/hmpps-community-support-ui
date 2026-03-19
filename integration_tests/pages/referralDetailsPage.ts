@@ -6,6 +6,7 @@ export default class ReferralDetailsPage extends AbstractPage {
   private constructor(
     page: Page,
     readonly header: Locator,
+    readonly backLink: Locator,
     readonly personalDetailsSummary: SummaryList,
     readonly equalityMonteringSummary: SummaryList,
     readonly contactDetailsSummary: SummaryList,
@@ -17,6 +18,7 @@ export default class ReferralDetailsPage extends AbstractPage {
   static async verifyOnPage(page: Page): Promise<ReferralDetailsPage> {
     const header = page.locator('h1')
     await expect(header).toBeVisible()
+    const backLink = page.getByRole('link', { name: 'Back', exact: true })
     const personalDetailsSummary = await SummaryList.create(page.locator('[data-testid="personal-details"]'))
     const equalityMonteringSummary = await SummaryList.create(page.locator('[data-testid="equality-details"]'))
     const contactDetailsSummary = await SummaryList.create(page.locator('[data-testid="contact-details"]'))
@@ -24,6 +26,7 @@ export default class ReferralDetailsPage extends AbstractPage {
     const referralDetailsPage = new ReferralDetailsPage(
       page,
       header,
+      backLink,
       personalDetailsSummary,
       equalityMonteringSummary,
       contactDetailsSummary,
