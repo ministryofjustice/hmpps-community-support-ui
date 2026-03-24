@@ -35,7 +35,7 @@ export interface ReferralProgress {
   /** Format: date-time */
   appointmentDateTime: string
   /** @enum {string} */
-  status: 'SCHEDULED' | 'NEEDS_FEEDBACK' | 'COMPLETED'
+  status: 'SCHEDULED' | 'NEEDS_FEEDBACK' | 'COMPLETED' | 'RESCHEDULED' | 'DID_NOT_ATTEND'
 }
 
 export default {

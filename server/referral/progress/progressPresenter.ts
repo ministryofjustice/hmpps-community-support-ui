@@ -11,6 +11,8 @@ type TabKey = 'caseDetails' | 'progress' | 'changeLog'
 const STATUS_CONFIG: Record<ReferralProgress['status'], { label: string; tagClass: string; action: string }> = {
   SCHEDULED: { label: 'Scheduled', tagClass: 'govuk-tag--blue', action: 'View or change details' },
   NEEDS_FEEDBACK: { label: 'Needs feedback', tagClass: 'govuk-tag--red', action: 'Add attendance and feedback' },
+  DID_NOT_ATTEND: { label: 'Did not attend', tagClass: 'govuk-tag--purple', action: 'Reason for not attending' }, // need confirmation
+  RESCHEDULED: { label: 'Rescheduled', tagClass: 'govuk-tag--grey', action: 'Reschedule Session' }, // need confirmation
   COMPLETED: { label: 'Completed', tagClass: 'govuk-tag--green', action: 'View feedback' },
 }
 
