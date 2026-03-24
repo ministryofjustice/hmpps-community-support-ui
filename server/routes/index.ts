@@ -83,10 +83,6 @@ export default function routes({
     await referralController.showAssignCaseWorkersPage(req, res, next)
   })
 
-  get('/referral/:referralId/assigned', async (req, res, next) => {
-    await referralController.showAssignedCaseWorkersPage(req, res, next)
-  })
-
   get('/referral/:referralId/appointment/confirm-ics', async (req, res, next) =>
     appointmentController.checkIcs(req, res, next),
   )

@@ -1,6 +1,7 @@
 {% extends "../partials/layout.njk" %}
 
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 
 {% set pageTitle = "Referral - Community Support" %}
 {% set mainClasses = "govuk-body" %}
@@ -9,6 +10,21 @@
 
 <div class="govuk-grid-row">
 <div class="govuk-grid-column-two-thirds">
+{% if content.successBanner %}
+    {% set html %}
+      <h3 class="govuk-notification-banner__heading">
+      	{{ content.successBanner.successBannerHeading }}
+      </h3>
+    {% endset %}
+    {% set html = html ~ "<p class=\"govuk-body\">" ~ content.successBanner.successBannerMessage ~ "</p>"%}
+    {{ govukNotificationBanner({
+      html: html,
+      type: "success",
+      attributes: {
+      	"data-testid": "success-message"
+      }
+    }) }}
+{% endif %}
 <h1 class="govuk-heading-l">Referral for {{ content.name }}</h1>
 <h2 class="govuk-heading-m">Case details</h2>
 

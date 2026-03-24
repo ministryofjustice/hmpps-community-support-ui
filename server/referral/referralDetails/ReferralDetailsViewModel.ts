@@ -39,8 +39,14 @@ export interface ReferralDetailsContent {
   pageSubHeader: string
   backLink: string
   defaultFieldValue: string
+  successBannerHeading: string
   personalDetailsCard: PersonalDetailsCard
   equalityMonitoringCard: EqualityMonitoringCard
   contactDetailsCard: ContactDetailsCard
   referralDetailsCard: ReferralDetailsCard
+}
+
+export type AssignmentSuccessBanner = {
+  successBannerHeading: string
+  successBannerMessage: string
 }

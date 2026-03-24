@@ -28,10 +28,12 @@ class ReferralController {
 
   async showReferralDetailsPage(req: Request, res: Response) {
     const referralId = req.params.id as string
+    const results = req.session.assignmentResults ? { ...req.session.assignmentResults } : null
+    delete req.session.assignmentResults
     const { username } = res.locals.user
     return this.referralService
       .getCaseDetailsByCaseIdentifier(referralId, username)
-      .then(dto => new ReferralDetailsPresenter(dto))
+      .then(dto => new ReferralDetailsPresenter(dto, results))
       .then(presenter => presenter.renderPage(res))
   }
 
@@ -148,7 +150,7 @@ class ReferralController {
       )
       if (referralUserAssignmentsResponse.success) {
         req.session.assignmentResults = referralUserAssignmentsResponse as ReferralUserAssignmentsResponse
-        return res.redirect(`/referral/${referralId}/assigned`)
+        return res.redirect(`/referral-details/${referralId}`)
       }
       req.session.assignmentResults = referralUserAssignmentsResponse as ReferralUserAssignmentsResponse
       return res.redirect(`/referral/${referralId}/assign`)
@@ -194,17 +196,11 @@ class ReferralController {
 
   async showAssignedCaseWorkersPage(req: Request, res: Response, next: NextFunction) {
     const { referralId } = req.params as { referralId: string }
-    const results = req.session ? req.session.assignmentResults : null
 
-    if (!results || !results.success) {
-      if (referralId) {
-        return res.render('referral/assign', { referralId })
-      }
-      return res.render('referral/assign')
+    if (referralId) {
+      return res.render('referral/assign', { referralId })
     }
-    delete req.session.assignmentResults
-    const { success, message } = results
-    return res.render('referral/assign', { referralId, success, message })
+    return res.render('referral/assign')
   }
 }
 

@@ -228,7 +228,7 @@ export default {
         transformers: ['response-template'],
       },
     }),
-  stubGetReferralDetailsPage: (httpStatus = 200): SuperAgentRequest =>
+  stubGetReferralDetailsPage: (httpStatus = 200, referralId: string | null = null): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'GET',
@@ -237,7 +237,7 @@ export default {
       response: {
         status: httpStatus,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: referralDetailsPageData,
+        jsonBody: referralDetailsPageData(referralId),
         transformers: ['response-template'],
       },
     }),

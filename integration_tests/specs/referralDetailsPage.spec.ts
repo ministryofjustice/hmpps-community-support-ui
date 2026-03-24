@@ -5,15 +5,16 @@ import { randomUUID } from 'node:crypto'
 import { login, resetStubs } from '../testUtils'
 import communitySupport from '../mockApis/communitySupport'
 import ReferralDetailsPage from '../pages/referralDetailsPage'
-import referralDetailsPageData from '../mockData/referralDetailsPageData'
+import referralDetailsPageData, { referralPageData } from '../mockData/referralDetailsPageData'
 
 test.describe('Referral Details Page', () => {
   const dateFormatStr = 'd MMMM uuuu'
   const id = randomUUID()
+  const referralDetailsPageMockData = referralDetailsPageData(id)
 
   test.beforeEach(async ({ page }) => {
     await resetStubs()
-    await communitySupport.stubGetReferralDetailsPage()
+    await communitySupport.stubGetReferralDetailsPage(200, id)
     await page.goto('/')
     await login(page)
     await test.step('go to referral details page', async () => {
@@ -27,7 +28,9 @@ test.describe('Referral Details Page', () => {
   // IPB-1940:AC1
   test('should display the heading with the correct content', async ({ page }) => {
     const referralDetailsPage = await ReferralDetailsPage.verifyOnPage(page)
-    expect(referralDetailsPage.header).toHaveText(`Referral for ${referralDetailsPageData.personDetailsTableData.name}`)
+    expect(referralDetailsPage.header).toHaveText(
+      `Referral for ${referralDetailsPageMockData.personDetailsTableData.name}`,
+    )
   })
   // IPB-1940:AC2
   test('back link should navigate to the correct page', async ({ page }) => {
@@ -53,17 +56,17 @@ test.describe('Referral Details Page', () => {
       await test.step('First row should be the name field', () => {
         const row = summary.rows[0]
         expect(row.key).toHaveText('Name')
-        expect(row.value).toHaveText(referralDetailsPageData.personDetailsTableData.name)
+        expect(row.value).toHaveText(referralDetailsPageMockData.personDetailsTableData.name)
       })
       await test.step('Second row should be the crn field', () => {
         const row = summary.rows[1]
         expect(row.key).toHaveText('CRN')
-        expect(row.value).toHaveText(referralDetailsPageData.personDetailsTableData.crn)
+        expect(row.value).toHaveText(referralDetailsPageMockData.personDetailsTableData.crn)
       })
       await test.step('Third row should be the date of birth field', () => {
         const row = summary.rows[2]
         expect(row.key).toHaveText('Date of birth')
-        const { dateOfBirth } = referralDetailsPageData.personDetailsTableData
+        const { dateOfBirth } = referralDetailsPageMockData.personDetailsTableData
         const age = differenceInYears(new Date(), dateOfBirth)
         const date = format(dateOfBirth, dateFormatStr)
         expect(row.value).toHaveText(`${date} (${age} years old)`)
@@ -71,12 +74,12 @@ test.describe('Referral Details Page', () => {
       await test.step('Fourth row should be the preferred language field', () => {
         const row = summary.rows[3]
         expect(row.key).toHaveText('Preferred language')
-        expect(row.value).toHaveText(referralDetailsPageData.personDetailsTableData.preferredLanguage)
+        expect(row.value).toHaveText(referralDetailsPageMockData.personDetailsTableData.preferredLanguage)
       })
       await test.step('Fifth row should be the disabilities field', () => {
         const row = summary.rows[4]
         expect(row.key).toHaveText('Disabilities')
-        expect(row.value).toHaveText(referralDetailsPageData.personDetailsTableData.disabilities)
+        expect(row.value).toHaveText(referralDetailsPageMockData.personDetailsTableData.disabilities)
       })
     })
     await test.step('equality monitoring summary', async () => {
@@ -90,32 +93,32 @@ test.describe('Referral Details Page', () => {
       await test.step('First row should be the ethnicity field', () => {
         const row = summary.rows[0]
         expect(row.key).toHaveText('Ethnicity')
-        expect(row.value).toHaveText(referralDetailsPageData.equalityDetailsTableData.ethnicity!)
+        expect(row.value).toHaveText(referralDetailsPageMockData.equalityDetailsTableData.ethnicity!)
       })
       await test.step('Second row should be the religion or belief field', () => {
         const row = summary.rows[1]
         expect(row.key).toHaveText('Religion or belief')
-        expect(row.value).toHaveText(referralDetailsPageData.equalityDetailsTableData.religionOrBelief!)
+        expect(row.value).toHaveText(referralDetailsPageMockData.equalityDetailsTableData.religionOrBelief!)
       })
       await test.step('Third row should be the sex field', () => {
         const row = summary.rows[2]
         expect(row.key).toHaveText('Sex')
-        expect(row.value).toHaveText(referralDetailsPageData.equalityDetailsTableData.sex)
+        expect(row.value).toHaveText(referralDetailsPageMockData.equalityDetailsTableData.sex)
       })
       await test.step('Fourth row should be the gender identity field', () => {
         const row = summary.rows[3]
         expect(row.key).toHaveText('Gender identity')
-        expect(row.value).toHaveText(referralDetailsPageData.equalityDetailsTableData.genderIdentity)
+        expect(row.value).toHaveText(referralDetailsPageMockData.equalityDetailsTableData.genderIdentity)
       })
       await test.step('Fifth row should be the sexual orientation field', () => {
         const row = summary.rows[4]
         expect(row.key).toHaveText('Sexual orientation')
-        expect(row.value).toHaveText(referralDetailsPageData.equalityDetailsTableData.sexualOrientation)
+        expect(row.value).toHaveText(referralDetailsPageMockData.equalityDetailsTableData.sexualOrientation)
       })
       await test.step('Sixth row should be the transgender field', () => {
         const row = summary.rows[5]
         expect(row.key).toHaveText('Transgender')
-        expect(row.value).toHaveText(referralDetailsPageData.equalityDetailsTableData.transgender)
+        expect(row.value).toHaveText(referralDetailsPageMockData.equalityDetailsTableData.transgender)
       })
     })
     await test.step('contact details summary', async () => {
@@ -129,22 +132,22 @@ test.describe('Referral Details Page', () => {
       await test.step('First row should be the phone number field', () => {
         const row = summary.rows[0]
         expect(row.key).toHaveText('Phone number')
-        expect(row.value).toHaveText(referralDetailsPageData.contactDetailsTableData.phoneNumber as string)
+        expect(row.value).toHaveText(referralDetailsPageMockData.contactDetailsTableData.phoneNumber as string)
       })
       await test.step('Second row should be the mobile number field', () => {
         const row = summary.rows[1]
         expect(row.key).toHaveText('Mobile number')
-        expect(row.value).toHaveText(referralDetailsPageData.contactDetailsTableData.mobileNumber as string)
+        expect(row.value).toHaveText(referralDetailsPageMockData.contactDetailsTableData.mobileNumber as string)
       })
       await test.step('Third row should be the email address field', () => {
         const row = summary.rows[2]
         expect(row.key).toHaveText('Email address')
-        expect(row.value).toHaveText(referralDetailsPageData.contactDetailsTableData.email as string)
+        expect(row.value).toHaveText(referralDetailsPageMockData.contactDetailsTableData.email as string)
       })
       await test.step('Fourth row should be the main address field', () => {
         const row = summary.rows[3]
         expect(row.key).toHaveText('Main address')
-        expect(row.value).toHaveText(referralDetailsPageData.contactDetailsTableData.address as string)
+        expect(row.value).toHaveText(referralDetailsPageMockData.contactDetailsTableData.address as string)
       })
     })
     await test.step('referral details summary', async () => {
@@ -159,7 +162,7 @@ test.describe('Referral Details Page', () => {
         const row = summary.rows[0]
         expect(row.key).toHaveText('Referral date')
         expect(row.value).toHaveText(
-          format(referralDetailsPageData.referralDetailsTableData.referralDate, dateFormatStr),
+          format(referralDetailsPageMockData.referralDetailsTableData.referralDate, dateFormatStr),
         )
       })
       await test.step('Second row should be the assigned to field', () => {
@@ -178,7 +181,7 @@ test.describe('Referral Details Page', () => {
       await test.step('Age should be displayed along with date of birth', () => {
         const row = summary.rows[2]
         expect(row.key).toHaveText('Date of birth')
-        const { dateOfBirth } = referralDetailsPageData.personDetailsTableData
+        const { dateOfBirth } = referralDetailsPageMockData.personDetailsTableData
         const age = differenceInYears(new Date(), dateOfBirth)
         const date = format(dateOfBirth, dateFormatStr)
         expect(row.value).toHaveText(`${date} (${age} years old)`)

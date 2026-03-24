@@ -355,9 +355,11 @@ export interface components {
       appointmentDate: string
       appointmentTime: components['schemas']['AppointmentTimeResponse']
       /** @enum {string} */
-      appointmentStatus: 'SCHEDULED' | 'ATTENDED'
-      sessionMethod: components['schemas']['InPersonAppointment'] | components['schemas']['VirtualAppointment']
+      appointmentStatus: 'SCHEDULED' | 'NEEDS_FEEDBACK' | 'COMPLETED' | 'RESCHEDULED' | 'DID_NOT_ATTEND'
+      sessionMethod: components['schemas']['SessionMethod']
       sessionCommunications: string[]
+      referralFirstName: string
+      referralLastName: string
       /** Format: date-time */
       createdAt: string
     }
@@ -368,25 +370,45 @@ export interface components {
       minute: number
       amPm: string
     }
-    InPersonAppointment: {
-      appointmentCategory: 'InPersonAppointment'
-    } & (Omit<WithRequired<components['schemas']['SessionMethod'], 'type'>, 'appointmentCategory'> & {
+    InPersonAppointment: Omit<WithRequired<components['schemas']['SessionMethod'], 'type'>, 'appointmentCategory'> & {
       probationOfficeName?: string
       addressLine1?: string
       addressLine2?: string
       townOrCity?: string
       county?: string
       postcode?: string
-    })
+    } & {
+      /**
+       * @description discriminator enum property added by openapi-typescript
+       * @enum {string}
+       */
+      appointmentCategory: 'IN_PERSON'
+    } & {
+      /**
+       * @description discriminator enum property added by openapi-typescript
+       * @enum {string}
+       */
+      appointmentCategory: 'IN_PERSON'
+    }
     SessionMethod: {
       type: string
       appointmentCategory: string
-    }
-    VirtualAppointment: {
-      appointmentCategory: 'VirtualAppointment'
-    } & (Omit<WithRequired<components['schemas']['SessionMethod'], 'type'>, 'appointmentCategory'> & {
+    } & (components['schemas']['VirtualAppointment'] | components['schemas']['InPersonAppointment'])
+    VirtualAppointment: Omit<WithRequired<components['schemas']['SessionMethod'], 'type'>, 'appointmentCategory'> & {
       whyNotInPersonReason?: string
-    })
+    } & {
+      /**
+       * @description discriminator enum property added by openapi-typescript
+       * @enum {string}
+       */
+      appointmentCategory: 'VIRTUAL'
+    } & {
+      /**
+       * @description discriminator enum property added by openapi-typescript
+       * @enum {string}
+       */
+      appointmentCategory: 'VIRTUAL'
+    }
     CommunitySupportServiceDto: {
       id: string
       region: string
@@ -462,6 +484,19 @@ export interface components {
     ReferralDetailsTableDataDto: {
       referralDate: string
       assignedTo: string[]
+    }
+    ReferralProgressDto: {
+      /** Format: uuid */
+      referralId: string
+      personName: string
+      /** Format: uuid */
+      appointmentId: string
+      /** @enum {string} */
+      appointmentType: 'ICS'
+      /** Format: date-time */
+      appointmentDateTime: string
+      /** @enum {string} */
+      status: 'SCHEDULED' | 'NEEDS_FEEDBACK' | 'COMPLETED' | 'RESCHEDULED' | 'DID_NOT_ATTEND'
     }
     ProbationOffice: {
       /** Format: int32 */
@@ -776,13 +811,13 @@ export interface operations {
     }
     requestBody?: never
     responses: {
-      /** @description Referral Details found */
+      /** @description Referral progress details */
       200: {
         headers: {
           [name: string]: unknown
         }
         content: {
-          'application/json': components['schemas']['ReferralDetailsBffResponseDto']
+          'application/json': components['schemas']['ReferralProgressDto'][]
         }
       }
       /** @description Referral not found */
