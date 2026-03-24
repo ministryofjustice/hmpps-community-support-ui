@@ -5,7 +5,7 @@ import { randomUUID } from 'node:crypto'
 import { login, resetStubs } from '../testUtils'
 import communitySupport from '../mockApis/communitySupport'
 import ReferralDetailsPage from '../pages/referralDetailsPage'
-import referralDetailsPageData, { referralPageData } from '../mockData/referralDetailsPageData'
+import referralDetailsPageData from '../mockData/referralDetailsPageData'
 
 test.describe('Referral Details Page', () => {
   const dateFormatStr = 'd MMMM uuuu'
