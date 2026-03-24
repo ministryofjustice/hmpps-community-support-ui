@@ -1,0 +1,36 @@
+{% extends "../partials/layout.njk" %}
+
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "moj/components/sub-navigation/macro.njk" import mojSubNavigation %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+
+{% set pageTitle = applicationName + " - Referral progress – " + staticContent.pageHeader %}
+{% set mainClasses = "govuk-body" %}
+
+{% block content %}
+  {{ govukBackLink({ href: backlinkHref }) }}
+  </br>
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {% if notificationBanner %}
+        {{ govukNotificationBanner(notificationBanner) }}
+      {% endif %}
+
+      <h1 class="govuk-heading-l">{{ staticContent.pageHeader }}</h1>
+
+      {{ mojSubNavigation(navBar) }}
+
+      <h2 class="govuk-heading-m">Referral progress</h2>
+      <h3 class="govuk-heading-s">Initial contact session (ICS)</h3>
+
+      {% if icsAppointmentTable and icsAppointmentTable.rows %}
+        {{ govukTable(icsAppointmentTable) }}
+      {% else %}
+        <p class="govuk-body">No appointments scheduled</p>
+      {% endif %}
+    </div>
+  </div>
+
+{% endblock %}

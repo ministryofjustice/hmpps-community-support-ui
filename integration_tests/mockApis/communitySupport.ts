@@ -24,6 +24,19 @@ export interface ReferralUserAssignmentsResponse {
   succeededList?: CaseWorkerDto[]
   failureList?: AssignmentFailureDto[]
 }
+export interface ReferralProgress {
+  /** Format: uuid */
+  referralId: string
+  personName: string
+  /** Format: uuid */
+  appointmentId: string
+  /** @enum {string} */
+  appointmentType: 'ICS'
+  /** Format: date-time */
+  appointmentDateTime: string
+  /** @enum {string} */
+  status: 'SCHEDULED' | 'NEEDS_FEEDBACK' | 'COMPLETED'
+}
 
 export default {
   stubPing: (httpStatus = 200): SuperAgentRequest =>
@@ -238,6 +251,23 @@ export default {
         status: httpStatus,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: referralDetailsPageData(referralId),
+        transformers: ['response-template'],
+      },
+    }),
+  stubGetReferralProgress: (
+    referralId: string,
+    appointments: ReferralProgress[] = [],
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: `/community-support/referral-details/${referralId}/progress`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: appointments,
         transformers: ['response-template'],
       },
     }),

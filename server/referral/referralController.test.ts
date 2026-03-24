@@ -8,6 +8,7 @@ import CheckReferralInformationPresenter from './check-referral-information/chec
 import ConfirmationContent from '../testutils/factories/ConfirmationContent'
 import CheckReferralInformationContent from '../testutils/factories/CheckReferralInformationContent'
 import ConfirmationPresenter from './confirmation/confirmationPresenter'
+import buildAppointments from '../testutils/buildReferralProgress'
 
 jest.mock('../services/referralService')
 jest.mock('../middleware/formValidationMiddleware')
@@ -28,6 +29,7 @@ describe('ReferralController', () => {
       getReferralById: jest.fn(),
       createReferral: jest.fn(),
       getReferralUserAssignments: jest.fn(),
+      getReferralProgress: jest.fn(),
     } as unknown as jest.Mocked<ReferralService>
     personService = {
       getPersonByIdentifier: jest.fn(),
@@ -44,7 +46,18 @@ describe('ReferralController', () => {
       session: { referralCreationDetails: null },
     } as unknown as Request
     res = {
-      locals: { user: { username: 'user1' } },
+      locals: {
+        user: { username: 'user1' },
+        content: {
+          pageHeader: 'Referral for Test User',
+          caseDetailsSubNavTitle: 'Case details',
+          progressSubNavTitle: 'Progress',
+          changeLogSubNavTitle: 'Change log',
+          subNavItems: [],
+          progressActiveColumnHeaders: ['Date and time', 'Status', 'Action'],
+          progressInactiveColumnHeaders: ['Status', 'Action'],
+        },
+      },
       render: jest.fn(),
       redirect: jest.fn(),
     } as unknown as Response
@@ -255,6 +268,111 @@ describe('ReferralController', () => {
         referralId: 'referral-id-123',
         caseworkers,
       })
+    })
+  })
+  describe('showReferralProgressDetails', () => {
+    const referralId = 'referral-id-123'
+
+    const getViewModel = () => (res.render as jest.Mock).mock.calls[0][1]
+
+    beforeEach(() => {
+      req.params.referralId = referralId
+      jest.clearAllMocks()
+    })
+
+    it('should show notification banner when latest appointment is scheduled', async () => {
+      const appointments = buildAppointments({
+        appointmentId: 'appId1',
+        events: [
+          { status: 'NEEDS_FEEDBACK', appointmentDateTime: '2026-03-26T10:00:00' },
+          { status: 'SCHEDULED', appointmentDateTime: '2026-03-27T10:00:00' },
+        ],
+      })
+
+      referralService.getReferralProgress.mockResolvedValue(appointments)
+
+      await referralController.showReferralProgressDetails(req, res, next)
+
+      expect(referralService.getReferralProgress).toHaveBeenCalledWith(referralId, 'user1')
+
+      const viewModel = getViewModel()
+
+      expect(viewModel.hasIcsAppointment).toBe(true)
+      expect(viewModel.notificationBanner.html).toContain('ICS has been scheduled')
+    })
+
+    it('should not show banner when latest appointment is not scheduled', async () => {
+      const appointments = buildAppointments({
+        appointmentId: 'appId1',
+        events: [
+          { status: 'SCHEDULED', appointmentDateTime: '2026-03-25T10:00:00' },
+          { status: 'COMPLETED', appointmentDateTime: '2026-03-27T10:00:00' },
+        ],
+      })
+
+      referralService.getReferralProgress.mockResolvedValue(appointments)
+
+      await referralController.showReferralProgressDetails(req, res, next)
+
+      const viewModel = getViewModel()
+
+      expect(viewModel.notificationBanner).toBeUndefined()
+    })
+
+    it('renders one row per appointmentId and sorts by latest date descending', async () => {
+      const appointments = buildAppointments(
+        {
+          appointmentId: 'appId1',
+          events: [
+            { status: 'SCHEDULED', appointmentDateTime: '2026-03-25T10:00:00' },
+            { status: 'NEEDS_FEEDBACK', appointmentDateTime: '2026-03-26T10:00:00' },
+            { status: 'COMPLETED', appointmentDateTime: '2026-03-27T10:00:00' },
+          ],
+        },
+        {
+          appointmentId: 'appId2',
+          events: [{ status: 'SCHEDULED', appointmentDateTime: '2026-03-28T10:00:00' }],
+        },
+      )
+
+      referralService.getReferralProgress.mockResolvedValue(appointments)
+
+      await referralController.showReferralProgressDetails(req, res, next)
+
+      const viewModel = getViewModel()
+      const { rows } = viewModel.icsAppointmentTable
+
+      expect(rows).toHaveLength(2)
+
+      expect(rows[0][1].html).toContain('Scheduled')
+      expect(rows[0][1].html).toContain('govuk-tag--blue')
+      expect(rows[1][1].html).toContain('Completed')
+      expect(rows[1][1].html).toContain('govuk-tag--green')
+    })
+
+    it('should flash retrieval error when referral not found', async () => {
+      referralService.getReferralProgress.mockRejectedValue({ responseStatus: 404 })
+
+      const errorsList = [{ href: '#referralIdError', text: "No referral with identifier 'referral-id-123' found" }]
+
+      await referralController.showReferralProgressDetails(req, res, next)
+
+      expect(res.render).toHaveBeenCalledWith('referral/progress', { referralId, errorsList })
+    })
+
+    it('should flash generic retrieval error for unexpected errors', async () => {
+      referralService.getReferralProgress.mockRejectedValue(new Error('Database down'))
+
+      const errorsList = [
+        {
+          href: '#retrievalError',
+          text: 'An unexpected error when retrieving referral progress. Please try again.',
+        },
+      ]
+
+      await referralController.showReferralProgressDetails(req, res, next)
+
+      expect(res.render).toHaveBeenCalledWith('referral/progress', { referralId, errorsList })
     })
   })
 })

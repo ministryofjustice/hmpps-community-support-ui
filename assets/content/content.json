@@ -100,5 +100,17 @@
   "/referral/:id/appointment/confirm-ics": {
     "pageHeader": "Check the details before scheduling the ICS",
     "submitButtonText": "Submit"
+  },
+  "/referral-details/:id/progress": {
+    "pageHeader": "Referral progress",
+    "caseDetailsSubNavTitle": "Case details",
+    "progressSubNavTitle": "Progress",
+    "changeLogSubNavTitle": "Change log",
+    "subNavItems": [
+      { "id": "caseDetails", "title": "Case details", "href": "/case-details" },
+      { "id": "progress", "title": "Progress", "href": "/progress" },
+      { "id": "changeLog", "title": "Change log", "href": "/change-log" }
+    ],
+    "progressColumnHeaders": ["Date and time", "Status", "Action"]
   }
 }

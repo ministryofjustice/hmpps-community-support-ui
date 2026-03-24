@@ -10,7 +10,7 @@ services:
       - '6379:6379'
 
   hmpps-auth:
-    image: quay.io/hmpps/hmpps-auth:latest
+    image: ghcr.io/ministryofjustice/hmpps-auth:latest
     networks:
       - hmpps
     container_name: hmpps-auth
@@ -69,7 +69,7 @@ services:
       - SERVER_PORT=8097
       - SPRING_PROFILES_ACTIVE=dev
       - API_BASE_URL_OAUTH=http://hmpps-auth:8090/auth
-  
+
   hmpps-external-users-api:
       image: quay.io/hmpps/hmpps-external-users-api:latest
       networks:
@@ -91,7 +91,7 @@ services:
         - SPRING_R2DBC_USERNAME=admin
         - SPRING_R2DBC_PASSWORD=admin_password
         - HMPPS_SQS_PROVIDER=localstack
-        - HMPPS_SQS_LOCALSTACKURL=http://localstack:4566  
+        - HMPPS_SQS_LOCALSTACKURL=http://localstack:4566
 
   auth-db:
     container_name: auth-db

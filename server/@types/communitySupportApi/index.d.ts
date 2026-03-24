@@ -16,6 +16,7 @@ type CaseWorkerDto = components['schemas']['CaseWorkerDto']
 type ReferralUserAssignmentsResponse = components['schemas']['ReferralUserAssignmentsResponse']
 type ReferralUserAssignmentsDto = components['schemas']['ReferralUserAssignmentsDto']
 type ReferralDetailsResponseDto = components['schemas']['ReferralDetailsBffResponseDto']
+type ReferralProgress = components['schemas']['ReferralProgressDto']
 
 export type {
   Referral,
@@ -34,4 +35,5 @@ export type {
   AssignmentFailureDto,
   CaseWorkerDto,
   ReferralDetailsResponseDto,
+  ReferralProgress,
 }

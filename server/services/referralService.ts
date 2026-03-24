@@ -35,4 +35,8 @@ export default class ReferralService {
   ) {
     return this.communitySupportApiClient.submitReferralUserAssignments(referralId, assignmentsData, username)
   }
+
+  async getReferralProgress(referralId: string, username: string) {
+    return this.communitySupportApiClient.getReferralProgress(referralId, username)
+  }
 }

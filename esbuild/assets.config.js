@@ -3,12 +3,9 @@ const { copy } = require('esbuild-plugin-copy')
 const { sassPlugin } = require('esbuild-sass-plugin')
 const { clean } = require('esbuild-plugin-clean')
 const manifestPlugin = require('esbuild-plugin-manifest')
-const { globSync } = require('node:fs')
+const fg = require('fast-glob')
 const { buildNotificationPlugin } = require('./utils')
 
-/**
- * Copy additional assets into distribution
- */
 const getAdditionalAssetsConfig = buildConfig => ({
   outdir: buildConfig.assets.outDir,
   plugins: [
@@ -20,9 +17,6 @@ const getAdditionalAssetsConfig = buildConfig => ({
   ],
 })
 
-/**
- * Build scss and javascript assets
- */
 const getAssetsConfig = buildConfig => ({
   entryPoints: buildConfig.assets.entryPoints,
   outdir: buildConfig.assets.outDir,
@@ -35,7 +29,7 @@ const getAssetsConfig = buildConfig => ({
   bundle: true,
   plugins: [
     clean({
-      patterns: globSync(buildConfig.assets.clear),
+      patterns: fg.sync(buildConfig.assets.clear),
     }),
     manifestPlugin({
       generate: entries =>

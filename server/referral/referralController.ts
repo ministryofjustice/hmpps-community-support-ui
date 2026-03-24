@@ -4,6 +4,7 @@ import {
   CaseWorkerDto,
   ReferralUserAssignmentsResponse,
   AssignmentFailureDto,
+  ReferralProgress,
 } from '@community-support-api'
 import ReferralService from '../services/referralService'
 import PersonService from '../services/personService'
@@ -12,6 +13,7 @@ import FoundPersonPresenter from './foundPerson/foundPersonPresenter'
 import logger from '../../logger'
 import CheckReferralInformationPresenter from './check-referral-information/checkReferralInformationPresenter'
 import ReferralDetailsPresenter from './referralDetails/ReferralDetailsPresenter'
+import ProgressPresenter from './progress/progressPresenter'
 
 class ReferralController {
   constructor(
@@ -201,6 +203,42 @@ class ReferralController {
       return res.render('referral/assign', { referralId })
     }
     return res.render('referral/assign')
+  }
+
+  async showReferralProgressDetails(req: Request, res: Response, next: NextFunction) {
+    const { referralId } = req.params as { referralId: string }
+    const { username } = res.locals.user
+    let referralProgress: ReferralProgress[] = []
+    let errorsList: unknown
+
+    try {
+      referralProgress = await this.referralService.getReferralProgress(referralId, username)
+
+      const personName = referralProgress[0]?.personName || '-'
+
+      res.locals.content = {
+        ...res.locals.content,
+        pageHeader: `Referral for ${personName}`,
+        progressActiveColumnHeaders: ['Date and time', 'Status', 'Action'],
+        progressInactiveColumnHeaders: ['Status', 'Action'],
+      }
+    } catch (error) {
+      if (error.responseStatus === 404) {
+        req.flash('referralIdError', `No referral with identifier '${referralId}' found`)
+        errorsList = [{ href: '#referralIdError', text: `No referral with identifier '${referralId}' found` }]
+      } else {
+        req.flash('retrievalError', 'An unexpected error when retrieving referral progress. Please try again.')
+        errorsList = [
+          { href: '#retrievalError', text: `An unexpected error when retrieving referral progress. Please try again.` },
+        ]
+      }
+      return res.render('referral/progress', { referralId, errorsList })
+    }
+
+    const presenter = new ProgressPresenter(referralProgress, referralId, 'progress')
+    const viewModel = presenter.buildPageContent(res)
+
+    return res.render('referral/progress', viewModel)
   }
 }
 

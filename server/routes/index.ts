@@ -87,5 +87,9 @@ export default function routes({
     appointmentController.checkIcs(req, res, next),
   )
 
+  get('/referral-details/:referralId/progress', async (req, res, next) => {
+    await referralController.showReferralProgressDetails(req, res, next)
+  })
+
   return router
 }

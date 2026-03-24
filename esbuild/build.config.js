@@ -1,5 +1,5 @@
 const path = require('path')
-const { globSync } = require('node:fs')
+const fg = require('fast-glob')
 
 /**
  * Configuration for build steps
@@ -15,35 +15,20 @@ const getBuildConfig = () => {
 
     app: {
       outDir: path.join(cwd, 'dist'),
-      entryPoints: globSync([path.join(cwd, '*.ts'), path.join(cwd, 'server/**/*.ts')]).filter(
-        file => !file.endsWith('.test.ts') && !file.endsWith('.config.ts'),
-      ),
-      copy: [
-        {
-          from: path.join(cwd, 'server/views/**/*'),
-          to: path.join(cwd, 'dist/server/views'),
-        },
-      ],
+      entryPoints: fg.sync([`${cwd}/*.ts`, `${cwd}/server/**/*.ts`], {
+        ignore: ['**/*.test.ts', '**/*.config.ts'],
+      }),
+      copy: [{ from: `${cwd}/server/views/**/*`, to: `${cwd}/dist/server/views` }],
     },
 
     assets: {
       outDir: path.join(cwd, 'dist/assets'),
-      entryPoints: globSync([
-        path.join(cwd, 'assets/js/*.js'),
-        path.join(cwd, 'assets/scss/*.scss'),
-        path.join(cwd, 'assets/content/*.json'),
-      ]),
+      entryPoints: fg.sync([`${cwd}/assets/js/*.js`, `${cwd}/assets/scss/*.scss`, `${cwd}/assets/content/*.json`]),
       copy: [
-        {
-          from: path.join(cwd, 'assets/images/**/*'),
-          to: path.join(cwd, 'dist/assets/images'),
-        },
-        {
-          from: path.join(cwd, 'assets/content/**/*'),
-          to: path.join(cwd, 'dist/assets/content'),
-        },
+        { from: `${cwd}/assets/images/**/*`, to: `${cwd}/dist/assets/images` },
+        { from: `${cwd}/assets/content/**/*`, to: `${cwd}/dist/assets/content` },
       ],
-      clear: globSync([path.join(cwd, 'dist/assets/{css,js,json}')]),
+      clear: fg.sync([`${cwd}/dist/assets/{css,js,json}`]),
     },
   }
 }
