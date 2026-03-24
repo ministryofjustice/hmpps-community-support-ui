@@ -3,7 +3,7 @@ import { randomUUID } from 'crypto'
 import { login, resetStubs } from '../testUtils'
 import communitySupport from '../mockApis/communitySupport'
 import AssignPage from '../pages/AssignPage'
-import AssignedPage from '../pages/AssignedPage'
+import ReferralDetailsPage from '../pages/referralDetailsPage'
 
 /*
   Test log
@@ -17,6 +17,7 @@ test.describe('AssignPage', () => {
     await page.goto('/')
     await login(page)
     await communitySupport.stubNewReferralUserAssignments(referralId)
+    await communitySupport.stubGetReferralDetailsPage(200, referralId)
     await test.step('go to assign page', async () => {
       await page.goto(`/referral/${referralId}/assign`)
     })
@@ -116,8 +117,8 @@ test.describe('AssignPage', () => {
       await assignPage.emailAddressInputs[0].fill('testuser1@email.com')
       await expect(assignPage.emailAddressInputs).toHaveLength(1)
       await assignPage.submitButton.click()
-      await expect(page).toHaveURL(`/referral/${referralId}/assigned`)
-      await AssignedPage.verifyAssignmentOnPage(page, 'single')
+      await expect(page).toHaveURL(`/referral-details/${referralId}`)
+      await ReferralDetailsPage.verifyAssignmentOnPage(page, 'single')
     })
   })
 
@@ -155,8 +156,8 @@ test.describe('AssignPage', () => {
     })
     await test.step('assign case workers', async () => {
       await assignPage.submitButton.click()
-      await expect(page).toHaveURL(`/referral/${referralId}/assigned`)
-      await AssignedPage.verifyAssignmentOnPage(page, 'multipe')
+      await expect(page).toHaveURL(`/referral-details/${referralId}`)
+      await ReferralDetailsPage.verifyAssignmentOnPage(page, 'multipe')
     })
   })
   // IPB-2010:AC6 - !!! integration needed !!!
@@ -335,8 +336,8 @@ test.describe('AssignPage', () => {
       await expect(assignPage.emailAddressInputs).toHaveLength(2)
       await assignPage.emailAddressInputs[1].fill('testuser1@email.com')
       await assignPage.submitButton.click()
-      await expect(page).toHaveURL(`/referral/${referralId}/assigned`)
-      await AssignedPage.verifyAssignmentOnPage(page, 'single')
+      await expect(page).toHaveURL(`/referral-details/${referralId}`)
+      await ReferralDetailsPage.verifyAssignmentOnPage(page, 'single')
     })
   })
   // IPB-2010: retrieve user assignments

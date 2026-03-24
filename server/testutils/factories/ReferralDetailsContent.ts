@@ -8,6 +8,7 @@ export default referralDetailsContentFactory.define(({ transientParams }) => ({
   pageSubHeader: transientParams.pageSubHeader || 'Case details',
   backLink: '/unassigned-cases',
   defaultFieldValue: 'Not available',
+  successBannerHeading: 'Case assigned',
   personalDetailsCard: {
     heading: 'Personal details',
     nameLabel: 'Name',

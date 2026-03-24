@@ -1,10 +1,11 @@
 import { Response } from 'express'
 import { GovukFrontendSummaryList } from '@govuk-frontend'
-import { ReferralDetailsResponseDto } from '@community-support-api'
+import { ReferralDetailsResponseDto, ReferralUserAssignmentsResponse } from '@community-support-api'
 import { differenceInYears } from 'date-fns'
 import PresenterBase from '../../presenter/presenterBase'
 import dateFormat from '../../utils/dateFormat'
 import {
+  AssignmentSuccessBanner,
   ContactDetailsCard,
   EqualityMonitoringCard,
   PersonalDetailsCard,
@@ -19,6 +20,7 @@ interface BackLink {
 
 export interface ReferralDetailsViewModel {
   name: string
+  successBanner: AssignmentSuccessBanner | null
   personal: GovukFrontendSummaryList
   equality: GovukFrontendSummaryList
   contact: GovukFrontendSummaryList
@@ -36,7 +38,10 @@ export default class ReferralDetailsPresenter extends PresenterBase<ReferralDeta
 
   readonly today: Date = new Date()
 
-  constructor(private readonly referralDetails: ReferralDetailsResponseDto) {
+  constructor(
+    private readonly referralDetails: ReferralDetailsResponseDto,
+    private readonly assignResult: ReferralUserAssignmentsResponse | null,
+  ) {
     super()
     this.assignReferalHref = `/referral/${referralDetails.id}/assign`
     this.age = differenceInYears(this.today, new Date(referralDetails.personDetailsTableData.dateOfBirth))
@@ -155,10 +160,18 @@ export default class ReferralDetailsPresenter extends PresenterBase<ReferralDeta
     }
   }
 
+  private buildSuccessBanner(heading: string): AssignmentSuccessBanner {
+    return {
+      successBannerHeading: heading,
+      successBannerMessage: this.assignResult.message,
+    }
+  }
+
   buildPageContent(res: Response): ReferralDetailsViewModel {
     const content = this.buildStaticContent(res)
     return {
       name: this.referralDetails.personDetailsTableData.name,
+      successBanner: this.assignResult ? this.buildSuccessBanner(content.successBannerHeading) : null,
       personal: this.buildPersonalDetails(content.personalDetailsCard, content.defaultFieldValue),
       equality: this.buildEqualityDetails(content.equalityMonitoringCard, content.defaultFieldValue),
       contact: this.buildContactDetails(content.contactDetailsCard, content.defaultFieldValue),

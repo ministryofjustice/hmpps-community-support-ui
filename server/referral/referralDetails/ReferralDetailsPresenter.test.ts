@@ -42,6 +42,7 @@ describe('ReferralDetailsPresenter', () => {
     expected = {
       name: 'John Doe',
       backLink: { href: '/unassigned-cases' },
+      successBanner: null,
       personal: {
         card: {
           title: {
@@ -245,7 +246,7 @@ describe('ReferralDetailsPresenter', () => {
     }
   })
   test('rendering', () => {
-    const presenter = new ReferralDetailsPresenter(dto)
+    const presenter = new ReferralDetailsPresenter(dto, null)
     const content = ReferralDetailsContent.build()
     const response = { locals: { content } } as unknown as Response
     const pageContent = presenter.buildPageContent(response)
@@ -258,7 +259,7 @@ describe('ReferralDetailsPresenter', () => {
     dto.contactDetailsTableData.address = undefined
     dto.referralDetailsTableData.assignedTo = []
 
-    const presenter = new ReferralDetailsPresenter(dto)
+    const presenter = new ReferralDetailsPresenter(dto, null)
     const content = ReferralDetailsContent.build()
     const response = { locals: { content } } as unknown as Response
     const pageContent = presenter.buildPageContent(response)
@@ -278,7 +279,7 @@ describe('ReferralDetailsPresenter', () => {
     dto.contactDetailsTableData.address = undefined
     dto.referralDetailsTableData.assignedTo = null
 
-    const presenter = new ReferralDetailsPresenter(dto)
+    const presenter = new ReferralDetailsPresenter(dto, null)
     const content = ReferralDetailsContent.build()
     const response = { locals: { content } } as unknown as Response
     const pageContent = presenter.buildPageContent(response)
