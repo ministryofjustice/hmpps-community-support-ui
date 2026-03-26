@@ -1,19 +1,31 @@
 import { Request, Response } from 'express'
-import { CreateAppointmentRequest } from '@community-support-api'
+import { CreateAppointmentRequest, ReferralInformation, ProbationOffice } from '@community-support-api'
+import { Prison } from '@prison-api'
 import AppointmentController from './appointmentController'
 import ConfirmIcsPresenter from './confirm-ics/confirmIcsPresenter'
+import ScheduleIcsPresenter from './schedule-ics/scheduleIcsPresenter'
 import ConfirmIcsContentFactory from '../testutils/factories/ConfirmIcsContent'
 import AppointmentService from '../services/AppointmentService'
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
+import ScheduleIcsContentFactory from '../testutils/factories/ScheduleIcsContent'
+import ReferenceDataService from '../services/referenceDataService'
 
 jest.mock('./confirm-ics/confirmIcsPresenter')
 jest.mock('../services/AppointmentService')
+jest.mock('./schedule-ics/scheduleIcsPresenter')
+jest.mock('../services/referenceDataService')
 
 describe('AppointmentController', () => {
   let appointmentService: AppointmentService
   let appointmentController: AppointmentController
+  let probationOffices: Promise<ProbationOffice[]>
+  let prisons: Promise<Prison[]>
   let req: Request
   let res: Response
+  let scheduleIcsCommunityReq: Request
+  let scheduleIcsPrisonReq: Request
+  let scheduleIcsRes: Response
+  let referenceDataService: jest.Mocked<ReferenceDataService>
 
   const referralId = 'referral-123'
 
@@ -24,10 +36,43 @@ describe('AppointmentController', () => {
     sessionCommunication: ['Phone call'],
   }
 
+  const mockReferralInformationInCommunity: ReferralInformation = {
+    crn: 'A123456', // crn number
+    firstName: 'John',
+    lastName: 'Doe',
+    sex: 'Male',
+    referralId: 'referral-123',
+    personId: 'person-id-123',
+    communityServiceProviderId: 'csp-id-123',
+    communityServiceProviderName: 'Community Support Provider',
+    region: 'North West',
+    deliveryPartner: 'Delivery Partner Ltd',
+  }
+
+  const mockReferralInformationInPrison: ReferralInformation = {
+    crn: 'A1234AA', // prison number
+    firstName: 'Alex',
+    lastName: 'Joe',
+    sex: 'Male',
+    referralId: 'referral-123',
+    personId: 'person-id-123',
+    communityServiceProviderId: 'csp-id-123',
+    communityServiceProviderName: 'Community Support Provider',
+    region: 'North West',
+    deliveryPartner: 'Delivery Partner Ltd',
+  }
+
   beforeEach(() => {
+    referenceDataService = {
+      getProbationOffices: jest.fn(),
+      getPrisons: jest.fn(),
+    } as unknown as jest.Mocked<ReferenceDataService>
+
+    probationOffices = referenceDataService.getProbationOffices()
+    prisons = referenceDataService.getPrisons()
     const communitySupportApiClient = {} as unknown as CommunitySupportApiClient
     appointmentService = new AppointmentService(communitySupportApiClient)
-    appointmentController = new AppointmentController(appointmentService)
+    appointmentController = new AppointmentController(appointmentService, referenceDataService)
 
     ConfirmIcsPresenter.prototype.renderPage = jest.fn()
 
@@ -39,6 +84,38 @@ describe('AppointmentController', () => {
 
     res = {
       locals: { content: ConfirmIcsContentFactory.build() },
+      render: jest.fn(),
+      redirect: jest.fn(),
+    } as unknown as Response
+
+    ScheduleIcsPresenter.prototype.renderPage = jest.fn()
+
+    scheduleIcsCommunityReq = {
+      params: {
+        referralId,
+        probationOffices,
+        prisons,
+        mockReferralInformationInCommunity,
+        createAppointmentRequest: null,
+      },
+      session: { referralInformation: mockReferralInformationInCommunity, createAppointmentRequest: null },
+      flash: jest.fn(),
+    } as unknown as Request
+
+    scheduleIcsPrisonReq = {
+      params: {
+        referralId,
+        probationOffices,
+        prisons,
+        mockReferralInformationInPrison,
+        createAppointmentRequest: null,
+      },
+      session: { referralInformation: mockReferralInformationInPrison, createAppointmentRequest: null },
+      flash: jest.fn(),
+    } as unknown as Request
+
+    scheduleIcsRes = {
+      locals: { content: ScheduleIcsContentFactory.build() },
       render: jest.fn(),
       redirect: jest.fn(),
     } as unknown as Response
@@ -57,6 +134,52 @@ describe('AppointmentController', () => {
 
       expect(ConfirmIcsPresenter).toHaveBeenCalledWith(mockCreateAppointmentRequest, referralId)
       expect(ConfirmIcsPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+    })
+  })
+
+  describe('scheduleIcs', () => {
+    it('should render schedule-ics page - community ', async () => {
+      req.session.referralInformation = mockReferralInformationInCommunity
+      await appointmentController.scheduleIcs(scheduleIcsCommunityReq, scheduleIcsRes)
+
+      expect(ScheduleIcsPresenter).toHaveBeenCalledWith(
+        referralId,
+        probationOffices,
+        prisons,
+        mockReferralInformationInCommunity,
+        null,
+      )
+      expect(ScheduleIcsPresenter.prototype.renderPage).toHaveBeenCalledWith(scheduleIcsRes)
+    })
+
+    it('should render schedule-ics page - custody ', async () => {
+      req.session.referralInformation = mockReferralInformationInPrison
+      await appointmentController.scheduleIcs(scheduleIcsPrisonReq, scheduleIcsRes)
+
+      expect(ScheduleIcsPresenter).toHaveBeenCalledWith(
+        referralId,
+        probationOffices,
+        prisons,
+        mockReferralInformationInPrison,
+        null,
+      )
+      expect(ScheduleIcsPresenter.prototype.renderPage).toHaveBeenCalledWith(scheduleIcsRes)
+    })
+
+    it('should create presenter with createAppointmentRequest from session and render page', async () => {
+      req.session.referralInformation = mockReferralInformationInCommunity
+      req.session.createAppointmentRequest = mockCreateAppointmentRequest
+
+      await appointmentController.scheduleIcs(scheduleIcsCommunityReq, scheduleIcsRes)
+
+      expect(ScheduleIcsPresenter).toHaveBeenCalledWith(
+        referralId,
+        probationOffices,
+        prisons,
+        mockReferralInformationInCommunity,
+        null,
+      )
+      expect(ScheduleIcsPresenter.prototype.renderPage).toHaveBeenCalledWith(scheduleIcsRes)
     })
   })
 })

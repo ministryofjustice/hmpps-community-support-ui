@@ -16,7 +16,8 @@
     "paths": {
       "@community-support-api": ["./server/@types/communitySupportApi/index.d.ts"],
       "@govuk-frontend": ["./server/@types/govukFrontend/index.d.ts"],
-      "@moj-frontend": ["./server/@types/mojFrontend/index.d.ts"]
+      "@moj-frontend": ["./server/@types/mojFrontend/index.d.ts"],
+      "@prison-api": ["./server/@types/prisonApi/index.d.ts"]
     }
   },
   "exclude": ["node_modules", "assets/**/*.js", "integration_tests", "dist", "esbuild", "eslint.config.mjs"],

@@ -35,6 +35,13 @@ export const seedAppointmentSession = async (page: Page, appointmentRequest: obj
   })
 }
 
+export const seedReferralInformation = async (page: Page, referralInformation: object): Promise<void> => {
+  await page.request.post('/test/setup-referral-information', {
+    data: referralInformation,
+    headers: { 'Content-Type': 'application/json' },
+  })
+}
+
 export const duplicateData = (dataToDuplicate: unknown, timesToDuplicates: number): Array<unknown> => {
   const duplicatedData = []
   // eslint-disable-next-line no-plusplus

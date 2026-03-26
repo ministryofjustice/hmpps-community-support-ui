@@ -20,6 +20,7 @@ type AppointmentIcsResponse = components['schemas']['AppointmentIcsResponse']
 type AppointmentTime = components['schemas']['AppointmentTimeRequest']
 type ReferralProgress = components['schemas']['ReferralProgressDto']
 type ReferralAppointmentHistory = components['schemas']['ReferralAppointmentHistoryDto']
+type ProbationOffice = components['schemas']['ProbationOffice']
 
 export type {
   Referral,
@@ -42,4 +43,5 @@ export type {
   AppointmentTime,
   ReferralProgress,
   ReferralAppointmentHistory,
+  ProbationOffice,
 }

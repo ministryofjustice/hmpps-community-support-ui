@@ -15,6 +15,7 @@ import { createRedisClient } from './redisClient'
 import config from '../config'
 import HmppsAuditClient from './hmppsAuditClient'
 import CommunitySupportApiClient from './communitySupportApiClient'
+import PrisonApiClient from './prisonApiClient'
 import logger from '../../logger'
 
 export const dataAccess = () => {
@@ -25,12 +26,14 @@ export const dataAccess = () => {
   )
 
   const communitySupportApiClient = new CommunitySupportApiClient(hmppsAuthClient)
+  const prisonApiClient = new PrisonApiClient(hmppsAuthClient)
 
   return {
     applicationInfo,
     hmppsAuthClient,
     hmppsAuditClient: new HmppsAuditClient(config.sqs.audit),
     communitySupportApiClient,
+    prisonApiClient,
   }
 }
 

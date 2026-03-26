@@ -4,6 +4,7 @@ import { stubFor } from './wiremock'
 import { duplicateData } from '../testUtils'
 import referralDetailsPageData from '../mockData/referralDetailsPageData'
 import { components } from '../../server/@types/communitySupportApi/imported'
+import { probationOfficesData } from '../mockData/referenceData'
 
 export interface AssignCaseWorkersRequest {
   emails: string[]
@@ -246,6 +247,19 @@ export default {
         status: httpStatus,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: referralDetailsPageData(referralId),
+        transformers: ['response-template'],
+      },
+    }),
+  stubGetProbationOffices: (httpStatus = 200): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: `/community-support/bff/reference-data/probation-offices`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: probationOfficesData,
         transformers: ['response-template'],
       },
     }),
