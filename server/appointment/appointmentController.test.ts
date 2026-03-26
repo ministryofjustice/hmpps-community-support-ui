@@ -1,6 +1,5 @@
 import { Request, Response } from 'express'
-import { CreateAppointmentRequest, ReferralInformation, ProbationOffice } from '@community-support-api'
-import { Prison } from '@prison-api'
+import { CreateAppointmentRequest, ReferralInformation } from '@community-support-api'
 import AppointmentController from './appointmentController'
 import ConfirmIcsPresenter from './confirm-ics/confirmIcsPresenter'
 import ScheduleIcsPresenter from './schedule-ics/scheduleIcsPresenter'
@@ -9,6 +8,7 @@ import AppointmentService from '../services/AppointmentService'
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
 import ScheduleIcsContentFactory from '../testutils/factories/ScheduleIcsContent'
 import ReferenceDataService from '../services/referenceDataService'
+import { prisonsData, probationOfficesData } from '../../integration_tests/mockData/referenceData'
 
 jest.mock('./confirm-ics/confirmIcsPresenter')
 jest.mock('../services/AppointmentService')
@@ -18,8 +18,6 @@ jest.mock('../services/referenceDataService')
 describe('AppointmentController', () => {
   let appointmentService: AppointmentService
   let appointmentController: AppointmentController
-  let probationOffices: Promise<ProbationOffice[]>
-  let prisons: Promise<Prison[]>
   let req: Request
   let res: Response
   let scheduleIcsCommunityReq: Request
@@ -64,12 +62,15 @@ describe('AppointmentController', () => {
 
   beforeEach(() => {
     referenceDataService = {
-      getProbationOffices: jest.fn(),
-      getPrisons: jest.fn(),
+      getProbationOffices: jest.fn().mockResolvedValue([]),
+      getPrisons: jest.fn().mockResolvedValue([]),
     } as unknown as jest.Mocked<ReferenceDataService>
+    ;(ReferenceDataService as jest.MockedClass<typeof ReferenceDataService>).mockImplementation(
+      () => referenceDataService,
+    )
 
-    probationOffices = referenceDataService.getProbationOffices()
-    prisons = referenceDataService.getPrisons()
+    referenceDataService.getProbationOffices.mockResolvedValue(probationOfficesData)
+    referenceDataService.getPrisons.mockResolvedValue(prisonsData)
     const communitySupportApiClient = {} as unknown as CommunitySupportApiClient
     appointmentService = new AppointmentService(communitySupportApiClient)
     appointmentController = new AppointmentController(appointmentService, referenceDataService)
@@ -93,8 +94,8 @@ describe('AppointmentController', () => {
     scheduleIcsCommunityReq = {
       params: {
         referralId,
-        probationOffices,
-        prisons,
+        probationOfficesData,
+        prisonsData,
         mockReferralInformationInCommunity,
         createAppointmentRequest: null,
       },
@@ -105,8 +106,8 @@ describe('AppointmentController', () => {
     scheduleIcsPrisonReq = {
       params: {
         referralId,
-        probationOffices,
-        prisons,
+        probationOfficesData,
+        prisonsData,
         mockReferralInformationInPrison,
         createAppointmentRequest: null,
       },
@@ -141,11 +142,15 @@ describe('AppointmentController', () => {
     it('should render schedule-ics page - community ', async () => {
       req.session.referralInformation = mockReferralInformationInCommunity
       await appointmentController.scheduleIcs(scheduleIcsCommunityReq, scheduleIcsRes)
+      referenceDataService.getProbationOffices.mockResolvedValue(probationOfficesData)
+      referenceDataService.getPrisons.mockResolvedValue(prisonsData)
+
+      await appointmentController.scheduleIcs(scheduleIcsCommunityReq, scheduleIcsRes)
 
       expect(ScheduleIcsPresenter).toHaveBeenCalledWith(
         referralId,
-        probationOffices,
-        prisons,
+        probationOfficesData,
+        prisonsData,
         mockReferralInformationInCommunity,
         null,
       )
@@ -158,8 +163,8 @@ describe('AppointmentController', () => {
 
       expect(ScheduleIcsPresenter).toHaveBeenCalledWith(
         referralId,
-        probationOffices,
-        prisons,
+        probationOfficesData,
+        prisonsData,
         mockReferralInformationInPrison,
         null,
       )
@@ -174,8 +179,8 @@ describe('AppointmentController', () => {
 
       expect(ScheduleIcsPresenter).toHaveBeenCalledWith(
         referralId,
-        probationOffices,
-        prisons,
+        probationOfficesData,
+        prisonsData,
         mockReferralInformationInCommunity,
         null,
       )

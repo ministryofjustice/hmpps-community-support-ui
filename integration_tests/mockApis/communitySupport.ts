@@ -254,7 +254,7 @@ export default {
     stubFor({
       request: {
         method: 'GET',
-        urlPathPattern: `/community-support/bff/reference-data/probation-offices`,
+        urlPath: `/community-support/bff/reference-data/probation-offices`,
       },
       response: {
         status: httpStatus,

@@ -7,7 +7,7 @@ export default {
     stubFor({
       request: {
         method: 'GET',
-        urlPattern: '/api/agencies',
+        urlPath: '/api/agencies',
       },
       response: {
         status: httpStatus,
@@ -19,7 +19,7 @@ export default {
     stubFor({
       request: {
         method: 'GET',
-        urlPathPattern: '/api/agencies/prisons',
+        urlPath: '/api/agencies/prisons',
       },
       response: {
         status: httpStatus,
