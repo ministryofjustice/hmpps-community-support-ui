@@ -12,20 +12,24 @@ const SCHEDULE_ICS_URL = `/referral/${REFERRAL_ID}/appointment/schedule-ics`
 test.describe('Schedule ICS Page', () => {
   test.beforeEach(async ({ page }) => {
     await resetStubs()
+    await page.goto('/')
+    await login(page)
     await communitySupport.stubGetReferral()
     await communitySupport.stubGetProbationOffices()
     await prisonApi.stubGetPrisons()
-    await page.goto('/')
-    await login(page)
   })
 
   test('AC1.1/AC3/AC12 should display the schedule ICS page - person in Prison', async ({ page }) => {
+    await communitySupport.stubGetProbationOffices()
+    await prisonApi.stubGetPrisons()
     await seedReferralInformation(page, referralInformationInPrison)
     await page.goto(SCHEDULE_ICS_URL)
     await ScheduleIcsPage.verifyInactionOnPage(page, false)
   })
 
   test('AC1.2/AC3/AC7/AC8/AC10/AC11 should display the schedule ICS page - person in Community', async ({ page }) => {
+    await communitySupport.stubGetProbationOffices()
+    await prisonApi.stubGetPrisons()
     await seedReferralInformation(page, referralInformationInCommunity)
     await page.goto(SCHEDULE_ICS_URL)
     await ScheduleIcsPage.verifyInactionOnPage(page, true)

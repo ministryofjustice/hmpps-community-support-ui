@@ -228,7 +228,7 @@ export default {
     stubFor({
       request: {
         method: 'POST',
-        url: `/community-support/referral/${referralId}/assign`,
+        urlPathPattern: `/community-support/referral/${referralId}/assign`,
       },
       response: {
         status: httpStatus,
@@ -254,7 +254,7 @@ export default {
     stubFor({
       request: {
         method: 'GET',
-        urlPath: `/community-support/bff/reference-data/probation-offices`,
+        urlPathPattern: `.*/bff/reference-data/probation-offices.*`,
       },
       response: {
         status: httpStatus,

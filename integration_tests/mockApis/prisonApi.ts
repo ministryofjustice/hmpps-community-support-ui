@@ -19,7 +19,7 @@ export default {
     stubFor({
       request: {
         method: 'GET',
-        urlPath: '/api/agencies/prisons',
+        urlPathPattern: '.*/agencies/prisons.*',
       },
       response: {
         status: httpStatus,
