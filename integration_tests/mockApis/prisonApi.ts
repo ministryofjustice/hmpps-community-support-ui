@@ -7,7 +7,7 @@ export default {
     stubFor({
       request: {
         method: 'GET',
-        urlPath: '/health',
+        urlPath: '/health/ping',
       },
       response: {
         status: httpStatus,
@@ -19,7 +19,7 @@ export default {
     stubFor({
       request: {
         method: 'GET',
-        urlPathPattern: '.*/agencies/prisons.*',
+        urlPathPattern: '.*prisons.*',
       },
       response: {
         status: httpStatus,

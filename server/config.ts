@@ -83,7 +83,7 @@ export default {
     },
     prisonApiService: {
       url: get('PRISON_API_URL', 'http://localhost:9091', requiredInProduction),
-      healthPath: '/health',
+      healthPath: '/health/ping',
       timeout: {
         response: 10000,
         deadline: 10000,

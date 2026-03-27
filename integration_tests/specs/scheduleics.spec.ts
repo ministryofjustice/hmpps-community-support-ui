@@ -15,8 +15,8 @@ test.describe('Schedule ICS Page', () => {
     await page.goto('/')
     await login(page)
     await communitySupport.stubGetReferral()
-    await communitySupport.stubGetProbationOffices()
     await prisonApi.stubGetPrisons()
+    await communitySupport.stubGetProbationOffices()
   })
 
   test('AC1.1/AC3/AC12 should display the schedule ICS page - person in Prison', async ({ page }) => {
