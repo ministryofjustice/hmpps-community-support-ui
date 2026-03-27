@@ -7,7 +7,7 @@ export default {
     stubFor({
       request: {
         method: 'GET',
-        urlPath: '/api/agencies',
+        urlPath: '/health',
       },
       response: {
         status: httpStatus,
@@ -25,7 +25,6 @@ export default {
         status: httpStatus,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: prisonsData,
-        transformers: ['response-template'],
       },
     }),
 }

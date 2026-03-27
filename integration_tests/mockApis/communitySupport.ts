@@ -260,7 +260,6 @@ export default {
         status: httpStatus,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: probationOfficesData,
-        transformers: ['response-template'],
       },
     }),
   stubGetICS: (

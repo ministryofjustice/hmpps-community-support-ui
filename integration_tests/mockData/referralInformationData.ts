@@ -1,11 +1,13 @@
 import type { ReferralInformation } from '@community-support-api'
 
+const mockReferralId = crypto.randomUUID()
+
 const referralInformationInCommunity: ReferralInformation = {
   crn: 'A123456', // crn number
   firstName: 'John',
   lastName: 'Doe',
   sex: 'Male',
-  referralId: 'referral-id-1',
+  referralId: mockReferralId,
   personId: 'person-id-123',
   communityServiceProviderId: 'csp-id-123',
   communityServiceProviderName: 'Community Support Provider',
@@ -17,7 +19,7 @@ const referralInformationInPrison: ReferralInformation = {
   firstName: 'Alex',
   lastName: 'Joe',
   sex: 'Male',
-  referralId: 'referral-id-2',
+  referralId: mockReferralId,
   personId: 'person-id-123',
   communityServiceProviderId: 'csp-id-123',
   communityServiceProviderName: 'Community Support Provider',

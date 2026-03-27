@@ -1,0 +1,40 @@
+{
+  "mappings": [
+    {
+      "name": "Prison API",
+      "request": {
+        "method": "GET",
+        "url": "/api/agencies/prisons"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": [
+          {
+            "agencyId": "ALI",
+            "description": "Albany (HMP)",
+            "longDescription": "HMP ALBANY",
+            "agencyType": "INST",
+            "active": true
+          },
+          {
+            "agencyId": "ACI",
+            "description": "Altcourse (HMP)",
+            "longDescription": "HMP ALTCOURSE",
+            "agencyType": "INST",
+            "active": true
+          },
+          {
+            "agencyId": "ASI",
+            "description": "Ashfield (HMP)",
+            "longDescription": "HMP & YOI ASHFIELD",
+            "agencyType": "INST",
+            "active": true
+          }
+        ]
+      }
+    }
+  ]
+}

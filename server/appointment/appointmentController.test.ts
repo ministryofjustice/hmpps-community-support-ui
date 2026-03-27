@@ -25,7 +25,11 @@ describe('AppointmentController', () => {
   let scheduleIcsRes: Response
   let referenceDataService: jest.Mocked<ReferenceDataService>
 
-  const referralId = 'referral-123'
+  const mockReferralId = crypto.randomUUID()
+  const mockPersonId = crypto.randomUUID()
+  const mockServiceProviderId = crypto.randomUUID()
+
+  const referralId = mockReferralId
 
   const mockCreateAppointmentRequest: CreateAppointmentRequest = {
     date: '2026-03-27',
@@ -39,9 +43,9 @@ describe('AppointmentController', () => {
     firstName: 'John',
     lastName: 'Doe',
     sex: 'Male',
-    referralId: 'referral-123',
-    personId: 'person-id-123',
-    communityServiceProviderId: 'csp-id-123',
+    referralId: mockReferralId,
+    personId: mockPersonId,
+    communityServiceProviderId: mockServiceProviderId,
     communityServiceProviderName: 'Community Support Provider',
     region: 'North West',
     deliveryPartner: 'Delivery Partner Ltd',
@@ -52,9 +56,9 @@ describe('AppointmentController', () => {
     firstName: 'Alex',
     lastName: 'Joe',
     sex: 'Male',
-    referralId: 'referral-123',
-    personId: 'person-id-123',
-    communityServiceProviderId: 'csp-id-123',
+    referralId: mockReferralId,
+    personId: mockPersonId,
+    communityServiceProviderId: mockServiceProviderId,
     communityServiceProviderName: 'Community Support Provider',
     region: 'North West',
     deliveryPartner: 'Delivery Partner Ltd',
