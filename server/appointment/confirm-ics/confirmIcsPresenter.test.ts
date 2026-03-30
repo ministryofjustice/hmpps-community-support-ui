@@ -4,6 +4,24 @@ import type { ConfirmIcsContent, ConfirmIcsViewModel } from './confirmIcsViewMod
 import ConfirmIcsPresenter from './confirmIcsPresenter'
 import ConfirmIcsContentFactory from '../../testutils/factories/ConfirmIcsContent'
 
+function addDays(days: number): Date {
+  const d = new Date()
+  d.setDate(d.getDate() + days)
+  return d
+}
+
+function toIsoDateString(d: Date): string {
+  return d.toISOString().split('T')[0]
+}
+
+function toDisplayDate(d: Date): string {
+  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+}
+
+const futureDate = addDays(7)
+const futureDateStr = toIsoDateString(futureDate)
+const futureDateDisplay = toDisplayDate(futureDate)
+
 describe('ConfirmIcsPresenter', () => {
   let res: Response
   let content: ConfirmIcsContent
@@ -11,7 +29,7 @@ describe('ConfirmIcsPresenter', () => {
   const referralId = 'referral-123'
 
   const baseRequest: CreateAppointmentRequest = {
-    date: '2026-03-27',
+    date: futureDateStr,
     time: { hour: 1, minute: 0, amPm: 'pm' },
     sessionMethodRequest: {
       type: 'PHONE',
@@ -72,7 +90,7 @@ describe('ConfirmIcsPresenter', () => {
       const viewModel: ConfirmIcsViewModel = renderCall[1].content
       const { rows } = viewModel.icsDetailsSummary
 
-      expect(rows[0]).toEqual({ key: { text: 'Date' }, value: { text: '27 March 2026' } })
+      expect(rows[0]).toEqual({ key: { text: 'Date' }, value: { text: futureDateDisplay } })
       expect(rows[1]).toEqual({ key: { text: 'Start time' }, value: { text: '1:00pm' } })
     })
 
