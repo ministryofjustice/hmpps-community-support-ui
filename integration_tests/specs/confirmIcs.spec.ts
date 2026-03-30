@@ -5,8 +5,29 @@ import ConfirmIcsPage from '../pages/confirmIcsPage'
 const REFERRAL_ID = 'b190ac1e-1e2a-41c2-a4ac-3ceb9d2dcb1e'
 const CONFIRM_ICS_URL = `/referral/${REFERRAL_ID}/appointment/confirm-ics`
 
+function addDays(days: number): Date {
+  const date = new Date()
+  date.setDate(date.getDate() + days)
+  return date
+}
+
+function toIsoDateString(date: Date): string {
+  return date.toISOString().split('T')[0]
+}
+
+function toDisplayDate(date: Date): string {
+  return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+}
+
+const futureDate = addDays(7)
+const pastDate = addDays(-30)
+
+const futureDateStr = toIsoDateString(futureDate)
+const pastDateStr = toIsoDateString(pastDate)
+const futureDateDisplay = toDisplayDate(futureDate)
+
 const phoneAppointmentRequest = {
-  date: '2026-03-27',
+  date: futureDateStr,
   time: { hour: 1, minute: 0, amPm: 'pm' },
   sessionMethodRequest: {
     type: 'PHONE',
@@ -16,7 +37,7 @@ const phoneAppointmentRequest = {
 }
 
 const inPersonAppointmentRequest = {
-  date: '2026-03-27',
+  date: futureDateStr,
   time: { hour: 10, minute: 30, amPm: 'am' },
   sessionMethodRequest: {
     type: 'PROBATION_OFFICE',
@@ -25,7 +46,7 @@ const inPersonAppointmentRequest = {
 }
 
 const otherLocationAppointmentRequest = {
-  date: '2026-03-27',
+  date: futureDateStr,
   time: { hour: 10, minute: 30, amPm: 'am' },
   sessionMethodRequest: {
     type: 'OTHER_LOCATION',
@@ -39,7 +60,7 @@ const otherLocationAppointmentRequest = {
 }
 
 const pastAppointmentRequest = {
-  date: '2026-01-01',
+  date: pastDateStr,
   time: { hour: 9, minute: 0, amPm: 'am' },
   sessionMethodRequest: {
     type: 'PHONE',
@@ -59,7 +80,7 @@ test.describe('Confirm ICS Page', () => {
     await seedAppointmentSession(page, phoneAppointmentRequest)
     await page.goto(CONFIRM_ICS_URL)
     const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
-    await expect(confirmIcsPage.dateRow).toContainText('27 March 2026')
+    await expect(confirmIcsPage.dateRow).toContainText(futureDateDisplay)
     await expect(confirmIcsPage.startTimeRow).toContainText('1:00pm')
     await expect(confirmIcsPage.methodRow).toContainText('Phone call')
     await expect(confirmIcsPage.notInPersonReasonRow).toBeVisible()
