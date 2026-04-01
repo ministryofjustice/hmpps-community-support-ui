@@ -1,13 +1,13 @@
 const { copy } = require('esbuild-plugin-copy')
 const { typecheckPlugin } = require('@jgoz/esbuild-plugin-typecheck')
-const fg = require('fast-glob')
+const { globSync } = require('node:fs')
 const { buildNotificationPlugin } = require('./utils')
 
 /**
  * Build typescript application into CommonJS
  */
 const getAppConfig = buildConfig => ({
-  entryPoints: fg.sync(buildConfig.app.entryPoints),
+  entryPoints: globSync(buildConfig.app.entryPoints),
   outdir: buildConfig.app.outDir,
   bundle: false,
   sourcemap: true,

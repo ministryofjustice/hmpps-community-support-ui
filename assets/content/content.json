@@ -97,6 +97,10 @@
       "linkChange": "Change"
     }
   },
+  "/referral/:id/appointment/schedule-ics": {
+    "pageHeader": "Schedule the ICS",
+    "submitButtonText": "Save and continue"
+  },
   "/referral/:id/appointment/confirm-ics": {
     "pageHeader": "Check the details before scheduling the ICS",
     "submitButtonText": "Submit"
@@ -120,15 +124,14 @@
     }
   },
   "/referral-details/:id/progress": {
-    "pageHeader": "Referral progress",
-    "caseDetailsSubNavTitle": "Case details",
+    "pageHeader": "Referral for",
     "progressSubNavTitle": "Progress",
-    "changeLogSubNavTitle": "Change log",
     "subNavItems": [
       { "id": "caseDetails", "title": "Case details", "href": "/case-details" },
       { "id": "progress", "title": "Progress", "href": "/progress" },
       { "id": "changeLog", "title": "Change log", "href": "/change-log" }
     ],
-    "progressColumnHeaders": ["Date and time", "Status", "Action"]
+    "progressActiveColumnHeaders": ["Date and time", "Status", "Action"],
+    "progressInactiveColumnHeaders": ["Status", "Action"]
   }
 }

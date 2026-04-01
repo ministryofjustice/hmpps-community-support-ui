@@ -22,13 +22,16 @@ function getContentForPath(req: Request, contentData: Record<string, Record<stri
 
 function parsePlaceholdersFromPath(pathToParse: string): string {
   const uuidRegex = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i
-  const caseReferenceRegex = /[a-z]{2}\d{4}[a-z]{2}$/i
+  const caseReferenceRegex = /[a-z]{2}\d{4}[a-z]{2}/i
+
   if (pathToParse.match(uuidRegex)) {
     return parsePlaceholdersFromPath(pathToParse.replace(uuidRegex, ':id'))
   }
+
   if (pathToParse.match(caseReferenceRegex)) {
     return parsePlaceholdersFromPath(pathToParse.replace(caseReferenceRegex, ':id'))
   }
+
   return pathToParse
 }
 

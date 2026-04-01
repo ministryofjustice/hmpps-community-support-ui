@@ -485,18 +485,21 @@ export interface components {
       referralDate: string
       assignedTo: string[]
     }
-    ReferralProgressDto: {
-      /** Format: uuid */
-      referralId: string
-      personName: string
+    ReferralAppointmentHistoryDto: {
       /** Format: uuid */
       appointmentId: string
       /** @enum {string} */
-      appointmentType: 'ICS'
+      type: 'ICS'
       /** Format: date-time */
-      appointmentDateTime: string
+      dateTime: string
       /** @enum {string} */
       status: 'SCHEDULED' | 'NEEDS_FEEDBACK' | 'COMPLETED' | 'RESCHEDULED' | 'DID_NOT_ATTEND'
+    }
+    ReferralProgressDto: {
+      /** Format: uuid */
+      referralId: string
+      fullName: string
+      appointments: components['schemas']['ReferralAppointmentHistoryDto'][]
     }
     ProbationOffice: {
       /** Format: int32 */

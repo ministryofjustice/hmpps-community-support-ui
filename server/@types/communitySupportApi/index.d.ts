@@ -19,6 +19,7 @@ type ReferralDetailsResponseDto = components['schemas']['ReferralDetailsBffRespo
 type AppointmentIcsResponse = components['schemas']['AppointmentIcsResponse']
 type AppointmentTime = components['schemas']['AppointmentTimeRequest']
 type ReferralProgress = components['schemas']['ReferralProgressDto']
+type ReferralAppointmentHistory = components['schemas']['ReferralAppointmentHistoryDto']
 
 export type {
   Referral,
@@ -40,4 +41,5 @@ export type {
   AppointmentIcsResponse,
   AppointmentTime,
   ReferralProgress,
+  ReferralAppointmentHistory,
 }

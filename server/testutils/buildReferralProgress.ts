@@ -1,21 +1,32 @@
-import { ReferralProgress } from '@community-support-api'
-import ReferralProgressFactory from './factories/ReferralProgress'
+import { ReferralAppointmentHistory, ReferralProgress } from '@community-support-api'
+import { randomUUID } from 'crypto'
+
+type AppointmentEvent = {
+  status: ReferralAppointmentHistory['status']
+  dateTime?: string
+}
 
 type AppointmentGroup = {
   appointmentId?: string
-  events: Array<Partial<ReferralProgress>>
+  events: AppointmentEvent[]
 }
 
-export default function buildAppointments(...groups: AppointmentGroup[]): ReferralProgress[] {
-  return groups.flatMap((group, groupIndex) => {
-    const appointmentId = group.appointmentId ?? `app-${groupIndex + 1}`
+export default function buildReferralProgress(
+  groups: AppointmentGroup[],
+  referralId: string = randomUUID(),
+): ReferralProgress {
+  return {
+    referralId,
+    fullName: 'Test User',
+    appointments: groups.flatMap((group, groupIndex) => {
+      const appointmentId = group.appointmentId ?? `app-${groupIndex + 1}`
 
-    return group.events.map((event, eventIndex) =>
-      ReferralProgressFactory.build({
+      return group.events.map((event, eventIndex) => ({
         appointmentId,
-        appointmentDateTime: event.appointmentDateTime ?? `2026-03-${25 + groupIndex}-${10 + eventIndex}:00:00`,
-        ...event,
-      }),
-    )
-  })
+        type: 'ICS',
+        dateTime: event.dateTime ?? `2026-03-${25 + groupIndex}T${10 + eventIndex}:00:00`,
+        status: event.status,
+      }))
+    }),
+  }
 }

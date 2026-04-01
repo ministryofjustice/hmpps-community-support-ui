@@ -214,15 +214,16 @@ describe('CommunitySupportApiClient tests', () => {
   })
   describe('getReferralProgress tests', () => {
     it('should return the progress of a referral with a 200 response', () => {
-      const mockReferralProgress: ReferralProgress = ReferralProgressFactory.build({ referralId: 'referral-id-1' })
+      const caseReference = 'AB1234CD'
+      const mockReferralProgress: ReferralProgress = ReferralProgressFactory.build()
 
       nock('http://localhost:8080', {
         reqheaders: { authorization: 'Bearer dummy-token' },
       })
-        .get(`/bff/referral-details/referral-id-1/progress`)
+        .get(`/bff/referral-details/${caseReference}/progress`)
         .reply(200, mockReferralProgress)
 
-      const result = communitySupportApiClient.getReferralProgress('referral-id-1', 'user1')
+      const result = communitySupportApiClient.getReferralProgress(caseReference, 'user1')
 
       expect(result).resolves.toEqual(mockReferralProgress)
     })

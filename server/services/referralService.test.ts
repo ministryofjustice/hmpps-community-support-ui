@@ -88,12 +88,13 @@ describe('Referral service tests', () => {
 
   describe('getReferralProgress', () => {
     it('should return referral progress from API client', async () => {
+      const caseReference = 'AB1234CD'
       const mockReferralProgress: ReferralProgress = ReferralProgressFactory.build()
 
-      communitySupportApiClient.getReferralProgress.mockResolvedValue([mockReferralProgress])
-      const result = await referralService.getReferralProgress('referral-id-1', 'user1')
-      expect(result).toStrictEqual([mockReferralProgress])
-      expect(communitySupportApiClient.getReferralProgress).toHaveBeenCalledWith('referral-id-1', 'user1')
+      communitySupportApiClient.getReferralProgress.mockResolvedValue(mockReferralProgress)
+      const result = await referralService.getReferralProgress(caseReference, 'user1')
+      expect(result).toStrictEqual(mockReferralProgress)
+      expect(communitySupportApiClient.getReferralProgress).toHaveBeenCalledWith(caseReference, 'user1')
     })
   })
 })

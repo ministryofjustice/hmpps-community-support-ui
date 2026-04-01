@@ -1,33 +1,79 @@
 import { Response } from 'express'
-import { GovukFrontendNotificationBanner, GovukFrontendTable } from '@govuk-frontend'
+import {
+  GovukFrontendNotificationBanner,
+  GovukFrontendTable,
+  GovukFrontendTableHeadElement,
+  GovukFrontendTableRow,
+} from '@govuk-frontend'
 import { MojSubNavigation } from '@moj-frontend'
-import { ReferralProgress } from '@community-support-api'
+import { ReferralProgress, ReferralAppointmentHistory } from '@community-support-api'
 
 import PresenterBase from '../../presenter/presenterBase'
 import { ReferralProgressContent, ReferralProgressViewModel } from './progressViewModel'
 
 type TabKey = 'caseDetails' | 'progress' | 'changeLog'
+type StatusKey = ReferralAppointmentHistory['status'] | 'NOT_SCHEDULED'
 
-const STATUS_CONFIG: Record<ReferralProgress['status'], { label: string; tagClass: string; action: string }> = {
-  SCHEDULED: { label: 'Scheduled', tagClass: 'govuk-tag--blue', action: 'View or change details' },
-  NEEDS_FEEDBACK: { label: 'Needs feedback', tagClass: 'govuk-tag--red', action: 'Add attendance and feedback' },
-  DID_NOT_ATTEND: { label: 'Did not attend', tagClass: 'govuk-tag--purple', action: 'Reason for not attending' }, // need confirmation
-  RESCHEDULED: { label: 'Rescheduled', tagClass: 'govuk-tag--grey', action: 'Reschedule Session' }, // need confirmation
-  COMPLETED: { label: 'Completed', tagClass: 'govuk-tag--green', action: 'View feedback' },
+type StatusConfig = {
+  label: string
+  tagClass: string
+  action: string
+  link: string
 }
 
+const getStatusConfig = (caseReference: string, appointmentId: string = ''): Record<StatusKey, StatusConfig> => ({
+  NOT_SCHEDULED: {
+    label: 'Not scheduled',
+    tagClass: 'govuk-tag--grey',
+    action: 'Schedule session',
+    link: `/referral/${caseReference}/appointment/schedule-ics`,
+  },
+  SCHEDULED: {
+    label: 'Scheduled',
+    tagClass: 'govuk-tag--blue',
+    action: 'View or change details',
+    link: `/referral/${caseReference}/ics/${appointmentId}`,
+  },
+  NEEDS_FEEDBACK: {
+    label: 'Needs feedback',
+    tagClass: 'govuk-tag--red',
+    action: 'Add attendance and feedback',
+    link: '#',
+  },
+  DID_NOT_ATTEND: {
+    label: 'Did not attend',
+    tagClass: 'govuk-tag--purple',
+    action: 'Reason for not attending',
+    link: '#',
+  },
+  RESCHEDULED: {
+    label: 'Rescheduled',
+    tagClass: 'govuk-tag--grey',
+    action: 'Reschedule Session',
+    link: '#',
+  },
+  COMPLETED: {
+    label: 'Completed',
+    tagClass: 'govuk-tag--green',
+    action: 'View feedback',
+    link: '#',
+  },
+})
+
 export default class ProgressPresenter extends PresenterBase<ReferralProgressViewModel> {
-  private readonly tabPaths: Record<TabKey, string>
+  private readonly name: string
 
   private readonly basePath: string
 
+  private readonly tabPaths: Record<TabKey, string>
+
   constructor(
-    private readonly referralAppointments: ReferralProgress[],
-    private readonly referralId: string,
-    private readonly selectedTab: TabKey,
+    private readonly referralProgress: ReferralProgress,
+    private readonly caseReference: string,
   ) {
     super()
-    this.basePath = `/referral-details/${this.referralId}`
+    this.name = referralProgress.fullName
+    this.basePath = `/referral-details/${this.caseReference}`
     this.tabPaths = {
       caseDetails: '#',
       progress: `${this.basePath}/progress`,
@@ -37,29 +83,19 @@ export default class ProgressPresenter extends PresenterBase<ReferralProgressVie
 
   buildPageContent(res: Response): ReferralProgressViewModel {
     const content = this.buildStaticContent(res)
-    const viewModel: ReferralProgressViewModel = { staticContent: content } as ReferralProgressViewModel
-    const sortedAppointments = this.getLatestAppointments()
+    const [latestAppointment] = this.getLatestAppointments()
 
-    viewModel.staticContent.pageHeader = content.pageHeader
-    viewModel.navBar = this.buildSubNav(viewModel.staticContent)
-    viewModel.actionLinkHref = '#'
-    viewModel.backlinkHref = '#'
-    viewModel.hasIcsAppointment = sortedAppointments.length > 0
-
-    if (viewModel.hasIcsAppointment) {
-      const latestAppointment = sortedAppointments[0]
-      if (latestAppointment.status === 'SCHEDULED') {
-        viewModel.notificationBanner = this.buildIcsScheduledBanner(latestAppointment.appointmentDateTime)
-      }
+    return {
+      pageHeader: `${content.pageHeader} ${this.name}`,
+      navBar: this.buildSubNav(content),
+      actionLinkHref: '#',
+      backLink: { href: '#' },
+      notificationBanner:
+        latestAppointment && latestAppointment.status === 'SCHEDULED'
+          ? this.buildIcsScheduledBanner(latestAppointment.dateTime)
+          : undefined,
+      icsAppointmentTable: this.buildIcsAppointmentTable(content, !!latestAppointment),
     }
-
-    viewModel.icsAppointmentTable = this.buildIcsAppointmentTable(
-      viewModel.staticContent,
-      this.selectedTab,
-      viewModel.hasIcsAppointment,
-    )
-
-    return viewModel
   }
 
   buildStaticContent(res: Response): ReferralProgressContent {
@@ -102,25 +138,13 @@ export default class ProgressPresenter extends PresenterBase<ReferralProgressVie
     }
   }
 
+  protected getTemplatePath(): string {
+    return 'referral/progress'
+  }
+
   private buildSubNav(content: ReferralProgressContent): MojSubNavigation {
-    let label: string
-
-    switch (this.selectedTab) {
-      case 'progress':
-        label = content.progressSubNavTitle
-        break
-      case 'caseDetails':
-        label = content.caseDetailsSubNavTitle
-        break
-      case 'changeLog':
-        label = content.changeLogSubNavTitle
-        break
-      default:
-        label = content.progressSubNavTitle
-    }
-
     return {
-      label,
+      label: content.progressSubNavTitle,
       items: this.buildSubNavItems(content),
     }
   }
@@ -129,83 +153,65 @@ export default class ProgressPresenter extends PresenterBase<ReferralProgressVie
     return Object.keys(this.tabPaths).map(tabKey => ({
       text: content.subNavItems.find(i => i.id === tabKey)?.title ?? tabKey,
       href: this.tabPaths[tabKey as TabKey],
-      active: tabKey === this.selectedTab,
+      active: tabKey === 'progress',
     }))
   }
 
-  private buildIcsAppointmentTable(
-    content: ReferralProgressContent,
-    selectedTab: TabKey,
-    hasAppointment: boolean,
-  ): GovukFrontendTable {
-    let headers: string[]
-    let rows: Array<Array<{ text?: string; html?: string }>>
-
-    switch (selectedTab) {
-      case 'progress':
-        if (hasAppointment) {
-          headers = content.progressActiveColumnHeaders
-          rows = this.buildInProgressTableRows()
-        } else {
-          headers = content.progressInactiveColumnHeaders
-          rows = this.buildNotScheduledRow()
-        }
-        break
-
-      default:
-        throw new Error(`Unhandled tab: ${selectedTab}`)
-    }
+  private buildIcsAppointmentTable(content: ReferralProgressContent, hasAppointment: boolean): GovukFrontendTable {
+    const headers = hasAppointment ? content.progressActiveColumnHeaders : content.progressInactiveColumnHeaders
 
     return {
       attributes: {
         'data-module': 'moj-sortable-table',
-        'data-testid': 'case-list-table',
+        'data-testid': 'referral-progress-table',
       },
       head: this.buildIcsAppointmentColumnHeaders(headers),
-      rows,
+      rows: hasAppointment ? this.buildInProgressTableRows() : this.buildNotScheduledRow(),
     }
   }
 
-  private buildNotScheduledRow() {
+  private buildIcsAppointmentColumnHeaders(items: string[]): GovukFrontendTableHeadElement[] {
+    return items.map(header => ({ text: header }))
+  }
+
+  private buildNotScheduledRow(): GovukFrontendTableRow[] {
+    const configMap = getStatusConfig(this.caseReference)
+    const config = configMap.NOT_SCHEDULED
     return [
       [
-        { html: `<span class="govuk-tag govuk-tag--grey">Not scheduled</span>` },
-        { html: `<a href="/referral-details/${this.referralId}/progress" class="govuk-link">Schedule session</a>` },
+        { html: `<span class="govuk-tag ${config.tagClass}">${config.label}</span>` },
+        { html: `<a href="${config.link}" class="govuk-link">${config.action}</a>` },
       ],
     ]
   }
 
-  private buildIcsAppointmentColumnHeaders(items?: string[]): { text: string }[] {
-    return (items ?? []).map(header => ({ text: header }))
-  }
+  private buildInProgressTableRows(): GovukFrontendTableRow[] {
+    const latestAppointments = this.getLatestAppointments()
 
-  private buildInProgressTableRows() {
+    const configMap = getStatusConfig(this.caseReference, latestAppointments.at(0)?.appointmentId)
+
     return this.getLatestAppointments().map(item => {
-      const config = STATUS_CONFIG[item.status]
+      const config = configMap[item.status]
       return [
-        { text: this.formatAppointmentDateTime(item.appointmentDateTime) },
+        { text: this.formatAppointmentDateTime(item.dateTime) },
         { html: `<span class="govuk-tag ${config.tagClass}">${config.label}</span>` },
-        { html: `<a href="${this.tabPaths.progress}" class="govuk-link">${config.action}</a>` },
+        { html: `<a href="${config.link}" class="govuk-link">${config.action}</a>` },
       ]
     })
   }
 
-  private getLatestAppointments(): ReferralProgress[] {
-    const latestPerAppointment: Record<string, ReferralProgress> = this.referralAppointments.reduce(
-      (accumulator, current) => {
-        const appointmentId = current.appointmentId ?? `unknown-${current.appointmentDateTime}`
-        const existing = accumulator[appointmentId]
+  private getLatestAppointments(): ReferralAppointmentHistory[] {
+    const latest = new Map<string, ReferralAppointmentHistory>()
 
-        if (!existing || new Date(current.appointmentDateTime) > new Date(existing.appointmentDateTime)) {
-          accumulator[appointmentId] = current
-        }
-        return accumulator
-      },
-      {} as Record<string, ReferralProgress>,
-    )
+    for (const appt of this.referralProgress.appointments ?? []) {
+      const key = appt.appointmentId ?? `unknown-${appt.dateTime}`
+      const existing = latest.get(key)
 
-    return Object.values(latestPerAppointment).sort(
-      (a, b) => new Date(b.appointmentDateTime).getTime() - new Date(a.appointmentDateTime).getTime(),
-    )
+      if (!existing || appt.dateTime > existing.dateTime) {
+        latest.set(key, appt)
+      }
+    }
+
+    return [...latest.values()].sort((a, b) => b.dateTime.localeCompare(a.dateTime))
   }
 }

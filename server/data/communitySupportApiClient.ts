@@ -75,7 +75,7 @@ export default class CommunitySupportApiClient extends RestClient {
     return this.get({ path: `/bff/referral/${referralId}/ics/${icsId}` }, asSystem(username))
   }
 
-  async getReferralProgress(referralId: string, username: string): Promise<ReferralProgress[]> {
-    return this.get({ path: `/bff/referral-details/${referralId}/progress` }, asSystem(username))
+  getReferralProgress(caseReference: string, username: string): Promise<ReferralProgress> {
+    return this.get({ path: `/bff/referral-details/${caseReference}/progress` }, asSystem(username))
   }
 }

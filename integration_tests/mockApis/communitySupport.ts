@@ -3,6 +3,7 @@ import { AppointmentIcsResponse } from '@community-support-api'
 import { stubFor } from './wiremock'
 import { duplicateData } from '../testUtils'
 import referralDetailsPageData from '../mockData/referralDetailsPageData'
+import { components } from '../../server/@types/communitySupportApi/imported'
 
 export interface AssignCaseWorkersRequest {
   emails: string[]
@@ -28,15 +29,8 @@ export interface ReferralUserAssignmentsResponse {
 export interface ReferralProgress {
   /** Format: uuid */
   referralId: string
-  personName: string
-  /** Format: uuid */
-  appointmentId: string
-  /** @enum {string} */
-  appointmentType: 'ICS'
-  /** Format: date-time */
-  appointmentDateTime: string
-  /** @enum {string} */
-  status: 'SCHEDULED' | 'NEEDS_FEEDBACK' | 'COMPLETED' | 'RESCHEDULED' | 'DID_NOT_ATTEND'
+  fullName: string
+  appointments: components['schemas']['ReferralAppointmentHistoryDto'][]
 }
 
 export default {
@@ -274,19 +268,19 @@ export default {
       },
     }),
   stubGetReferralProgress: (
-    referralId: string,
-    appointments: ReferralProgress[] = [],
+    referralProgress: ReferralProgress,
+    caseReference: string,
     httpStatus = 200,
   ): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'GET',
-        url: `/community-support/referral-details/${referralId}/progress`,
+        urlPathPattern: `/community-support/bff/referral-details/${caseReference}/progress`,
       },
       response: {
         status: httpStatus,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: appointments,
+        jsonBody: referralProgress,
         transformers: ['response-template'],
       },
     }),

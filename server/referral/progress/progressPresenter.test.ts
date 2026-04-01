@@ -1,16 +1,15 @@
 import { Response } from 'express'
+import { ReferralProgress } from '@community-support-api'
 import { ReferralProgressContent } from './progressViewModel'
 import ProgressPresenter from './progressPresenter'
-import buildAppointments from '../../testutils/buildReferralProgress'
+import buildReferralProgress from '../../testutils/buildReferralProgress'
 
 describe('ProgressPresenter', () => {
-  const referralId = 'ref-1'
+  const caseReference = 'AB1234CD'
 
   const mockContent: ReferralProgressContent = {
-    pageHeader: 'Referral for Alex River',
-    caseDetailsSubNavTitle: 'Case details',
+    pageHeader: 'Referral for',
     progressSubNavTitle: 'Progress',
-    changeLogSubNavTitle: 'Change log',
     subNavItems: [],
     progressActiveColumnHeaders: ['Date and time', 'Status', 'Action'],
     progressInactiveColumnHeaders: ['Status', 'Action'],
@@ -19,10 +18,10 @@ describe('ProgressPresenter', () => {
   const mockResponse = { locals: { content: mockContent } } as unknown as Response
 
   it('renders NOT SCHEDULED table correctly when no appointments exist', () => {
-    const presenter = new ProgressPresenter([], referralId, 'progress')
+    const referralProgressNoAppointments: ReferralProgress = buildReferralProgress([{ events: [] }])
+    const presenter = new ProgressPresenter(referralProgressNoAppointments, caseReference)
     const viewModel = presenter.buildPageContent(mockResponse)
 
-    expect(viewModel.hasIcsAppointment).toBe(false)
     expect(viewModel.icsAppointmentTable.head).toEqual([{ text: 'Status' }, { text: 'Action' }])
     expect(viewModel.icsAppointmentTable.rows).toEqual([
       [{ html: expect.stringContaining('Not scheduled') }, { html: expect.stringContaining('Schedule session') }],
@@ -30,22 +29,22 @@ describe('ProgressPresenter', () => {
   })
 
   it('renders one row per appointmentId and sorts by latest date descending', () => {
-    const appointments = buildAppointments(
+    const referralProgressWithAppointments = buildReferralProgress([
       {
         appointmentId: 'appId1',
         events: [
-          { status: 'SCHEDULED', appointmentDateTime: '2026-03-25T10:00:00' },
-          { status: 'NEEDS_FEEDBACK', appointmentDateTime: '2026-03-26T10:00:00' },
-          { status: 'COMPLETED', appointmentDateTime: '2026-03-27T10:00:00' },
+          { status: 'SCHEDULED', dateTime: '2026-03-25T10:00:00' },
+          { status: 'NEEDS_FEEDBACK', dateTime: '2026-03-26T10:00:00' },
+          { status: 'COMPLETED', dateTime: '2026-03-27T10:00:00' },
         ],
       },
       {
         appointmentId: 'appId2',
-        events: [{ status: 'SCHEDULED', appointmentDateTime: '2026-03-28T10:00:00' }],
+        events: [{ status: 'SCHEDULED', dateTime: '2026-03-28T10:00:00' }],
       },
-    )
+    ])
 
-    const presenter = new ProgressPresenter(appointments, referralId, 'progress')
+    const presenter = new ProgressPresenter(referralProgressWithAppointments, caseReference)
     const viewModel = presenter.buildPageContent(mockResponse)
     const { rows } = viewModel.icsAppointmentTable
 
@@ -57,21 +56,21 @@ describe('ProgressPresenter', () => {
   })
 
   it('renders notification banner if latest appointment is at SCHEDULED status', () => {
-    const appointments = buildAppointments(
+    const referralProgressWithAppointments = buildReferralProgress([
       {
         appointmentId: 'appId1',
         events: [
-          { status: 'SCHEDULED', appointmentDateTime: '2026-03-26T10:00:00' },
-          { status: 'NEEDS_FEEDBACK', appointmentDateTime: '2026-03-27T10:00:00' },
+          { status: 'SCHEDULED', dateTime: '2026-03-26T10:00:00' },
+          { status: 'NEEDS_FEEDBACK', dateTime: '2026-03-27T10:00:00' },
         ],
       },
       {
         appointmentId: 'appId2',
-        events: [{ status: 'SCHEDULED', appointmentDateTime: '2026-03-28T10:00:00' }],
+        events: [{ status: 'SCHEDULED', dateTime: '2026-03-28T10:00:00' }],
       },
-    )
+    ])
 
-    const presenter = new ProgressPresenter(appointments, referralId, 'progress')
+    const presenter = new ProgressPresenter(referralProgressWithAppointments, caseReference)
     const viewModel = presenter.buildPageContent(mockResponse)
 
     expect(viewModel.notificationBanner?.type).toEqual('success')
@@ -79,14 +78,15 @@ describe('ProgressPresenter', () => {
   })
 
   it('renders SCHEDULED appointment correctly and should display notification banner', () => {
-    const appointments = buildAppointments({
-      events: [{ status: 'SCHEDULED', appointmentDateTime: '2026-03-27T13:00:00' }],
-    })
+    const referralProgressWithAppointments = buildReferralProgress([
+      {
+        events: [{ status: 'SCHEDULED', dateTime: '2026-03-27T13:00:00' }],
+      },
+    ])
 
-    const presenter = new ProgressPresenter(appointments, referralId, 'progress')
+    const presenter = new ProgressPresenter(referralProgressWithAppointments, caseReference)
     const viewModel = presenter.buildPageContent(mockResponse)
 
-    expect(viewModel.hasIcsAppointment).toBe(true)
     expect(viewModel.icsAppointmentTable.head).toEqual([
       { text: 'Date and time' },
       { text: 'Status' },
@@ -100,14 +100,16 @@ describe('ProgressPresenter', () => {
   })
 
   it('renders NEEDS_FEEDBACK action correctly and should not display notification banner', () => {
-    const appointments = buildAppointments({
-      events: [
-        { status: 'SCHEDULED', appointmentDateTime: '2026-03-25T10:00:00' },
-        { status: 'NEEDS_FEEDBACK', appointmentDateTime: '2026-03-27T10:00:00' },
-      ],
-    })
+    const referralProgressWithAppointments = buildReferralProgress([
+      {
+        events: [
+          { status: 'SCHEDULED', dateTime: '2026-03-25T10:00:00' },
+          { status: 'NEEDS_FEEDBACK', dateTime: '2026-03-27T10:00:00' },
+        ],
+      },
+    ])
 
-    const presenter = new ProgressPresenter(appointments, referralId, 'progress')
+    const presenter = new ProgressPresenter(referralProgressWithAppointments, caseReference)
     const viewModel = presenter.buildPageContent(mockResponse)
 
     expect(viewModel.icsAppointmentTable.rows[0][1].html).toContain('Needs feedback')
@@ -117,20 +119,52 @@ describe('ProgressPresenter', () => {
   })
 
   it('renders COMPLETED action correctly and should not display notification banner', () => {
-    const appointments = buildAppointments({
-      events: [
-        { status: 'SCHEDULED', appointmentDateTime: '2026-03-25T10:00:00' },
-        { status: 'NEEDS_FEEDBACK', appointmentDateTime: '2026-03-26T10:00:00' },
-        { status: 'COMPLETED', appointmentDateTime: '2026-03-27T10:00:00' },
-      ],
-    })
+    const referralProgressWithAppointments = buildReferralProgress([
+      {
+        events: [
+          { status: 'SCHEDULED', dateTime: '2026-03-25T10:00:00' },
+          { status: 'NEEDS_FEEDBACK', dateTime: '2026-03-26T10:00:00' },
+          { status: 'COMPLETED', dateTime: '2026-03-27T10:00:00' },
+        ],
+      },
+    ])
 
-    const presenter = new ProgressPresenter(appointments, referralId, 'progress')
+    const presenter = new ProgressPresenter(referralProgressWithAppointments, caseReference)
     const viewModel = presenter.buildPageContent(mockResponse)
 
     expect(viewModel.icsAppointmentTable.rows[0][1].html).toContain('Completed')
     expect(viewModel.icsAppointmentTable.rows[0][1].html).toContain('govuk-tag--green')
     expect(viewModel.icsAppointmentTable.rows[0][2].html).toContain('View feedback')
     expect(viewModel.notificationBanner).toBeUndefined()
+  })
+
+  it('renders DID_NOT_ATTEND correctly', () => {
+    const referralProgressWithAppointments = buildReferralProgress([
+      {
+        events: [{ status: 'DID_NOT_ATTEND', dateTime: '2026-03-27T13:00:00' }],
+      },
+    ])
+    const presenter = new ProgressPresenter(referralProgressWithAppointments, caseReference)
+    const viewModel = presenter.buildPageContent(mockResponse)
+    const row = viewModel.icsAppointmentTable.rows[0]
+
+    expect(row[1].html).toContain('Did not attend')
+    expect(row[1].html).toContain('govuk-tag--purple')
+    expect(row[2].html).toContain('Reason for not attending')
+  })
+
+  it('renders RESCHEDULED correctly', () => {
+    const referralProgressWithAppointments = buildReferralProgress([
+      {
+        events: [{ status: 'RESCHEDULED', dateTime: '2026-03-27T13:00:00' }],
+      },
+    ])
+    const presenter = new ProgressPresenter(referralProgressWithAppointments, caseReference)
+    const viewModel = presenter.buildPageContent(mockResponse)
+    const row = viewModel.icsAppointmentTable.rows[0]
+
+    expect(row[1].html).toContain('Rescheduled')
+    expect(row[1].html).toContain('govuk-tag--grey')
+    expect(row[2].html).toContain('Reschedule Session')
   })
 })

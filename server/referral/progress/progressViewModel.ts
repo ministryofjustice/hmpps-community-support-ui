@@ -1,24 +1,21 @@
-import { GovukFrontendNotificationBanner, GovukFrontendTable } from '@govuk-frontend'
+import { GovukFrontendBackLink, GovukFrontendNotificationBanner, GovukFrontendTable } from '@govuk-frontend'
 import { MojSubNavigation } from '@moj-frontend'
 
 export type ReferralProgressViewModel = {
-  staticContent: ReferralProgressContent
+  pageHeader: string
   navBar: MojSubNavigation
-  hasIcsAppointment: boolean
   icsAppointmentTable: GovukFrontendTable
   actionLinkHref: string
-  backlinkHref: string
+  backLink: GovukFrontendBackLink
   notificationBanner?: GovukFrontendNotificationBanner
 }
 
-export type ReferralProgressContent = {
+export interface ReferralProgressContent {
   pageHeader: string
-  caseDetailsSubNavTitle: string
   progressSubNavTitle: string
-  changeLogSubNavTitle: string
-  subNavItems: Array<SubNavItem>
-  progressActiveColumnHeaders: Array<string>
-  progressInactiveColumnHeaders: Array<string>
+  subNavItems: SubNavItem[]
+  progressActiveColumnHeaders: string[]
+  progressInactiveColumnHeaders: string[]
 }
 
 export type SubNavItem = {

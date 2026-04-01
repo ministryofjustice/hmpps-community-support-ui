@@ -4,7 +4,6 @@ import {
   CaseWorkerDto,
   ReferralUserAssignmentsResponse,
   AssignmentFailureDto,
-  ReferralProgress,
 } from '@community-support-api'
 import ReferralService from '../services/referralService'
 import PersonService from '../services/personService'
@@ -205,40 +204,13 @@ class ReferralController {
     return res.render('referral/assign')
   }
 
-  async showReferralProgressDetails(req: Request, res: Response, next: NextFunction) {
-    const { referralId } = req.params as { referralId: string }
+  async showReferralProgressDetails(req: Request, res: Response) {
+    const { caseReference } = req.params as { caseReference: string }
     const { username } = res.locals.user
-    let referralProgress: ReferralProgress[] = []
-    let errorsList: unknown
+    const referralProgress = await this.referralService.getReferralProgress(caseReference, username)
+    const presenter = new ProgressPresenter(referralProgress, caseReference)
 
-    try {
-      referralProgress = await this.referralService.getReferralProgress(referralId, username)
-
-      const personName = referralProgress[0]?.personName || '-'
-
-      res.locals.content = {
-        ...res.locals.content,
-        pageHeader: `Referral for ${personName}`,
-        progressActiveColumnHeaders: ['Date and time', 'Status', 'Action'],
-        progressInactiveColumnHeaders: ['Status', 'Action'],
-      }
-    } catch (error) {
-      if (error.responseStatus === 404) {
-        req.flash('referralIdError', `No referral with identifier '${referralId}' found`)
-        errorsList = [{ href: '#referralIdError', text: `No referral with identifier '${referralId}' found` }]
-      } else {
-        req.flash('retrievalError', 'An unexpected error when retrieving referral progress. Please try again.')
-        errorsList = [
-          { href: '#retrievalError', text: `An unexpected error when retrieving referral progress. Please try again.` },
-        ]
-      }
-      return res.render('referral/progress', { referralId, errorsList })
-    }
-
-    const presenter = new ProgressPresenter(referralProgress, referralId, 'progress')
-    const viewModel = presenter.buildPageContent(res)
-
-    return res.render('referral/progress', viewModel)
+    return presenter.renderPage(res)
   }
 }
 
