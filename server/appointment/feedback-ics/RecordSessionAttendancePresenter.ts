@@ -2,7 +2,7 @@ import { Response } from 'express'
 import { GovukFrontendButton, GovukFrontendRadios, GovukFrontendSummaryList } from '@govuk-frontend'
 import PresenterBase from '../../presenter/presenterBase'
 
-export interface InitialContactSessionFeedbackViewModel {
+export interface RecordSessionAttendanceViewModel {
   pageHeader: string
   text: string
   details: GovukFrontendSummaryList
@@ -21,7 +21,7 @@ interface FormContent {
   options: string[]
 }
 
-export interface InitialContactSessionFeedbackViewModelContent {
+export interface RecordSessionAttendanceContent {
   pageHeader: string
   text: string
   details: DetailsContent
@@ -33,15 +33,15 @@ export interface TempBackendData {
   placeholder: string
 }
 
-export default class InitialContactSessionFeedbackPresenter extends PresenterBase<
-  InitialContactSessionFeedbackViewModel | null,
-  InitialContactSessionFeedbackViewModelContent
+export default class RecordSessionAttendancePresenter extends PresenterBase<
+  RecordSessionAttendanceViewModel | null,
+  RecordSessionAttendanceContent
 > {
   constructor(private readonly data: TempBackendData) {
     super()
   }
 
-  buildPageContent(res: Response): InitialContactSessionFeedbackViewModel {
+  buildPageContent(res: Response): RecordSessionAttendanceViewModel | null {
     return null
   }
 
