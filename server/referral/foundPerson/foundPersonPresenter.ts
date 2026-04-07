@@ -4,7 +4,7 @@ import PresenterBase from '../../presenter/presenterBase'
 import { FoundPersonContent, FoundPersonViewModel } from './foundPersonViewModel'
 import ViewUtils from '../../utils/viewUtils'
 
-export default class FoundPersonPresenter extends PresenterBase<FoundPersonViewModel> {
+export default class FoundPersonPresenter extends PresenterBase<FoundPersonViewModel, FoundPersonContent> {
   constructor(private readonly foundPerson: Person) {
     super()
   }
@@ -20,15 +20,6 @@ export default class FoundPersonPresenter extends PresenterBase<FoundPersonViewM
     const attributes = { 'data-testid': 'personsummary' }
     viewModel.personSummary = ViewUtils.summaryList(personSummaryItems, { showBorders: true }, attributes)
     return viewModel
-  }
-
-  protected buildStaticContent(res: Response): FoundPersonContent {
-    const { content } = res.locals
-    return {
-      pageHeader: content.pageHeader,
-      continueButtonText: content.continueButtonText,
-      continueButtonLink: content.continueButtonLink,
-    }
   }
 
   protected override getTemplatePath(): string {

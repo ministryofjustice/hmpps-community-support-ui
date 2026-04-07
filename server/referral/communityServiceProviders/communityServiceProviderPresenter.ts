@@ -4,7 +4,10 @@ import PresenterBase from '../../presenter/presenterBase'
 import { CommunityServiceProviderContent, CommunityServiceProviderViewModel } from './communityServiceProvidersModel'
 import ViewUtils from '../../utils/viewUtils'
 
-export default class CommunityServiceProviderPresenter extends PresenterBase<CommunityServiceProviderViewModel> {
+export default class CommunityServiceProviderPresenter extends PresenterBase<
+  CommunityServiceProviderViewModel,
+  CommunityServiceProviderContent
+> {
   constructor(private readonly communitySupportServiceProviders: Array<CommunitySupportServiceProviders>) {
     super()
   }
@@ -39,11 +42,6 @@ export default class CommunityServiceProviderPresenter extends PresenterBase<Com
       }
     })
     return viewModel
-  }
-
-  protected buildStaticContent(res: Response): CommunityServiceProviderContent {
-    const { content } = res.locals
-    return content as CommunityServiceProviderContent
   }
 
   getTemplatePath(): string {

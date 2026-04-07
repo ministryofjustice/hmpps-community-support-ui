@@ -5,7 +5,10 @@ import PresenterBase from '../../presenter/presenterBase'
 import { ReferralConfirmationContent, ReferralConfirmationViewModel } from './confirmationViewModel'
 import ViewUtils from '../../utils/viewUtils'
 
-export default class ConfirmationPresenter extends PresenterBase<ReferralConfirmationViewModel> {
+export default class ConfirmationPresenter extends PresenterBase<
+  ReferralConfirmationViewModel,
+  ReferralConfirmationContent
+> {
   constructor(private readonly referral: Referral) {
     super()
   }
@@ -17,11 +20,6 @@ export default class ConfirmationPresenter extends PresenterBase<ReferralConfirm
     viewModel.startAReferralLink = '/referral/new/find-a-person'
     viewModel.panel = this.buildPanel(content.pageHeader, content.referenceNumberIntro, this.referral.referenceNumber)
     return viewModel
-  }
-
-  buildStaticContent(res: Response): ReferralConfirmationContent {
-    const { content } = res.locals
-    return content as ReferralConfirmationContent
   }
 
   getTemplatePath(): string {

@@ -6,7 +6,7 @@ import { CaseListCase, CaseListContent, CaseListViewModel } from './caseListView
 import { MojPagination, MojSubNavigation } from '../@types/mojFrontend'
 import { PagedResponse } from '../@types/communitySupportApi/derived'
 
-export default class CaseListPresenter extends PresenterBase<CaseListViewModel> {
+export default class CaseListPresenter extends PresenterBase<CaseListViewModel, CaseListContent> {
   private caseList: Array<CaseList>
 
   private parsedCaseList: Array<CaseListCase>
@@ -45,11 +45,6 @@ export default class CaseListPresenter extends PresenterBase<CaseListViewModel> 
       href: '/',
     }
     return viewModel
-  }
-
-  protected buildStaticContent(res: Response): CaseListContent {
-    const { content } = res.locals
-    return content as CaseListContent
   }
 
   private buildCaseList(cases: Array<CaseList>): Array<CaseListCase> {
