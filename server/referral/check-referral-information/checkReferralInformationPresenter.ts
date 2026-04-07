@@ -4,7 +4,10 @@ import { Response } from 'express'
 import PresenterBase from '../../presenter/presenterBase'
 import { CheckReferralInformationContent, CheckReferralInformationViewModel } from './checkReferralInformationViewModel'
 
-export default class CheckReferralInformationPresenter extends PresenterBase<CheckReferralInformationViewModel> {
+export default class CheckReferralInformationPresenter extends PresenterBase<
+  CheckReferralInformationViewModel,
+  CheckReferralInformationContent
+> {
   constructor(private readonly referralInformation: ReferralInformation) {
     super()
   }
@@ -18,11 +21,6 @@ export default class CheckReferralInformationPresenter extends PresenterBase<Che
     viewModel.referralDetailsSummary = this.buildReferralDetailsSummary()
     viewModel.submitHref = `/referral/${this.referralInformation.referralId}/submit-referral-information`
     return viewModel
-  }
-
-  buildStaticContent(res: Response): CheckReferralInformationContent {
-    const { content } = res.locals
-    return content as CheckReferralInformationContent
   }
 
   getTemplatePath(): string {

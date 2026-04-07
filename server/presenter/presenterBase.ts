@@ -1,15 +1,16 @@
 import type { Response } from 'express'
 
-export default abstract class PresenterBase<T> {
+export default abstract class PresenterBase<PageContentType, StaticContentType> {
   constructor() {}
 
-  protected buildPageContent(res: Response): T {
-    return this.buildPageContent(res)
-  }
+  protected abstract buildPageContent(res: Response): PageContentType
 
   // For now returns the raw string, in future will return a computed path
-  protected getTemplatePath(): string {
-    throw new Error('This method must be overridden by subclasses')
+  protected abstract getTemplatePath(): string
+
+  protected buildStaticContent(res: Response): StaticContentType {
+    const { content } = res.locals
+    return content as StaticContentType
   }
 
   renderPage(res: Response): void {

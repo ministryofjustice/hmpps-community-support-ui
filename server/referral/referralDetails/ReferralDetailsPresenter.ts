@@ -31,7 +31,7 @@ export interface ReferralDetailsViewModel {
 const nonEmptyStringOrDefault = (str: string | undefined | null, defaultValue: string): string =>
   (str ?? '').trim() || defaultValue
 
-export default class ReferralDetailsPresenter extends PresenterBase<ReferralDetailsViewModel> {
+export default class ReferralDetailsPresenter extends PresenterBase<ReferralDetailsViewModel, ReferralDetailsContent> {
   private readonly assignReferalHref: string
 
   private readonly age: number
@@ -45,11 +45,6 @@ export default class ReferralDetailsPresenter extends PresenterBase<ReferralDeta
     super()
     this.assignReferalHref = `/referral/${referralDetails.id}/assign`
     this.age = differenceInYears(this.today, new Date(referralDetails.personDetailsTableData.dateOfBirth))
-  }
-
-  buildStaticContent(res: Response): ReferralDetailsContent {
-    const { content } = res.locals
-    return content as ReferralDetailsContent
   }
 
   private buildPersonalDetails(cardContent: PersonalDetailsCard, defaultFieldValue: string): GovukFrontendSummaryList {
