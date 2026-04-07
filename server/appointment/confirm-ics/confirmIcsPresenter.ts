@@ -4,7 +4,7 @@ import { Response } from 'express'
 import PresenterBase from '../../presenter/presenterBase'
 import { ConfirmIcsContent, ConfirmIcsViewModel } from './confirmIcsViewModel'
 
-export default class ConfirmIcsPresenter extends PresenterBase<ConfirmIcsViewModel> {
+export default class ConfirmIcsPresenter extends PresenterBase<ConfirmIcsViewModel, ConfirmIcsContent> {
   constructor(
     private readonly createAppointmentRequest: CreateAppointmentRequest,
     private readonly referralId: string,
@@ -24,11 +24,6 @@ export default class ConfirmIcsPresenter extends PresenterBase<ConfirmIcsViewMod
       viewModel.notificationBanner = this.buildPastAppointmentBanner()
     }
     return viewModel
-  }
-
-  buildStaticContent(res: Response): ConfirmIcsContent {
-    const { content } = res.locals
-    return content as ConfirmIcsContent
   }
 
   getTemplatePath(): string {
