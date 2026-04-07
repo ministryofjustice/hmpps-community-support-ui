@@ -16,6 +16,8 @@ type CaseWorkerDto = components['schemas']['CaseWorkerDto']
 type ReferralUserAssignmentsResponse = components['schemas']['ReferralUserAssignmentsResponse']
 type ReferralUserAssignmentsDto = components['schemas']['ReferralUserAssignmentsDto']
 type ReferralDetailsResponseDto = components['schemas']['ReferralDetailsBffResponseDto']
+type AppointmentIcsResponse = components['schemas']['AppointmentIcsResponse']
+type AppointmentTime = components['schemas']['AppointmentTimeRequest']
 
 export type {
   Referral,
@@ -34,4 +36,6 @@ export type {
   AssignmentFailureDto,
   CaseWorkerDto,
   ReferralDetailsResponseDto,
+  AppointmentIcsResponse,
+  AppointmentTime,
 }

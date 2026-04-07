@@ -1,0 +1,319 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`InitialContactSessionDetailsPresenter in person meeting buildPageContent the correct view model 1`] = `
+{
+  "backLink": {
+    "href": "/referral/ref-id/appointment/change-ics",
+  },
+  "details": {
+    "card": {
+      "actions": {
+        "items": [
+          {
+            "href": "/referral/ref-id/appointment/change-ics",
+            "text": "Change",
+          },
+        ],
+      },
+      "attributes": {
+        "data-testid": "details",
+      },
+      "title": {
+        "text": "ICS details",
+      },
+    },
+    "rows": [
+      {
+        "actions": null,
+        "key": {
+          "text": "Date",
+        },
+        "value": {
+          "text": "10 February 2026",
+        },
+      },
+      {
+        "actions": null,
+        "key": {
+          "text": "Start time",
+        },
+        "value": {
+          "text": "9:30am",
+        },
+      },
+      {
+        "actions": null,
+        "key": {
+          "text": "Method",
+        },
+        "value": {
+          "text": "In person - probation office",
+        },
+      },
+      {
+        "actions": null,
+        "key": {
+          "text": "Location",
+        },
+        "value": {
+          "html": "<p>Office visit at probation office, Room 3</p>",
+        },
+      },
+      {
+        "actions": null,
+        "key": {
+          "text": "How Carlos was informed about the session",
+        },
+        "value": {
+          "html": "<ul class="govuk-list">
+    <li>Phone call</li>
+<li>Text message</li>
+    </ul>",
+        },
+      },
+    ],
+  },
+  "heading": "View or change session details",
+  "title": "View or change session details",
+}
+`;
+
+exports[`InitialContactSessionDetailsPresenter in person meeting with fullAddress 1`] = `
+{
+  "backLink": {
+    "href": "/referral/ref-id/appointment/change-ics",
+  },
+  "details": {
+    "card": {
+      "actions": {
+        "items": [
+          {
+            "href": "/referral/ref-id/appointment/change-ics",
+            "text": "Change",
+          },
+        ],
+      },
+      "attributes": {
+        "data-testid": "details",
+      },
+      "title": {
+        "text": "ICS details",
+      },
+    },
+    "rows": [
+      {
+        "actions": null,
+        "key": {
+          "text": "Date",
+        },
+        "value": {
+          "text": "10 February 2026",
+        },
+      },
+      {
+        "actions": null,
+        "key": {
+          "text": "Start time",
+        },
+        "value": {
+          "text": "9:30am",
+        },
+      },
+      {
+        "actions": null,
+        "key": {
+          "text": "Method",
+        },
+        "value": {
+          "text": "In person - probation office",
+        },
+      },
+      {
+        "actions": null,
+        "key": {
+          "text": "Location",
+        },
+        "value": {
+          "html": "<p>Office visit at probation office, Room 3</p>
+<p>12 Placeholder Lane</p>
+<p>Floor 2</p>
+<p>Mockington</p>
+<p>Mockinghamshire</p>
+<p>MK0 1AA</p>",
+        },
+      },
+      {
+        "actions": null,
+        "key": {
+          "text": "How Carlos was informed about the session",
+        },
+        "value": {
+          "html": "<ul class="govuk-list">
+    <li>Phone call</li>
+<li>Text message</li>
+    </ul>",
+        },
+      },
+    ],
+  },
+  "heading": "View or change session details",
+  "title": "View or change session details",
+}
+`;
+
+exports[`InitialContactSessionDetailsPresenter in person meeting with postcode 1`] = `
+{
+  "backLink": {
+    "href": "/referral/ref-id/appointment/change-ics",
+  },
+  "details": {
+    "card": {
+      "actions": {
+        "items": [
+          {
+            "href": "/referral/ref-id/appointment/change-ics",
+            "text": "Change",
+          },
+        ],
+      },
+      "attributes": {
+        "data-testid": "details",
+      },
+      "title": {
+        "text": "ICS details",
+      },
+    },
+    "rows": [
+      {
+        "actions": null,
+        "key": {
+          "text": "Date",
+        },
+        "value": {
+          "text": "10 February 2026",
+        },
+      },
+      {
+        "actions": null,
+        "key": {
+          "text": "Start time",
+        },
+        "value": {
+          "text": "9:30am",
+        },
+      },
+      {
+        "actions": null,
+        "key": {
+          "text": "Method",
+        },
+        "value": {
+          "text": "In person - probation office",
+        },
+      },
+      {
+        "actions": null,
+        "key": {
+          "text": "Location",
+        },
+        "value": {
+          "html": "<p>Office visit at probation office, Room 3</p>
+<p>A11 11A</p>",
+        },
+      },
+      {
+        "actions": null,
+        "key": {
+          "text": "How Carlos was informed about the session",
+        },
+        "value": {
+          "html": "<ul class="govuk-list">
+    <li>Phone call</li>
+<li>Text message</li>
+    </ul>",
+        },
+      },
+    ],
+  },
+  "heading": "View or change session details",
+  "title": "View or change session details",
+}
+`;
+
+exports[`InitialContactSessionDetailsPresenter virtual meeting buildPageContent the correct view model 1`] = `
+{
+  "backLink": {
+    "href": "/referral/ref-id/appointment/change-ics",
+  },
+  "details": {
+    "card": {
+      "actions": {
+        "items": [
+          {
+            "href": "/referral/ref-id/appointment/change-ics",
+            "text": "Change",
+          },
+        ],
+      },
+      "attributes": {
+        "data-testid": "details",
+      },
+      "title": {
+        "text": "ICS details",
+      },
+    },
+    "rows": [
+      {
+        "actions": null,
+        "key": {
+          "text": "Date",
+        },
+        "value": {
+          "text": "1 February 2026",
+        },
+      },
+      {
+        "actions": null,
+        "key": {
+          "text": "Start time",
+        },
+        "value": {
+          "text": "10:00am",
+        },
+      },
+      {
+        "actions": null,
+        "key": {
+          "text": "Method",
+        },
+        "value": {
+          "text": "Phone call",
+        },
+      },
+      {
+        "actions": null,
+        "key": {
+          "text": "Reason session is not in person",
+        },
+        "value": {
+          "text": "Welfare check call",
+        },
+      },
+      {
+        "actions": null,
+        "key": {
+          "text": "How Alice was informed about the session",
+        },
+        "value": {
+          "html": "<ul class="govuk-list">
+    <li>Phone call</li>
+<li>Text message</li>
+    </ul>",
+        },
+      },
+    ],
+  },
+  "heading": "View or change session details",
+  "title": "View or change session details",
+}
+`;

@@ -1,4 +1,5 @@
 import type { SuperAgentRequest } from 'superagent'
+import { AppointmentIcsResponse } from '@community-support-api'
 import { stubFor } from './wiremock'
 import { duplicateData } from '../testUtils'
 import referralDetailsPageData from '../mockData/referralDetailsPageData'
@@ -238,6 +239,24 @@ export default {
         status: httpStatus,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: referralDetailsPageData(referralId),
+        transformers: ['response-template'],
+      },
+    }),
+  stubGetICS: (
+    referralId: string,
+    icsId: string,
+    mockData: AppointmentIcsResponse,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: `/community-support/bff/referral/${referralId}/ics/${icsId}`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: mockData,
         transformers: ['response-template'],
       },
     }),

@@ -1,5 +1,5 @@
 import { Response } from 'express'
-import { GovukFrontendSummaryList } from '@govuk-frontend'
+import { GovukFrontendBackLink, GovukFrontendSummaryList } from '@govuk-frontend'
 import { ReferralDetailsResponseDto, ReferralUserAssignmentsResponse } from '@community-support-api'
 import { differenceInYears } from 'date-fns'
 import PresenterBase from '../../presenter/presenterBase'
@@ -14,10 +14,6 @@ import {
 } from './ReferralDetailsViewModel'
 import { govFrontendSummaryListRow } from '../../utils/viewUtils'
 
-interface BackLink {
-  href: string
-}
-
 export interface ReferralDetailsViewModel {
   name: string
   successBanner: AssignmentSuccessBanner | null
@@ -25,7 +21,7 @@ export interface ReferralDetailsViewModel {
   equality: GovukFrontendSummaryList
   contact: GovukFrontendSummaryList
   referral: GovukFrontendSummaryList
-  backLink: BackLink
+  backLink: GovukFrontendBackLink
 }
 
 const nonEmptyStringOrDefault = (str: string | undefined | null, defaultValue: string): string =>
