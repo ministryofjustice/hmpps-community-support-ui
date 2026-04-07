@@ -15,6 +15,7 @@ export default function routes({
   personService,
   referralService,
   caseListService,
+  appointmentService,
 }: Services): Router {
   const router = Router()
   const get = (path: string | string[], handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
@@ -29,7 +30,7 @@ export default function routes({
   const referralController = new ReferralController(referralService, personService)
   const communityServiceProviderController = new CommunityServiceProviderController(communityServiceProviderService)
   const caseListController = new CaseListController(caseListService)
-  const appointmentController = new AppointmentController()
+  const appointmentController = new AppointmentController(appointmentService)
 
   router.get('/', async (req, res, next) => {
     await auditService.logPageView(Page.INDEX_PAGE, { who: res.locals.user.username, correlationId: req.id })
@@ -83,9 +84,9 @@ export default function routes({
     await referralController.showAssignCaseWorkersPage(req, res, next)
   })
 
-  get('/referral/:referralId/appointment/confirm-ics', async (req, res, next) =>
-    appointmentController.checkIcs(req, res, next),
-  )
+  get('/referral/:referralId/appointment/confirm-ics', async (req, res) => appointmentController.checkIcs(req, res))
+
+  get('/referral/:referralId/appointment/:icsId', async (req, res) => appointmentController.changeIcs(req, res))
 
   get('/referral-details/:referralId/progress', async (req, res, next) => {
     await referralController.showReferralProgressDetails(req, res, next)

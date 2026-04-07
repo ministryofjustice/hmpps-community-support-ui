@@ -13,6 +13,7 @@ import type {
   ReferralUserAssignmentsResponse,
   CaseWorkerDto,
   ReferralDetailsResponseDto,
+  AppointmentIcsResponse,
   ReferralProgress,
 } from '@community-support-api'
 import config from '../config'
@@ -68,6 +69,10 @@ export default class CommunitySupportApiClient extends RestClient {
     username: string,
   ): Promise<ReferralUserAssignmentsResponse> {
     return this.post({ path: `/referral/${referralId}/assign`, data: assignmentsData }, asSystem(username))
+  }
+
+  async getICS(referralId: string, icsId: string, username: string): Promise<AppointmentIcsResponse> {
+    return this.get({ path: `/bff/referral/${referralId}/ics/${icsId}` }, asSystem(username))
   }
 
   async getReferralProgress(referralId: string, username: string): Promise<ReferralProgress[]> {
