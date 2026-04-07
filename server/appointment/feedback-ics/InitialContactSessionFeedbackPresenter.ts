@@ -1,11 +1,32 @@
 import { Response } from 'express'
+import { GovukFrontendButton, GovukFrontendRadios, GovukFrontendSummaryList } from '@govuk-frontend'
 import PresenterBase from '../../presenter/presenterBase'
 
 export interface InitialContactSessionFeedbackViewModel {
-  placeholder: string
+  pageHeader: string
+  text: string
+  details: GovukFrontendSummaryList
+  form: GovukFrontendRadios
+  button: GovukFrontendButton
 }
+
+interface DetailsContent {
+  dateLabel: string
+  startTimeLabel: string
+}
+
+interface FormContent {
+  heading: string
+  subheading: string
+  options: string[]
+}
+
 export interface InitialContactSessionFeedbackViewModelContent {
-  placeholder: string
+  pageHeader: string
+  text: string
+  details: DetailsContent
+  form: FormContent
+  button: string
 }
 
 export interface TempBackendData {
@@ -13,7 +34,7 @@ export interface TempBackendData {
 }
 
 export default class InitialContactSessionFeedbackPresenter extends PresenterBase<
-  InitialContactSessionFeedbackViewModel,
+  InitialContactSessionFeedbackViewModel | null,
   InitialContactSessionFeedbackViewModelContent
 > {
   constructor(private readonly data: TempBackendData) {
@@ -21,7 +42,7 @@ export default class InitialContactSessionFeedbackPresenter extends PresenterBas
   }
 
   buildPageContent(res: Response): InitialContactSessionFeedbackViewModel {
-    return { placeholder: 'placeholder' }
+    return null
   }
 
   getTemplatePath(): string {
