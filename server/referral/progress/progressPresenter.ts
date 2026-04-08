@@ -60,7 +60,7 @@ const getStatusConfig = (caseReference: string, appointmentId: string = ''): Rec
   },
 })
 
-export default class ProgressPresenter extends PresenterBase<ReferralProgressViewModel> {
+export default class ProgressPresenter extends PresenterBase<ReferralProgressViewModel, ReferralProgressContent> {
   private readonly name: string
 
   private readonly basePath: string
@@ -96,11 +96,6 @@ export default class ProgressPresenter extends PresenterBase<ReferralProgressVie
           : undefined,
       icsAppointmentTable: this.buildIcsAppointmentTable(content, !!latestAppointment),
     }
-  }
-
-  buildStaticContent(res: Response): ReferralProgressContent {
-    const { content } = res.locals
-    return content as ReferralProgressContent
   }
 
   private formatAppointmentDateTime(date: string): string {
@@ -190,7 +185,7 @@ export default class ProgressPresenter extends PresenterBase<ReferralProgressVie
 
     const configMap = getStatusConfig(this.caseReference, latestAppointments.at(0)?.appointmentId)
 
-    return this.getLatestAppointments().map(item => {
+    return latestAppointments.map(item => {
       const config = configMap[item.status]
       return [
         { text: this.formatAppointmentDateTime(item.dateTime) },
