@@ -23,6 +23,8 @@ test.describe('Schedule ICS Page', () => {
     await communitySupport.stubGetProbationOffices()
     await prisonApi.stubGetPrisons()
     await seedReferralInformation(page, referralInformationInPrison)
+    await communitySupport.stubGetReferral()
+    await prisonApi.stubGetPrisons()
     await page.goto(SCHEDULE_ICS_URL)
     await ScheduleIcsPage.verifyInactionOnPage(page, false)
   })
@@ -31,6 +33,8 @@ test.describe('Schedule ICS Page', () => {
     await communitySupport.stubGetProbationOffices()
     await prisonApi.stubGetPrisons()
     await seedReferralInformation(page, referralInformationInCommunity)
+    await communitySupport.stubGetReferral()
+    await prisonApi.stubGetPrisons()
     await page.goto(SCHEDULE_ICS_URL)
     await ScheduleIcsPage.verifyInactionOnPage(page, true)
   })
@@ -43,6 +47,8 @@ test.describe('Schedule ICS Page', () => {
 
   test('AC3.1 should return error if date is invalid', async ({ page }) => {
     await seedReferralInformation(page, referralInformationInPrison)
+    await communitySupport.stubGetReferral()
+    await prisonApi.stubGetPrisons()
     await page.goto(SCHEDULE_ICS_URL)
     const scheduleIcsPage = await ScheduleIcsPage.verifyOnPage(page, false)
     await test.step('submit', async () => {
@@ -64,6 +70,8 @@ test.describe('Schedule ICS Page', () => {
 
   test('AC3.2 should return error if date is before referral date', async ({ page }) => {
     await seedReferralInformation(page, referralInformationInPrison)
+    await communitySupport.stubGetReferral()
+    await prisonApi.stubGetPrisons()
     await page.goto(SCHEDULE_ICS_URL)
     const scheduleIcsPage = await ScheduleIcsPage.verifyOnPage(page, false)
     await test.step('submit', async () => {
@@ -85,6 +93,8 @@ test.describe('Schedule ICS Page', () => {
 
   test('AC3.3 should return error if date is beyond today + 6 months', async ({ page }) => {
     await seedReferralInformation(page, referralInformationInPrison)
+    await communitySupport.stubGetReferral()
+    await prisonApi.stubGetPrisons()
     await page.goto(SCHEDULE_ICS_URL)
     const scheduleIcsPage = await ScheduleIcsPage.verifyOnPage(page, false)
     await test.step('submit', async () => {
@@ -101,6 +111,8 @@ test.describe('Schedule ICS Page', () => {
 
   test('AC3.4 should return error if date left blank when submission', async ({ page }) => {
     await seedReferralInformation(page, referralInformationInPrison)
+    await communitySupport.stubGetReferral()
+    await prisonApi.stubGetPrisons()
     await page.goto(SCHEDULE_ICS_URL)
     const scheduleIcsPage = await ScheduleIcsPage.verifyOnPage(page, false)
     await test.step('submit', async () => {
@@ -116,6 +128,8 @@ test.describe('Schedule ICS Page', () => {
 
   test('AC4.1 should return error if invalid time format when submission', async ({ page }) => {
     await seedReferralInformation(page, referralInformationInPrison)
+    await communitySupport.stubGetReferral()
+    await prisonApi.stubGetPrisons()
     await page.goto(SCHEDULE_ICS_URL)
     const scheduleIcsPage = await ScheduleIcsPage.verifyOnPage(page, false)
     await test.step('submit', async () => {
@@ -135,6 +149,8 @@ test.describe('Schedule ICS Page', () => {
 
   test('AC4.2 should return error if time left blank when submission', async ({ page }) => {
     await seedReferralInformation(page, referralInformationInPrison)
+    await communitySupport.stubGetReferral()
+    await prisonApi.stubGetPrisons()
     await page.goto(SCHEDULE_ICS_URL)
     const scheduleIcsPage = await ScheduleIcsPage.verifyOnPage(page, false)
     await test.step('submit', async () => {
@@ -148,6 +164,8 @@ test.describe('Schedule ICS Page', () => {
 
   test('AC4.3.1 should return error if minute left blank when submission', async ({ page }) => {
     await seedReferralInformation(page, referralInformationInPrison)
+    await communitySupport.stubGetReferral()
+    await prisonApi.stubGetPrisons()
     await page.goto(SCHEDULE_ICS_URL)
     const scheduleIcsPage = await ScheduleIcsPage.verifyOnPage(page, false)
     await test.step('submit', async () => {
@@ -168,6 +186,8 @@ test.describe('Schedule ICS Page', () => {
 
   test('AC4.3.2 should return error if hour left blank when submission', async ({ page }) => {
     await seedReferralInformation(page, referralInformationInPrison)
+    await communitySupport.stubGetReferral()
+    await prisonApi.stubGetPrisons()
     await page.goto(SCHEDULE_ICS_URL)
     const scheduleIcsPage = await ScheduleIcsPage.verifyOnPage(page, false)
     await test.step('submit', async () => {
@@ -188,6 +208,8 @@ test.describe('Schedule ICS Page', () => {
 
   test('AC5.1 should return error if meridiem left blank when submission', async ({ page }) => {
     await seedReferralInformation(page, referralInformationInPrison)
+    await communitySupport.stubGetReferral()
+    await prisonApi.stubGetPrisons()
     await page.goto(SCHEDULE_ICS_URL)
     const scheduleIcsPage = await ScheduleIcsPage.verifyOnPage(page, false)
     await test.step('submit', async () => {
@@ -208,6 +230,8 @@ test.describe('Schedule ICS Page', () => {
 
   test('AC6 should return error if session take place is not selected when submission (custody)', async ({ page }) => {
     await seedReferralInformation(page, referralInformationInCommunity)
+    await communitySupport.stubGetReferral()
+    await prisonApi.stubGetPrisons()
     await page.goto(SCHEDULE_ICS_URL)
     const scheduleIcsPage = await ScheduleIcsPage.verifyOnPage(page, true)
     await test.step('submit', async () => {
@@ -231,6 +255,8 @@ test.describe('Schedule ICS Page', () => {
     page,
   }) => {
     await seedReferralInformation(page, referralInformationInCommunity)
+    await communitySupport.stubGetReferral()
+    await prisonApi.stubGetPrisons()
     await page.goto(SCHEDULE_ICS_URL)
     const scheduleIcsPage = await ScheduleIcsPage.verifyOnPage(page, true)
     await test.step('submit', async () => {
@@ -250,6 +276,8 @@ test.describe('Schedule ICS Page', () => {
     page,
   }) => {
     await seedReferralInformation(page, referralInformationInCommunity)
+    await communitySupport.stubGetReferral()
+    await prisonApi.stubGetPrisons()
     await page.goto(SCHEDULE_ICS_URL)
     const scheduleIcsPage = await ScheduleIcsPage.verifyOnPage(page, true)
     await test.step('submit', async () => {
@@ -269,6 +297,8 @@ test.describe('Schedule ICS Page', () => {
     page,
   }) => {
     await seedReferralInformation(page, referralInformationInCommunity)
+    await communitySupport.stubGetReferral()
+    await prisonApi.stubGetPrisons()
     await page.goto(SCHEDULE_ICS_URL)
     const scheduleIcsPage = await ScheduleIcsPage.verifyOnPage(page, true)
     await test.step('submit', async () => {
@@ -292,6 +322,8 @@ test.describe('Schedule ICS Page', () => {
     page,
   }) => {
     await seedReferralInformation(page, referralInformationInCommunity)
+    await communitySupport.stubGetReferral()
+    await prisonApi.stubGetPrisons()
     await page.goto(SCHEDULE_ICS_URL)
     const scheduleIcsPage = await ScheduleIcsPage.verifyOnPage(page, true)
     await test.step('submit', async () => {
@@ -315,6 +347,8 @@ test.describe('Schedule ICS Page', () => {
     page,
   }) => {
     await seedReferralInformation(page, referralInformationInCommunity)
+    await communitySupport.stubGetReferral()
+    await prisonApi.stubGetPrisons()
     await page.goto(SCHEDULE_ICS_URL)
     const scheduleIcsPage = await ScheduleIcsPage.verifyOnPage(page, true)
     await test.step('submit', async () => {
@@ -338,6 +372,8 @@ test.describe('Schedule ICS Page', () => {
     page,
   }) => {
     await seedReferralInformation(page, referralInformationInCommunity)
+    await communitySupport.stubGetReferral()
+    await prisonApi.stubGetPrisons()
     await page.goto(SCHEDULE_ICS_URL)
     const scheduleIcsPage = await ScheduleIcsPage.verifyOnPage(page, true)
     await test.step('submit', async () => {
@@ -361,6 +397,8 @@ test.describe('Schedule ICS Page', () => {
     page,
   }) => {
     await seedReferralInformation(page, referralInformationInCommunity)
+    await communitySupport.stubGetReferral()
+    await prisonApi.stubGetPrisons()
     await page.goto(SCHEDULE_ICS_URL)
     const scheduleIcsPage = await ScheduleIcsPage.verifyOnPage(page, true)
     await test.step('submit', async () => {
@@ -392,6 +430,8 @@ test.describe('Schedule ICS Page', () => {
     page,
   }) => {
     await seedReferralInformation(page, referralInformationInCommunity)
+    await communitySupport.stubGetReferral()
+    await prisonApi.stubGetPrisons()
     await page.goto(SCHEDULE_ICS_URL)
     const scheduleIcsPage = await ScheduleIcsPage.verifyOnPage(page, true)
     await test.step('submit', async () => {
@@ -421,6 +461,8 @@ test.describe('Schedule ICS Page', () => {
     page,
   }) => {
     await seedReferralInformation(page, referralInformationInCommunity)
+    await communitySupport.stubGetReferral()
+    await prisonApi.stubGetPrisons()
     await page.goto(SCHEDULE_ICS_URL)
     const scheduleIcsPage = await ScheduleIcsPage.verifyOnPage(page, true)
     await test.step('submit', async () => {
@@ -452,6 +494,8 @@ test.describe('Schedule ICS Page', () => {
     page,
   }) => {
     await seedReferralInformation(page, referralInformationInCommunity)
+    await communitySupport.stubGetReferral()
+    await prisonApi.stubGetPrisons()
     await page.goto(SCHEDULE_ICS_URL)
     const scheduleIcsPage = await ScheduleIcsPage.verifyOnPage(page, true)
     await test.step('submit', async () => {
@@ -481,6 +525,8 @@ test.describe('Schedule ICS Page', () => {
     page,
   }) => {
     await seedReferralInformation(page, referralInformationInCommunity)
+    await communitySupport.stubGetReferral()
+    await prisonApi.stubGetPrisons()
     await page.goto(SCHEDULE_ICS_URL)
     const scheduleIcsPage = await ScheduleIcsPage.verifyOnPage(page, true)
     await test.step('submit', async () => {
@@ -512,6 +558,8 @@ test.describe('Schedule ICS Page', () => {
     page,
   }) => {
     await seedReferralInformation(page, referralInformationInCommunity)
+    await communitySupport.stubGetReferral()
+    await prisonApi.stubGetPrisons()
     await page.goto(SCHEDULE_ICS_URL)
     const scheduleIcsPage = await ScheduleIcsPage.verifyOnPage(page, true)
     await test.step('submit', async () => {
@@ -541,6 +589,8 @@ test.describe('Schedule ICS Page', () => {
     page,
   }) => {
     await seedReferralInformation(page, referralInformationInCommunity)
+    await communitySupport.stubGetReferral()
+    await prisonApi.stubGetPrisons()
     await page.goto(SCHEDULE_ICS_URL)
     const scheduleIcsPage = await ScheduleIcsPage.verifyOnPage(page, true)
     await test.step('submit', async () => {
@@ -567,6 +617,8 @@ test.describe('Schedule ICS Page', () => {
     page,
   }) => {
     await seedReferralInformation(page, referralInformationInCommunity)
+    await communitySupport.stubGetReferral()
+    await prisonApi.stubGetPrisons()
     await page.goto(SCHEDULE_ICS_URL)
     const scheduleIcsPage = await ScheduleIcsPage.verifyOnPage(page, true)
     await test.step('submit', async () => {
@@ -596,6 +648,8 @@ test.describe('Schedule ICS Page', () => {
     page,
   }) => {
     await seedReferralInformation(page, referralInformationInCommunity)
+    await communitySupport.stubGetReferral()
+    await prisonApi.stubGetPrisons()
     await page.goto(SCHEDULE_ICS_URL)
     const scheduleIcsPage = await ScheduleIcsPage.verifyOnPage(page, true)
     await test.step('submit', async () => {
@@ -627,6 +681,8 @@ test.describe('Schedule ICS Page', () => {
     page,
   }) => {
     await seedReferralInformation(page, referralInformationInCommunity)
+    await communitySupport.stubGetReferral()
+    await prisonApi.stubGetPrisons()
     await page.goto(SCHEDULE_ICS_URL)
     const scheduleIcsPage = await ScheduleIcsPage.verifyOnPage(page, true)
     await test.step('submit', async () => {
@@ -656,6 +712,8 @@ test.describe('Schedule ICS Page', () => {
     page,
   }) => {
     await seedReferralInformation(page, referralInformationInCommunity)
+    await communitySupport.stubGetReferral()
+    await prisonApi.stubGetPrisons()
     await page.goto(SCHEDULE_ICS_URL)
     const scheduleIcsPage = await ScheduleIcsPage.verifyOnPage(page, true)
     await test.step('submit', async () => {
@@ -679,6 +737,8 @@ test.describe('Schedule ICS Page', () => {
     page,
   }) => {
     await seedReferralInformation(page, referralInformationInCommunity)
+    await communitySupport.stubGetReferral()
+    await prisonApi.stubGetPrisons()
     await page.goto(SCHEDULE_ICS_URL)
     const scheduleIcsPage = await ScheduleIcsPage.verifyOnPage(page, true)
     await test.step('submit', async () => {
@@ -703,6 +763,8 @@ test.describe('Schedule ICS Page', () => {
     page,
   }) => {
     await seedReferralInformation(page, referralInformationInCommunity)
+    await communitySupport.stubGetReferral()
+    await prisonApi.stubGetPrisons()
     await page.goto(SCHEDULE_ICS_URL)
     const scheduleIcsPage = await ScheduleIcsPage.verifyOnPage(page, true)
     await test.step('submit', async () => {
@@ -728,6 +790,8 @@ test.describe('Schedule ICS Page', () => {
     page,
   }) => {
     await seedReferralInformation(page, referralInformationInCommunity)
+    await communitySupport.stubGetReferral()
+    await prisonApi.stubGetPrisons()
     await page.goto(SCHEDULE_ICS_URL)
     const scheduleIcsPage = await ScheduleIcsPage.verifyOnPage(page, true)
     await test.step('submit', async () => {
@@ -751,6 +815,8 @@ test.describe('Schedule ICS Page', () => {
 
   test('AC12 should return error if session take place is not selected when submission (custody)', async ({ page }) => {
     await seedReferralInformation(page, referralInformationInPrison)
+    await communitySupport.stubGetReferral()
+    await prisonApi.stubGetPrisons()
     await page.goto(SCHEDULE_ICS_URL)
     const scheduleIcsPage = await ScheduleIcsPage.verifyOnPage(page, false)
     await test.step('submit', async () => {
@@ -770,6 +836,8 @@ test.describe('Schedule ICS Page', () => {
 
   test('AC12.1 should return error if session taken by phone but reason is blank when submission', async ({ page }) => {
     await seedReferralInformation(page, referralInformationInPrison)
+    await communitySupport.stubGetReferral()
+    await prisonApi.stubGetPrisons()
     await page.goto(SCHEDULE_ICS_URL)
     const scheduleIcsPage = await ScheduleIcsPage.verifyOnPage(page, false)
     await test.step('submit', async () => {
@@ -785,6 +853,8 @@ test.describe('Schedule ICS Page', () => {
 
   test('AC12.2 should return error if session taken by video but reason is blank when submission', async ({ page }) => {
     await seedReferralInformation(page, referralInformationInPrison)
+    await communitySupport.stubGetReferral()
+    await prisonApi.stubGetPrisons()
     await page.goto(SCHEDULE_ICS_URL)
     const scheduleIcsPage = await ScheduleIcsPage.verifyOnPage(page, false)
     await test.step('submit', async () => {
