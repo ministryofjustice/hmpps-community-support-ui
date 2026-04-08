@@ -101,7 +101,7 @@ describe('AppointmentController', () => {
         probationOfficesData,
         prisonsData,
         mockReferralInformationInCommunity,
-        createAppointmentRequest: null,
+        formData: {},
       },
       session: { referralInformation: mockReferralInformationInCommunity, createAppointmentRequest: null },
       flash: jest.fn(),
@@ -113,7 +113,7 @@ describe('AppointmentController', () => {
         probationOfficesData,
         prisonsData,
         mockReferralInformationInPrison,
-        createAppointmentRequest: null,
+        formData: {},
       },
       session: { referralInformation: mockReferralInformationInPrison, createAppointmentRequest: null },
       flash: jest.fn(),
@@ -156,7 +156,7 @@ describe('AppointmentController', () => {
         probationOfficesData,
         prisonsData,
         mockReferralInformationInCommunity,
-        null,
+        expect.any(Object),
       )
       expect(ScheduleIcsPresenter.prototype.renderPage).toHaveBeenCalledWith(scheduleIcsRes)
     })
@@ -170,7 +170,7 @@ describe('AppointmentController', () => {
         probationOfficesData,
         prisonsData,
         mockReferralInformationInPrison,
-        null,
+        expect.any(Object),
       )
       expect(ScheduleIcsPresenter.prototype.renderPage).toHaveBeenCalledWith(scheduleIcsRes)
     })
@@ -186,7 +186,7 @@ describe('AppointmentController', () => {
         probationOfficesData,
         prisonsData,
         mockReferralInformationInCommunity,
-        null,
+        expect.any(Object),
       )
       expect(ScheduleIcsPresenter.prototype.renderPage).toHaveBeenCalledWith(scheduleIcsRes)
     })

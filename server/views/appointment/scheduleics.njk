@@ -47,6 +47,7 @@
       {{ mojDatePicker({
         id: "session-date",
         name: "sessionDate",
+        value: content.formData["sessionDate"],
         errorMessage: content.errors["sessionDate"],
         hint: {
           text: "Enter a date, for example 10/7/2025, or select one from the calendar."
@@ -70,11 +71,11 @@
           text: "Use the 12-hour clock, for example 11:30am or 3pm."
         },
         items: [
-          { name: "hour", value: data.sessionTimeHours or "", classes: "govuk-input govuk-date-input__input govuk-input--width-2" },
-          { name: "minute", value: data.sessionTimeMinutes or "", classes: "govuk-input govuk-date-input__input govuk-input--width-2" }
+          { name: "hour", value: content.formData["sessionTime-hour"] or "", classes: "govuk-input govuk-date-input__input govuk-input--width-2" },
+          { name: "minute", value: content.formData["sessionTime-minute"] or "", classes: "govuk-input govuk-date-input__input govuk-input--width-2" }
         ],
-        meridiem: {
-          value: data.sessionTimeMeridiem or ""
+        meridiemParams: {
+          value: content.formData["sessionTime-meridiem"] or ""
         }
       }) }}
     {% endcall %}
@@ -84,6 +85,7 @@
         id: "take-place-by-phone",
         name: "ByPhone",
         type: "text",
+        value: content.formData["ByPhone"],
         errorMessage: content.errors["ByPhone"],
         spellcheck: false,
         classes: "govuk-!-width-one-third",
@@ -98,7 +100,8 @@
         id: "take-place-by-video",
         name: "ByVideo",
         type: "text",
-        errorMessage: content.errors["ByPhone"],
+        value: content.formData["ByVideo"],
+        errorMessage: content.errors["ByVideo"],
         spellcheck: false,
         classes: "govuk-!-width-one-third",
         label: {
@@ -117,7 +120,8 @@
         {{ govukSelect({
           id: "probation-office-list",
           name: "probationOfficeList",
-          items: content.probationOfficesSelectItems
+          items: content.probationOfficesSelectItems,
+          value: content.formData["probationOffice"]
         }) }}
       {% endset %}
 
@@ -128,6 +132,7 @@
           },
           id: "address-line-1",
           name: "addressLine1",
+          value: content.formData["addressLine1"],
           errorMessage: content.errors["addressLine1"],
           autocomplete: "address-line1"
         }) }}
@@ -138,6 +143,7 @@
           },
           id: "address-line-2",
           name: "addressLine2",
+          value: content.formData["addressLine2"],
           errorMessage: content.errors["addressLine2"],
           autocomplete: "address-line2"
         }) }}
@@ -149,6 +155,7 @@
           classes: "govuk-!-width-two-thirds",
           id: "address-town",
           name: "addressTown",
+          value: content.formData["addressTown"],
           errorMessage: content.errors["addressTown"],
           autocomplete: "address-level2"
         }) }}
@@ -160,6 +167,7 @@
           classes: "govuk-!-width-two-thirds",
           id: "address-county",
           name: "addressCounty",
+          value: content.formData["addressCounty"],
           errorMessage: content.errors["addressCounty"]
         }) }}
 
@@ -170,6 +178,7 @@
           classes: "govuk-input--width-10",
           id: "address-postcode",
           name: "addressPostcode",
+          value: content.formData["addressPostcode"],
           errorMessage: content.errors["addressPostcode"],
           autocomplete: "postal-code"
         }) }}
@@ -179,6 +188,7 @@
       {{ govukInput({
         id: "other-method-of-contact",
         name: "otherMethodOfContact",
+        value: content.formData["otherMethodOfContact"],
         type: "text",
           errorMessage: content.errors["otherMethodOfContact"],
         spellcheck: false,
@@ -193,7 +203,8 @@
         {{ govukSelect({
           id: "prison-list",
           name: "prisonList",
-          items: content.prisonsSelectItems
+          items: content.prisonsSelectItems,
+          value: content.formData["prison"]
         }) }}
       {% endset %}
     {% endif %}
@@ -232,6 +243,7 @@
           classes: "govuk-fieldset__legend--l"
         }
       },
+      value: content.formData["sessionTakePlace"],
       hint: {
         text: "Select one option."
       },
@@ -273,7 +285,8 @@
               html: otherMethodOfContactHtml
             }
           }
-        ]
+        ],
+        values: content.formData.informedMethod
       }) }}
     {% endif %}
 

@@ -1,8 +1,8 @@
 import { Response } from 'express'
-import { ProbationOffice, CreateAppointmentRequest, ReferralInformation } from '@community-support-api'
+import { ProbationOffice, ReferralInformation } from '@community-support-api'
 import { Prison } from '@prison-api'
 import PresenterBase from '../../presenter/presenterBase'
-import { ScheduleIcsContent, ScheduleIcsViewModel, SelectItem } from './scheduleIcsViewModel'
+import { ScheduleIcsContent, ScheduleIcsViewModel, SelectItem, ScheduleFormData } from './scheduleIcsViewModel'
 
 export interface ValidationError {
   key: string
@@ -15,7 +15,7 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
     private readonly probationOffices: ProbationOffice[],
     private readonly prisons: Prison[],
     private readonly referralInformation: ReferralInformation,
-    private readonly createAppointmentRequest?: CreateAppointmentRequest,
+    private readonly formData?: ScheduleFormData,
     private readonly validationErrors?: Record<string, { text: string }>,
   ) {
     super()
@@ -64,11 +64,12 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
     viewModel.pageHeader = content.pageHeader
     viewModel.submitButtonText = content.submitButtonText
     viewModel.submitHref = `/referral/${this.referralId}/appointment/schedule-ics`
-    viewModel.backlinkHref = `/referral/${this.referralId}/appointment/schedule-ics`
+    viewModel.backlinkHref = `/referral-details/${this.referralId}/progress`
     viewModel.probationOfficesSelectItems = this.buildProbationOfficesSelectItems()
     viewModel.prisonsSelectItems = this.buildPrisonsSelectItems()
     viewModel.isPersonInCommunity = this.isPersonInCommunity()
     viewModel.firstName = this.referralInformation.firstName
+    viewModel.formData = this.formData
     viewModel.errors = this.validationErrors
     viewModel.errorList = Object.entries(viewModel.errors ?? {}).map(([key, error]) => ({
       href: `#${key}`,
