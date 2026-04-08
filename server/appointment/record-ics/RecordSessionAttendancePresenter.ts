@@ -25,7 +25,8 @@ export interface RecordSessionAttendanceContent {
   pageHeader: string
   text: string
   details: DetailsContent
-  form: FormContent
+  form1: FormContent
+  form2: FormContent
   button: string
 }
 
