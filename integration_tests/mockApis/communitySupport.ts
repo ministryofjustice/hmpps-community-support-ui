@@ -3,6 +3,7 @@ import { AppointmentIcsResponse } from '@community-support-api'
 import { stubFor } from './wiremock'
 import { duplicateData } from '../testUtils'
 import referralDetailsPageData from '../mockData/referralDetailsPageData'
+import { components } from '../../server/@types/communitySupportApi/imported'
 
 export interface AssignCaseWorkersRequest {
   emails: string[]
@@ -24,6 +25,12 @@ export interface ReferralUserAssignmentsResponse {
   message: string
   succeededList?: CaseWorkerDto[]
   failureList?: AssignmentFailureDto[]
+}
+export interface ReferralProgress {
+  /** Format: uuid */
+  referralId: string
+  fullName: string
+  appointments: components['schemas']['ReferralAppointmentHistoryDto'][]
 }
 
 export default {
@@ -257,6 +264,23 @@ export default {
         status: httpStatus,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: mockData,
+        transformers: ['response-template'],
+      },
+    }),
+  stubGetReferralProgress: (
+    referralProgress: ReferralProgress,
+    caseReference: string,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: `/community-support/bff/referral-details/${caseReference}/progress`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: referralProgress,
         transformers: ['response-template'],
       },
     }),

@@ -12,6 +12,7 @@ import FoundPersonPresenter from './foundPerson/foundPersonPresenter'
 import logger from '../../logger'
 import CheckReferralInformationPresenter from './check-referral-information/checkReferralInformationPresenter'
 import ReferralDetailsPresenter from './referralDetails/ReferralDetailsPresenter'
+import ProgressPresenter from './progress/progressPresenter'
 
 class ReferralController {
   constructor(
@@ -201,6 +202,15 @@ class ReferralController {
       return res.render('referral/assign', { referralId })
     }
     return res.render('referral/assign')
+  }
+
+  async showReferralProgressDetails(req: Request, res: Response) {
+    const { caseReference } = req.params as { caseReference: string }
+    const { username } = res.locals.user
+    const referralProgress = await this.referralService.getReferralProgress(caseReference, username)
+    const presenter = new ProgressPresenter(referralProgress, caseReference)
+
+    return presenter.renderPage(res)
   }
 }
 

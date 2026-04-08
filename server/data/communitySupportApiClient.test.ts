@@ -6,10 +6,12 @@ import type {
   ReferralUserAssignmentsRequest,
   ReferralUserAssignmentsResponse,
   CaseWorkerDto,
+  ReferralProgress,
 } from '@community-support-api'
 import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import { AgentConfig, ApiConfig } from '@ministryofjustice/hmpps-rest-client'
 import CommunitySupportApiClient from './communitySupportApiClient'
+import ReferralProgressFactory from '../testutils/factories/ReferralProgress'
 
 describe('CommunitySupportApiClient tests', () => {
   let communitySupportApiClient: CommunitySupportApiClient
@@ -208,6 +210,22 @@ describe('CommunitySupportApiClient tests', () => {
       )
 
       expect(result).resolves.toEqual(mockReferralUserAssignmentsResponseData)
+    })
+  })
+  describe('getReferralProgress tests', () => {
+    it('should return the progress of a referral with a 200 response', () => {
+      const caseReference = 'AB1234CD'
+      const mockReferralProgress: ReferralProgress = ReferralProgressFactory.build()
+
+      nock('http://localhost:8080', {
+        reqheaders: { authorization: 'Bearer dummy-token' },
+      })
+        .get(`/bff/referral-details/${caseReference}/progress`)
+        .reply(200, mockReferralProgress)
+
+      const result = communitySupportApiClient.getReferralProgress(caseReference, 'user1')
+
+      expect(result).resolves.toEqual(mockReferralProgress)
     })
   })
 })

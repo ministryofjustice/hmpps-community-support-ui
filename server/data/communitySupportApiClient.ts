@@ -14,6 +14,7 @@ import type {
   CaseWorkerDto,
   ReferralDetailsResponseDto,
   AppointmentIcsResponse,
+  ReferralProgress,
 } from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
@@ -72,5 +73,9 @@ export default class CommunitySupportApiClient extends RestClient {
 
   async getICS(referralId: string, icsId: string, username: string): Promise<AppointmentIcsResponse> {
     return this.get({ path: `/bff/referral/${referralId}/ics/${icsId}` }, asSystem(username))
+  }
+
+  getReferralProgress(caseReference: string, username: string): Promise<ReferralProgress> {
+    return this.get({ path: `/bff/referral-details/${caseReference}/progress` }, asSystem(username))
   }
 }
