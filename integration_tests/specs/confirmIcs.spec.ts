@@ -1,6 +1,9 @@
 import { expect, test } from '@playwright/test'
 import { login, resetStubs, seedAppointmentSession } from '../testUtils'
 import ConfirmIcsPage from '../pages/confirmIcsPage'
+import communitySupport from '../mockApis/communitySupport'
+import prisonApi from '../mockApis/prisonApi'
+import { probationOfficesData } from '../mockData/referenceData'
 
 const REFERRAL_ID = 'b190ac1e-1e2a-41c2-a4ac-3ceb9d2dcb1e'
 const CONFIRM_ICS_URL = `/referral/${REFERRAL_ID}/appointment/confirm-ics`
@@ -111,6 +114,8 @@ test.describe('Confirm ICS Page', () => {
   })
 
   test('should redirect to schedule-ics when no session data is present', async ({ page }) => {
+    await communitySupport.stubGetProbationOffices(probationOfficesData)
+    await prisonApi.stubGetPrisons()
     await page.goto(CONFIRM_ICS_URL)
     await expect(page).toHaveURL(`/referral/${REFERRAL_ID}/appointment/schedule-ics`)
   })

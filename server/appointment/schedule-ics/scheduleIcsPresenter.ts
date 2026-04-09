@@ -38,19 +38,13 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
   private isIdentifierACrn(id: string): boolean {
     const cleaned = id.trim().toUpperCase()
 
-    if (cleaned.length === 7 && /^[A-Z]\d{6}$/.test(cleaned)) {
-      return true
-    }
-    return false
+    return cleaned.length === 7 && /^[A-Z]\d{6}$/.test(cleaned)
   }
 
   private isIdentifierAPrisonNumber(id: string): boolean {
     const cleaned = id.trim().toUpperCase()
 
-    if (cleaned.length === 7 && /^[A-Z]\d{4}[A-Z]{2}$/.test(cleaned)) {
-      return true
-    }
-    return false
+    return cleaned.length === 7 && /^[A-Z]\d{4}[A-Z]{2}$/.test(cleaned)
   }
 
   private isPersonInCommunity(): boolean {
@@ -80,20 +74,6 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
 
   getTemplatePath(): string {
     return 'appointment/scheduleIcsAppointment'
-  }
-
-  private formatDate(date: string): string {
-    const [year, month, day] = date.split('-').map(Number)
-    return new Date(year, month - 1, day).toLocaleDateString('en-GB', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    })
-  }
-
-  private formatTime(time: { hour: number; minute?: number; amPm: string }): string {
-    const minute = time.minute !== undefined ? String(time.minute).padStart(2, '0') : '00'
-    return `${time.hour}:${minute}${time.amPm.toLowerCase()}`
   }
 
   private formatSessionMethod(type: string): string {

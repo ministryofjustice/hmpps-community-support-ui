@@ -1,4 +1,5 @@
-import { isValid, parse, addMonths, startOfDay, format } from 'date-fns'
+import { z } from 'zod'
+import { isValid, isAfter, parse, addMonths, startOfDay, format } from 'date-fns'
 
 export interface DateValidationResult {
   isValid: boolean
@@ -33,59 +34,52 @@ export function validateDate(
 
   const finalMessages = { ...defaultMessages, ...messages }
 
-  let dateStr: string
-
-  if (typeof input === 'string') {
-    dateStr = input.trim()
-  } else {
-    const { day, month, year } = input
-    if (!day || !month || !year) {
-      return {
-        isValid: false,
-        error: finalMessages.blank,
+  const preprocessSchema = z
+    .union([z.string(), z.object({ day: z.string(), month: z.string(), year: z.string() })])
+    .transform(val => {
+      if (typeof val === 'string') {
+        return val.trim()
       }
-    }
-    dateStr = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
-  }
+      const { day, month, year } = val
+      if (!day?.trim() || !month?.trim() || !year?.trim()) {
+        return ''
+      }
+      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
+    })
 
-  if (!dateStr) {
-    return {
-      isValid: false,
-      error: finalMessages.blank,
-    }
-  }
-
-  const parsed = parse(dateStr, dateFormat, new Date())
-
-  if (!isValid(parsed)) {
-    return {
-      isValid: false,
-      error: finalMessages.invalidFormat,
-    }
-  }
+  let dateSchema = preprocessSchema
+    .refine(val => val.length > 0, { message: finalMessages.blank })
+    .transform(dateStr => {
+      if (!dateStr) return null
+      const parsedDate = parse(dateStr, dateFormat, new Date())
+      return isValid(parsedDate) ? parsedDate : null
+    })
+    .refine((date): date is Date => date !== null, { message: finalMessages.invalidFormat })
 
   if (minDate) {
-    if (!isAfter(parsed, minDate)) {
-      return {
-        isValid: false,
-        error: finalMessages.tooEarly + format(minDate, 'd/M/yyyy'),
-      }
-    }
+    dateSchema = dateSchema.refine(date => isAfter(date, minDate), {
+      message: finalMessages.tooEarly + format(minDate, 'd/M/yyyy'),
+    })
   }
 
-  if (maxMonthsFuture) {
+  if (maxMonthsFuture !== null && maxMonthsFuture !== undefined) {
     const maxAllowed = addMonths(startOfDay(new Date()), maxMonthsFuture)
-    if (isAfter(parsed, maxAllowed)) {
-      return {
-        isValid: false,
-        error: finalMessages.tooFarFuture + format(maxAllowed, 'd/M/yyyy'),
-      }
-    }
+    dateSchema = dateSchema.refine(date => !isAfter(date, maxAllowed), {
+      message: finalMessages.tooFarFuture + format(maxAllowed, 'd/M/yyyy'),
+    })
   }
 
+  const result = dateSchema.safeParse(input)
+
+  if (result.success) {
+    return {
+      isValid: true,
+      parsedDate: result.data,
+    }
+  }
   return {
-    isValid: true,
-    parsedDate: parsed,
+    isValid: false,
+    error: result.error.issues[0]?.message,
   }
 }
 
@@ -123,63 +117,53 @@ export function validateTime(
 
   const finalMessages = { ...defaultMessages, ...messages }
 
-  const trimmedHour = hour?.trim()
-  const trimmedMinute = minute?.trim()
-  const trimmedMeridiem = meridiem?.trim().toUpperCase()
+  const timeSchema = z
+    .object({
+      hour: z.string().transform(v => v?.trim() ?? ''),
+      minute: z.string().transform(v => v?.trim() ?? ''),
+      meridiem: z.string().transform(v => v?.trim().toUpperCase() ?? ''),
+    })
+    .superRefine((data, ctx) => {
+      if (!data.hour && !data.minute && !data.meridiem) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, message: finalMessages.blank })
+        return
+      }
+      if (!data.hour) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, message: finalMessages.hourBlank, path: ['hour'] })
+        return
+      }
+      if (!data.minute) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, message: finalMessages.minuteBlank, path: ['minute'] })
+        return
+      }
+      if (!data.meridiem) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, message: finalMessages.meridiemBlank, path: ['meridiem'] })
+        return
+      }
 
-  if (!trimmedHour && !trimmedMinute && !trimmedMeridiem) {
-    return {
-      isValid: false,
-      error: finalMessages.blank,
-    }
-  }
-  if (!trimmedHour) {
-    return {
-      isValid: false,
-      error: finalMessages.hourBlank,
-    }
-  }
-  if (!trimmedMinute) {
-    return {
-      isValid: false,
-      error: finalMessages.minuteBlank,
-    }
-  }
-  if (!trimmedMeridiem) {
-    return {
-      isValid: false,
-      error: finalMessages.meridiemBlank,
-    }
-  }
-  const hourNum = parseInt(trimmedHour, 10)
-  const minuteNum = parseInt(trimmedMinute, 10)
-  if (Number.isNaN(hourNum) || hourNum < 1 || hourNum > 12) {
-    return {
-      isValid: false,
-      error: finalMessages.invalidFormat,
-    }
-  }
-  if (Number.isNaN(minuteNum) || minuteNum < 0 || minuteNum > 59) {
-    return {
-      isValid: false,
-      error: finalMessages.invalidFormat,
-    }
-  }
-  if (!['AM', 'PM'].includes(trimmedMeridiem)) {
-    return {
-      isValid: false,
-      error: finalMessages.invalidFormat,
-    }
-  }
+      const h = parseInt(data.hour, 10)
+      const m = parseInt(data.minute, 10)
 
-  const parsedTime = `${hourNum.toString().padStart(2, '0')}:${minuteNum.toString().padStart(2, '0')} ${trimmedMeridiem}`
+      if (
+        Number.isNaN(h) ||
+        h < 1 ||
+        h > 12 ||
+        Number.isNaN(m) ||
+        m < 0 ||
+        m > 59 ||
+        !['AM', 'PM'].includes(data.meridiem)
+      ) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, message: finalMessages.invalidFormat })
+      }
+    })
+    .transform(data => {
+      const hourNum = parseInt(data.hour, 10)
+      const minuteNum = parseInt(data.minute, 10)
+      return `${hourNum.toString().padStart(2, '0')}:${minuteNum.toString().padStart(2, '0')} ${data.meridiem}`
+    })
 
-  return {
-    isValid: true,
-    parsedTime,
-  }
-}
+  const result = timeSchema.safeParse({ hour, minute, meridiem })
 
-function isAfter(date: Date, reference: Date): boolean {
-  return date > reference
+  if (result.success) return { isValid: true, parsedTime: result.data }
+  return { isValid: false, error: result.error.issues[0]?.message }
 }

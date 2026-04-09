@@ -61,7 +61,7 @@ describe('validateDateTime tests', () => {
   it('check blank hour', () => {
     const result = validateTime('', '10', 'AM')
     expect(result.isValid).toBe(false)
-    expect(result.error).toContain('ime must include hour')
+    expect(result.error).toContain('Time must include hour')
   })
 
   it('check blank minute', () => {
