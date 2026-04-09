@@ -480,7 +480,7 @@ class AppointmentController {
     const { referralId, icsId } = req.params
     const { username } = res.locals.user
     return this.appointmentService
-      .getICS(referralId.toString(), icsId.toString(), username)
+      .getICSDepreciated(referralId.toString(), icsId.toString(), username)
       .then(data => new InitialContactSessionDetailsPresenter(data))
       .then(presenter => presenter.renderPage(res))
   }
