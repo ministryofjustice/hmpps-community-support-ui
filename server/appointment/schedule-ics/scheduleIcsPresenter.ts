@@ -79,7 +79,7 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
   }
 
   getTemplatePath(): string {
-    return 'appointment/scheduleIcs'
+    return 'appointment/scheduleIcsAppointment'
   }
 
   private formatDate(date: string): string {
