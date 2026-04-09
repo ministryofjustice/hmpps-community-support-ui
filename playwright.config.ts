@@ -44,5 +44,15 @@ export default defineConfig({
   },
 
   /* Configure projects */
-  projects: [{ name: 'default' }],
+  projects: [
+    {
+      name: 'schedule-ics-first',
+      testMatch: '**/scheduleics.spec.ts',
+    },
+    {
+      name: 'default',
+      testMatch: '**/*.spec.ts',
+      testIgnore: '**/scheduleics.spec.ts',
+    },
+  ],
 })

@@ -1,10 +1,9 @@
 import type { SuperAgentRequest } from 'superagent'
-import { AppointmentIcsResponse } from '@community-support-api'
+import { AppointmentIcsResponse, ProbationOffice } from '@community-support-api'
 import { stubFor } from './wiremock'
 import { duplicateData } from '../testUtils'
 import referralDetailsPageData from '../mockData/referralDetailsPageData'
 import { components } from '../../server/@types/communitySupportApi/imported'
-import { probationOfficesData } from '../mockData/referenceData'
 
 export interface AssignCaseWorkersRequest {
   emails: string[]
@@ -250,16 +249,16 @@ export default {
         transformers: ['response-template'],
       },
     }),
-  stubGetProbationOffices: (httpStatus = 200): SuperAgentRequest =>
+  stubGetProbationOffices: (mockData: ProbationOffice[], httpStatus = 200): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'GET',
-        urlPathPattern: '.*probation-offices.*',
+        urlPattern: '/.*reference-data/probation-offices',
       },
       response: {
         status: httpStatus,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: probationOfficesData,
+        jsonBody: mockData,
       },
     }),
   stubGetICS: (
