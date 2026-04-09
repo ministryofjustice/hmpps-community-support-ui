@@ -1,10 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import {
-  CreateReferralRequest,
-  CaseWorkerDto,
-  ReferralUserAssignmentsResponse,
-  AssignmentFailureDto,
-} from '@community-support-api'
+import { CreateReferralRequest, ReferralUserAssignmentsResponse, AssignmentFailureDto } from '@community-support-api'
 import ReferralService from '../services/referralService'
 import PersonService from '../services/personService'
 import ConfirmationPresenter from './confirmation/confirmationPresenter'
