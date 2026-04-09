@@ -2,6 +2,7 @@ import { Response } from 'express'
 import { GovukFrontendBackLink, GovukFrontendSummaryList } from '@govuk-frontend'
 import { ReferralDetailsResponseDto, ReferralUserAssignmentsResponse } from '@community-support-api'
 import { differenceInYears } from 'date-fns'
+import { MojSubNavigation, MojSubNavigationItem } from '@moj-frontend'
 import PresenterBase from '../../presenter/presenterBase'
 import dateFormat from '../../utils/dateFormat'
 import {
@@ -17,6 +18,7 @@ import { govFrontendSummaryListRow } from '../../utils/viewUtils'
 export interface ReferralDetailsViewModel {
   name: string
   successBanner: AssignmentSuccessBanner | null
+  subNav: MojSubNavigation
   personal: GovukFrontendSummaryList
   equality: GovukFrontendSummaryList
   contact: GovukFrontendSummaryList
@@ -158,10 +160,26 @@ export default class ReferralDetailsPresenter extends PresenterBase<ReferralDeta
     }
   }
 
+  private buildSubNav(content: ReferralDetailsContent): MojSubNavigation {
+    return {
+      label: content.subNavTitle,
+      items: this.buildSubNavItems(content),
+    } as MojSubNavigation
+  }
+
+  private buildSubNavItems(content: ReferralDetailsContent): MojSubNavigationItem[] {
+    return content.subNavItems.map(i => ({
+      text: i.text,
+      href: `${i.href}/${this.referralDetails.referenceNumber}`,
+      active: i.text === 'Case details',
+    }))
+  }
+
   buildPageContent(res: Response): ReferralDetailsViewModel {
     const content = this.buildStaticContent(res)
     return {
       name: this.referralDetails.personDetailsTableData.name,
+      subNav: this.buildSubNav(content),
       successBanner: this.assignResult ? this.buildSuccessBanner(content.successBannerHeading) : null,
       personal: this.buildPersonalDetails(content.personalDetailsCard, content.defaultFieldValue),
       equality: this.buildEqualityDetails(content.equalityMonitoringCard, content.defaultFieldValue),
