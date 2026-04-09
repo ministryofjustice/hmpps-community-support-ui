@@ -49,7 +49,6 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
 
   private isPersonInCommunity(): boolean {
     return this.isIdentifierACrn(this.referralInformation.crn)
-    return true
   }
 
   buildPageContent(res: Response): ScheduleIcsViewModel {
