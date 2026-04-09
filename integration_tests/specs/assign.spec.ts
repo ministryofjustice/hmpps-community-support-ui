@@ -35,13 +35,14 @@ test.describe('AssignPage', () => {
       await expect(assignPage.subheaders.first()).toHaveText('Caseworker')
     })
   })
-  // IPB-2010:AC2 - !!! No back link yet!!!
-  test.skip('AC2: Back navigation', async () => {
-    /*
-      Given I’m assigning a specific case to caseworker(s)
-      When I select the Back option
-      Then I am taken back to the specific case’s referral details screen
-      */
+  test('AC2: Back navigation', async ({ page }) => {
+    const assignPage = await AssignPage.verifyOnPage(page)
+    await test.step('click back link', async () => {
+      await assignPage.backLink.click()
+    })
+    await test.step('should be on cases screen', async () => {
+      await expect(page).toHaveURL(ReferralDetailsPage.url(referralId))
+    })
   })
   // IPB-2010:additional
   test('ACXX: Adding the second caseworkers', async ({ page }) => {
@@ -117,7 +118,7 @@ test.describe('AssignPage', () => {
       await assignPage.emailAddressInputs[0].fill('testuser1@email.com')
       await expect(assignPage.emailAddressInputs).toHaveLength(1)
       await assignPage.submitButton.click()
-      await expect(page).toHaveURL(`/referral-details/${referralId}`)
+      await expect(page).toHaveURL(ReferralDetailsPage.url(referralId))
       await ReferralDetailsPage.verifyAssignmentOnPage(page, 'single')
     })
   })
@@ -156,7 +157,7 @@ test.describe('AssignPage', () => {
     })
     await test.step('assign case workers', async () => {
       await assignPage.submitButton.click()
-      await expect(page).toHaveURL(`/referral-details/${referralId}`)
+      await expect(page).toHaveURL(ReferralDetailsPage.url(referralId))
       await ReferralDetailsPage.verifyAssignmentOnPage(page, 'multipe')
     })
   })
@@ -336,7 +337,7 @@ test.describe('AssignPage', () => {
       await expect(assignPage.emailAddressInputs).toHaveLength(2)
       await assignPage.emailAddressInputs[1].fill('testuser1@email.com')
       await assignPage.submitButton.click()
-      await expect(page).toHaveURL(`/referral-details/${referralId}`)
+      await expect(page).toHaveURL(ReferralDetailsPage.url(referralId))
       await ReferralDetailsPage.verifyAssignmentOnPage(page, 'single')
     })
   })

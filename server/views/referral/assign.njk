@@ -8,7 +8,7 @@
 {% set mainClasses = "govuk-body" %}
 
 {% block content %}
-  {% if errorsList and errorsList | length > 0 %}
+  {% if errorsList %}
     {{ govukErrorSummary({
       titleText: "There is a problem",
       errorList: errorsList,
@@ -35,7 +35,7 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
       <h1 class="govuk-heading-l">Who do you want to assign this case to?</h1>
-      <form method="post" novalidate action="/referral/{{referralId}}/assign">
+      <form method="post" novalidate action="/referral/{{content.referralId}}/assign">
         <input type="hidden" name="_csrf" value="{{csrfToken}}">
         <div id="caseworker-container" data-max="5">
           {% for i in range(0, 5) %}

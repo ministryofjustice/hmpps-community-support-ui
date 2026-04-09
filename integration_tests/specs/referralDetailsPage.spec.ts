@@ -18,7 +18,7 @@ test.describe('Referral Details Page', () => {
     await page.goto('/')
     await login(page)
     await test.step('go to referral details page', async () => {
-      await page.goto(`/referral-details/${id}`)
+      await page.goto(ReferralDetailsPage.url(id))
     })
   })
 

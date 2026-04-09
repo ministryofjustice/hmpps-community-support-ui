@@ -206,7 +206,13 @@ describe('ReferralController', () => {
         flash: jest.fn(),
       } as unknown as Request
       await referralController.showAssignCaseWorkersPage(req, res, next)
-      expect(res.render).toHaveBeenCalledWith('referral/assign', { referralId: 'referral-id-1' })
+      expect(res.render).toHaveBeenCalledWith('referral/assign', {
+        caseworkers: undefined,
+        content: {
+          referralId: 'referral-id-1',
+          backLink: { href: '/referral-details/referral-id-1' },
+        },
+      })
     })
     it('should flash not found error redirect when no referral is found', async () => {
       req = {
@@ -228,7 +234,10 @@ describe('ReferralController', () => {
       expect(referralService.getReferralUserAssignments).toHaveBeenCalledWith('referral-id-123', 'user1')
       expect(req.flash).toHaveBeenCalledWith('referralIdError', "No referral with identifier 'referral-id-123' found")
       expect(res.render).toHaveBeenCalledWith('referral/assign', {
-        referralId: 'referral-id-123',
+        content: {
+          referralId: 'referral-id-123',
+          backLink: { href: '/referral-details/referral-id-123' },
+        },
         errorsList,
       })
     })
@@ -252,7 +261,10 @@ describe('ReferralController', () => {
 
       expect(referralService.getReferralUserAssignments).toHaveBeenCalledWith('referral-id-123', 'user1')
       expect(res.render).toHaveBeenCalledWith('referral/assign', {
-        referralId: 'referral-id-123',
+        content: {
+          referralId: 'referral-id-123',
+          backLink: { href: '/referral-details/referral-id-123' },
+        },
         caseworkers,
       })
     })

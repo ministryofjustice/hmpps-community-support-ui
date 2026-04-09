@@ -22,7 +22,10 @@ export default class AssignPage extends AbstractPage {
 
   public readonly unrecognisedEmailInputErrorMessage: string
 
-  private constructor(page: Page) {
+  private constructor(
+    page: Page,
+    public readonly backLink: Locator,
+  ) {
     super(page)
     this.header = page.locator('h1')
     this.errorHeader = page.locator('h2', { hasText: 'There is a problem' })
@@ -54,7 +57,8 @@ export default class AssignPage extends AbstractPage {
   }
 
   static async verifyOnPage(page: Page): Promise<AssignPage> {
-    const assignPage = new AssignPage(page)
+    const backLink = page.getByRole('link', { name: 'Back', exact: true })
+    const assignPage = new AssignPage(page, backLink)
     await expect(assignPage.header).toBeVisible()
     await assignPage.updateInputs()
     return assignPage
