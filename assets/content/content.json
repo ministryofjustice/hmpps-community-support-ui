@@ -64,6 +64,12 @@
     "backLink": "/unassigned-cases",
     "defaultFieldValue": "Not available",
     "successBannerHeading": "Case assigned",
+    "subNavTitle": "Sub navigation",
+    "subNavItems": [
+      { "id": "caseDetails", "text": "Case details", "href": "/referral-details" },
+      { "id": "progress", "text": "Progress", "href": "/progress" },
+      { "id": "changeLog", "text": "Change log", "href": "/change-log" }
+    ],
     "personalDetailsCard": {
       "heading": "Personal details",
       "nameLabel": "Name",

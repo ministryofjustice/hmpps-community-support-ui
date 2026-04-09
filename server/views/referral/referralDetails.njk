@@ -2,6 +2,7 @@
 
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+{% from "moj/components/sub-navigation/macro.njk" import mojSubNavigation %}
 
 {% set pageTitle = "Referral - Community Support" %}
 {% set mainClasses = "govuk-body" %}
@@ -26,8 +27,8 @@
     }) }}
 {% endif %}
 <h1 class="govuk-heading-l">Referral for {{ content.name }}</h1>
+{{ mojSubNavigation(content.subNav) }}
 <h2 class="govuk-heading-m">Case details</h2>
-
 {{ govukSummaryList(content.personal) }}
 {{ govukSummaryList(content.equality) }}
 {{ govukSummaryList(content.contact) }}

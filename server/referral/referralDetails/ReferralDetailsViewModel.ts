@@ -1,3 +1,5 @@
+import { MojSubNavigationItem } from '@moj-frontend'
+
 export interface PersonalDetailsCard {
   heading: string
   nameLabel: string
@@ -44,6 +46,8 @@ export interface ReferralDetailsContent {
   equalityMonitoringCard: EqualityMonitoringCard
   contactDetailsCard: ContactDetailsCard
   referralDetailsCard: ReferralDetailsCard
+  subNavTitle: string
+  subNavItems: MojSubNavigationItem[]
 }
 
 export type AssignmentSuccessBanner = {

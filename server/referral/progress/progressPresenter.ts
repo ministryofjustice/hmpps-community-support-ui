@@ -75,7 +75,7 @@ export default class ProgressPresenter extends PresenterBase<ReferralProgressVie
     this.name = referralProgress.fullName
     this.basePath = `/referral-details/${this.caseReference}`
     this.tabPaths = {
-      caseDetails: '#',
+      caseDetails: `/referral-details/${this.caseReference}`,
       progress: `${this.basePath}/progress`,
       changeLog: '#',
     }

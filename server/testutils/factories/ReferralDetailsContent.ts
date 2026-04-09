@@ -6,6 +6,12 @@ class referralDetailsContentFactory extends Factory<ReferralDetailsContent> {}
 export default referralDetailsContentFactory.define(({ transientParams }) => ({
   pageHeader: transientParams.pageHeader || 'Referral for ',
   pageSubHeader: transientParams.pageSubHeader || 'Case details',
+  subNavTitle: transientParams.subNavTitle || 'Sub navigation',
+  subNavItems: transientParams.subNavItems || [
+    { text: 'Case details', href: '/referral-details' },
+    { text: 'Progress', href: '/progress' },
+    { text: 'Change log', href: '/change-log' },
+  ],
   backLink: '/unassigned-cases',
   defaultFieldValue: 'Not available',
   successBannerHeading: 'Case assigned',

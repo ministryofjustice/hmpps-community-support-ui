@@ -43,6 +43,14 @@ describe('ReferralDetailsPresenter', () => {
       name: 'John Doe',
       backLink: { href: '/unassigned-cases' },
       successBanner: null,
+      subNav: {
+        label: 'Sub navigation',
+        items: [
+          { text: 'Case details', href: `/referral-details/${dto.referenceNumber}`, active: true },
+          { text: 'Progress', href: `/progress/${dto.referenceNumber}`, active: false },
+          { text: 'Change log', href: `/change-log/${dto.referenceNumber}`, active: false },
+        ],
+      },
       personal: {
         card: {
           title: {
