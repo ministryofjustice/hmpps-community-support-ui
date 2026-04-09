@@ -1,10 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import {
-  CreateReferralRequest,
-  CaseWorkerDto,
-  ReferralUserAssignmentsResponse,
-  AssignmentFailureDto,
-} from '@community-support-api'
+import { CreateReferralRequest, ReferralUserAssignmentsResponse, AssignmentFailureDto } from '@community-support-api'
 import ReferralService from '../services/referralService'
 import PersonService from '../services/personService'
 import ConfirmationPresenter from './confirmation/confirmationPresenter'
@@ -109,26 +104,41 @@ class ReferralController {
   async showAssignCaseWorkersPage(req: Request, res: Response, next: NextFunction) {
     const { referralId } = req.params as { referralId: string }
     const { username } = res.locals.user
-    let caseworkers: CaseWorkerDto[] = []
-    let errorsList: unknown
+    const viewModel = {
+      referralId,
+      backLink: { href: `/referral-details/${referralId}` },
+    }
     try {
-      caseworkers = await this.referralService.getReferralUserAssignments(referralId, username)
+      const caseworkers = await this.referralService.getReferralUserAssignments(referralId, username)
+      return res.render('referral/assign', { content: { ...viewModel }, caseworkers })
     } catch (error) {
       if (error.responseStatus === 404) {
         req.flash('referralIdError', `No referral with identifier '${referralId}' found`)
-        errorsList = [{ href: '#referralIdError', text: `No referral with identifier '${referralId}' found` }]
-      } else {
-        req.flash('retrievalError', 'An unexpected error when retrieving user assignments. Please try again.')
-        errorsList = [
-          { href: '#retrievalError', text: `An unexpected error when retrieving user assignments. Please try again.` },
-        ]
+        return res.render('referral/assign', {
+          content: {
+            ...viewModel,
+          },
+          errorsList: [
+            {
+              href: '#referralIdError',
+              text: `No referral with identifier '${referralId}' found`,
+            },
+          ],
+        })
       }
-      return res.render('referral/assign', { referralId, errorsList })
+      req.flash('retrievalError', 'An unexpected error when retrieving user assignments. Please try again.')
+      return res.render('referral/assign', {
+        content: {
+          ...viewModel,
+        },
+        errorsList: [
+          {
+            href: '#retrievalError',
+            text: `An unexpected error when retrieving user assignments. Please try again.`,
+          },
+        ],
+      })
     }
-    if (caseworkers?.length > 0) {
-      return res.render('referral/assign', { referralId, caseworkers })
-    }
-    return res.render('referral/assign', { referralId })
   }
 
   async submitReferralUserAssignments(req: Request, res: Response): Promise<void> {

@@ -9,6 +9,10 @@ export default class ReferralDetailsPage extends AbstractPage {
 
   private readonly multipleAssignmentsMessage: Locator
 
+  static url(referralId: string): string {
+    return `/referral-details/${referralId}`
+  }
+
   private constructor(
     page: Page,
     readonly header: Locator,
