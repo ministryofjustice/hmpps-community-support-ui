@@ -44,5 +44,10 @@ export default defineConfig({
   },
 
   /* Configure projects */
-  projects: [{ name: 'default' }],
+  projects: [
+    {
+      name: 'default',
+      testMatch: '**/*.spec.ts',
+    },
+  ],
 })

@@ -4,6 +4,7 @@ import tokenVerification from '../mockApis/tokenVerification'
 
 import { resetStubs } from '../testUtils'
 import communitySupport from '../mockApis/communitySupport'
+import prisonApi from '../mockApis/prisonApi'
 
 test.describe('Health', () => {
   test.afterEach(async () => {
@@ -12,7 +13,12 @@ test.describe('Health', () => {
 
   test.describe('All healthy', () => {
     test.beforeEach(async () => {
-      await Promise.all([hmppsAuth.stubPing(), tokenVerification.stubPing(), communitySupport.stubPing()])
+      await Promise.all([
+        hmppsAuth.stubPing(),
+        tokenVerification.stubPing(),
+        communitySupport.stubPing(),
+        prisonApi.stubPing(),
+      ])
     })
 
     test('Health check is accessible and status is UP', async ({ page }) => {

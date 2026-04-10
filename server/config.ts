@@ -81,6 +81,15 @@ export default {
       },
       agent: new AgentConfig(),
     },
+    prisonApiService: {
+      url: get('PRISON_API_URL', 'http://localhost:9091', requiredInProduction),
+      healthPath: '/health/ping',
+      timeout: {
+        response: 10000,
+        deadline: 10000,
+      },
+      agent: new AgentConfig(),
+    },
   },
   sqs: {
     audit: auditConfig(),

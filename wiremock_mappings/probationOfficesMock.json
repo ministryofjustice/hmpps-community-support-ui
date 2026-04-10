@@ -1,0 +1,41 @@
+{
+  "mappings": [
+    {
+      "name": "Probation Offices",
+      "request": {
+        "method": "GET",
+        "url": "/community-support/bff/reference-data/probation-offices"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": [
+          {
+            "probationOfficeId": 1,
+            "name": "Derby: Derwent Centre",
+            "address": "Derwent Centre, 1 Stuart Street, Derby, DE1 2EQ",
+            "probationRegionId": "F",
+            "govUkUrl": "https://www.gov.uk/guidance/derby-derwent-centre"
+          },
+          {
+            "probationOfficeId": 2,
+            "name": "Derbyshire: Buxton Probation Office",
+            "address": "Probation Office, Chesterfield House, 25 Hardwick Street, Buxton, Derbyshire, SK17 6DH",
+            "probationRegionId": "F",
+            "govUkUrl": "https://www.gov.uk/guidance/derbyshire-chesterfield-house",
+            "deliusCRSLocationI": "CRS0032"
+          },
+          {
+            "probationOfficeId": 3,
+            "name": "Derbyshire: Chesterfield Probation Office",
+            "address": "Probation Office, 3 Birmington Road, Chesterfield, Derbyshire, S41 7UG",
+            "probationRegionId": "F",
+            "govUkUrl": "https://www.gov.uk/guidance/derbyshire-chesterfield-probation-office"
+          }
+        ]
+      }
+    }
+  ]
+}

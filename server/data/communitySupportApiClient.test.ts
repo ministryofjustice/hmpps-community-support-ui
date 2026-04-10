@@ -7,6 +7,7 @@ import type {
   ReferralUserAssignmentsResponse,
   CaseWorkerDto,
   ReferralProgress,
+  ProbationOffice,
 } from '@community-support-api'
 import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import { AgentConfig, ApiConfig } from '@ministryofjustice/hmpps-rest-client'
@@ -210,6 +211,43 @@ describe('CommunitySupportApiClient tests', () => {
       )
 
       expect(result).resolves.toEqual(mockReferralUserAssignmentsResponseData)
+    })
+  })
+  describe('getProbationOffices tests', () => {
+    it('should return a list of probation offices on a 200 response', () => {
+      const mockProbationOffices = [
+        {
+          probationOfficeId: 1,
+          name: 'Derby: Derwent Centre',
+          address: 'Derwent Centre, 1 Stuart Street, Derby, DE1 2EQ',
+          probationRegionId: 'F',
+          govUkUrl: 'https://www.gov.uk/guidance/derby-derwent-centre',
+        },
+        {
+          probationOfficeId: 5,
+          name: 'Leicestershire: Coalville Probation Office',
+          address: 'Probation Office, 27 London Road, Coalville, Leicestershire, LE67 3JB"',
+          probationRegionId: 'F',
+          govUkUrl: 'https://www.gov.uk/guidance/leicestershire-coalville-probation-office',
+          deliusCRSLocationId: 'CRS0086',
+        },
+        {
+          probationOfficeId: 128,
+          name: 'Warrington: Warrington Probation Office',
+          address: 'Units 3 & 4 Bankside, Crosfield Street, Warrington, WA1 1UP',
+          probationRegionId: 'B',
+          deliusCRSLocationId: 'CRS0328',
+        },
+      ] as ProbationOffice[]
+      nock('http://localhost:8080', {
+        reqheaders: { authorization: 'Bearer dummy-token' },
+      })
+        .get('/bff/reference-data/probation-offices')
+        .reply(200, mockProbationOffices)
+
+      const result = communitySupportApiClient.getProbationOffices('user1')
+
+      expect(result).resolves.toEqual(mockProbationOffices)
     })
   })
   describe('getReferralProgress tests', () => {

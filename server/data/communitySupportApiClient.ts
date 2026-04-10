@@ -15,6 +15,7 @@ import type {
   ReferralDetailsResponseDto,
   AppointmentIcsResponse,
   ReferralProgress,
+  ProbationOffice,
 } from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
@@ -69,6 +70,10 @@ export default class CommunitySupportApiClient extends RestClient {
     username: string,
   ): Promise<ReferralUserAssignmentsResponse> {
     return this.post({ path: `/referral/${referralId}/assign`, data: assignmentsData }, asSystem(username))
+  }
+
+  async getProbationOffices(username: string): Promise<ProbationOffice[]> {
+    return this.get({ path: `/bff/reference-data/probation-offices` }, asSystem(username))
   }
 
   async getICS(referralId: string, icsId: string, username: string): Promise<AppointmentIcsResponse> {

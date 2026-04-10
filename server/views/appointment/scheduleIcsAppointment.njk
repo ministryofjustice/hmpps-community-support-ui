@@ -1,0 +1,299 @@
+{% extends "../partials/layout.njk" %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "moj/components/date-picker/macro.njk" import mojDatePicker %}
+{% from "govuk/components/fieldset/macro.njk" import govukFieldset %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "components/time-input/macro.njk" import timeInput %}
+
+{% set pageTitle = applicationName + " - Schedule the ICS" %}
+{% set mainClasses = "govuk-body" %}
+
+{% block content %}
+  {{ govukBackLink({ href: content.backlinkHref }) }}
+
+  <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
+
+    {% if content.errorList and content.errorList | length > 0 %}
+      {{ govukErrorSummary({
+        titleText: "There is a problem",
+        errorList: content.errorList,
+        attributes: {
+          "data-testid": "error-messages"
+        }
+      }) }}
+    {% endif %}
+
+    {% if content.notificationBanner %}
+      {{ govukNotificationBanner(content.notificationBanner) }}
+    {% endif %}
+
+    <form method="post" action="{{ content.submitHref }}">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    {% call govukFieldset({
+      classes: "govuk-fieldset",
+      legend: {
+        text: "What is the date of the session?",
+        classes: "moj-add-another__title govuk-fieldset__legend--m",
+        isPageHeading: false
+      }
+    }) %}
+      {{ mojDatePicker({
+        id: "session-date",
+        name: "sessionDate",
+        value: content.formData["sessionDate"],
+        errorMessage: content.errors["sessionDate"],
+        hint: {
+          text: "Enter a date, for example 10/7/2025, or select one from the calendar."
+        }
+      }) }}
+    {% endcall %}
+
+    {% call govukFieldset({
+      classes: "govuk-fieldset",
+      legend: {
+        text: "What time does the session start?",
+        classes: "moj-add-another__title govuk-fieldset__legend--m",
+        isPageHeading: false
+      }
+    }) %}
+      {{ timeInput({
+        id: "session-time",
+        namePrefix: "sessionTime",
+        errorMessage: content.errors["sessionTime"],
+        hint: {
+          text: "Use the 12-hour clock, for example 11:30am or 3pm."
+        },
+        items: [
+          { name: "hour", value: content.formData["sessionTime-hour"] or "", classes: "govuk-input govuk-date-input__input govuk-input--width-2" },
+          { name: "minute", value: content.formData["sessionTime-minute"] or "", classes: "govuk-input govuk-date-input__input govuk-input--width-2" }
+        ],
+        meridiemParams: {
+          value: content.formData["sessionTime-meridiem"] or ""
+        }
+      }) }}
+    {% endcall %}
+
+    {% set phoneCallHtml %}
+      {{ govukInput({
+        id: "take-place-by-phone",
+        name: "ByPhone",
+        type: "text",
+        value: content.formData["ByPhone"],
+        errorMessage: content.errors["ByPhone"],
+        spellcheck: false,
+        classes: "govuk-!-width-one-third",
+        label: {
+          text: "Why is this session not in-person"
+        }
+      }) }}
+    {% endset -%}
+
+    {% set videoCallHtml %}
+      {{ govukInput({
+        id: "take-place-by-video",
+        name: "ByVideo",
+        type: "text",
+        value: content.formData["ByVideo"],
+        errorMessage: content.errors["ByVideo"],
+        spellcheck: false,
+        classes: "govuk-!-width-one-third",
+        label: {
+          text: "Why is this session not in-person"
+        }
+      }) }}
+    {% endset %}
+
+    {% set inProbationOfficeHtml = "" %}
+    {% set inSomewhereElseHtml = "" %}
+    {% set inPrisonHtml = "" %}
+    {% set otherContactMethodHtml = "" %}
+
+    {% if content.isPersonInCommunity %}
+      {% set inProbationOfficeHtml %}
+        {{ govukSelect({
+          id: "probation-office-list",
+          name: "probationOfficeList",
+          items: content.probationOfficesSelectItems,
+          value: content.formData["probationOffice"]
+        }) }}
+      {% endset %}
+
+      {% set inSomewhereElseHtml %}
+        {{ govukInput({
+          label: {
+            text: 'Address line 1'
+          },
+          id: "address-line-1",
+          name: "addressLine1",
+          value: content.formData["addressLine1"],
+          errorMessage: content.errors["addressLine1"],
+          autocomplete: "address-line1"
+        }) }}
+
+        {{ govukInput({
+          label: {
+            text: 'Address line 2 (optional)'
+          },
+          id: "address-line-2",
+          name: "addressLine2",
+          value: content.formData["addressLine2"],
+          errorMessage: content.errors["addressLine2"],
+          autocomplete: "address-line2"
+        }) }}
+
+        {{ govukInput({
+          label: {
+            text: "Town or city"
+          },
+          classes: "govuk-!-width-two-thirds",
+          id: "address-town",
+          name: "addressTown",
+          value: content.formData["addressTown"],
+          errorMessage: content.errors["addressTown"],
+          autocomplete: "address-level2"
+        }) }}
+
+        {{ govukInput({
+          label: {
+            text: "County (optional)"
+          },
+          classes: "govuk-!-width-two-thirds",
+          id: "address-county",
+          name: "addressCounty",
+          value: content.formData["addressCounty"],
+          errorMessage: content.errors["addressCounty"]
+        }) }}
+
+        {{ govukInput({
+          label: {
+            text: "Postcode"
+          },
+          classes: "govuk-input--width-10",
+          id: "address-postcode",
+          name: "addressPostcode",
+          value: content.formData["addressPostcode"],
+          errorMessage: content.errors["addressPostcode"],
+          autocomplete: "postal-code"
+        }) }}
+      {% endset %}
+
+      {% set otherMethodOfContactHtml %}
+      {{ govukInput({
+        id: "other-method-of-contact",
+        name: "otherMethodOfContact",
+        value: content.formData["otherMethodOfContact"],
+        type: "text",
+          errorMessage: content.errors["otherMethodOfContact"],
+        spellcheck: false,
+        classes: "govuk-!-width-one-third",
+        label: {
+          text: "Other method of contact"
+        }
+      }) }}
+      {% endset %}
+    {% else %}
+      {% set inPrisonHtml %}
+        {{ govukSelect({
+          id: "prison-list",
+          name: "prisonList",
+          items: content.prisonsSelectItems,
+          value: content.formData["prison"]
+        }) }}
+      {% endset %}
+    {% endif %}
+
+    {% set items = [
+      { value: "ByPhone", text: "Phone call", conditional: { html: phoneCallHtml } },
+      { value: "ByVideo", text: "Video call", conditional: { html: videoCallHtml } }
+    ] %}
+
+    {% if content.isPersonInCommunity %}
+      {% set items = (items.push({
+        value: "InProbationOffice",
+        text: "In-person meeting - probation office",
+        conditional: { html: inProbationOfficeHtml }
+      }), items) %}
+
+      {% set items = (items.push({
+        value: "InSomewhereElse",
+        text: "In-person meeting - somewhere else",
+        conditional: { html: inSomewhereElseHtml }
+      }), items) %}
+    {% else %}
+      {% set items = (items.push({
+        value: "InPrison",
+        text: "In-person meeting - prison establishment",
+        conditional: { html: inPrisonHtml }
+      }), items) %}
+    {% endif %}
+
+    {{ govukRadios({
+      name: "sessionTakePlace",
+      fieldset: {
+        legend: {
+          text: "How will the session take place?",
+          isPageHeading: true,
+          classes: "govuk-fieldset__legend--l"
+        }
+      },
+      value: content.formData["sessionTakePlace"],
+      hint: {
+        text: "Select one option."
+      },
+      items: items
+    }) }}
+
+    {% set informMessage = "How was " + content.firstName + " informed about the session?" %}
+    {% if content.isPersonInCommunity %}
+      {{ govukCheckboxes({
+        id: "informed-method",
+        name: "informedMethod",
+        fieldset: {
+          legend: {
+            text: informMessage,
+            isPageHeading: true,
+            classes: "govuk-fieldset__legend--l"
+          }
+        },
+        hint: {
+          text: "Select all that apply."
+        },
+        items: [
+          {
+            value: "informedByPhone",
+            text: "Phone call"
+          },
+          {
+            value: "informedByTextMessage",
+            text: "Text message"
+          },
+          {
+            value: "informedByEmail",
+            text: "Email"
+          },
+          {
+            value: "informedByOtherMethod",
+            text: "Other",
+            conditional: {
+              html: otherMethodOfContactHtml
+            }
+          }
+        ],
+        values: content.formData.informedMethod
+      }) }}
+    {% endif %}
+
+    {{ govukButton({
+        text: content.submitButtonText,
+        classes: "govuk-!-margin-top-6"
+    }) }}
+    </form>
+
+{% endblock %}

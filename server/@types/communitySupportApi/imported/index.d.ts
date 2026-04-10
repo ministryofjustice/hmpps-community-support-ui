@@ -182,7 +182,7 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /** Get all Probation Offices Information */
+    /** Get list of probation offices */
     get: operations['getProbationOffices']
     put?: never
     post?: never

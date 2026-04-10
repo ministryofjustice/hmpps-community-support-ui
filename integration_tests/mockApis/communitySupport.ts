@@ -1,5 +1,5 @@
 import type { SuperAgentRequest } from 'superagent'
-import { AppointmentIcsResponse } from '@community-support-api'
+import { AppointmentIcsResponse, ProbationOffice } from '@community-support-api'
 import { stubFor } from './wiremock'
 import { duplicateData } from '../testUtils'
 import referralDetailsPageData from '../mockData/referralDetailsPageData'
@@ -227,7 +227,7 @@ export default {
     stubFor({
       request: {
         method: 'POST',
-        url: `/community-support/referral/${referralId}/assign`,
+        urlPathPattern: `/community-support/referral/${referralId}/assign`,
       },
       response: {
         status: httpStatus,
@@ -247,6 +247,18 @@ export default {
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: referralDetailsPageData(referralId),
         transformers: ['response-template'],
+      },
+    }),
+  stubGetProbationOffices: (mockData: ProbationOffice[], httpStatus = 200): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPattern: '/.*reference-data/probation-offices',
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: mockData,
       },
     }),
   stubGetICS: (
