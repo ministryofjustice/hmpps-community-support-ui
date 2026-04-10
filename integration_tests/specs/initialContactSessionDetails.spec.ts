@@ -12,15 +12,15 @@ test.describe('Initial Contact Session Details Page', () => {
     data: initialContactSessionDetailsPageData.virtual(),
   } as const
 
-  const inPersion = {
+  const inPerson = {
     caseRefId: randomUUID(),
-    data: initialContactSessionDetailsPageData.inPersion(),
+    data: initialContactSessionDetailsPageData.inPerson(),
   } as const
 
   test.beforeEach(async ({ page }) => {
     await resetStubs()
     await communitySupport.stubGetICS(virtual.caseRefId, virtual.data)
-    await communitySupport.stubGetICS(inPersion.caseRefId, inPersion.data)
+    await communitySupport.stubGetICS(inPerson.caseRefId, inPerson.data)
     await page.goto('/')
     await login(page)
   })
@@ -32,9 +32,9 @@ test.describe('Initial Contact Session Details Page', () => {
     await InitialContactSessionDetailsPage.verifyOnPage(page)
   })
 
-  test('should display the page - in persion', async ({ page }) => {
+  test('should display the page - in person', async ({ page }) => {
     await test.step('go to initial contact session details page', async () => {
-      await page.goto(InitialContactSessionDetailsPage.url(inPersion.caseRefId))
+      await page.goto(InitialContactSessionDetailsPage.url(inPerson.caseRefId))
     })
     await InitialContactSessionDetailsPage.verifyOnPage(page)
   })
@@ -94,9 +94,9 @@ test.describe('Initial Contact Session Details Page', () => {
     })
   })
   // IPB-2130:AC4
-  test('View ICS details - in persion', async ({ page }) => {
+  test('View ICS details - in person', async ({ page }) => {
     await test.step('go to initial contact session details page', async () => {
-      await page.goto(InitialContactSessionDetailsPage.url(inPersion.caseRefId))
+      await page.goto(InitialContactSessionDetailsPage.url(inPerson.caseRefId))
     })
     const referralDetailsPage = await InitialContactSessionDetailsPage.verifyOnPage(page)
     const summary = referralDetailsPage.details
@@ -121,7 +121,7 @@ test.describe('Initial Contact Session Details Page', () => {
         await expect(rows[3].key).toHaveText('Location')
       })
       await test.step('How [First Name] was informed about the session', async () => {
-        await expect(rows[4].key).toHaveText(`How ${inPersion.data.referralFirstName} was informed about the session`)
+        await expect(rows[4].key).toHaveText(`How ${inPerson.data.referralFirstName} was informed about the session`)
       })
     })
   })

@@ -27,7 +27,7 @@ class InitialContactSessionDetailsPageData {
     }
   }
 
-  inPersion(): AppointmentIcsResponse {
+  inPerson(): AppointmentIcsResponse {
     return {
       appointmentIcsId: randomUUID(),
       appointmentId: randomUUID(),
