@@ -1,11 +1,12 @@
 import { AppointmentIcsResponse } from '@community-support-api'
+import { randomUUID } from 'node:crypto'
 
 class InitialContactSessionDetailsPageData {
-  virtual(referralId: string, icsId: string): AppointmentIcsResponse {
+  virtual(): AppointmentIcsResponse {
     return {
-      appointmentIcsId: icsId,
-      appointmentId: '4a88fd16-76a9-4ded-9f87-f60a9748f641',
-      referralId,
+      appointmentIcsId: randomUUID(),
+      appointmentId: randomUUID(),
+      referralId: randomUUID(),
       appointmentType: 'ICS',
       appointmentDate: '2026-02-01',
       appointmentTime: {
@@ -26,11 +27,11 @@ class InitialContactSessionDetailsPageData {
     }
   }
 
-  inPersion(referralId: string, icsId: string): AppointmentIcsResponse {
+  inPerson(): AppointmentIcsResponse {
     return {
-      appointmentIcsId: icsId,
-      appointmentId: '4a88fd16-76a9-4ded-9f87-f60a9748f641',
-      referralId,
+      appointmentIcsId: randomUUID(),
+      appointmentId: randomUUID(),
+      referralId: randomUUID(),
       appointmentType: 'ICS',
       appointmentDate: '2026-02-10',
       appointmentTime: {

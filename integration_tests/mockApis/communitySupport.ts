@@ -261,16 +261,11 @@ export default {
         jsonBody: mockData,
       },
     }),
-  stubGetICS: (
-    referralId: string,
-    icsId: string,
-    mockData: AppointmentIcsResponse,
-    httpStatus = 200,
-  ): SuperAgentRequest =>
+  stubGetICS: (caseRefId: string, mockData: AppointmentIcsResponse, httpStatus = 200): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'GET',
-        urlPathPattern: `/community-support/bff/referral/${referralId}/ics/${icsId}`,
+        urlPathPattern: `/community-support/bff/referral-details/${caseRefId}/ics`,
       },
       response: {
         status: httpStatus,

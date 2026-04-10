@@ -18,7 +18,6 @@ type ReferralUserAssignmentsResponse = components['schemas']['ReferralUserAssign
 type ReferralUserAssignmentsDto = components['schemas']['ReferralUserAssignmentsDto']
 type ReferralDetailsResponseDto = components['schemas']['ReferralDetailsBffResponseDto']
 type AppointmentIcsResponse = components['schemas']['AppointmentIcsResponse']
-type AppointmentTime = components['schemas']['AppointmentTimeRequest']
 type ReferralProgress = components['schemas']['ReferralProgressDto']
 type ReferralAppointmentHistory = components['schemas']['ReferralAppointmentHistoryDto']
 type ProbationOffice = components['schemas']['ProbationOffice']
@@ -42,7 +41,6 @@ export type {
   CaseWorkerDto,
   ReferralDetailsResponseDto,
   AppointmentIcsResponse,
-  AppointmentTime,
   ReferralProgress,
   ReferralAppointmentHistory,
   ProbationOffice,

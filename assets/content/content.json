@@ -66,9 +66,21 @@
     "successBannerHeading": "Case assigned",
     "subNavTitle": "Sub navigation",
     "subNavItems": [
-      { "id": "caseDetails", "text": "Case details", "href": "/referral-details" },
-      { "id": "progress", "text": "Progress", "href": "/progress" },
-      { "id": "changeLog", "text": "Change log", "href": "/change-log" }
+      {
+        "id": "caseDetails",
+        "text": "Case details",
+        "href": "/referral-details"
+      },
+      {
+        "id": "progress",
+        "text": "Progress",
+        "href": "/progress"
+      },
+      {
+        "id": "changeLog",
+        "text": "Change log",
+        "href": "/change-log"
+      }
     ],
     "personalDetailsCard": {
       "heading": "Personal details",
@@ -111,7 +123,30 @@
     "pageHeader": "Check the details before scheduling the ICS",
     "submitButtonText": "Submit"
   },
-  "/referral/:id/appointment/:id": {
+  "/referral-details/:id/progress": {
+    "pageHeader": "Referral for",
+    "progressSubNavTitle": "Progress",
+    "subNavItems": [
+      {
+        "id": "caseDetails",
+        "title": "Case details",
+        "href": "/case-details"
+      },
+      {
+        "id": "progress",
+        "title": "Progress",
+        "href": "/progress"
+      },
+      {
+        "id": "changeLog",
+        "title": "Change log",
+        "href": "/change-log"
+      }
+    ],
+    "progressActiveColumnHeaders": ["Date and time", "Status", "Action"],
+    "progressInactiveColumnHeaders": ["Status", "Action"]
+  },
+  "/referral-details/:id/check-change-ics": {
     "title": "View or change session details",
     "heading": "View or change session details",
     "details": {
@@ -128,16 +163,5 @@
       "change": "/referral/{{ id }}/appointment/change-ics",
       "back": "/referral/{{ id }}/appointment/change-ics"
     }
-  },
-  "/referral-details/:id/progress": {
-    "pageHeader": "Referral for",
-    "progressSubNavTitle": "Progress",
-    "subNavItems": [
-      { "id": "caseDetails", "title": "Case details", "href": "/case-details" },
-      { "id": "progress", "title": "Progress", "href": "/progress" },
-      { "id": "changeLog", "title": "Change log", "href": "/change-log" }
-    ],
-    "progressActiveColumnHeaders": ["Date and time", "Status", "Action"],
-    "progressInactiveColumnHeaders": ["Status", "Action"]
   }
 }
