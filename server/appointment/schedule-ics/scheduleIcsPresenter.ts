@@ -3,6 +3,7 @@ import { ProbationOffice, ReferralInformation } from '@community-support-api'
 import { Prison } from '@prison-api'
 import PresenterBase from '../../presenter/presenterBase'
 import { ScheduleIcsContent, ScheduleIcsViewModel, SelectItem, ScheduleFormData } from './scheduleIcsViewModel'
+import isIdentifierACrn from '../../utils/isIdentifierACrn'
 
 export interface ValidationError {
   key: string
@@ -35,20 +36,8 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
     }))
   }
 
-  private isIdentifierACrn(id: string): boolean {
-    const cleaned = id.trim().toUpperCase()
-
-    return cleaned.length === 7 && /^[A-Z]\d{6}$/.test(cleaned)
-  }
-
-  private isIdentifierAPrisonNumber(id: string): boolean {
-    const cleaned = id.trim().toUpperCase()
-
-    return cleaned.length === 7 && /^[A-Z]\d{4}[A-Z]{2}$/.test(cleaned)
-  }
-
   private isPersonInCommunity(): boolean {
-    return this.isIdentifierACrn(this.referralInformation.crn)
+    return isIdentifierACrn(this.referralInformation.crn)
   }
 
   buildPageContent(res: Response): ScheduleIcsViewModel {
@@ -73,15 +62,5 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
 
   getTemplatePath(): string {
     return 'appointment/scheduleIcsAppointment'
-  }
-
-  private formatSessionMethod(type: string): string {
-    const methods: Record<string, string> = {
-      PHONE: 'Phone call',
-      VIDEO: 'Video call',
-      PROBATION_OFFICE: 'In person',
-      OTHER_LOCATION: 'Other location',
-    }
-    return methods[type] ?? type
   }
 }
