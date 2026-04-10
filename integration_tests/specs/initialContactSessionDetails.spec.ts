@@ -8,48 +8,41 @@ import InitialContactSessionDetailsPage from '../pages/InitialContactSessionDeta
 
 test.describe('Initial Contact Session Details Page', () => {
   const virtual = {
-    referralId: randomUUID(),
-    icsId: randomUUID(),
+    caseRefId: randomUUID(),
+    data: initialContactSessionDetailsPageData.virtual(),
   } as const
-
-  const virtualData = initialContactSessionDetailsPageData.virtual(virtual.referralId, virtual.icsId)
 
   const inPersion = {
-    referralId: randomUUID(),
-    icsId: randomUUID(),
+    caseRefId: randomUUID(),
+    data: initialContactSessionDetailsPageData.inPersion(),
   } as const
-
-  const inPersionData = initialContactSessionDetailsPageData.inPersion(inPersion.referralId, inPersion.icsId)
 
   test.beforeEach(async ({ page }) => {
     await resetStubs()
-    await communitySupport.stubGetICS(virtual.referralId, virtual.icsId, virtualData)
-    await communitySupport.stubGetICS(inPersion.referralId, inPersion.icsId, inPersionData)
+    await communitySupport.stubGetICS(virtual.caseRefId, virtual.data)
+    await communitySupport.stubGetICS(inPersion.caseRefId, inPersion.data)
     await page.goto('/')
     await login(page)
   })
 
   test('should display the page - virtual', async ({ page }) => {
     await test.step('go to initial contact session details page', async () => {
-      await page.goto(`/referral/${virtual.referralId}/appointment/${virtual.icsId}`)
+      await page.goto(InitialContactSessionDetailsPage.url(virtual.caseRefId))
     })
     await InitialContactSessionDetailsPage.verifyOnPage(page)
   })
 
   test('should display the page - in persion', async ({ page }) => {
     await test.step('go to initial contact session details page', async () => {
-      await page.goto(`/referral/${inPersion.referralId}/appointment/${inPersion.icsId}`)
+      await page.goto(InitialContactSessionDetailsPage.url(inPersion.caseRefId))
     })
     await InitialContactSessionDetailsPage.verifyOnPage(page)
   })
 
-  // IPB-2130:AC1
-  // No page to navigate from...
-
   // IPB-2130:AC2
   test('Heading', async ({ page }) => {
     await test.step('go to initial contact session details page', async () => {
-      await page.goto(`/referral/${virtual.referralId}/appointment/${virtual.icsId}`)
+      await page.goto(InitialContactSessionDetailsPage.url(virtual.caseRefId))
     })
     const referralDetailsPage = await InitialContactSessionDetailsPage.verifyOnPage(page)
     await expect(referralDetailsPage.header).toHaveText('View or change session details')
@@ -58,20 +51,20 @@ test.describe('Initial Contact Session Details Page', () => {
   // IPB-2130:AC3
   test('Navigate back', async ({ page }) => {
     await test.step('go to initial contact session details page', async () => {
-      await page.goto(`/referral/${virtual.referralId}/appointment/${virtual.icsId}`)
+      await page.goto(InitialContactSessionDetailsPage.url(virtual.caseRefId))
     })
     const referralDetailsPage = await InitialContactSessionDetailsPage.verifyOnPage(page)
     const backlink = referralDetailsPage.backLink
     await test.step('check backlink', async () => {
       await backlink.click()
-      await expect(page).toHaveURL(`referral/${virtual.referralId}/appointment/change-ics`)
+      await expect(page).toHaveURL(`referral/${virtual.data.referralId}/appointment/change-ics`)
     })
   })
 
   // IPB-2130:AC4
   test('View ICS details - virtual', async ({ page }) => {
     await test.step('go to initial contact session details page', async () => {
-      await page.goto(`/referral/${virtual.referralId}/appointment/${virtual.icsId}`)
+      await page.goto(InitialContactSessionDetailsPage.url(virtual.caseRefId))
     })
     const referralDetailsPage = await InitialContactSessionDetailsPage.verifyOnPage(page)
     const summary = referralDetailsPage.details
@@ -96,14 +89,14 @@ test.describe('Initial Contact Session Details Page', () => {
         await expect(rows[3].key).toHaveText('Reason session is not in person')
       })
       await test.step('How [First Name] was informed about the session', async () => {
-        await expect(rows[4].key).toHaveText(`How ${virtualData.referralFirstName} was informed about the session`)
+        await expect(rows[4].key).toHaveText(`How ${virtual.data.referralFirstName} was informed about the session`)
       })
     })
   })
   // IPB-2130:AC4
   test('View ICS details - in persion', async ({ page }) => {
     await test.step('go to initial contact session details page', async () => {
-      await page.goto(`/referral/${inPersion.referralId}/appointment/${inPersion.icsId}`)
+      await page.goto(InitialContactSessionDetailsPage.url(inPersion.caseRefId))
     })
     const referralDetailsPage = await InitialContactSessionDetailsPage.verifyOnPage(page)
     const summary = referralDetailsPage.details
@@ -128,7 +121,7 @@ test.describe('Initial Contact Session Details Page', () => {
         await expect(rows[3].key).toHaveText('Location')
       })
       await test.step('How [First Name] was informed about the session', async () => {
-        await expect(rows[4].key).toHaveText(`How ${inPersionData.referralFirstName} was informed about the session`)
+        await expect(rows[4].key).toHaveText(`How ${inPersion.data.referralFirstName} was informed about the session`)
       })
     })
   })

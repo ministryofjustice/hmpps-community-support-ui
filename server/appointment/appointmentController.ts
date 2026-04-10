@@ -477,10 +477,10 @@ class AppointmentController {
   }
 
   changeIcs(req: Request, res: Response): Promise<void> {
-    const { referralId, icsId } = req.params
+    const { caseRefId } = req.params
     const { username } = res.locals.user
     return this.appointmentService
-      .getICSDepreciated(referralId.toString(), icsId.toString(), username)
+      .getICS(caseRefId.toString(), username)
       .then(data => new InitialContactSessionDetailsPresenter(data))
       .then(presenter => presenter.renderPage(res))
   }

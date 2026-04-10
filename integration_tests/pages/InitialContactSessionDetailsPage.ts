@@ -12,6 +12,10 @@ export default class InitialContactSessionDetailsPage extends AbstractPage {
     super(page)
   }
 
+  static url(caseRefId: string): string {
+    return `/referral-details/${caseRefId}/check-change-ics`
+  }
+
   static async verifyOnPage(page: Page): Promise<InitialContactSessionDetailsPage> {
     const header = page.locator('h1')
     await expect(header).toBeVisible()

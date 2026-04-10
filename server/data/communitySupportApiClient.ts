@@ -76,12 +76,8 @@ export default class CommunitySupportApiClient extends RestClient {
     return this.get({ path: `/bff/reference-data/probation-offices` }, asSystem(username))
   }
 
-  getICSDepreciated(referralId: string, icsId: string, username: string): Promise<AppointmentIcsResponse> {
-    return this.get({ path: `/bff/referral/${referralId}/ics/${icsId}` }, asSystem(username))
-  }
-
   getICS(caseRefId: string, username: string): Promise<AppointmentIcsResponse> {
-    return this.get({ path: `/bff/referral/${caseRefId}/ics` }, asSystem(username))
+    return this.get({ path: `/bff/referral-details/${caseRefId}/ics` }, asSystem(username))
   }
 
   getReferralProgress(caseReference: string, username: string): Promise<ReferralProgress> {

@@ -1,9 +1,10 @@
 import { Response } from 'express'
 import { GovukFrontendSummaryList, GovukFrontendBackLink, GovukFrontendSummaryListRow } from '@govuk-frontend'
-import { AppointmentIcsResponse, AppointmentTime } from '@community-support-api'
+import { AppointmentIcsResponse } from '@community-support-api'
 import nunjucks from 'nunjucks'
 import PresenterBase from '../presenter/presenterBase'
 import dateFormat from '../utils/dateFormat'
+import timeFormat from '../utils/timeFormat'
 import { govFrontendSummaryListRow } from '../utils/viewUtils'
 
 export interface InitialContactSessionDetailsViewModel {
@@ -51,8 +52,6 @@ type SessionType =
   | 'IN_PERSON_PRISON_ESTABLISMENT'
   | 'PHONE'
   | 'VIDEO'
-
-const timeFormat = ({ hour, minute, amPm }: AppointmentTime) => `${hour}:${minute || '00'}${amPm}`
 
 const showSessionType = (sessionType: SessionType): string => {
   switch (sessionType) {

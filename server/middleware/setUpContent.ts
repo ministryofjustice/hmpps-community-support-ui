@@ -25,11 +25,11 @@ function parsePlaceholdersFromPath(pathToParse: string): string {
   const caseReferenceRegex = /[a-z]{2}\d{4}[a-z]{2}/i
 
   if (pathToParse.match(uuidRegex)) {
-    return parsePlaceholdersFromPath(pathToParse.replace(uuidRegex, ':id'))
+    return pathToParse.replace(uuidRegex, ':id')
   }
 
   if (pathToParse.match(caseReferenceRegex)) {
-    return parsePlaceholdersFromPath(pathToParse.replace(caseReferenceRegex, ':id'))
+    return pathToParse.replace(caseReferenceRegex, ':id')
   }
 
   return pathToParse
