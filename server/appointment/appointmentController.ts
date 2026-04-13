@@ -70,11 +70,13 @@ class AppointmentController {
   async scheduleIcs(req: Request, res: Response): Promise<void> {
     const { referralId } = req.params as { referralId: string }
     const referralInformation = req.session?.referralInformation
+    let createAppointmentRequest = req.session?.createAppointmentRequest
     const probationOffices = await this.referenceDataService.getProbationOffices()
     const prisons = await this.referenceDataService.getPrisons()
     if (req.method === 'POST') {
       const validationResults = this.validateAppointment(req, referralInformation)
-      const createAppointmentRequest = this.saveFormToSession(validationResults.formData)
+
+      createAppointmentRequest = this.saveFormToSession(validationResults.formData)
 
       if (Object.keys(validationResults.errors).length > 0) {
         const presenter = new ScheduleIcsPresenter(
@@ -89,11 +91,10 @@ class AppointmentController {
       }
 
       req.session.createAppointmentRequest = createAppointmentRequest
-      req.session.success = true
 
       return res.redirect(`/referral/${referralId}/appointment/check-ics`)
     }
-    const formData = this.loadFormFromSession(req.session?.createAppointmentRequest)
+    const formData = this.loadFormFromSession(createAppointmentRequest)
     const presenter = new ScheduleIcsPresenter(referralId, probationOffices, prisons, referralInformation, formData)
     return presenter.renderPage(res)
   }

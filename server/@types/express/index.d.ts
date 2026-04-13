@@ -15,7 +15,6 @@ export declare module 'express-session' {
     assignmentResults: ReferralUserAssignmentResponse
     createAppointmentRequest: CreateAppointmentRequest
     referralInformation: ReferralInformationDto
-    success: boolean
   }
 }
 
