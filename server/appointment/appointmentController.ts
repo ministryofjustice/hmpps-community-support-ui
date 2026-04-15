@@ -8,6 +8,9 @@ import AppointmentService from '../services/AppointmentService'
 import ScheduleIcsPresenter from './schedule-ics/scheduleIcsPresenter'
 import ReferenceDataService from '../services/referenceDataService'
 import { validateDate, DateValidationOptions, validateTime, TimeValidationOptions } from '../utils/validateDateTime'
+import RecordSessionAttendancePresenter from './record-ics/RecordSessionAttendancePresenter'
+import { RecordSessionAttendanceFormDataSchema } from '../validation/RecordSessionAttendanceFormData'
+import type RecordSessionAttendanceFormData from '../validation/RecordSessionAttendanceFormData'
 
 const DEFAULT_VALIDATE_DATE_OPTIONS: DateValidationOptions = {
   dateFormat: 'd/M/yyyy',
@@ -491,6 +494,25 @@ class AppointmentController {
       .getICS(caseRefId.toString(), username)
       .then(data => new InitialContactSessionDetailsPresenter(data))
       .then(presenter => presenter.renderPage(res))
+  }
+
+  attendance(req: Request, res: Response): Promise<void> {
+    const { caseRefId } = req.params
+    const { username } = res.locals.user
+    return this.appointmentService
+      .getICS(caseRefId.toString(), username)
+      .then(data => {
+        console.log(JSON.stringify(data, null, 2))
+        return data
+      })
+      .then(data => new RecordSessionAttendancePresenter(data))
+      .then(presenter => presenter.renderPage(res))
+  }
+
+  recordAttendance(req: Request, res: Response): Promise<void> {
+    return RecordSessionAttendanceFormDataSchema.parseAsync(req.body).then(
+      (formData: RecordSessionAttendanceFormData) => console.log(formData),
+    )
   }
 }
 

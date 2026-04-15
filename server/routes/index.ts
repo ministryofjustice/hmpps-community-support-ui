@@ -8,6 +8,7 @@ import CaseListController from '../caseList/caseListController'
 import CommunityServiceProviderController from '../referral/communityServiceProviders/communityServiceProviderController'
 import AppointmentController from '../appointment/appointmentController'
 import asyncMiddleware from '../middleware/asyncMiddleware'
+import RecordSessionAttendancePresenter from '../appointment/record-ics/RecordSessionAttendancePresenter'
 
 export default function routes({
   auditService,
@@ -97,9 +98,9 @@ export default function routes({
     await referralController.showReferralProgressDetails(req, res)
   })
 
-  get('/ics-feedback/attendance/:caseRefId', async (req, res) => res.send('get stuff'))
+  get('/ics-feedback/attendance/:caseRefId', async (req, res) => appointmentController.attendance(req, res))
 
-  post('/ics-feedback/attendance/:caseRefId', async (req, res) => res.send('post stuff'))
+  post('/ics-feedback/attendance/:caseRefId', async (req, res) => appointmentController.recordAttendance(req, res))
 
   return router
 }

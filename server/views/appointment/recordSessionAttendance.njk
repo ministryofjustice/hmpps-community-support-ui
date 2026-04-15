@@ -1,0 +1,23 @@
+{% extends "../partials/layout.njk" %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+
+{% set pageTitle = applicationName + " - Schedule the ICS" %}
+{% set mainClasses = "govuk-body" %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
+    <p class="govuk-body">{{ content.description }} </p>
+    {{ govukSummaryList(content.appointment) }}
+
+    <form method="post" action="{{ content.submitHref }}">
+    {{ govukRadios(content.form.radios) }}
+    {{ govukButton(content.form.button) }}
+    </form>
+  </div>
+</div>
+
+{% endblock %}
