@@ -70,6 +70,7 @@ export default class ProgressPresenter extends PresenterBase<ReferralProgressVie
   constructor(
     private readonly referralProgress: ReferralProgress,
     private readonly caseReference: string,
+    private readonly showSuccessBanner: boolean = false,
   ) {
     super()
     this.name = referralProgress.fullName
@@ -91,7 +92,7 @@ export default class ProgressPresenter extends PresenterBase<ReferralProgressVie
       actionLinkHref: '#',
       backLink: { href: '#' },
       notificationBanner:
-        latestAppointment && latestAppointment.status === 'SCHEDULED'
+        this.showSuccessBanner && latestAppointment && latestAppointment.status === 'SCHEDULED'
           ? this.buildIcsScheduledBanner(latestAppointment.dateTime)
           : undefined,
       icsAppointmentTable: this.buildIcsAppointmentTable(content, !!latestAppointment),

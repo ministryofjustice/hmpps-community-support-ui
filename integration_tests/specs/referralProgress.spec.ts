@@ -23,7 +23,7 @@ test.describe('Referral Progress Page', () => {
   test.skip('Navigate back to referral dashboard', async ({ page }) => {
     await communitySupport.stubGetReferralProgress(referralProgressNoAppointments, caseReference)
 
-    await page.goto(`/referral-details/${caseReference}/progress`)
+    await page.goto(ReferralProgressPage.url(caseReference))
 
     const referralProgressPage = await ReferralProgressPage.verifyOnPage(page)
 
@@ -39,7 +39,7 @@ test.describe('Referral Progress Page', () => {
   test('View ICS section', async ({ page }) => {
     await communitySupport.stubGetReferralProgress(referralProgressNoAppointments, caseReference)
 
-    await page.goto(`/referral-details/${caseReference}/progress`)
+    await page.goto(ReferralProgressPage.url(caseReference))
 
     const referralProgressPage = await ReferralProgressPage.verifyOnPage(page)
 
@@ -53,7 +53,7 @@ test.describe('Referral Progress Page', () => {
   test('Status display when ICS not scheduled', async ({ page }) => {
     await communitySupport.stubGetReferralProgress(referralProgressNoAppointments, caseReference)
 
-    await page.goto(`/referral-details/${caseReference}/progress`)
+    await page.goto(ReferralProgressPage.url(caseReference))
 
     const referralProgressPage = await ReferralProgressPage.verifyOnPage(page)
 
@@ -78,7 +78,7 @@ test.describe('Referral Progress Page', () => {
   test('Option to Schedule the Initial Contact Session', async ({ page }) => {
     await communitySupport.stubGetReferralProgress(referralProgressNoAppointments, caseReference)
 
-    await page.goto(`/referral-details/${caseReference}/progress`)
+    await page.goto(ReferralProgressPage.url(caseReference))
 
     const referralProgressPage = await ReferralProgressPage.verifyOnPage(page)
 
@@ -110,7 +110,7 @@ test.describe('Referral Progress Page', () => {
   test('Show ICS scheduling success message', async ({ page }) => {
     await communitySupport.stubGetReferralProgress(referralProgressWithAppointments, caseReference)
 
-    await page.goto(`/referral-details/${caseReference}/progress`)
+    await page.goto(ReferralProgressPage.url(caseReference, true))
 
     const referralProgressPage = await ReferralProgressPage.verifyOnPage(page)
 
@@ -119,11 +119,24 @@ test.describe('Referral Progress Page', () => {
     })
   })
 
+  // IPB-2142:AC5
+  test('Returning to progress will not show ICS scheduling success message', async ({ page }) => {
+    await communitySupport.stubGetReferralProgress(referralProgressWithAppointments, caseReference)
+
+    await page.goto(ReferralProgressPage.url(caseReference))
+
+    const referralProgressPage = await ReferralProgressPage.verifyOnPage(page)
+
+    await test.step('can not see ICS success notification banner', async () => {
+      await expect(referralProgressPage.notificationBanner).not.toBeVisible()
+    })
+  })
+
   // IPB-2142:AC6
   test('View scheduled ICS on referral progress', async ({ page }) => {
     await communitySupport.stubGetReferralProgress(referralProgressWithAppointments, caseReference)
 
-    await page.goto(`/referral-details/${caseReference}/progress`)
+    await page.goto(ReferralProgressPage.url(caseReference))
 
     const referralProgressPage = await ReferralProgressPage.verifyOnPage(page)
 

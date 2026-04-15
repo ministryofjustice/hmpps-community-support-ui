@@ -55,7 +55,7 @@ describe('ProgressPresenter', () => {
     expect(rows[1][1].html).toContain('govuk-tag--green')
   })
 
-  it('renders notification banner if latest appointment is at SCHEDULED status', () => {
+  it('renders notification banner if latest appointment is at SCHEDULED status and show notification banner is true', () => {
     const referralProgressWithAppointments = buildReferralProgress([
       {
         appointmentId: 'appId1',
@@ -70,11 +70,32 @@ describe('ProgressPresenter', () => {
       },
     ])
 
-    const presenter = new ProgressPresenter(referralProgressWithAppointments, caseReference)
+    const presenter = new ProgressPresenter(referralProgressWithAppointments, caseReference, true)
     const viewModel = presenter.buildPageContent(mockResponse)
 
     expect(viewModel.notificationBanner?.type).toEqual('success')
     expect(viewModel.notificationBanner?.html).toContain('ICS has been scheduled')
+  })
+
+  it('does not render notification banner if show notification banner is false', () => {
+    const referralProgressWithAppointments = buildReferralProgress([
+      {
+        appointmentId: 'appId1',
+        events: [
+          { status: 'SCHEDULED', dateTime: '2026-03-26T10:00:00' },
+          { status: 'NEEDS_FEEDBACK', dateTime: '2026-03-27T10:00:00' },
+        ],
+      },
+      {
+        appointmentId: 'appId2',
+        events: [{ status: 'SCHEDULED', dateTime: '2026-03-28T10:00:00' }],
+      },
+    ])
+
+    const presenter = new ProgressPresenter(referralProgressWithAppointments, caseReference, false)
+    const viewModel = presenter.buildPageContent(mockResponse)
+
+    expect(viewModel.notificationBanner).toBeUndefined()
   })
 
   it('renders SCHEDULED appointment correctly and should display notification banner', () => {
@@ -84,7 +105,7 @@ describe('ProgressPresenter', () => {
       },
     ])
 
-    const presenter = new ProgressPresenter(referralProgressWithAppointments, caseReference)
+    const presenter = new ProgressPresenter(referralProgressWithAppointments, caseReference, true)
     const viewModel = presenter.buildPageContent(mockResponse)
 
     expect(viewModel.icsAppointmentTable.head).toEqual([
