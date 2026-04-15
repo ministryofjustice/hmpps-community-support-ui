@@ -1,8 +1,9 @@
 import { Request, Response } from 'express'
-import { ReferralInformation, CreateAppointmentRequest, SessionMethodRequest } from '@community-support-api'
+import { CreateAppointmentRequest, SessionMethodRequest, ReferralDetailsResponseDto } from '@community-support-api'
 import { format, parse } from 'date-fns'
 import ConfirmIcsPresenter from './confirm-ics/confirmIcsPresenter'
 import InitialContactSessionDetailsPresenter from '../referral/InitialContactSessionDetailsPresenter'
+import ReferralService from '../services/referralService'
 import AppointmentService from '../services/AppointmentService'
 import ScheduleIcsPresenter from './schedule-ics/scheduleIcsPresenter'
 import ReferenceDataService from '../services/referenceDataService'
@@ -52,6 +53,7 @@ interface ScheduleFormData {
 
 class AppointmentController {
   constructor(
+    private readonly referralService: ReferralService,
     private readonly appointmentService: AppointmentService,
     private readonly referenceDataService: ReferenceDataService,
   ) {}
@@ -68,13 +70,16 @@ class AppointmentController {
   }
 
   async scheduleIcs(req: Request, res: Response): Promise<void> {
+    const { username } = res.locals.user
     const { referralId } = req.params as { referralId: string }
-    const referralInformation = req.session?.referralInformation
     let createAppointmentRequest = req.session?.createAppointmentRequest
     const probationOffices = await this.referenceDataService.getProbationOffices()
     const prisons = await this.referenceDataService.getPrisons()
+
+    const referralDetails = await this.referralService.getCaseDetailsByCaseIdentifier(referralId, username)
+
     if (req.method === 'POST') {
-      const validationResults = this.validateAppointment(req, referralInformation)
+      const validationResults = this.validateAppointment(req, referralDetails)
 
       createAppointmentRequest = this.saveFormToSession(validationResults.formData)
 
@@ -83,7 +88,7 @@ class AppointmentController {
           referralId,
           probationOffices,
           prisons,
-          referralInformation,
+          referralDetails,
           validationResults.formData,
           validationResults.errors,
         )
@@ -95,7 +100,8 @@ class AppointmentController {
       return res.redirect(`/referral/${referralId}/appointment/check-ics`)
     }
     const formData = this.loadFormFromSession(createAppointmentRequest)
-    const presenter = new ScheduleIcsPresenter(referralId, probationOffices, prisons, referralInformation, formData)
+    const presenter = new ScheduleIcsPresenter(referralId, probationOffices, prisons, referralDetails, formData)
+
     return presenter.renderPage(res)
   }
 
@@ -299,7 +305,7 @@ class AppointmentController {
 
   validateAppointment(
     req: Request,
-    referralInformation: ReferralInformation,
+    referralDetails: ReferralDetailsResponseDto,
   ): {
     formData: ScheduleFormData
     errors: Record<string, { text: string }>
@@ -318,7 +324,7 @@ class AppointmentController {
       const single = String(val ?? '').trim()
       return single ? [single] : []
     }
-    const isPersonInCommunity = this.isPersonInCommunity(referralInformation.crn)
+    const isPersonInCommunity = this.isPersonInCommunity(referralDetails.personDetailsTableData.crn)
 
     if (req && req.body) {
       formData.sessionDate = getValue('sessionDate')
@@ -391,7 +397,9 @@ class AppointmentController {
         }
         formData.informedMethod = getValues('informedMethod')
         if (!formData.informedMethod || formData.informedMethod.length === 0) {
-          errors.informedMethod = { text: `Select how ${referralInformation.firstName} was informed about the session` }
+          errors.informedMethod = {
+            text: `Select how ${referralDetails.personDetailsTableData.name} was informed about the session`,
+          }
         } else if (formData.informedMethod.includes('informedByOtherMethod')) {
           formData.otherMethodOfContact = getValue('otherMethodOfContact')
           if (!formData.otherMethodOfContact || formData.otherMethodOfContact.trim() === '') {
