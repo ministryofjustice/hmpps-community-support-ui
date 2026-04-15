@@ -31,7 +31,7 @@ export default function routes({
   const referralController = new ReferralController(referralService, personService)
   const communityServiceProviderController = new CommunityServiceProviderController(communityServiceProviderService)
   const caseListController = new CaseListController(caseListService)
-  const appointmentController = new AppointmentController(appointmentService, referenceDataService)
+  const appointmentController = new AppointmentController(referralService, appointmentService, referenceDataService)
 
   router.get('/', async (req, res, next) => {
     await auditService.logPageView(Page.INDEX_PAGE, { who: res.locals.user.username, correlationId: req.id })

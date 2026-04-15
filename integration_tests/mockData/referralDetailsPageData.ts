@@ -1,6 +1,6 @@
 import type { ReferralDetailsResponseDto } from '@community-support-api'
 
-export function referralPageData(id: string | null): ReferralDetailsResponseDto {
+export function referralPageData(id: string | null, personNumber: string = 'CRN123'): ReferralDetailsResponseDto {
   return {
     id: id || '{{request.path.[3]}}',
     referenceNumber: 'QD0878DE',
@@ -10,7 +10,7 @@ export function referralPageData(id: string | null): ReferralDetailsResponseDto 
       dateOfBirth: '1973-02-10T11:23:00.780Z',
       preferredLanguage: 'English',
       disabilities: 'None',
-      crn: 'CRN123',
+      crn: personNumber,
     },
     equalityDetailsTableData: {
       ethnicity: 'White British',

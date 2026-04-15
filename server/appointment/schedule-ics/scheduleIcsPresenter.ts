@@ -1,5 +1,5 @@
 import { Response } from 'express'
-import { ProbationOffice, ReferralInformation } from '@community-support-api'
+import { ProbationOffice, ReferralDetailsResponseDto } from '@community-support-api'
 import { Prison } from '@prison-api'
 import PresenterBase from '../../presenter/presenterBase'
 import { ScheduleIcsContent, ScheduleIcsViewModel, SelectItem, ScheduleFormData } from './scheduleIcsViewModel'
@@ -15,7 +15,7 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
     private readonly referralId: string,
     private readonly probationOffices: ProbationOffice[],
     private readonly prisons: Prison[],
-    private readonly referralInformation: ReferralInformation,
+    private readonly referralDetails: ReferralDetailsResponseDto,
     private readonly formData?: ScheduleFormData,
     private readonly validationErrors?: Record<string, { text: string }>,
   ) {
@@ -37,7 +37,7 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
   }
 
   private isPersonInCommunity(): boolean {
-    return isIdentifierACrn(this.referralInformation.crn)
+    return isIdentifierACrn(this.referralDetails.personDetailsTableData.crn)
   }
 
   buildPageContent(res: Response): ScheduleIcsViewModel {
@@ -50,7 +50,7 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
     viewModel.probationOfficesSelectItems = this.buildProbationOfficesSelectItems()
     viewModel.prisonsSelectItems = this.buildPrisonsSelectItems()
     viewModel.isPersonInCommunity = this.isPersonInCommunity()
-    viewModel.firstName = this.referralInformation.firstName
+    viewModel.firstName = this.referralDetails.personDetailsTableData.name
     viewModel.formData = this.formData
     viewModel.errors = this.validationErrors
     viewModel.errorList = Object.entries(viewModel.errors ?? {}).map(([key, error]) => ({
