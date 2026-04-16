@@ -5,5 +5,5 @@ export default class Radios {
     return Promise.resolve(new Radios(radiosLocatior))
   }
 
-  private constructor(public readonly locator: Locator) {}
+  private constructor(public readonly locator: Locator) { }
 }
