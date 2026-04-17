@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test'
 
 import { randomUUID } from 'node:crypto'
-import { addDays, subDays } from 'date-fns'
+import { addDays, format, subDays } from 'date-fns'
 import { login, resetStubs } from '../testUtils'
 import communitySupport, { ReferralProgress } from '../mockApis/communitySupport'
 import initialContactSessionDetailsPageData from '../mockData/initialContactSessionDetailsPageData'
@@ -10,14 +10,17 @@ import ReferralProgressPage from '../pages/referralProgressPage'
 import buildReferralProgress from '../../server/testutils/buildReferralProgress'
 
 test.describe('RecordSessionAttendancePage', () => {
+  const date = new Date()
+  const pastDate = subDays(date, 10)
+  const futureDate = addDays(date, 10)
   const pastMeeting = {
     caseRefId: randomUUID(),
-    data: initialContactSessionDetailsPageData.virtual(subDays(new Date(), 10)),
+    data: initialContactSessionDetailsPageData.virtual(pastDate),
   } as const
 
   const futureMeeting = {
     caseRefId: randomUUID(),
-    data: initialContactSessionDetailsPageData.inPerson(addDays(new Date(), 10)),
+    data: initialContactSessionDetailsPageData.inPerson(futureDate),
   } as const
 
   test.beforeEach(async ({ page }) => {
@@ -62,5 +65,31 @@ test.describe('RecordSessionAttendancePage', () => {
     await test.step('should be on the Record Session Attendance screen', async () => {
       await expect(page).toHaveURL(RecordSessionAttendancePage.url(pastMeeting.caseRefId))
     })
+  })
+  // IPB-2208:AC4
+  test('Displaying the heading and content', async ({ page }) => {
+    await test.step('go to initial contact session details page', async () => {
+      await page.goto(RecordSessionAttendancePage.url(pastMeeting.caseRefId))
+    })
+    const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
+    await expect(recordSessionAttendancePage.header).toHaveText('Record session attendance')
+    await expect(recordSessionAttendancePage.subheading).toHaveText(
+      'The date and time of the session are a permanent record of where this person was. If the session started late, you must record this as part of the feedback.',
+    )
+    await test.step('check summary content', async () => {
+      const { summary } = recordSessionAttendancePage
+      expect(summary.rows).toHaveLength(2)
+      await test.step('check content of first row', async () => {
+        const row = summary.rows[0]
+        await expect(row.key).toHaveText('Date')
+        await expect(row.value).toHaveText(format(pastDate, 'd MMMM uuuu'))
+      })
+      await test.step('check content of second row', async () => {
+        const row = summary.rows[1]
+        await expect(row.key).toHaveText('Start time')
+        await expect(row.value).toHaveText(format(pastDate, 'h:maaa'))
+      })
+    })
+    // TODO - MORE
   })
 })
