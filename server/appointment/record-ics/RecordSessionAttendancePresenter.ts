@@ -107,13 +107,16 @@ export default class RecordSessionAttendancePresenter extends PresenterBase<
   buildForm(content: FormContent): RecordSessionAttendanceFormViewModel | undefined {
     return {
       radios: this.buildRadios(content.radios),
-      button: { text: content.submitButtonText, attributes: { 'data-testid': 'submit' } },
+      button: {
+        text: content.submitButtonText,
+        // attributes: { 'data-testid': 'submit' }
+      },
     }
   }
 
   buildPageContent(res: Response): RecordSessionAttendanceViewModel {
     const content = this.buildStaticContent(res)
-    const value = {
+    return {
       backLink: { href: '#' },
       pageHeader: content.pageHeader,
       description: content.description,
@@ -121,8 +124,6 @@ export default class RecordSessionAttendancePresenter extends PresenterBase<
       form: isPast(getAppointmentDateTime(this.data)) ? this.buildForm(content.form) : undefined,
       submitHref: '#',
     }
-    console.log(JSON.stringify(value, null, 2))
-    return value
   }
 
   getTemplatePath(): string {

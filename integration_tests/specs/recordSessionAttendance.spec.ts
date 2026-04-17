@@ -3,9 +3,11 @@ import { expect, test } from '@playwright/test'
 import { randomUUID } from 'node:crypto'
 import { addDays, subDays } from 'date-fns'
 import { login, resetStubs } from '../testUtils'
-import communitySupport from '../mockApis/communitySupport'
+import communitySupport, { ReferralProgress } from '../mockApis/communitySupport'
 import initialContactSessionDetailsPageData from '../mockData/initialContactSessionDetailsPageData'
 import RecordSessionAttendancePage from '../pages/RecordSessionAttendancePage'
+import ReferralProgressPage from '../pages/referralProgressPage'
+import buildReferralProgress from '../../server/testutils/buildReferralProgress'
 
 test.describe('RecordSessionAttendancePage', () => {
   const pastMeeting = {
@@ -42,5 +44,23 @@ test.describe('RecordSessionAttendancePage', () => {
     })
     const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
     await expect(recordSessionAttendancePage.radios.locator).not.toBeVisible()
+  })
+
+  // IPB-2208:AC3 !!! Navigation url is wrong !!!
+  test.skip('Navigating to the record attendance screen', async ({ page }) => {
+    const referralProgressWithAppointments: ReferralProgress = buildReferralProgress([
+      { events: [{ status: 'NEEDS_FEEDBACK' }] },
+    ])
+    await communitySupport.stubGetReferralProgress(referralProgressWithAppointments, pastMeeting.caseRefId)
+
+    await test.step('go to referral progress screen', async () => {
+      await page.goto(ReferralProgressPage.url(pastMeeting.caseRefId))
+    })
+    await test.step('select the option to record the session feedback and attendance ', async () => {
+      await page.getByRole('cell', { name: 'Add attendance and feedback' }).click()
+    })
+    await test.step('should be on the Record Session Attendance screen', async () => {
+      await expect(page).toHaveURL(RecordSessionAttendancePage.url(pastMeeting.caseRefId))
+    })
   })
 })
