@@ -1,7 +1,14 @@
-import { Referral, CaseWorkerDto, AssignmentFailureDto, ReferralProgress } from '@community-support-api'
+import {
+  Referral,
+  CaseWorkerDto,
+  AssignmentFailureDto,
+  ReferralProgress,
+  ReferralInformation,
+} from '@community-support-api'
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
 import ReferralService from './referralService'
 import ReferralProgressFactory from '../testutils/factories/ReferralProgress'
+import ReferralInformationFactory from '../testutils/factories/ReferralInformation'
 
 jest.mock('../data/communitySupportApiClient')
 
@@ -95,6 +102,18 @@ describe('Referral service tests', () => {
       const result = await referralService.getReferralProgress(caseReference, 'user1')
       expect(result).toStrictEqual(mockReferralProgress)
       expect(communitySupportApiClient.getReferralProgress).toHaveBeenCalledWith(caseReference, 'user1')
+    })
+  })
+
+  describe('getReferralInformation', () => {
+    it('should return referral information from API client', async () => {
+      const caseReference = 'AB1234CD'
+      const mockReferralInformation: ReferralInformation = ReferralInformationFactory.build()
+
+      communitySupportApiClient.getReferralInformation.mockResolvedValue(mockReferralInformation)
+      const result = await referralService.getReferralInformation(caseReference, 'user1')
+      expect(result).toStrictEqual(mockReferralInformation)
+      expect(communitySupportApiClient.getReferralInformation).toHaveBeenCalledWith(caseReference, 'user1')
     })
   })
 })

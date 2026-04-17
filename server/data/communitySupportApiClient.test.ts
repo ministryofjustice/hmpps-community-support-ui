@@ -7,12 +7,14 @@ import type {
   ReferralUserAssignmentsResponse,
   CaseWorkerDto,
   ReferralProgress,
+  ReferralInformation,
   ProbationOffice,
 } from '@community-support-api'
 import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import { AgentConfig, ApiConfig } from '@ministryofjustice/hmpps-rest-client'
 import CommunitySupportApiClient from './communitySupportApiClient'
 import ReferralProgressFactory from '../testutils/factories/ReferralProgress'
+import ReferralInformationFactory from '../testutils/factories/ReferralInformation'
 
 describe('CommunitySupportApiClient tests', () => {
   let communitySupportApiClient: CommunitySupportApiClient
@@ -264,6 +266,22 @@ describe('CommunitySupportApiClient tests', () => {
       const result = communitySupportApiClient.getReferralProgress(caseReference, 'user1')
 
       expect(result).resolves.toEqual(mockReferralProgress)
+    })
+  })
+  describe('getReferralInformation tests', () => {
+    it('should return the referral information with a 200 response', () => {
+      const caseReference = 'AB1234CD'
+      const mockReferralInformation: ReferralInformation = ReferralInformationFactory.build()
+
+      nock('http://localhost:8080', {
+        reqheaders: { authorization: 'Bearer dummy-token' },
+      })
+        .get(`/bff/referral-information/${caseReference}`)
+        .reply(200, mockReferralInformation)
+
+      const result = communitySupportApiClient.getReferralInformation(caseReference, 'user1')
+
+      expect(result).resolves.toEqual(mockReferralInformation)
     })
   })
 })

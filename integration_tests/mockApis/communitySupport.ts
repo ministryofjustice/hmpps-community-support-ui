@@ -1,8 +1,9 @@
 import type { SuperAgentRequest } from 'superagent'
-import { AppointmentIcsResponse, ProbationOffice } from '@community-support-api'
+import { AppointmentIcsResponse, ProbationOffice, ReferralInformation } from '@community-support-api'
 import { stubFor } from './wiremock'
 import { duplicateData } from '../testUtils'
 import referralDetailsPageData from '../mockData/referralDetailsPageData'
+import { referralInformationInCommunity } from '../mockData/referralInformationData'
 import { components } from '../../server/@types/communitySupportApi/imported'
 
 export interface AssignCaseWorkersRequest {
@@ -292,6 +293,23 @@ export default {
         status: httpStatus,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: referralProgress,
+        transformers: ['response-template'],
+      },
+    }),
+  stubGetReferralInformation: (
+    httpStatus = 200,
+    caseReference: string | null = null,
+    referralInformation: ReferralInformation = referralInformationInCommunity,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: `/community-support/bff/referral-information/${caseReference}`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: referralInformation,
         transformers: ['response-template'],
       },
     }),

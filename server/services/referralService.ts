@@ -2,6 +2,7 @@ import {
   CreateReferralRequest,
   ReferralUserAssignmentsRequest,
   ReferralDetailsResponseDto,
+  ReferralInformation,
   ReferralProgress,
 } from '@community-support-api'
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
@@ -39,5 +40,9 @@ export default class ReferralService {
 
   getReferralProgress(caseReference: string, username: string): Promise<ReferralProgress> {
     return this.communitySupportApiClient.getReferralProgress(caseReference, username)
+  }
+
+  getReferralInformation(caseIdentifier: string, username: string): Promise<ReferralInformation> {
+    return this.communitySupportApiClient.getReferralInformation(caseIdentifier, username)
   }
 }

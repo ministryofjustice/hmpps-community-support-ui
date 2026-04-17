@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { CreateAppointmentRequest, SessionMethodRequest, ReferralDetailsResponseDto } from '@community-support-api'
+import { CreateAppointmentRequest, SessionMethodRequest, ReferralInformation } from '@community-support-api'
 import { format, parse } from 'date-fns'
 import ConfirmIcsPresenter from './confirm-ics/confirmIcsPresenter'
 import InitialContactSessionDetailsPresenter from '../referral/InitialContactSessionDetailsPresenter'
@@ -76,19 +76,18 @@ class AppointmentController {
     const probationOffices = await this.referenceDataService.getProbationOffices()
     const prisons = await this.referenceDataService.getPrisons()
 
-    const referralDetails = await this.referralService.getCaseDetailsByCaseIdentifier(referralId, username)
+    const referralInformation = await this.referralService.getReferralInformation(referralId, username)
 
     if (req.method === 'POST') {
-      const validationResults = this.validateAppointment(req, referralDetails)
+      const validationResults = this.validateAppointment(req, referralInformation)
 
       createAppointmentRequest = this.saveFormToSession(validationResults.formData)
-
       if (Object.keys(validationResults.errors).length > 0) {
         const presenter = new ScheduleIcsPresenter(
           referralId,
           probationOffices,
           prisons,
-          referralDetails,
+          referralInformation,
           validationResults.formData,
           validationResults.errors,
         )
@@ -97,15 +96,15 @@ class AppointmentController {
 
       req.session.createAppointmentRequest = createAppointmentRequest
 
-      return res.redirect(`/referral/${referralId}/appointment/check-ics`)
+      return res.redirect(`/referral/${referralId}/appointment/confirm-ics`)
     }
     const formData = this.loadFormFromSession(createAppointmentRequest)
-    const presenter = new ScheduleIcsPresenter(referralId, probationOffices, prisons, referralDetails, formData)
+    const presenter = new ScheduleIcsPresenter(referralId, probationOffices, prisons, referralInformation, formData)
 
     return presenter.renderPage(res)
   }
 
-  saveFormToSession(formData: ScheduleFormData): CreateAppointmentRequest {
+  private saveFormToSession(formData: ScheduleFormData): CreateAppointmentRequest {
     let createAppointmentRequest = {} as CreateAppointmentRequest
 
     if (!formData) return createAppointmentRequest
@@ -164,14 +163,18 @@ class AppointmentController {
     return createAppointmentRequest
   }
 
-  loadFormFromSession(createAppointmentRequest: CreateAppointmentRequest): ScheduleFormData {
+  private loadFormFromSession(createAppointmentRequest: CreateAppointmentRequest): ScheduleFormData {
     const formData: ScheduleFormData = {}
 
     if (!createAppointmentRequest) {
       return formData
     }
     if (createAppointmentRequest.date) {
-      formData.sessionDate = createAppointmentRequest.date
+      try {
+        formData.sessionDate = format(parse(createAppointmentRequest.date, 'yyyy-MM-dd', new Date()), 'd/M/yyyy')
+      } catch {
+        formData.sessionDate = ''
+      }
     }
 
     if (createAppointmentRequest.time) {
@@ -226,27 +229,27 @@ class AppointmentController {
     return formData
   }
 
-  isIdentifierACrn(id: string): boolean {
+  private isIdentifierACrn(id: string): boolean {
     if (!id) return false
     const cleaned = id.trim().toUpperCase()
     return cleaned.length === 7 && /^[A-Z]\d{6}$/.test(cleaned)
   }
 
-  isIdentifierAPrisonNumber(id: string): boolean {
+  private isIdentifierAPrisonNumber(id: string): boolean {
     if (!id) return false
     const cleaned = id.trim().toUpperCase()
     return cleaned.length === 7 && /^[A-Z]\d{4}[A-Z]{2}$/.test(cleaned)
   }
 
-  isPersonInCommunity(personIdentifier: string): boolean {
+  private isPersonInCommunity(personIdentifier: string): boolean {
     return this.isIdentifierACrn(personIdentifier)
   }
 
-  isPersonInPrison(personIdentifier: string): boolean {
+  private isPersonInPrison(personIdentifier: string): boolean {
     return this.isIdentifierAPrisonNumber(personIdentifier)
   }
 
-  validateAddressFields(
+  private validateAddressFields(
     addressLine1: string,
     addressLine2: string,
     addressTown: string,
@@ -303,14 +306,15 @@ class AppointmentController {
     return errors
   }
 
-  validateAppointment(
+  private validateAppointment(
     req: Request,
-    referralDetails: ReferralDetailsResponseDto,
+    referralInformation: ReferralInformation,
   ): {
     formData: ScheduleFormData
     errors: Record<string, { text: string }>
   } {
     const MAX_OTHER_METHOD_OF_CONTACT_LENGTH = 50
+    const MAX_REASON_LENGTH = 100
 
     let errors: Record<string, { text: string }> = {}
     const formData: ScheduleFormData = {}
@@ -324,7 +328,7 @@ class AppointmentController {
       const single = String(val ?? '').trim()
       return single ? [single] : []
     }
-    const isPersonInCommunity = this.isPersonInCommunity(referralDetails.personDetailsTableData.crn)
+    const isPersonInCommunity = this.isPersonInCommunity(referralInformation.crn)
 
     if (req && req.body) {
       formData.sessionDate = getValue('sessionDate')
@@ -349,7 +353,7 @@ class AppointmentController {
       }
 
       formData.sessionTakePlace = getValue('sessionTakePlace')
-      if (!formData.sessionTakePlace || formData.sessionTakePlace.trim() === '') {
+      if (!formData.sessionTakePlace?.trim()) {
         errors.sessionTakePlace = { text: 'Select how the session will take place' }
       }
       if (['ByPhone', 'ByVideo'].includes(formData.sessionTakePlace)) {
@@ -368,15 +372,19 @@ class AppointmentController {
           default:
             break
         }
-        if (!reason || reason.trim() === '') {
+        if (!reason?.trim()) {
           errors[reasonKey] = { text: 'Enter why the session is not in-person' }
+        } else if (reason?.length > MAX_REASON_LENGTH) {
+          errors[reasonKey] = {
+            text: `Why is this session not in-person must be ${MAX_REASON_LENGTH} characters or less`,
+          }
         }
       }
       if (isPersonInCommunity) {
         if (formData.sessionTakePlace === 'InProbationOffice') {
           formData.probationOffice = getValue('probationOfficeList')
-          if (!formData.probationOffice || formData.probationOffice.trim() === '') {
-            errors.probationOfficeList = { text: 'Select a probation office' }
+          if (!formData.probationOffice?.trim()) {
+            errors.probationOfficeList = { text: 'Select probation office' }
           }
         }
         if (formData.sessionTakePlace === 'InSomewhereElse') {
@@ -398,11 +406,11 @@ class AppointmentController {
         formData.informedMethod = getValues('informedMethod')
         if (!formData.informedMethod || formData.informedMethod.length === 0) {
           errors.informedMethod = {
-            text: `Select how ${referralDetails.personDetailsTableData.name} was informed about the session`,
+            text: `Select how ${referralInformation.firstName} was informed about the session`,
           }
         } else if (formData.informedMethod.includes('informedByOtherMethod')) {
           formData.otherMethodOfContact = getValue('otherMethodOfContact')
-          if (!formData.otherMethodOfContact || formData.otherMethodOfContact.trim() === '') {
+          if (!formData.otherMethodOfContact?.trim()) {
             errors.otherMethodOfContact = { text: 'Enter the other method of contact' }
           } else if (formData.otherMethodOfContact.length > MAX_OTHER_METHOD_OF_CONTACT_LENGTH) {
             errors.otherMethodOfContact = {
@@ -416,8 +424,8 @@ class AppointmentController {
         }
       } else if (formData.sessionTakePlace === 'InPrison') {
         formData.prison = getValue('prisonList')
-        if (!formData.prison || formData.prison.trim() === '') {
-          errors.prisonList = { text: 'Select a prison establishment' }
+        if (!formData.prison?.trim()) {
+          errors.prisonList = { text: 'Select prison establishment' }
         }
       }
     }
@@ -427,7 +435,7 @@ class AppointmentController {
     }
   }
 
-  mapSessionTakePlaceToType(takePlace: string): SessionMethodRequest['type'] {
+  private mapSessionTakePlaceToType(takePlace: string): SessionMethodRequest['type'] {
     switch (takePlace) {
       case 'ByPhone':
         return 'PHONE'
@@ -443,7 +451,7 @@ class AppointmentController {
     }
   }
 
-  mapTypeToSessionTakePlace(type: SessionMethodRequest['type']): string {
+  private mapTypeToSessionTakePlace(type: SessionMethodRequest['type']): string {
     switch (type) {
       case 'PHONE':
         return 'ByPhone'
@@ -458,7 +466,7 @@ class AppointmentController {
     }
   }
 
-  getReasonKey(sessionTakePlace: string): string | null {
+  private getReasonKey(sessionTakePlace: string): string | null {
     switch (sessionTakePlace) {
       case 'ByPhone':
         return 'ByPhone'
@@ -471,7 +479,7 @@ class AppointmentController {
     }
   }
 
-  getReasonFromFormData(formData: ScheduleFormData, sessionTakePlace: string): string | undefined {
+  private getReasonFromFormData(formData: ScheduleFormData, sessionTakePlace: string): string | undefined {
     switch (sessionTakePlace) {
       case 'ByPhone':
         return formData.ByPhone

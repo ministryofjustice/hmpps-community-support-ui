@@ -1,67 +1,33 @@
-import type { ReferralDetailsResponseDto } from '@community-support-api'
+import type { ReferralInformation } from '@community-support-api'
+import { randomUUID } from 'crypto'
 
-const mockReferralId = crypto.randomUUID()
+const mockReferralId = randomUUID()
 
-const referralInformationInCommunity: ReferralDetailsResponseDto = {
-  id: mockReferralId,
-  referenceNumber: 'R20260327',
-  createdDate: '2026-03-27',
-  personDetailsTableData: {
-    name: 'John Doe',
-    crn: 'A123456',
-    dateOfBirth: '1990-05-15',
-    preferredLanguage: 'English',
-    disabilities: '',
-  },
-  equalityDetailsTableData: {
-    ethnicity: '',
-    religionOrBelief: '',
-    sex: '',
-    genderIdentity: '',
-    sexualOrientation: '',
-    transgender: '',
-  },
-  contactDetailsTableData: {
-    phoneNumber: '',
-    mobileNumber: '',
-    email: '',
-    address: '',
-  },
-  referralDetailsTableData: {
-    referralDate: '',
-    assignedTo: [],
-  },
+const referralInformationInCommunity: ReferralInformation = {
+  crn: 'A123456', // crn number
+  firstName: 'John',
+  lastName: 'Doe',
+  sex: 'Male',
+  referralId: mockReferralId,
+  personId: 'person-id-123',
+  communityServiceProviderId: 'csp-id-123',
+  communityServiceProviderName: 'Community Support Provider',
+  region: 'North West',
+  referenceNumber: 'AB1234CD',
+  deliveryPartner: 'Delivery Partner Ltd',
 }
-
-const referralInformationInPrison: ReferralDetailsResponseDto = {
-  id: mockReferralId,
-  referenceNumber: 'R20260327',
-  createdDate: '2026-03-27T10:00:00Z',
-  personDetailsTableData: {
-    name: 'John Doe',
-    crn: 'A123456',
-    dateOfBirth: '1990-05-15',
-    preferredLanguage: 'English',
-    disabilities: '',
-  },
-  equalityDetailsTableData: {
-    ethnicity: '',
-    religionOrBelief: '',
-    sex: '',
-    genderIdentity: '',
-    sexualOrientation: '',
-    transgender: '',
-  },
-  contactDetailsTableData: {
-    phoneNumber: '',
-    mobileNumber: '',
-    email: '',
-    address: '',
-  },
-  referralDetailsTableData: {
-    referralDate: '',
-    assignedTo: [],
-  },
+const referralInformationInPrison: ReferralInformation = {
+  crn: 'A1234AA', // prison number
+  firstName: 'Alex',
+  lastName: 'Joe',
+  sex: 'Male',
+  referralId: mockReferralId,
+  personId: 'person-id-123',
+  communityServiceProviderId: 'csp-id-123',
+  communityServiceProviderName: 'Community Support Provider',
+  region: 'North West',
+  referenceNumber: 'AB1234CD',
+  deliveryPartner: 'Delivery Partner Ltd',
 }
 
 export { referralInformationInCommunity, referralInformationInPrison }

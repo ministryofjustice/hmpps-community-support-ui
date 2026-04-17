@@ -6,6 +6,8 @@ export default class ScheduleIcsPage extends AbstractPage {
 
   readonly errorHeader: Locator
 
+  readonly backLink: Locator
+
   readonly dateInput: Locator
 
   readonly timeHourInput: Locator
@@ -62,6 +64,7 @@ export default class ScheduleIcsPage extends AbstractPage {
     super(page)
     this.header = page.locator('h1', { hasText: 'Schedule the ICS' })
     this.errorHeader = page.locator('h2', { hasText: 'There is a problem' })
+    this.backLink = page.getByRole('link', { name: 'Back', exact: true })
     this.dateInput = page.locator('input[type="text"][name="sessionDate"]')
     this.timeHourInput = page.locator('input[type="text"][name="sessionTime-hour"]')
     this.timeMinuteInput = page.locator('input[type="text"][name="sessionTime-minute"]')
