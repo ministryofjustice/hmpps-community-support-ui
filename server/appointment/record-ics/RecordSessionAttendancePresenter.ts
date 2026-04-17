@@ -7,10 +7,12 @@ import {
   GovukFrontendSummaryList,
 } from '@govuk-frontend'
 import { AppointmentIcsResponse } from '@community-support-api'
+import { isPast } from 'date-fns'
 import PresenterBase from '../../presenter/presenterBase'
 import { govFrontendSummaryListRow } from '../../utils/viewUtils'
 import dateFormat from '../../utils/dateFormat'
 import timeFormat from '../../utils/timeFormat'
+import getAppointmentDateTime from '../../utils/getAppointmentDateTime'
 
 type GovukFrontendRadiosItemWithConditional = GovukFrontendRadiosItem & {
   conditional?: { html: string }
@@ -25,7 +27,7 @@ export interface RecordSessionAttendanceViewModel {
   pageHeader: string
   description: string
   appointment: GovukFrontendSummaryList
-  form: RecordSessionAttendanceFormViewModel
+  form?: RecordSessionAttendanceFormViewModel
   backLink: GovukFrontendBackLink
   submitHref: string
 }
@@ -102,22 +104,21 @@ export default class RecordSessionAttendancePresenter extends PresenterBase<
     }
   }
 
-  buildForm(content: FormContent): RecordSessionAttendanceFormViewModel {
+  buildForm(content: FormContent): RecordSessionAttendanceFormViewModel | undefined {
     return {
       radios: this.buildRadios(content.radios),
-      button: { text: content.submitButtonText },
+      button: { text: content.submitButtonText, attributes: { 'data-testid': 'submit' } },
     }
   }
 
   buildPageContent(res: Response): RecordSessionAttendanceViewModel {
     const content = this.buildStaticContent(res)
-    console.log('---content---\n', JSON.stringify(content, null, 2))
     const value = {
       backLink: { href: '#' },
       pageHeader: content.pageHeader,
       description: content.description,
       appointment: this.buildAppointmentDetails(content.appointmentDetails),
-      form: this.buildForm(content.form),
+      form: isPast(getAppointmentDateTime(this.data)) ? this.buildForm(content.form) : undefined,
       submitHref: '#',
     }
     console.log(JSON.stringify(value, null, 2))

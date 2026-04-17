@@ -12,11 +12,12 @@
     <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
     <p class="govuk-body">{{ content.description }} </p>
     {{ govukSummaryList(content.appointment) }}
-
-    <form method="post" action="{{ content.submitHref }}">
-    {{ govukRadios(content.form.radios) }}
-    {{ govukButton(content.form.button) }}
-    </form>
+    {% if content.form %}
+        <form method="post" action="{{ content.submitHref }}">
+          {{ govukRadios(content.form.radios) }}
+          {{ govukButton(content.form.button) }}
+        </form>
+    {% endif %}
   </div>
 </div>
 
