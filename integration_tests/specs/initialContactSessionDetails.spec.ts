@@ -5,6 +5,7 @@ import { login, resetStubs } from '../testUtils'
 import communitySupport from '../mockApis/communitySupport'
 import initialContactSessionDetailsPageData from '../mockData/initialContactSessionDetailsPageData'
 import InitialContactSessionDetailsPage from '../pages/InitialContactSessionDetailsPage'
+import ReferralProgressPage from '../pages/referralProgressPage'
 
 test.describe('Initial Contact Session Details Page', () => {
   const virtual = {
@@ -57,7 +58,7 @@ test.describe('Initial Contact Session Details Page', () => {
     const backlink = referralDetailsPage.backLink
     await test.step('check backlink', async () => {
       await backlink.click()
-      await expect(page).toHaveURL(`referral/${virtual.data.referralId}/appointment/change-ics`)
+      await expect(page).toHaveURL(ReferralProgressPage.url(virtual.data.referralId))
     })
   })
 

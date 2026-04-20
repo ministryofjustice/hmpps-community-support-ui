@@ -24,6 +24,10 @@ export default class ConfirmIcsPage extends AbstractPage {
 
   readonly notificationBanner: Locator
 
+  static url(referralId: string): string {
+    return `/referral/${referralId}/appointment/confirm-ics`
+  }
+
   private constructor(page: Page) {
     super(page)
     this.header = page.locator('h1', { hasText: 'Check the details before scheduling the ICS' })

@@ -161,7 +161,7 @@
     },
     "links": {
       "change": "/referral/{{ id }}/appointment/change-ics",
-      "back": "/referral/{{ id }}/appointment/change-ics"
+      "back": "/progress/{{ id }}"
     }
   }
 }

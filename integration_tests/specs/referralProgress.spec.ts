@@ -5,7 +5,8 @@ import { login, resetStubs } from '../testUtils'
 import communitySupport from '../mockApis/communitySupport'
 import buildReferralProgress from '../../server/testutils/buildReferralProgress'
 import ReferralProgressPage from '../pages/referralProgressPage'
-import ReferralDashboard from '../pages/ReferralDashboard'
+import CaseListPage from '../pages/caseListPage'
+import ScheduleIcsPage from '../pages/scheduleIcsPage'
 
 test.describe('Referral Progress Page', () => {
   const caseReference = 'AB1234CD'
@@ -32,7 +33,7 @@ test.describe('Referral Progress Page', () => {
       await referralProgressPage.backLink.click()
     })
     await test.step('should be on referral dashboard screen', async () => {
-      await expect(page).toHaveURL(ReferralDashboard.url()) // need confirmation on page
+      await expect(page).toHaveURL(CaseListPage.url('in-progress'))
     })
   })
 
@@ -101,7 +102,7 @@ test.describe('Referral Progress Page', () => {
           await referralProgressPage.scheduleSessionLink.click()
         })
         await test.step('I’m taken to the Schedule the ICS screen', async () => {
-          await expect(page).toHaveURL(`/referral/${caseReference}/appointment/schedule-ics`)
+          await expect(page).toHaveURL(ScheduleIcsPage.url(caseReference))
         })
       })
     })

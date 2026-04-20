@@ -89,7 +89,7 @@ export default class ProgressPresenter extends PresenterBase<ReferralProgressVie
       pageHeader: `${content.pageHeader} ${this.name}`,
       navBar: this.buildSubNav(content),
       actionLinkHref: '#',
-      backLink: { href: '/referral-dashboard' },
+      backLink: { href: '/cases-in-progress' },
       notificationBanner:
         this.showSuccessBanner && latestAppointment && latestAppointment.status === 'SCHEDULED'
           ? this.buildIcsScheduledBanner(latestAppointment.dateTime)
