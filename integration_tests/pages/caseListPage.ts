@@ -14,6 +14,19 @@ export default class CaseListPage extends AbstractPage {
 
   readonly subNavTitle: Locator
 
+  static url(screen: 'unassigned' | 'in-progress'): string {
+    // Don't like that there's a shared POM between two URLs, but shrug
+    switch (screen) {
+      case 'unassigned':
+        return '/unassigned-cases'
+      case 'in-progress':
+        return '/cases-in-progress'
+      default:
+        return ''
+    }
+    return ''
+  }
+
   private constructor(page: Page) {
     super(page)
     this.header = page.locator('h1', { hasText: 'Cases' })

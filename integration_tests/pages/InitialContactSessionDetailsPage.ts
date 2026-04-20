@@ -21,7 +21,6 @@ export default class InitialContactSessionDetailsPage extends AbstractPage {
     await expect(header).toBeVisible()
     const backLink = page.getByRole('link', { name: 'Back', exact: true })
     const details = await SummaryList.create(page.locator('[data-testid="details"]'))
-    const referralDetailsPage = new InitialContactSessionDetailsPage(page, header, backLink, details)
-    return referralDetailsPage
+    return new InitialContactSessionDetailsPage(page, header, backLink, details)
   }
 }

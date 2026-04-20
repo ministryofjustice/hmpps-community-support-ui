@@ -22,6 +22,10 @@ export default class AssignPage extends AbstractPage {
 
   public readonly unrecognisedEmailInputErrorMessage: string
 
+  static url(id: string): string {
+    return `/referral/${id}/assign`
+  }
+
   private constructor(
     page: Page,
     public readonly backLink: Locator,

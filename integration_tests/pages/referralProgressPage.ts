@@ -22,7 +22,7 @@ export default class ReferralProgressPage extends AbstractPage {
   readonly addAttendanceAndFeedbackLink: Locator
 
   static url(caseReference: string, success: boolean = false) {
-    return `/referral-details/${caseReference}/progress${success ? '?success=""' : ''}`
+    return `/progress/${caseReference}${success ? '?success=""' : ''}`
   }
 
   private constructor(

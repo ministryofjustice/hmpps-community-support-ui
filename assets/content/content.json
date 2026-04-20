@@ -123,7 +123,7 @@
     "pageHeader": "Check the details before scheduling the ICS",
     "submitButtonText": "Submit"
   },
-  "/referral-details/:id/progress": {
+  "/progress/:id": {
     "pageHeader": "Referral for",
     "progressSubNavTitle": "Progress",
     "subNavItems": [

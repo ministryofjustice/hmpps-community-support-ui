@@ -93,7 +93,7 @@ export default function routes({
 
   get('/referral-details/:caseRefId/check-change-ics', (req, res) => appointmentController.changeIcs(req, res))
 
-  get('/referral-details/:caseReference/progress', async (req, res) => {
+  get('/progress/:caseReference', async (req, res) => {
     await referralController.showReferralProgressDetails(req, res)
   })
 

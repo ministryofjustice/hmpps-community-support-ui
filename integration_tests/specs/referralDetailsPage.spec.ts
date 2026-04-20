@@ -6,6 +6,8 @@ import { login, resetStubs } from '../testUtils'
 import communitySupport from '../mockApis/communitySupport'
 import ReferralDetailsPage from '../pages/referralDetailsPage'
 import referralDetailsPageData from '../mockData/referralDetailsPageData'
+import AssignPage from '../pages/AssignPage'
+import CaseListPage from '../pages/caseListPage'
 
 test.describe('Referral Details Page', () => {
   const dateFormatStr = 'd MMMM uuuu'
@@ -39,7 +41,7 @@ test.describe('Referral Details Page', () => {
       await referralDetailsPage.backLink.click()
     })
     await test.step('should be on cases screen', async () => {
-      await expect(page).toHaveURL('/unassigned-cases')
+      await expect(page).toHaveURL(CaseListPage.url('unassigned'))
     })
   })
   // IPB-1940:AC3
@@ -228,7 +230,7 @@ test.describe('Referral Details Page', () => {
     })
     await test.step('check navigation on click', async () => {
       await action.click()
-      await expect(page).toHaveURL(`/referral/${id}/assign`)
+      await expect(page).toHaveURL(AssignPage.url(id))
     })
   })
 })
