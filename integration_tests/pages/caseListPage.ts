@@ -15,7 +15,7 @@ export default class CaseListPage extends AbstractPage {
   readonly subNavTitle: Locator
 
   static url(screen: 'unassigned' | 'in-progress'): string {
-    // Don't like that there's a shared POM between two URLs, but shrug
+    // In future may split this up into two POMs but leaving it as one for now.
     switch (screen) {
       case 'unassigned':
         return '/unassigned-cases'
