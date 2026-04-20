@@ -74,10 +74,9 @@ export default class ProgressPresenter extends PresenterBase<ReferralProgressVie
   ) {
     super()
     this.name = referralProgress.fullName
-    this.basePath = `/referral-details/${this.caseReference}`
     this.tabPaths = {
       caseDetails: `/referral-details/${this.caseReference}`,
-      progress: `${this.basePath}/progress`,
+      progress: `/progress/${this.caseReference}`,
       changeLog: '#',
     }
   }
@@ -90,7 +89,7 @@ export default class ProgressPresenter extends PresenterBase<ReferralProgressVie
       pageHeader: `${content.pageHeader} ${this.name}`,
       navBar: this.buildSubNav(content),
       actionLinkHref: '#',
-      backLink: { href: '#' },
+      backLink: { href: '/cases-in-progress' },
       notificationBanner:
         this.showSuccessBanner && latestAppointment && latestAppointment.status === 'SCHEDULED'
           ? this.buildIcsScheduledBanner(latestAppointment.dateTime)

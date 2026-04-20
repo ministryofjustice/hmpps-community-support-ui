@@ -4,9 +4,9 @@ import ConfirmIcsPage from '../pages/confirmIcsPage'
 import communitySupport from '../mockApis/communitySupport'
 import prisonApi from '../mockApis/prisonApi'
 import { probationOfficesData } from '../mockData/referenceData'
+import ScheduleIcsPage from '../pages/scheduleIcsPage'
 
-const REFERRAL_ID = 'b190ac1e-1e2a-41c2-a4ac-3ceb9d2dcb1e'
-const CONFIRM_ICS_URL = `/referral/${REFERRAL_ID}/appointment/confirm-ics`
+const REFERRAL_ID = 'b190ac1e-1e2a-41c2-a4ac-3ceb9d2dcb1e' as const
 
 function addDays(days: number): Date {
   const date = new Date()
@@ -81,7 +81,7 @@ test.describe('Confirm ICS Page', () => {
 
   test('should display the ICS details summary card details for a phone appointment', async ({ page }) => {
     await seedAppointmentSession(page, phoneAppointmentRequest)
-    await page.goto(CONFIRM_ICS_URL)
+    await page.goto(ConfirmIcsPage.url(REFERRAL_ID))
     const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
     await expect(confirmIcsPage.dateRow).toContainText(futureDateDisplay)
     await expect(confirmIcsPage.startTimeRow).toContainText('1:00pm')
@@ -93,22 +93,23 @@ test.describe('Confirm ICS Page', () => {
 
   test('should display multiple session communication methods joined', async ({ page }) => {
     await seedAppointmentSession(page, inPersonAppointmentRequest)
-    await page.goto(CONFIRM_ICS_URL)
+    await page.goto(ConfirmIcsPage.url(REFERRAL_ID))
     const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
     await expect(confirmIcsPage.sessionCommunicationRow).toContainText('Letter, Phone call')
   })
 
   test('should display a Change link in the ICS details card', async ({ page }) => {
     await seedAppointmentSession(page, phoneAppointmentRequest)
-    await page.goto(CONFIRM_ICS_URL)
+    await page.goto(ConfirmIcsPage.url(REFERRAL_ID))
     const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
     await expect(confirmIcsPage.changeLink).toBeVisible()
-    await expect(confirmIcsPage.changeLink).toHaveAttribute('href', `/referral/${REFERRAL_ID}/appointment/schedule-ics`)
+    await confirmIcsPage.changeLink.click()
+    await expect(page).toHaveURL(ScheduleIcsPage.url(REFERRAL_ID))
   })
 
   test('should display the Submit button', async ({ page }) => {
     await seedAppointmentSession(page, phoneAppointmentRequest)
-    await page.goto(CONFIRM_ICS_URL)
+    await page.goto(ConfirmIcsPage.url(REFERRAL_ID))
     const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
     await expect(confirmIcsPage.submitButton).toBeVisible()
   })
@@ -116,13 +117,13 @@ test.describe('Confirm ICS Page', () => {
   test('should redirect to schedule-ics when no session data is present', async ({ page }) => {
     await communitySupport.stubGetProbationOffices(probationOfficesData)
     await prisonApi.stubGetPrisons()
-    await page.goto(CONFIRM_ICS_URL)
-    await expect(page).toHaveURL(`/referral/${REFERRAL_ID}/appointment/schedule-ics`)
+    await page.goto(ConfirmIcsPage.url(REFERRAL_ID))
+    await expect(page).toHaveURL(ScheduleIcsPage.url(REFERRAL_ID))
   })
 
   test('should display the notification banner when the appointment date and time is in the past', async ({ page }) => {
     await seedAppointmentSession(page, pastAppointmentRequest)
-    await page.goto(CONFIRM_ICS_URL)
+    await page.goto(ConfirmIcsPage.url(REFERRAL_ID))
     const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
     await expect(confirmIcsPage.notificationBanner).toBeVisible()
     await expect(confirmIcsPage.notificationBanner).toContainText("You've chosen a date and time in the past")
@@ -134,14 +135,14 @@ test.describe('Confirm ICS Page', () => {
     page,
   }) => {
     await seedAppointmentSession(page, phoneAppointmentRequest)
-    await page.goto(CONFIRM_ICS_URL)
+    await page.goto(ConfirmIcsPage.url(REFERRAL_ID))
     const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
     await expect(confirmIcsPage.notificationBanner).not.toBeVisible()
   })
 
   test('should display Location row with "Probation office" for PROBATION_OFFICE method', async ({ page }) => {
     await seedAppointmentSession(page, inPersonAppointmentRequest)
-    await page.goto(CONFIRM_ICS_URL)
+    await page.goto(ConfirmIcsPage.url(REFERRAL_ID))
     const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
     await expect(confirmIcsPage.locationRow).toBeVisible()
     await expect(confirmIcsPage.locationRow).toContainText('Probation office')
@@ -149,7 +150,7 @@ test.describe('Confirm ICS Page', () => {
 
   test('should display Location row with address lines for OTHER_LOCATION method', async ({ page }) => {
     await seedAppointmentSession(page, otherLocationAppointmentRequest)
-    await page.goto(CONFIRM_ICS_URL)
+    await page.goto(ConfirmIcsPage.url(REFERRAL_ID))
     const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
     await expect(confirmIcsPage.locationRow).toBeVisible()
     await expect(confirmIcsPage.locationRow).toContainText('123 Main Street')
@@ -161,7 +162,7 @@ test.describe('Confirm ICS Page', () => {
 
   test('should not display Location row for non-in-person methods', async ({ page }) => {
     await seedAppointmentSession(page, phoneAppointmentRequest)
-    await page.goto(CONFIRM_ICS_URL)
+    await page.goto(ConfirmIcsPage.url(REFERRAL_ID))
     const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
     await expect(confirmIcsPage.locationRow).not.toBeVisible()
   })

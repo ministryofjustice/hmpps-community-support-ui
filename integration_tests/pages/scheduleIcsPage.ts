@@ -54,6 +54,10 @@ export default class ScheduleIcsPage extends AbstractPage {
 
   readonly informedByOtherMethodInput: Locator
 
+  static url(referralId: string): string {
+    return `/referral/${referralId}/appointment/schedule-ics`
+  }
+
   private constructor(page: Page) {
     super(page)
     this.header = page.locator('h1', { hasText: 'Schedule the ICS' })
