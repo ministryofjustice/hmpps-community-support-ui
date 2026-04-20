@@ -146,6 +146,10 @@ class AppointmentController {
         if (reason) sessionMethod.additionalDetails = reason
       }
 
+      if (sessionTakePlace === 'InProbationOffice' && formData.probationOffice) {
+        //TODO - capture ProbationOfficeDetails and update submission endpoint to accept these details rather than just the name
+      }
+
       if (sessionTakePlace === 'InSomewhereElse') {
         sessionMethod.addressLine1 = formData.addressLine1
         sessionMethod.addressLine2 = formData.addressLine2
@@ -159,6 +163,7 @@ class AppointmentController {
 
     const informedMethods = formData.informedMethod
     createAppointmentRequest.sessionCommunication = Array.isArray(informedMethods) ? informedMethods : []
+    //TODO  - Update submission endpoint to accept otherMethodOfContact input text as part of sessionCommunication
 
     return createAppointmentRequest
   }
