@@ -24,7 +24,6 @@ export default class CaseListPage extends AbstractPage {
       default:
         return ''
     }
-    return ''
   }
 
   private constructor(page: Page) {
