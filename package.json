@@ -24,7 +24,7 @@
     "int-test-init:ci": "npx playwright install",
     "clean": "rm -rf dist test_results",
     "rebuild": "npm run clean && npm i && npm run build",
-    "generate-frontend-types": "ts-node script/generateGovukFrontendTypes/runner.ts && prettier --write server/utils/govukFrontendTypes.ts",
+    "generate-frontend-types": "ts-node script/generateGovukFrontendTypes/runner.ts && prettier --write server/@types/govukFrontend/index.d.ts",
     "setup": "npm ci && hmpps-npm-script-run-allowlist"
   },
   "engines": {
