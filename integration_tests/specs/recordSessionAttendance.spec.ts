@@ -11,6 +11,7 @@ import buildReferralProgress from '../../server/testutils/buildReferralProgress'
 
 test.describe('RecordSessionAttendancePage', () => {
   const fixedDate = new Date('2026-03-08T09:30:40+00:00')
+  const fixedDatePm = new Date('2026-03-12T14:30:40+00:00')
   const date = new Date()
   const pastDate = subDays(date, 12)
   const futureDate = addDays(date, 10)
@@ -18,6 +19,11 @@ test.describe('RecordSessionAttendancePage', () => {
   const fixedTimeMeeting = {
     caseRefId: randomUUID(),
     data: initialContactSessionDetailsPageData.virtual(fixedDate),
+  } as const
+
+  const fixedTimePmMeeting = {
+    caseRefId: randomUUID(),
+    data: initialContactSessionDetailsPageData.virtual(fixedDatePm),
   } as const
 
   const pastMeeting = {
@@ -35,6 +41,7 @@ test.describe('RecordSessionAttendancePage', () => {
     await communitySupport.stubGetICS(pastMeeting.caseRefId, pastMeeting.data)
     await communitySupport.stubGetICS(futureMeeting.caseRefId, futureMeeting.data)
     await communitySupport.stubGetICS(fixedTimeMeeting.caseRefId, fixedTimeMeeting.data)
+    await communitySupport.stubGetICS(fixedTimePmMeeting.caseRefId, fixedTimePmMeeting.data)
     await page.goto('/')
     await login(page)
   })
@@ -99,10 +106,14 @@ test.describe('RecordSessionAttendancePage', () => {
         await expect(row.value).toHaveText(format(pastDate, 'h:maaa'))
       })
     })
+    await expect(recordSessionAttendancePage.radios.fieldset.legend).toHaveText('Did the session happen?')
+    await expect(recordSessionAttendancePage.radios.fieldset.hint).toHaveText(
+      'The session happened if something was delivered.',
+    )
     // TODO - radios content
   })
   // IPB-2208:AC5
-  test('Display ICS session date', async ({ page }) => {
+  test('Display ICS session date - one number day of month', async ({ page }) => {
     await test.step('go to initial contact session details page', async () => {
       await page.goto(RecordSessionAttendancePage.url(fixedTimeMeeting.caseRefId))
     })
@@ -115,8 +126,23 @@ test.describe('RecordSessionAttendancePage', () => {
       await expect(value).toHaveText('8 March 2026')
     })
   })
+
+  // IPB-2208:AC5
+  test('Display ICS session date - two number day of month', async ({ page }) => {
+    await test.step('go to initial contact session details page', async () => {
+      await page.goto(RecordSessionAttendancePage.url(fixedTimePmMeeting.caseRefId))
+    })
+    const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
+    await test.step('check content', async () => {
+      const { summary } = recordSessionAttendancePage
+      const [row] = summary.rows
+      expect(row).toBeDefined()
+      const { value } = row
+      await expect(value).toHaveText('12 March 2026')
+    })
+  })
   // IPB-2208:AC6
-  test('Display ICS start time', async ({ page }) => {
+  test('Display ICS start time - morning meeting', async ({ page }) => {
     await test.step('go to initial contact session details page', async () => {
       await page.goto(RecordSessionAttendancePage.url(fixedTimeMeeting.caseRefId))
     })
@@ -128,5 +154,29 @@ test.describe('RecordSessionAttendancePage', () => {
       const { value } = row
       await expect(value).toHaveText('9:30am')
     })
+  })
+  // IPB-2208:AC6
+  test('Display ICS start time - afternoon meeting', async ({ page }) => {
+    await test.step('go to initial contact session details page', async () => {
+      await page.goto(RecordSessionAttendancePage.url(fixedTimePmMeeting.caseRefId))
+    })
+    const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
+    await test.step('check content', async () => {
+      const { summary } = recordSessionAttendancePage
+      const [_, row] = summary.rows
+      expect(row).toBeDefined()
+      const { value } = row
+      await expect(value).toHaveText('2:30pm')
+    })
+  })
+
+  // IPB-2208:AC7
+  test('Select whether the session happened', async ({ page }) => {
+    await test.step('go to initial contact session details page', async () => {
+      await page.goto(RecordSessionAttendancePage.url(pastMeeting.caseRefId))
+    })
+    const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
+    await expect(recordSessionAttendancePage.radios.locator).toBeVisible()
+    await expect(recordSessionAttendancePage.radios.fieldset.locator).toBeVisible()
   })
 })
