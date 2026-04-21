@@ -10,8 +10,9 @@ import ReferralProgressPage from '../pages/referralProgressPage'
 import buildReferralProgress from '../../server/testutils/buildReferralProgress'
 
 test.describe('RecordSessionAttendancePage', () => {
-  const date = new Date()
+  const date = new Date('2026-04-20T09:10:40+00:00')
   const pastDate = subDays(date, 10)
+  console.log(pastDate)
   const futureDate = addDays(date, 10)
   const pastMeeting = {
     caseRefId: randomUUID(),
@@ -24,6 +25,7 @@ test.describe('RecordSessionAttendancePage', () => {
   } as const
 
   test.beforeEach(async ({ page }) => {
+    await page.clock.setFixedTime(date)
     await resetStubs()
     await communitySupport.stubGetICS(pastMeeting.caseRefId, pastMeeting.data)
     await communitySupport.stubGetICS(futureMeeting.caseRefId, futureMeeting.data)
@@ -49,8 +51,8 @@ test.describe('RecordSessionAttendancePage', () => {
     await expect(recordSessionAttendancePage.radios.locator).not.toBeVisible()
   })
 
-  // IPB-2208:AC3 !!! Navigation url is wrong !!!
-  test.skip('Navigating to the record attendance screen', async ({ page }) => {
+  // IPB-2208:AC3
+  test('Navigating to the record attendance screen', async ({ page }) => {
     const referralProgressWithAppointments: ReferralProgress = buildReferralProgress([
       { events: [{ status: 'NEEDS_FEEDBACK' }] },
     ])
@@ -91,5 +93,19 @@ test.describe('RecordSessionAttendancePage', () => {
       })
     })
     // TODO - MORE
+  })
+  // IPB-2208:AC5
+  test('Display ICS session date', async ({ page }) => {
+    await test.step('go to initial contact session details page', async () => {
+      await page.goto(RecordSessionAttendancePage.url(pastMeeting.caseRefId))
+    })
+    const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
+    await test.step('check content', async () => {
+      const { summary } = recordSessionAttendancePage
+      const [row] = summary.rows
+      expect(row).toBeDefined()
+      const { value } = row
+      await expect(value).toHaveText(format(pastDate, 'd MMMM uuuu'))
+    })
   })
 })

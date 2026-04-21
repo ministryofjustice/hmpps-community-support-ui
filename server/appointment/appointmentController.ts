@@ -501,7 +501,7 @@ class AppointmentController {
     const { username } = res.locals.user
     return this.appointmentService
       .getICS(caseRefId.toString(), username)
-      .then(data => new RecordSessionAttendancePresenter(data))
+      .then(data => new RecordSessionAttendancePresenter(caseRefId.toString(), data))
       .then(presenter => presenter.renderPage(res))
   }
 

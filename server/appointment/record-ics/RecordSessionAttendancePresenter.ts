@@ -68,7 +68,10 @@ export default class RecordSessionAttendancePresenter extends PresenterBase<
   RecordSessionAttendanceViewModel,
   RecordSessionAttendanceContent
 > {
-  constructor(private readonly data: AppointmentIcsResponse) {
+  constructor(
+    private readonly caseRefId: string,
+    private readonly data: AppointmentIcsResponse,
+  ) {
     super()
   }
 
@@ -122,7 +125,7 @@ export default class RecordSessionAttendancePresenter extends PresenterBase<
       description: content.description,
       appointment: this.buildAppointmentDetails(content.appointmentDetails),
       form: isPast(getAppointmentDateTime(this.data)) ? this.buildForm(content.form) : undefined,
-      submitHref: '#',
+      submitHref: `/ics-feedback/attendance/${this.caseRefId}`,
     }
   }
 
