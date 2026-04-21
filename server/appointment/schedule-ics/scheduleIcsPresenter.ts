@@ -32,9 +32,9 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
     return [
       ...defaultItem,
       ...(this.probationOffices ?? []).map(office => ({
-        value: office.probationOfficeId,
+        value: `${office.probationOfficeId}`,
         text: office.name,
-        selected: this.formData?.probationOffice === office.name,
+        selected: this.formData?.probationOffice === `${office.probationOfficeId}`,
       })),
     ]
   }
@@ -49,8 +49,9 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
     return [
       ...defaultItem,
       ...(this.prisons ?? []).map(prison => ({
-        value: prison.agencyId,
+        value: `${prison.agencyId}`,
         text: prison.description,
+        selected: this.formData?.prison === `${prison.agencyId}`,
       })),
     ]
   }

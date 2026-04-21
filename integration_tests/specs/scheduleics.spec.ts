@@ -908,7 +908,7 @@ test.describe('Schedule ICS Page', () => {
     await ScheduleIcsPage.verifyFieldErrorOnPage(page, 'ByVideo', 'Enter why the session is not in-person', false)
   })
 
-  test('AC12.3 should return error if no probation office was selected (custody)', async ({ page }) => {
+  test('AC12.3 should return error if no prison was selected (custody)', async ({ page }) => {
     await communitySupport.stubGetReferralInformation(200, id, referralInformationInPrison)
     await page.goto(SCHEDULE_ICS_URL)
     const scheduleIcsPage = await ScheduleIcsPage.verifyOnPage(page, false)
@@ -940,7 +940,7 @@ test.describe('Schedule ICS Page', () => {
     await ScheduleIcsPage.verifyFieldErrorOnPage(page, 'probationOfficeList', 'Select probation office', true)
   })
 
-  test('AC13: Navigation to review screen when all mandatory fields are complete', async ({ page }) => {
+  test('AC13.1: Navigation to review screen when all mandatory fields are complete - case 1', async ({ page }) => {
     await communitySupport.stubGetReferralInformation(200, id, referralInformationInCommunity)
     await page.goto(SCHEDULE_ICS_URL)
     const scheduleIcsPage = await ScheduleIcsPage.verifyOnPage(page, true)
@@ -951,6 +951,27 @@ test.describe('Schedule ICS Page', () => {
       await scheduleIcsPage.timeMeridiemInput.selectOption('PM')
       await scheduleIcsPage.videoCallRadioButton.click()
       await scheduleIcsPage.videoCallReasonInput.fill('Some reasons')
+      await scheduleIcsPage.informedByOtherMethodCheckbox.check()
+      await scheduleIcsPage.informedByOtherMethodInput.fill('Some other method')
+      await scheduleIcsPage.saveAndContinueButton.click()
+      await test.step('should be on check ics screen', async () => {
+        await expect(page).toHaveURL(CHECK_ICS_URL)
+      })
+    })
+  })
+
+  test('AC13.2: Navigation to review screen when all mandatory fields are complete - case 2', async ({ page }) => {
+    await communitySupport.stubGetReferralInformation(200, id, referralInformationInCommunity)
+    await page.goto(SCHEDULE_ICS_URL)
+    const scheduleIcsPage = await ScheduleIcsPage.verifyOnPage(page, true)
+    await test.step('submit', async () => {
+      await scheduleIcsPage.dateInput.fill(format(addDays(new Date(), 7), 'd/M/yyyy'))
+      await scheduleIcsPage.timeHourInput.fill('10')
+      await scheduleIcsPage.timeMinuteInput.fill('11')
+      await scheduleIcsPage.timeMeridiemInput.selectOption('PM')
+      await scheduleIcsPage.inProbationOfficeRadioButton.click()
+      await scheduleIcsPage.probationOfficeSelect.waitFor({ state: 'visible' })
+      await scheduleIcsPage.probationOfficeSelect.selectOption({ index: 4 })
       await scheduleIcsPage.informedByOtherMethodCheckbox.check()
       await scheduleIcsPage.informedByOtherMethodInput.fill('Some other method')
       await scheduleIcsPage.saveAndContinueButton.click()

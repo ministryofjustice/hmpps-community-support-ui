@@ -136,40 +136,14 @@ class AppointmentController {
         amPm: String(amPm).toUpperCase() as 'AM' | 'PM',
       }
     }
-    const sessionTakePlace = formData.sessionTakePlace || ''
-
-    if (sessionTakePlace) {
-      const sessionMethod: SessionMethodRequest = { type: this.mapSessionTakePlaceToType(sessionTakePlace) }
-
-      if (['ByPhone', 'ByVideo'].includes(sessionTakePlace)) {
-        const reason = this.getReasonFromFormData(formData, sessionTakePlace)
-        if (reason) sessionMethod.additionalDetails = reason
-      }
-
-      if (sessionTakePlace === 'InProbationOffice' && formData.probationOffice) {
-        // TODO - capture ProbationOfficeDetails and update submission endpoint to accept these details rather than just the name
-      }
-
-      if (sessionTakePlace === 'InSomewhereElse') {
-        sessionMethod.addressLine1 = formData.addressLine1
-        sessionMethod.addressLine2 = formData.addressLine2
-        sessionMethod.townOrCity = formData.addressTown
-        sessionMethod.county = formData.addressCounty
-        sessionMethod.postcode = formData.addressPostcode
-      }
-
-      createAppointmentRequest.sessionMethodRequest = sessionMethod
-    }
-
-    const informedMethods = formData.informedMethod
-    createAppointmentRequest.sessionCommunication = Array.isArray(informedMethods) ? informedMethods : []
-    // TODO  - Update submission endpoint to accept otherMethodOfContact input text as part of sessionCommunication
+    createAppointmentRequest.sessionMethodRequest = this.getSessionMethodFromFormData(formData)
+    createAppointmentRequest.sessionCommunication = this.getInformedMethodsFromFormData(formData)
 
     return createAppointmentRequest
   }
 
   private loadFormFromSession(createAppointmentRequest: CreateAppointmentRequest): ScheduleFormData {
-    const formData: ScheduleFormData = {}
+    let formData: ScheduleFormData = {}
 
     if (!createAppointmentRequest) {
       return formData
@@ -192,44 +166,8 @@ class AppointmentController {
         : 'am'
     }
 
-    if (createAppointmentRequest.sessionMethodRequest) {
-      const method = createAppointmentRequest.sessionMethodRequest
-
-      formData.sessionTakePlace = this.mapTypeToSessionTakePlace(method.type)
-
-      if (method.additionalDetails) {
-        const reasonKey = this.getReasonKey(formData.sessionTakePlace)
-        if (reasonKey) {
-          switch (reasonKey) {
-            case 'ByPhone':
-              formData.ByPhone = method.additionalDetails
-              break
-            case 'ByVideo':
-              formData.ByVideo = method.additionalDetails
-              break
-            case 'InSomewhereElse':
-              formData.InSomewhereElse = method.additionalDetails
-              break
-            default:
-              break
-          }
-        }
-      }
-
-      if (method.type === 'OTHER_LOCATION') {
-        formData.addressLine1 = method.addressLine1 || ''
-        formData.addressLine2 = method.addressLine2 || ''
-        formData.addressTown = method.townOrCity || ''
-        formData.addressCounty = method.county || ''
-        formData.addressPostcode = method.postcode || ''
-      }
-    }
-
-    if (Array.isArray(createAppointmentRequest.sessionCommunication)) {
-      formData.informedMethod = [...createAppointmentRequest.sessionCommunication]
-    } else {
-      formData.informedMethod = []
-    }
+    formData = this.loadSessionMethodFromSession(createAppointmentRequest.sessionMethodRequest, formData)
+    formData = this.loadInformedMethodsFromSession(createAppointmentRequest.sessionCommunication, formData)
 
     return formData
   }
@@ -371,9 +309,6 @@ class AppointmentController {
           case 'ByVideo':
             formData.ByVideo = reason
             break
-          case 'InSomewhereElse':
-            formData.InSomewhereElse = reason
-            break
           default:
             break
         }
@@ -449,7 +384,6 @@ class AppointmentController {
       case 'InProbationOffice':
         return 'PROBATION_OFFICE'
       case 'InSomewhereElse':
-      case 'InPrison':
         return 'OTHER_LOCATION'
       default:
         return 'OTHER_LOCATION'
@@ -477,8 +411,6 @@ class AppointmentController {
         return 'ByPhone'
       case 'ByVideo':
         return 'ByVideo'
-      case 'InSomewhereElse':
-        return 'InSomewhereElse'
       default:
         return null
     }
@@ -490,10 +422,114 @@ class AppointmentController {
         return formData.ByPhone
       case 'ByVideo':
         return formData.ByVideo
-      case 'InSomewhereElse':
-        return formData.InSomewhereElse
       default:
         return null
+    }
+  }
+
+  private getSessionMethodFromFormData(formData: ScheduleFormData): SessionMethodRequest {
+    const sessionTakePlace = formData.sessionTakePlace || ''
+
+    if (sessionTakePlace) {
+      const sessionMethod: SessionMethodRequest = { type: this.mapSessionTakePlaceToType(sessionTakePlace) }
+
+      if (['ByPhone', 'ByVideo'].includes(sessionTakePlace)) {
+        const reason = this.getReasonFromFormData(formData, sessionTakePlace)
+        if (reason) sessionMethod.additionalDetails = reason
+      }
+
+      if (sessionTakePlace === 'InProbationOffice' && formData.probationOffice) {
+        sessionMethod.additionalDetails = formData.probationOffice
+      }
+
+      if (sessionTakePlace === 'InPrison' && formData.prison) {
+        sessionMethod.additionalDetails = formData.prison
+      }
+
+      if (sessionTakePlace === 'InSomewhereElse') {
+        sessionMethod.addressLine1 = formData.addressLine1
+        sessionMethod.addressLine2 = formData.addressLine2
+        sessionMethod.townOrCity = formData.addressTown
+        sessionMethod.county = formData.addressCounty
+        sessionMethod.postcode = formData.addressPostcode
+      }
+
+      return sessionMethod
+    }
+    return {} as SessionMethodRequest
+  }
+
+  private loadSessionMethodFromSession(
+    sessionMethodRequest: SessionMethodRequest,
+    formData: ScheduleFormData,
+  ): ScheduleFormData {
+    if (!sessionMethodRequest) {
+      return formData
+    }
+
+    const updatedFormData = { ...formData }
+    const method = sessionMethodRequest
+
+    updatedFormData.sessionTakePlace = this.mapTypeToSessionTakePlace(method.type)
+
+    if (method.additionalDetails) {
+      const reasonKey = this.getReasonKey(updatedFormData.sessionTakePlace)
+      if (reasonKey) {
+        switch (reasonKey) {
+          case 'ByPhone':
+            updatedFormData.ByPhone = method.additionalDetails
+            break
+          case 'ByVideo':
+            updatedFormData.ByVideo = method.additionalDetails
+            break
+          default:
+            break
+        }
+      }
+    }
+    if (method.type === 'PROBATION_OFFICE') {
+      updatedFormData.probationOffice = method.additionalDetails
+    }
+    if (method.type === 'OTHER_LOCATION') {
+      updatedFormData.addressLine1 = method.addressLine1 || ''
+      updatedFormData.addressLine2 = method.addressLine2 || ''
+      updatedFormData.addressTown = method.townOrCity || ''
+      updatedFormData.addressCounty = method.county || ''
+      updatedFormData.addressPostcode = method.postcode || ''
+    }
+
+    return updatedFormData
+  }
+
+  private getInformedMethodsFromFormData(formData: ScheduleFormData): string[] {
+    let informedMethods = Array.isArray(formData.informedMethod) ? [...formData.informedMethod] : []
+    if (informedMethods.includes('informedByOtherMethod') && formData.otherMethodOfContact) {
+      informedMethods = informedMethods
+        .filter(method => method !== 'informedByOtherMethod')
+        .concat(formData.otherMethodOfContact)
+    }
+    return informedMethods
+  }
+
+  private loadInformedMethodsFromSession(
+    sessionCommunications: string[],
+    formData: ScheduleFormData,
+  ): ScheduleFormData {
+    let informedMethods = [...sessionCommunications]
+
+    const standardMethods = ['informedByPhone', 'informedByTextMessage', 'informedByEmail']
+
+    const otherMethod = informedMethods.find(method => !standardMethods.includes(method))
+
+    if (otherMethod) {
+      informedMethods = informedMethods.filter(method => method !== otherMethod)
+      informedMethods.push('informedByOtherMethod')
+    }
+
+    return {
+      ...formData,
+      otherMethodOfContact: otherMethod || '',
+      informedMethod: informedMethods,
     }
   }
 
