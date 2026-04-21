@@ -1,11 +1,5 @@
 import { Response } from 'express'
-import {
-  GovukFrontendBackLink,
-  GovukFrontendButton,
-  GovukFrontendRadios,
-  GovukFrontendRadiosItem,
-  GovukFrontendSummaryList,
-} from '@govuk-frontend'
+import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendSummaryList } from '@govuk-frontend'
 import { AppointmentIcsResponse } from '@community-support-api'
 import { isPast } from 'date-fns'
 import PresenterBase from '../../presenter/presenterBase'
@@ -13,13 +7,13 @@ import { govFrontendSummaryListRow } from '../../utils/viewUtils'
 import dateFormat from '../../utils/dateFormat'
 import timeFormat from '../../utils/timeFormat'
 import getAppointmentDateTime from '../../utils/getAppointmentDateTime'
-
-type GovukFrontendRadiosItemWithConditional = GovukFrontendRadiosItem & {
-  conditional?: { html: string }
-}
+import {
+  GovukFrontendRadiosItemWithConditional,
+  GovukFrontendRadiosWithConditional,
+} from '../../@types/govukFrontend/derived'
 
 export interface RecordSessionAttendanceFormViewModel {
-  radios: GovukFrontendRadios
+  radios: GovukFrontendRadiosWithConditional
   button: GovukFrontendButton
 }
 
@@ -89,10 +83,10 @@ export default class RecordSessionAttendancePresenter extends PresenterBase<
     if (raidos) {
       return { value: label, text: label, conditional: { html: '<p>testing</p>' } }
     }
-    return { value: label, text: label }
+    return { value: label, text: label, conditional: { html: '<p>testing</p>' } }
   }
 
-  buildRadios({ heading, hint, options }: RadiosContent): GovukFrontendRadios {
+  buildRadios({ heading, hint, options }: RadiosContent): GovukFrontendRadiosWithConditional {
     return {
       name: 'attended',
       hint: { text: hint },

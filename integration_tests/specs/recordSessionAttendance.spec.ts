@@ -10,10 +10,16 @@ import ReferralProgressPage from '../pages/referralProgressPage'
 import buildReferralProgress from '../../server/testutils/buildReferralProgress'
 
 test.describe('RecordSessionAttendancePage', () => {
-  const date = new Date('2026-04-20T09:10:40+00:00')
-  const pastDate = subDays(date, 10)
-  console.log(pastDate)
+  const fixedDate = new Date('2026-03-08T09:30:40+00:00')
+  const date = new Date()
+  const pastDate = subDays(date, 12)
   const futureDate = addDays(date, 10)
+
+  const fixedTimeMeeting = {
+    caseRefId: randomUUID(),
+    data: initialContactSessionDetailsPageData.virtual(fixedDate),
+  } as const
+
   const pastMeeting = {
     caseRefId: randomUUID(),
     data: initialContactSessionDetailsPageData.virtual(pastDate),
@@ -25,10 +31,10 @@ test.describe('RecordSessionAttendancePage', () => {
   } as const
 
   test.beforeEach(async ({ page }) => {
-    await page.clock.setFixedTime(date)
     await resetStubs()
     await communitySupport.stubGetICS(pastMeeting.caseRefId, pastMeeting.data)
     await communitySupport.stubGetICS(futureMeeting.caseRefId, futureMeeting.data)
+    await communitySupport.stubGetICS(fixedTimeMeeting.caseRefId, fixedTimeMeeting.data)
     await page.goto('/')
     await login(page)
   })
@@ -44,6 +50,7 @@ test.describe('RecordSessionAttendancePage', () => {
 
   // IPB-2208:AC2
   test('No option to record feedback before session time', async ({ page }) => {
+    console.log(new Date())
     await test.step('go to initial contact session details page', async () => {
       await page.goto(RecordSessionAttendancePage.url(futureMeeting.caseRefId))
     })
@@ -92,12 +99,12 @@ test.describe('RecordSessionAttendancePage', () => {
         await expect(row.value).toHaveText(format(pastDate, 'h:maaa'))
       })
     })
-    // TODO - MORE
+    // TODO - radios content
   })
   // IPB-2208:AC5
   test('Display ICS session date', async ({ page }) => {
     await test.step('go to initial contact session details page', async () => {
-      await page.goto(RecordSessionAttendancePage.url(pastMeeting.caseRefId))
+      await page.goto(RecordSessionAttendancePage.url(fixedTimeMeeting.caseRefId))
     })
     const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
     await test.step('check content', async () => {
@@ -105,7 +112,21 @@ test.describe('RecordSessionAttendancePage', () => {
       const [row] = summary.rows
       expect(row).toBeDefined()
       const { value } = row
-      await expect(value).toHaveText(format(pastDate, 'd MMMM uuuu'))
+      await expect(value).toHaveText('8 March 2026')
+    })
+  })
+  // IPB-2208:AC6
+  test('Display ICS start time', async ({ page }) => {
+    await test.step('go to initial contact session details page', async () => {
+      await page.goto(RecordSessionAttendancePage.url(fixedTimeMeeting.caseRefId))
+    })
+    const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
+    await test.step('check content', async () => {
+      const { summary } = recordSessionAttendancePage
+      const [_, row] = summary.rows
+      expect(row).toBeDefined()
+      const { value } = row
+      await expect(value).toHaveText('9:30am')
     })
   })
 })
