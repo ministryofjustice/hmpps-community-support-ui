@@ -2,6 +2,7 @@ import { Response } from 'express'
 import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendSummaryList } from '@govuk-frontend'
 import { AppointmentIcsResponse } from '@community-support-api'
 import { isPast } from 'date-fns'
+import nunjucks from 'nunjucks'
 import PresenterBase from '../../presenter/presenterBase'
 import { govFrontendSummaryListRow } from '../../utils/viewUtils'
 import dateFormat from '../../utils/dateFormat'
@@ -38,7 +39,7 @@ interface FormOptionContent {
 
 interface RadiosContent {
   heading: string
-  hint: string
+  hint?: string
   options: FormOptionContent[]
 }
 
@@ -54,9 +55,8 @@ export interface RecordSessionAttendanceContent {
   form: FormContent
 }
 
-export interface TempBackendData {
-  placeholder: string
-}
+const condiditionalTemplate =
+  `{% from "govuk/components/radios/macro.njk" import govukRadios %}{{ govukRadios(content.radios) }}` as const
 
 export default class RecordSessionAttendancePresenter extends PresenterBase<
   RecordSessionAttendanceViewModel,
@@ -69,7 +69,7 @@ export default class RecordSessionAttendancePresenter extends PresenterBase<
     super()
   }
 
-  buildAppointmentDetails(content: ApointmentDetailsContent): GovukFrontendSummaryList {
+  private buildAppointmentDetails(content: ApointmentDetailsContent): GovukFrontendSummaryList {
     return {
       rows: [
         govFrontendSummaryListRow(content.dateLabel, dateFormat(new Date(this.data.appointmentDate))),
@@ -79,28 +79,34 @@ export default class RecordSessionAttendancePresenter extends PresenterBase<
     }
   }
 
-  buildItem({ label, radios }: FormOptionContent): GovukFrontendRadiosItemWithConditional {
-    return { value: label, text: label, conditional: radios ? { html: '<p>testing</p>' } : undefined }
+  private buildConditional(content: RadiosContent): string {
+    const radios = this.buildRadios('happened', content)
+    const result = nunjucks.renderString(condiditionalTemplate, { content: { radios } })
+    console.log('*****\n', content, '\n', result, '\n*****')
+    return result
   }
 
-  buildRadios({ heading, hint, options }: RadiosContent): GovukFrontendRadiosWithConditional {
+  private buildItem({ label, radios }: FormOptionContent): GovukFrontendRadiosItemWithConditional {
+    return { value: label, text: label, conditional: radios ? { html: this.buildConditional(radios) } : undefined }
+  }
+
+  private buildRadios(name: string, { heading, hint, options }: RadiosContent): GovukFrontendRadiosWithConditional {
     return {
-      name: 'attended',
-      hint: { text: hint },
+      hint: hint ? { text: hint } : undefined,
       items: options.map(option => this.buildItem(option)),
       fieldset: {
         legend: {
-          text: heading,
+          text: nunjucks.renderString(heading, { firstname: this.data.referralFirstName }),
           classes: 'govuk-fieldset__legend--m',
         },
       },
-      attributes: { 'data-testid': 'attended' },
+      attributes: { 'data-testid': name },
     }
   }
 
-  buildForm(content: FormContent): RecordSessionAttendanceFormViewModel | undefined {
+  private buildForm(content: FormContent): RecordSessionAttendanceFormViewModel | undefined {
     return {
-      radios: this.buildRadios(content.radios),
+      radios: this.buildRadios('attended', content.radios),
       button: {
         text: content.submitButtonText,
       },
