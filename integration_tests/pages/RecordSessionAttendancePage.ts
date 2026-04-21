@@ -27,7 +27,7 @@ export default class RecordSessionAttendancePage extends AbstractPage {
     const backLink = page.getByRole('link', { name: 'Back', exact: true })
     const summary = await SummaryList.create(page.locator('[data-testid="appointment-details"]'))
     const radios = await Radios.create(page.locator('[data-testid="attended"]'))
-    const submit = page.locator('')
+    const submit = page.getByRole('button', { name: 'Submit' })
     return new RecordSessionAttendancePage(page, header, subheading, backLink, summary, radios, submit)
   }
 }

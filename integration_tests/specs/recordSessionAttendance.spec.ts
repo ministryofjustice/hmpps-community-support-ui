@@ -176,7 +176,11 @@ test.describe('RecordSessionAttendancePage', () => {
       await page.goto(RecordSessionAttendancePage.url(pastMeeting.caseRefId))
     })
     const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
-    await expect(recordSessionAttendancePage.radios.locator).toBeVisible()
-    await expect(recordSessionAttendancePage.radios.fieldset.locator).toBeVisible()
+    await test.step('select attended', async () => {
+      await recordSessionAttendancePage.radios.items[0].input.click()
+    })
+    await test.step('click submit', async () => {
+      await recordSessionAttendancePage.submit.click()
+    })
   })
 })
