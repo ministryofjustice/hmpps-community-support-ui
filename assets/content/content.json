@@ -182,9 +182,16 @@
           {
             "label": "No",
             "radios": {
-              "heading": "No - sub radio",
+              "heading": "Did {{ firstname }} come to the appointment?",
               "hint": "hint?",
-              "options": []
+              "options": [
+                {
+                  "label": "Yes"
+                },
+                {
+                  "label": "No"
+                }
+              ]
             }
           }
         ]

@@ -110,7 +110,10 @@ test.describe('RecordSessionAttendancePage', () => {
     await expect(recordSessionAttendancePage.radios.fieldset.hint).toHaveText(
       'The session happened if something was delivered.',
     )
-    // TODO - radios content
+    expect(recordSessionAttendancePage.radios.items).toHaveLength(2)
+    const [item1, item2] = recordSessionAttendancePage.radios.items
+    await expect(item1.label).toHaveText('Yes')
+    await expect(item2.label).toHaveText('No')
   })
   // IPB-2208:AC5
   test('Display ICS session date - one number day of month', async ({ page }) => {
@@ -171,13 +174,27 @@ test.describe('RecordSessionAttendancePage', () => {
   })
 
   // IPB-2208:AC7
-  test('Select whether the session happened', async ({ page }) => {
+  test('Select whether the session happened - Yes', async ({ page }) => {
     await test.step('go to initial contact session details page', async () => {
       await page.goto(RecordSessionAttendancePage.url(pastMeeting.caseRefId))
     })
     const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
     await test.step('select attended', async () => {
       await recordSessionAttendancePage.radios.items[0].input.click()
+    })
+    await test.step('click submit', async () => {
+      await recordSessionAttendancePage.submit.click()
+    })
+  })
+
+  // IPB-2208:AC7
+  test('Select whether the session happened - No', async ({ page }) => {
+    await test.step('go to initial contact session details page', async () => {
+      await page.goto(RecordSessionAttendancePage.url(pastMeeting.caseRefId))
+    })
+    const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
+    await test.step('select attended', async () => {
+      await recordSessionAttendancePage.radios.items[1].input.click()
     })
     await test.step('click submit', async () => {
       await recordSessionAttendancePage.submit.click()

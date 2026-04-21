@@ -33,7 +33,7 @@ interface ApointmentDetailsContent {
 
 interface FormOptionContent {
   label: string
-  raidos?: RadiosContent
+  radios?: RadiosContent
 }
 
 interface RadiosContent {
@@ -79,11 +79,8 @@ export default class RecordSessionAttendancePresenter extends PresenterBase<
     }
   }
 
-  buildItem({ label, raidos }: FormOptionContent): GovukFrontendRadiosItemWithConditional {
-    if (raidos) {
-      return { value: label, text: label, conditional: { html: '<p>testing</p>' } }
-    }
-    return { value: label, text: label, conditional: { html: '<p>testing</p>' } }
+  buildItem({ label, radios }: FormOptionContent): GovukFrontendRadiosItemWithConditional {
+    return { value: label, text: label, conditional: radios ? { html: '<p>testing</p>' } : undefined }
   }
 
   buildRadios({ heading, hint, options }: RadiosContent): GovukFrontendRadiosWithConditional {
@@ -106,7 +103,6 @@ export default class RecordSessionAttendancePresenter extends PresenterBase<
       radios: this.buildRadios(content.radios),
       button: {
         text: content.submitButtonText,
-        // attributes: { 'data-testid': 'submit' }
       },
     }
   }
