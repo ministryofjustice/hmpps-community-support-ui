@@ -8,7 +8,6 @@ import CaseListController from '../caseList/caseListController'
 import CommunityServiceProviderController from '../referral/communityServiceProviders/communityServiceProviderController'
 import AppointmentController from '../appointment/appointmentController'
 import asyncMiddleware from '../middleware/asyncMiddleware'
-import RecordSessionAttendancePresenter from '../appointment/record-ics/RecordSessionAttendancePresenter'
 
 export default function routes({
   auditService,

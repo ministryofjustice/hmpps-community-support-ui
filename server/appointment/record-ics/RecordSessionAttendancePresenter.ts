@@ -81,9 +81,7 @@ export default class RecordSessionAttendancePresenter extends PresenterBase<
 
   private buildConditional(content: RadiosContent): string {
     const radios = this.buildRadios('happened', content)
-    const result = nunjucks.renderString(condiditionalTemplate, { content: { radios } })
-    console.log('*****\n', content, '\n', result, '\n*****')
-    return result
+    return nunjucks.renderString(condiditionalTemplate, { content: { radios } })
   }
 
   private buildItem({ label, radios }: FormOptionContent): GovukFrontendRadiosItemWithConditional {
