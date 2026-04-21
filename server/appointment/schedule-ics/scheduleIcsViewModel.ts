@@ -30,6 +30,7 @@ export type ScheduleIcsViewModel = {
   backlinkHref: string
   probationOfficesSelectItems: SelectItem[]
   prisonsSelectItems: SelectItem[]
+  serviceName: string
   isPersonInCommunity: boolean
   firstName: string
   formData: ScheduleFormData

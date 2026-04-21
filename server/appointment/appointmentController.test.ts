@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { CreateAppointmentRequest, ReferralDetailsResponseDto } from '@community-support-api'
+import { CreateAppointmentRequest } from '@community-support-api'
 import AppointmentController from './appointmentController'
 import ConfirmIcsPresenter from './confirm-ics/confirmIcsPresenter'
 import ScheduleIcsPresenter from './schedule-ics/scheduleIcsPresenter'
@@ -10,6 +10,10 @@ import CommunitySupportApiClient from '../data/communitySupportApiClient'
 import ScheduleIcsContentFactory from '../testutils/factories/ScheduleIcsContent'
 import ReferenceDataService from '../services/referenceDataService'
 import { prisonsData, probationOfficesData } from '../../integration_tests/mockData/referenceData'
+import {
+  referralInformationInCommunity,
+  referralInformationInPrison,
+} from '../../integration_tests/mockData/referralInformationData'
 
 jest.mock('./confirm-ics/confirmIcsPresenter')
 jest.mock('../services/AppointmentService')
@@ -39,71 +43,12 @@ describe('AppointmentController', () => {
     sessionCommunication: ['Phone call'],
   }
 
-  const mockReferralDetailsInCommunity: ReferralDetailsResponseDto = {
-    id: mockReferralId,
-    referenceNumber: 'R20260327',
-    createdDate: '2026-03-27',
-    personDetailsTableData: {
-      name: 'John Doe',
-      crn: 'A123456',
-      dateOfBirth: '1990-05-15',
-      preferredLanguage: 'English',
-      disabilities: '',
-    },
-    equalityDetailsTableData: {
-      ethnicity: null,
-      religionOrBelief: null,
-      sex: '',
-      genderIdentity: '',
-      sexualOrientation: '',
-      transgender: '',
-    },
-    contactDetailsTableData: {
-      phoneNumber: null,
-      mobileNumber: null,
-      email: null,
-      address: null,
-    },
-    referralDetailsTableData: {
-      referralDate: '',
-      assignedTo: [],
-    },
-  }
-
-  const mockReferralDetailsInPrison: ReferralDetailsResponseDto = {
-    id: mockReferralId,
-    referenceNumber: 'R20260327',
-    createdDate: '2026-03-27T10:00:00Z',
-    personDetailsTableData: {
-      name: 'John Doe',
-      crn: 'A123456',
-      dateOfBirth: '1990-05-15',
-      preferredLanguage: 'English',
-      disabilities: '',
-    },
-    equalityDetailsTableData: {
-      ethnicity: null,
-      religionOrBelief: null,
-      sex: '',
-      genderIdentity: '',
-      sexualOrientation: '',
-      transgender: '',
-    },
-    contactDetailsTableData: {
-      phoneNumber: null,
-      mobileNumber: null,
-      email: null,
-      address: null,
-    },
-    referralDetailsTableData: {
-      referralDate: '',
-      assignedTo: [],
-    },
-  }
+  const mockReferralInformationInCommunity = referralInformationInCommunity
+  const mockReferralInformationInPrison = referralInformationInPrison
 
   beforeEach(() => {
     referralService = {
-      getCaseDetailsByCaseIdentifier: jest.fn(),
+      getReferralInformation: jest.fn(),
     } as unknown as jest.Mocked<ReferralService>
     referenceDataService = {
       getProbationOffices: jest.fn().mockResolvedValue([]),
@@ -140,7 +85,7 @@ describe('AppointmentController', () => {
         referralId,
         probationOfficesData,
         prisonsData,
-        mockReferralDetailsInCommunity,
+        mockReferralInformationInCommunity,
         formData: {},
       },
       session: { createAppointmentRequest: null },
@@ -152,7 +97,7 @@ describe('AppointmentController', () => {
         referralId,
         probationOfficesData,
         prisonsData,
-        mockReferralDetailsInPrison,
+        mockReferralInformationInPrison,
         formData: {},
       },
       session: { createAppointmentRequest: null },
@@ -184,7 +129,7 @@ describe('AppointmentController', () => {
 
   describe('scheduleIcs', () => {
     it('should render schedule-ics page - community ', async () => {
-      referralService.getCaseDetailsByCaseIdentifier.mockResolvedValue(mockReferralDetailsInCommunity)
+      referralService.getReferralInformation.mockResolvedValue(mockReferralInformationInCommunity)
       await appointmentController.scheduleIcs(scheduleIcsCommunityReq, scheduleIcsRes)
       referenceDataService.getProbationOffices.mockResolvedValue(probationOfficesData)
       referenceDataService.getPrisons.mockResolvedValue(prisonsData)
@@ -195,28 +140,28 @@ describe('AppointmentController', () => {
         referralId,
         probationOfficesData,
         prisonsData,
-        mockReferralDetailsInCommunity,
+        mockReferralInformationInCommunity,
         expect.any(Object),
       )
       expect(ScheduleIcsPresenter.prototype.renderPage).toHaveBeenCalledWith(scheduleIcsRes)
     })
 
     it('should render schedule-ics page - custody ', async () => {
-      referralService.getCaseDetailsByCaseIdentifier.mockResolvedValue(mockReferralDetailsInPrison)
+      referralService.getReferralInformation.mockResolvedValue(mockReferralInformationInPrison)
       await appointmentController.scheduleIcs(scheduleIcsPrisonReq, scheduleIcsRes)
 
       expect(ScheduleIcsPresenter).toHaveBeenCalledWith(
         referralId,
         probationOfficesData,
         prisonsData,
-        mockReferralDetailsInPrison,
+        mockReferralInformationInPrison,
         expect.any(Object),
       )
       expect(ScheduleIcsPresenter.prototype.renderPage).toHaveBeenCalledWith(scheduleIcsRes)
     })
 
     it('should create presenter with createAppointmentRequest from session and render page', async () => {
-      referralService.getCaseDetailsByCaseIdentifier.mockResolvedValue(mockReferralDetailsInCommunity)
+      referralService.getReferralInformation.mockResolvedValue(mockReferralInformationInCommunity)
       req.session.createAppointmentRequest = mockCreateAppointmentRequest
 
       await appointmentController.scheduleIcs(scheduleIcsCommunityReq, scheduleIcsRes)
@@ -225,7 +170,7 @@ describe('AppointmentController', () => {
         referralId,
         probationOfficesData,
         prisonsData,
-        mockReferralDetailsInCommunity,
+        mockReferralInformationInCommunity,
         expect.any(Object),
       )
       expect(ScheduleIcsPresenter.prototype.renderPage).toHaveBeenCalledWith(scheduleIcsRes)

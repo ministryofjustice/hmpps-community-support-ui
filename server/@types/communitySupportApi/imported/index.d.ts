@@ -1036,6 +1036,55 @@ export interface operations {
       }
     }
   }
+  getReferralInformation: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        caseIdentifier: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Referral Details found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ReferralInformationDto']
+        }
+      }
+      /** @description The request was unauthorised */
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Forbidden. The client is not authorised to access the case list. */
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': components['schemas']['ErrorResponse']
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
 }
 type WithRequired<T, K extends keyof T> = T & {
   [P in K]-?: T[P]

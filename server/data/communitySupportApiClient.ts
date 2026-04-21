@@ -83,4 +83,8 @@ export default class CommunitySupportApiClient extends RestClient {
   getReferralProgress(caseReference: string, username: string): Promise<ReferralProgress> {
     return this.get({ path: `/bff/referral-details/${caseReference}/progress` }, asSystem(username))
   }
+
+  getReferralInformation(caseReference: string, username: string): Promise<ReferralInformation> {
+    return this.get({ path: `/bff/referral-information/${caseReference}` }, asSystem(username))
+  }
 }

@@ -6,6 +6,8 @@ export default class ScheduleIcsPage extends AbstractPage {
 
   readonly errorHeader: Locator
 
+  readonly backLink: Locator
+
   readonly dateInput: Locator
 
   readonly timeHourInput: Locator
@@ -62,6 +64,7 @@ export default class ScheduleIcsPage extends AbstractPage {
     super(page)
     this.header = page.locator('h1', { hasText: 'Schedule the ICS' })
     this.errorHeader = page.locator('h2', { hasText: 'There is a problem' })
+    this.backLink = page.getByRole('link', { name: 'Back', exact: true })
     this.dateInput = page.locator('input[type="text"][name="sessionDate"]')
     this.timeHourInput = page.locator('input[type="text"][name="sessionTime-hour"]')
     this.timeMinuteInput = page.locator('input[type="text"][name="sessionTime-minute"]')
@@ -71,7 +74,7 @@ export default class ScheduleIcsPage extends AbstractPage {
     this.videoCallRadioButton = page.locator('input[type="radio"][value="ByVideo"]')
     this.videoCallReasonInput = page.locator('input[type="text"][name="ByVideo"]')
     this.inProbationOfficeRadioButton = page.locator('input[type="radio"][value="InProbationOffice"]')
-    this.probationOfficeSelect = page.locator('[name="probationOfficeList"]')
+    this.probationOfficeSelect = page.locator('#probationOfficeList')
     this.inSomewhereElseRadioButton = page.locator('input[type="radio"][value="InSomewhereElse"]')
     this.addressLine1Input = page.locator('input[type="text"][name="addressLine1"]')
     this.addressLine2Input = page.locator('input[type="text"][name="addressLine2"]')
@@ -79,7 +82,7 @@ export default class ScheduleIcsPage extends AbstractPage {
     this.countyInput = page.locator('input[type="text"][name="addressCounty"]')
     this.postcodeInput = page.locator('input[type="text"][name="addressPostcode"]')
     this.inPrisonRadioButton = page.locator('input[type="radio"][value="InPrison"]')
-    this.prisonListSelect = page.locator('[name="prisonList"]')
+    this.prisonListSelect = page.locator('#prisonList')
     this.informedByPhoneCheckbox = page.locator('input[type="checkbox"][value="informedByPhone"]')
     this.informedByTextMessageCheckbox = page.locator('input[type="checkbox"][value="informedByTextMessage"]')
     this.informedByEmailCheckbox = page.locator('input[type="checkbox"][value="informedByEmail"]')
