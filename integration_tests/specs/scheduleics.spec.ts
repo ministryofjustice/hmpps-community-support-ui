@@ -12,7 +12,7 @@ import { probationOfficesData } from '../mockData/referenceData'
 
 const REFERRAL_ID = randomUUID()
 const SCHEDULE_ICS_URL = `/referral/${REFERRAL_ID}/appointment/schedule-ics`
-const REFERRAL_PROGRESS_URL = `/referral-details/${REFERRAL_ID}/progress`
+const REFERRAL_PROGRESS_URL = `/progress/${REFERRAL_ID}`
 const CHECK_ICS_URL = `/referral/${REFERRAL_ID}/appointment/confirm-ics`
 
 test.describe('Schedule ICS Page', () => {
