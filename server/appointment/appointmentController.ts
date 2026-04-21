@@ -147,7 +147,7 @@ class AppointmentController {
       }
 
       if (sessionTakePlace === 'InProbationOffice' && formData.probationOffice) {
-        //TODO - capture ProbationOfficeDetails and update submission endpoint to accept these details rather than just the name
+        // TODO - capture ProbationOfficeDetails and update submission endpoint to accept these details rather than just the name
       }
 
       if (sessionTakePlace === 'InSomewhereElse') {
@@ -163,7 +163,7 @@ class AppointmentController {
 
     const informedMethods = formData.informedMethod
     createAppointmentRequest.sessionCommunication = Array.isArray(informedMethods) ? informedMethods : []
-    //TODO  - Update submission endpoint to accept otherMethodOfContact input text as part of sessionCommunication
+    // TODO  - Update submission endpoint to accept otherMethodOfContact input text as part of sessionCommunication
 
     return createAppointmentRequest
   }

@@ -4,7 +4,6 @@ import { Prison } from '@prison-api'
 import PresenterBase from '../../presenter/presenterBase'
 import { ScheduleIcsContent, ScheduleIcsViewModel, SelectItem, ScheduleFormData } from './scheduleIcsViewModel'
 import isIdentifierACrn from '../../utils/isIdentifierACrn'
-import { se } from 'date-fns/locale'
 
 export interface ValidationError {
   key: string
