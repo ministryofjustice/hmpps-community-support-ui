@@ -2,9 +2,10 @@ import { Locator } from '@playwright/test'
 import FieldSet from './fieldset'
 import RadioItem from './radioItem'
 
-export default class Radios {
-  static create(radiosLocatior: Locator): Promise<Radios> {
-    const itemsLocator = radiosLocatior.locator('div.govuk-radios__item')
+export default class RadiosWithFieldSet {
+  static create(radiosLocatior: Locator, fieldsetLocator: Locator): Promise<RadiosWithFieldSet> {
+    const fieldset = new FieldSet(fieldsetLocator)
+    const itemsLocator = radiosLocatior.locator('> div.govuk-radios__item')
     return itemsLocator
       .count()
       .then(itemCount =>
@@ -13,15 +14,12 @@ export default class Radios {
           .map((_, i) => new RadioItem(itemsLocator.nth(i))),
       )
       .then(itemPromise => Promise.all(itemPromise))
-      .then(items => new Radios(radiosLocatior, items))
+      .then(items => new RadiosWithFieldSet(radiosLocatior, fieldset, items))
   }
-
-  public readonly fieldset: FieldSet
 
   private constructor(
     readonly locator: Locator,
+    readonly fieldset: FieldSet,
     readonly items: RadioItem[],
-  ) {
-    this.fieldset = new FieldSet(locator.page().locator('fieldset', { has: locator }))
-  }
+  ) {}
 }

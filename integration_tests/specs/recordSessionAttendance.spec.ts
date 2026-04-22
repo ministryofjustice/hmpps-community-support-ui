@@ -52,7 +52,7 @@ test.describe('RecordSessionAttendancePage', () => {
       await page.goto(RecordSessionAttendancePage.url(pastMeeting.caseRefId))
     })
     const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
-    await expect(recordSessionAttendancePage.radios.locator).toBeVisible()
+    await expect(recordSessionAttendancePage.attendedRadios.locator).toBeVisible()
   })
 
   // IPB-2208:AC2
@@ -62,7 +62,7 @@ test.describe('RecordSessionAttendancePage', () => {
       await page.goto(RecordSessionAttendancePage.url(futureMeeting.caseRefId))
     })
     const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
-    await expect(recordSessionAttendancePage.radios.locator).not.toBeVisible()
+    await expect(recordSessionAttendancePage.attendedRadios.locator).not.toBeVisible()
   })
 
   // IPB-2208:AC3
@@ -103,17 +103,30 @@ test.describe('RecordSessionAttendancePage', () => {
       await test.step('check content of second row', async () => {
         const row = summary.rows[1]
         await expect(row.key).toHaveText('Start time')
-        await expect(row.value).toHaveText(format(pastDate, 'h:maaa'))
+        await expect(row.value).toHaveText(format(pastDate, 'h:mmaaa'))
       })
     })
-    await expect(recordSessionAttendancePage.radios.fieldset.legend).toHaveText('Did the session happen?')
-    await expect(recordSessionAttendancePage.radios.fieldset.hint).toHaveText(
+    await expect(recordSessionAttendancePage.attendedRadios.fieldset.legend).toHaveText('Did the session happen?')
+    await expect(recordSessionAttendancePage.attendedRadios.fieldset.hint).toHaveText(
       'The session happened if something was delivered.',
     )
-    expect(recordSessionAttendancePage.radios.items).toHaveLength(2)
-    const [item1, item2] = recordSessionAttendancePage.radios.items
-    await expect(item1.label).toHaveText('Yes')
-    await expect(item2.label).toHaveText('No')
+    await test.step('attended radios have the correct content', async () => {
+      expect(recordSessionAttendancePage.attendedRadios.items).toHaveLength(2)
+      const [item1, item2] = recordSessionAttendancePage.attendedRadios.items
+      await expect(item1.label).toHaveText('Yes')
+      await expect(item2.label).toHaveText('No')
+    })
+    await test.step('session happend radios have the correct content', async () => {
+      const [_, attendNo] = recordSessionAttendancePage.attendedRadios.items
+      await attendNo.input.click()
+      expect(recordSessionAttendancePage.sessionHappenedRadios.items).toHaveLength(2)
+      const [item1, item2] = recordSessionAttendancePage.sessionHappenedRadios.items
+      await expect(item1.label).toHaveText('Yes')
+      await expect(item2.label).toHaveText('No')
+    })
+    await test.step('Button has correct content', async () => {
+      await expect(recordSessionAttendancePage.submitButton).toHaveText('Continue')
+    })
   })
   // IPB-2208:AC5
   test('Display ICS session date - one number day of month', async ({ page }) => {
@@ -180,10 +193,10 @@ test.describe('RecordSessionAttendancePage', () => {
     })
     const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
     await test.step('select attended', async () => {
-      await recordSessionAttendancePage.radios.items[0].input.click()
+      await recordSessionAttendancePage.attendedRadios.items[0].input.click()
     })
     await test.step('click submit', async () => {
-      await recordSessionAttendancePage.submit.click()
+      await recordSessionAttendancePage.submitButton.click()
     })
   })
 
@@ -194,10 +207,10 @@ test.describe('RecordSessionAttendancePage', () => {
     })
     const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
     await test.step('select attended', async () => {
-      await recordSessionAttendancePage.radios.items[1].input.click()
+      await recordSessionAttendancePage.attendedRadios.items[1].input.click()
     })
     await test.step('click submit', async () => {
-      await recordSessionAttendancePage.submit.click()
+      await recordSessionAttendancePage.submitButton.click()
     })
   })
 })

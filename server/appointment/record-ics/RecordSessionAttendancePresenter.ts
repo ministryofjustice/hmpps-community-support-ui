@@ -84,15 +84,22 @@ export default class RecordSessionAttendancePresenter extends PresenterBase<
     return nunjucks.renderString(condiditionalTemplate, { content: { radios } })
   }
 
-  private buildItem({ label, radios }: FormOptionContent): GovukFrontendRadiosItemWithConditional {
-    return { value: label, text: label, conditional: radios ? { html: this.buildConditional(radios) } : undefined }
+  private buildItem(name: string, { label, radios }: FormOptionContent): GovukFrontendRadiosItemWithConditional {
+    return {
+      id: `${name}-${label}`,
+      value: label,
+      text: label,
+      conditional: radios ? { html: this.buildConditional(radios) } : undefined,
+    }
   }
 
   private buildRadios(name: string, { heading, hint, options }: RadiosContent): GovukFrontendRadiosWithConditional {
     return {
+      name,
       hint: hint ? { text: hint } : undefined,
-      items: options.map(option => this.buildItem(option)),
+      items: options.map(option => this.buildItem(name, option)),
       fieldset: {
+        attributes: { 'data-testid': `fieldset-${name}` },
         legend: {
           text: nunjucks.renderString(heading, { firstname: this.data.referralFirstName }),
           classes: 'govuk-fieldset__legend--m',

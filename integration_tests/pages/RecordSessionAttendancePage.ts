@@ -1,6 +1,6 @@
 import { expect, type Locator, type Page } from '@playwright/test'
 import AbstractPage from './abstractPage'
-import Radios from './components/radios'
+import RadiosWithFieldSet from './components/radiosWithFieldSet'
 import SummaryList from './components/summaryList'
 
 export default class RecordSessionAttendancePage extends AbstractPage {
@@ -10,8 +10,9 @@ export default class RecordSessionAttendancePage extends AbstractPage {
     readonly subheading: Locator,
     readonly backLink: Locator,
     readonly summary: SummaryList,
-    readonly radios: Radios,
-    readonly submit: Locator,
+    readonly attendedRadios: RadiosWithFieldSet,
+    readonly sessionHappenedRadios: RadiosWithFieldSet,
+    readonly submitButton: Locator,
   ) {
     super(page)
   }
@@ -26,8 +27,15 @@ export default class RecordSessionAttendancePage extends AbstractPage {
     const subheading = page.locator('[data-testid="subheading"]')
     const backLink = page.getByRole('link', { name: 'Back', exact: true })
     const summary = await SummaryList.create(page.locator('[data-testid="appointment-details"]'))
-    const radios = await Radios.create(page.locator('[data-testid="attended"]'))
-    const submit = page.getByRole('button', { name: 'Submit' })
-    return new RecordSessionAttendancePage(page, header, subheading, backLink, summary, radios, submit)
+    const attended = await RadiosWithFieldSet.create(
+      page.locator('[data-testid="attended"]'),
+      page.locator('[data-testid="fieldset-attended"]'),
+    )
+    const happened = await RadiosWithFieldSet.create(
+      page.locator('[data-testid="happened"]'),
+      page.locator('[data-testid="fieldset-happened"]'),
+    )
+    const submit = page.getByRole('button', { name: 'Continue' })
+    return new RecordSessionAttendancePage(page, header, subheading, backLink, summary, attended, happened, submit)
   }
 }
