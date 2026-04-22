@@ -18,7 +18,7 @@ function loadContentData(): Record<string, Record<string, string>> {
 function getContentForPath(req: Request, contentData: Record<string, Record<string, string>>): Record<string, string> {
   const parsedPath = parsePlaceholdersFromPath(req.path)
   const subPaths = getParentPathsForSubPath(parsedPath)
-  console.log(
+  logger.info(
     `Getting content for path ${req.path} (parsed as ${parsedPath}) with subpaths ${JSON.stringify(subPaths)}`,
   )
   const content = {} as Record<string, string>
