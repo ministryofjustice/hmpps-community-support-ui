@@ -109,7 +109,7 @@ export default class RecordSessionAttendancePresenter extends PresenterBase<
     }
   }
 
-  private buildForm(content: FormContent, fake: number = 0): RecordSessionAttendanceFormViewModel | undefined {
+  private buildForm(content: FormContent): RecordSessionAttendanceFormViewModel | undefined {
     return {
       radios: this.buildRadios('attended', content.radios),
       button: {
