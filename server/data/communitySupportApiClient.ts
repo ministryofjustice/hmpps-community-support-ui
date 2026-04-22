@@ -13,6 +13,7 @@ import type {
   ReferralUserAssignmentsResponse,
   CaseWorkerDto,
   ReferralDetailsResponseDto,
+  CreateAppointmentRequest,
   AppointmentIcsResponse,
   ReferralProgress,
   ProbationOffice,
@@ -78,6 +79,14 @@ export default class CommunitySupportApiClient extends RestClient {
 
   getICS(caseRefId: string, username: string): Promise<AppointmentIcsResponse> {
     return this.get({ path: `/bff/referral-details/${caseRefId}/ics` }, asSystem(username))
+  }
+
+  async submitICS(
+    caseRefId: string,
+    createAppointmentRequest: CreateAppointmentRequest,
+    username: string,
+  ): Promise<AppointmentIcsResponse> {
+    return this.post({ path: `/bff/referral/${caseRefId}/ics`, data: createAppointmentRequest }, asSystem(username))
   }
 
   getReferralProgress(caseReference: string, username: string): Promise<ReferralProgress> {

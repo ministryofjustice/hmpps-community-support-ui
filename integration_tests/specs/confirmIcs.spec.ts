@@ -1,12 +1,15 @@
 import { expect, test } from '@playwright/test'
+import { ReferralProgress } from '@community-support-api'
 import { login, resetStubs, seedAppointmentSession } from '../testUtils'
 import ConfirmIcsPage from '../pages/confirmIcsPage'
 import communitySupport from '../mockApis/communitySupport'
 import prisonApi from '../mockApis/prisonApi'
+import buildReferralProgress from '../../server/testutils/buildReferralProgress'
 import { probationOfficesData } from '../mockData/referenceData'
 import ScheduleIcsPage from '../pages/scheduleIcsPage'
 
 const REFERRAL_ID = 'b190ac1e-1e2a-41c2-a4ac-3ceb9d2dcb1e' as const
+const REFERRAL_PROGRESS_URL = `/progress/${REFERRAL_ID}`
 
 function addDays(days: number): Date {
   const date = new Date()
@@ -72,9 +75,36 @@ const pastAppointmentRequest = {
   sessionCommunication: ['Phone call'],
 }
 
+const mockAppointmentIcsResponse = {
+  appointmentIcsId: '123e4567-e89b-12d3-a456-426614174000',
+  appointmentId: '987fcdeb-51a2-43e8-9f9b-123456789abc',
+  referralId: REFERRAL_ID,
+  appointmentType: 'ICS' as const,
+  appointmentDate: '2026-05-15',
+  appointmentTime: {
+    hour: 14,
+    minute: 30,
+    amPm: 'PM',
+  },
+  appointmentStatus: 'SCHEDULED' as const,
+  sessionMethod: {
+    type: 'IN_PERSON' as const,
+    appointmentCategory: 'IN_PERSON' as const,
+  } as const,
+  sessionCommunications: ['email', 'phone'],
+  referralFirstName: 'John',
+  referralLastName: 'Smith',
+  createdAt: '2026-04-22T10:15:30Z',
+}
+
 test.describe('Confirm ICS Page', () => {
+  const referralProgressWithAppointments: ReferralProgress = buildReferralProgress([
+    { events: [{ status: 'SCHEDULED' }] },
+  ])
+
   test.beforeEach(async ({ page }) => {
     await resetStubs()
+    await communitySupport.stubGetReferralProgress(referralProgressWithAppointments, REFERRAL_ID)
     await page.goto('/')
     await login(page)
   })
@@ -165,5 +195,17 @@ test.describe('Confirm ICS Page', () => {
     await page.goto(ConfirmIcsPage.url(REFERRAL_ID))
     const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
     await expect(confirmIcsPage.locationRow).not.toBeVisible()
+  })
+
+  test('should submit the ics and navigate to the progress screen', async ({ page }) => {
+    await seedAppointmentSession(page, phoneAppointmentRequest)
+    await communitySupport.stubSubmitICS(REFERRAL_ID, mockAppointmentIcsResponse, 200)
+    await page.goto(ConfirmIcsPage.url(REFERRAL_ID))
+    const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
+    await expect(confirmIcsPage.submitButton).toBeVisible()
+    await confirmIcsPage.submitButton.click()
+    await test.step('should navigate to the progress screen', async () => {
+      await expect(page).toHaveURL(REFERRAL_PROGRESS_URL)
+    })
   })
 })
