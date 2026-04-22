@@ -17,15 +17,15 @@ function loadContentData(): Record<string, Record<string, string>> {
 
 function getContentForPath(req: Request, contentData: Record<string, Record<string, string>>): Record<string, string> {
   const parsedPath = parsePlaceholdersFromPath(req.path)
-  const subPaths = getParentPathsForSubPath(parsedPath)
+  const parentPaths = getParentPathsForSubPath(parsedPath)
   logger.info(
-    `Getting content for path ${req.path} (parsed as ${parsedPath}) with subpaths ${JSON.stringify(subPaths)}`,
+    `Getting content for path ${req.path} (parsed as ${parsedPath}) with subpaths ${JSON.stringify(parentPaths)}`,
   )
   const content = {} as Record<string, string>
-  for (const subPath of subPaths) {
-    const contentForSubPath = contentData[subPath]
-    if (contentForSubPath) {
-      Object.assign(content, contentForSubPath)
+  for (const parentPath of parentPaths) {
+    const contentForParentPath = contentData[parentPath]
+    if (contentForParentPath) {
+      Object.assign(content, contentForParentPath)
     }
   }
   const contentForFullPath = contentData[parsedPath] || {}
