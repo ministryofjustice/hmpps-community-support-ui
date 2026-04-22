@@ -17,7 +17,32 @@ function loadContentData(): Record<string, Record<string, string>> {
 
 function getContentForPath(req: Request, contentData: Record<string, Record<string, string>>): Record<string, string> {
   const parsedPath = parsePlaceholdersFromPath(req.path)
-  return contentData[parsedPath] || {}
+  const subPaths = getParentPathsForSubPath(parsedPath)
+  console.log(
+    `Getting content for path ${req.path} (parsed as ${parsedPath}) with subpaths ${JSON.stringify(subPaths)}`,
+  )
+  const content = {} as Record<string, string>
+  for (const subPath of subPaths) {
+    const contentForSubPath = contentData[subPath]
+    if (contentForSubPath) {
+      Object.assign(content, contentForSubPath)
+    }
+  }
+  const contentForFullPath = contentData[parsedPath] || {}
+  const mergedContent = contentForFullPath ? { ...content, ...contentForFullPath } : content
+  return mergedContent
+}
+
+function getParentPathsForSubPath(subPath: string): Array<string> {
+  const paths = Array<string>()
+  const pathElements = subPath.split('/').filter(element => element !== '')
+
+  pathElements.pop()
+  while (pathElements.length > 0) {
+    paths.push(`/${pathElements.join('/')}`)
+    pathElements.pop()
+  }
+  return paths
 }
 
 function parsePlaceholdersFromPath(pathToParse: string): string {
