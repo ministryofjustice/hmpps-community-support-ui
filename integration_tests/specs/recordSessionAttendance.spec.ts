@@ -57,7 +57,6 @@ test.describe('RecordSessionAttendancePage', () => {
 
   // IPB-2208:AC2
   test('No option to record feedback before session time', async ({ page }) => {
-    console.log(new Date())
     await test.step('go to initial contact session details page', async () => {
       await page.goto(RecordSessionAttendancePage.url(futureMeeting.caseRefId))
     })
