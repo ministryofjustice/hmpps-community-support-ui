@@ -8,6 +8,7 @@ import AppointmentService from '../services/AppointmentService'
 import ScheduleIcsPresenter from './schedule-ics/scheduleIcsPresenter'
 import ReferenceDataService from '../services/referenceDataService'
 import { validateDate, DateValidationOptions, validateTime, TimeValidationOptions } from '../utils/validateDateTime'
+import RecordSessionAttendancePresenter from './record-ics/RecordSessionAttendancePresenter'
 
 const DEFAULT_VALIDATE_DATE_OPTIONS: DateValidationOptions = {
   dateFormat: 'd/M/yyyy',
@@ -539,6 +540,15 @@ class AppointmentController {
     return this.appointmentService
       .getICS(caseRefId.toString(), username)
       .then(data => new InitialContactSessionDetailsPresenter(data))
+      .then(presenter => presenter.renderPage(res))
+  }
+
+  attendance(req: Request, res: Response): Promise<void> {
+    const { caseRefId } = req.params
+    const { username } = res.locals.user
+    return this.appointmentService
+      .getICS(caseRefId.toString(), username)
+      .then(data => new RecordSessionAttendancePresenter(caseRefId.toString(), data))
       .then(presenter => presenter.renderPage(res))
   }
 }

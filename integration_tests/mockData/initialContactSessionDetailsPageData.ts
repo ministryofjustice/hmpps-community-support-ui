@@ -1,18 +1,34 @@
 import { AppointmentIcsResponse } from '@community-support-api'
+import { format } from 'date-fns'
 import { randomUUID } from 'node:crypto'
 
+interface DateInfo {
+  date: string
+  hour: number
+  minute: number
+  amPm: string
+}
+
+const getDateInfo = (date: Date): DateInfo => ({
+  date: format(date, 'Y-M-d'),
+  hour: date.getHours(),
+  minute: date.getMinutes(),
+  amPm: format(date, 'aaa'),
+})
+
 class InitialContactSessionDetailsPageData {
-  virtual(): AppointmentIcsResponse {
+  virtual(date: Date = new Date('2026-02-01T10:00:00Z')): AppointmentIcsResponse {
+    const dateInfo = getDateInfo(date)
     return {
       appointmentIcsId: randomUUID(),
       appointmentId: randomUUID(),
       referralId: randomUUID(),
       appointmentType: 'ICS',
-      appointmentDate: '2026-02-01',
+      appointmentDate: dateInfo.date,
       appointmentTime: {
-        hour: 10,
-        minute: 0,
-        amPm: 'am',
+        hour: dateInfo.hour,
+        minute: dateInfo.minute,
+        amPm: dateInfo.amPm,
       },
       appointmentStatus: 'COMPLETED',
       sessionMethod: {
@@ -27,17 +43,18 @@ class InitialContactSessionDetailsPageData {
     }
   }
 
-  inPerson(): AppointmentIcsResponse {
+  inPerson(date: Date = new Date('2026-02-01T09:30:00Z')): AppointmentIcsResponse {
+    const dateInfo = getDateInfo(date)
     return {
       appointmentIcsId: randomUUID(),
       appointmentId: randomUUID(),
       referralId: randomUUID(),
       appointmentType: 'ICS',
-      appointmentDate: '2026-02-10',
+      appointmentDate: dateInfo.date,
       appointmentTime: {
-        hour: 9,
-        minute: 30,
-        amPm: 'am',
+        hour: dateInfo.hour,
+        minute: dateInfo.minute,
+        amPm: dateInfo.amPm,
       },
       appointmentStatus: 'SCHEDULED',
       sessionMethod: {
