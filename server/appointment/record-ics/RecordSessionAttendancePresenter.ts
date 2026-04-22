@@ -52,7 +52,7 @@ export interface RecordSessionAttendanceContent {
   pageHeader: string
   description: string
   appointmentDetails: ApointmentDetailsContent
-  form: FormContent
+  attendanceForm: FormContent
 }
 
 const condiditionalTemplate =
@@ -125,7 +125,7 @@ export default class RecordSessionAttendancePresenter extends PresenterBase<
       pageHeader: content.pageHeader,
       description: content.description,
       appointment: this.buildAppointmentDetails(content.appointmentDetails),
-      form: isPast(getAppointmentDateTime(this.data)) ? this.buildForm(content.form) : undefined,
+      form: isPast(getAppointmentDateTime(this.data)) ? this.buildForm(content.attendanceForm) : undefined,
       submitHref: `/ics-feedback/attendance/${this.caseRefId}`,
     }
   }

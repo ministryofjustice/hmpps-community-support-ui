@@ -164,14 +164,8 @@
       "back": "/progress/{{ id }}"
     }
   },
-  "/ics-feedback/attendance/:id": {
-    "pageHeader": "Record session attendance",
-    "description": "The date and time of the session are a permanent record of where this person was. If the session started late, you must record this as part of the feedback.",
-    "appointmentDetails": {
-      "dateLabel": "Date",
-      "startTimeLabel": "Start time"
-    },
-    "form": {
+  "/ics-feedback": {
+    "attendanceForm": {
       "radios": {
         "heading": "Did the session happen?",
         "hint": "The session happened if something was delivered. ",
@@ -196,6 +190,14 @@
         ]
       },
       "submitButtonText": "Continue"
+    }
+  },
+  "/ics-feedback/attendance/:id": {
+    "pageHeader": "Record session attendance",
+    "description": "The date and time of the session are a permanent record of where this person was. If the session started late, you must record this as part of the feedback.",
+    "appointmentDetails": {
+      "dateLabel": "Date",
+      "startTimeLabel": "Start time"
     }
   }
 }
