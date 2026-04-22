@@ -82,3 +82,13 @@ configured by setting GitHub actions environment variable called `SECURITY_ALERT
 ## Change log
 
 A changelog for the service is available [in this document.](./CHANGELOG.md)
+
+## Content Middleware
+
+A content middleware is setup to inject content from the content file in ./assets/content/content.json where the request
+path or subpath matches a defined path in the content file. i.e a request to the path /home/help would inject content from both "/home" and "/home/help"
+
+Where the path includes a path param such as a UUID or Case Reference the content middleware will strip this to find the
+relevant match and maintain consistency between the defined express route. This means that all requests whether generating by the service
+or added via integration tests must use params that match the format of the intended param and not a random string otherwise the content middleware
+will not parse this correctly and will fail.
