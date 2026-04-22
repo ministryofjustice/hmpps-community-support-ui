@@ -12,7 +12,7 @@ export interface ValidationError {
 
 export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewModel, ScheduleIcsContent> {
   constructor(
-    private readonly referralId: string,
+    private readonly caseReference: string,
     private readonly probationOffices: ProbationOffice[],
     private readonly prisons: Prison[],
     private readonly referralInformation: ReferralInformation,
@@ -65,8 +65,8 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
     const content = this.buildStaticContent(res)
     viewModel.pageHeader = content.pageHeader
     viewModel.submitButtonText = content.submitButtonText
-    viewModel.submitHref = `/referral/${this.referralId}/appointment/schedule-ics`
-    viewModel.backlinkHref = `/referral-details/${this.referralId}/progress`
+    viewModel.submitHref = `/referral/${this.caseReference}/appointment/schedule-ics`
+    viewModel.backlinkHref = `/progress/${this.caseReference}`
     viewModel.probationOfficesSelectItems = this.buildProbationOfficesSelectItems()
     viewModel.prisonsSelectItems = this.buildPrisonsSelectItems()
     viewModel.serviceName = this.referralInformation.communityServiceProviderName
