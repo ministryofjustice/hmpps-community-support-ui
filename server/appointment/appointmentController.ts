@@ -551,6 +551,20 @@ class AppointmentController {
       .then(data => new RecordSessionAttendancePresenter(caseRefId.toString(), data))
       .then(presenter => presenter.renderPage(res))
   }
+
+  async submitIcs(req: Request, res: Response): Promise<void> {
+    const { referralId } = req.params as { referralId: string }
+    const { username } = res.locals.user
+    const createAppointmentRequest = req.session?.createAppointmentRequest
+    if (createAppointmentRequest) {
+      const response = await this.appointmentService.submitICS(referralId, createAppointmentRequest, username)
+      if (response) {
+        delete req.session.createAppointmentRequest
+      }
+      return res.redirect(`/progress/${referralId}`)
+    }
+    return res.redirect(`/referral/${referralId}/appointment/schedule-ics`)
+  }
 }
 
 export default AppointmentController

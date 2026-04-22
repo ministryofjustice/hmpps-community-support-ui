@@ -705,7 +705,6 @@ export interface operations {
       query?: never
       header?: never
       path: {
-        referralId: string
         icsId: string
       }
       cookie?: never
