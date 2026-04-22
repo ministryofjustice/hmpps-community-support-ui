@@ -116,7 +116,7 @@ test.describe('RecordSessionAttendancePage', () => {
       await expect(item2.label).toHaveText('No')
     })
     await test.step('session happend radios have the correct content', async () => {
-      const [_, attendNo] = recordSessionAttendancePage.attendedRadios.items
+      const [, attendNo] = recordSessionAttendancePage.attendedRadios.items
       await attendNo.input.click()
       expect(recordSessionAttendancePage.sessionHappenedRadios.items).toHaveLength(2)
       const [item1, item2] = recordSessionAttendancePage.sessionHappenedRadios.items
@@ -164,7 +164,7 @@ test.describe('RecordSessionAttendancePage', () => {
     const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
     await test.step('check content', async () => {
       const { summary } = recordSessionAttendancePage
-      const [_, row] = summary.rows
+      const [, row] = summary.rows
       expect(row).toBeDefined()
       const { value } = row
       await expect(value).toHaveText('9:30am')
@@ -178,7 +178,7 @@ test.describe('RecordSessionAttendancePage', () => {
     const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
     await test.step('check content', async () => {
       const { summary } = recordSessionAttendancePage
-      const [_, row] = summary.rows
+      const [, row] = summary.rows
       expect(row).toBeDefined()
       const { value } = row
       await expect(value).toHaveText('2:30pm')
