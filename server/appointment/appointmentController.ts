@@ -9,6 +9,7 @@ import ScheduleIcsPresenter from './schedule-ics/scheduleIcsPresenter'
 import ReferenceDataService from '../services/referenceDataService'
 import { validateDate, DateValidationOptions, validateTime, TimeValidationOptions } from '../utils/validateDateTime'
 import RecordSessionAttendancePresenter from './record-ics/RecordSessionAttendancePresenter'
+import IcsFeedbackCheckYourAnswersPresenter from './check-ics-feedback/icsFeedbackCheckYourAnswersPresenter'
 
 const DEFAULT_VALIDATE_DATE_OPTIONS: DateValidationOptions = {
   dateFormat: 'd/M/yyyy',
@@ -564,6 +565,17 @@ class AppointmentController {
       return res.redirect(`/progress/${referralId}`)
     }
     return res.redirect(`/referral/${referralId}/appointment/schedule-ics`)
+  }
+
+  async checkFeedback(req: Request, res: Response): Promise<void> {
+    const { caseRefId } = req.params
+    const { IcsFeedbackSubmission } = req.session || null
+    if (IcsFeedbackSubmission) {
+      const presenter = new IcsFeedbackCheckYourAnswersPresenter(IcsFeedbackSubmission)
+      presenter.renderPage(res)
+    } else {
+      res.redirect(`/progress/${caseRefId}`)
+    }
   }
 }
 

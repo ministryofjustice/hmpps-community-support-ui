@@ -101,5 +101,7 @@ export default function routes({
 
   get('/ics-feedback/attendance/:caseRefId', async (req, res) => appointmentController.attendance(req, res))
 
+  get('/ics-feedback/feedback/:caseRefId', async (req, res) => appointmentController.checkFeedback(req, res))
+
   return router
 }

@@ -3,6 +3,7 @@ import {
   ReferralUserAssignmentResponse,
   CreateAppointmentRequest,
   ReferralInformationDto,
+  IcsFeedbackSubmission,
 } from '@community-support-api'
 import { HmppsUser } from '../../interfaces/hmppsUser'
 
@@ -15,6 +16,7 @@ export declare module 'express-session' {
     assignmentResults: ReferralUserAssignmentResponse
     createAppointmentRequest: CreateAppointmentRequest
     referralInformation: ReferralInformationDto
+    IcsFeedbackSubmission: IcsFeedbackSubmission
   }
 }
 

@@ -1,0 +1,24 @@
+{% extends "../partials/layout.njk" %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
+{% set pageTitle = applicationName + " - Referral" %}
+{% set mainClasses = "govuk-body" %}
+
+{% block content %}
+
+<h1 class="govuk-heading-xl">{{ content.pageHeader }}</h1>
+    {% for feedbackSummary in content.feedbackSummarys %}
+       {{ govukSummaryList(feedbackSummary) }}
+    {% endfor %}
+
+    <form method="post" action="{{ content.submitHref }}">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    {{ govukButton({
+        text: content.submitButtonText,
+        classes: "govuk-!-margin-top-6"
+    }) }}
+    </form>
+
+{% endblock %}
