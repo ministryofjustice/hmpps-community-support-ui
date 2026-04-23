@@ -61,6 +61,7 @@ export interface RecordSessionAttendanceContent {
   description: string
   appointmentDetails: ApointmentDetailsContent
   attendanceForm: FormContent
+  backLink: string
 }
 
 const condiditionalTemplate =
@@ -202,7 +203,7 @@ export default class RecordSessionAttendancePresenter extends PresenterBase<
     console.log('errorLookup :', errorLookup)
     return {
       errorSummary: this.buildErrorSummary(renderedErrorLookup),
-      backLink: { href: '#' },
+      backLink: { href: nunjucks.renderString(content.backLink, { id: this.caseRefId }) },
       pageHeader: content.pageHeader,
       description: content.description,
       appointment: this.buildAppointmentDetails(content.appointmentDetails),

@@ -202,6 +202,7 @@
     "appointmentDetails": {
       "dateLabel": "Date",
       "startTimeLabel": "Start time"
-    }
+    },
+    "backLink": "/progress/{{ id }}"
   }
 }

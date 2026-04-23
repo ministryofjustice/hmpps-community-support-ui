@@ -274,4 +274,15 @@ test.describe('RecordSessionAttendancePage', () => {
       })
     })
   })
+  // IPB-2208:AC11 covered by AC4
+
+  // IPB-2208:AC12
+  test('Navigate back to the referral progress screen', async ({ page }) => {
+    await test.step('go to initial contact session details page', async () => {
+      await page.goto(RecordSessionAttendancePage.url(pastMeeting.caseRefId))
+    })
+    const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
+    await recordSessionAttendancePage.backLink.click()
+    await expect(page).toHaveURL(ReferralProgressPage.url(pastMeeting.caseRefId))
+  })
 })
