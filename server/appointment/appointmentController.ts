@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { CreateAppointmentRequest, SessionMethodRequest, ReferralInformation } from '@community-support-api'
 import { format, parse } from 'date-fns'
-import ConfirmIcsPresenter from './confirm-ics/confirmIcsPresenter'
+import ConfirmIcsPresenter, { type AdditionalInformation } from './confirm-ics/confirmIcsPresenter'
 import InitialContactSessionDetailsPresenter from '../referral/InitialContactSessionDetailsPresenter'
 import ReferralService from '../services/referralService'
 import AppointmentService from '../services/AppointmentService'
@@ -60,13 +60,15 @@ class AppointmentController {
   ) {}
 
   async checkIcs(req: Request, res: Response): Promise<void> {
+    const { username } = res.locals.user
     const { referralId } = req.params as { referralId: string }
     const createAppointmentRequest = req.session?.createAppointmentRequest
     if (!createAppointmentRequest) {
       return res.redirect(`/referral/${referralId}/appointment/schedule-ics`)
     }
-
-    const presenter = new ConfirmIcsPresenter(createAppointmentRequest, referralId)
+    const referralInformation = await this.referralService.getReferralInformation(referralId, username)
+    const additionalDetails: AdditionalInformation = { firstName: referralInformation.firstName }
+    const presenter = new ConfirmIcsPresenter(createAppointmentRequest, referralId, additionalDetails)
     return presenter.renderPage(res)
   }
 

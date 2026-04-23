@@ -4,10 +4,15 @@ import { Response } from 'express'
 import PresenterBase from '../../presenter/presenterBase'
 import { ConfirmIcsContent, ConfirmIcsViewModel } from './confirmIcsViewModel'
 
+export type AdditionalInformation = {
+  firstName: string
+}
+
 export default class ConfirmIcsPresenter extends PresenterBase<ConfirmIcsViewModel, ConfirmIcsContent> {
   constructor(
     private readonly createAppointmentRequest: CreateAppointmentRequest,
     private readonly referralId: string,
+    private readonly additionalInformation: AdditionalInformation,
   ) {
     super()
   }
@@ -54,11 +59,24 @@ export default class ConfirmIcsPresenter extends PresenterBase<ConfirmIcsViewMod
     return methods[type] ?? type
   }
 
+  private formatSessionCommunication(input: string): string {
+    const communications: Record<string, string> = {
+      informedByPhone: 'Phone call',
+      informedByEmail: 'Email',
+      informedByTextMessage: 'Text message',
+    }
+    return communications[input] ?? input
+  }
+
   private buildIcsDetailsSummary(): GovukFrontendSummaryList {
     const { date, time, sessionMethodRequest, sessionCommunication } = this.createAppointmentRequest
     const isNotInPerson = sessionMethodRequest.type === 'PHONE' || sessionMethodRequest.type === 'VIDEO'
     const isInPerson =
       sessionMethodRequest.type === 'PROBATION_OFFICE' || sessionMethodRequest.type === 'OTHER_LOCATION'
+
+    const sessionCommunications: string[] = sessionCommunication.map(communication =>
+      this.formatSessionCommunication(communication),
+    )
 
     const rows = [
       {
@@ -93,8 +111,8 @@ export default class ConfirmIcsPresenter extends PresenterBase<ConfirmIcsViewMod
           ]
         : []),
       {
-        key: { text: 'How the person was informed about the session' },
-        value: { text: sessionCommunication.join(', ') },
+        key: { text: `How ${this.additionalInformation.firstName} was informed about the session` },
+        value: { text: sessionCommunications.join(', ') },
       },
     ]
 

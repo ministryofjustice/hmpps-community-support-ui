@@ -1,7 +1,7 @@
 import { Response } from 'express'
 import { CreateAppointmentRequest } from '@community-support-api'
 import type { ConfirmIcsContent, ConfirmIcsViewModel } from './confirmIcsViewModel'
-import ConfirmIcsPresenter from './confirmIcsPresenter'
+import ConfirmIcsPresenter, { type AdditionalInformation } from './confirmIcsPresenter'
 import ConfirmIcsContentFactory from '../../testutils/factories/ConfirmIcsContent'
 
 function addDays(days: number): Date {
@@ -38,6 +38,10 @@ describe('ConfirmIcsPresenter', () => {
     sessionCommunication: ['Phone call'],
   }
 
+  const additionInformation: AdditionalInformation = {
+    firstName: 'John',
+  }
+
   beforeEach(() => {
     content = ConfirmIcsContentFactory.build()
     res = {
@@ -49,13 +53,13 @@ describe('ConfirmIcsPresenter', () => {
 
   describe('renderPage', () => {
     it('should render the confirm ICS page with correct template', () => {
-      const presenter = new ConfirmIcsPresenter(baseRequest, referralId)
+      const presenter = new ConfirmIcsPresenter(baseRequest, referralId, additionInformation)
       presenter.renderPage(res)
       expect(res.render).toHaveBeenCalledWith('appointment/confirmIcs', expect.objectContaining({}))
     })
 
     it('should include the page header and submit button text from content', () => {
-      const presenter = new ConfirmIcsPresenter(baseRequest, referralId)
+      const presenter = new ConfirmIcsPresenter(baseRequest, referralId, additionInformation)
       presenter.renderPage(res)
       expect(res.render).toHaveBeenCalledWith(
         'appointment/confirmIcs',
@@ -69,7 +73,7 @@ describe('ConfirmIcsPresenter', () => {
     })
 
     it('should include the correct submit and backlink href', () => {
-      const presenter = new ConfirmIcsPresenter(baseRequest, referralId)
+      const presenter = new ConfirmIcsPresenter(baseRequest, referralId, additionInformation)
       presenter.renderPage(res)
       expect(res.render).toHaveBeenCalledWith(
         'appointment/confirmIcs',
@@ -83,7 +87,7 @@ describe('ConfirmIcsPresenter', () => {
     })
 
     it('should build the ICS details summary with formatted date and time', () => {
-      const presenter = new ConfirmIcsPresenter(baseRequest, referralId)
+      const presenter = new ConfirmIcsPresenter(baseRequest, referralId, additionInformation)
       presenter.renderPage(res)
 
       const renderCall = (res.render as jest.Mock).mock.calls[0]
@@ -95,7 +99,7 @@ describe('ConfirmIcsPresenter', () => {
     })
 
     it('should format the session method as a display string', () => {
-      const presenter = new ConfirmIcsPresenter(baseRequest, referralId)
+      const presenter = new ConfirmIcsPresenter(baseRequest, referralId, additionInformation)
       presenter.renderPage(res)
 
       const renderCall = (res.render as jest.Mock).mock.calls[0]
@@ -106,7 +110,7 @@ describe('ConfirmIcsPresenter', () => {
     })
 
     it('should include reason session is not in-person when method is not PROBATION_OFFICE', () => {
-      const presenter = new ConfirmIcsPresenter(baseRequest, referralId)
+      const presenter = new ConfirmIcsPresenter(baseRequest, referralId, additionInformation)
       presenter.renderPage(res)
 
       const renderCall = (res.render as jest.Mock).mock.calls[0]
@@ -124,7 +128,7 @@ describe('ConfirmIcsPresenter', () => {
         ...baseRequest,
         sessionMethodRequest: { type: 'PROBATION_OFFICE' },
       }
-      const presenter = new ConfirmIcsPresenter(inPersonRequest, referralId)
+      const presenter = new ConfirmIcsPresenter(inPersonRequest, referralId, additionInformation)
       presenter.renderPage(res)
 
       const renderCall = (res.render as jest.Mock).mock.calls[0]
@@ -136,7 +140,7 @@ describe('ConfirmIcsPresenter', () => {
     })
 
     it('should include how the person was informed about the session', () => {
-      const presenter = new ConfirmIcsPresenter(baseRequest, referralId)
+      const presenter = new ConfirmIcsPresenter(baseRequest, referralId, additionInformation)
       presenter.renderPage(res)
 
       const renderCall = (res.render as jest.Mock).mock.calls[0]
@@ -144,13 +148,13 @@ describe('ConfirmIcsPresenter', () => {
       const lastRow = viewModel.icsDetailsSummary.rows.at(-1)
 
       expect(lastRow).toEqual({
-        key: { text: 'How the person was informed about the session' },
+        key: { text: `How ${additionInformation.firstName} was informed about the session` },
         value: { text: 'Phone call' },
       })
     })
 
     it('should include a Change action link in the ICS details card', () => {
-      const presenter = new ConfirmIcsPresenter(baseRequest, referralId)
+      const presenter = new ConfirmIcsPresenter(baseRequest, referralId, additionInformation)
       presenter.renderPage(res)
 
       const renderCall = (res.render as jest.Mock).mock.calls[0]
@@ -169,7 +173,7 @@ describe('ConfirmIcsPresenter', () => {
           ...baseRequest,
           sessionMethodRequest: { type: 'PROBATION_OFFICE' },
         }
-        const presenter = new ConfirmIcsPresenter(inPersonRequest, referralId)
+        const presenter = new ConfirmIcsPresenter(inPersonRequest, referralId, additionInformation)
         presenter.renderPage(res)
 
         const renderCall = (res.render as jest.Mock).mock.calls[0]
@@ -191,7 +195,7 @@ describe('ConfirmIcsPresenter', () => {
             postcode: 'LS1 1AA',
           },
         }
-        const presenter = new ConfirmIcsPresenter(otherLocationRequest, referralId)
+        const presenter = new ConfirmIcsPresenter(otherLocationRequest, referralId, additionInformation)
         presenter.renderPage(res)
 
         const renderCall = (res.render as jest.Mock).mock.calls[0]
@@ -214,7 +218,7 @@ describe('ConfirmIcsPresenter', () => {
             postcode: 'LS1 1AA',
           },
         }
-        const presenter = new ConfirmIcsPresenter(otherLocationRequest, referralId)
+        const presenter = new ConfirmIcsPresenter(otherLocationRequest, referralId, additionInformation)
         presenter.renderPage(res)
 
         const renderCall = (res.render as jest.Mock).mock.calls[0]
@@ -228,7 +232,7 @@ describe('ConfirmIcsPresenter', () => {
       })
 
       it('should not include a Location row for non-in-person sessions', () => {
-        const presenter = new ConfirmIcsPresenter(baseRequest, referralId)
+        const presenter = new ConfirmIcsPresenter(baseRequest, referralId, additionInformation)
         presenter.renderPage(res)
 
         const renderCall = (res.render as jest.Mock).mock.calls[0]
@@ -246,7 +250,7 @@ describe('ConfirmIcsPresenter', () => {
           date: '2020-01-01',
           time: { hour: 9, minute: 0, amPm: 'am' },
         }
-        const presenter = new ConfirmIcsPresenter(pastRequest, referralId)
+        const presenter = new ConfirmIcsPresenter(pastRequest, referralId, additionInformation)
         presenter.renderPage(res)
 
         const renderCall = (res.render as jest.Mock).mock.calls[0]
@@ -264,7 +268,7 @@ describe('ConfirmIcsPresenter', () => {
           date: '2099-12-31',
           time: { hour: 11, minute: 59, amPm: 'pm' },
         }
-        const presenter = new ConfirmIcsPresenter(futureRequest, referralId)
+        const presenter = new ConfirmIcsPresenter(futureRequest, referralId, additionInformation)
         presenter.renderPage(res)
 
         const renderCall = (res.render as jest.Mock).mock.calls[0]
