@@ -37,6 +37,7 @@ function appSetup(services: Services, production: boolean, userSupplier: () => H
     req.flash = flashProvider
     res.locals = {
       user: { ...req.user } as HmppsUser,
+      errors: {} as Express.Locals['errors'],
     }
     next()
   })

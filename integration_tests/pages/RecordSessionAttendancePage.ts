@@ -19,9 +19,8 @@ export default class RecordSessionAttendancePage extends AbstractPage {
     super(page)
   }
 
-  static url(caseRefId: string, error: string | undefined = undefined): string {
-    const base = `/ics-feedback/attendance/${caseRefId}`
-    return error ? `${base}?error=${error}` : base
+  static url(caseRefId: string): string {
+    return `/ics-feedback/${caseRefId}/attendance`
   }
 
   static async verifyOnPage(page: Page): Promise<RecordSessionAttendancePage> {

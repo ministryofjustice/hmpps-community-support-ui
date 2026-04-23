@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import { AppointmentIcsResponse, CreateAppointmentRequest, IcsFeedbackSubmission } from '@community-support-api'
+import { randomUUID } from 'crypto'
 import AppointmentController from './appointmentController'
 import ConfirmIcsPresenter, { type AdditionalInformation } from './confirm-ics/confirmIcsPresenter'
 import ScheduleIcsPresenter from './schedule-ics/scheduleIcsPresenter'
@@ -205,6 +206,128 @@ describe('AppointmentController', () => {
         expect.any(Object),
       )
       expect(ScheduleIcsPresenter.prototype.renderPage).toHaveBeenCalledWith(scheduleIcsRes)
+    })
+  })
+
+  describe('recordAttendance', () => {
+    beforeEach(() => {
+      const content = {
+        pageHeader: 'Record session attendance',
+        description:
+          'The date and time of the session are a permanent record of where this person was. If the session started late, you must record this as part of the feedback.',
+        appointmentDetails: {
+          dateLabel: 'Date',
+          startTimeLabel: 'Start time',
+        },
+        backLink: '/progress/id',
+        attendanceForm: {
+          radios: {
+            id: 'happened',
+            heading: 'Did the session happen?',
+            hint: 'The session happened if something was delivered. ',
+            error: 'Select yes if the session happened',
+            options: [
+              {
+                label: 'Yes',
+              },
+              {
+                label: 'No',
+                radios: {
+                  id: 'attended',
+                  heading: 'Did firstname come to the appointment?',
+                  error: 'Select yes if firstname came to the appointment',
+                  options: [
+                    {
+                      label: 'Yes',
+                    },
+                    {
+                      label: 'No',
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+          submitButtonText: 'Continue',
+        },
+      } as const
+      res.locals.content = content
+    })
+    test('nothing selected', async () => {
+      const caseRefId = randomUUID()
+      req = { ...req, params: { caseRefId }, body: {} } as unknown as Request
+      await appointmentController.recordIcsAppointmentAttendance(req, res)
+      {
+        const { formKeys } = req.session
+        expect(formKeys).toHaveLength(2)
+        expect(formKeys).toContain('happened')
+        expect(formKeys).toContain('attended')
+      }
+
+      expect(req.flash).toHaveBeenCalledWith('happenedError', 'Select yes if the session happened')
+      expect(req.flash).not.toHaveBeenCalledWith('attendedError')
+      expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseRefId}/attendance`)
+    })
+    test('happened selected, but attended unselected', async () => {
+      const caseRefId = randomUUID()
+      req = { ...req, params: { caseRefId }, body: { happened: 'No' } } as unknown as Request
+      await appointmentController.recordIcsAppointmentAttendance(req, res)
+      {
+        const { formKeys } = req.session
+        expect(formKeys).toHaveLength(2)
+        expect(formKeys).toContain('happened')
+        expect(formKeys).toContain('attended')
+      }
+      expect(req.flash).not.toHaveBeenCalledWith('happenedError')
+      expect(req.flash).toHaveBeenCalledWith('attendedError', 'Select yes if firstname came to the appointment')
+      expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseRefId}/attendance`)
+    })
+    test('bad body data', async () => {
+      const caseRefId = randomUUID()
+      req = { ...req, params: { caseRefId }, body: { message: 'hello' } } as unknown as Request
+      await appointmentController.recordIcsAppointmentAttendance(req, res)
+      {
+        const { formKeys } = req.session
+        expect(formKeys).toHaveLength(2)
+        expect(formKeys).toContain('happened')
+        expect(formKeys).toContain('attended')
+      }
+      expect(req.flash).toHaveBeenCalledWith('happenedError', 'Select yes if the session happened')
+      expect(req.flash).not.toHaveBeenCalledWith('attendedError')
+      expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseRefId}/attendance`)
+    })
+    test('session happened', async () => {
+      const caseRefId = randomUUID()
+      req = { ...req, params: { caseRefId }, body: { happened: 'Yes' } } as unknown as Request
+      await appointmentController.recordIcsAppointmentAttendance(req, res)
+      expect(req.session.IcsFeedbackSubmission).toStrictEqual({
+        record: { didPersonAttend: true, didSessionHappen: true },
+      })
+      expect(req.flash).not.toHaveBeenCalledWith('happenedError')
+      expect(req.flash).not.toHaveBeenCalledWith('attendedError')
+      expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseRefId}/did-session-take-place`)
+    })
+    test('session did not happen but was attended', async () => {
+      const caseRefId = randomUUID()
+      req = { ...req, params: { caseRefId }, body: { happened: 'No', attended: 'Yes' } } as unknown as Request
+      await appointmentController.recordIcsAppointmentAttendance(req, res)
+      expect(req.session.IcsFeedbackSubmission).toStrictEqual({
+        record: { didPersonAttend: true, didSessionHappen: false },
+      })
+      expect(req.flash).not.toHaveBeenCalledWith('happenedError')
+      expect(req.flash).not.toHaveBeenCalledWith('attendedError')
+      expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseRefId}/why-did-the-session-not-happen`)
+    })
+    test('session did not happen and was not attended', async () => {
+      const caseRefId = randomUUID()
+      req = { ...req, params: { caseRefId }, body: { happened: 'No', attended: 'No' } } as unknown as Request
+      await appointmentController.recordIcsAppointmentAttendance(req, res)
+      expect(req.session.IcsFeedbackSubmission).toStrictEqual({
+        record: { didPersonAttend: false, didSessionHappen: false },
+      })
+      expect(req.flash).not.toHaveBeenCalledWith('happenedError')
+      expect(req.flash).not.toHaveBeenCalledWith('attendedError')
+      expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseRefId}/how-they-tried-to-contact-the-person`)
     })
   })
 

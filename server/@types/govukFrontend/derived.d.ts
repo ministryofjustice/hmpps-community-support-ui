@@ -1,5 +1,9 @@
+export type ConditionalInput = {
+  html: string
+}
+
 export type GovukFrontendRadiosItemWithConditional = GovukFrontendRadiosItem & {
-  conditional?: { html: string }
+  conditional?: ConditionalInput
 }
 
 export type GovukFrontendRadiosWithConditional = Omit<GovukFrontendRadios, 'items'> & {

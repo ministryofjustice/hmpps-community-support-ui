@@ -220,10 +220,25 @@
           }
         ]
       },
+      "happenedRadios": {
+        "id": "happened",
+        "heading": "Did the session happen?",
+        "hint": "The session happened if something was delivered. ",
+        "error": "Select yes if the session happened",
+        "yesLabel": "Yes",
+        "noLabel": "No"
+      },
+      "attendedRadios": {
+        "id": "attended",
+        "heading": "Did {{ firstname }} come to the appointment?",
+        "error": "Select yes if {{ firstname }} came to the appointment",
+        "yesLabel": "Yes",
+        "noLabel": "No"
+      },
       "submitButtonText": "Continue"
     }
   },
-  "/ics-feedback/attendance/:id": {
+  "/ics-feedback/:id/attendance": {
     "pageHeader": "Record session attendance",
     "description": "The date and time of the session are a permanent record of where this person was. If the session started late, you must record this as part of the feedback.",
     "appointmentDetails": {
