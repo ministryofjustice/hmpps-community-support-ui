@@ -8,6 +8,7 @@ import initialContactSessionDetailsPageData from '../mockData/initialContactSess
 import RecordSessionAttendancePage from '../pages/RecordSessionAttendancePage'
 import ReferralProgressPage from '../pages/referralProgressPage'
 import buildReferralProgress from '../../server/testutils/buildReferralProgress'
+import FooPage from '../pages/FooPage'
 
 test.describe('RecordSessionAttendancePage', () => {
   const fixedDate = new Date('2026-03-08T09:30:40+00:00')
@@ -284,5 +285,16 @@ test.describe('RecordSessionAttendancePage', () => {
     const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
     await recordSessionAttendancePage.backLink.click()
     await expect(page).toHaveURL(ReferralProgressPage.url(pastMeeting.caseRefId))
+  })
+
+  // IPB-2208:AC13
+  test('Session happened', async ({ page }) => {
+    await test.step('go to initial contact session details page', async () => {
+      await page.goto(RecordSessionAttendancePage.url(pastMeeting.caseRefId))
+    })
+    const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
+    await recordSessionAttendancePage.sessionHappenedRadios.items[0].input.click()
+    await recordSessionAttendancePage.submitButton.click()
+    await expect(page).toHaveURL('/to-do')
   })
 })
