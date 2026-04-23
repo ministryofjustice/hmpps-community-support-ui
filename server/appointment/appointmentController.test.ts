@@ -274,8 +274,9 @@ describe('AppointmentController', () => {
       await appointmentController.recordIcsAppointmentAttendance(req, res)
 
       const { formKeys } = req.session
-      expect(formKeys).toHaveLength(1)
+      expect(formKeys).toHaveLength(2)
       expect(formKeys).toContain('happened')
+      expect(formKeys).toContain('attended')
 
       expect(req.flash).toHaveBeenCalledWith('happenedError', 'Select yes if the session happened')
       expect(req.flash).not.toHaveBeenCalledWith('attendedError')
@@ -287,7 +288,8 @@ describe('AppointmentController', () => {
       await appointmentController.recordIcsAppointmentAttendance(req, res)
 
       const { formKeys } = req.session
-      expect(formKeys).toHaveLength(1)
+      expect(formKeys).toHaveLength(2)
+      expect(formKeys).toContain('attended')
       expect(formKeys).toContain('attended')
 
       expect(req.flash).not.toHaveBeenCalledWith('happenedError')
@@ -300,8 +302,9 @@ describe('AppointmentController', () => {
       await appointmentController.recordIcsAppointmentAttendance(req, res)
 
       const { formKeys } = req.session
-      expect(formKeys).toHaveLength(1)
+      expect(formKeys).toHaveLength(2)
       expect(formKeys).toContain('happened')
+      expect(formKeys).toContain('attended')
 
       expect(req.flash).toHaveBeenCalledWith('happenedError', 'Select yes if the session happened')
       expect(req.flash).not.toHaveBeenCalledWith('attendedError')
