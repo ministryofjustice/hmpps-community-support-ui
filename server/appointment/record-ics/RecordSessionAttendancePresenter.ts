@@ -1,5 +1,10 @@
 import { Response } from 'express'
-import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendSummaryList } from '@govuk-frontend'
+import {
+  GovukFrontendBackLink,
+  GovukFrontendButton,
+  GovukFrontendErrorSummary,
+  GovukFrontendSummaryList,
+} from '@govuk-frontend'
 import { AppointmentIcsResponse } from '@community-support-api'
 import { isPast } from 'date-fns'
 import nunjucks from 'nunjucks'
@@ -19,6 +24,7 @@ export interface RecordSessionAttendanceFormViewModel {
 }
 
 export interface RecordSessionAttendanceViewModel {
+  errorSummary?: GovukFrontendErrorSummary
   pageHeader: string
   description: string
   appointment: GovukFrontendSummaryList
@@ -38,8 +44,10 @@ interface FormOptionContent {
 }
 
 interface RadiosContent {
+  id: string
   heading: string
   hint?: string
+  error: string
   options: FormOptionContent[]
 }
 
@@ -58,15 +66,34 @@ export interface RecordSessionAttendanceContent {
 const condiditionalTemplate =
   `{% from "govuk/components/radios/macro.njk" import govukRadios %}{{ govukRadios(content.radios) }}` as const
 
+const gatherErrors = ({ id, options, error }: RadiosContent): Record<string, string> => {
+  const children = options
+    .map(option => option.radios)
+    .filter(radios => !!radios)
+    .map(radios => gatherErrors)
+    .reduce<Record<string, string>>((acc, child) => ({ ...acc, ...child }), {})
+  const result = { ...children }
+  result[id] = error
+  return result
+}
+
 export default class RecordSessionAttendancePresenter extends PresenterBase<
   RecordSessionAttendanceViewModel,
   RecordSessionAttendanceContent
 > {
+  private readonly errors: string[]
+
   constructor(
     private readonly caseRefId: string,
     private readonly data: AppointmentIcsResponse,
+    error: string | string[] = [],
   ) {
     super()
+    if (typeof error === 'string') {
+      this.errors = [error]
+    } else {
+      this.errors = error
+    }
   }
 
   private buildAppointmentDetails(content: ApointmentDetailsContent): GovukFrontendSummaryList {
@@ -80,7 +107,7 @@ export default class RecordSessionAttendancePresenter extends PresenterBase<
   }
 
   private buildConditional(content: RadiosContent): string {
-    const radios = this.buildRadios('happened', content)
+    const radios = this.buildRadios(content)
     return nunjucks.renderString(condiditionalTemplate, { content: { radios } })
   }
 
@@ -93,34 +120,54 @@ export default class RecordSessionAttendancePresenter extends PresenterBase<
     }
   }
 
-  private buildRadios(name: string, { heading, hint, options }: RadiosContent): GovukFrontendRadiosWithConditional {
+  private buildRadios({ id, heading, hint, options, error }: RadiosContent): GovukFrontendRadiosWithConditional {
     return {
-      name,
+      name: id,
       hint: hint ? { text: hint } : undefined,
-      items: options.map(option => this.buildItem(name, option)),
+      items: options.map(option => this.buildItem(id, option)),
       fieldset: {
-        attributes: { 'data-testid': `fieldset-${name}` },
+        attributes: { 'data-testid': `fieldset-${id}` },
         legend: {
           text: nunjucks.renderString(heading, { firstname: this.data.referralFirstName }),
           classes: 'govuk-fieldset__legend--m',
         },
       },
-      attributes: { 'data-testid': name },
+      errorMessage: this.errors.includes(id)
+        ? {
+            text: error,
+          }
+        : null,
+      attributes: { 'data-testid': id },
     }
   }
 
   private buildForm(content: FormContent): RecordSessionAttendanceFormViewModel | undefined {
     return {
-      radios: this.buildRadios('attended', content.radios),
+      radios: this.buildRadios(content.radios),
       button: {
         text: content.submitButtonText,
       },
     }
   }
 
+  private buildErrorSummary(errorLookup: Record<string, string>): GovukFrontendErrorSummary | undefined {
+    if (this.errors.length === 0) {
+      return undefined
+    }
+    return {
+      titleText: 'There is a problem',
+      errorList: this.errors.map(error => ({ text: errorLookup[error] })),
+      attributes: {
+        'data-testid': 'error-messages',
+      },
+    }
+  }
+
   buildPageContent(res: Response): RecordSessionAttendanceViewModel {
     const content = this.buildStaticContent(res)
+    const errorLookup = gatherErrors(content.attendanceForm.radios)
     return {
+      errorSummary: this.buildErrorSummary(errorLookup),
       backLink: { href: '#' },
       pageHeader: content.pageHeader,
       description: content.description,

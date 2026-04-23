@@ -9,9 +9,11 @@ export default class SummaryList {
     return rowLocator
       .count()
       .then(rowCount =>
-        Array(rowCount)
-          .fill(0)
-          .map((_, i) => SummaryRow.create(rowLocator.nth(i))),
+        rowCount === 0
+          ? [SummaryRow.create(rowLocator)]
+          : Array(rowCount)
+              .fill(0)
+              .map((_, i) => SummaryRow.create(rowLocator.nth(i))),
       )
       .then(rowPromise => Promise.all(rowPromise))
       .then(rows => new SummaryList(summaryLocator, rows))

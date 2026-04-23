@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import { CreateAppointmentRequest, SessionMethodRequest, ReferralInformation } from '@community-support-api'
 import { format, parse } from 'date-fns'
+import z, { ZodError } from 'zod'
 import ConfirmIcsPresenter, { type AdditionalInformation } from './confirm-ics/confirmIcsPresenter'
 import InitialContactSessionDetailsPresenter from '../referral/InitialContactSessionDetailsPresenter'
 import ReferralService from '../services/referralService'
@@ -10,6 +11,9 @@ import ReferenceDataService from '../services/referenceDataService'
 import { validateDate, DateValidationOptions, validateTime, TimeValidationOptions } from '../utils/validateDateTime'
 import RecordSessionAttendancePresenter from './record-ics/RecordSessionAttendancePresenter'
 import IcsFeedbackCheckYourAnswersPresenter from './check-ics-feedback/icsFeedbackCheckYourAnswersPresenter'
+import RecordSessionAttendanceFormData, {
+  RecordSessionAttendanceFormDataSchema,
+} from '../validation/RecordSessionAttendanceFormData'
 
 const DEFAULT_VALIDATE_DATE_OPTIONS: DateValidationOptions = {
   dateFormat: 'd/M/yyyy',
@@ -58,7 +62,7 @@ class AppointmentController {
     private readonly referralService: ReferralService,
     private readonly appointmentService: AppointmentService,
     private readonly referenceDataService: ReferenceDataService,
-  ) {}
+  ) { }
 
   async checkIcs(req: Request, res: Response): Promise<void> {
     const { username } = res.locals.user
@@ -549,9 +553,17 @@ class AppointmentController {
   attendance(req: Request, res: Response): Promise<void> {
     const { caseRefId } = req.params
     const { username } = res.locals.user
+    console.log(req.query)
+    const querySchema = z.object({
+      error: z
+        .union([z.string(), z.array(z.string())])
+        .optional()
+        .default([]),
+    })
+    const { error } = querySchema.parse(req.query)
     return this.appointmentService
       .getICS(caseRefId.toString(), username)
-      .then(data => new RecordSessionAttendancePresenter(caseRefId.toString(), data))
+      .then(data => new RecordSessionAttendancePresenter(caseRefId.toString(), data, error))
       .then(presenter => presenter.renderPage(res))
   }
 
@@ -578,6 +590,28 @@ class AppointmentController {
     } else {
       res.redirect(`/progress/${caseRefId}`)
     }
+  }
+
+  recordAttendance(req: Request, res: Response): Promise<void> {
+    const { caseRefId } = req.params
+    console.log('raw :', JSON.stringify(req.body))
+    return RecordSessionAttendanceFormDataSchema.parseAsync(req.body)
+      .then(data => {
+        console.log('success :', data)
+        console.log('data.attended :', data.attended)
+        req.session.data = { attendance: data }
+        res.redirect('/to-do')
+      })
+      .catch(error => {
+        if (error instanceof ZodError) {
+          const flat = z.flattenError(error)
+          console.log('errors :', flat)
+          const ids = Object.keys(flat.fieldErrors)
+          res.redirect(`/ics-feedback/attendance/${caseRefId}?error=${ids}`)
+          return
+        }
+        res.redirect('/error')
+      })
   }
 }
 

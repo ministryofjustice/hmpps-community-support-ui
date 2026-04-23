@@ -167,8 +167,10 @@
   "/ics-feedback": {
     "attendanceForm": {
       "radios": {
+        "id": "attended",
         "heading": "Did the session happen?",
         "hint": "The session happened if something was delivered. ",
+        "error": "Select yes if the session happened",
         "options": [
           {
             "label": "Yes"
@@ -176,6 +178,7 @@
           {
             "label": "No",
             "radios": {
+              "id": "happened",
               "heading": "Did {{ firstname }} come to the appointment?",
               "options": [
                 {

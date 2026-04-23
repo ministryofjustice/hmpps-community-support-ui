@@ -186,7 +186,7 @@ test.describe('RecordSessionAttendancePage', () => {
   })
 
   // IPB-2208:AC7
-  test('Select whether the session happened - Yes', async ({ page }) => {
+  test('Select whether the session happened', async ({ page }) => {
     await test.step('go to initial contact session details page', async () => {
       await page.goto(RecordSessionAttendancePage.url(pastMeeting.caseRefId))
     })
@@ -197,19 +197,33 @@ test.describe('RecordSessionAttendancePage', () => {
     await test.step('click submit', async () => {
       await recordSessionAttendancePage.submitButton.click()
     })
+    await expect(page).toHaveURL('/to-do')
   })
 
-  // IPB-2208:AC7
-  test('Select whether the session happened - No', async ({ page }) => {
+  // IPB-2208:AC8
+  test('Error when session happened selection is not made', async ({ page }) => {
     await test.step('go to initial contact session details page', async () => {
       await page.goto(RecordSessionAttendancePage.url(pastMeeting.caseRefId))
     })
     const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
-    await test.step('select attended', async () => {
-      await recordSessionAttendancePage.attendedRadios.items[1].input.click()
-    })
     await test.step('click submit', async () => {
       await recordSessionAttendancePage.submitButton.click()
+    })
+    await expect(page).toHaveURL(RecordSessionAttendancePage.url(pastMeeting.caseRefId, 'attended'))
+    await test.step('check error content', async () => {
+      await test.step('check banner content', async () => {
+        await expect(recordSessionAttendancePage.errorSummary.locator).toBeVisible()
+        await expect(recordSessionAttendancePage.errorSummary.title).toHaveText('There is a problem')
+        expect(recordSessionAttendancePage.errorSummary.list).toBeVisible()
+        expect(recordSessionAttendancePage.errorSummary.items).toHaveLength(1)
+        await expect(recordSessionAttendancePage.errorSummary.items[0]).toHaveText('Select yes if the session happened')
+      })
+      await test.step('check radio content', async () => {
+        await expect(recordSessionAttendancePage.attendedRadios.errorText).toBeVisible()
+        await expect(recordSessionAttendancePage.attendedRadios.errorText).toHaveText(
+          'Error: Select yes if the session happened',
+        )
+      })
     })
   })
 })
