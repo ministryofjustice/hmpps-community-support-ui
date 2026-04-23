@@ -9,7 +9,7 @@ import { MojSubNavigation } from '@moj-frontend'
 import { ReferralProgress, ReferralAppointmentHistory } from '@community-support-api'
 
 import PresenterBase from '../../presenter/presenterBase'
-import { ReferralProgressContent, ReferralProgressViewModel } from './progressViewModel'
+import { ReferralProgressContent, ReferralProgressViewModel } from './referralProgressViewModel'
 
 type TabKey = 'caseDetails' | 'progress' | 'changeLog'
 type StatusKey = ReferralAppointmentHistory['status'] | 'NOT_SCHEDULED'
@@ -60,7 +60,10 @@ const getStatusConfig = (caseReference: string, appointmentId: string = ''): Rec
   },
 })
 
-export default class ProgressPresenter extends PresenterBase<ReferralProgressViewModel, ReferralProgressContent> {
+export default class ReferralProgressPresenter extends PresenterBase<
+  ReferralProgressViewModel,
+  ReferralProgressContent
+> {
   private readonly name: string
 
   private readonly basePath: string

@@ -1,10 +1,10 @@
 import { Response } from 'express'
 import { ReferralProgress } from '@community-support-api'
-import { ReferralProgressContent } from './progressViewModel'
-import ProgressPresenter from './progressPresenter'
+import { ReferralProgressContent } from './referralProgressViewModel'
+import ReferralProgressPresenter from './referralProgressPresenter'
 import buildReferralProgress from '../../testutils/buildReferralProgress'
 
-describe('ProgressPresenter', () => {
+describe('ReferralProgressPresenter', () => {
   const caseReference = 'AB1234CD'
 
   const mockContent: ReferralProgressContent = {
@@ -19,7 +19,7 @@ describe('ProgressPresenter', () => {
 
   it('renders NOT SCHEDULED table correctly when no appointments exist', () => {
     const referralProgressNoAppointments: ReferralProgress = buildReferralProgress([{ events: [] }])
-    const presenter = new ProgressPresenter(referralProgressNoAppointments, caseReference)
+    const presenter = new ReferralProgressPresenter(referralProgressNoAppointments, caseReference)
     const viewModel = presenter.buildPageContent(mockResponse)
 
     expect(viewModel.icsAppointmentTable.head).toEqual([{ text: 'Status' }, { text: 'Action' }])
@@ -44,7 +44,7 @@ describe('ProgressPresenter', () => {
       },
     ])
 
-    const presenter = new ProgressPresenter(referralProgressWithAppointments, caseReference)
+    const presenter = new ReferralProgressPresenter(referralProgressWithAppointments, caseReference)
     const viewModel = presenter.buildPageContent(mockResponse)
     const { rows } = viewModel.icsAppointmentTable
 
@@ -70,7 +70,7 @@ describe('ProgressPresenter', () => {
       },
     ])
 
-    const presenter = new ProgressPresenter(referralProgressWithAppointments, caseReference, true)
+    const presenter = new ReferralProgressPresenter(referralProgressWithAppointments, caseReference, true)
     const viewModel = presenter.buildPageContent(mockResponse)
 
     expect(viewModel.notificationBanner?.type).toEqual('success')
@@ -92,7 +92,7 @@ describe('ProgressPresenter', () => {
       },
     ])
 
-    const presenter = new ProgressPresenter(referralProgressWithAppointments, caseReference, false)
+    const presenter = new ReferralProgressPresenter(referralProgressWithAppointments, caseReference, false)
     const viewModel = presenter.buildPageContent(mockResponse)
 
     expect(viewModel.notificationBanner).toBeUndefined()
@@ -105,7 +105,7 @@ describe('ProgressPresenter', () => {
       },
     ])
 
-    const presenter = new ProgressPresenter(referralProgressWithAppointments, caseReference, true)
+    const presenter = new ReferralProgressPresenter(referralProgressWithAppointments, caseReference, true)
     const viewModel = presenter.buildPageContent(mockResponse)
 
     expect(viewModel.icsAppointmentTable.head).toEqual([
@@ -130,7 +130,7 @@ describe('ProgressPresenter', () => {
       },
     ])
 
-    const presenter = new ProgressPresenter(referralProgressWithAppointments, caseReference)
+    const presenter = new ReferralProgressPresenter(referralProgressWithAppointments, caseReference)
     const viewModel = presenter.buildPageContent(mockResponse)
 
     expect(viewModel.icsAppointmentTable.rows[0][1].html).toContain('Needs feedback')
@@ -150,7 +150,7 @@ describe('ProgressPresenter', () => {
       },
     ])
 
-    const presenter = new ProgressPresenter(referralProgressWithAppointments, caseReference)
+    const presenter = new ReferralProgressPresenter(referralProgressWithAppointments, caseReference)
     const viewModel = presenter.buildPageContent(mockResponse)
 
     expect(viewModel.icsAppointmentTable.rows[0][1].html).toContain('Completed')
@@ -165,7 +165,7 @@ describe('ProgressPresenter', () => {
         events: [{ status: 'DID_NOT_ATTEND', dateTime: '2026-03-27T13:00:00' }],
       },
     ])
-    const presenter = new ProgressPresenter(referralProgressWithAppointments, caseReference)
+    const presenter = new ReferralProgressPresenter(referralProgressWithAppointments, caseReference)
     const viewModel = presenter.buildPageContent(mockResponse)
     const row = viewModel.icsAppointmentTable.rows[0]
 
@@ -180,7 +180,7 @@ describe('ProgressPresenter', () => {
         events: [{ status: 'RESCHEDULED', dateTime: '2026-03-27T13:00:00' }],
       },
     ])
-    const presenter = new ProgressPresenter(referralProgressWithAppointments, caseReference)
+    const presenter = new ReferralProgressPresenter(referralProgressWithAppointments, caseReference)
     const viewModel = presenter.buildPageContent(mockResponse)
     const row = viewModel.icsAppointmentTable.rows[0]
 
