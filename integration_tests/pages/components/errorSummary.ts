@@ -9,7 +9,6 @@ export default class ErrorSummary {
     return itemLocator
       .count()
       .then(count => {
-        console.log('count :', count)
         return count
       })
       .then(itemCount =>
