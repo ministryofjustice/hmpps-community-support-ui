@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { CreateAppointmentRequest } from '@community-support-api'
 import AppointmentController from './appointmentController'
-import ConfirmIcsPresenter from './confirm-ics/confirmIcsPresenter'
+import ConfirmIcsPresenter, { type AdditionalInformation } from './confirm-ics/confirmIcsPresenter'
 import ScheduleIcsPresenter from './schedule-ics/scheduleIcsPresenter'
 import ConfirmIcsContentFactory from '../testutils/factories/ConfirmIcsContent'
 import ReferralService from '../services/referralService'
@@ -43,6 +43,10 @@ describe('AppointmentController', () => {
     sessionCommunication: ['Phone call'],
   }
 
+  const mockAdditionalDetails: AdditionalInformation = {
+    firstName: 'John',
+  }
+
   const mockReferralInformationInCommunity = referralInformationInCommunity
   const mockReferralInformationInPrison = referralInformationInPrison
 
@@ -73,7 +77,7 @@ describe('AppointmentController', () => {
     } as unknown as Request
 
     res = {
-      locals: { content: ConfirmIcsContentFactory.build() },
+      locals: { user: { username: 'user1' }, content: ConfirmIcsContentFactory.build() },
       render: jest.fn(),
       redirect: jest.fn(),
     } as unknown as Response
@@ -113,16 +117,18 @@ describe('AppointmentController', () => {
 
   describe('checkIcs', () => {
     it('should redirect to schedule-ics page when createAppointmentRequest is not in session', async () => {
+      referralService.getReferralInformation.mockResolvedValue(mockReferralInformationInCommunity)
       await appointmentController.checkIcs(req, res)
       expect(res.redirect).toHaveBeenCalledWith(`/referral/${referralId}/appointment/schedule-ics`)
     })
 
     it('should create presenter with createAppointmentRequest from session and render page', async () => {
+      referralService.getReferralInformation.mockResolvedValue(mockReferralInformationInCommunity)
       req.session.createAppointmentRequest = mockCreateAppointmentRequest
 
       await appointmentController.checkIcs(req, res)
 
-      expect(ConfirmIcsPresenter).toHaveBeenCalledWith(mockCreateAppointmentRequest, referralId)
+      expect(ConfirmIcsPresenter).toHaveBeenCalledWith(mockCreateAppointmentRequest, referralId, mockAdditionalDetails)
       expect(ConfirmIcsPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
     })
   })

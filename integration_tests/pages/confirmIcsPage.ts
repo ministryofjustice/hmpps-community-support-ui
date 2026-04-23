@@ -16,6 +16,8 @@ export default class ConfirmIcsPage extends AbstractPage {
 
   readonly locationRow: Locator
 
+  readonly sessionCommunicationLabel: Locator
+
   readonly sessionCommunicationRow: Locator
 
   readonly changeLink: Locator
@@ -39,8 +41,11 @@ export default class ConfirmIcsPage extends AbstractPage {
     this.locationRow = page
       .locator('.govuk-summary-list__row')
       .filter({ has: page.locator('.govuk-summary-list__key', { hasText: 'Location' }) })
+    this.sessionCommunicationLabel = page.locator('.govuk-summary-list__key', {
+      hasText: ' was informed about the session',
+    })
     this.sessionCommunicationRow = page.locator('.govuk-summary-list__row', {
-      hasText: 'How the person was informed about the session',
+      hasText: ' was informed about the session',
     })
     this.changeLink = page.locator('a', { hasText: 'Change' })
     this.submitButton = page.locator('button', { hasText: 'Submit' })

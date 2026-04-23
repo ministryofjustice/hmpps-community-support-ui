@@ -5,6 +5,7 @@ import ConfirmIcsPage from '../pages/confirmIcsPage'
 import communitySupport from '../mockApis/communitySupport'
 import prisonApi from '../mockApis/prisonApi'
 import buildReferralProgress from '../../server/testutils/buildReferralProgress'
+import { referralInformationInCommunity } from '../mockData/referralInformationData'
 import { probationOfficesData } from '../mockData/referenceData'
 import ScheduleIcsPage from '../pages/scheduleIcsPage'
 
@@ -39,7 +40,17 @@ const phoneAppointmentRequest = {
     type: 'PHONE',
     additionalDetails: 'The referral dont have a vehicle',
   },
-  sessionCommunication: ['Phone call'],
+  sessionCommunication: ['informedByPhone'],
+}
+
+const videoAppointmentRequest = {
+  date: futureDateStr,
+  time: { hour: 1, minute: 0, amPm: 'pm' },
+  sessionMethodRequest: {
+    type: 'PHONE',
+    additionalDetails: 'The referral dont have a vehicle',
+  },
+  sessionCommunication: ['informedByVideo'],
 }
 
 const inPersonAppointmentRequest = {
@@ -48,7 +59,7 @@ const inPersonAppointmentRequest = {
   sessionMethodRequest: {
     type: 'PROBATION_OFFICE',
   },
-  sessionCommunication: ['Letter', 'Phone call'],
+  sessionCommunication: ['informedByPhone', 'Letter'],
 }
 
 const otherLocationAppointmentRequest = {
@@ -62,7 +73,7 @@ const otherLocationAppointmentRequest = {
     county: 'West Yorkshire',
     postcode: 'LS1 1AA',
   },
-  sessionCommunication: ['Phone call'],
+  sessionCommunication: ['informedByPhone'],
 }
 
 const pastAppointmentRequest = {
@@ -72,7 +83,7 @@ const pastAppointmentRequest = {
     type: 'PHONE',
     additionalDetails: 'Remote session.',
   },
-  sessionCommunication: ['Phone call'],
+  sessionCommunication: ['informedByPhone'],
 }
 
 const mockAppointmentIcsResponse = {
@@ -91,7 +102,7 @@ const mockAppointmentIcsResponse = {
     type: 'IN_PERSON' as const,
     appointmentCategory: 'IN_PERSON' as const,
   } as const,
-  sessionCommunications: ['email', 'phone'],
+  sessionCommunications: ['informedByEmail', 'informedByPhone'],
   referralFirstName: 'John',
   referralLastName: 'Smith',
   createdAt: '2026-04-22T10:15:30Z',
@@ -104,9 +115,10 @@ test.describe('Confirm ICS Page', () => {
 
   test.beforeEach(async ({ page }) => {
     await resetStubs()
-    await communitySupport.stubGetReferralProgress(referralProgressWithAppointments, REFERRAL_ID)
     await page.goto('/')
     await login(page)
+    await communitySupport.stubGetReferralProgress(referralProgressWithAppointments, REFERRAL_ID)
+    await communitySupport.stubGetReferralInformation(200, REFERRAL_ID, referralInformationInCommunity)
   })
 
   test('should display the ICS details summary card details for a phone appointment', async ({ page }) => {
@@ -121,11 +133,20 @@ test.describe('Confirm ICS Page', () => {
     await expect(confirmIcsPage.sessionCommunicationRow).toContainText('Phone call')
   })
 
+  test('should display the person name in the communication methods label', async ({ page }) => {
+    await seedAppointmentSession(page, inPersonAppointmentRequest)
+    await page.goto(ConfirmIcsPage.url(REFERRAL_ID))
+    const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
+    await expect(confirmIcsPage.sessionCommunicationLabel).toContainText(
+      `How ${referralInformationInCommunity.firstName} was informed about the session`,
+    )
+  })
+
   test('should display multiple session communication methods joined', async ({ page }) => {
     await seedAppointmentSession(page, inPersonAppointmentRequest)
     await page.goto(ConfirmIcsPage.url(REFERRAL_ID))
     const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
-    await expect(confirmIcsPage.sessionCommunicationRow).toContainText('Letter, Phone call')
+    await expect(confirmIcsPage.sessionCommunicationRow).toContainText('Phone call, Letter')
   })
 
   test('should display a Change link in the ICS details card', async ({ page }) => {
@@ -138,7 +159,7 @@ test.describe('Confirm ICS Page', () => {
   })
 
   test('should display the Submit button', async ({ page }) => {
-    await seedAppointmentSession(page, phoneAppointmentRequest)
+    await seedAppointmentSession(page, videoAppointmentRequest)
     await page.goto(ConfirmIcsPage.url(REFERRAL_ID))
     const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
     await expect(confirmIcsPage.submitButton).toBeVisible()
