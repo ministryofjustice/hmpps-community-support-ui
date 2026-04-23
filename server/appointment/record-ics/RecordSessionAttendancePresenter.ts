@@ -70,7 +70,7 @@ const gatherErrors = ({ id, options, error }: RadiosContent): Record<string, str
   const children = options
     .map(option => option.radios)
     .filter(radios => !!radios)
-    .map(radios => gatherErrors)
+    .map(gatherErrors)
     .reduce<Record<string, string>>((acc, child) => ({ ...acc, ...child }), {})
   const result = { ...children }
   result[id] = error
@@ -111,16 +111,43 @@ export default class RecordSessionAttendancePresenter extends PresenterBase<
     return nunjucks.renderString(condiditionalTemplate, { content: { radios } })
   }
 
-  private buildItem(name: string, { label, radios }: FormOptionContent): GovukFrontendRadiosItemWithConditional {
+  private buildItem(
+    name: string,
+    { label, radios }: FormOptionContent,
+    checked: boolean = false,
+  ): GovukFrontendRadiosItemWithConditional {
     return {
       id: `${name}-${label}`,
       value: label,
+      checked,
       text: label,
       conditional: radios ? { html: this.buildConditional(radios) } : undefined,
     }
   }
 
   private buildRadios({ id, heading, hint, options, error }: RadiosContent): GovukFrontendRadiosWithConditional {
+    const renderedHeading = nunjucks.renderString(heading, { firstname: this.data.referralFirstName })
+    const renderedError = nunjucks.renderString(error, { firstname: this.data.referralFirstName })
+    if (id === 'happened' && this.errors.includes('attended')) {
+      return {
+        name: id,
+        hint: hint ? { text: hint } : undefined,
+        items: options.map(option => this.buildItem(id, option, option.label === 'No')),
+        fieldset: {
+          attributes: { 'data-testid': `fieldset-${id}` },
+          legend: {
+            text: renderedHeading,
+            classes: 'govuk-fieldset__legend--m',
+          },
+        },
+        errorMessage: this.errors.includes(id)
+          ? {
+              text: renderedError,
+            }
+          : null,
+        attributes: { 'data-testid': id },
+      }
+    }
     return {
       name: id,
       hint: hint ? { text: hint } : undefined,
@@ -128,13 +155,13 @@ export default class RecordSessionAttendancePresenter extends PresenterBase<
       fieldset: {
         attributes: { 'data-testid': `fieldset-${id}` },
         legend: {
-          text: nunjucks.renderString(heading, { firstname: this.data.referralFirstName }),
+          text: renderedHeading,
           classes: 'govuk-fieldset__legend--m',
         },
       },
       errorMessage: this.errors.includes(id)
         ? {
-            text: error,
+            text: renderedError,
           }
         : null,
       attributes: { 'data-testid': id },
@@ -166,8 +193,15 @@ export default class RecordSessionAttendancePresenter extends PresenterBase<
   buildPageContent(res: Response): RecordSessionAttendanceViewModel {
     const content = this.buildStaticContent(res)
     const errorLookup = gatherErrors(content.attendanceForm.radios)
+    const renderedErrorLookup = Object.fromEntries(
+      Object.entries(errorLookup).map(([key, value]) => [
+        key,
+        nunjucks.renderString(value, { firstname: this.data.referralFirstName }),
+      ]),
+    )
+    console.log('errorLookup :', errorLookup)
     return {
-      errorSummary: this.buildErrorSummary(errorLookup),
+      errorSummary: this.buildErrorSummary(renderedErrorLookup),
       backLink: { href: '#' },
       pageHeader: content.pageHeader,
       description: content.description,

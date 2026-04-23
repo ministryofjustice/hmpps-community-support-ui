@@ -12,8 +12,8 @@ export default class RecordSessionAttendancePage extends AbstractPage {
     readonly subheading: Locator,
     readonly backLink: Locator,
     readonly summary: SummaryList,
-    readonly attendedRadios: RadiosWithFieldSet,
     readonly sessionHappenedRadios: RadiosWithFieldSet,
+    readonly sessionAttendedRadios: RadiosWithFieldSet,
     readonly submitButton: Locator,
   ) {
     super(page)
@@ -31,13 +31,13 @@ export default class RecordSessionAttendancePage extends AbstractPage {
     const subheading = page.locator('[data-testid="subheading"]')
     const backLink = page.getByRole('link', { name: 'Back', exact: true })
     const summary = await SummaryList.create(page.locator('[data-testid="appointment-details"]'))
-    const attended = await RadiosWithFieldSet.create(
-      page.locator('[data-testid="attended"]'),
-      page.locator('[data-testid="fieldset-attended"]'),
-    )
     const happened = await RadiosWithFieldSet.create(
       page.locator('[data-testid="happened"]'),
       page.locator('[data-testid="fieldset-happened"]'),
+    )
+    const attended = await RadiosWithFieldSet.create(
+      page.locator('[data-testid="attended"]'),
+      page.locator('[data-testid="fieldset-attended"]'),
     )
     const submit = page.getByRole('button', { name: 'Continue' })
     return new RecordSessionAttendancePage(
@@ -47,8 +47,8 @@ export default class RecordSessionAttendancePage extends AbstractPage {
       subheading,
       backLink,
       summary,
-      attended,
       happened,
+      attended,
       submit,
     )
   }

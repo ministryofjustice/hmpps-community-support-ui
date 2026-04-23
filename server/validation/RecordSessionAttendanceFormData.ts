@@ -2,11 +2,11 @@ import { z } from 'zod'
 
 const YesOrNoSchema = z.enum(['Yes', 'No'])
 
-export const RecordSessionAttendanceFormDataSchema = z.discriminatedUnion('attended', [
-  z.object({ attended: z.literal('Yes') }),
+export const RecordSessionAttendanceFormDataSchema = z.discriminatedUnion('happened', [
+  z.object({ happened: z.literal('Yes') }),
   z.object({
-    attended: z.literal('No'),
-    happened: YesOrNoSchema,
+    happened: z.literal('No'),
+    attended: YesOrNoSchema,
   }),
 ])
 

@@ -553,7 +553,7 @@ class AppointmentController {
   attendance(req: Request, res: Response): Promise<void> {
     const { caseRefId } = req.params
     const { username } = res.locals.user
-    console.log(req.query)
+    console.log('query :', req.query)
     const querySchema = z.object({
       error: z
         .union([z.string(), z.array(z.string())])
@@ -598,7 +598,6 @@ class AppointmentController {
     return RecordSessionAttendanceFormDataSchema.parseAsync(req.body)
       .then(data => {
         console.log('success :', data)
-        console.log('data.attended :', data.attended)
         req.session.data = { attendance: data }
         res.redirect('/to-do')
       })
