@@ -10,6 +10,7 @@ import ReferralProgressPage from '../pages/referralProgressPage'
 import buildReferralProgress from '../../server/testutils/buildReferralProgress'
 import IcsFeedbackHowSessionTookPlacePage from '../pages/IcsFeedbackHowSessionTookPlacePage'
 import IcsFeedbackWhyDidTheSessionNotHappenPage from '../pages/IcsFeedbackWhyDidTheSessionNotHappenPage'
+import IcsFeedbackHowTheyTriedToContactThePersonPage from '../pages/IcsFeedbackHowTheyTriedToContactThePersonPage'
 
 test.describe('RecordSessionAttendancePage', () => {
   const fixedDate = new Date('2026-03-08T09:30:40+00:00')
@@ -307,5 +308,16 @@ test.describe('RecordSessionAttendancePage', () => {
     await recordSessionAttendancePage.sessionAttendedRadios.items[0].input.click()
     await recordSessionAttendancePage.submitButton.click()
     await expect(page).toHaveURL(IcsFeedbackWhyDidTheSessionNotHappenPage.url(pastMeeting.caseRefId))
+  })
+  // IPB-2208:AC15
+  test('Session did not happen and the person did not attend', async ({ page }) => {
+    await test.step('go to initial contact session details page', async () => {
+      await page.goto(RecordSessionAttendancePage.url(pastMeeting.caseRefId))
+    })
+    const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
+    await recordSessionAttendancePage.sessionHappenedRadios.items[1].input.click()
+    await recordSessionAttendancePage.sessionAttendedRadios.items[1].input.click()
+    await recordSessionAttendancePage.submitButton.click()
+    await expect(page).toHaveURL(IcsFeedbackHowTheyTriedToContactThePersonPage.url(pastMeeting.caseRefId))
   })
 })

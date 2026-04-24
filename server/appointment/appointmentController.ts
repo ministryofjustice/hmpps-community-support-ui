@@ -599,7 +599,6 @@ class AppointmentController {
         const sessionHappened = data.happened === 'Yes'
         req.session.IcsFeedbackSubmission = { record: { didSessionHappen: sessionHappened } }
         console.log('session :', JSON.stringify(req.session, null, 2))
-        // work out redirect url
         if (data.happened === 'Yes') {
           console.log(`redirect to /ics-feedback/${caseRefId}/did-session-take-place`)
           res.redirect(`/ics-feedback/${caseRefId}/did-session-take-place`)
@@ -610,7 +609,7 @@ class AppointmentController {
           res.redirect(`/ics-feedback/${caseRefId}/why-did-the-session-not-happen`)
           return
         }
-        res.redirect('/to-do')
+        res.redirect(`/ics-feedback/${caseRefId}/how-they-tried-to-contact-the-person`)
       })
       .catch(error => {
         if (error instanceof ZodError) {
