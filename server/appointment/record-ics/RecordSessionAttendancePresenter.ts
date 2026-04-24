@@ -200,7 +200,6 @@ export default class RecordSessionAttendancePresenter extends PresenterBase<
         nunjucks.renderString(value, { firstname: this.data.referralFirstName }),
       ]),
     )
-    console.log('errorLookup :', errorLookup)
     return {
       errorSummary: this.buildErrorSummary(renderedErrorLookup),
       backLink: { href: nunjucks.renderString(content.backLink, { id: this.caseRefId }) },

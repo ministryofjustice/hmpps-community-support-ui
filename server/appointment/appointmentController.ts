@@ -551,7 +551,6 @@ class AppointmentController {
   attendance(req: Request, res: Response): Promise<void> {
     const { caseRefId } = req.params
     const { username } = res.locals.user
-    console.log('query :', req.query)
     const querySchema = z.object({
       error: z
         .union([z.string(), z.array(z.string())])
@@ -592,20 +591,15 @@ class AppointmentController {
 
   recordAttendance(req: Request, res: Response): Promise<void> {
     const { caseRefId } = req.params
-    console.log('raw :', JSON.stringify(req.body))
     return RecordSessionAttendanceFormDataSchema.parseAsync(req.body)
       .then(data => {
-        console.log('success :', data)
         const sessionHappened = data.happened === 'Yes'
         req.session.IcsFeedbackSubmission = { record: { didSessionHappen: sessionHappened } }
-        console.log('session :', JSON.stringify(req.session, null, 2))
         if (data.happened === 'Yes') {
-          console.log(`redirect to /ics-feedback/${caseRefId}/did-session-take-place`)
           res.redirect(`/ics-feedback/${caseRefId}/did-session-take-place`)
           return
         }
         if (data.attended === 'Yes') {
-          console.log(`/ics-feedback/${caseRefId}/why-did-the-session-not-happen`)
           res.redirect(`/ics-feedback/${caseRefId}/why-did-the-session-not-happen`)
           return
         }
@@ -613,9 +607,7 @@ class AppointmentController {
       })
       .catch(error => {
         if (error instanceof ZodError) {
-          const flat = z.flattenError(error)
-          console.log('errors :', flat)
-          const ids = Object.keys(flat.fieldErrors)
+          const ids = Object.keys(z.flattenError(error).fieldErrors)
           res.redirect(`/ics-feedback/attendance/${caseRefId}?error=${ids}`)
           return
         }

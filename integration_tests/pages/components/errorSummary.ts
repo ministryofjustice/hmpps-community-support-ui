@@ -5,7 +5,6 @@ export default class ErrorSummary {
     const title = locator.locator('h2.govuk-error-summary__title')
     const list = locator.locator('ul.govuk-error-summary__list')
     const itemLocator = list.locator('li')
-    console.log(itemLocator)
     return itemLocator
       .count()
       .then(count => {
@@ -19,7 +18,6 @@ export default class ErrorSummary {
               .map((_, i) => itemLocator.nth(i)),
       )
       .then(items => {
-        console.log(items)
         return items
       })
       .then(items => new ErrorSummary(locator, title, list, items))
