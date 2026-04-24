@@ -7,7 +7,7 @@ import FoundPersonPresenter from './foundPerson/foundPersonPresenter'
 import logger from '../../logger'
 import CheckReferralInformationPresenter from './check-referral-information/checkReferralInformationPresenter'
 import ReferralDetailsPresenter from './referralDetails/ReferralDetailsPresenter'
-import ProgressPresenter from './progress/progressPresenter'
+import ReferralProgressPresenter from './progress/referralProgressPresenter'
 
 class ReferralController {
   constructor(
@@ -219,7 +219,7 @@ class ReferralController {
     const { success } = req.query
     const { username } = res.locals.user
     const referralProgress = await this.referralService.getReferralProgress(caseReference, username)
-    const presenter = new ProgressPresenter(referralProgress, caseReference, !!success)
+    const presenter = new ReferralProgressPresenter(referralProgress, caseReference, !!success)
 
     return presenter.renderPage(res)
   }
