@@ -107,9 +107,5 @@ export default function routes({
 
   post('/ics-feedback/attendance/:caseRefId', async (req, res) => appointmentController.recordAttendance(req, res))
 
-  get('/to-do', async (req, res) => {
-    const { session } = req
-    res.send(session)
-  })
   return router
 }
