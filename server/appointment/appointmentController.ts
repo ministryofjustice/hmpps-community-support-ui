@@ -11,9 +11,7 @@ import ReferenceDataService from '../services/referenceDataService'
 import { validateDate, DateValidationOptions, validateTime, TimeValidationOptions } from '../utils/validateDateTime'
 import RecordSessionAttendancePresenter from './record-ics/RecordSessionAttendancePresenter'
 import IcsFeedbackCheckYourAnswersPresenter from './check-ics-feedback/icsFeedbackCheckYourAnswersPresenter'
-import RecordSessionAttendanceFormData, {
-  RecordSessionAttendanceFormDataSchema,
-} from '../validation/RecordSessionAttendanceFormData'
+import { RecordSessionAttendanceFormDataSchema } from '../validation/RecordSessionAttendanceFormData'
 
 const DEFAULT_VALIDATE_DATE_OPTIONS: DateValidationOptions = {
   dateFormat: 'd/M/yyyy',
@@ -62,7 +60,7 @@ class AppointmentController {
     private readonly referralService: ReferralService,
     private readonly appointmentService: AppointmentService,
     private readonly referenceDataService: ReferenceDataService,
-  ) { }
+  ) {}
 
   async checkIcs(req: Request, res: Response): Promise<void> {
     const { username } = res.locals.user
@@ -598,7 +596,15 @@ class AppointmentController {
     return RecordSessionAttendanceFormDataSchema.parseAsync(req.body)
       .then(data => {
         console.log('success :', data)
-        req.session.data = { attendance: data }
+        const sessionHappened = data.happened === 'Yes'
+        req.session.IcsFeedbackSubmission = { record: { didSessionHappen: sessionHappened } }
+        console.log('session :', JSON.stringify(req.session, null, 2))
+        // work out redirect url
+        if (data.happened === 'Yes') {
+          console.log(`redirect to /ics-feedback/${caseRefId}/did-session-take-place`)
+          res.redirect(`/ics-feedback/${caseRefId}/did-session-take-place`)
+          return
+        }
         res.redirect('/to-do')
       })
       .catch(error => {

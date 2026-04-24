@@ -8,7 +8,7 @@ import initialContactSessionDetailsPageData from '../mockData/initialContactSess
 import RecordSessionAttendancePage from '../pages/RecordSessionAttendancePage'
 import ReferralProgressPage from '../pages/referralProgressPage'
 import buildReferralProgress from '../../server/testutils/buildReferralProgress'
-import FooPage from '../pages/FooPage'
+import IcsFeedbackHowSessionTookPlacePage from '../pages/IcsFeedbackHowSessionTookPlacePage'
 
 test.describe('RecordSessionAttendancePage', () => {
   const fixedDate = new Date('2026-03-08T09:30:40+00:00')
@@ -295,6 +295,6 @@ test.describe('RecordSessionAttendancePage', () => {
     const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
     await recordSessionAttendancePage.sessionHappenedRadios.items[0].input.click()
     await recordSessionAttendancePage.submitButton.click()
-    await expect(page).toHaveURL('/to-do')
+    await expect(page).toHaveURL(IcsFeedbackHowSessionTookPlacePage.url(pastMeeting.caseRefId))
   })
 })
