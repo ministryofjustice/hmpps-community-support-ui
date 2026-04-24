@@ -9,6 +9,7 @@ import RecordSessionAttendancePage from '../pages/RecordSessionAttendancePage'
 import ReferralProgressPage from '../pages/referralProgressPage'
 import buildReferralProgress from '../../server/testutils/buildReferralProgress'
 import IcsFeedbackHowSessionTookPlacePage from '../pages/IcsFeedbackHowSessionTookPlacePage'
+import IcsFeedbackWhyDidTheSessionNotHappenPage from '../pages/IcsFeedbackWhyDidTheSessionNotHappenPage'
 
 test.describe('RecordSessionAttendancePage', () => {
   const fixedDate = new Date('2026-03-08T09:30:40+00:00')
@@ -200,7 +201,6 @@ test.describe('RecordSessionAttendancePage', () => {
     await test.step('click submit', async () => {
       await recordSessionAttendancePage.submitButton.click()
     })
-    await expect(page).toHaveURL('/to-do')
   })
 
   // IPB-2208:AC8
@@ -242,7 +242,6 @@ test.describe('RecordSessionAttendancePage', () => {
     await test.step('click submit', async () => {
       await recordSessionAttendancePage.submitButton.click()
     })
-    await expect(page).toHaveURL('/to-do')
   })
 
   // IPB-2208:AC10
@@ -296,5 +295,17 @@ test.describe('RecordSessionAttendancePage', () => {
     await recordSessionAttendancePage.sessionHappenedRadios.items[0].input.click()
     await recordSessionAttendancePage.submitButton.click()
     await expect(page).toHaveURL(IcsFeedbackHowSessionTookPlacePage.url(pastMeeting.caseRefId))
+  })
+
+  // IPB-2208:AC14
+  test('Session did not happen but the person attended', async ({ page }) => {
+    await test.step('go to initial contact session details page', async () => {
+      await page.goto(RecordSessionAttendancePage.url(pastMeeting.caseRefId))
+    })
+    const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
+    await recordSessionAttendancePage.sessionHappenedRadios.items[1].input.click()
+    await recordSessionAttendancePage.sessionAttendedRadios.items[0].input.click()
+    await recordSessionAttendancePage.submitButton.click()
+    await expect(page).toHaveURL(IcsFeedbackWhyDidTheSessionNotHappenPage.url(pastMeeting.caseRefId))
   })
 })

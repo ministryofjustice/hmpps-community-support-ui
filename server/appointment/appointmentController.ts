@@ -605,6 +605,11 @@ class AppointmentController {
           res.redirect(`/ics-feedback/${caseRefId}/did-session-take-place`)
           return
         }
+        if (data.attended === 'Yes') {
+          console.log(`/ics-feedback/${caseRefId}/why-did-the-session-not-happen`)
+          res.redirect(`/ics-feedback/${caseRefId}/why-did-the-session-not-happen`)
+          return
+        }
         res.redirect('/to-do')
       })
       .catch(error => {
