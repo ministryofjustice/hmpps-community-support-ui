@@ -11,11 +11,9 @@ export default class ErrorSummary {
         return count
       })
       .then(itemCount =>
-        itemCount === 0
-          ? [itemLocator]
-          : Array(itemCount)
-              .fill(0)
-              .map((_, i) => itemLocator.nth(i)),
+        Array(itemCount)
+          .fill(0)
+          .map((_, i) => itemLocator.nth(i)),
       )
       .then(items => {
         return items

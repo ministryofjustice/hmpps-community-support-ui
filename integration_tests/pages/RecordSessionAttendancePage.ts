@@ -14,7 +14,7 @@ export default class RecordSessionAttendancePage extends AbstractPage {
     readonly summary: SummaryList,
     readonly sessionHappenedRadios: RadiosWithFieldSet,
     readonly sessionAttendedRadios: RadiosWithFieldSet,
-    readonly submitButton: Locator,
+    readonly continueButton: Locator,
   ) {
     super(page)
   }

@@ -129,7 +129,7 @@ test.describe('RecordSessionAttendancePage', () => {
       await expect(item2.label).toHaveText('No')
     })
     await test.step('Button has correct content', async () => {
-      await expect(recordSessionAttendancePage.submitButton).toHaveText('Continue')
+      await expect(recordSessionAttendancePage.continueButton).toHaveText('Continue')
     })
   })
   // IPB-2208:AC5
@@ -200,7 +200,7 @@ test.describe('RecordSessionAttendancePage', () => {
       await recordSessionAttendancePage.sessionHappenedRadios.items[0].input.click()
     })
     await test.step('click submit', async () => {
-      await recordSessionAttendancePage.submitButton.click()
+      await recordSessionAttendancePage.continueButton.click()
     })
   })
 
@@ -209,12 +209,13 @@ test.describe('RecordSessionAttendancePage', () => {
     await test.step('go to initial contact session details page', async () => {
       await page.goto(RecordSessionAttendancePage.url(pastMeeting.caseRefId))
     })
-    const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
-    await test.step('click submit', async () => {
-      await recordSessionAttendancePage.submitButton.click()
+    await test.step('click continue without selecting radio option', async () => {
+      const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
+      await recordSessionAttendancePage.continueButton.click()
     })
     await expect(page).toHaveURL(RecordSessionAttendancePage.url(pastMeeting.caseRefId, 'happened'))
     await test.step('check error content', async () => {
+      const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
       await test.step('check banner content', async () => {
         await expect(recordSessionAttendancePage.errorSummary.locator).toBeVisible()
         await expect(recordSessionAttendancePage.errorSummary.title).toHaveText('There is a problem')
@@ -241,7 +242,7 @@ test.describe('RecordSessionAttendancePage', () => {
     const [happenedYes] = recordSessionAttendancePage.sessionAttendedRadios.items
     await happenedYes.input.click()
     await test.step('click submit', async () => {
-      await recordSessionAttendancePage.submitButton.click()
+      await recordSessionAttendancePage.continueButton.click()
     })
   })
 
@@ -250,14 +251,17 @@ test.describe('RecordSessionAttendancePage', () => {
     await test.step('go to initial contact session details page', async () => {
       await page.goto(RecordSessionAttendancePage.url(pastMeeting.caseRefId))
     })
-    const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
-    const [, attendNo] = recordSessionAttendancePage.sessionHappenedRadios.items
-    await attendNo.input.click()
-    await test.step('click submit', async () => {
-      await recordSessionAttendancePage.submitButton.click()
+    await test.step('select attended no and click continue without clicking drop down radios', async () => {
+      const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
+      const [, attendNo] = recordSessionAttendancePage.sessionHappenedRadios.items
+      await attendNo.input.click()
+
+      await recordSessionAttendancePage.continueButton.click()
     })
+
     await expect(page).toHaveURL(RecordSessionAttendancePage.url(pastMeeting.caseRefId, 'attended'))
     await test.step('check error content', async () => {
+      const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
       await test.step('check banner content', async () => {
         await expect(recordSessionAttendancePage.errorSummary.locator).toBeVisible()
         await expect(recordSessionAttendancePage.errorSummary.title).toHaveText('There is a problem')
@@ -294,7 +298,7 @@ test.describe('RecordSessionAttendancePage', () => {
     })
     const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
     await recordSessionAttendancePage.sessionHappenedRadios.items[0].input.click()
-    await recordSessionAttendancePage.submitButton.click()
+    await recordSessionAttendancePage.continueButton.click()
     await expect(page).toHaveURL(IcsFeedbackHowSessionTookPlacePage.url(pastMeeting.caseRefId))
   })
 
@@ -306,7 +310,7 @@ test.describe('RecordSessionAttendancePage', () => {
     const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
     await recordSessionAttendancePage.sessionHappenedRadios.items[1].input.click()
     await recordSessionAttendancePage.sessionAttendedRadios.items[0].input.click()
-    await recordSessionAttendancePage.submitButton.click()
+    await recordSessionAttendancePage.continueButton.click()
     await expect(page).toHaveURL(IcsFeedbackWhyDidTheSessionNotHappenPage.url(pastMeeting.caseRefId))
   })
   // IPB-2208:AC15
@@ -317,7 +321,7 @@ test.describe('RecordSessionAttendancePage', () => {
     const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
     await recordSessionAttendancePage.sessionHappenedRadios.items[1].input.click()
     await recordSessionAttendancePage.sessionAttendedRadios.items[1].input.click()
-    await recordSessionAttendancePage.submitButton.click()
+    await recordSessionAttendancePage.continueButton.click()
     await expect(page).toHaveURL(IcsFeedbackHowTheyTriedToContactThePersonPage.url(pastMeeting.caseRefId))
   })
 })

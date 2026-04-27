@@ -10,11 +10,9 @@ export default class RadiosWithFieldSet {
     return itemsLocator
       .count()
       .then(itemCount =>
-        itemCount === 0
-          ? [new RadioItem(itemsLocator)]
-          : Array(itemCount)
-              .fill(0)
-              .map((_, i) => new RadioItem(itemsLocator.nth(i))),
+        Array(itemCount)
+          .fill(0)
+          .map((_, i) => new RadioItem(itemsLocator.nth(i))),
       )
       .then(itemPromise => Promise.all(itemPromise))
       .then(items => new RadiosWithFieldSet(radiosLocatior, fieldset, items, errorText))

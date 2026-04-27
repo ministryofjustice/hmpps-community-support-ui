@@ -25,7 +25,6 @@ export default class Table {
           .map(row => TableRow.create(row, 'td')),
       )
       .then(rowPromise => Promise.all(rowPromise))
-    // .then(rows => new Table(tableLocator, rows))
 
     return Promise.all([headerRows, bodyRows]).then(([header, body]) => new Table(tableLocator, header, body))
   }
