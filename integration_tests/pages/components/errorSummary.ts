@@ -7,17 +7,11 @@ export default class ErrorSummary {
     const itemLocator = list.locator('li')
     return itemLocator
       .count()
-      .then(count => {
-        return count
-      })
       .then(itemCount =>
         Array(itemCount)
           .fill(0)
           .map((_, i) => itemLocator.nth(i)),
       )
-      .then(items => {
-        return items
-      })
       .then(items => new ErrorSummary(locator, title, list, items))
   }
 
