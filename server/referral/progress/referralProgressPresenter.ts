@@ -13,50 +13,50 @@ import { ReferralProgressContent, ReferralProgressViewModel } from './referralPr
 
 type TabKey = 'caseDetails' | 'progress' | 'changeLog'
 type StatusKey = ReferralAppointmentHistory['status'] | 'NOT_SCHEDULED'
-
-type StatusConfig = {
-  label: string
-  tagClass: string
-  action: string
-  link: string
-}
+type SuccessBannerType = 'SCHEDULED_ICS' | 'RESCHEDULED_ICS' | 'COMPLETED_ICS' | undefined
+type StatusConfig = { label: string; tagClass: string; actions: { label: string; href: string }[] }
 
 const getStatusConfig = (caseReference: string, appointmentId: string = ''): Record<StatusKey, StatusConfig> => ({
   NOT_SCHEDULED: {
     label: 'Not scheduled',
     tagClass: 'govuk-tag--grey',
-    action: 'Schedule session',
-    link: `/referral/${caseReference}/appointment/schedule-ics`,
+    actions: [{ label: 'Schedule session', href: `/referral/${caseReference}/appointment/schedule-ics` }],
   },
   SCHEDULED: {
     label: 'Scheduled',
     tagClass: 'govuk-tag--blue',
-    action: 'View or change details',
-    link: `/referral/${caseReference}/ics/${appointmentId}`,
+    actions: [{ label: 'View or change details', href: `/referral/${caseReference}/ics/${appointmentId}` }],
   },
   NEEDS_FEEDBACK: {
     label: 'Needs feedback',
     tagClass: 'govuk-tag--red',
-    action: 'Add attendance and feedback',
-    link: `/ics-feedback/attendance/${caseReference}`,
+    actions: [{ label: 'Add attendance and feedback', href: `/ics-feedback/attendance/${caseReference}` }],
+  },
+  DID_NOT_HAPPEN: {
+    label: 'Did not happen',
+    tagClass: 'govuk-tag--purple',
+    actions: [
+      { label: 'Reschedule', href: '#' },
+      { label: 'View feedback', href: '#' },
+    ],
   },
   DID_NOT_ATTEND: {
     label: 'Did not attend',
     tagClass: 'govuk-tag--purple',
-    action: 'Reason for not attending',
-    link: '#',
+    actions: [
+      { label: 'Reschedule', href: '#' },
+      { label: 'View feedback', href: '#' },
+    ],
   },
   RESCHEDULED: {
     label: 'Rescheduled',
     tagClass: 'govuk-tag--grey',
-    action: 'Reschedule Session',
-    link: '#',
+    actions: [{ label: 'View or change details', href: `/referral/${caseReference}/ics/${appointmentId}` }],
   },
   COMPLETED: {
     label: 'Completed',
     tagClass: 'govuk-tag--green',
-    action: 'View feedback',
-    link: '#',
+    actions: [{ label: 'View feedback', href: '#' }],
   },
 })
 
@@ -66,14 +66,12 @@ export default class ReferralProgressPresenter extends PresenterBase<
 > {
   private readonly name: string
 
-  private readonly basePath: string
-
   private readonly tabPaths: Record<TabKey, string>
 
   constructor(
     private readonly referralProgress: ReferralProgress,
     private readonly caseReference: string,
-    private readonly showSuccessBanner: boolean = false,
+    private readonly successBannerType?: SuccessBannerType,
   ) {
     super()
     this.name = referralProgress.fullName
@@ -93,10 +91,7 @@ export default class ReferralProgressPresenter extends PresenterBase<
       navBar: this.buildSubNav(content),
       actionLinkHref: '#',
       backLink: { href: '/cases-in-progress' },
-      notificationBanner:
-        this.showSuccessBanner && latestAppointment && latestAppointment.status === 'SCHEDULED'
-          ? this.buildIcsScheduledBanner(latestAppointment.dateTime)
-          : undefined,
+      notificationBanner: this.getNotificationBanner(latestAppointment),
       icsAppointmentTable: this.buildIcsAppointmentTable(content, !!latestAppointment),
     }
   }
@@ -126,13 +121,41 @@ export default class ReferralProgressPresenter extends PresenterBase<
     return `${formattedDate} at ${formattedTime}`
   }
 
-  private buildIcsScheduledBanner(date: string): GovukFrontendNotificationBanner {
+  private buildSuccessBanner(heading: string, body: string): GovukFrontendNotificationBanner {
     return {
       type: 'success',
       html: `
-        <h3 class="govuk-notification-banner__heading">ICS scheduled</h3>
-        <p class="govuk-body">The ICS has been scheduled for ${this.formatAppointmentDateTime(date)}.</p>
+        <h3 class="govuk-notification-banner__heading">${heading}</h3>
+        <p class="govuk-body">${body}</p>
       `,
+    }
+  }
+
+  private getNotificationBanner(
+    latestAppointment?: ReferralAppointmentHistory,
+  ): GovukFrontendNotificationBanner | undefined {
+    if (!latestAppointment || !this.successBannerType) return undefined
+
+    switch (this.successBannerType) {
+      case 'SCHEDULED_ICS':
+        if (latestAppointment.status !== 'SCHEDULED') return undefined
+
+        return this.buildSuccessBanner(
+          'ICS scheduled',
+          `The ICS has been scheduled for ${this.formatAppointmentDateTime(latestAppointment.dateTime)}.`,
+        )
+
+      case 'RESCHEDULED_ICS':
+        return this.buildSuccessBanner('Session feedback submitted', 'You must now reschedule the ICS.')
+
+      case 'COMPLETED_ICS':
+        return this.buildSuccessBanner(
+          'Session feedback submitted',
+          'The ICS is now complete. The probation practitioner will receive an email.',
+        )
+
+      default:
+        return undefined
     }
   }
 
@@ -178,7 +201,7 @@ export default class ReferralProgressPresenter extends PresenterBase<
     return [
       [
         { html: `<span class="govuk-tag ${config.tagClass}">${config.label}</span>` },
-        { html: `<a href="${config.link}" class="govuk-link">${config.action}</a>` },
+        { html: this.renderActions(config.actions) },
       ],
     ]
   }
@@ -189,13 +212,21 @@ export default class ReferralProgressPresenter extends PresenterBase<
     const configMap = getStatusConfig(this.caseReference, latestAppointments.at(0)?.appointmentId)
 
     return latestAppointments.map(item => {
-      const config = configMap[item.status]
+      const config = configMap[item.status] ?? configMap.NOT_SCHEDULED
       return [
         { text: this.formatAppointmentDateTime(item.dateTime) },
         { html: `<span class="govuk-tag ${config.tagClass}">${config.label}</span>` },
-        { html: `<a href="${config.link}" class="govuk-link">${config.action}</a>` },
+        { html: this.renderActions(config.actions) },
       ]
     })
+  }
+
+  private renderActions(actions: { label: string; href: string }[]): string {
+    return `
+      <ul class="govuk-list govuk-!-margin-0">
+        ${actions.map(a => `<li><a href="${a.href}" class="govuk-link">${a.label}</a></li>`).join('')}
+      </ul>
+    `
   }
 
   private getLatestAppointments(): ReferralAppointmentHistory[] {

@@ -2,6 +2,8 @@ import { expect, type Locator, type Page } from '@playwright/test'
 import AbstractPage from './abstractPage'
 import Table from './components/table'
 
+type SuccessQuery = 'scheduledIcs' | 'rescheduledIcs' | 'completedIcs'
+
 export default class ReferralProgressPage extends AbstractPage {
   readonly header: Locator
 
@@ -21,8 +23,12 @@ export default class ReferralProgressPage extends AbstractPage {
 
   readonly addAttendanceAndFeedbackLink: Locator
 
-  static url(caseReference: string, success: boolean = false) {
-    return `/progress/${caseReference}${success ? '?success=""' : ''}`
+  // static url(caseReference: string, success: boolean = false) {
+  //   return `/progress/${caseReference}${success ? '?success=""' : ''}` // this has to change to accommodate other success banner indicators
+  // }
+
+  static url(caseReference: string, success?: SuccessQuery) {
+    return `/progress/${caseReference}${success ? `?success=${success}` : ''}`
   }
 
   private constructor(
