@@ -7,13 +7,9 @@ export default class SummaryList {
   static create(summaryLocator: Locator): Promise<SummaryList> {
     const rowLocator = summaryLocator.locator('div.govuk-summary-list__row')
     return rowLocator
-      .count()
-      .then(rowCount =>
-        Array(rowCount)
-          .fill(0)
-          .map((_, i) => SummaryRow.create(rowLocator.nth(i))),
-      )
-      .then(rowPromise => Promise.all(rowPromise))
+      .all()
+      .then(rows => rows.map(row => SummaryRow.create(row)))
+      .then(rowsPromise => Promise.all(rowsPromise))
       .then(rows => new SummaryList(summaryLocator, rows))
   }
 
