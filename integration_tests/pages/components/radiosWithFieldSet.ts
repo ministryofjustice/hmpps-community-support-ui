@@ -8,12 +8,8 @@ export default class RadiosWithFieldSet {
     const errorText = fieldsetLocator.locator('> p.govuk-error-message')
     const itemsLocator = radiosLocatior.locator('> div.govuk-radios__item')
     return itemsLocator
-      .count()
-      .then(itemCount =>
-        Array(itemCount)
-          .fill(0)
-          .map((_, i) => new RadioItem(itemsLocator.nth(i))),
-      )
+      .all()
+      .then(items => items.map(item => new RadioItem(item)))
       .then(itemPromise => Promise.all(itemPromise))
       .then(items => new RadiosWithFieldSet(radiosLocatior, fieldset, items, errorText))
   }
