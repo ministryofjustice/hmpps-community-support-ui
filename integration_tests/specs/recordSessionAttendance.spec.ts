@@ -8,6 +8,9 @@ import initialContactSessionDetailsPageData from '../mockData/initialContactSess
 import RecordSessionAttendancePage from '../pages/RecordSessionAttendancePage'
 import ReferralProgressPage from '../pages/referralProgressPage'
 import buildReferralProgress from '../../server/testutils/buildReferralProgress'
+import IcsFeedbackHowSessionTookPlacePage from '../pages/IcsFeedbackHowSessionTookPlacePage'
+import IcsFeedbackWhyDidTheSessionNotHappenPage from '../pages/IcsFeedbackWhyDidTheSessionNotHappenPage'
+import IcsFeedbackHowTheyTriedToContactThePersonPage from '../pages/IcsFeedbackHowTheyTriedToContactThePersonPage'
 
 test.describe('RecordSessionAttendancePage', () => {
   const fixedDate = new Date('2026-03-08T09:30:40+00:00')
@@ -52,7 +55,7 @@ test.describe('RecordSessionAttendancePage', () => {
       await page.goto(RecordSessionAttendancePage.url(pastMeeting.caseRefId))
     })
     const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
-    await expect(recordSessionAttendancePage.attendedRadios.locator).toBeVisible()
+    await expect(recordSessionAttendancePage.sessionHappenedRadios.locator).toBeVisible()
   })
 
   // IPB-2208:AC2
@@ -61,7 +64,7 @@ test.describe('RecordSessionAttendancePage', () => {
       await page.goto(RecordSessionAttendancePage.url(futureMeeting.caseRefId))
     })
     const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
-    await expect(recordSessionAttendancePage.attendedRadios.locator).not.toBeVisible()
+    await expect(recordSessionAttendancePage.sessionAttendedRadios.locator).not.toBeVisible()
   })
 
   // IPB-2208:AC3
@@ -105,18 +108,20 @@ test.describe('RecordSessionAttendancePage', () => {
         await expect(row.value).toHaveText(format(pastDate, 'h:mmaaa'))
       })
     })
-    await expect(recordSessionAttendancePage.attendedRadios.fieldset.legend).toHaveText('Did the session happen?')
-    await expect(recordSessionAttendancePage.attendedRadios.fieldset.hint).toHaveText(
-      'The session happened if something was delivered.',
-    )
-    await test.step('attended radios have the correct content', async () => {
-      expect(recordSessionAttendancePage.attendedRadios.items).toHaveLength(2)
-      const [item1, item2] = recordSessionAttendancePage.attendedRadios.items
+    await test.step('session attended radios have the correct content', async () => {
+      await expect(recordSessionAttendancePage.sessionHappenedRadios.fieldset.legend).toHaveText(
+        'Did the session happen?',
+      )
+      await expect(recordSessionAttendancePage.sessionHappenedRadios.fieldset.hint).toHaveText(
+        'The session happened if something was delivered.',
+      )
+      expect(recordSessionAttendancePage.sessionAttendedRadios.items).toHaveLength(2)
+      const [item1, item2] = recordSessionAttendancePage.sessionAttendedRadios.items
       await expect(item1.label).toHaveText('Yes')
       await expect(item2.label).toHaveText('No')
     })
     await test.step('session happend radios have the correct content', async () => {
-      const [, attendNo] = recordSessionAttendancePage.attendedRadios.items
+      const [, attendNo] = recordSessionAttendancePage.sessionHappenedRadios.items
       await attendNo.input.click()
       expect(recordSessionAttendancePage.sessionHappenedRadios.items).toHaveLength(2)
       const [item1, item2] = recordSessionAttendancePage.sessionHappenedRadios.items
@@ -124,7 +129,7 @@ test.describe('RecordSessionAttendancePage', () => {
       await expect(item2.label).toHaveText('No')
     })
     await test.step('Button has correct content', async () => {
-      await expect(recordSessionAttendancePage.submitButton).toHaveText('Continue')
+      await expect(recordSessionAttendancePage.continueButton).toHaveText('Continue')
     })
   })
   // IPB-2208:AC5
@@ -186,30 +191,137 @@ test.describe('RecordSessionAttendancePage', () => {
   })
 
   // IPB-2208:AC7
-  test('Select whether the session happened - Yes', async ({ page }) => {
+  test('Select whether the session happened', async ({ page }) => {
     await test.step('go to initial contact session details page', async () => {
       await page.goto(RecordSessionAttendancePage.url(pastMeeting.caseRefId))
     })
     const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
     await test.step('select attended', async () => {
-      await recordSessionAttendancePage.attendedRadios.items[0].input.click()
+      await recordSessionAttendancePage.sessionHappenedRadios.items[0].input.click()
     })
     await test.step('click submit', async () => {
-      await recordSessionAttendancePage.submitButton.click()
+      await recordSessionAttendancePage.continueButton.click()
     })
   })
 
-  // IPB-2208:AC7
-  test('Select whether the session happened - No', async ({ page }) => {
+  // IPB-2208:AC8
+  test('Error when session happened selection is not made', async ({ page }) => {
+    await test.step('go to initial contact session details page', async () => {
+      await page.goto(RecordSessionAttendancePage.url(pastMeeting.caseRefId))
+    })
+    await test.step('click continue without selecting radio option', async () => {
+      const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
+      await recordSessionAttendancePage.continueButton.click()
+    })
+    await expect(page).toHaveURL(RecordSessionAttendancePage.url(pastMeeting.caseRefId, 'happened'))
+    await test.step('check error content', async () => {
+      const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
+      await test.step('check banner content', async () => {
+        await expect(recordSessionAttendancePage.errorSummary.locator).toBeVisible()
+        await expect(recordSessionAttendancePage.errorSummary.title).toHaveText('There is a problem')
+        expect(recordSessionAttendancePage.errorSummary.list).toBeVisible()
+        expect(recordSessionAttendancePage.errorSummary.items).toHaveLength(1)
+        await expect(recordSessionAttendancePage.errorSummary.items[0]).toHaveText('Select yes if the session happened')
+      })
+      await test.step('check radio content', async () => {
+        await expect(recordSessionAttendancePage.sessionHappenedRadios.errorText).toBeVisible()
+        await expect(recordSessionAttendancePage.sessionHappenedRadios.errorText).toHaveText(
+          'Error: Select yes if the session happened',
+        )
+      })
+    })
+  })
+  // IPB-2208:AC9
+  test('Select whether the person came to the appointment', async ({ page }) => {
     await test.step('go to initial contact session details page', async () => {
       await page.goto(RecordSessionAttendancePage.url(pastMeeting.caseRefId))
     })
     const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
-    await test.step('select attended', async () => {
-      await recordSessionAttendancePage.attendedRadios.items[1].input.click()
-    })
+    const [, attendNo] = recordSessionAttendancePage.sessionHappenedRadios.items
+    await attendNo.input.click()
+    const [happenedYes] = recordSessionAttendancePage.sessionAttendedRadios.items
+    await happenedYes.input.click()
     await test.step('click submit', async () => {
-      await recordSessionAttendancePage.submitButton.click()
+      await recordSessionAttendancePage.continueButton.click()
     })
+  })
+
+  // IPB-2208:AC10
+  test('Error when attendance selection is not made', async ({ page }) => {
+    await test.step('go to initial contact session details page', async () => {
+      await page.goto(RecordSessionAttendancePage.url(pastMeeting.caseRefId))
+    })
+    await test.step('select attended no and click continue without clicking drop down radios', async () => {
+      const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
+      const [, attendNo] = recordSessionAttendancePage.sessionHappenedRadios.items
+      await attendNo.input.click()
+
+      await recordSessionAttendancePage.continueButton.click()
+    })
+
+    await expect(page).toHaveURL(RecordSessionAttendancePage.url(pastMeeting.caseRefId, 'attended'))
+    await test.step('check error content', async () => {
+      const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
+      await test.step('check banner content', async () => {
+        await expect(recordSessionAttendancePage.errorSummary.locator).toBeVisible()
+        await expect(recordSessionAttendancePage.errorSummary.title).toHaveText('There is a problem')
+        expect(recordSessionAttendancePage.errorSummary.list).toBeVisible()
+        expect(recordSessionAttendancePage.errorSummary.items).toHaveLength(1)
+        await expect(recordSessionAttendancePage.errorSummary.items[0]).toHaveText(
+          'Select yes if Alice came to the appointment',
+        )
+      })
+      await test.step('check radio content', async () => {
+        await expect(recordSessionAttendancePage.sessionAttendedRadios.errorText).toBeVisible()
+        await expect(recordSessionAttendancePage.sessionAttendedRadios.errorText).toHaveText(
+          'Error: Select yes if Alice came to the appointment',
+        )
+      })
+    })
+  })
+  // IPB-2208:AC11 covered by AC4
+
+  // IPB-2208:AC12
+  test('Navigate back to the referral progress screen', async ({ page }) => {
+    await test.step('go to initial contact session details page', async () => {
+      await page.goto(RecordSessionAttendancePage.url(pastMeeting.caseRefId))
+    })
+    const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
+    await recordSessionAttendancePage.backLink.click()
+    await expect(page).toHaveURL(ReferralProgressPage.url(pastMeeting.caseRefId))
+  })
+
+  // IPB-2208:AC13
+  test('Session happened', async ({ page }) => {
+    await test.step('go to initial contact session details page', async () => {
+      await page.goto(RecordSessionAttendancePage.url(pastMeeting.caseRefId))
+    })
+    const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
+    await recordSessionAttendancePage.sessionHappenedRadios.items[0].input.click()
+    await recordSessionAttendancePage.continueButton.click()
+    await expect(page).toHaveURL(IcsFeedbackHowSessionTookPlacePage.url(pastMeeting.caseRefId))
+  })
+
+  // IPB-2208:AC14
+  test('Session did not happen but the person attended', async ({ page }) => {
+    await test.step('go to initial contact session details page', async () => {
+      await page.goto(RecordSessionAttendancePage.url(pastMeeting.caseRefId))
+    })
+    const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
+    await recordSessionAttendancePage.sessionHappenedRadios.items[1].input.click()
+    await recordSessionAttendancePage.sessionAttendedRadios.items[0].input.click()
+    await recordSessionAttendancePage.continueButton.click()
+    await expect(page).toHaveURL(IcsFeedbackWhyDidTheSessionNotHappenPage.url(pastMeeting.caseRefId))
+  })
+  // IPB-2208:AC15
+  test('Session did not happen and the person did not attend', async ({ page }) => {
+    await test.step('go to initial contact session details page', async () => {
+      await page.goto(RecordSessionAttendancePage.url(pastMeeting.caseRefId))
+    })
+    const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
+    await recordSessionAttendancePage.sessionHappenedRadios.items[1].input.click()
+    await recordSessionAttendancePage.sessionAttendedRadios.items[1].input.click()
+    await recordSessionAttendancePage.continueButton.click()
+    await expect(page).toHaveURL(IcsFeedbackHowTheyTriedToContactThePersonPage.url(pastMeeting.caseRefId))
   })
 })

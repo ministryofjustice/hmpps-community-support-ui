@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import { CreateAppointmentRequest, SessionMethodRequest, ReferralInformation } from '@community-support-api'
 import { format, parse } from 'date-fns'
+import z, { ZodError } from 'zod'
 import ConfirmIcsPresenter, { type AdditionalInformation } from './confirm-ics/confirmIcsPresenter'
 import InitialContactSessionDetailsPresenter from '../referral/InitialContactSessionDetailsPresenter'
 import ReferralService from '../services/referralService'
@@ -10,6 +11,7 @@ import ReferenceDataService from '../services/referenceDataService'
 import { validateDate, DateValidationOptions, validateTime, TimeValidationOptions } from '../utils/validateDateTime'
 import RecordSessionAttendancePresenter from './record-ics/RecordSessionAttendancePresenter'
 import IcsFeedbackCheckYourAnswersPresenter from './check-ics-feedback/icsFeedbackCheckYourAnswersPresenter'
+import { RecordSessionAttendanceFormDataSchema } from '../validation/RecordSessionAttendanceFormData'
 
 const DEFAULT_VALIDATE_DATE_OPTIONS: DateValidationOptions = {
   dateFormat: 'd/M/yyyy',
@@ -549,9 +551,16 @@ class AppointmentController {
   attendance(req: Request, res: Response): Promise<void> {
     const { caseRefId } = req.params
     const { username } = res.locals.user
+    const querySchema = z.object({
+      error: z
+        .union([z.string(), z.array(z.string())])
+        .optional()
+        .default([]),
+    })
+    const { error } = querySchema.parse(req.query)
     return this.appointmentService
       .getICS(caseRefId.toString(), username)
-      .then(data => new RecordSessionAttendancePresenter(caseRefId.toString(), data))
+      .then(data => new RecordSessionAttendancePresenter(caseRefId.toString(), data, error))
       .then(presenter => presenter.renderPage(res))
   }
 
@@ -578,6 +587,32 @@ class AppointmentController {
     } else {
       res.redirect(`/progress/${caseRefId}`)
     }
+  }
+
+  recordAttendance(req: Request, res: Response): Promise<void> {
+    const { caseRefId } = req.params
+    return RecordSessionAttendanceFormDataSchema.parseAsync(req.body)
+      .then(data => {
+        const sessionHappened = data.happened === 'Yes'
+        req.session.IcsFeedbackSubmission = { record: { didSessionHappen: sessionHappened } }
+        if (data.happened === 'Yes') {
+          res.redirect(`/ics-feedback/${caseRefId}/did-session-take-place`)
+          return
+        }
+        if (data.attended === 'Yes') {
+          res.redirect(`/ics-feedback/${caseRefId}/why-did-the-session-not-happen`)
+          return
+        }
+        res.redirect(`/ics-feedback/${caseRefId}/how-they-tried-to-contact-the-person`)
+      })
+      .catch(error => {
+        if (error instanceof ZodError) {
+          const ids = Object.keys(z.flattenError(error).fieldErrors)
+          res.redirect(`/ics-feedback/attendance/${caseRefId}?error=${ids}`)
+          return
+        }
+        res.redirect('/error')
+      })
   }
 }
 

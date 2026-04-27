@@ -10,7 +10,7 @@ interface DateInfo {
 }
 
 const getDateInfo = (date: Date): DateInfo => ({
-  date: format(date, 'Y-M-d'),
+  date: format(date, 'y-M-d'),
   hour: date.getHours(),
   minute: date.getMinutes(),
   amPm: format(date, 'aaa'),
