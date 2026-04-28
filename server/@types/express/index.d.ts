@@ -6,6 +6,7 @@ import {
   IcsFeedbackSubmission,
 } from '@community-support-api'
 import { HmppsUser } from '../../interfaces/hmppsUser'
+import { Validation } from './validation'
 
 export declare module 'express-session' {
   // Declare that the session will potentially contain these additional fields
@@ -17,6 +18,7 @@ export declare module 'express-session' {
     createAppointmentRequest: CreateAppointmentRequest
     referralInformation: ReferralInformationDto
     IcsFeedbackSubmission: IcsFeedbackSubmission
+    validation: Validation
   }
 }
 

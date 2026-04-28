@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test'
 import { ReferralProgress } from '@community-support-api'
+import { randomUUID } from 'crypto'
+import { addDays, subDays } from 'date-fns'
 import { login, resetStubs, seedAppointmentSession } from '../testUtils'
 import ConfirmIcsPage from '../pages/confirmIcsPage'
 import communitySupport from '../mockApis/communitySupport'
@@ -8,15 +10,9 @@ import buildReferralProgress from '../../server/testutils/buildReferralProgress'
 import { referralInformationInCommunity } from '../mockData/referralInformationData'
 import { probationOfficesData } from '../mockData/referenceData'
 import ScheduleIcsPage from '../pages/scheduleIcsPage'
+import ReferralProgressPage from '../pages/referralProgressPage'
 
-const REFERRAL_ID = 'b190ac1e-1e2a-41c2-a4ac-3ceb9d2dcb1e' as const
-const REFERRAL_PROGRESS_URL = `/progress/${REFERRAL_ID}`
-
-function addDays(days: number): Date {
-  const date = new Date()
-  date.setDate(date.getDate() + days)
-  return date
-}
+const REFERRAL_ID = randomUUID()
 
 function toIsoDateString(date: Date): string {
   return date.toISOString().split('T')[0]
@@ -26,8 +22,9 @@ function toDisplayDate(date: Date): string {
   return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
 }
 
-const futureDate = addDays(7)
-const pastDate = addDays(-30)
+const date = new Date()
+const futureDate = addDays(date, 7)
+const pastDate = subDays(date, 30)
 
 const futureDateStr = toIsoDateString(futureDate)
 const pastDateStr = toIsoDateString(pastDate)
@@ -226,7 +223,30 @@ test.describe('Confirm ICS Page', () => {
     await expect(confirmIcsPage.submitButton).toBeVisible()
     await confirmIcsPage.submitButton.click()
     await test.step('should navigate to the progress screen', async () => {
-      await expect(page).toHaveURL(REFERRAL_PROGRESS_URL)
+      await expect(page).toHaveURL(ReferralProgressPage.url(REFERRAL_ID))
+    })
+  })
+  test('should not show success banner a second time', async ({ page }) => {
+    await seedAppointmentSession(page, phoneAppointmentRequest)
+    await communitySupport.stubSubmitICS(REFERRAL_ID, mockAppointmentIcsResponse, 200)
+    await test.step('submit ics successfully', async () => {
+      await page.goto(ConfirmIcsPage.url(REFERRAL_ID))
+      const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
+      await expect(confirmIcsPage.submitButton).toBeVisible()
+      await confirmIcsPage.submitButton.click()
+      await expect(page).toHaveURL(ReferralProgressPage.url(REFERRAL_ID))
+      await test.step('and success banner is shown', async () => {
+        const referralProgressPage = await ReferralProgressPage.verifyOnPage(page)
+        await expect(referralProgressPage.notificationBanner).toBeVisible()
+      })
+    })
+    // await page.goto('/')
+    await test.step('revisit referral progress page', async () => {
+      await page.goto(ReferralProgressPage.url(REFERRAL_ID))
+      test.step('and the success banner is not shown', async () => {
+        const referralProgressPage = await ReferralProgressPage.verifyOnPage(page)
+        await expect(referralProgressPage.notificationBanner).not.toBeVisible()
+      })
     })
   })
 })

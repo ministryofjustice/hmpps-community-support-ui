@@ -573,6 +573,7 @@ class AppointmentController {
       if (response) {
         delete req.session.createAppointmentRequest
       }
+      req.session.validation = { success: true }
       return res.redirect(`/progress/${referralId}`)
     }
     return res.redirect(`/referral/${referralId}/appointment/schedule-ics`)
