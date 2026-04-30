@@ -4,7 +4,7 @@ export interface Success {
 
 export interface Error {
   success: false
-  errors: true
+  errors: string | string[]
 }
 
 export type Validation = Success | Error
