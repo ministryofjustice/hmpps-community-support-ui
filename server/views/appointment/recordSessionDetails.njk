@@ -1,0 +1,85 @@
+{% extends "../partials/layout.njk" %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/fieldset/macro.njk" import govukFieldset %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "components/time-input-no-meridiem/macro.njk" import timeInputNoMeridiem %}
+
+{% set pageTitle = "Record session details - ICS feedback - [service name]" %}
+{% set mainClasses = "govuk-body" %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    {{ govukBackLink({ href: content.backlinkHref }) }}
+
+    <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
+
+    {{ govukSummaryList(content.appointment) }}
+
+    <form method="post" action="{{ content.submitHref }}">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+
+    {% set lateReasonMessage = "Why was " + content.firstName + " late?" %}
+    {% set wasLateHtml %}
+      {{ govukTextarea({
+        id: "lateReason",
+        name: "lateReason",
+        value: content.formData["lateReason"],
+        errorMessage: "",
+        spellcheck: false,
+        label: {
+          text: lateReasonMessage,
+          classes: "govuk-label--s",
+          isPageHeading: true
+        }
+      }) }}
+    {% endset %}
+
+    {% set lateRadioItems = [
+      { value: "Yes", text: "Yes", conditional: { html: wasLateHtml } },
+      { value: "No", text: "No" }
+    ] %}
+    {% set lateMessage = "Was " + content.firstName + " late?" %}
+    {{ govukRadios({
+      name: "wasPersonLate",
+      fieldset: {
+        legend: {
+          text: lateMessage,
+          isPageHeading: false,
+          classes: "govuk-fieldset__legend govuk-fieldset__legend--m"
+        }
+      },
+      value: content.formData["wasLate"],
+      errorMessage: "",
+      items: lateRadioItems
+    }) }}
+
+    {% call govukFieldset({
+      classes: "govuk-fieldset",
+      legend: {
+        text: "How long did the session last?",
+        classes: "govuk-fieldset__legend govuk-fieldset__legend--m",
+        isPageHeading: false
+      }
+    }) %}
+      {{ timeInputNoMeridiem({
+        id: "sessionDuration",
+        namePrefix: "sessionDuration",
+        errorMessage: "",
+        items: [
+          { name: "hour", value: content.formData["sessionDuration-hour"] or "", inputmode: "numeric", classes: "govuk-input govuk-date-input__input govuk-input--width-2" },
+          { name: "minute", value: content.formData["sessionDuration-minute"] or "",inputmode: "numeric", classes: "govuk-input govuk-date-input__input govuk-input--width-2" }
+        ]
+      }) }}
+    {% endcall %}
+
+    {{ govukButton({
+      text: content.submitButtonText,
+      classes: "govuk-!-margin-top-6"
+    }) }}
+    </form>
+  </div>
+</div>
+{% endblock %}

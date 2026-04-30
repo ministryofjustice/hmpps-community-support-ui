@@ -12,6 +12,8 @@ import { validateDate, DateValidationOptions, validateTime, TimeValidationOption
 import RecordSessionAttendancePresenter from './record-ics/RecordSessionAttendancePresenter'
 import IcsFeedbackCheckYourAnswersPresenter from './check-ics-feedback/icsFeedbackCheckYourAnswersPresenter'
 import { RecordSessionAttendanceFormDataSchema } from '../validation/RecordSessionAttendanceFormData'
+import RecordSessionDetailsPresenter from './record-ics/RecordSessionDetailsPresenter'
+import { RecordSessionDetailsFormData } from './record-ics/RecordSessionDetailsViewModel'
 
 const DEFAULT_VALIDATE_DATE_OPTIONS: DateValidationOptions = {
   dateFormat: 'd/M/yyyy',
@@ -255,6 +257,16 @@ class AppointmentController {
     return errors
   }
 
+  private getValueFromRequest = (field: string, req: Request): string => {return req.body[field]?.trim() ?? ''}
+  private getValuesFromRequest = (field: string, req:Request): string[] => {
+    const val = req.body[field]
+    if (Array.isArray(val)) {
+      return val.map(v => String(v).trim()).filter(Boolean)
+    }
+    const single = String(val ?? '').trim()
+    return single ? [single] : []
+  }
+
   private validateAppointment(
     req: Request,
     referralInformation: ReferralInformation,
@@ -268,19 +280,10 @@ class AppointmentController {
     let errors: Record<string, { text: string }> = {}
     const formData: ScheduleFormData = {}
 
-    const getValue = (field: string) => req.body[field]?.trim() ?? ''
-    const getValues = (field: string): string[] => {
-      const val = req.body[field]
-      if (Array.isArray(val)) {
-        return val.map(v => String(v).trim()).filter(Boolean)
-      }
-      const single = String(val ?? '').trim()
-      return single ? [single] : []
-    }
     const isPersonInCommunity = this.isPersonInCommunity(referralInformation.crn)
 
     if (req && req.body) {
-      formData.sessionDate = getValue('sessionDate')
+      formData.sessionDate = this.getValueFromRequest('sessionDate', req)
       const dateValidationResult = validateDate(formData.sessionDate, DEFAULT_VALIDATE_DATE_OPTIONS)
       if (!dateValidationResult.isValid) {
         errors.sessionDate = { text: dateValidationResult.error }
@@ -288,9 +291,9 @@ class AppointmentController {
         formData.sessionDate = format(dateValidationResult.parsedDate, 'd/M/yyyy') || undefined
       }
 
-      formData['sessionTime-hour'] = getValue('sessionTime-hour')
-      formData['sessionTime-minute'] = getValue('sessionTime-minute')
-      formData['sessionTime-meridiem'] = getValue('sessionTime-meridiem')?.toLowerCase()
+      formData['sessionTime-hour'] = this.getValueFromRequest('sessionTime-hour', req)
+      formData['sessionTime-minute'] = this.getValueFromRequest('sessionTime-minute', req)
+      formData['sessionTime-meridiem'] = this.getValueFromRequest('sessionTime-meridiem', req)?.toLowerCase()
       const timeValidationResult = validateTime(
         formData['sessionTime-hour'],
         formData['sessionTime-minute'],
@@ -301,13 +304,13 @@ class AppointmentController {
         errors.sessionTime = { text: timeValidationResult.error }
       }
 
-      formData.sessionTakePlace = getValue('sessionTakePlace')
+      formData.sessionTakePlace = this.getValueFromRequest('sessionTakePlace', req)
       if (!formData.sessionTakePlace?.trim()) {
         errors.sessionTakePlace = { text: 'Select how the session will take place' }
       }
       if (['ByPhone', 'ByVideo'].includes(formData.sessionTakePlace)) {
         const reasonKey = this.getReasonKey(formData.sessionTakePlace)
-        const reason = getValue(reasonKey)
+        const reason = this.getValueFromRequest(reasonKey, req)
         switch (reasonKey) {
           case 'ByPhone':
             formData.ByPhone = reason
@@ -328,17 +331,17 @@ class AppointmentController {
       }
       if (isPersonInCommunity) {
         if (formData.sessionTakePlace === 'InProbationOffice') {
-          formData.probationOffice = getValue('probationOfficeList')
+          formData.probationOffice = this.getValueFromRequest('probationOfficeList', req)
           if (!formData.probationOffice?.trim()) {
             errors.probationOfficeList = { text: 'Select probation office' }
           }
         }
         if (formData.sessionTakePlace === 'InSomewhereElse') {
-          formData.addressLine1 = getValue('addressLine1')
-          formData.addressLine2 = getValue('addressLine2')
-          formData.addressTown = getValue('addressTown')
-          formData.addressCounty = getValue('addressCounty')
-          formData.addressPostcode = getValue('addressPostcode')
+          formData.addressLine1 = this.getValueFromRequest('addressLine1', req)
+          formData.addressLine2 = this.getValueFromRequest('addressLine2', req)
+          formData.addressTown = this.getValueFromRequest('addressTown', req)
+          formData.addressCounty = this.getValueFromRequest('addressCounty', req)
+          formData.addressPostcode = this.getValueFromRequest('addressPostcode', req)
           const addressErrors = this.validateAddressFields(
             formData.addressLine1,
             formData.addressLine2,
@@ -349,13 +352,13 @@ class AppointmentController {
           const mergedErrors = { ...addressErrors, ...errors } as Record<string, { text: string }>
           errors = mergedErrors
         }
-        formData.informedMethod = getValues('informedMethod')
+        formData.informedMethod = this.getValuesFromRequest('informedMethod', req)
         if (!formData.informedMethod || formData.informedMethod.length === 0) {
           errors.informedMethod = {
             text: `Select how ${referralInformation.firstName} was informed about the session`,
           }
         } else if (formData.informedMethod.includes('informedByOtherMethod')) {
-          formData.otherMethodOfContact = getValue('otherMethodOfContact')
+          formData.otherMethodOfContact = this.getValueFromRequest('otherMethodOfContact', req)
           if (!formData.otherMethodOfContact?.trim()) {
             errors.otherMethodOfContact = { text: 'Enter the other method of contact' }
           } else if (formData.otherMethodOfContact.length > MAX_OTHER_METHOD_OF_CONTACT_LENGTH) {
@@ -369,7 +372,7 @@ class AppointmentController {
           }
         }
       } else if (formData.sessionTakePlace === 'InPrison') {
-        formData.prison = getValue('prisonList')
+        formData.prison = this.getValueFromRequest('prisonList', req)
         if (!formData.prison?.trim()) {
           errors.prisonList = { text: 'Select prison establishment' }
         }
@@ -613,6 +616,40 @@ class AppointmentController {
         }
         res.redirect('/error')
       })
+  }
+
+  sessionDetails(req: Request, res: Response): Promise<void> {
+    const { caseRefId } = req.params as { caseRefId: string }
+    const { username } = res.locals.user
+    return this.appointmentService
+      .getICS(caseRefId.toString(), username)
+      .then(data => new RecordSessionDetailsPresenter(caseRefId, data))
+      .then(presenter => presenter.renderPage(res))
+  }
+
+  async recordSessionDetails(req: Request, res: Response): Promise<void> {
+    const { caseRefId } = req.params
+    let formData: RecordSessionDetailsFormData = {}
+    let icsFeedbackSubmission = req.session.IcsFeedbackSubmission
+    // TODO what if record doesn't exist?
+    // let icsFeedbackSubmission = session.IcsFeedbackSubmission
+    if (!icsFeedbackSubmission) {
+      icsFeedbackSubmission = { record: { didSessionHappen: true } }
+    }
+
+    formData.wasPersonLate = this.getValueFromRequest('wasPersonLate', req) === "Yes"
+    if (formData.wasPersonLate) {
+      formData.lateReason = this.getValueFromRequest('lateReason', req)
+    }
+    let hours = Number.parseInt(this.getValueFromRequest('sessionDuration-hour', req))
+    let minutes = Number.parseInt(this.getValueFromRequest('sessionDuration-minutes', req))
+    formData.duration = {
+      hours: isNaN(hours) ? 0 : hours, // Default 0?
+      minutes: isNaN(minutes) ? undefined : minutes
+    }
+    icsFeedbackSubmission.sessionDetails = formData
+    req.session.IcsFeedbackSubmission = icsFeedbackSubmission
+    return res.redirect(`/progress/${caseRefId}`) //TODO
   }
 }
 
