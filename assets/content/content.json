@@ -205,12 +205,13 @@
     },
     "backLink": "/progress/{{ id }}"
   },
-  "/ics-feedback/session-details/:id": {
+  "/ics-feedback/:id/session-details": {
     "pageHeader": "Session Details",
     "appointmentDetails": {
       "dateLabel": "Date",
       "startTimeLabel": "Start time"
     },
-    "submitButtonText": "Continue"
+    "submitButtonText": "Continue",
+    "backLink": "/progress/{{ id }}"
   }
 }

@@ -13,7 +13,11 @@ import RecordSessionAttendancePresenter from './record-ics/RecordSessionAttendan
 import IcsFeedbackCheckYourAnswersPresenter from './check-ics-feedback/icsFeedbackCheckYourAnswersPresenter'
 import { RecordSessionAttendanceFormDataSchema } from '../validation/RecordSessionAttendanceFormData'
 import RecordSessionDetailsPresenter from './record-ics/RecordSessionDetailsPresenter'
-import { RecordSessionDetailsFormData } from './record-ics/RecordSessionDetailsViewModel'
+import {
+  RecordSessionDetailsFormData,
+  RecordSessionDetailsFormViewModel,
+} from './record-ics/RecordSessionDetailsViewModel'
+import { RecordSessionDetailsFormDataSchema } from '../validation/RecordSessionDetailsFormData'
 
 const DEFAULT_VALIDATE_DATE_OPTIONS: DateValidationOptions = {
   dateFormat: 'd/M/yyyy',
@@ -621,35 +625,64 @@ class AppointmentController {
   sessionDetails(req: Request, res: Response): Promise<void> {
     const { caseRefId } = req.params as { caseRefId: string }
     const { username } = res.locals.user
+    const { IcsFeedbackSubmission } = req.session || null
+    const sessionDetails = IcsFeedbackSubmission ? IcsFeedbackSubmission.sessionDetails : null
     return this.appointmentService
       .getICS(caseRefId.toString(), username)
-      .then(data => new RecordSessionDetailsPresenter(caseRefId, data))
+      .then(appointmentData => new RecordSessionDetailsPresenter(caseRefId, appointmentData, sessionDetails))
       .then(presenter => presenter.renderPage(res))
   }
 
+  errorMessageMap = new Map<string, string>([
+    ["wasPersonLate", "Please select Yes or No"],
+    ["sessionDuration-hours", "Invalid hours - Please enter a number between 0 and 99"],
+    ["sessionDuration-minutes", "Invalid minutes - Please enter a number between 0 and 59"]
+  ])
+
   async recordSessionDetails(req: Request, res: Response): Promise<void> {
     const { caseRefId } = req.params
-    let formData: RecordSessionDetailsFormData = {}
+    const bodyData: RecordSessionDetailsFormViewModel = req.body
     let icsFeedbackSubmission = req.session.IcsFeedbackSubmission
-    // TODO what if record doesn't exist?
-    // let icsFeedbackSubmission = session.IcsFeedbackSubmission
+    // TODO What happens if there's no session?
     if (!icsFeedbackSubmission) {
       icsFeedbackSubmission = { record: { didSessionHappen: true } }
     }
+    return RecordSessionDetailsFormDataSchema.parseAsync(req.body)
+      .then(data => {
+        let formData: RecordSessionDetailsFormData = {}
 
-    formData.wasPersonLate = this.getValueFromRequest('wasPersonLate', req) === "Yes"
-    if (formData.wasPersonLate) {
-      formData.lateReason = this.getValueFromRequest('lateReason', req)
-    }
-    let hours = Number.parseInt(this.getValueFromRequest('sessionDuration-hour', req))
-    let minutes = Number.parseInt(this.getValueFromRequest('sessionDuration-minutes', req))
-    formData.duration = {
-      hours: isNaN(hours) ? 0 : hours, // Default 0?
-      minutes: isNaN(minutes) ? undefined : minutes
-    }
-    icsFeedbackSubmission.sessionDetails = formData
-    req.session.IcsFeedbackSubmission = icsFeedbackSubmission
-    return res.redirect(`/progress/${caseRefId}`) //TODO
+        formData.wasPersonLate = data.wasPersonLate === 'Yes'
+        formData.lateReason = data.lateReason
+        formData['sessionDuration-hours'] = data['sessionDuration-hours']
+        formData['sessionDuration-minutes'] = data['sessionDuration-minutes']
+        icsFeedbackSubmission.sessionDetails = formData
+        req.session.IcsFeedbackSubmission = icsFeedbackSubmission
+        return res.redirect(`/ics-feedback/${caseRefId}/session-feedback`)
+      })
+      .catch(error => {
+        if (error instanceof ZodError) {
+          // Persist the entered values
+          icsFeedbackSubmission.sessionDetails = {
+            wasPersonLate: bodyData.wasPersonLate ? bodyData.wasPersonLate === "Yes" : null,
+            lateReason: bodyData.lateReason!,
+            duration: {
+              hours: bodyData['sessionDuration-hours'] ? Number(bodyData['sessionDuration-hours']) : null,
+              minutes: bodyData['sessionDuration-minutes'] ? Number(bodyData['sessionDuration-minutes']) : null
+            }
+          }
+          req.session.IcsFeedbackSubmission = icsFeedbackSubmission
+
+          const errors: {[key:string]: string[]} = z.flattenError(error).fieldErrors
+          const ids = Object.keys(errors)
+          if (!req.session.formKeys.includes('wasPersonLate')) {
+            req.session.formKeys.push('wasPersonLate')
+          }
+          ids.forEach(id => req.flash(`${id}Error`, this.errorMessageMap.get(id)))
+          res.redirect(`/ics-feedback/${caseRefId}/session-details`)
+          return
+        }
+        res.redirect('/error')
+      })
   }
 }
 

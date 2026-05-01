@@ -1,30 +1,45 @@
 import { Response } from 'express'
 import PresenterBase from '../../presenter/presenterBase'
 import {
-  RecordSessionDetailsContent,
+  RecordSessionDetailsContent, RecordSessionDetailsFormData,
   RecordSessionDetailsViewModel,
 } from './RecordSessionDetailsViewModel'
 import buildAppointmentDetails from './AppointmentDetailsModel'
 import { AppointmentIcsResponse } from '@community-support-api'
 
-export default class RecordSessionDetailsPresenter extends PresenterBase<RecordSessionDetailsViewModel, RecordSessionDetailsContent> {
+export default class RecordSessionDetailsPresenter extends PresenterBase<
+  RecordSessionDetailsViewModel,
+  RecordSessionDetailsContent
+> {
   constructor(
     private readonly caseRefId: string,
     private readonly data: AppointmentIcsResponse,
+    private readonly session: {
+      wasPersonLate?: boolean | null
+      lateReason?: string | null
+      duration?: { hours: number, minutes?: number | null } | null
+    },
   ) {
     super()
   }
 
   buildPageContent(res: Response): RecordSessionDetailsViewModel {
     const content = this.buildStaticContent(res)
+    const formData: RecordSessionDetailsFormData = this.session ? {
+      wasPersonLate: this.session.wasPersonLate,
+      lateReason: this.session.lateReason,
+      "sessionDuration-hours": this.session.duration?.hours,
+      "sessionDuration-minutes": this.session.duration?.minutes
+    } : {}
 
     return {
       pageHeader: content.pageHeader,
       firstName: this.data.referralFirstName,
       appointment: buildAppointmentDetails(content.appointmentDetails, this.data),
+      formData: formData,
       submitButtonText: content.submitButtonText,
-      submitHref: `/ics-feedback/session-details/${this.caseRefId}`,
-      backlinkHref: `/progress/${this.caseRefId}`,
+      submitHref: `/ics-feedback/${this.caseRefId}/session-details`,
+      backLink: { href: `/ics-feedback/${this.caseRefId}/did-session-take-place` },
     }
   }
 

@@ -1,25 +1,28 @@
-import { GovukFrontendSummaryList } from '@govuk-frontend'
-import { FormContent } from './RecordSessionViewModel'
+import { GovukFrontendBackLink, GovukFrontendSummaryList } from '@govuk-frontend'
 import { AppointmentDetailsContent } from './AppointmentDetailsModel'
 
-export interface SessionDetailsDuration {
-  hours: number
-  minutes?: number
+export interface RecordSessionDetailsFormViewModel {
+  wasPersonLate?: string
+  lateReason?: string
+  'sessionDuration-hours'?: string
+  'sessionDuration-minutes'?: string
 }
 
 export interface RecordSessionDetailsFormData {
   wasPersonLate?: boolean
   lateReason?: string
-  duration? : SessionDetailsDuration
+  "sessionDuration-hours"?: number
+  "sessionDuration-minutes"?: number
 }
 
 export type RecordSessionDetailsViewModel = {
   pageHeader: string
   firstName: string
   appointment: GovukFrontendSummaryList
+  formData: RecordSessionDetailsFormData
   submitButtonText: string
   submitHref: string
-  backlinkHref: string
+  backLink: GovukFrontendBackLink
 }
 
 export type RecordSessionDetailsContent = {
