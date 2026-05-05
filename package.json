@@ -32,7 +32,7 @@
     "npm": "^11"
   },
   "dependencies": {
-    "@aws-sdk/client-sqs": "^3.1036.0",
+    "@aws-sdk/client-sqs": "^3.1040.0",
     "@ministryofjustice/frontend": "^9.0.0",
     "@ministryofjustice/hmpps-auth-clients": "^1.0.2",
     "@ministryofjustice/hmpps-monitoring": "^1.0.2",
@@ -62,7 +62,7 @@
     "redis": "^5.12.1",
     "superagent": "^10.3.0",
     "ts-node": "^10.9.2",
-    "zod": "^4.3.6"
+    "zod": "^4.4.1"
   },
   "devDependencies": {
     "@jgoz/esbuild-plugin-typecheck": "^4.0.4",
@@ -97,7 +97,7 @@
     "jsonwebtoken": "^9.0.3",
     "lint-staged": "^16.4.0",
     "mocha-junit-reporter": "^2.2.1",
-    "nock": "^14.0.13",
+    "nock": "^14.0.14",
     "openapi-typescript": "^7.13.0",
     "prettier": "^3.8.3",
     "prettier-plugin-jinja-template": "^2.1.0",
