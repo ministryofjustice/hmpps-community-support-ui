@@ -1,5 +1,10 @@
 import { Request, Response } from 'express'
-import { CreateAppointmentRequest, SessionMethodRequest, ReferralInformation } from '@community-support-api'
+import {
+  CreateAppointmentRequest,
+  SessionMethodRequest,
+  ReferralInformation,
+  IcsFeedbackSubmission,
+} from '@community-support-api'
 import { format, parse } from 'date-fns'
 import z, { ZodError } from 'zod'
 import ConfirmIcsPresenter, { type AdditionalInformation } from './confirm-ics/confirmIcsPresenter'
@@ -11,7 +16,9 @@ import ReferenceDataService from '../services/referenceDataService'
 import { validateDate, DateValidationOptions, validateTime, TimeValidationOptions } from '../utils/validateDateTime'
 import RecordSessionAttendancePresenter from './record-ics/RecordSessionAttendancePresenter'
 import IcsFeedbackCheckYourAnswersPresenter from './check-ics-feedback/icsFeedbackCheckYourAnswersPresenter'
+import SessionFeedbackPresenter from './session-feedback/sessionFeedbackPresenter'
 import { RecordSessionAttendanceFormDataSchema } from '../validation/RecordSessionAttendanceFormData'
+import { SessionFeedbackFormDataSchema } from '../validation/SessionFeedbackFormData'
 
 const DEFAULT_VALIDATE_DATE_OPTIONS: DateValidationOptions = {
   dateFormat: 'd/M/yyyy',
@@ -580,9 +587,10 @@ class AppointmentController {
 
   async checkFeedback(req: Request, res: Response): Promise<void> {
     const { caseRefId } = req.params
-    const { IcsFeedbackSubmission } = req.session || null
-    if (IcsFeedbackSubmission) {
-      const presenter = new IcsFeedbackCheckYourAnswersPresenter(IcsFeedbackSubmission)
+    const icsFeedbackSubmission = req.session?.IcsFeedbackSubmission || null
+
+    if (icsFeedbackSubmission) {
+      const presenter = new IcsFeedbackCheckYourAnswersPresenter(icsFeedbackSubmission)
       presenter.renderPage(res)
     } else {
       res.redirect(`/progress/${caseRefId}`)
@@ -613,6 +621,40 @@ class AppointmentController {
         }
         res.redirect('/error')
       })
+  }
+
+  getSessionFeedback(req: Request, res: Response): Promise<void> {
+    const { caseRefId } = req.params
+    const icsFeedback = (req.session?.IcsFeedbackSubmission as IcsFeedbackSubmission) ?? null
+
+    const presenter = new SessionFeedbackPresenter(caseRefId.toString(), icsFeedback)
+    presenter.renderPage(res)
+
+    return Promise.resolve()
+  }
+
+  async submitSessionFeedback(req: Request, res: Response): Promise<void> {
+    const { caseRefId } = req.params
+    try {
+      req.session.IcsFeedbackSubmission ??= { record: { didSessionHappen: true } }
+      req.session.IcsFeedbackSubmission.record ??= { didSessionHappen: true }
+      req.session.IcsFeedbackSubmission.sessionFeedback ??= {}
+
+      const icsFeedback = await SessionFeedbackFormDataSchema.parseAsync(req.body)
+      if (icsFeedback) {
+        req.session.IcsFeedbackSubmission.sessionFeedback.whatHappened = icsFeedback.whatDidYouDo
+      }
+      res.redirect(`/ics-feedback/${caseRefId}/check-your-answers`)
+    } catch (error) {
+      req.session.IcsFeedbackSubmission.sessionFeedback.whatHappened = req.body.whatDidYouDo ?? ''
+      if (error instanceof z.ZodError) {
+        error.issues.forEach(issue => {
+          const field = String(issue.path[0] ?? '')
+          req.flash(`${field}Error`, issue.message)
+        })
+      }
+      res.redirect(`/ics-feedback/${caseRefId}/session-feedback`)
+    }
   }
 }
 
