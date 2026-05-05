@@ -1,6 +1,5 @@
 import nock from 'nock'
 import type {
-  AppointmentIcsResponse,
   CommunitySupportServicesProvider,
   CreateReferralRequest,
   Referral,
@@ -284,24 +283,5 @@ describe('CommunitySupportApiClient tests', () => {
 
       expect(result).resolves.toEqual(mockReferralInformation)
     })
-  })
-
-  describe('getIcsAppointmentById tests', () => {
-    const caseReference = 'referral-id-123'
-    const icsId = 'ics-id-456'
-    const mockIcsAppointment: AppointmentIcsResponse = {
-      appointmentIcsId: icsId,
-      appointmentId: 'appointment-id-789',
-      referralId: caseReference,
-      appointmentType: 'ICS',
-      appointmentDate: '2026-04-21',
-      appointmentTime: { hour: 10, minute: 30, amPm: 'AM' },
-      appointmentStatus: 'NEEDS_FEEDBACK',
-      sessionMethod: { type: 'PHONE', appointmentCategory: 'VIRTUAL' },
-      sessionCommunications: [],
-      referralFirstName: 'John',
-      referralLastName: 'Doe',
-      createdAt: '2026-04-21T10:00:00Z',
-    }
   })
 })
