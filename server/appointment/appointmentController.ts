@@ -261,8 +261,11 @@ class AppointmentController {
     return errors
   }
 
-  private getValueFromRequest = (field: string, req: Request): string => {return req.body[field]?.trim() ?? ''}
-  private getValuesFromRequest = (field: string, req:Request): string[] => {
+  private getValueFromRequest = (field: string, req: Request): string => {
+    return req.body[field]?.trim() ?? ''
+  }
+
+  private getValuesFromRequest = (field: string, req: Request): string[] => {
     const val = req.body[field]
     if (Array.isArray(val)) {
       return val.map(v => String(v).trim()).filter(Boolean)
@@ -634,9 +637,9 @@ class AppointmentController {
   }
 
   errorMessageMap = new Map<string, string>([
-    ["wasPersonLate", "Please select Yes or No"],
-    ["sessionDuration-hours", "Invalid hours - Please enter a number between 0 and 99"],
-    ["sessionDuration-minutes", "Invalid minutes - Please enter a number between 0 and 59"]
+    ['wasPersonLate', 'Please select Yes or No'],
+    ['sessionDuration-hours', 'Invalid hours - Please enter a number between 0 and 99'],
+    ['sessionDuration-minutes', 'Invalid minutes - Please enter a number between 0 and 59'],
   ])
 
   async recordSessionDetails(req: Request, res: Response): Promise<void> {
@@ -649,7 +652,7 @@ class AppointmentController {
     }
     return RecordSessionDetailsFormDataSchema.parseAsync(req.body)
       .then(data => {
-        let formData: RecordSessionDetailsFormData = {}
+        const formData: RecordSessionDetailsFormData = {}
 
         formData.wasPersonLate = data.wasPersonLate === 'Yes'
         formData.lateReason = data.lateReason
@@ -663,16 +666,16 @@ class AppointmentController {
         if (error instanceof ZodError) {
           // Persist the entered values
           icsFeedbackSubmission.sessionDetails = {
-            wasPersonLate: bodyData.wasPersonLate ? bodyData.wasPersonLate === "Yes" : null,
+            wasPersonLate: bodyData.wasPersonLate ? bodyData.wasPersonLate === 'Yes' : null,
             lateReason: bodyData.lateReason!,
             duration: {
               hours: bodyData['sessionDuration-hours'] ? Number(bodyData['sessionDuration-hours']) : null,
-              minutes: bodyData['sessionDuration-minutes'] ? Number(bodyData['sessionDuration-minutes']) : null
-            }
+              minutes: bodyData['sessionDuration-minutes'] ? Number(bodyData['sessionDuration-minutes']) : null,
+            },
           }
           req.session.IcsFeedbackSubmission = icsFeedbackSubmission
 
-          const errors: {[key:string]: string[]} = z.flattenError(error).fieldErrors
+          const errors: { [key: string]: string[] } = z.flattenError(error).fieldErrors
           const ids = Object.keys(errors)
           if (!req.session.formKeys.includes('wasPersonLate')) {
             req.session.formKeys.push('wasPersonLate')

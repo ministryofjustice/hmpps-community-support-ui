@@ -11,8 +11,8 @@ export interface RecordSessionDetailsFormViewModel {
 export interface RecordSessionDetailsFormData {
   wasPersonLate?: boolean
   lateReason?: string
-  "sessionDuration-hours"?: number
-  "sessionDuration-minutes"?: number
+  'sessionDuration-hours'?: number
+  'sessionDuration-minutes'?: number
 }
 
 export type RecordSessionDetailsViewModel = {

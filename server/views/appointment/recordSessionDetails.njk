@@ -4,6 +4,7 @@
 {% from "govuk/components/fieldset/macro.njk" import govukFieldset %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/error-message/macro.njk" import govukErrorMessage %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "components/time-input-no-meridiem/macro.njk" import timeInputNoMeridiem %}
 
@@ -32,7 +33,6 @@
         id: "lateReason",
         name: "lateReason",
         value: content.formData["lateReason"],
-        errorMessage: "",
         spellcheck: false,
         label: {
           text: lateReasonMessage,
@@ -60,6 +60,8 @@
       items: lateRadioItems
     }) }}
 
+    {% set durationErrors = (errors.messages["sessionDuration-hours"]) or (errors.messages["sessionDuration-minutes"]) %}
+    {% if durationErrors %}<div class="govuk-form-group--error">{% endif %}
     {% call govukFieldset({
       classes: "govuk-fieldset",
       legend: {
@@ -68,16 +70,29 @@
         isPageHeading: false
       }
     }) %}
+      {% if errors.messages["sessionDuration-hours"] %}
+        {{ govukErrorMessage({
+          text: errors.messages["sessionDuration-hours"].text,
+          classes: 'govuk-error-message'
+        }) }}
+      {% endif %}
+      {% if errors.messages["sessionDuration-minutes"] %}
+        {{ govukErrorMessage({
+          text: errors.messages["sessionDuration-minutes"].text,
+          classes: 'govuk-error-message'
+        }) }}
+      {% endif %}
       {{ timeInputNoMeridiem({
         id: "sessionDuration",
         namePrefix: "sessionDuration",
-        errorMessage: "",
         items: [
           { name: "hours", value: content.formData["sessionDuration-hours"] or "", inputmode: "numeric", classes: "govuk-input govuk-date-input__input govuk-input--width-2" },
           { name: "minutes", value: content.formData["sessionDuration-minutes"] or "",inputmode: "numeric", classes: "govuk-input govuk-date-input__input govuk-input--width-2" }
         ]
       }) }}
     {% endcall %}
+    {% if durationErrors %}</div>{% endif %}
+    <hr class="govuk-section-break govuk-section-break--m"/>
 
     {{ govukButton({
       text: content.submitButtonText,
