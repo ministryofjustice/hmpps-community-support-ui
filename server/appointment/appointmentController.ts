@@ -644,7 +644,7 @@ class AppointmentController {
       if (icsFeedback) {
         req.session.IcsFeedbackSubmission.sessionFeedback.whatHappened = icsFeedback.whatDidYouDo
       }
-      res.redirect(`/ics-feedback/${caseRefId}/check-your-answers`)
+      res.redirect(`/ics-feedback/${caseRefId}/feedback`)
     } catch (error) {
       req.session.IcsFeedbackSubmission.sessionFeedback.whatHappened = req.body.whatDidYouDo ?? ''
       if (error instanceof z.ZodError) {

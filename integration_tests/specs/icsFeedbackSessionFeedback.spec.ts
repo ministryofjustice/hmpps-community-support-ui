@@ -6,6 +6,7 @@ import IcsFeedbackSessionDetailsPage from '../pages/IcsFeedbackSessionDetailsPag
 const CASE_REFERENCE = 'AB1234CD'
 const SESSION_FEEDBACK_URL = `/ics-feedback/${CASE_REFERENCE}/session-feedback`
 const SESSION_DETAILS_URL = IcsFeedbackSessionDetailsPage.url(CASE_REFERENCE)
+const CHECK_ANSWERS_URL = `/ics-feedback/${CASE_REFERENCE}/feedback`
 
 test.describe('Session Feedback Page', () => {
   test.beforeEach(async ({ page }) => {
@@ -61,6 +62,18 @@ test.describe('Session Feedback Page', () => {
     })
     await test.step('should be on session details screen', async () => {
       await expect(page).toHaveURL(SESSION_DETAILS_URL)
+    })
+  })
+
+  test('AC6: Successful submission of ICS details', async ({ page }) => {
+    await page.goto(SESSION_FEEDBACK_URL)
+    const sessionFeedbackPage = await IcsFeedbackSessionFeedbackPage.verifyOnPage(page)
+    await test.step('submit', async () => {
+      await sessionFeedbackPage.whatDidYouDoInput.fill('Some feedback information')
+      await sessionFeedbackPage.continueButton.click()
+    })
+    await test.step('should be on check your answers page', async () => {
+      await expect(page).toHaveURL(CHECK_ANSWERS_URL)
     })
   })
 })
