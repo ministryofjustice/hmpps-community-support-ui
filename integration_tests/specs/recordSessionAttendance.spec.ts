@@ -8,7 +8,7 @@ import initialContactSessionDetailsPageData from '../mockData/initialContactSess
 import RecordSessionAttendancePage from '../pages/RecordSessionAttendancePage'
 import ReferralProgressPage from '../pages/referralProgressPage'
 import buildReferralProgress from '../../server/testutils/buildReferralProgress'
-import IcsFeedbackHowSessionTookPlacePage from '../pages/IcsFeedbackHowSessionTookPlacePage'
+import IcsFeedbackHowSessionTookPlacePage from '../pages/icsFeedbackHowSessionTookPlacePage'
 import IcsFeedbackWhyDidTheSessionNotHappenPage from '../pages/IcsFeedbackWhyDidTheSessionNotHappenPage'
 import IcsFeedbackHowTheyTriedToContactThePersonPage from '../pages/IcsFeedbackHowTheyTriedToContactThePersonPage'
 

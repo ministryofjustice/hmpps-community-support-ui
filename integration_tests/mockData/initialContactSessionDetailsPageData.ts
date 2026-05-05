@@ -59,7 +59,7 @@ class InitialContactSessionDetailsPageData {
       appointmentStatus: 'SCHEDULED',
       sessionMethod: {
         appointmentCategory: 'IN_PERSON',
-        type: 'IN_PERSON_PROBATION_OFFICE',
+        type: 'PROBATION_OFFICE',
         probationOfficeName: 'Office visit at probation office, Room 3',
       },
       sessionCommunications: ['Phone', 'Text'],

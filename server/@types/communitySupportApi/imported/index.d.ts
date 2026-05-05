@@ -55,7 +55,7 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/bff/referral/{referralId}/ics/{icsId}/feedback': {
+  '/bff/referral/{caseReference}/ics/{icsId}/feedback': {
     parameters: {
       query?: never
       header?: never
@@ -83,39 +83,6 @@ export interface paths {
     put?: never
     /** Book an ICS appointment for a referral */
     post: operations['createIcsAppointment']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/bff/referral/{referralId}/ics': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** Submit feedback for an ICS appointment */
-    post: operations['submitIcsFeedback']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/bff/referral/{caseIdentifier}/ics': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    post?: never
     delete?: never
     options?: never
     head?: never
@@ -165,23 +132,6 @@ export interface paths {
     }
     /** Get a single ICS appointment by ID */
     get: operations['getIcsAppointment']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/bff/referral/{caseReference}/ics_appointment_feedback_details': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get ICS feedback session details */
-    get: operations['getIcsFeedbackSession']
     put?: never
     post?: never
     delete?: never
@@ -250,23 +200,6 @@ export interface paths {
     }
     /** Get referral progress page data */
     get: operations['getReferralProgressDetails']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/bff/referral-details/{caseReference}/ics': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get ICS Details */
-    get: operations['getICSDetails']
     put?: never
     post?: never
     delete?: never
@@ -487,6 +420,9 @@ export interface components {
     RecordSessionRequest: {
       didSessionHappen: boolean
       howSessionTookPlace?: components['schemas']['SessionMethodRequest'] | null
+      didPersonAttend?: boolean | null
+      sessionNotHappenReason?: components['schemas']['SessionNotHappenReasonRequest'] | null
+      noAttendanceInformation?: string | null
     }
     SessionDetailsRequest: {
       wasPersonLate?: boolean | null
@@ -515,6 +451,11 @@ export interface components {
       county?: string | null
       postcode?: string | null
     }
+    SessionNotHappenReasonRequest: {
+      /** @enum {string} */
+      reason: 'SERVICE_PROVIDER_ISSUE' | 'REFERRAL_COULD_NOT_TAKE_PART' | 'REFERRAL_DID_NOT_COMPLY'
+      details?: string | null
+    }
     /** @description ICS appointment session feedback */
     AppointmentIcsFeedbackResponse: {
       /** Format: uuid */
@@ -530,6 +471,10 @@ export interface components {
       recordSessionTownOrCity?: string | null
       recordSessionCounty?: string | null
       recordSessionPostcode?: string | null
+      recordSessionDidPersonAttend?: boolean | null
+      recordSessionNotHappenReason?: string | null
+      recordSessionNotHappenReasonDetails?: string | null
+      recordSessionNoAttendanceInformation?: string | null
       sessionDetailsWasPersonLate?: boolean | null
       sessionDetailsLateReason?: string | null
       sessionDetailsDuration?: string | null
@@ -866,7 +811,6 @@ export interface operations {
       path: {
         caseReference: string
         icsId: string
-        icsId: string
       }
       cookie?: never
     }
@@ -949,12 +893,44 @@ export interface operations {
       }
     }
   }
+  getIcsFeedbackSession: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        caseReference: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description ICS feedback session details found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['IcsFeedbackSessionDto']
+        }
+      }
+      /** @description ICS feedback session details not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
   getIcsAppointments: {
     parameters: {
       query?: never
       header?: never
       path: {
-        referralId: string
+        caseReference: string
+        icsId: string
       }
       cookie?: never
     }
@@ -1002,37 +978,6 @@ export interface operations {
         }
       }
       /** @description Appointment not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  getIcsFeedbackSession: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        caseReference: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description ICS feedback session details found */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['IcsFeedbackSessionDto']
-        }
-      }
-      /** @description ICS feedback session details not found */
       404: {
         headers: {
           [name: string]: unknown

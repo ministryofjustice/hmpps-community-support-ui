@@ -1,0 +1,67 @@
+{% extends "../partials/layout.njk" %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+
+{% set pageTitle = applicationName + " - " + content.pageHeader %}
+{% set mainClasses = "govuk-body" %}
+
+{% block content %}
+  {{ govukBackLink({ href: content.backlinkHref }) }}
+
+  {% if content.errorList and content.errorList | length > 0 %}
+    {{ govukErrorSummary({
+      titleText: "There is a problem",
+      errorList: content.errorList,
+      attributes: {
+        "data-testid": "error-messages"
+      }
+    }) }}
+  {% endif %}
+
+  <form method="post" action="{{ content.submitHref }}">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+
+    <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
+
+    {% if content.sessionLocationLines and content.sessionLocationLines | length %}
+      <p class="govuk-body" data-testid="session-location">
+        {% for line in content.sessionLocationLines %}
+          {{- line -}}{% if not loop.last %}<br>{% endif %}
+        {% endfor %}
+      </p>
+    {% endif %}
+
+    {% set phoneCallReasonHtml %}
+      {{ govukInput(content.phoneCallReasonInputArgs) }}
+    {% endset %}
+
+    {% set videoCallReasonHtml %}
+      {{ govukInput(content.videoCallReasonInputArgs) }}
+    {% endset %}
+
+    {% set probationOfficeHtml %}
+      {{ govukSelect(content.probationDeliveryUnitSelectArgs) }}
+    {% endset %}
+
+    {% set somewhereElseHtml %}
+      {% for input in content.somewhereElseInputArgs %}
+        {{ govukInput(input) }}
+      {% endfor %}
+    {% endset %}
+
+    {% set howSessionHtml %}
+      {{ govukRadios(content.howSessionRadiosArgs(phoneCallReasonHtml, videoCallReasonHtml, probationOfficeHtml, somewhereElseHtml)) }}
+    {% endset %}
+
+    {{ govukRadios(content.phoneCallRadiosArgs(howSessionHtml)) }}
+
+    {{ govukButton({
+      text: content.submitButtonText,
+      attributes: { "data-qa": "continue-button" }
+    }) }}
+  </form>
+{% endblock %}
