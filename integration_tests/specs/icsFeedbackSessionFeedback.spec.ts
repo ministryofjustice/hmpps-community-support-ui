@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test'
-import { login, resetStubs } from '../testUtils'
+import { IcsFeedbackSubmission } from '@community-support-api'
+import { login, resetStubs, seedSessionFeedbackSession } from '../testUtils'
 import IcsFeedbackSessionFeedbackPage from '../pages/IcsFeedbackSessionFeedbackPage'
 import IcsFeedbackSessionDetailsPage from '../pages/IcsFeedbackSessionDetailsPage'
 
@@ -7,6 +8,8 @@ const CASE_REFERENCE = 'AB1234CD'
 const SESSION_FEEDBACK_URL = `/ics-feedback/${CASE_REFERENCE}/session-feedback`
 const SESSION_DETAILS_URL = IcsFeedbackSessionDetailsPage.url(CASE_REFERENCE)
 const CHECK_ANSWERS_URL = `/ics-feedback/${CASE_REFERENCE}/feedback`
+
+const mockIcsFeedbackSubmission: IcsFeedbackSubmission = { record: { didSessionHappen: true } }
 
 test.describe('Session Feedback Page', () => {
   test.beforeEach(async ({ page }) => {
@@ -16,16 +19,19 @@ test.describe('Session Feedback Page', () => {
   })
 
   test('AC1 - Session feedback', async ({ page }) => {
+    await seedSessionFeedbackSession(page, mockIcsFeedbackSubmission)
     await page.goto(SESSION_FEEDBACK_URL)
     await expect(page).toHaveTitle('Session feedback – ICS feedback - [service name]')
   })
 
   test('AC2 - Providing details of what happened in the session', async ({ page }) => {
+    await seedSessionFeedbackSession(page, mockIcsFeedbackSubmission)
     await page.goto(SESSION_FEEDBACK_URL)
     await IcsFeedbackSessionFeedbackPage.verifyOnPage(page)
   })
 
   test('AC3 - Empty field error message', async ({ page }) => {
+    await seedSessionFeedbackSession(page, mockIcsFeedbackSubmission)
     await page.goto(SESSION_FEEDBACK_URL)
     const sessionFeedbackPage = await IcsFeedbackSessionFeedbackPage.verifyOnPage(page)
     await test.step('submit', async () => {
@@ -40,6 +46,7 @@ test.describe('Session Feedback Page', () => {
   })
 
   test('AC4 - Too many characters error message', async ({ page }) => {
+    await seedSessionFeedbackSession(page, mockIcsFeedbackSubmission)
     await page.goto(SESSION_FEEDBACK_URL)
     const sessionFeedbackPage = await IcsFeedbackSessionFeedbackPage.verifyOnPage(page)
     const tooLongText = 'x'.repeat(3001)
@@ -55,6 +62,7 @@ test.describe('Session Feedback Page', () => {
   })
 
   test('AC5: Back link navigation', async ({ page }) => {
+    await seedSessionFeedbackSession(page, mockIcsFeedbackSubmission)
     await page.goto(SESSION_FEEDBACK_URL)
     const sessionFeedbackPage = await IcsFeedbackSessionFeedbackPage.verifyOnPage(page)
     await test.step('click back link', async () => {
@@ -66,6 +74,7 @@ test.describe('Session Feedback Page', () => {
   })
 
   test('AC6: Successful submission of ICS details', async ({ page }) => {
+    await seedSessionFeedbackSession(page, mockIcsFeedbackSubmission)
     await page.goto(SESSION_FEEDBACK_URL)
     const sessionFeedbackPage = await IcsFeedbackSessionFeedbackPage.verifyOnPage(page)
     await test.step('submit', async () => {

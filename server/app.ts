@@ -51,6 +51,10 @@ export default function createApp(services: Services): express.Application {
       req.session.referralInformation = req.body
       res.status(200).json({ ok: true })
     })
+    app.post('/test/setup-session-feedback-session', (req, res) => {
+      req.session.IcsFeedbackSubmission = req.body
+      res.status(200).json({ ok: true })
+    })
   }
 
   app.use(setUpCsrf())

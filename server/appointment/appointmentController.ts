@@ -636,8 +636,18 @@ class AppointmentController {
   async submitSessionFeedback(req: Request, res: Response): Promise<void> {
     const { caseRefId } = req.params
     try {
-      req.session.IcsFeedbackSubmission ??= { record: { didSessionHappen: true } }
-      req.session.IcsFeedbackSubmission.record ??= { didSessionHappen: true }
+      if (!req.session.IcsFeedbackSubmission) {
+        req.flash('error', 'Feedback record is missing. Please start the feedback process again.')
+        res.redirect(`/ics-feedback/${caseRefId}/session-feedback`)
+        return Promise.resolve()
+      }
+
+      if (!req.session.IcsFeedbackSubmission.record) {
+        req.flash('error', 'Feedback record is missing. Please start the feedback process again.')
+        res.redirect(`/ics-feedback/${caseRefId}/session-feedback`)
+        return Promise.resolve()
+      }
+
       req.session.IcsFeedbackSubmission.sessionFeedback ??= {}
 
       const icsFeedback = await SessionFeedbackFormDataSchema.parseAsync(req.body)
@@ -655,6 +665,7 @@ class AppointmentController {
       }
       res.redirect(`/ics-feedback/${caseRefId}/session-feedback`)
     }
+    return Promise.resolve()
   }
 }
 
