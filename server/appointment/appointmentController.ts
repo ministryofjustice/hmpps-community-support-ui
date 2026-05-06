@@ -648,12 +648,12 @@ class AppointmentController {
         return Promise.resolve()
       }
 
-      req.session.IcsFeedbackSubmission.sessionFeedback ??= {}
+      const current = req.session.IcsFeedbackSubmission
+      current.sessionFeedback ??= {}
 
-      const icsFeedback = await SessionFeedbackFormDataSchema.parseAsync(req.body)
-      if (icsFeedback) {
-        req.session.IcsFeedbackSubmission.sessionFeedback.whatHappened = icsFeedback.whatDidYouDo
-      }
+      const validated = await SessionFeedbackFormDataSchema.parseAsync(req.body)
+      current.sessionFeedback.whatHappened = validated.whatDidYouDo
+
       res.redirect(`/ics-feedback/${caseRefId}/feedback`)
     } catch (error) {
       req.session.IcsFeedbackSubmission.sessionFeedback.whatHappened = req.body.whatDidYouDo ?? ''
