@@ -42,7 +42,7 @@ export default class RecordSessionDetailsPresenter extends PresenterBase<
       formData,
       submitButtonText: content.submitButtonText,
       submitHref: `/ics-feedback/${this.caseRefId}/session-details`,
-      backLink: { href: `/ics-feedback/${this.caseRefId}/did-session-take-place` },
+      backLink: { href: content.backLinkHref.replace('{{ id }}', this.caseRefId) },
     }
   }
 

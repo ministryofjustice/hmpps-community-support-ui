@@ -212,6 +212,6 @@
       "startTimeLabel": "Start time"
     },
     "submitButtonText": "Continue",
-    "backLink": "/progress/{{ id }}"
+    "backLinkHref": "/ics-feedback/{{ id }}/did-the-session-take-place-by"
   }
 }

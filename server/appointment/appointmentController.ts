@@ -636,12 +636,6 @@ class AppointmentController {
       .then(presenter => presenter.renderPage(res))
   }
 
-  errorMessageMap = new Map<string, string>([
-    ['wasPersonLate', 'Please select Yes or No'],
-    ['sessionDuration-hours', 'Invalid hours - Please enter a number between 0 and 99'],
-    ['sessionDuration-minutes', 'Invalid minutes - Please enter a number between 0 and 59'],
-  ])
-
   async recordSessionDetails(req: Request, res: Response): Promise<void> {
     const { caseRefId } = req.params
     const bodyData: RecordSessionDetailsFormViewModel = req.body
@@ -678,9 +672,9 @@ class AppointmentController {
           const errors: { [key: string]: string[] } = z.flattenError(error).fieldErrors
           const ids = Object.keys(errors)
           if (!req.session.formKeys.includes('wasPersonLate')) {
-            req.session.formKeys.push('wasPersonLate')
+            req.session.formKeys.unshift('wasPersonLate')
           }
-          ids.forEach(id => req.flash(`${id}Error`, this.errorMessageMap.get(id)))
+          ids.forEach(id => req.flash(`${id}Error`, errors[id][0]))
           res.redirect(`/ics-feedback/${caseRefId}/session-details`)
           return
         }
