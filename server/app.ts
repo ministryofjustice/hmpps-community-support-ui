@@ -51,6 +51,15 @@ export default function createApp(services: Services): express.Application {
       req.session.referralInformation = req.body
       res.status(200).json({ ok: true })
     })
+    app.post('/test/setup-session-feedback-session', (req, res) => {
+      if (!req.session.icsFeedbackSubmissionsMap) {
+        req.session.icsFeedbackSubmissionsMap = {}
+      }
+      if (req.body?.caseRefId !== '') {
+        req.session.icsFeedbackSubmissionsMap[req.body.caseRefId] = req.body.icsFeedbackSubmission
+      }
+      res.status(200).json({ ok: true })
+    })
   }
 
   app.use(setUpCsrf())

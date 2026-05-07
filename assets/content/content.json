@@ -204,5 +204,20 @@
       "startTimeLabel": "Start time"
     },
     "backLink": "/progress/{{ id }}"
+  },
+  "/ics-feedback/:id/session-feedback": {
+    "pageHeader": "Session feedback",
+    "feedbackForm": {
+      "textarea": {
+        "id": "whatDidYouDo",
+        "name": "whatDidYouDo",
+        "label": "What did you do in the session?",
+        "hint": "Give details about what you did, anything that was achieved and what came out of the session.",
+        "error": "Enter what you did in the session",
+        "rows": "5"
+      },
+      "submitButtonText": "Continue"
+    },
+    "backLink": "/ics-feedback/{{ id }}/session-details"
   }
 }
