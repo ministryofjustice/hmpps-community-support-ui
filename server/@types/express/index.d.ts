@@ -16,7 +16,7 @@ export declare module 'express-session' {
     assignmentResults: ReferralUserAssignmentResponse
     createAppointmentRequest: CreateAppointmentRequest
     referralInformation: ReferralInformationDto
-    IcsFeedbackSubmission: IcsFeedbackSubmission
+    icsFeedbackSubmissionsMap: Record<string, IcsFeedbackSubmission>
   }
 }
 

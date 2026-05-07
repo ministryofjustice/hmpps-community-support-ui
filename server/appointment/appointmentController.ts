@@ -586,8 +586,8 @@ class AppointmentController {
   }
 
   async checkFeedback(req: Request, res: Response): Promise<void> {
-    const { caseRefId } = req.params
-    const icsFeedbackSubmission = req.session?.IcsFeedbackSubmission || null
+    const caseRefId = req.params.caseRefId as string
+    const icsFeedbackSubmission = this.getFeedbackSubmission(req, caseRefId)
 
     if (icsFeedbackSubmission) {
       const presenter = new IcsFeedbackCheckYourAnswersPresenter(icsFeedbackSubmission)
@@ -598,11 +598,12 @@ class AppointmentController {
   }
 
   recordAttendance(req: Request, res: Response): Promise<void> {
-    const { caseRefId } = req.params
+    const caseRefId = req.params.caseRefId as string
     return RecordSessionAttendanceFormDataSchema.parseAsync(req.body)
       .then(data => {
         const sessionHappened = data.happened === 'Yes'
-        req.session.IcsFeedbackSubmission = { record: { didSessionHappen: sessionHappened } }
+        let icsFeedbackSubmission = this.ensureFeedbackSubmission(req, caseRefId)
+        icsFeedbackSubmission = { record: { didSessionHappen: sessionHappened } }
         if (data.happened === 'Yes') {
           res.redirect(`/ics-feedback/${caseRefId}/did-session-take-place`)
           return
@@ -623,40 +624,56 @@ class AppointmentController {
       })
   }
 
-  getSessionFeedback(req: Request, res: Response): Promise<void> {
-    const { caseRefId } = req.params
-    const icsFeedback = (req.session?.IcsFeedbackSubmission as IcsFeedbackSubmission) ?? null
+  async getSessionFeedback(req: Request, res: Response): Promise<void> {
+    const caseRefId = req.params.caseRefId as string
+    const { username } = res.locals.user
+    const icsAppointment = await this.appointmentService.getICS(caseRefId, username)
 
-    const presenter = new SessionFeedbackPresenter(caseRefId.toString(), icsFeedback)
+    if (!icsAppointment) {
+      req.flash('error', 'Appointment not found.')
+      res.redirect(`/ics-feedback/${caseRefId}/session-feedback`)
+      return Promise.resolve()
+    }
+
+    const currentFeedback = this.ensureFeedbackSubmission(req, caseRefId)
+
+    const presenter = new SessionFeedbackPresenter(caseRefId.toString(), currentFeedback)
     presenter.renderPage(res)
 
     return Promise.resolve()
   }
 
   async submitSessionFeedback(req: Request, res: Response): Promise<void> {
-    const { caseRefId } = req.params
+    const caseRefId = req.params.caseRefId as string
+    const { username } = res.locals.user
     try {
-      if (!req.session.IcsFeedbackSubmission) {
+      const icsAppointment = await this.appointmentService.getICS(caseRefId, username)
+
+      if (!icsAppointment) {
+        req.flash('error', 'Appointment not found.')
+        res.redirect(`/ics-feedback/${caseRefId}/session-feedback`)
+        return Promise.resolve()
+      }
+
+      const currentSubmission = this.getFeedbackSubmission(req, caseRefId)
+
+      if (!currentSubmission || !currentSubmission.record) {
         req.flash('error', 'Feedback record is missing. Please start the feedback process again.')
         res.redirect(`/ics-feedback/${caseRefId}/session-feedback`)
         return Promise.resolve()
       }
 
-      if (!req.session.IcsFeedbackSubmission.record) {
-        req.flash('error', 'Feedback record is missing. Please start the feedback process again.')
-        res.redirect(`/ics-feedback/${caseRefId}/session-feedback`)
-        return Promise.resolve()
-      }
-
-      const current = req.session.IcsFeedbackSubmission
-      current.sessionFeedback ??= {}
+      currentSubmission.sessionFeedback ??= {}
 
       const validated = await SessionFeedbackFormDataSchema.parseAsync(req.body)
-      current.sessionFeedback.whatHappened = validated.whatDidYouDo
+      currentSubmission.sessionFeedback.whatHappened = validated.whatDidYouDo
 
       res.redirect(`/ics-feedback/${caseRefId}/feedback`)
     } catch (error) {
-      req.session.IcsFeedbackSubmission.sessionFeedback.whatHappened = req.body.whatDidYouDo ?? ''
+      const currentSubmission = this.getFeedbackSubmission(req, caseRefId)
+      if (currentSubmission && currentSubmission?.sessionFeedback) {
+        currentSubmission.sessionFeedback.whatHappened = req.body.whatDidYouDo ?? ''
+      }
       if (error instanceof z.ZodError) {
         error.issues.forEach(issue => {
           const field = String(issue.path[0] ?? '')
@@ -666,6 +683,22 @@ class AppointmentController {
       res.redirect(`/ics-feedback/${caseRefId}/session-feedback`)
     }
     return Promise.resolve()
+  }
+
+  private getFeedbackSubmission(req: Request, caseRefId: string): IcsFeedbackSubmission | null {
+    return req.session.icsFeedbackSubmissionsMap?.[caseRefId]
+  }
+
+  private ensureFeedbackSubmission(req: Request, caseRefId: string): IcsFeedbackSubmission {
+    if (!req.session.icsFeedbackSubmissionsMap) {
+      req.session.icsFeedbackSubmissionsMap = {} as Record<string, IcsFeedbackSubmission>
+    }
+    let submission = req.session.icsFeedbackSubmissionsMap[caseRefId]
+    if (!submission) {
+      req.session.icsFeedbackSubmissionsMap[caseRefId] = {} as IcsFeedbackSubmission
+      submission = req.session.icsFeedbackSubmissionsMap[caseRefId]
+    }
+    return submission
   }
 }
 
