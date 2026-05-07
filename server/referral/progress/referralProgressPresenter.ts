@@ -13,7 +13,7 @@ import { ReferralProgressContent, ReferralProgressViewModel } from './referralPr
 
 type TabKey = 'caseDetails' | 'progress' | 'changeLog'
 type StatusKey = ReferralAppointmentHistory['status'] | 'NOT_SCHEDULED'
-type SuccessBannerType = 'SCHEDULED_ICS' | 'RESCHEDULED_ICS' | 'COMPLETED_ICS' | undefined
+type SuccessBannerType = 'SCHEDULED_ICS' | 'RESCHEDULE_ICS' | 'COMPLETED_ICS' | undefined
 type StatusConfig = { label: string; tagClass: string; actions: { label: string; href: string }[] }
 
 const getStatusConfig = (caseReference: string, appointmentId: string = ''): Record<StatusKey, StatusConfig> => ({
@@ -91,7 +91,7 @@ export default class ReferralProgressPresenter extends PresenterBase<
       navBar: this.buildSubNav(content),
       actionLinkHref: '#',
       backLink: { href: '/cases-in-progress' },
-      notificationBanner: this.getNotificationBanner(latestAppointment),
+      notificationBanner: this.getNotificationBanner(content, latestAppointment),
       icsAppointmentTable: this.buildIcsAppointmentTable(content, !!latestAppointment),
     }
   }
@@ -132,6 +132,7 @@ export default class ReferralProgressPresenter extends PresenterBase<
   }
 
   private getNotificationBanner(
+    content: ReferralProgressContent,
     latestAppointment?: ReferralAppointmentHistory,
   ): GovukFrontendNotificationBanner | undefined {
     if (!latestAppointment || !this.successBannerType) return undefined
@@ -141,17 +142,20 @@ export default class ReferralProgressPresenter extends PresenterBase<
         if (latestAppointment.status !== 'SCHEDULED') return undefined
 
         return this.buildSuccessBanner(
-          'ICS scheduled',
-          `The ICS has been scheduled for ${this.formatAppointmentDateTime(latestAppointment.dateTime)}.`,
+          content.scheduledIcsBannerHeading,
+          `${content.scheduledIcsBannerMessage} ${this.formatAppointmentDateTime(latestAppointment.dateTime)}.`,
         )
 
-      case 'RESCHEDULED_ICS':
-        return this.buildSuccessBanner('Session feedback submitted', 'You must now reschedule the ICS.')
+      case 'RESCHEDULE_ICS':
+        return this.buildSuccessBanner(
+          content.sessionFeedbackBannerHeading,
+          content.sessionFeedbackRescheduleIcsBannerMessage,
+        )
 
       case 'COMPLETED_ICS':
         return this.buildSuccessBanner(
-          'Session feedback submitted',
-          'The ICS is now complete. The probation practitioner will receive an email.',
+          content.sessionFeedbackBannerHeading,
+          content.sessionFeedbackCompletedIcsBannerMessage,
         )
 
       default:

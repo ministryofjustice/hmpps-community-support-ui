@@ -9,18 +9,29 @@ import CaseListPage from '../pages/caseListPage'
 import ScheduleIcsPage from '../pages/scheduleIcsPage'
 
 test.describe('Referral Progress Page', () => {
+  function daysAfter(base: Date, days: number, hour: number = 10): string {
+    const d = new Date(base)
+    d.setDate(d.getDate() + days)
+    d.setHours(hour, 0, 0, 0)
+    return d.toISOString()
+  }
+
   const caseReference = 'AB1234CD'
+  const baseDate = new Date('2026-03-25T10:00:00')
   const referralProgressNoAppointments: ReferralProgress = buildReferralProgress([{ events: [] }])
   const appointmentScheduled: ReferralProgress = buildReferralProgress([
-    { appointmentId: randomUUID(), events: [{ status: 'SCHEDULED', dateTime: '2026-03-26T10:00:00' }] },
+    {
+      appointmentId: randomUUID(),
+      events: [{ status: 'SCHEDULED', dateTime: daysAfter(baseDate, 1) }],
+    },
   ])
   const appointmentDidNotHappen: ReferralProgress = buildReferralProgress([
     {
       appointmentId: randomUUID(),
       events: [
-        { status: 'SCHEDULED', dateTime: '2026-03-26T10:00:00' },
-        { status: 'NEEDS_FEEDBACK', dateTime: '2026-03-27T10:00:00' },
-        { status: 'DID_NOT_HAPPEN', dateTime: '2026-03-28T10:00:00' },
+        { status: 'SCHEDULED', dateTime: daysAfter(baseDate, 1) },
+        { status: 'NEEDS_FEEDBACK', dateTime: daysAfter(baseDate, 2) },
+        { status: 'DID_NOT_HAPPEN', dateTime: daysAfter(baseDate, 3) },
       ],
     },
   ])
@@ -28,9 +39,9 @@ test.describe('Referral Progress Page', () => {
     {
       appointmentId: randomUUID(),
       events: [
-        { status: 'SCHEDULED', dateTime: '2026-03-26T10:00:00' },
-        { status: 'NEEDS_FEEDBACK', dateTime: '2026-03-27T10:00:00' },
-        { status: 'DID_NOT_ATTEND', dateTime: '2026-03-28T10:00:00' },
+        { status: 'SCHEDULED', dateTime: daysAfter(baseDate, 1) },
+        { status: 'NEEDS_FEEDBACK', dateTime: daysAfter(baseDate, 2) },
+        { status: 'DID_NOT_ATTEND', dateTime: daysAfter(baseDate, 3) },
       ],
     },
   ])
@@ -38,9 +49,9 @@ test.describe('Referral Progress Page', () => {
     {
       appointmentId: randomUUID(),
       events: [
-        { status: 'SCHEDULED', dateTime: '2026-03-25T10:00:00' },
-        { status: 'NEEDS_FEEDBACK', dateTime: '2026-03-26T10:00:00' },
-        { status: 'COMPLETED', dateTime: '2026-03-28T12:00:00' },
+        { status: 'SCHEDULED', dateTime: daysAfter(baseDate, 0) },
+        { status: 'NEEDS_FEEDBACK', dateTime: daysAfter(baseDate, 1) },
+        { status: 'COMPLETED', dateTime: daysAfter(baseDate, 3, 12) },
       ],
     },
   ])
@@ -182,117 +193,94 @@ test.describe('Referral Progress Page', () => {
     })
   })
 
-  /*
-    IPB-2212: AC2 - Success banner displayed
-    IPB-2212: AC3 - ICS date and time displayed
-    IPB-2212: AC4 - Status updated to ‘Completed’
-    IPB-2212: AC5 - Option to view feedback displayed
-  */
-  test('Show ICS banner when appointment has been updated to COMPLETED status from session feedback', async ({
-    page,
-  }) => {
-    await communitySupport.stubGetReferralProgress(appointmentCompleted, caseReference)
-    await page.goto(ReferralProgressPage.url(caseReference, 'completedIcs'))
+  type Scenario = {
+    name: string
+    fixture: ReferralProgress
+    successQuery: 'completedIcs' | 'rescheduleIcs'
+    expected: {
+      bannerTexts: string[]
+      dateTime: string
+      status: string
+      actions: string[]
+    }
+  }
 
-    const referralProgressPage = await ReferralProgressPage.verifyOnPage(page)
+  const scenarios: Scenario[] = [
+    {
+      name: 'COMPLETED',
+      fixture: appointmentCompleted,
+      successQuery: 'completedIcs',
+      expected: {
+        bannerTexts: [
+          'Session feedback submitted',
+          'The ICS is now complete. The probation practitioner will receive an email.',
+        ],
+        dateTime: '28 March 2026 at 12:00pm',
+        status: 'Completed',
+        actions: ['View feedback'],
+      },
+    },
+    {
+      name: 'DID NOT HAPPEN',
+      fixture: appointmentDidNotHappen,
+      successQuery: 'rescheduleIcs',
+      expected: {
+        bannerTexts: ['Session feedback submitted', 'You must now reschedule the ICS.'],
+        dateTime: '28 March 2026 at 10:00am',
+        status: 'Did not happen',
+        actions: ['Reschedule', 'View feedback'],
+      },
+    },
+    {
+      name: 'DID NOT ATTEND',
+      fixture: appointmentDidNotAttend,
+      successQuery: 'rescheduleIcs',
+      expected: {
+        bannerTexts: ['Session feedback submitted', 'You must now reschedule the ICS.'],
+        dateTime: '28 March 2026 at 10:00am',
+        status: 'Did not attend',
+        actions: ['Reschedule', 'View feedback'],
+      },
+    },
+  ]
 
-    await test.step('can see Completed ICS success notification banner', async () => {
-      await expect(referralProgressPage.notificationBanner).toContainText('Session feedback submitted')
-      await expect(referralProgressPage.notificationBanner).toContainText(
-        'The ICS is now complete. The probation practitioner will receive an email.',
-      )
-    })
+  // IPB-2212: AC1-AC17, excluding AC1, AC6 and AC12
+  test.describe('ICS success banner + appointment table', () => {
+    for (const scenario of scenarios) {
+      test(`shows correct UI for ${scenario.name}`, async ({ page }) => {
+        await communitySupport.stubGetReferralProgress(scenario.fixture, caseReference)
+        await page.goto(ReferralProgressPage.url(caseReference, scenario.successQuery))
 
-    await test.step('can see completed ICS appointment table with correct headers', async () => {
-      expect(referralProgressPage.table.header).toHaveLength(1)
-      expect(referralProgressPage.table.header[0].elements).toHaveLength(3)
-      await expect(referralProgressPage.table.header[0].elements[0]).toHaveText('Date and time')
-      await expect(referralProgressPage.table.header[0].elements[1]).toHaveText('Status')
-      await expect(referralProgressPage.table.header[0].elements[2]).toHaveText('Action')
-    })
+        const referralProgressPage = await ReferralProgressPage.verifyOnPage(page)
 
-    await test.step('can see completed ICS appointment table with correct data', async () => {
-      expect(referralProgressPage.table.body).toHaveLength(1)
-      expect(referralProgressPage.table.body[0].elements).toHaveLength(3)
-      await expect(referralProgressPage.table.body[0].elements[0]).toHaveText('28 March 2026 at 12:00pm')
-      await expect(referralProgressPage.table.body[0].elements[1]).toHaveText('Completed')
-      await expect(referralProgressPage.table.body[0].elements[2]).toHaveText('View feedback')
-    })
-  })
+        await test.step('banner is correct', async () => {
+          for (const text of scenario.expected.bannerTexts) {
+            expect(referralProgressPage.notificationBanner).toContainText(text)
+          }
+        })
 
-  /*
-    IPB-2212: AC7 - Success banner displayed
-    IPB-2212: AC8 - ICS date and time displayed
-    IPB-2212: AC9 - Status updated to ‘Did not happen’
-    IPB-2212: AC10 - Option to reschedule displayed
-    IPB-2212: AC11 - Option to view feedback displayed
-  */
-  test('Show ICS banner when appointment has been updated to DID NOT HAPPEN status from session feedback', async ({
-    page,
-  }) => {
-    await communitySupport.stubGetReferralProgress(appointmentDidNotHappen, caseReference)
-    await page.goto(ReferralProgressPage.url(caseReference, 'rescheduledIcs'))
+        await test.step('table headers are correct', async () => {
+          expect(referralProgressPage.table.header).toHaveLength(1)
+          expect(referralProgressPage.table.header[0].elements).toHaveLength(3)
 
-    const referralProgressPage = await ReferralProgressPage.verifyOnPage(page)
+          await expect(referralProgressPage.table.header[0].elements[0]).toHaveText('Date and time')
+          await expect(referralProgressPage.table.header[0].elements[1]).toHaveText('Status')
+          await expect(referralProgressPage.table.header[0].elements[2]).toHaveText('Action')
+        })
 
-    await test.step('can see rescheduled ICS success notification banner', async () => {
-      await expect(referralProgressPage.notificationBanner).toContainText('Session feedback submitted')
-      await expect(referralProgressPage.notificationBanner).toContainText('You must now reschedule the ICS.')
-    })
+        await test.step('table row data is correct', async () => {
+          expect(referralProgressPage.table.body).toHaveLength(1)
+          expect(referralProgressPage.table.body[0].elements).toHaveLength(3)
 
-    await test.step('can see rescheduled ICS appointment table with correct headers', async () => {
-      expect(referralProgressPage.table.header).toHaveLength(1)
-      expect(referralProgressPage.table.header[0].elements).toHaveLength(3)
-      await expect(referralProgressPage.table.header[0].elements[0]).toHaveText('Date and time')
-      await expect(referralProgressPage.table.header[0].elements[1]).toHaveText('Status')
-      await expect(referralProgressPage.table.header[0].elements[2]).toHaveText('Action')
-    })
+          await expect(referralProgressPage.table.body[0].elements[0]).toHaveText(scenario.expected.dateTime)
 
-    await test.step('can see rescheduled ICS appointment table with correct data', async () => {
-      expect(referralProgressPage.table.body).toHaveLength(1)
-      expect(referralProgressPage.table.body[0].elements).toHaveLength(3)
-      await expect(referralProgressPage.table.body[0].elements[0]).toHaveText('28 March 2026 at 10:00am')
-      await expect(referralProgressPage.table.body[0].elements[1]).toHaveText('Did not happen')
-      await expect(referralProgressPage.table.body[0].elements[2]).toContainText('Reschedule')
-      await expect(referralProgressPage.table.body[0].elements[2]).toContainText('View feedback')
-    })
-  })
+          await expect(referralProgressPage.table.body[0].elements[1]).toHaveText(scenario.expected.status)
 
-  /*
-    IPB-2212: AC13 - Success banner displayed
-    IPB-2212: AC14 - ICS date and time displayed
-    IPB-2212: AC15 - Status updated to ‘Did not attend’
-    IPB-2212: AC16 - Option to reschedule displayed
-    IPB-2212: AC17 - Option to view feedback displayed
-  */
-  test('Show ICS banner when appointment has been updated to DID NOT ATTEND status from session feedback', async ({
-    page,
-  }) => {
-    await communitySupport.stubGetReferralProgress(appointmentDidNotAttend, caseReference)
-    await page.goto(ReferralProgressPage.url(caseReference, 'rescheduledIcs'))
-
-    const referralProgressPage = await ReferralProgressPage.verifyOnPage(page)
-
-    await test.step('can see rescheduled ICS success notification banner', async () => {
-      await expect(referralProgressPage.notificationBanner).toContainText('Session feedback submitted')
-      await expect(referralProgressPage.notificationBanner).toContainText('You must now reschedule the ICS.')
-    })
-
-    await test.step('can see rescheduled ICS appointment table with correct headers', async () => {
-      expect(referralProgressPage.table.header).toHaveLength(1)
-      expect(referralProgressPage.table.header[0].elements).toHaveLength(3)
-      await expect(referralProgressPage.table.header[0].elements[0]).toHaveText('Date and time')
-      await expect(referralProgressPage.table.header[0].elements[1]).toHaveText('Status')
-      await expect(referralProgressPage.table.header[0].elements[2]).toHaveText('Action')
-    })
-
-    await test.step('can see Rescheduled ICS appointment table with correct data', async () => {
-      expect(referralProgressPage.table.body).toHaveLength(1)
-      expect(referralProgressPage.table.body[0].elements).toHaveLength(3)
-      await expect(referralProgressPage.table.body[0].elements[0]).toHaveText('28 March 2026 at 10:00am')
-      await expect(referralProgressPage.table.body[0].elements[1]).toHaveText('Did not attend')
-      await expect(referralProgressPage.table.body[0].elements[2]).toContainText('Reschedule')
-      await expect(referralProgressPage.table.body[0].elements[2]).toContainText('View feedback')
-    })
+          for (const action of scenario.expected.actions) {
+            expect(referralProgressPage.table.body[0].elements[2]).toContainText(action)
+          }
+        })
+      })
+    }
   })
 })

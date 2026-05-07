@@ -13,6 +13,11 @@ export type ReferralProgressViewModel = {
 export interface ReferralProgressContent {
   pageHeader: string
   progressSubNavTitle: string
+  scheduledIcsBannerHeading: string
+  scheduledIcsBannerMessage: string
+  sessionFeedbackBannerHeading: string
+  sessionFeedbackRescheduleIcsBannerMessage: string
+  sessionFeedbackCompletedIcsBannerMessage: string
   subNavItems: SubNavItem[]
   progressActiveColumnHeaders: string[]
   progressInactiveColumnHeaders: string[]

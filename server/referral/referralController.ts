@@ -9,7 +9,7 @@ import CheckReferralInformationPresenter from './check-referral-information/chec
 import ReferralDetailsPresenter from './referralDetails/ReferralDetailsPresenter'
 import ReferralProgressPresenter from './progress/referralProgressPresenter'
 
-type SuccessBannerType = 'SCHEDULED_ICS' | 'RESCHEDULED_ICS' | 'COMPLETED_ICS'
+type SuccessBannerType = 'SCHEDULED_ICS' | 'RESCHEDULE_ICS' | 'COMPLETED_ICS'
 
 class ReferralController {
   constructor(
@@ -230,7 +230,7 @@ class ReferralController {
 
   private readonly successBannerMap: Record<string, SuccessBannerType> = {
     scheduledIcs: 'SCHEDULED_ICS',
-    rescheduledIcs: 'RESCHEDULED_ICS',
+    rescheduleIcs: 'RESCHEDULE_ICS',
     completedIcs: 'COMPLETED_ICS',
   }
 

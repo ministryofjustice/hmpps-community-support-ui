@@ -10,6 +10,12 @@ describe('ReferralProgressPresenter', () => {
   const mockContent: ReferralProgressContent = {
     pageHeader: 'Referral for',
     progressSubNavTitle: 'Progress',
+    scheduledIcsBannerHeading: 'ICS scheduled',
+    scheduledIcsBannerMessage: 'The ICS has been scheduled for',
+    sessionFeedbackBannerHeading: 'Session feedback submitted',
+    sessionFeedbackCompletedIcsBannerMessage:
+      'The ICS is now complete. The probation practitioner will receive an email.',
+    sessionFeedbackRescheduleIcsBannerMessage: 'You must now reschedule the ICS.',
     subNavItems: [],
     progressActiveColumnHeaders: ['Date and time', 'Status', 'Action'],
     progressInactiveColumnHeaders: ['Status', 'Action'],
