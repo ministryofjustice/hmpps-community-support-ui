@@ -96,6 +96,56 @@ export interface paths {
       path?: never
       cookie?: never
     }
+    get?: never
+    put?: never
+    /** Submit feedback for an ICS appointment */
+    post: operations['submitIcsFeedback']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/referral/{caseIdentifier}/ics': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/referral/{caseReference}/ics_appointment_feedback_details': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get ICS feedback session details */
+    get: operations['getIcsFeedbackSession']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/referral/{caseReference}/ics': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
     /** Get all ICS appointments for a referral */
     get: operations['getIcsAppointments']
     put?: never
@@ -106,7 +156,7 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/bff/referral/{referralId}/ics/{icsId}': {
+  '/bff/referral/{caseReference}/ics/{icsId}': {
     parameters: {
       query?: never
       header?: never
@@ -200,6 +250,23 @@ export interface paths {
     }
     /** Get referral progress page data */
     get: operations['getReferralProgressDetails']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/referral-details/{caseReference}/ics': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get ICS Details */
+    get: operations['getICSDetails']
     put?: never
     post?: never
     delete?: never
@@ -505,7 +572,13 @@ export interface components {
       appointmentDate: string
       appointmentTime: components['schemas']['AppointmentTimeResponse']
       /** @enum {string} */
-      appointmentStatus: 'SCHEDULED' | 'NEEDS_FEEDBACK' | 'COMPLETED' | 'RESCHEDULED' | 'DID_NOT_ATTEND'
+      appointmentStatus:
+        | 'SCHEDULED'
+        | 'NEEDS_FEEDBACK'
+        | 'COMPLETED'
+        | 'RESCHEDULED'
+        | 'DID_NOT_ATTEND'
+        | 'DID_NOT_HAPPEN'
       sessionMethod: components['schemas']['SessionMethod']
       sessionCommunications: string[]
       referralFirstName: string
@@ -654,7 +727,7 @@ export interface components {
       /** Format: date-time */
       dateTime: string
       /** @enum {string} */
-      status: 'SCHEDULED' | 'NEEDS_FEEDBACK' | 'COMPLETED' | 'RESCHEDULED' | 'DID_NOT_ATTEND'
+      status: 'SCHEDULED' | 'NEEDS_FEEDBACK' | 'COMPLETED' | 'RESCHEDULED' | 'DID_NOT_ATTEND' | 'DID_NOT_HAPPEN'
     }
     ReferralProgressDto: {
       /** Format: uuid */
@@ -791,7 +864,8 @@ export interface operations {
       query?: never
       header?: never
       path: {
-        referralId: string
+        caseReference: string
+        icsId: string
         icsId: string
       }
       cookie?: never
@@ -911,7 +985,7 @@ export interface operations {
       query?: never
       header?: never
       path: {
-        referralId: string
+        caseReference: string
         icsId: string
       }
       cookie?: never

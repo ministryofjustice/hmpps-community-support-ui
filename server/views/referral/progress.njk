@@ -22,7 +22,7 @@
       <h2 class="govuk-heading-m">Referral progress</h2>
       <h3 class="govuk-heading-s">Initial contact session (ICS)</h3>
 
-      {% if content.icsAppointmentTable and content.icsAppointmentTable.rows %}
+      {% if content.icsAppointmentTable and content.icsAppointmentTable.rows.length %}
         {{ govukTable(content.icsAppointmentTable) }}
       {% else %}
         <p class="govuk-body">No appointments scheduled</p>
