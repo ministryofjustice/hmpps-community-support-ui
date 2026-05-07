@@ -602,8 +602,7 @@ class AppointmentController {
     return RecordSessionAttendanceFormDataSchema.parseAsync(req.body)
       .then(data => {
         const sessionHappened = data.happened === 'Yes'
-        this.ensureFeedbackSubmission(req, caseRefId)
-        req.session.icsFeedbackSubmissionsMap[caseRefId] = { record: { didSessionHappen: sessionHappened } }
+        this.updatedFeedbackSubmission(req, caseRefId, { record: { didSessionHappen: sessionHappened } })
         if (data.happened === 'Yes') {
           res.redirect(`/ics-feedback/${caseRefId}/did-session-take-place`)
           return
@@ -693,12 +692,33 @@ class AppointmentController {
     if (!req.session.icsFeedbackSubmissionsMap) {
       req.session.icsFeedbackSubmissionsMap = {} as Record<string, IcsFeedbackSubmission>
     }
-    let submission = req.session.icsFeedbackSubmissionsMap[caseRefId]
-    if (!submission) {
+    if (!req.session.icsFeedbackSubmissionsMap[caseRefId]) {
       req.session.icsFeedbackSubmissionsMap[caseRefId] = {} as IcsFeedbackSubmission
-      submission = req.session.icsFeedbackSubmissionsMap[caseRefId]
     }
-    return submission
+    return req.session.icsFeedbackSubmissionsMap[caseRefId]
+  }
+
+  private updatedFeedbackSubmission(
+    req: Request,
+    caseRefId: string,
+    icsFeedbackSubmission: IcsFeedbackSubmission,
+  ): IcsFeedbackSubmission {
+    if (!req.session.icsFeedbackSubmissionsMap) {
+      req.session.icsFeedbackSubmissionsMap = {} as Record<string, IcsFeedbackSubmission>
+    }
+    req.session.icsFeedbackSubmissionsMap = {
+      ...req.session.icsFeedbackSubmissionsMap,
+      [caseRefId]: icsFeedbackSubmission,
+    }
+    return req.session.icsFeedbackSubmissionsMap[caseRefId]
+  }
+
+  private clearFeedbackSubmission(req: Request, caseRefId: string): void {
+    if (!req.session.icsFeedbackSubmissionsMap) {
+      return
+    }
+
+    delete req.session.icsFeedbackSubmissionsMap[caseRefId]
   }
 }
 
