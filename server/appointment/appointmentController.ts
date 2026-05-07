@@ -602,8 +602,8 @@ class AppointmentController {
     return RecordSessionAttendanceFormDataSchema.parseAsync(req.body)
       .then(data => {
         const sessionHappened = data.happened === 'Yes'
-        let icsFeedbackSubmission = this.ensureFeedbackSubmission(req, caseRefId)
-        icsFeedbackSubmission = { record: { didSessionHappen: sessionHappened } }
+        this.ensureFeedbackSubmission(req, caseRefId)
+        req.session.icsFeedbackSubmissionsMap[caseRefId] = { record: { didSessionHappen: sessionHappened } }
         if (data.happened === 'Yes') {
           res.redirect(`/ics-feedback/${caseRefId}/did-session-take-place`)
           return
