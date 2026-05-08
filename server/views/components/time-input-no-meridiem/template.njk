@@ -36,17 +36,19 @@
     text: params.hint.text
   }) | trim | indent(2) }}
 {% endif %}
-{% if params.errorMessage %}
-  {% set errorId = params.id + "-error" %}
-  {% set describedBy = describedBy + " " + errorId if describedBy else errorId %}
-  {{ govukErrorMessage({
-    id: errorId,
-    classes: params.errorMessage.classes,
-    attributes: params.errorMessage.attributes,
-    html: params.errorMessage.html,
-    text: params.errorMessage.text,
-    visuallyHiddenText: params.errorMessage.visuallyHiddenText
-  }) | trim | indent(2) }}
+{% if params.errorMessages %}
+  {% for errorMessage in params.errorMessages %}
+    {% set errorId = params.id + "-error-" + loop.index %}
+    {% set describedBy = describedBy + " " + errorId if describedBy else errorId %}
+    {{ govukErrorMessage({
+      id: errorId,
+      classes: errorMessage.classes,
+      attributes: errorMessage.attributes,
+      html: errorMessage.html,
+      text: errorMessage.text,
+      visuallyHiddenText: errorMessage.visuallyHiddenText
+    }) | trim | indent(2) }}
+  {% endfor %}
 {% endif %}
   <div class="govuk-date-input {%- if params.classes %} {{ params.classes }}{% endif %}"
     {{- govukAttributes(params.attributes) -}}
@@ -57,8 +59,8 @@
     {% for item in timeInputItems %}
     <div class="govuk-date-input__item">
       {{ govukInput({
-        label: {
-          text: item.label if item.label else item.name | capitalize,
+        label: item.label if item.label else {
+          text: item.name | capitalize,
           classes: "govuk-date-input__label"
         },
         id: item.id if item.id else (params.id + "-" + item.name),
@@ -79,7 +81,7 @@
   </div>
 {% endset -%}
 
-<div class="govuk-form-group {%- if params.errorMessage %} govuk-form-group--error{% endif %} {%- if params.formGroup.classes %} {{ params.formGroup.classes }}{% endif %}" {{- govukAttributes(params.formGroup.attributes) }}>
+<div class="govuk-form-group {%- if params.errorMessages | length %} govuk-form-group--error{% endif %} {%- if params.formGroup.classes %} {{ params.formGroup.classes }}{% endif %}" {{- govukAttributes(params.formGroup.attributes) }}>
 {% if hasFieldset %}
   {{ govukFieldset({
     describedBy: describedBy,

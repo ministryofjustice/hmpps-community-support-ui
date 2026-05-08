@@ -17,7 +17,10 @@ import {
   RecordSessionDetailsFormData,
   RecordSessionDetailsFormViewModel,
 } from './record-ics/RecordSessionDetailsViewModel'
-import { RecordSessionDetailsFormDataSchema } from '../validation/RecordSessionDetailsFormData'
+import {
+  RecordSessionDetailsError,
+  RecordSessionDetailsFormDataSchema,
+} from '../validation/RecordSessionDetailsFormData'
 
 const DEFAULT_VALIDATE_DATE_OPTIONS: DateValidationOptions = {
   dateFormat: 'd/M/yyyy',
@@ -628,11 +631,12 @@ class AppointmentController {
   sessionDetails(req: Request, res: Response): Promise<void> {
     const { caseRefId } = req.params as { caseRefId: string }
     const { username } = res.locals.user
+    const validationErrors: RecordSessionDetailsError = res.locals.errors
     const { IcsFeedbackSubmission } = req.session || null
     const sessionDetails = IcsFeedbackSubmission ? IcsFeedbackSubmission.sessionDetails : null
     return this.appointmentService
       .getICS(caseRefId.toString(), username)
-      .then(appointmentData => new RecordSessionDetailsPresenter(caseRefId, appointmentData, sessionDetails))
+      .then(appointmentData => new RecordSessionDetailsPresenter(caseRefId, appointmentData, sessionDetails, validationErrors))
       .then(presenter => presenter.renderPage(res))
   }
 

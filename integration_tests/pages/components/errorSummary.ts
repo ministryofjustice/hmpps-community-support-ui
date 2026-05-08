@@ -6,7 +6,6 @@ export default class ErrorSummary {
     const list = locator.locator('ul.govuk-error-summary__list')
     const itemLocator = list.getByRole('listitem')
     return new ErrorSummary(locator, title, list, itemLocator)
-    // return itemLocator.all().then(items => new ErrorSummary(locator, title, list, items))
   }
 
   private constructor(

@@ -30,83 +30,10 @@
     <form method="post" action="{{ content.submitHref }}">
     <input type="hidden" name="_csrf" value="{{csrfToken}}">
 
-    {% set lateReasonMessage = "Why was " + content.firstName + " late?" %}
-    {% set wasLateHtml %}
-      {{ govukTextarea({
-        id: "lateReason",
-        name: "lateReason",
-        value: content.formData["lateReason"],
-        spellcheck: false,
-        attributes: { "data-testid": "lateReason" },
-        label: {
-          text: lateReasonMessage,
-          classes: "govuk-label--s",
-          attributes: { "data-testid": "lateReasonLabel" },
-          isPageHeading: true
-        }
-      }) }}
-    {% endset %}
+    {{ govukRadios(content.wasPersonLateRadio) }}
+    {{ timeInputNoMeridiem(content.sessionDurationTimeInput) }}
 
-    {% set lateRadioItems = [
-      { value: "Yes", text: "Yes", conditional: { html: wasLateHtml }, checked: content.formData["wasPersonLate"] === true },
-      { value: "No", text: "No", checked: content.formData["wasPersonLate"] === false }
-    ] %}
-    {% set lateMessage = "Was " + content.firstName + " late?" %}
-    {{ govukRadios({
-      name: "wasPersonLate",
-      fieldset: {
-        attributes: { "data-testid": "fieldset-wasPersonLate" },
-        legend: {
-          text: lateMessage,
-          isPageHeading: false,
-          classes: "govuk-fieldset__legend govuk-fieldset__legend--m"
-        }
-      },
-      errorMessage: errors.messages.wasPersonLate,
-      attributes: { "data-testid": "wasPersonLate" },
-      items: lateRadioItems
-    }) }}
-
-    {% set durationErrors = (errors.messages["sessionDuration-hours"]) or (errors.messages["sessionDuration-minutes"]) %}
-    {% if durationErrors %}<div class="govuk-form-group--error">{% endif %}
-    {% call govukFieldset({
-      classes: "govuk-fieldset",
-      attributes: { "data-testid": "fieldset-sessionDuration" },
-      legend: {
-        text: "How long did the session last?",
-        classes: "govuk-fieldset__legend govuk-fieldset__legend--m",
-        isPageHeading: false
-      }
-    }) %}
-      {% if errors.messages["sessionDuration-hours"] %}
-        {{ govukErrorMessage({
-          text: errors.messages["sessionDuration-hours"].text,
-          classes: 'govuk-error-message'
-        }) }}
-      {% endif %}
-      {% if errors.messages["sessionDuration-minutes"] %}
-        {{ govukErrorMessage({
-          text: errors.messages["sessionDuration-minutes"].text,
-          classes: 'govuk-error-message'
-        }) }}
-      {% endif %}
-      {{ timeInputNoMeridiem({
-        id: "sessionDuration",
-        attributes: { "data-testid": "sessionDuration" },
-        namePrefix: "sessionDuration",
-        items: [
-          { name: "hours", value: content.formData["sessionDuration-hours"] or "", inputmode: "numeric", classes: "govuk-input govuk-date-input__input govuk-input--width-2" },
-          { name: "minutes", value: content.formData["sessionDuration-minutes"] or "",inputmode: "numeric", classes: "govuk-input govuk-date-input__input govuk-input--width-2" }
-        ]
-      }) }}
-    {% endcall %}
-    {% if durationErrors %}</div>{% endif %}
-    <hr class="govuk-section-break govuk-section-break--m"/>
-
-    {{ govukButton({
-      text: content.submitButtonText,
-      classes: "govuk-!-margin-top-6"
-    }) }}
+    {{ govukButton(content.submitButton) }}
     </form>
   </div>
 </div>

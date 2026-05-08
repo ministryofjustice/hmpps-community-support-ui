@@ -13,6 +13,7 @@ test.describe('Session Details Page', () => {
   const date = new Date()
   const pastDate = subDays(date, 12)
 
+  const EMPTY_RADIO_ERROR_MESSAGE = 'Please select Yes or No'
   const INVALID_HOURS_ERROR_MESSAGE = 'Invalid hours - Please enter a number between 0 and 99'
   const INVALID_MINUTES_ERROR_MESSAGE = 'Invalid minutes - Please enter a number between 0 and 59'
 
@@ -56,8 +57,8 @@ test.describe('Session Details Page', () => {
       await expect(sessionDetailsPage.duration.fieldset.legend).toHaveText('How long did the session last?')
       expect(sessionDetailsPage.duration.items).toHaveLength(2)
       const [item1, item2] = sessionDetailsPage.duration.items
-      await expect(item1.label).toHaveText('Hours')
-      await expect(item2.label).toHaveText('Minutes')
+      await expect(item1.label).toHaveText('Hour')
+      await expect(item2.label).toHaveText('Minute')
     })
   })
 
@@ -117,15 +118,15 @@ test.describe('Session Details Page', () => {
       await expect(sessionDetailsPage.errorSummary.locator).toBeVisible()
       await expect(sessionDetailsPage.errorSummary.title).toHaveText('There is a problem')
       await expect(sessionDetailsPage.errorSummary.list).toBeVisible()
-      expect(sessionDetailsPage.errorSummary.items).toHaveCount(3)
+      await expect(sessionDetailsPage.errorSummary.items).toHaveCount(3)
       const errorMessages = await sessionDetailsPage.errorSummary.items.all()
-      await expect(errorMessages[0]).toHaveText('Please select Yes or No')
+      await expect(errorMessages[0]).toHaveText(EMPTY_RADIO_ERROR_MESSAGE)
       await expect(errorMessages[1]).toHaveText(INVALID_HOURS_ERROR_MESSAGE)
       await expect(errorMessages[2]).toHaveText(INVALID_MINUTES_ERROR_MESSAGE)
     })
     await test.step('check error messages content on components', async () => {
       await expect(sessionDetailsPage.wasPersonLateRadios.errorText).toBeVisible()
-      await expect(sessionDetailsPage.wasPersonLateRadios.errorText).toContainText('Please select Yes or No')
+      await expect(sessionDetailsPage.wasPersonLateRadios.errorText).toContainText(EMPTY_RADIO_ERROR_MESSAGE)
       const [errorHours, errorMinutes] = await sessionDetailsPage.duration.errorText.all()
       await expect(errorHours).toBeVisible()
       await expect(errorHours).toContainText(INVALID_HOURS_ERROR_MESSAGE)
@@ -151,7 +152,7 @@ test.describe('Session Details Page', () => {
       await expect(sessionDetailsPage.errorSummary.locator).toBeVisible()
       await expect(sessionDetailsPage.errorSummary.title).toHaveText('There is a problem')
       await expect(sessionDetailsPage.errorSummary.list).toBeVisible()
-      expect(sessionDetailsPage.errorSummary.items).toHaveCount(1)
+      await expect(sessionDetailsPage.errorSummary.items).toHaveCount(1)
       const errorMessages = await sessionDetailsPage.errorSummary.items.all()
       await expect(errorMessages[0]).toHaveText(INVALID_MINUTES_ERROR_MESSAGE)
       await expect(sessionDetailsPage.duration.errorText).toBeVisible()
@@ -176,7 +177,7 @@ test.describe('Session Details Page', () => {
       await expect(sessionDetailsPage.errorSummary.locator).toBeVisible()
       await expect(sessionDetailsPage.errorSummary.title).toHaveText('There is a problem')
       await expect(sessionDetailsPage.errorSummary.list).toBeVisible()
-      expect(sessionDetailsPage.errorSummary.items).toHaveCount(2)
+      await expect(sessionDetailsPage.errorSummary.items).toHaveCount(2)
       const errorMessages = await sessionDetailsPage.errorSummary.items.all()
       await expect(errorMessages[0]).toHaveText(INVALID_HOURS_ERROR_MESSAGE)
       await expect(errorMessages[1]).toHaveText(INVALID_MINUTES_ERROR_MESSAGE)
@@ -205,7 +206,7 @@ test.describe('Session Details Page', () => {
       await expect(sessionDetailsPage.errorSummary.locator).toBeVisible()
       await expect(sessionDetailsPage.errorSummary.title).toHaveText('There is a problem')
       await expect(sessionDetailsPage.errorSummary.list).toBeVisible()
-      expect(sessionDetailsPage.errorSummary.items).toHaveCount(2)
+      await expect(sessionDetailsPage.errorSummary.items).toHaveCount(2)
       const errorMessages = await sessionDetailsPage.errorSummary.items.all()
       await expect(errorMessages[0]).toHaveText(INVALID_HOURS_ERROR_MESSAGE)
       await expect(errorMessages[1]).toHaveText(INVALID_MINUTES_ERROR_MESSAGE)
