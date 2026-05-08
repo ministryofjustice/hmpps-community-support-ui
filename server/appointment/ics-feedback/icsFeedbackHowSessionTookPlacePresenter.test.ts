@@ -75,25 +75,25 @@ describe('IcsFeedbackPresenter', () => {
         'appointment/icsFeedback',
         expect.objectContaining({
           content: expect.objectContaining<Partial<IcsFeedbackHowSessionTookPlaceViewModel>>({
-            submitHref: `/ics-feedback/didSessionTookPlace/${caseRefId}`,
+            submitHref: `/ics-feedback/${caseRefId}/did-session-take-place`,
             backlinkHref: `/ics-feedback/attendance/${caseRefId}`,
           }),
         }),
       )
     })
 
-    it('builds phoneCallRadiosArgs that returns yes/no items', () => {
+    it('builds didSessionTakePlaceRadiosArgs that returns yes/no items', () => {
       const presenter = new IcsFeedbackHowSessionTookPlacePresenter(caseRefId, sessionMethod, probationOfficesData)
       presenter.renderPage(res)
       const viewModel: IcsFeedbackHowSessionTookPlaceViewModel = (res.render as jest.Mock).mock.calls[0][1].content
-      const radios = viewModel.phoneCallRadiosArgs('<div>how session html</div>')
+      const radios = viewModel.didSessionTakePlaceRadiosArgs('<div>how session html</div>')
       expect(radios.name).toBe('phoneCall')
       expect(radios.items).toHaveLength(2)
       expect(radios.items[0].value).toBe('yes')
       expect(radios.items[1].value).toBe('no')
     })
 
-    it('sets checked state on phoneCallRadiosArgs items from formData', () => {
+    it('sets checked state on didSessionTakePlaceRadiosArgs items from formData', () => {
       const formData = { phoneCall: 'no', howSessionTookPlace: 'VIDEO', videoCallReason: 'Remote access only' }
       const presenter = new IcsFeedbackHowSessionTookPlacePresenter(
         caseRefId,
@@ -103,7 +103,7 @@ describe('IcsFeedbackPresenter', () => {
       )
       presenter.renderPage(res)
       const viewModel: IcsFeedbackHowSessionTookPlaceViewModel = (res.render as jest.Mock).mock.calls[0][1].content
-      const radios = viewModel.phoneCallRadiosArgs('<div>how session html</div>')
+      const radios = viewModel.didSessionTakePlaceRadiosArgs('<div>how session html</div>')
       expect(radios.items[0].checked).toBe(false)
       expect(radios.items[1].checked).toBe(true)
     })
@@ -168,7 +168,7 @@ describe('IcsFeedbackPresenter', () => {
       presenter.renderPage(res)
       const renderCall = (res.render as jest.Mock).mock.calls[0]
       const viewModel: IcsFeedbackHowSessionTookPlaceViewModel = renderCall[1].content
-      expect(viewModel.phoneCallRadiosArgs).toBeDefined()
+      expect(viewModel.didSessionTakePlaceRadiosArgs).toBeDefined()
     })
   })
 

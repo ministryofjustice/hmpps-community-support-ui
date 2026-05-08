@@ -151,7 +151,7 @@
     "progressActiveColumnHeaders": ["Date and time", "Status", "Action"],
     "progressInactiveColumnHeaders": ["Status", "Action"]
   },
-  "/ics-feedback/didSessionTookPlace/:id": {
+  "/ics-feedback/:id/did-session-take-place": {
     "submitButtonText": "Continue",
     "pageHeaders": {
       "PHONE": "Did the session take place by phone call?",

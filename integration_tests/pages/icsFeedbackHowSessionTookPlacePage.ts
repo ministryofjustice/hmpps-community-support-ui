@@ -39,7 +39,7 @@ export default class IcsFeedbackHowSessionTookPlacePage extends AbstractPage {
   readonly continueButton: Locator
 
   static url(caseRefId: string) {
-    return `/ics-feedback/didSessionTookPlace/${caseRefId}`
+    return `/ics-feedback/${caseRefId}/did-session-take-place`
   }
 
   static sessionDetailsUrl(caseRefId: string) {

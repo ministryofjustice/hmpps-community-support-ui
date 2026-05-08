@@ -31,7 +31,7 @@ export type IcsFeedbackHowSessionTookPlaceViewModel = {
     probationOfficeHtml: string,
     somewhereElseHtml: string,
   ) => GovukFrontendRadiosWithConditional
-  phoneCallRadiosArgs: (howSessionHtml: string) => GovukFrontendRadiosWithConditional
+  didSessionTakePlaceRadiosArgs: (howSessionHtml: string) => GovukFrontendRadiosWithConditional
 }
 
 export type IcsFeedbackHowSessionTookPlaceContent = {

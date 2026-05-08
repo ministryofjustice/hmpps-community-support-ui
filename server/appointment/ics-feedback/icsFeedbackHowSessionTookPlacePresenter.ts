@@ -186,7 +186,7 @@ export default class IcsFeedbackHowSessionTookPlacePresenter extends PresenterBa
     }
   }
 
-  private buildPhoneCallRadiosArgs(
+  private buildDidSessionTakePlaceRadiosArgs(
     content: IcsFeedbackHowSessionTookPlaceContent,
     pageHeader: string,
     howSessionHtml: string,
@@ -220,11 +220,11 @@ export default class IcsFeedbackHowSessionTookPlacePresenter extends PresenterBa
   buildPageContent(res: Response): IcsFeedbackHowSessionTookPlaceViewModel {
     const content = this.buildStaticContent(res)
     const { type } = this.sessionMethod
-    const pageHeader = content.pageHeaders[type] ?? content.pageHeaders.default
+    const pageHeader = content.pageHeaders?.[type] ?? content.pageHeaders?.default ?? ''
     return {
       pageHeader,
       submitButtonText: content.submitButtonText,
-      submitHref: `/ics-feedback/didSessionTookPlace/${this.caseRefId}`,
+      submitHref: `/ics-feedback/${this.caseRefId}/did-session-take-place`,
       backlinkHref: `/ics-feedback/attendance/${this.caseRefId}`,
       sessionLocationLines: this.buildSessionLocationLines(),
       errorList: Object.entries(this.validationErrors ?? {}).map(([key, error]) => ({
@@ -237,7 +237,8 @@ export default class IcsFeedbackHowSessionTookPlacePresenter extends PresenterBa
       somewhereElseInputArgs: this.buildSomewhereElseInputArgs(content),
       howSessionRadiosArgs: (phoneCallHtml, videoCallHtml, probationOfficeHtml, somewhereElseHtml) =>
         this.buildHowSessionRadiosArgs(content, phoneCallHtml, videoCallHtml, probationOfficeHtml, somewhereElseHtml),
-      phoneCallRadiosArgs: howSessionHtml => this.buildPhoneCallRadiosArgs(content, pageHeader, howSessionHtml),
+      didSessionTakePlaceRadiosArgs: howSessionHtml =>
+        this.buildDidSessionTakePlaceRadiosArgs(content, pageHeader, howSessionHtml),
     }
   }
 

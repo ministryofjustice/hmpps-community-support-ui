@@ -57,7 +57,7 @@
       {{ govukRadios(content.howSessionRadiosArgs(phoneCallReasonHtml, videoCallReasonHtml, probationOfficeHtml, somewhereElseHtml)) }}
     {% endset %}
 
-    {{ govukRadios(content.phoneCallRadiosArgs(howSessionHtml)) }}
+    {{ govukRadios(content.didSessionTakePlaceRadiosArgs(howSessionHtml)) }}
 
     {{ govukButton({
       text: content.submitButtonText,

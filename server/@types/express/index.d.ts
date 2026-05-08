@@ -33,6 +33,7 @@ export declare module 'express-session' {
     referralInformation: ReferralInformationDto
     icsFeedbackHowSessionTookPlaceSubmission: Record<string, IcsFeedbackHowSessionTookPlaceSession>
     icsFeedbackSubmissionsMap: Record<string, IcsFeedbackSubmission>
+    icsFeedbackPendingFormData: Record<string, Record<string, string>>
   }
 }
 

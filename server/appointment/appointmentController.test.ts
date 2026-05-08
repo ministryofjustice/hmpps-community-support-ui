@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { AppointmentIcsResponse, CreateAppointmentRequest } from '@community-support-api'
+import { AppointmentIcsResponse, CreateAppointmentRequest, IcsFeedbackSubmission } from '@community-support-api'
 import AppointmentController from './appointmentController'
 import ConfirmIcsPresenter, { type AdditionalInformation } from './confirm-ics/confirmIcsPresenter'
 import ScheduleIcsPresenter from './schedule-ics/scheduleIcsPresenter'
@@ -223,39 +223,48 @@ describe('AppointmentController', () => {
     })
 
     it('renders the ics-feedback page on GET with empty form data when no session data', async () => {
-      await appointmentController.didSessionTookPlace(icsFeedbackReq, icsFeedbackRes)
+      await appointmentController.didSessionTakePlace(icsFeedbackReq, icsFeedbackRes)
 
       expect(IcsFeedbackHowSessionTookPlacePresenter).toHaveBeenCalledWith(
         'ics-123',
         mockIcsAppointment.sessionMethod,
         probationOfficesData,
         {},
+        undefined,
       )
       expect(IcsFeedbackHowSessionTookPlacePresenter.prototype.renderPage).toHaveBeenCalledWith(icsFeedbackRes)
     })
 
     it('renders the ics-feedback page on GET with form data loaded from session (PHONE)', async () => {
-      icsFeedbackReq.session.icsFeedbackHowSessionTookPlaceSubmission = {
-        'ics-123': { howSessionTookPlace: { type: 'PHONE' } },
+      icsFeedbackReq.session.icsFeedbackSubmissionsMap = {
+        'ics-123': {
+          record: { didSessionHappen: true, howSessionTookPlace: { type: 'PHONE' } },
+        } as unknown as IcsFeedbackSubmission,
       }
 
-      await appointmentController.didSessionTookPlace(icsFeedbackReq, icsFeedbackRes)
+      await appointmentController.didSessionTakePlace(icsFeedbackReq, icsFeedbackRes)
 
       expect(IcsFeedbackHowSessionTookPlacePresenter).toHaveBeenCalledWith(
         'ics-123',
         mockIcsAppointment.sessionMethod,
         probationOfficesData,
         { phoneCall: 'yes' },
+        undefined,
       )
       expect(IcsFeedbackHowSessionTookPlacePresenter.prototype.renderPage).toHaveBeenCalledWith(icsFeedbackRes)
     })
 
     it('renders the ics-feedback page on GET with form data loaded from session (PHONE with reason)', async () => {
-      icsFeedbackReq.session.icsFeedbackHowSessionTookPlaceSubmission = {
-        'ics-123': { howSessionTookPlace: { type: 'PHONE', additionalDetails: 'Video not available' } },
+      icsFeedbackReq.session.icsFeedbackSubmissionsMap = {
+        'ics-123': {
+          record: {
+            didSessionHappen: true,
+            howSessionTookPlace: { type: 'PHONE', additionalDetails: 'Video not available' },
+          },
+        } as unknown as IcsFeedbackSubmission,
       }
 
-      await appointmentController.didSessionTookPlace(icsFeedbackReq, icsFeedbackRes)
+      await appointmentController.didSessionTakePlace(icsFeedbackReq, icsFeedbackRes)
 
       expect(IcsFeedbackHowSessionTookPlacePresenter).toHaveBeenCalledWith(
         'ics-123',
@@ -266,16 +275,19 @@ describe('AppointmentController', () => {
           howSessionTookPlace: 'PHONE',
           phoneCallReason: 'Video not available',
         },
+        undefined,
       )
       expect(IcsFeedbackHowSessionTookPlacePresenter.prototype.renderPage).toHaveBeenCalledWith(icsFeedbackRes)
     })
 
     it('renders the ics-feedback page on GET with form data loaded from session (VIDEO)', async () => {
-      icsFeedbackReq.session.icsFeedbackHowSessionTookPlaceSubmission = {
-        'ics-123': { howSessionTookPlace: { type: 'VIDEO', additionalDetails: 'Remote only' } },
+      icsFeedbackReq.session.icsFeedbackSubmissionsMap = {
+        'ics-123': {
+          record: { didSessionHappen: true, howSessionTookPlace: { type: 'VIDEO', additionalDetails: 'Remote only' } },
+        } as unknown as IcsFeedbackSubmission,
       }
 
-      await appointmentController.didSessionTookPlace(icsFeedbackReq, icsFeedbackRes)
+      await appointmentController.didSessionTakePlace(icsFeedbackReq, icsFeedbackRes)
 
       expect(IcsFeedbackHowSessionTookPlacePresenter).toHaveBeenCalledWith(
         'ics-123',
@@ -286,15 +298,21 @@ describe('AppointmentController', () => {
           howSessionTookPlace: 'VIDEO',
           videoCallReason: 'Remote only',
         },
+        undefined,
       )
     })
 
     it('renders the ics-feedback page on GET with form data loaded from session (IN_PERSON_PROBATION_OFFICE)', async () => {
-      icsFeedbackReq.session.icsFeedbackHowSessionTookPlaceSubmission = {
-        'ics-123': { howSessionTookPlace: { type: 'IN_PERSON_PROBATION_OFFICE', pdu: 'PDU-South-East' } },
+      icsFeedbackReq.session.icsFeedbackSubmissionsMap = {
+        'ics-123': {
+          record: {
+            didSessionHappen: true,
+            howSessionTookPlace: { type: 'IN_PERSON_PROBATION_OFFICE', pdu: 'PDU-South-East' },
+          },
+        } as unknown as IcsFeedbackSubmission,
       }
 
-      await appointmentController.didSessionTookPlace(icsFeedbackReq, icsFeedbackRes)
+      await appointmentController.didSessionTakePlace(icsFeedbackReq, icsFeedbackRes)
 
       expect(IcsFeedbackHowSessionTookPlacePresenter).toHaveBeenCalledWith(
         'ics-123',
@@ -305,39 +323,102 @@ describe('AppointmentController', () => {
           howSessionTookPlace: 'IN_PERSON_PROBATION_OFFICE',
           probationDeliveryUnit: 'PDU-South-East',
         },
+        undefined,
       )
     })
 
     it('renders the ics-feedback page on GET with form data loaded from session (IN_PERSON_OTHER_LOCATION)', async () => {
-      icsFeedbackReq.session.icsFeedbackHowSessionTookPlaceSubmission = {
+      icsFeedbackReq.session.icsFeedbackSubmissionsMap = {
         'ics-123': {
-          howSessionTookPlace: {
-            type: 'IN_PERSON_OTHER_LOCATION',
-            addressLine1: '123 Main St',
-            townOrCity: 'London',
-            postcode: 'SW1A 1AA',
+          record: {
+            didSessionHappen: true,
+            howSessionTookPlace: {
+              type: 'IN_PERSON_OTHER_LOCATION',
+              addressLine1: '123 Main St',
+              townOrCity: 'London',
+              postcode: 'SW1A 1AA',
+            },
           },
-        },
+        } as unknown as IcsFeedbackSubmission,
       }
 
-      await appointmentController.didSessionTookPlace(icsFeedbackReq, icsFeedbackRes)
+      await appointmentController.didSessionTakePlace(icsFeedbackReq, icsFeedbackRes)
 
       expect(IcsFeedbackHowSessionTookPlacePresenter).toHaveBeenCalledWith(
         'ics-123',
         mockIcsAppointment.sessionMethod,
         probationOfficesData,
         expect.objectContaining({ phoneCall: 'no', howSessionTookPlace: 'IN_PERSON_OTHER_LOCATION' }),
+        undefined,
       )
+    })
+
+    it('saves submitted form data to session, flashes errors and redirects on invalid POST', async () => {
+      icsFeedbackReq.method = 'POST'
+      icsFeedbackReq.body = { phoneCall: 'no' } // missing howSessionTookPlace
+
+      await appointmentController.didSessionTakePlace(icsFeedbackReq, icsFeedbackRes)
+
+      expect(icsFeedbackReq.flash).toHaveBeenCalled()
+      expect(icsFeedbackRes.redirect).toHaveBeenCalledWith('/ics-feedback/ics-123/did-session-take-place')
+      expect(icsFeedbackReq.session.icsFeedbackPendingFormData?.['ics-123']).toEqual(
+        expect.objectContaining({ phoneCall: 'no' }),
+      )
+    })
+
+    it('saves submitted form data with nested field to session and redirects on invalid POST', async () => {
+      icsFeedbackReq.method = 'POST'
+      icsFeedbackReq.body = { phoneCall: 'no', howSessionTookPlace: 'PHONE', phoneCallReason: '' }
+
+      await appointmentController.didSessionTakePlace(icsFeedbackReq, icsFeedbackRes)
+
+      expect(icsFeedbackReq.flash).toHaveBeenCalledWith('phoneCallReasonError', expect.any(String))
+      expect(icsFeedbackRes.redirect).toHaveBeenCalledWith('/ics-feedback/ics-123/did-session-take-place')
+      expect(icsFeedbackReq.session.icsFeedbackPendingFormData?.['ics-123']).toEqual(
+        expect.objectContaining({ phoneCall: 'no', howSessionTookPlace: 'PHONE', phoneCallReason: '' }),
+      )
+    })
+
+    it('restores form data from session on GET after failed POST', async () => {
+      icsFeedbackReq.session.icsFeedbackPendingFormData = {
+        'ics-123': { phoneCall: 'no', howSessionTookPlace: 'PHONE', phoneCallReason: '' },
+      }
+
+      await appointmentController.didSessionTakePlace(icsFeedbackReq, icsFeedbackRes)
+
+      expect(IcsFeedbackHowSessionTookPlacePresenter).toHaveBeenCalledWith(
+        'ics-123',
+        mockIcsAppointment.sessionMethod,
+        probationOfficesData,
+        { phoneCall: 'no', howSessionTookPlace: 'PHONE', phoneCallReason: '' },
+        undefined,
+      )
+      expect(icsFeedbackReq.session.icsFeedbackPendingFormData?.['ics-123']).toBeUndefined()
+    })
+
+    it('saves howSessionTookPlace to session and redirects on valid POST with phoneCall yes (no prior session)', async () => {
+      icsFeedbackReq.method = 'POST'
+      icsFeedbackReq.body = { phoneCall: 'yes' }
+
+      await appointmentController.didSessionTakePlace(icsFeedbackReq, icsFeedbackRes)
+
+      expect(icsFeedbackReq.session.icsFeedbackSubmissionsMap!['ics-123'].record.howSessionTookPlace).toEqual({
+        type: 'PHONE',
+      })
+      expect(icsFeedbackRes.redirect).toHaveBeenCalledWith(`/ics-feedback/ics-123/session-details`)
     })
 
     it('saves howSessionTookPlace to session and redirects on valid POST with phoneCall yes', async () => {
       icsFeedbackReq.method = 'POST'
       icsFeedbackReq.body = { phoneCall: 'yes' }
+      icsFeedbackReq.session.icsFeedbackSubmissionsMap = {
+        'ics-123': { record: { didSessionHappen: true } } as unknown as IcsFeedbackSubmission,
+      }
 
-      await appointmentController.didSessionTookPlace(icsFeedbackReq, icsFeedbackRes)
+      await appointmentController.didSessionTakePlace(icsFeedbackReq, icsFeedbackRes)
 
-      expect(icsFeedbackReq.session.icsFeedbackHowSessionTookPlaceSubmission).toEqual({
-        'ics-123': { howSessionTookPlace: { type: 'PHONE' } },
+      expect(icsFeedbackReq.session.icsFeedbackSubmissionsMap['ics-123'].record.howSessionTookPlace).toEqual({
+        type: 'PHONE',
       })
       expect(icsFeedbackRes.redirect).toHaveBeenCalledWith(`/ics-feedback/ics-123/session-details`)
     })
@@ -345,11 +426,15 @@ describe('AppointmentController', () => {
     it('saves howSessionTookPlace to session and redirects on valid POST with PHONE (howSessionTookPlace)', async () => {
       icsFeedbackReq.method = 'POST'
       icsFeedbackReq.body = { phoneCall: 'no', howSessionTookPlace: 'PHONE', phoneCallReason: 'Video not available' }
+      icsFeedbackReq.session.icsFeedbackSubmissionsMap = {
+        'ics-123': { record: { didSessionHappen: true } } as unknown as IcsFeedbackSubmission,
+      }
 
-      await appointmentController.didSessionTookPlace(icsFeedbackReq, icsFeedbackRes)
+      await appointmentController.didSessionTakePlace(icsFeedbackReq, icsFeedbackRes)
 
-      expect(icsFeedbackReq.session.icsFeedbackHowSessionTookPlaceSubmission).toEqual({
-        'ics-123': { howSessionTookPlace: { type: 'PHONE', additionalDetails: 'Video not available' } },
+      expect(icsFeedbackReq.session.icsFeedbackSubmissionsMap['ics-123'].record.howSessionTookPlace).toEqual({
+        type: 'PHONE',
+        additionalDetails: 'Video not available',
       })
       expect(icsFeedbackRes.redirect).toHaveBeenCalledWith(`/ics-feedback/ics-123/session-details`)
     })
@@ -357,11 +442,15 @@ describe('AppointmentController', () => {
     it('saves howSessionTookPlace to session and redirects on valid POST with VIDEO', async () => {
       icsFeedbackReq.method = 'POST'
       icsFeedbackReq.body = { phoneCall: 'no', howSessionTookPlace: 'VIDEO', videoCallReason: 'Teams only' }
+      icsFeedbackReq.session.icsFeedbackSubmissionsMap = {
+        'ics-123': { record: { didSessionHappen: true } } as unknown as IcsFeedbackSubmission,
+      }
 
-      await appointmentController.didSessionTookPlace(icsFeedbackReq, icsFeedbackRes)
+      await appointmentController.didSessionTakePlace(icsFeedbackReq, icsFeedbackRes)
 
-      expect(icsFeedbackReq.session.icsFeedbackHowSessionTookPlaceSubmission).toEqual({
-        'ics-123': { howSessionTookPlace: { type: 'VIDEO', additionalDetails: 'Teams only' } },
+      expect(icsFeedbackReq.session.icsFeedbackSubmissionsMap['ics-123'].record.howSessionTookPlace).toEqual({
+        type: 'VIDEO',
+        additionalDetails: 'Teams only',
       })
       expect(icsFeedbackRes.redirect).toHaveBeenCalledWith(`/ics-feedback/ics-123/session-details`)
     })
@@ -373,11 +462,15 @@ describe('AppointmentController', () => {
         howSessionTookPlace: 'IN_PERSON_PROBATION_OFFICE',
         probationDeliveryUnit: 'PDU-123',
       }
+      icsFeedbackReq.session.icsFeedbackSubmissionsMap = {
+        'ics-123': { record: { didSessionHappen: true } } as unknown as IcsFeedbackSubmission,
+      }
 
-      await appointmentController.didSessionTookPlace(icsFeedbackReq, icsFeedbackRes)
+      await appointmentController.didSessionTakePlace(icsFeedbackReq, icsFeedbackRes)
 
-      expect(icsFeedbackReq.session.icsFeedbackHowSessionTookPlaceSubmission).toEqual({
-        'ics-123': { howSessionTookPlace: { type: 'IN_PERSON_PROBATION_OFFICE', pdu: 'PDU-123' } },
+      expect(icsFeedbackReq.session.icsFeedbackSubmissionsMap['ics-123'].record.howSessionTookPlace).toEqual({
+        type: 'IN_PERSON_PROBATION_OFFICE',
+        pdu: 'PDU-123',
       })
     })
 
@@ -392,20 +485,19 @@ describe('AppointmentController', () => {
         county: '',
         postcode: 'N1 6XE',
       }
+      icsFeedbackReq.session.icsFeedbackSubmissionsMap = {
+        'ics-123': { record: { didSessionHappen: true } } as unknown as IcsFeedbackSubmission,
+      }
 
-      await appointmentController.didSessionTookPlace(icsFeedbackReq, icsFeedbackRes)
+      await appointmentController.didSessionTakePlace(icsFeedbackReq, icsFeedbackRes)
 
-      expect(icsFeedbackReq.session.icsFeedbackHowSessionTookPlaceSubmission).toEqual({
-        'ics-123': {
-          howSessionTookPlace: {
-            type: 'IN_PERSON_OTHER_LOCATION',
-            addressLine1: '56 Carlisle Road',
-            addressLine2: '',
-            townOrCity: 'London',
-            county: '',
-            postcode: 'N1 6XE',
-          },
-        },
+      expect(icsFeedbackReq.session.icsFeedbackSubmissionsMap['ics-123'].record.howSessionTookPlace).toEqual({
+        type: 'IN_PERSON_OTHER_LOCATION',
+        addressLine1: '56 Carlisle Road',
+        addressLine2: '',
+        townOrCity: 'London',
+        county: '',
+        postcode: 'N1 6XE',
       })
     })
   })

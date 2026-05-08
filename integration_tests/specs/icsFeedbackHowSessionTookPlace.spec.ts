@@ -181,6 +181,13 @@ test.describe('ICS Feedback - Did session take place by phone call?', () => {
     await icsFeedbackPage.continueButton.click()
     await expect(page).toHaveURL(IcsFeedbackPage.sessionDetailsUrl(ICS_ID))
   })
+
+  test('does not show location block for PHONE appointment', async ({ page }) => {
+    await page.goto(IcsFeedbackPage.url(ICS_ID))
+    const icsFeedbackPage = await IcsFeedbackPage.verifyOnPage(page)
+
+    await expect(icsFeedbackPage.sessionLocation).not.toBeVisible()
+  })
 })
 
 test.describe('ICS Feedback - Did session take place by video call?', () => {
@@ -485,19 +492,6 @@ test.describe('ICS Feedback - In person appointment location display', () => {
     await icsFeedbackPage.videoCallReasonInput.fill('Office was unavailable')
     await icsFeedbackPage.continueButton.click()
     await expect(page).toHaveURL(IcsFeedbackPage.sessionDetailsUrl(inPersonIcsId))
-  })
-
-  test('does not show location block for PHONE appointment', async ({ page }) => {
-    await communitySupport.stubGetICS(inPersonIcsId, {
-      ...phoneAppointment,
-      appointmentIcsId: inPersonIcsId,
-      referralId: inPersonReferralId,
-    })
-
-    await page.goto(IcsFeedbackPage.url(inPersonIcsId))
-    const icsFeedbackPage = await IcsFeedbackPage.verifyOnPage(page)
-
-    await expect(icsFeedbackPage.sessionLocation).not.toBeVisible()
   })
 })
 

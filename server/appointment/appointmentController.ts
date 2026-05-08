@@ -21,6 +21,7 @@ import SessionFeedbackPresenter from './session-feedback/sessionFeedbackPresente
 import { RecordSessionAttendanceFormDataSchema } from '../validation/RecordSessionAttendanceFormData'
 import AppointmentValidator from './AppointmentValidator'
 import { IcsFeedbackHowSessionTookPlaceFormData } from './ics-feedback/icsFeedbackHowSessionTookPlaceViewModel'
+import { SessionFeedbackFormDataSchema } from '../validation/SessionFeedbackFormData'
 
 interface ScheduleFormData {
   sessionDate?: string
@@ -372,7 +373,7 @@ class AppointmentController {
       .then(presenter => presenter.renderPage(res))
   }
 
-  async didSessionTookPlace(req: Request, res: Response): Promise<void> {
+  async didSessionTakePlace(req: Request, res: Response): Promise<void> {
     const { caseRefId } = req.params as { caseRefId: string }
     const { username } = res.locals.user
     const [probationOffices, icsAppointment] = await Promise.all([
@@ -380,30 +381,53 @@ class AppointmentController {
       this.appointmentService.getICS(caseRefId, username),
     ])
     const { sessionMethod } = icsAppointment
+
     if (req.method === 'POST') {
       const { formData, errors } = this.validator.validateIcsFeedbackForm(req, sessionMethod.type)
 
       if (Object.keys(errors).length > 0) {
-        const presenter = new IcsFeedbackHowSessionTookPlacePresenter(
-          caseRefId,
-          sessionMethod,
-          probationOffices,
-          formData,
-          errors,
-        )
-        return presenter.renderPage(res)
+        if (!req.session.icsFeedbackPendingFormData) {
+          req.session.icsFeedbackPendingFormData = {}
+        }
+        req.session.icsFeedbackPendingFormData[caseRefId] = formData as Record<string, string>
+        Object.entries(errors).forEach(([field, error]) => {
+          req.flash(`${field}Error`, error.text)
+        })
+        req.session.formKeys = [...new Set([...(req.session.formKeys ?? []), ...Object.keys(errors)])]
+        return res.redirect(`/ics-feedback/${caseRefId}/did-session-take-place`)
       }
 
-      req.session.icsFeedbackHowSessionTookPlaceSubmission = {
-        ...req.session.icsFeedbackHowSessionTookPlaceSubmission,
-        [caseRefId]: { howSessionTookPlace: this.buildHowSessionTookPlace(formData) },
+      const currentSubmission = this.ensureFeedbackSubmission(req, caseRefId)
+      if (!currentSubmission.record) {
+        currentSubmission.record = { didSessionHappen: true }
+      }
+      currentSubmission.record = {
+        ...currentSubmission.record,
+        howSessionTookPlace: this.buildHowSessionTookPlace(formData) as SessionMethodRequest,
       }
 
       return res.redirect(`/ics-feedback/${caseRefId}/session-details`)
     }
 
-    const formData = this.loadIcsFeedbackFromSession(req.session.icsFeedbackHowSessionTookPlaceSubmission?.[caseRefId])
-    const presenter = new IcsFeedbackHowSessionTookPlacePresenter(caseRefId, sessionMethod, probationOffices, formData)
+    let formData: IcsFeedbackHowSessionTookPlaceFormData
+    if (req.session.icsFeedbackPendingFormData?.[caseRefId]) {
+      formData = req.session.icsFeedbackPendingFormData[caseRefId] as IcsFeedbackHowSessionTookPlaceFormData
+      delete req.session.icsFeedbackPendingFormData[caseRefId]
+    } else {
+      const currentFeedback = this.getFeedbackSubmission(req, caseRefId)
+      const storedHowSessionTookPlace = currentFeedback?.record?.howSessionTookPlace as HowSessionTookPlace | undefined
+      formData = this.loadIcsFeedbackFromSession(
+        storedHowSessionTookPlace ? { howSessionTookPlace: storedHowSessionTookPlace } : undefined,
+      )
+    }
+    const validationErrors = res.locals.errors?.messages as Record<string, { text: string }> | undefined
+    const presenter = new IcsFeedbackHowSessionTookPlacePresenter(
+      caseRefId,
+      sessionMethod,
+      probationOffices,
+      formData,
+      validationErrors,
+    )
     return presenter.renderPage(res)
   }
 
@@ -496,7 +520,11 @@ class AppointmentController {
     return RecordSessionAttendanceFormDataSchema.parseAsync(req.body)
       .then(data => {
         const sessionHappened = data.happened === 'Yes'
-        this.updatedFeedbackSubmission(req, caseRefId, { record: { didSessionHappen: sessionHappened } })
+        const existing = this.getFeedbackSubmission(req, caseRefId)
+        this.updatedFeedbackSubmission(req, caseRefId, {
+          ...existing,
+          record: { ...existing?.record, didSessionHappen: sessionHappened },
+        })
         if (data.happened === 'Yes') {
           res.redirect(`/ics-feedback/${caseRefId}/did-session-take-place`)
           return
