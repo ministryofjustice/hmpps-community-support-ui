@@ -93,6 +93,14 @@ export default function routes({
 
   get('/referral-details/:caseRefId/check-change-ics', (req, res) => appointmentController.changeIcs(req, res))
 
+  getOrPost('/ics-feedback/:caseRefId/did-session-take-place', async (req, res) =>
+    appointmentController.didSessionTakePlace(req, res),
+  )
+
+  get('/referral-details/:caseReference/progress', async (req, res) =>
+    referralController.showReferralProgressDetails(req, res),
+  )
+
   post('/referral/:referralId/appointment/submit-ics', async (req, res) => appointmentController.submitIcs(req, res))
 
   get('/progress/:caseReference', async (req, res) => {
@@ -100,8 +108,6 @@ export default function routes({
   })
 
   get('/ics-feedback/attendance/:caseRefId', async (req, res) => appointmentController.attendance(req, res))
-
-  get('/ics-feedback/feedback/:caseRefId', async (req, res) => appointmentController.checkFeedback(req, res))
 
   get('/ics-feedback/feedback/:caseRefId', async (req, res) => appointmentController.checkFeedback(req, res))
 
