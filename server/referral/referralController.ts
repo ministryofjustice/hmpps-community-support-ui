@@ -9,8 +9,6 @@ import CheckReferralInformationPresenter from './check-referral-information/chec
 import ReferralDetailsPresenter from './referralDetails/ReferralDetailsPresenter'
 import ReferralProgressPresenter from './progress/referralProgressPresenter'
 
-type SuccessBannerType = 'SCHEDULED_ICS' | 'RESCHEDULE_ICS' | 'COMPLETED_ICS'
-
 class ReferralController {
   constructor(
     private readonly referralService: ReferralService,
@@ -219,24 +217,15 @@ class ReferralController {
   async showReferralProgressDetails(req: Request, res: Response) {
     const { caseReference } = req.params as { caseReference: string }
     const { username } = res.locals.user
-    const { success } = req.query
+    const bannerContent = req.session.referralProgressBanner
+
+    delete req.session.referralProgressBanner
 
     const referralProgress = await this.referralService.getReferralProgress(caseReference, username)
-    const successBannerType = this.successBannerTypeFromQuery(success)
-    const presenter = new ReferralProgressPresenter(referralProgress, caseReference, successBannerType)
+
+    const presenter = new ReferralProgressPresenter(referralProgress, caseReference, bannerContent)
 
     return presenter.renderPage(res)
-  }
-
-  private readonly successBannerMap: Record<string, SuccessBannerType> = {
-    scheduledIcs: 'SCHEDULED_ICS',
-    rescheduleIcs: 'RESCHEDULE_ICS',
-    completedIcs: 'COMPLETED_ICS',
-  }
-
-  private successBannerTypeFromQuery(success: unknown): SuccessBannerType | undefined {
-    if (typeof success !== 'string') return undefined
-    return this.successBannerMap[success]
   }
 }
 

@@ -6,6 +6,7 @@ import {
   IcsFeedbackSubmission,
 } from '@community-support-api'
 import { HmppsUser } from '../../interfaces/hmppsUser'
+import { ReferralProgressBannerContent } from '../../referral/progress/ReferralProgressBannerContent'
 
 export interface HowSessionTookPlace {
   type: 'PHONE' | 'VIDEO' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION'
@@ -34,6 +35,7 @@ export declare module 'express-session' {
     icsFeedbackHowSessionTookPlaceSubmission: Record<string, IcsFeedbackHowSessionTookPlaceSession>
     icsFeedbackSubmissionsMap: Record<string, IcsFeedbackSubmission>
     icsFeedbackPendingFormData: Record<string, Record<string, string>>
+    referralProgressBanner?: ReferralProgressBannerContent
   }
 }
 

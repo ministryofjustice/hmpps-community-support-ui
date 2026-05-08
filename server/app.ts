@@ -60,6 +60,10 @@ export default function createApp(services: Services): express.Application {
       }
       res.status(200).json({ ok: true })
     })
+    app.post('/test/setup-referral-progress-session', (req, res) => {
+      req.session.referralProgressBanner = req.body.referralProgressBanner
+      res.sendStatus(200)
+    })
   }
 
   app.use(setUpCsrf())

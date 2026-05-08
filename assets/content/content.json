@@ -126,11 +126,6 @@
   "/progress/:id": {
     "pageHeader": "Referral for",
     "progressSubNavTitle": "Progress",
-    "scheduledIcsBannerHeading": "ICS scheduled",
-    "scheduledIcsBannerMessage": "The ICS has been scheduled for",
-    "sessionFeedbackBannerHeading": "Session feedback submitted",
-    "sessionFeedbackRescheduleIcsBannerMessage": "You must now reschedule the ICS.",
-    "sessionFeedbackCompletedIcsBannerMessage": "The ICS is now complete. The probation practitioner will receive an email.",
     "subNavItems": [
       {
         "id": "caseDetails",
