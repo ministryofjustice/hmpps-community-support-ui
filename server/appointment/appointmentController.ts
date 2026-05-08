@@ -1,10 +1,5 @@
 import { Request, Response } from 'express'
-import {
-  CreateAppointmentRequest,
-  SessionMethodRequest,
-  ReferralInformation,
-  IcsFeedbackSubmission,
-} from '@community-support-api'
+import { CreateAppointmentRequest, SessionMethodRequest, IcsFeedbackSubmission } from '@community-support-api'
 import { format, parse } from 'date-fns'
 import z, { ZodError } from 'zod'
 import { HowSessionTookPlace, IcsFeedbackHowSessionTookPlaceSession } from '../@types/express'
