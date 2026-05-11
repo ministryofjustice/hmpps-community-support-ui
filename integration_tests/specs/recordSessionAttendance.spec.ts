@@ -219,9 +219,10 @@ test.describe('RecordSessionAttendancePage', () => {
       await test.step('check banner content', async () => {
         await expect(recordSessionAttendancePage.errorSummary.locator).toBeVisible()
         await expect(recordSessionAttendancePage.errorSummary.title).toHaveText('There is a problem')
-        expect(recordSessionAttendancePage.errorSummary.list).toBeVisible()
-        expect(recordSessionAttendancePage.errorSummary.items).toHaveLength(1)
-        await expect(recordSessionAttendancePage.errorSummary.items[0]).toHaveText('Select yes if the session happened')
+        await expect(recordSessionAttendancePage.errorSummary.list).toBeVisible()
+        await expect(recordSessionAttendancePage.errorSummary.items).toHaveCount(1)
+        const [ errorMessage ] = await recordSessionAttendancePage.errorSummary.items.all()
+        await expect(errorMessage).toHaveText('Select yes if the session happened')
       })
       await test.step('check radio content', async () => {
         await expect(recordSessionAttendancePage.sessionHappenedRadios.errorText).toBeVisible()
@@ -265,9 +266,10 @@ test.describe('RecordSessionAttendancePage', () => {
       await test.step('check banner content', async () => {
         await expect(recordSessionAttendancePage.errorSummary.locator).toBeVisible()
         await expect(recordSessionAttendancePage.errorSummary.title).toHaveText('There is a problem')
-        expect(recordSessionAttendancePage.errorSummary.list).toBeVisible()
-        expect(recordSessionAttendancePage.errorSummary.items).toHaveLength(1)
-        await expect(recordSessionAttendancePage.errorSummary.items[0]).toHaveText(
+        await expect(recordSessionAttendancePage.errorSummary.list).toBeVisible()
+        await expect(recordSessionAttendancePage.errorSummary.items).toHaveCount(1)
+        const [errorMessage] = await recordSessionAttendancePage.errorSummary.items.all()
+        await expect(errorMessage).toHaveText(
           'Select yes if Alice came to the appointment',
         )
       })

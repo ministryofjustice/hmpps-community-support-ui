@@ -628,25 +628,24 @@ class AppointmentController {
       })
   }
 
-  sessionDetails(req: Request, res: Response): Promise<void> {
+  async sessionDetails(req: Request, res: Response): Promise<void> {
     const { caseRefId } = req.params as { caseRefId: string }
     const { username } = res.locals.user
     const validationErrors: RecordSessionDetailsError = res.locals.errors
     const { IcsFeedbackSubmission } = req.session || null
     const sessionDetails = IcsFeedbackSubmission ? IcsFeedbackSubmission.sessionDetails : null
-    return this.appointmentService
-      .getICS(caseRefId.toString(), username)
-      .then(appointmentData => new RecordSessionDetailsPresenter(caseRefId, appointmentData, sessionDetails, validationErrors))
-      .then(presenter => presenter.renderPage(res))
+    const appointmentData = await this.appointmentService.getICS(caseRefId.toString(), username)
+    const presenter = new RecordSessionDetailsPresenter(caseRefId, appointmentData, sessionDetails, validationErrors)
+    return presenter.renderPage(res)
   }
 
   async recordSessionDetails(req: Request, res: Response): Promise<void> {
     const { caseRefId } = req.params
     const bodyData: RecordSessionDetailsFormViewModel = req.body
     let icsFeedbackSubmission = req.session.IcsFeedbackSubmission
-    // TODO What happens if there's no session?
     if (!icsFeedbackSubmission) {
-      icsFeedbackSubmission = { record: { didSessionHappen: true } }
+      res.redirect(`/progress/${caseRefId}`)
+      return
     }
     return RecordSessionDetailsFormDataSchema.parseAsync(req.body)
       .then(data => {

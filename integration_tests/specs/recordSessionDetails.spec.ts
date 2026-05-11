@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test'
 
 import { randomUUID } from 'node:crypto'
 import { format, subDays } from 'date-fns'
-import { login, resetStubs } from '../testUtils'
+import { login, resetStubs, seedIcsFeedbackSession } from '../testUtils'
 import SessionDetailsPage from '../pages/SessionDetailsPage'
 import initialContactSessionDetailsPageData from '../mockData/initialContactSessionDetailsPageData'
 import communitySupport from '../mockApis/communitySupport'
@@ -28,6 +28,12 @@ test.describe('Session Details Page', () => {
 
     await page.goto('/')
     await login(page)
+
+    await seedIcsFeedbackSession(page, {
+      record: {
+        didSessionHappen: true,
+      },
+    })
   })
 
   // IPB-2253:AC1/AC2
