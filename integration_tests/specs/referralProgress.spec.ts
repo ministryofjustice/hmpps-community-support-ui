@@ -69,16 +69,19 @@ test.describe('Referral Progress Page', () => {
   }
 
   const scheduledIcsSessionBannerContent: ReferralProgressBannerContent = {
+    caseReference,
     heading: 'ICS scheduled',
     body: 'The ICS has been scheduled for 27 March 2026 at 1:00pm',
   }
 
   const rescheduleIcsSessionBannerContent: ReferralProgressBannerContent = {
+    caseReference,
     heading: 'Session feedback submitted',
     body: 'You must now reschedule the ICS.',
   }
 
   const completedIcsSessionBannerContent: ReferralProgressBannerContent = {
+    caseReference,
     heading: 'Session feedback submitted',
     body: 'The ICS is now complete. The probation practitioner will receive an email.',
   }
@@ -174,16 +177,22 @@ test.describe('Referral Progress Page', () => {
     })
   })
 
-  test('Returning to progress will not show ICS scheduling success message', async ({ page }) => {
+  test('Should not display success banner when session banner belongs to different case reference', async ({
+    page,
+  }) => {
     await communitySupport.stubGetReferralProgress(appointmentScheduled, caseReference)
+
+    await setupReferralProgressSessionBanner(page, {
+      caseReference: 'ZZ9999ZZ',
+      heading: 'ICS scheduled',
+      body: 'The ICS has been scheduled for 27 March 2026 at 1:00pm',
+    })
 
     await page.goto(ReferralProgressPage.url(caseReference))
 
     const referralProgressPage = await ReferralProgressPage.verifyOnPage(page)
 
-    await test.step('can not see ICS success notification banner', async () => {
-      await expect(referralProgressPage.notificationBanner).not.toBeVisible()
-    })
+    await expect(referralProgressPage.notificationBanner).not.toBeVisible()
   })
 
   // IPB-2142:AC6 and other Referral Progress statuses
@@ -225,6 +234,10 @@ test.describe('Referral Progress Page', () => {
         await page.goto(ReferralProgressPage.url(caseReference))
 
         const referralProgressPage = await ReferralProgressPage.verifyOnPage(page)
+
+        await test.step('no notification banner is shown', async () => {
+          await expect(referralProgressPage.notificationBanner).not.toBeVisible()
+        })
 
         await test.step('can see ICS appointment table with correct headers', async () => {
           expect(referralProgressPage.table.header).toHaveLength(1)

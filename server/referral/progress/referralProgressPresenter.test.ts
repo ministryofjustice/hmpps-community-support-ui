@@ -33,27 +33,30 @@ describe('ReferralProgressPresenter', () => {
   }
 
   const scheduledIcsSessionBannerContent: ReferralProgressBannerContent = {
+    caseReference,
     heading: 'ICS scheduled',
     body: 'The ICS has been scheduled for 27 March 2026 at 1:00pm',
   }
 
   const rescheduleIcsSessionBannerContent: ReferralProgressBannerContent = {
+    caseReference,
     heading: 'Session feedback submitted',
     body: 'You must now reschedule the ICS.',
   }
 
   const completedIcsSessionBannerContent: ReferralProgressBannerContent = {
+    caseReference,
     heading: 'Session feedback submitted',
     body: 'The ICS is now complete. The probation practitioner will receive an email.',
   }
 
   describe('when no appointments exist', () => {
     it('renders NOT SCHEDULED table correctly', () => {
-      const referralProgressNoAppointments: ReferralProgress = buildReferralProgress([
+      const referralProgressNoAppointment: ReferralProgress = buildReferralProgress([
         { appointmentId: randomUUID(), events: [] },
       ])
 
-      const presenter = new ReferralProgressPresenter(referralProgressNoAppointments, caseReference)
+      const presenter = new ReferralProgressPresenter(referralProgressNoAppointment, caseReference)
       const viewModel = presenter.buildPageContent(mockResponse)
 
       expect(viewModel.icsAppointmentTable.head).toEqual([{ text: 'Status' }, { text: 'Action' }])
@@ -96,7 +99,7 @@ describe('ReferralProgressPresenter', () => {
 
   describe('scheduled ICS banner', () => {
     it('shows scheduled ICS success banner', () => {
-      const referralProgressWithAppointments = buildReferralProgress([
+      const referralProgressWithAppointment = buildReferralProgress([
         {
           appointmentId: randomUUID(),
           events: [{ status: 'SCHEDULED', dateTime: daysAfter(baseDate, 1) }],
@@ -104,7 +107,7 @@ describe('ReferralProgressPresenter', () => {
       ])
 
       const presenter = new ReferralProgressPresenter(
-        referralProgressWithAppointments,
+        referralProgressWithAppointment,
         caseReference,
         scheduledIcsSessionBannerContent,
       )
@@ -124,7 +127,7 @@ describe('ReferralProgressPresenter', () => {
 
     for (const scenario of scenarios) {
       it(`shows reschedule ICS banner after ${scenario.name}`, () => {
-        const referralProgressWithAppointments = buildReferralProgress([
+        const referralProgressWithAppointment = buildReferralProgress([
           {
             appointmentId: randomUUID(),
             events: [
@@ -136,7 +139,7 @@ describe('ReferralProgressPresenter', () => {
         ])
 
         const presenter = new ReferralProgressPresenter(
-          referralProgressWithAppointments,
+          referralProgressWithAppointment,
           caseReference,
           rescheduleIcsSessionBannerContent,
         )
@@ -152,7 +155,7 @@ describe('ReferralProgressPresenter', () => {
 
   describe('completed ICS banner', () => {
     it('shows completed ICS success banner', () => {
-      const referralProgressWithAppointments = buildReferralProgress([
+      const referralProgressWithAppointment = buildReferralProgress([
         {
           appointmentId: randomUUID(),
           events: [
@@ -164,7 +167,7 @@ describe('ReferralProgressPresenter', () => {
       ])
 
       const presenter = new ReferralProgressPresenter(
-        referralProgressWithAppointments,
+        referralProgressWithAppointment,
         caseReference,
         completedIcsSessionBannerContent,
       )
@@ -195,7 +198,7 @@ describe('ReferralProgressPresenter', () => {
 
     for (const scenario of scenarios) {
       it(`renders ${scenario.name} correctly`, () => {
-        const referralProgressWithAppointments = buildReferralProgress([
+        const referralProgressWithAppointment = buildReferralProgress([
           {
             appointmentId: randomUUID(),
             events: [
@@ -206,12 +209,39 @@ describe('ReferralProgressPresenter', () => {
           },
         ])
 
-        const presenter = new ReferralProgressPresenter(referralProgressWithAppointments, caseReference)
+        const presenter = new ReferralProgressPresenter(referralProgressWithAppointment, caseReference)
         const viewModel = presenter.buildPageContent(mockResponse)
 
         expect(viewModel.notificationBanner).toBeUndefined()
         expect(viewModel.icsAppointmentTable.rows[0][1].html).toContain(statusLabel[scenario.finalStatus])
       })
     }
+  })
+
+  describe('banner case reference validation', () => {
+    it('does not render notification banner when banner case reference does not match current referral', () => {
+      const referralProgressWithAppointment = buildReferralProgress([
+        {
+          appointmentId: randomUUID(),
+          events: [{ status: 'SCHEDULED', dateTime: daysAfter(baseDate, 1) }],
+        },
+      ])
+
+      const bannerForDifferentCaseReference: ReferralProgressBannerContent = {
+        caseReference: 'ZZ9999ZZ',
+        heading: 'ICS scheduled',
+        body: 'The ICS has been scheduled for 27 March 2026 at 1:00pm',
+      }
+
+      const presenter = new ReferralProgressPresenter(
+        referralProgressWithAppointment,
+        caseReference,
+        bannerForDifferentCaseReference,
+      )
+
+      const viewModel = presenter.buildPageContent(mockResponse)
+
+      expect(viewModel.notificationBanner).toBeUndefined()
+    })
   })
 })

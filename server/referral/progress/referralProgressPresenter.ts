@@ -132,7 +132,7 @@ export default class ReferralProgressPresenter extends PresenterBase<
   }
 
   private getNotificationBanner(): GovukFrontendNotificationBanner | undefined {
-    if (!this.bannerContent) return undefined
+    if (this.bannerContent?.caseReference !== this.caseReference) return undefined
 
     return this.buildSuccessBanner(this.bannerContent.heading, this.bannerContent.body)
   }
