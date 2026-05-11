@@ -646,7 +646,7 @@ class AppointmentController {
       res.redirect(`/progress/${caseRefId}`)
       return
     }
-    return RecordSessionDetailsFormDataSchema.parseAsync(req.body)
+    RecordSessionDetailsFormDataSchema.parseAsync(req.body)
       .then(data => {
         const formData: RecordSessionDetailsFormData = {}
 
