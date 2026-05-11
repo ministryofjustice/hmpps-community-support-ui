@@ -24,7 +24,7 @@ export interface RecordSessionDetailsFormData {
 }
 
 export interface TimeInput {
-  id: string,
+  id: string
   errorMessages: GovukFrontendErrorMessage[]
   fieldset: GovukFrontendFieldset
   attributes: Record<string, unknown>

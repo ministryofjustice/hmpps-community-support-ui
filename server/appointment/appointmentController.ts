@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { CreateAppointmentRequest, SessionMethodRequest, ReferralInformation } from '@community-support-api'
+import { CreateAppointmentRequest, ReferralInformation, SessionMethodRequest } from '@community-support-api'
 import { format, parse } from 'date-fns'
 import z, { ZodError } from 'zod'
 import ConfirmIcsPresenter, { type AdditionalInformation } from './confirm-ics/confirmIcsPresenter'
@@ -8,7 +8,7 @@ import ReferralService from '../services/referralService'
 import AppointmentService from '../services/AppointmentService'
 import ScheduleIcsPresenter from './schedule-ics/scheduleIcsPresenter'
 import ReferenceDataService from '../services/referenceDataService'
-import { validateDate, DateValidationOptions, validateTime, TimeValidationOptions } from '../utils/validateDateTime'
+import { DateValidationOptions, TimeValidationOptions, validateDate, validateTime } from '../utils/validateDateTime'
 import RecordSessionAttendancePresenter from './record-ics/RecordSessionAttendancePresenter'
 import IcsFeedbackCheckYourAnswersPresenter from './check-ics-feedback/icsFeedbackCheckYourAnswersPresenter'
 import { RecordSessionAttendanceFormDataSchema } from '../validation/RecordSessionAttendanceFormData'
@@ -359,8 +359,7 @@ class AppointmentController {
             formData.addressCounty,
             formData.addressPostcode,
           )
-          const mergedErrors = { ...addressErrors, ...errors } as Record<string, { text: string }>
-          errors = mergedErrors
+          errors = { ...addressErrors, ...errors } as Record<string, { text: string }>
         }
         formData.informedMethod = this.getValuesFromRequest('informedMethod', req)
         if (!formData.informedMethod || formData.informedMethod.length === 0) {
@@ -552,7 +551,7 @@ class AppointmentController {
     }
   }
 
-  changeIcs(req: Request, res: Response): Promise<void> {
+  async changeIcs(req: Request, res: Response): Promise<void> {
     const { caseRefId } = req.params
     const { username } = res.locals.user
     return this.appointmentService
@@ -561,7 +560,7 @@ class AppointmentController {
       .then(presenter => presenter.renderPage(res))
   }
 
-  attendance(req: Request, res: Response): Promise<void> {
+  async attendance(req: Request, res: Response): Promise<void> {
     const { caseRefId } = req.params
     const { username } = res.locals.user
     const querySchema = z.object({
@@ -602,7 +601,7 @@ class AppointmentController {
     }
   }
 
-  recordAttendance(req: Request, res: Response): Promise<void> {
+  async recordAttendance(req: Request, res: Response): Promise<void> {
     const { caseRefId } = req.params
     return RecordSessionAttendanceFormDataSchema.parseAsync(req.body)
       .then(data => {
@@ -642,7 +641,7 @@ class AppointmentController {
   async recordSessionDetails(req: Request, res: Response): Promise<void> {
     const { caseRefId } = req.params
     const bodyData: RecordSessionDetailsFormViewModel = req.body
-    let icsFeedbackSubmission = req.session.IcsFeedbackSubmission
+    const icsFeedbackSubmission = req.session.IcsFeedbackSubmission
     if (!icsFeedbackSubmission) {
       res.redirect(`/progress/${caseRefId}`)
       return

@@ -1,5 +1,14 @@
 import { Response } from 'express'
 import { AppointmentIcsResponse } from '@community-support-api'
+import {
+  GovukFrontendBackLink,
+  GovukFrontendButton,
+  GovukFrontendErrorMessage,
+  GovukFrontendFieldset,
+  GovukFrontendInput,
+  GovukFrontendTextarea,
+} from '@govuk-frontend'
+import nunjucks from 'nunjucks'
 import PresenterBase from '../../presenter/presenterBase'
 import {
   RecordSessionDetailsContent,
@@ -18,20 +27,14 @@ import {
   GovukFrontendRadiosWithConditional,
 } from '../../@types/govukFrontend/derived'
 import {
-  GovukFrontendBackLink,
-  GovukFrontendButton,
-  GovukFrontendErrorMessage,
-  GovukFrontendFieldset,
-  GovukFrontendInput,
-  GovukFrontendTextarea,
-} from '@govuk-frontend'
-import nunjucks from 'nunjucks'
-import {
   RecordSessionDetailsError,
   RecordSessionDetailsErrorMessages,
 } from '../../validation/RecordSessionDetailsFormData'
 
-export default class RecordSessionDetailsPresenter extends PresenterBase<RecordSessionDetailsViewModel, RecordSessionDetailsContent> {
+export default class RecordSessionDetailsPresenter extends PresenterBase<
+  RecordSessionDetailsViewModel,
+  RecordSessionDetailsContent
+> {
   constructor(
     private readonly caseRefId: string,
     private readonly data: AppointmentIcsResponse,
@@ -110,9 +113,7 @@ export default class RecordSessionDetailsPresenter extends PresenterBase<RecordS
     }
   }
 
-  private buildSessionDurationFieldset(
-    content: SessionDurationTimeInputFieldsetContent
-  ): GovukFrontendFieldset {
+  private buildSessionDurationFieldset(content: SessionDurationTimeInputFieldsetContent): GovukFrontendFieldset {
     return {
       classes: 'govuk-fieldset',
       attributes: { 'data-testid': content.id },
@@ -151,7 +152,7 @@ export default class RecordSessionDetailsPresenter extends PresenterBase<RecordS
     formData: RecordSessionDetailsFormData,
     errorMessages?: RecordSessionDetailsErrorMessages,
   ): TimeInput {
-    let errors: GovukFrontendErrorMessage[] = []
+    const errors: GovukFrontendErrorMessage[] = []
     if (errorMessages['sessionDuration-hours']) {
       errors.push(errorMessages['sessionDuration-hours'])
     }

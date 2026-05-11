@@ -221,7 +221,7 @@ test.describe('RecordSessionAttendancePage', () => {
         await expect(recordSessionAttendancePage.errorSummary.title).toHaveText('There is a problem')
         await expect(recordSessionAttendancePage.errorSummary.list).toBeVisible()
         await expect(recordSessionAttendancePage.errorSummary.items).toHaveCount(1)
-        const [ errorMessage ] = await recordSessionAttendancePage.errorSummary.items.all()
+        const [errorMessage] = await recordSessionAttendancePage.errorSummary.items.all()
         await expect(errorMessage).toHaveText('Select yes if the session happened')
       })
       await test.step('check radio content', async () => {
@@ -269,9 +269,7 @@ test.describe('RecordSessionAttendancePage', () => {
         await expect(recordSessionAttendancePage.errorSummary.list).toBeVisible()
         await expect(recordSessionAttendancePage.errorSummary.items).toHaveCount(1)
         const [errorMessage] = await recordSessionAttendancePage.errorSummary.items.all()
-        await expect(errorMessage).toHaveText(
-          'Select yes if Alice came to the appointment',
-        )
+        await expect(errorMessage).toHaveText('Select yes if Alice came to the appointment')
       })
       await test.step('check radio content', async () => {
         await expect(recordSessionAttendancePage.sessionAttendedRadios.errorText).toBeVisible()
