@@ -42,6 +42,13 @@ export const seedReferralInformation = async (page: Page, referralInformation: o
   })
 }
 
+export const seedIcsFeedbackSession = async (page: Page, icsFeedbackSubmission: object): Promise<void> => {
+  await page.request.post('/test/setup-ics-feedback-session', {
+    data: icsFeedbackSubmission,
+    headers: { 'Content-Type': 'application/json' },
+  })
+}
+
 export const duplicateData = (dataToDuplicate: unknown, timesToDuplicates: number): Array<unknown> => {
   const duplicatedData = []
   // eslint-disable-next-line no-plusplus
