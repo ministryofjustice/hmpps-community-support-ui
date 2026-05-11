@@ -499,7 +499,7 @@ class AppointmentController {
       const response = await this.appointmentService.submitICS(referralId, createAppointmentRequest, username)
       if (response) {
         delete req.session.createAppointmentRequest
-        this.setIcsSuccessfulScheduledBanner(req, response, referralId)
+        this.setIcsSuccessfullyScheduledBanner(req, response, referralId)
       }
 
       return res.redirect(`/progress/${referralId}`)
@@ -647,7 +647,7 @@ class AppointmentController {
     delete req.session.icsFeedbackSubmissionsMap[caseRefId]
   }
 
-  private setIcsSuccessfulScheduledBanner(req: Request, response: AppointmentIcsResponse, id: string): void {
+  private setIcsSuccessfullyScheduledBanner(req: Request, response: AppointmentIcsResponse, id: string): void {
     const date = format(response.appointmentDate, 'dd MMM yyyy')
     const time = timeFormat(response.appointmentTime)
 
