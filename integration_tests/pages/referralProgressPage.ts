@@ -47,4 +47,22 @@ export default class ReferralProgressPage extends AbstractPage {
     await expect(referralProgressPage.header).toBeVisible()
     return referralProgressPage
   }
+
+  static async verifySuccessBanner(page: Page, heading: string, message: string): Promise<ReferralProgressPage> {
+    const icsTable = await Table.create(page.locator('[data-testid="referral-progress-table"]'))
+    const referralProgressPage = new ReferralProgressPage(page, icsTable)
+    const banner = referralProgressPage.notificationBanner
+    await expect(banner).toHaveClass(/govuk-notification-banner--success/)
+    await expect(banner.locator('.govuk-notification-banner__title')).toHaveText('Success')
+    await expect(banner.locator('.govuk-notification-banner__heading')).toHaveText(heading)
+    await expect(banner.locator('.govuk-body')).toHaveText(message)
+    return referralProgressPage
+  }
+
+  static async verifyNoBanner(page: Page): Promise<ReferralProgressPage> {
+    const icsTable = await Table.create(page.locator('[data-testid="referral-progress-table"]'))
+    const referralProgressPage = new ReferralProgressPage(page, icsTable)
+    await expect(referralProgressPage.notificationBanner).not.toBeVisible()
+    return referralProgressPage
+  }
 }

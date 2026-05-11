@@ -1,7 +1,13 @@
 import { Request, Response } from 'express'
-import { CreateAppointmentRequest, SessionMethodRequest, IcsFeedbackSubmission } from '@community-support-api'
+import {
+  CreateAppointmentRequest,
+  SessionMethodRequest,
+  IcsFeedbackSubmission,
+  AppointmentIcsResponse,
+} from '@community-support-api'
 import { format, parse } from 'date-fns'
 import z, { ZodError } from 'zod'
+import timeFormat from '../utils/timeFormat'
 import { HowSessionTookPlace, IcsFeedbackHowSessionTookPlaceSession } from '../@types/express'
 import ConfirmIcsPresenter, { type AdditionalInformation } from './confirm-ics/confirmIcsPresenter'
 import InitialContactSessionDetailsPresenter from '../referral/InitialContactSessionDetailsPresenter'
@@ -14,6 +20,7 @@ import RecordSessionAttendancePresenter from './record-ics/RecordSessionAttendan
 import IcsFeedbackCheckYourAnswersPresenter from './check-ics-feedback/icsFeedbackCheckYourAnswersPresenter'
 import SessionFeedbackPresenter from './session-feedback/sessionFeedbackPresenter'
 import { RecordSessionAttendanceFormDataSchema } from '../validation/RecordSessionAttendanceFormData'
+import { ReferralProgressBannerContent } from '../referral/progress/ReferralProgressBannerContent'
 import AppointmentValidator from './AppointmentValidator'
 import { IcsFeedbackHowSessionTookPlaceFormData } from './ics-feedback/icsFeedbackHowSessionTookPlaceViewModel'
 import { SessionFeedbackFormDataSchema } from '../validation/SessionFeedbackFormData'
@@ -492,7 +499,9 @@ class AppointmentController {
       const response = await this.appointmentService.submitICS(referralId, createAppointmentRequest, username)
       if (response) {
         delete req.session.createAppointmentRequest
+        this.setIcsSuccessfulScheduledBanner(req, response, referralId)
       }
+
       return res.redirect(`/progress/${referralId}`)
     }
     return res.redirect(`/referral/${referralId}/appointment/schedule-ics`)
@@ -636,6 +645,17 @@ class AppointmentController {
     }
 
     delete req.session.icsFeedbackSubmissionsMap[caseRefId]
+  }
+
+  private setIcsSuccessfulScheduledBanner(req: Request, response: AppointmentIcsResponse, id: string): void {
+    const date = format(response.appointmentDate, 'dd MMM yyyy')
+    const time = timeFormat(response.appointmentTime)
+
+    req.session.referralProgressBanner = {
+      caseReference: id,
+      heading: 'ICS Scheduled',
+      body: `The ICS has been scheduled for ${date} at ${time}`,
+    } as ReferralProgressBannerContent
   }
 }
 
