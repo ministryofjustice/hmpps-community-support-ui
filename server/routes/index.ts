@@ -101,6 +101,10 @@ export default function routes({
     referralController.showReferralProgressDetails(req, res),
   )
 
+  get('/referral/:referralId/ics/:icsId/view-session-details', async (req, res) =>
+    appointmentController.viewChangeSessionDetails(req, res),
+  )
+
   post('/referral/:referralId/appointment/submit-ics', async (req, res) => appointmentController.submitIcs(req, res))
 
   get('/progress/:caseReference', async (req, res) => {

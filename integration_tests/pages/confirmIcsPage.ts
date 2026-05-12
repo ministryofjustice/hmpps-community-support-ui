@@ -1,24 +1,8 @@
 import { expect, type Locator, type Page } from '@playwright/test'
-import AbstractPage from './abstractPage'
+import IcsSummaryPage from './icsSummaryPage'
 
-export default class ConfirmIcsPage extends AbstractPage {
+export default class ConfirmIcsPage extends IcsSummaryPage {
   readonly header: Locator
-
-  readonly icsDetailsSummary: Locator
-
-  readonly dateRow: Locator
-
-  readonly startTimeRow: Locator
-
-  readonly methodRow: Locator
-
-  readonly notInPersonReasonRow: Locator
-
-  readonly locationRow: Locator
-
-  readonly sessionCommunicationLabel: Locator
-
-  readonly sessionCommunicationRow: Locator
 
   readonly changeLink: Locator
 
@@ -33,20 +17,6 @@ export default class ConfirmIcsPage extends AbstractPage {
   private constructor(page: Page) {
     super(page)
     this.header = page.locator('h1', { hasText: 'Check the details before scheduling the ICS' })
-    this.icsDetailsSummary = page.locator('.govuk-summary-card')
-    this.dateRow = page.locator('.govuk-summary-list__row', { hasText: 'Date' })
-    this.startTimeRow = page.locator('.govuk-summary-list__row', { hasText: 'Start time' })
-    this.methodRow = page.locator('.govuk-summary-list__row', { hasText: 'Method' })
-    this.notInPersonReasonRow = page.locator('.govuk-summary-list__row', { hasText: 'Reason session is not in-person' })
-    this.locationRow = page
-      .locator('.govuk-summary-list__row')
-      .filter({ has: page.locator('.govuk-summary-list__key', { hasText: 'Location' }) })
-    this.sessionCommunicationLabel = page.locator('.govuk-summary-list__key', {
-      hasText: ' was informed about the session',
-    })
-    this.sessionCommunicationRow = page.locator('.govuk-summary-list__row', {
-      hasText: ' was informed about the session',
-    })
     this.changeLink = page.locator('a', { hasText: 'Change' })
     this.submitButton = page.locator('button', { hasText: 'Submit' })
     this.notificationBanner = page.locator('.govuk-notification-banner')

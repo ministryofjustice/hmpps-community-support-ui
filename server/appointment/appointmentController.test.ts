@@ -16,6 +16,7 @@ import {
   referralInformationInCommunity,
   referralInformationInPrison,
 } from '../../integration_tests/mockData/referralInformationData'
+import ViewChangeSessionDetailsPresenter from './view-change-session-details/ViewChangeSessionDetailsPresenter'
 
 jest.mock('./confirm-ics/confirmIcsPresenter')
 jest.mock('../services/AppointmentService')
@@ -23,6 +24,7 @@ jest.mock('./schedule-ics/scheduleIcsPresenter')
 jest.mock('./ics-feedback/icsFeedbackHowSessionTookPlacePresenter')
 jest.mock('../services/referralService')
 jest.mock('../services/referenceDataService')
+jest.mock('./view-change-session-details/ViewChangeSessionDetailsPresenter')
 
 describe('AppointmentController', () => {
   let appointmentService: AppointmentService
@@ -48,6 +50,27 @@ describe('AppointmentController', () => {
     firstName: 'John',
   }
 
+  const mockIcsId = crypto.randomUUID()
+
+  const mockAppointmentIcsResponse: AppointmentIcsResponse = {
+    appointmentIcsId: mockIcsId,
+    appointmentId: crypto.randomUUID(),
+    referralId,
+    appointmentType: 'ICS',
+    appointmentDate: '2026-03-27',
+    appointmentTime: { hour: 1, minute: 0, amPm: 'pm' },
+    appointmentStatus: 'SCHEDULED',
+    sessionMethod: {
+      appointmentCategory: 'VIRTUAL',
+      type: 'PHONE',
+      whyNotInPersonReason: 'Lorem ipsum dolor sit amet.',
+    },
+    sessionCommunications: ['Phone'],
+    referralFirstName: 'John',
+    referralLastName: 'Doe',
+    createdAt: '2026-03-01T10:00:00Z',
+  }
+
   const mockReferralInformationInCommunity = referralInformationInCommunity
   const mockReferralInformationInPrison = referralInformationInPrison
 
@@ -70,6 +93,7 @@ describe('AppointmentController', () => {
     appointmentController = new AppointmentController(referralService, appointmentService, referenceDataService)
 
     ConfirmIcsPresenter.prototype.renderPage = jest.fn()
+    ViewChangeSessionDetailsPresenter.prototype.renderPage = jest.fn()
 
     req = {
       params: { referralId },
@@ -499,6 +523,35 @@ describe('AppointmentController', () => {
         county: '',
         postcode: 'N1 6XE',
       })
+    })
+  })
+
+  describe('viewChangeSessionDetails', () => {
+    let viewChangeReq: Request
+    let viewChangeRes: Response
+
+    beforeEach(() => {
+      viewChangeReq = {
+        params: { referralId, icsId: mockIcsId },
+        session: {},
+        flash: jest.fn(),
+      } as unknown as Request
+
+      viewChangeRes = {
+        locals: { user: { username: 'user1' }, content: {} },
+        render: jest.fn(),
+        redirect: jest.fn(),
+      } as unknown as Response
+    })
+
+    it('should call getIcsById and render the view-change session details page', async () => {
+      jest.spyOn(appointmentService, 'getIcsById').mockResolvedValue(mockAppointmentIcsResponse)
+
+      await appointmentController.viewChangeSessionDetails(viewChangeReq, viewChangeRes)
+
+      expect(appointmentService.getIcsById).toHaveBeenCalledWith(referralId, mockIcsId, 'user1')
+      expect(ViewChangeSessionDetailsPresenter).toHaveBeenCalledWith(mockAppointmentIcsResponse, referralId, mockIcsId)
+      expect(ViewChangeSessionDetailsPresenter.prototype.renderPage).toHaveBeenCalledWith(viewChangeRes)
     })
   })
 })

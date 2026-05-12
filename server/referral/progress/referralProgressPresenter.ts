@@ -25,7 +25,7 @@ const getStatusConfig = (caseReference: string, appointmentId: string = ''): Rec
   SCHEDULED: {
     label: 'Scheduled',
     tagClass: 'govuk-tag--blue',
-    actions: [{ label: 'View or change details', href: `/referral/${caseReference}/ics/${appointmentId}` }],
+    actions: [{ label: 'View details', href: `/referral/${caseReference}/ics/${appointmentId}/view-session-details` }],
   },
   NEEDS_FEEDBACK: {
     label: 'Needs feedback',

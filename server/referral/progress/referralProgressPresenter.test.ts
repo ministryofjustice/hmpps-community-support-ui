@@ -89,11 +89,15 @@ describe('ReferralProgressPresenter', () => {
 
       expect(viewModel.icsAppointmentTable.rows).toHaveLength(2)
 
-      expect(viewModel.icsAppointmentTable.rows[0][0].text).toContain('28 March 2026 at 10:00am')
-      expect(viewModel.icsAppointmentTable.rows[0][1].html).toContain('Scheduled')
+        expect(viewModel.icsAppointmentTable.rows[0][0].text).toContain('28 March 2026 at 10:00am')
+        expect(viewModel.icsAppointmentTable.rows[0][1].html).toContain('Scheduled')
+        expect(viewModel.icsAppointmentTable.rows[0][1].html).toContain('govuk-tag--blue')
+        expect(viewModel.icsAppointmentTable.rows[0][2].html).toContain('View details')
 
-      expect(viewModel.icsAppointmentTable.rows[1][0].text).toContain('27 March 2026 at 10:00am')
-      expect(viewModel.icsAppointmentTable.rows[1][1].html).toContain('Completed')
+        expect(viewModel.icsAppointmentTable.rows[1][0].text).toContain('27 March 2026 at 10:00am')
+        expect(viewModel.icsAppointmentTable.rows[1][1].html).toContain('Completed')
+        expect(viewModel.icsAppointmentTable.rows[1][1].html).toContain('govuk-tag--green')
+        expect(viewModel.icsAppointmentTable.rows[1][2].html).toContain('View feedback')
     })
   })
 
