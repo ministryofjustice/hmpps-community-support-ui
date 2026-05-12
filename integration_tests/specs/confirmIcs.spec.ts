@@ -8,6 +8,7 @@ import buildReferralProgress from '../../server/testutils/buildReferralProgress'
 import { referralInformationInCommunity } from '../mockData/referralInformationData'
 import { probationOfficesData } from '../mockData/referenceData'
 import ScheduleIcsPage from '../pages/scheduleIcsPage'
+import ReferralProgressPage from '../pages/referralProgressPage'
 
 const REFERRAL_ID = 'b190ac1e-1e2a-41c2-a4ac-3ceb9d2dcb1e' as const
 const REFERRAL_PROGRESS_URL = `/progress/${REFERRAL_ID}`
@@ -227,6 +228,16 @@ test.describe('Confirm ICS Page', () => {
     await confirmIcsPage.submitButton.click()
     await test.step('should navigate to the progress screen', async () => {
       await expect(page).toHaveURL(REFERRAL_PROGRESS_URL)
+      await ReferralProgressPage.verifySuccessBanner(
+        page,
+        'ICS Scheduled',
+        'The ICS has been scheduled for 15 May 2026 at 2:30PM',
+      )
+    })
+    await test.step('should navigate to the progress screen again and the banner gone', async () => {
+      await page.goto(ReferralProgressPage.url(REFERRAL_ID))
+      await expect(page).toHaveURL(REFERRAL_PROGRESS_URL)
+      await ReferralProgressPage.verifyNoBanner(page)
     })
   })
 })

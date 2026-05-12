@@ -216,10 +216,15 @@ class ReferralController {
 
   async showReferralProgressDetails(req: Request, res: Response) {
     const { caseReference } = req.params as { caseReference: string }
-    const { success } = req.query
     const { username } = res.locals.user
+    const sessionBanner = req.session.referralProgressBanner
+    const bannerContent = sessionBanner?.caseReference === caseReference ? sessionBanner : undefined
+
+    delete req.session.referralProgressBanner
+
     const referralProgress = await this.referralService.getReferralProgress(caseReference, username)
-    const presenter = new ReferralProgressPresenter(referralProgress, caseReference, !!success)
+
+    const presenter = new ReferralProgressPresenter(referralProgress, caseReference, bannerContent)
 
     return presenter.renderPage(res)
   }

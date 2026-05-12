@@ -13,6 +13,7 @@
     "noImplicitAny": true,
     "experimentalDecorators": true,
     "typeRoots": ["./server/@types", "./node_modules/@types"],
+    "types": ["jest", "node"],
     "paths": {
       "@community-support-api": ["./server/@types/communitySupportApi/index.d.ts"],
       "@govuk-frontend": ["./server/@types/govukFrontend/index.d.ts"],

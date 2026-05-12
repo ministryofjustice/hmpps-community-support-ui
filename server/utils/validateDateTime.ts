@@ -125,19 +125,19 @@ export function validateTime(
     })
     .superRefine((data, ctx) => {
       if (!data.hour && !data.minute && !data.meridiem) {
-        ctx.addIssue({ code: z.ZodIssueCode.custom, message: finalMessages.blank })
+        ctx.addIssue({ code: 'custom', message: finalMessages.blank })
         return
       }
       if (!data.hour) {
-        ctx.addIssue({ code: z.ZodIssueCode.custom, message: finalMessages.hourBlank, path: ['hour'] })
+        ctx.addIssue({ code: 'custom', message: finalMessages.hourBlank, path: ['hour'] })
         return
       }
       if (!data.minute) {
-        ctx.addIssue({ code: z.ZodIssueCode.custom, message: finalMessages.minuteBlank, path: ['minute'] })
+        ctx.addIssue({ code: 'custom', message: finalMessages.minuteBlank, path: ['minute'] })
         return
       }
       if (!data.meridiem) {
-        ctx.addIssue({ code: z.ZodIssueCode.custom, message: finalMessages.meridiemBlank, path: ['meridiem'] })
+        ctx.addIssue({ code: 'custom', message: finalMessages.meridiemBlank, path: ['meridiem'] })
         return
       }
 
@@ -153,7 +153,7 @@ export function validateTime(
         m > 59 ||
         !['AM', 'PM'].includes(data.meridiem)
       ) {
-        ctx.addIssue({ code: z.ZodIssueCode.custom, message: finalMessages.invalidFormat })
+        ctx.addIssue({ code: 'custom', message: finalMessages.invalidFormat })
       }
     })
     .transform(data => {

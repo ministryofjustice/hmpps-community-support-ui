@@ -1,17 +1,30 @@
 import { Request, Response } from 'express'
-import { CreateAppointmentRequest, ReferralInformation, SessionMethodRequest } from '@community-support-api'
+import {
+  CreateAppointmentRequest,
+  SessionMethodRequest,
+  IcsFeedbackSubmission,
+  AppointmentIcsResponse,
+} from '@community-support-api'
 import { format, parse } from 'date-fns'
 import z, { ZodError } from 'zod'
+import timeFormat from '../utils/timeFormat'
+import { HowSessionTookPlace, IcsFeedbackHowSessionTookPlaceSession } from '../@types/express'
 import ConfirmIcsPresenter, { type AdditionalInformation } from './confirm-ics/confirmIcsPresenter'
 import InitialContactSessionDetailsPresenter from '../referral/InitialContactSessionDetailsPresenter'
 import ReferralService from '../services/referralService'
 import AppointmentService from '../services/AppointmentService'
 import ScheduleIcsPresenter from './schedule-ics/scheduleIcsPresenter'
+import IcsFeedbackHowSessionTookPlacePresenter from './ics-feedback/icsFeedbackHowSessionTookPlacePresenter'
 import ReferenceDataService from '../services/referenceDataService'
 import { DateValidationOptions, TimeValidationOptions, validateDate, validateTime } from '../utils/validateDateTime'
 import RecordSessionAttendancePresenter from './record-ics/RecordSessionAttendancePresenter'
 import IcsFeedbackCheckYourAnswersPresenter from './check-ics-feedback/icsFeedbackCheckYourAnswersPresenter'
+import SessionFeedbackPresenter from './session-feedback/sessionFeedbackPresenter'
 import { RecordSessionAttendanceFormDataSchema } from '../validation/RecordSessionAttendanceFormData'
+import { ReferralProgressBannerContent } from '../referral/progress/ReferralProgressBannerContent'
+import AppointmentValidator from './AppointmentValidator'
+import { IcsFeedbackHowSessionTookPlaceFormData } from './ics-feedback/icsFeedbackHowSessionTookPlaceViewModel'
+import { SessionFeedbackFormDataSchema } from '../validation/SessionFeedbackFormData'
 import RecordSessionDetailsPresenter from './record-ics/RecordSessionDetailsPresenter'
 import {
   RecordSessionDetailsFormData,
@@ -65,6 +78,8 @@ interface ScheduleFormData {
 }
 
 class AppointmentController {
+  private readonly validator = new AppointmentValidator()
+
   constructor(
     private readonly referralService: ReferralService,
     private readonly appointmentService: AppointmentService,
@@ -94,7 +109,7 @@ class AppointmentController {
     const referralInformation = await this.referralService.getReferralInformation(referralId, username)
 
     if (req.method === 'POST') {
-      const validationResults = this.validateAppointment(req, referralInformation)
+      const validationResults = this.validator.validateAppointment(req, referralInformation)
 
       createAppointmentRequest = this.saveFormToSession(validationResults.formData)
       if (Object.keys(validationResults.errors).length > 0) {
@@ -183,214 +198,46 @@ class AppointmentController {
 
     formData = this.loadSessionMethodFromSession(createAppointmentRequest.sessionMethodRequest, formData)
     formData = this.loadInformedMethodsFromSession(createAppointmentRequest.sessionCommunication, formData)
+    if (createAppointmentRequest.sessionMethodRequest) {
+      const method = createAppointmentRequest.sessionMethodRequest
+
+      formData.sessionTakePlace = this.mapTypeToSessionTakePlace(method.type)
+
+      if (method.additionalDetails) {
+        const reasonKey = this.validator.getReasonKey(formData.sessionTakePlace)
+        if (reasonKey) {
+          switch (reasonKey) {
+            case 'ByPhone':
+              formData.ByPhone = method.additionalDetails
+              break
+            case 'ByVideo':
+              formData.ByVideo = method.additionalDetails
+              break
+            case 'InSomewhereElse':
+              formData.InSomewhereElse = method.additionalDetails
+              break
+            default:
+              break
+          }
+        }
+      }
+
+      if (method.type === 'OTHER_LOCATION') {
+        formData.addressLine1 = method.addressLine1 || ''
+        formData.addressLine2 = method.addressLine2 || ''
+        formData.addressTown = method.townOrCity || ''
+        formData.addressCounty = method.county || ''
+        formData.addressPostcode = method.postcode || ''
+      }
+    }
+
+    if (Array.isArray(createAppointmentRequest.sessionCommunication)) {
+      formData.informedMethod = [...createAppointmentRequest.sessionCommunication]
+    } else {
+      formData.informedMethod = []
+    }
 
     return formData
-  }
-
-  private isIdentifierACrn(id: string): boolean {
-    if (!id) return false
-    const cleaned = id.trim().toUpperCase()
-    return cleaned.length === 7 && /^[A-Z]\d{6}$/.test(cleaned)
-  }
-
-  private isIdentifierAPrisonNumber(id: string): boolean {
-    if (!id) return false
-    const cleaned = id.trim().toUpperCase()
-    return cleaned.length === 7 && /^[A-Z]\d{4}[A-Z]{2}$/.test(cleaned)
-  }
-
-  private isPersonInCommunity(personIdentifier: string): boolean {
-    return this.isIdentifierACrn(personIdentifier)
-  }
-
-  private isPersonInPrison(personIdentifier: string): boolean {
-    return this.isIdentifierAPrisonNumber(personIdentifier)
-  }
-
-  private validateAddressFields(
-    addressLine1: string,
-    addressLine2: string,
-    addressTown: string,
-    addressCounty: string,
-    addressPostcode: string,
-  ): Record<string, { text: string }> {
-    const isValidAddressChar = (str: string): boolean => {
-      return /^[a-zA-Z0-9\s\-']*$/.test(str)
-    }
-    const MAX_ADDRESS_LENGTH = 100
-
-    const errors: Record<string, { text: string }> = {}
-    if (!addressLine1) {
-      errors.addressLine1 = { text: 'Enter an address line 1' }
-    } else if (addressLine1.length > MAX_ADDRESS_LENGTH) {
-      errors.addressLine1 = { text: `Address line 1 must be ${MAX_ADDRESS_LENGTH} characters or less` }
-    } else if (!isValidAddressChar(addressLine1)) {
-      errors.addressLine1 = {
-        text: 'Address line 1 must only include letters a to z, numbers 0 to 9, spaces, hyphens or apostrophes',
-      }
-    }
-    if (addressLine2 && addressLine2.length > MAX_ADDRESS_LENGTH) {
-      errors.addressLine2 = { text: `Address line 2 must be ${MAX_ADDRESS_LENGTH} characters or less` }
-    } else if (!isValidAddressChar(addressLine2)) {
-      errors.addressLine2 = {
-        text: 'Address line 2 must only include letters a to z, numbers 0 to 9, spaces, hyphens or apostrophes',
-      }
-    }
-    if (!addressTown) {
-      errors.addressTown = { text: 'Enter a town or city' }
-    } else if (addressTown.length > MAX_ADDRESS_LENGTH) {
-      errors.addressTown = { text: `Town or city must be ${MAX_ADDRESS_LENGTH} characters or less` }
-    } else if (!isValidAddressChar(addressTown)) {
-      errors.addressTown = {
-        text: 'Town or city must only include letters a to z, numbers 0 to 9, spaces, hyphens or apostrophes',
-      }
-    }
-    if (addressCounty && addressCounty.length > MAX_ADDRESS_LENGTH) {
-      errors.addressCounty = { text: `County must be ${MAX_ADDRESS_LENGTH} characters or less` }
-    } else if (!isValidAddressChar(addressCounty)) {
-      errors.addressCounty = {
-        text: 'County must only include letters a to z, numbers 0 to 9, spaces, hyphens or apostrophes',
-      }
-    }
-    if (!addressPostcode) {
-      errors.addressPostcode = { text: 'Enter a postcode' }
-    } else if (addressPostcode.length > MAX_ADDRESS_LENGTH) {
-      errors.addressPostcode = { text: `Postcode must be ${MAX_ADDRESS_LENGTH} characters or less` }
-    } else if (!/^[a-zA-Z0-9\s]*$/.test(addressPostcode)) {
-      errors.addressPostcode = {
-        text: 'Postcode must only include letters a to z, numbers 0 to 9 or spaces',
-      }
-    }
-    return errors
-  }
-
-  private getValueFromRequest = (field: string, req: Request): string => {
-    return req.body[field]?.trim() ?? ''
-  }
-
-  private getValuesFromRequest = (field: string, req: Request): string[] => {
-    const val = req.body[field]
-    if (Array.isArray(val)) {
-      return val.map(v => String(v).trim()).filter(Boolean)
-    }
-    const single = String(val ?? '').trim()
-    return single ? [single] : []
-  }
-
-  private validateAppointment(
-    req: Request,
-    referralInformation: ReferralInformation,
-  ): {
-    formData: ScheduleFormData
-    errors: Record<string, { text: string }>
-  } {
-    const MAX_OTHER_METHOD_OF_CONTACT_LENGTH = 50
-    const MAX_REASON_LENGTH = 100
-
-    let errors: Record<string, { text: string }> = {}
-    const formData: ScheduleFormData = {}
-
-    const isPersonInCommunity = this.isPersonInCommunity(referralInformation.crn)
-
-    if (req && req.body) {
-      formData.sessionDate = this.getValueFromRequest('sessionDate', req)
-      const dateValidationResult = validateDate(formData.sessionDate, DEFAULT_VALIDATE_DATE_OPTIONS)
-      if (!dateValidationResult.isValid) {
-        errors.sessionDate = { text: dateValidationResult.error }
-      } else {
-        formData.sessionDate = format(dateValidationResult.parsedDate, 'd/M/yyyy') || undefined
-      }
-
-      formData['sessionTime-hour'] = this.getValueFromRequest('sessionTime-hour', req)
-      formData['sessionTime-minute'] = this.getValueFromRequest('sessionTime-minute', req)
-      formData['sessionTime-meridiem'] = this.getValueFromRequest('sessionTime-meridiem', req)?.toLowerCase()
-      const timeValidationResult = validateTime(
-        formData['sessionTime-hour'],
-        formData['sessionTime-minute'],
-        formData['sessionTime-meridiem'],
-        DEFAULT_VALIDATE_TIME_OPTIONS,
-      )
-      if (!timeValidationResult.isValid) {
-        errors.sessionTime = { text: timeValidationResult.error }
-      }
-
-      formData.sessionTakePlace = this.getValueFromRequest('sessionTakePlace', req)
-      if (!formData.sessionTakePlace?.trim()) {
-        errors.sessionTakePlace = { text: 'Select how the session will take place' }
-      }
-      if (['ByPhone', 'ByVideo'].includes(formData.sessionTakePlace)) {
-        const reasonKey = this.getReasonKey(formData.sessionTakePlace)
-        const reason = this.getValueFromRequest(reasonKey, req)
-        switch (reasonKey) {
-          case 'ByPhone':
-            formData.ByPhone = reason
-            break
-          case 'ByVideo':
-            formData.ByVideo = reason
-            break
-          default:
-            break
-        }
-        if (!reason?.trim()) {
-          errors[reasonKey] = { text: 'Enter why the session is not in-person' }
-        } else if (reason?.length > MAX_REASON_LENGTH) {
-          errors[reasonKey] = {
-            text: `Why is this session not in-person must be ${MAX_REASON_LENGTH} characters or less`,
-          }
-        }
-      }
-      if (isPersonInCommunity) {
-        if (formData.sessionTakePlace === 'InProbationOffice') {
-          formData.probationOffice = this.getValueFromRequest('probationOfficeList', req)
-          if (!formData.probationOffice?.trim()) {
-            errors.probationOfficeList = { text: 'Select probation office' }
-          }
-        }
-        if (formData.sessionTakePlace === 'InSomewhereElse') {
-          formData.addressLine1 = this.getValueFromRequest('addressLine1', req)
-          formData.addressLine2 = this.getValueFromRequest('addressLine2', req)
-          formData.addressTown = this.getValueFromRequest('addressTown', req)
-          formData.addressCounty = this.getValueFromRequest('addressCounty', req)
-          formData.addressPostcode = this.getValueFromRequest('addressPostcode', req)
-          const addressErrors = this.validateAddressFields(
-            formData.addressLine1,
-            formData.addressLine2,
-            formData.addressTown,
-            formData.addressCounty,
-            formData.addressPostcode,
-          )
-          errors = { ...addressErrors, ...errors } as Record<string, { text: string }>
-        }
-        formData.informedMethod = this.getValuesFromRequest('informedMethod', req)
-        if (!formData.informedMethod || formData.informedMethod.length === 0) {
-          errors.informedMethod = {
-            text: `Select how ${referralInformation.firstName} was informed about the session`,
-          }
-        } else if (formData.informedMethod.includes('informedByOtherMethod')) {
-          formData.otherMethodOfContact = this.getValueFromRequest('otherMethodOfContact', req)
-          if (!formData.otherMethodOfContact?.trim()) {
-            errors.otherMethodOfContact = { text: 'Enter the other method of contact' }
-          } else if (formData.otherMethodOfContact.length > MAX_OTHER_METHOD_OF_CONTACT_LENGTH) {
-            errors.otherMethodOfContact = {
-              text: `Other method of contact must be ${MAX_OTHER_METHOD_OF_CONTACT_LENGTH} characters or less`,
-            }
-          } else if (!/^[a-zA-Z0-9\s,\-']*$/.test(formData.otherMethodOfContact)) {
-            errors.otherMethodOfContact = {
-              text: 'Other method of contact must only include letters a to z, numbers 0 to 9, spaces, commas, hyphens or apostrophes',
-            }
-          }
-        }
-      } else if (formData.sessionTakePlace === 'InPrison') {
-        formData.prison = this.getValueFromRequest('prisonList', req)
-        if (!formData.prison?.trim()) {
-          errors.prisonList = { text: 'Select prison establishment' }
-        }
-      }
-    }
-    return {
-      formData,
-      errors,
-    }
   }
 
   private mapSessionTakePlaceToType(takePlace: string): SessionMethodRequest['type'] {
@@ -560,7 +407,107 @@ class AppointmentController {
       .then(presenter => presenter.renderPage(res))
   }
 
-  async attendance(req: Request, res: Response): Promise<void> {
+  async didSessionTakePlace(req: Request, res: Response): Promise<void> {
+    const { caseRefId } = req.params as { caseRefId: string }
+    const { username } = res.locals.user
+    const [probationOffices, icsAppointment] = await Promise.all([
+      this.referenceDataService.getProbationOffices(),
+      this.appointmentService.getICS(caseRefId, username),
+    ])
+    const { sessionMethod } = icsAppointment
+
+    if (req.method === 'POST') {
+      const { formData, errors } = this.validator.validateIcsFeedbackForm(req, sessionMethod.type)
+
+      if (Object.keys(errors).length > 0) {
+        if (!req.session.icsFeedbackPendingFormData) {
+          req.session.icsFeedbackPendingFormData = {}
+        }
+        req.session.icsFeedbackPendingFormData[caseRefId] = formData as Record<string, string>
+        Object.entries(errors).forEach(([field, error]) => {
+          req.flash(`${field}Error`, error.text)
+        })
+        req.session.formKeys = [...new Set([...(req.session.formKeys ?? []), ...Object.keys(errors)])]
+        return res.redirect(`/ics-feedback/${caseRefId}/did-session-take-place`)
+      }
+
+      const currentSubmission = this.ensureFeedbackSubmission(req, caseRefId)
+      if (!currentSubmission.record) {
+        currentSubmission.record = { didSessionHappen: true }
+      }
+      currentSubmission.record = {
+        ...currentSubmission.record,
+        howSessionTookPlace: this.buildHowSessionTookPlace(formData) as SessionMethodRequest,
+      }
+
+      return res.redirect(`/ics-feedback/${caseRefId}/session-details`)
+    }
+
+    let formData: IcsFeedbackHowSessionTookPlaceFormData
+    if (req.session.icsFeedbackPendingFormData?.[caseRefId]) {
+      formData = req.session.icsFeedbackPendingFormData[caseRefId] as IcsFeedbackHowSessionTookPlaceFormData
+      delete req.session.icsFeedbackPendingFormData[caseRefId]
+    } else {
+      const currentFeedback = this.getFeedbackSubmission(req, caseRefId)
+      const storedHowSessionTookPlace = currentFeedback?.record?.howSessionTookPlace as HowSessionTookPlace | undefined
+      formData = this.loadIcsFeedbackFromSession(
+        storedHowSessionTookPlace ? { howSessionTookPlace: storedHowSessionTookPlace } : undefined,
+      )
+    }
+    const validationErrors = res.locals.errors?.messages as Record<string, { text: string }> | undefined
+    const presenter = new IcsFeedbackHowSessionTookPlacePresenter(
+      caseRefId,
+      sessionMethod,
+      probationOffices,
+      formData,
+      validationErrors,
+    )
+    return presenter.renderPage(res)
+  }
+
+  buildHowSessionTookPlace(formData: IcsFeedbackHowSessionTookPlaceFormData): HowSessionTookPlace {
+    if (formData.phoneCall === 'yes') {
+      return { type: 'PHONE' }
+    }
+    const formType = formData.howSessionTookPlace
+    if (formType === 'PHONE') {
+      return { type: 'PHONE', additionalDetails: formData.phoneCallReason }
+    }
+    if (formType === 'VIDEO') {
+      return { type: 'VIDEO', additionalDetails: formData.videoCallReason }
+    }
+    if (formType === 'IN_PERSON_PROBATION_OFFICE') {
+      return { type: 'IN_PERSON_PROBATION_OFFICE', pdu: formData.probationDeliveryUnit }
+    }
+    return {
+      type: 'IN_PERSON_OTHER_LOCATION',
+      addressLine1: formData.addressLine1,
+      addressLine2: formData.addressLine2,
+      townOrCity: formData.townOrCity,
+      county: formData.county,
+      postcode: formData.postcode,
+    }
+  }
+
+  loadIcsFeedbackFromSession(
+    icsFeedback: IcsFeedbackHowSessionTookPlaceSession | undefined,
+  ): IcsFeedbackHowSessionTookPlaceFormData {
+    if (!icsFeedback?.howSessionTookPlace) return {}
+    const { type, additionalDetails, pdu, addressLine1, addressLine2, townOrCity, county, postcode } =
+      icsFeedback.howSessionTookPlace
+    if (type === 'PHONE') {
+      if (additionalDetails) {
+        return { phoneCall: 'no', howSessionTookPlace: 'PHONE', phoneCallReason: additionalDetails }
+      }
+      return { phoneCall: 'yes' }
+    }
+    const base: IcsFeedbackHowSessionTookPlaceFormData = { phoneCall: 'no', howSessionTookPlace: type }
+    if (type === 'VIDEO') return { ...base, videoCallReason: additionalDetails }
+    if (type === 'IN_PERSON_PROBATION_OFFICE') return { ...base, probationDeliveryUnit: pdu }
+    return { ...base, addressLine1, addressLine2, townOrCity, county, postcode }
+  }
+
+  attendance(req: Request, res: Response): Promise<void> {
     const { caseRefId } = req.params
     const { username } = res.locals.user
     const querySchema = z.object({
@@ -584,29 +531,36 @@ class AppointmentController {
       const response = await this.appointmentService.submitICS(referralId, createAppointmentRequest, username)
       if (response) {
         delete req.session.createAppointmentRequest
+        this.setIcsSuccessfullyScheduledBanner(req, response, referralId)
       }
+
       return res.redirect(`/progress/${referralId}`)
     }
     return res.redirect(`/referral/${referralId}/appointment/schedule-ics`)
   }
 
   async checkFeedback(req: Request, res: Response): Promise<void> {
-    const { caseRefId } = req.params
-    const { IcsFeedbackSubmission } = req.session || null
-    if (IcsFeedbackSubmission) {
-      const presenter = new IcsFeedbackCheckYourAnswersPresenter(IcsFeedbackSubmission)
+    const caseRefId = req.params.caseRefId as string
+    const icsFeedbackSubmission = this.getFeedbackSubmission(req, caseRefId)
+
+    if (icsFeedbackSubmission) {
+      const presenter = new IcsFeedbackCheckYourAnswersPresenter(icsFeedbackSubmission)
       presenter.renderPage(res)
     } else {
       res.redirect(`/progress/${caseRefId}`)
     }
   }
 
-  async recordAttendance(req: Request, res: Response): Promise<void> {
-    const { caseRefId } = req.params
+  recordAttendance(req: Request, res: Response): Promise<void> {
+    const caseRefId = req.params.caseRefId as string
     return RecordSessionAttendanceFormDataSchema.parseAsync(req.body)
       .then(data => {
         const sessionHappened = data.happened === 'Yes'
-        req.session.IcsFeedbackSubmission = { record: { didSessionHappen: sessionHappened } }
+        const existing = this.getFeedbackSubmission(req, caseRefId)
+        this.updatedFeedbackSubmission(req, caseRefId, {
+          ...existing,
+          record: { ...existing?.record, didSessionHappen: sessionHappened },
+        })
         if (data.happened === 'Yes') {
           res.redirect(`/ics-feedback/${caseRefId}/did-session-take-place`)
           return
@@ -625,6 +579,115 @@ class AppointmentController {
         }
         res.redirect('/error')
       })
+  }
+
+  async getSessionFeedback(req: Request, res: Response): Promise<void> {
+    const caseRefId = req.params.caseRefId as string
+    const { username } = res.locals.user
+    const icsAppointment = await this.appointmentService.getICS(caseRefId, username)
+
+    if (!icsAppointment) {
+      req.flash('error', 'Appointment not found.')
+      res.redirect(`/ics-feedback/${caseRefId}/session-feedback`)
+      return Promise.resolve()
+    }
+
+    const currentFeedback = this.ensureFeedbackSubmission(req, caseRefId)
+
+    const presenter = new SessionFeedbackPresenter(caseRefId.toString(), currentFeedback)
+    presenter.renderPage(res)
+
+    return Promise.resolve()
+  }
+
+  async submitSessionFeedback(req: Request, res: Response): Promise<void> {
+    const caseRefId = req.params.caseRefId as string
+    const { username } = res.locals.user
+    try {
+      const icsAppointment = await this.appointmentService.getICS(caseRefId, username)
+
+      if (!icsAppointment) {
+        req.flash('error', 'Appointment not found.')
+        res.redirect(`/ics-feedback/${caseRefId}/session-feedback`)
+        return Promise.resolve()
+      }
+
+      const currentSubmission = this.getFeedbackSubmission(req, caseRefId)
+
+      if (!currentSubmission || !currentSubmission.record) {
+        req.flash('error', 'Feedback record is missing. Please start the feedback process again.')
+        res.redirect(`/ics-feedback/${caseRefId}/session-feedback`)
+        return Promise.resolve()
+      }
+
+      currentSubmission.sessionFeedback ??= {}
+
+      const validated = await SessionFeedbackFormDataSchema.parseAsync(req.body)
+      currentSubmission.sessionFeedback.whatHappened = validated.whatDidYouDo
+
+      res.redirect(`/ics-feedback/${caseRefId}/feedback`)
+    } catch (error) {
+      const currentSubmission = this.getFeedbackSubmission(req, caseRefId)
+      if (currentSubmission && currentSubmission?.sessionFeedback) {
+        currentSubmission.sessionFeedback.whatHappened = req.body.whatDidYouDo ?? ''
+      }
+      if (error instanceof z.ZodError) {
+        error.issues.forEach(issue => {
+          const field = String(issue.path[0] ?? '')
+          req.flash(`${field}Error`, issue.message)
+        })
+      }
+      res.redirect(`/ics-feedback/${caseRefId}/session-feedback`)
+    }
+    return Promise.resolve()
+  }
+
+  private getFeedbackSubmission(req: Request, caseRefId: string): IcsFeedbackSubmission | null {
+    return req.session.icsFeedbackSubmissionsMap?.[caseRefId]
+  }
+
+  private ensureFeedbackSubmission(req: Request, caseRefId: string): IcsFeedbackSubmission {
+    if (!req.session.icsFeedbackSubmissionsMap) {
+      req.session.icsFeedbackSubmissionsMap = {} as Record<string, IcsFeedbackSubmission>
+    }
+    if (!req.session.icsFeedbackSubmissionsMap[caseRefId]) {
+      req.session.icsFeedbackSubmissionsMap[caseRefId] = {} as IcsFeedbackSubmission
+    }
+    return req.session.icsFeedbackSubmissionsMap[caseRefId]
+  }
+
+  private updatedFeedbackSubmission(
+    req: Request,
+    caseRefId: string,
+    icsFeedbackSubmission: IcsFeedbackSubmission,
+  ): IcsFeedbackSubmission {
+    if (!req.session.icsFeedbackSubmissionsMap) {
+      req.session.icsFeedbackSubmissionsMap = {} as Record<string, IcsFeedbackSubmission>
+    }
+    req.session.icsFeedbackSubmissionsMap = {
+      ...req.session.icsFeedbackSubmissionsMap,
+      [caseRefId]: icsFeedbackSubmission,
+    }
+    return req.session.icsFeedbackSubmissionsMap[caseRefId]
+  }
+
+  private clearFeedbackSubmission(req: Request, caseRefId: string): void {
+    if (!req.session.icsFeedbackSubmissionsMap) {
+      return
+    }
+
+    delete req.session.icsFeedbackSubmissionsMap[caseRefId]
+  }
+
+  private setIcsSuccessfullyScheduledBanner(req: Request, response: AppointmentIcsResponse, id: string): void {
+    const date = format(response.appointmentDate, 'dd MMM yyyy')
+    const time = timeFormat(response.appointmentTime)
+
+    req.session.referralProgressBanner = {
+      caseReference: id,
+      heading: 'ICS Scheduled',
+      body: `The ICS has been scheduled for ${date} at ${time}`,
+    } as ReferralProgressBannerContent
   }
 
   async sessionDetails(req: Request, res: Response): Promise<void> {

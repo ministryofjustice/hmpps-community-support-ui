@@ -57,3 +57,14 @@ export const duplicateData = (dataToDuplicate: unknown, timesToDuplicates: numbe
   }
   return duplicatedData
 }
+
+export const seedSessionFeedbackSession = async (
+  page: Page,
+  caseRefId: string,
+  icsFeedbackSubmission: object,
+): Promise<void> => {
+  await page.request.post('/test/setup-session-feedback-session', {
+    data: { caseRefId, icsFeedbackSubmission },
+    headers: { 'Content-Type': 'application/json' },
+  })
+}
