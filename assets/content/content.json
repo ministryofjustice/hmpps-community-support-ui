@@ -277,6 +277,6 @@
       }
     },
     "submitButtonText": "Continue",
-    "backLinkHref": "/ics-feedback/{{ id }}/did-the-session-take-place-by"
+    "backLinkHref": "/ics-feedback/{{ id }}/did-session-take-place"
   }
 }
