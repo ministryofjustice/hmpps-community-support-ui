@@ -653,7 +653,7 @@ class AppointmentController {
 
     req.session.referralProgressBanner = {
       caseReference: id,
-      heading: 'ICS Scheduled',
+      heading: 'ICS scheduled',
       body: `The ICS has been scheduled for ${date} at ${time}`,
     } as ReferralProgressBannerContent
   }

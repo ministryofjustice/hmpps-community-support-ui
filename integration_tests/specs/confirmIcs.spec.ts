@@ -230,7 +230,7 @@ test.describe('Confirm ICS Page', () => {
       await expect(page).toHaveURL(REFERRAL_PROGRESS_URL)
       await ReferralProgressPage.verifySuccessBanner(
         page,
-        'ICS Scheduled',
+        'ICS scheduled',
         'The ICS has been scheduled for 15 May 2026 at 2:30PM',
       )
     })
