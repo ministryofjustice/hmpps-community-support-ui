@@ -24,6 +24,7 @@ import { ReferralProgressBannerContent } from '../referral/progress/ReferralProg
 import AppointmentValidator from './AppointmentValidator'
 import { IcsFeedbackHowSessionTookPlaceFormData } from './ics-feedback/icsFeedbackHowSessionTookPlaceViewModel'
 import { SessionFeedbackFormDataSchema } from '../validation/SessionFeedbackFormData'
+import ViewChangeSessionDetailsPresenter from './view-change-session-details/ViewChangeSessionDetailsPresenter'
 
 interface ScheduleFormData {
   sessionDate?: string
@@ -473,6 +474,14 @@ class AppointmentController {
     if (type === 'VIDEO') return { ...base, videoCallReason: additionalDetails }
     if (type === 'IN_PERSON_PROBATION_OFFICE') return { ...base, probationDeliveryUnit: pdu }
     return { ...base, addressLine1, addressLine2, townOrCity, county, postcode }
+  }
+
+  async viewChangeSessionDetails(req: Request, res: Response): Promise<void> {
+    const { referralId, icsId } = req.params as { referralId: string; icsId: string }
+    const { username } = res.locals.user
+    const appointmentIcsResponse = await this.appointmentService.getIcsById(referralId, icsId, username)
+    const presenter = new ViewChangeSessionDetailsPresenter(appointmentIcsResponse, referralId, icsId)
+    return presenter.renderPage(res)
   }
 
   attendance(req: Request, res: Response): Promise<void> {

@@ -1,0 +1,15 @@
+{% extends "../partials/layout.njk" %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+
+{% set pageTitle = applicationName + " - View session details" %}
+{% set mainClasses = "govuk-body" %}
+
+{% block content %}
+{{ govukBackLink({ href: content.backlinkHref }) }}
+
+<h1 class="govuk-heading-xl">{{ content.pageHeader }}</h1>
+
+    {{ govukSummaryList(content.icsDetailsSummary) }}
+
+{% endblock %}
