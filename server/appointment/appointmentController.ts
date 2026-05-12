@@ -16,7 +16,6 @@ import AppointmentService from '../services/AppointmentService'
 import ScheduleIcsPresenter from './schedule-ics/scheduleIcsPresenter'
 import IcsFeedbackHowSessionTookPlacePresenter from './ics-feedback/icsFeedbackHowSessionTookPlacePresenter'
 import ReferenceDataService from '../services/referenceDataService'
-import { DateValidationOptions, TimeValidationOptions } from '../utils/validateDateTime'
 import RecordSessionAttendancePresenter from './record-ics/RecordSessionAttendancePresenter'
 import IcsFeedbackCheckYourAnswersPresenter from './check-ics-feedback/icsFeedbackCheckYourAnswersPresenter'
 import SessionFeedbackPresenter from './session-feedback/sessionFeedbackPresenter'
@@ -31,28 +30,6 @@ import {
   RecordSessionDetailsError,
   RecordSessionDetailsFormDataSchema,
 } from '../validation/RecordSessionDetailsFormData'
-
-const DEFAULT_VALIDATE_DATE_OPTIONS: DateValidationOptions = {
-  dateFormat: 'd/M/yyyy',
-  minDate: new Date(),
-  maxMonthsFuture: 6,
-  messages: {
-    blank: 'Enter the date of the session',
-    invalidFormat: 'Enter a date in the correct format, like 10/7/2025',
-    tooEarly: 'The session date must be after the referral date, ',
-    tooFarFuture: 'The session date must be before ',
-  },
-}
-
-const DEFAULT_VALIDATE_TIME_OPTIONS: TimeValidationOptions = {
-  messages: {
-    blank: 'Enter the start time of the session',
-    hourBlank: 'Session start time must include an hour and minute',
-    minuteBlank: 'Session start time must include an hour and minute',
-    meridiemBlank: 'Select whether the session start time is AM or PM',
-    invalidFormat: 'Enter a session start time in the correct format',
-  },
-}
 
 interface ScheduleFormData {
   sessionDate?: string
