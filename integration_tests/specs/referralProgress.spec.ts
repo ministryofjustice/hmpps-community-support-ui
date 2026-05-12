@@ -203,7 +203,7 @@ test.describe('Referral Progress Page', () => {
         fixture: appointmentScheduled,
         expectedDateTime: '26 March 2026 at 10:00am',
         expectedStatus: 'Scheduled',
-        expectedActions: ['View or change details'],
+        expectedActions: ['View details'],
       },
       {
         name: 'COMPLETED',
