@@ -30,19 +30,13 @@ import {
   RecordSessionDetailsError,
   RecordSessionDetailsErrorMessages,
 } from '../../validation/RecordSessionDetailsFormData'
+import { components } from '../../@types/communitySupportApi/imported'
 
-export default class RecordSessionDetailsPresenter extends PresenterBase<
-  RecordSessionDetailsViewModel,
-  RecordSessionDetailsContent
-> {
+export default class RecordSessionDetailsPresenter extends PresenterBase<RecordSessionDetailsViewModel, RecordSessionDetailsContent> {
   constructor(
     private readonly caseRefId: string,
     private readonly data: AppointmentIcsResponse,
-    private readonly session: {
-      wasPersonLate?: boolean | null
-      lateReason?: string | null
-      duration?: { hours: number | null; minutes?: number | null } | null
-    },
+    private readonly session: components['schemas']['SessionDetailsRequest'],
     private readonly validationErrors?: RecordSessionDetailsError,
   ) {
     super()
@@ -140,7 +134,7 @@ export default class RecordSessionDetailsPresenter extends PresenterBase<
       {
         name: content.minutesName,
         label: { text: content.minutesLabel, classes: 'govuk-date-input__label' },
-        value: formData['sessionDuration-hours']?.toString(),
+        value: formData['sessionDuration-minutes']?.toString(),
         inputmode: 'numeric',
         classes: 'govuk-input govuk-date-input__input govuk-input--width-2',
       },

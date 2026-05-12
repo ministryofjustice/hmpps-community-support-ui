@@ -248,7 +248,7 @@
     "backLink": "/ics-feedback/{{ id }}/session-details"
   },
   "/ics-feedback/:id/session-details": {
-    "pageHeader": "Session Details",
+    "pageHeader": "Session details",
     "appointmentDetails": {
       "dateLabel": "Date",
       "startTimeLabel": "Start time"

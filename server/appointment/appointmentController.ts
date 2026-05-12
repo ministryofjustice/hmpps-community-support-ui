@@ -372,7 +372,7 @@ class AppointmentController {
     }
   }
 
-  async changeIcs(req: Request, res: Response): Promise<void> {
+  changeIcs(req: Request, res: Response): Promise<void> {
     const { caseRefId } = req.params
     const { username } = res.locals.user
     return this.appointmentService
@@ -525,7 +525,7 @@ class AppointmentController {
     }
   }
 
-  async recordAttendance(req: Request, res: Response): Promise<void> {
+  recordAttendance(req: Request, res: Response): Promise<void> {
     const caseRefId = req.params.caseRefId as string
     return RecordSessionAttendanceFormDataSchema.parseAsync(req.body)
       .then(data => {
@@ -675,7 +675,7 @@ class AppointmentController {
     return presenter.renderPage(res)
   }
 
-  async recordSessionDetails(req: Request, res: Response): Promise<void> {
+  recordSessionDetails(req: Request, res: Response): Promise<void> {
     const { caseRefId } = req.params as { caseRefId: string }
     const bodyData: RecordSessionDetailsFormViewModel = req.body
     const icsFeedbackSubmission = this.ensureFeedbackSubmission(req, caseRefId)

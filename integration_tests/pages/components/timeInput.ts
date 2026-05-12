@@ -10,7 +10,6 @@ export default class TimeInput {
     return itemsLocator
       .all()
       .then(items => items.map(item => new Input(item)))
-      .then(itemPromise => Promise.all(itemPromise))
       .then(items => new TimeInput(timeInputLocator, fieldset, items, errorText))
   }
 

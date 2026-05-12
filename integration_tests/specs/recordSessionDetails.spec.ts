@@ -7,7 +7,7 @@ import SessionDetailsPage from '../pages/SessionDetailsPage'
 import initialContactSessionDetailsPageData from '../mockData/initialContactSessionDetailsPageData'
 import communitySupport from '../mockApis/communitySupport'
 import IcsFeedbackSessionFeedbackPage from '../pages/IcsFeedbackSessionFeedbackPage'
-import IcsFeedbackDidTheSessionTakePlaceByPage from '../pages/IcsFeedbackDidTheSessionTakePlaceByPage'
+import IcsFeedbackHowSessionTookPlacePage from '../pages/icsFeedbackHowSessionTookPlacePage'
 
 test.describe('Session Details Page', () => {
   const date = new Date()
@@ -231,6 +231,6 @@ test.describe('Session Details Page', () => {
     })
     const sessionDetailsPage = await SessionDetailsPage.verifyOnPage(page)
     await sessionDetailsPage.backLink.click()
-    await expect(page).toHaveURL(IcsFeedbackDidTheSessionTakePlaceByPage.url(pastMeeting.caseRefId))
+    await expect(page).toHaveURL(IcsFeedbackHowSessionTookPlacePage.url(pastMeeting.caseRefId))
   })
 })
