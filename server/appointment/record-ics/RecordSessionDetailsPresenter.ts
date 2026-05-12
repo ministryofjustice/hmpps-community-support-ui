@@ -6,9 +6,7 @@ import {
   GovukFrontendErrorMessage,
   GovukFrontendFieldset,
   GovukFrontendInput,
-  GovukFrontendTextarea,
 } from '@govuk-frontend'
-import nunjucks from 'nunjucks'
 import PresenterBase from '../../presenter/presenterBase'
 import {
   RecordSessionDetailsContent,
@@ -31,6 +29,7 @@ import {
   RecordSessionDetailsErrorMessages,
 } from '../../validation/RecordSessionDetailsFormData'
 import { components } from '../../@types/communitySupportApi/imported'
+import { escapeHtml } from '../../utils/utils'
 
 export default class RecordSessionDetailsPresenter extends PresenterBase<RecordSessionDetailsViewModel, RecordSessionDetailsContent> {
   constructor(
@@ -46,36 +45,31 @@ export default class RecordSessionDetailsPresenter extends PresenterBase<RecordS
     content: WasPersonLateRadioItemsContent,
     formData: RecordSessionDetailsFormData,
   ): string {
-    const textArea: GovukFrontendTextarea = {
-      id: content.lateReasonName,
-      name: content.lateReasonName,
-      value: formData.lateReason,
-      spellcheck: false,
-      attributes: { 'data-testid': content.lateReasonName },
-      label: {
-        text: content.lateReasonLabel.replace('{{ firstname }}', this.data.referralFirstName),
-        classes: 'govuk-label--s',
-        attributes: { 'data-testid': `${content.lateReasonName}Label` },
-        isPageHeading: true,
-      },
-    }
-    return nunjucks.renderString(
-      '{% from "govuk/components/textarea/macro.njk" import govukTextarea %}{{ govukTextarea(content.textArea) }}',
-      { content: { textArea } },
-    )
+    return `
+    <div class="govuk-form-group">
+      <h1 class="govuk-label-wrapper">
+        <label class="govuk-label govuk-label--s"
+          data-testid=${content.lateReasonName}Label for=${content.lateReasonName}>
+          ${content.lateReasonLabel.replace('{{ firstname }}', this.data.referralFirstName)}
+        </label>
+      </h1>
+      <textarea class="govuk-textarea" id=${content.lateReasonName} name=${content.lateReasonName} rows="5" spellcheck="false"
+        data-testid=${content.lateReasonName}>${escapeHtml(formData.lateReason) ?? ''}</textarea>
+    </div>`
   }
 
   private buildWasPersonLateRadioItems(
     content: WasPersonLateRadioItemsContent,
     formData: RecordSessionDetailsFormData,
   ): GovukFrontendRadiosItemWithConditional[] {
+    const htmlString = this.buildLateReasonTextArea(content, formData)
     return [
       {
         id: 'YesRadio',
         value: content.yesText,
         text: content.yesText,
         checked: formData.wasPersonLate === true,
-        conditional: { html: this.buildLateReasonTextArea(content, formData) },
+        conditional: { html: htmlString },
       },
       {
         id: 'NoRadio',

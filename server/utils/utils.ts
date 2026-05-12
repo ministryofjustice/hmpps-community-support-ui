@@ -21,3 +21,13 @@ export const initialiseName = (fullName?: string): string | null => {
   const array = fullName.split(' ')
   return `${array[0][0]}. ${array.reverse()[0]}`
 }
+
+export const escapeHtml = (str?: string): string | null => {
+  if (!str) return null
+  return str
+      .replace(/&/g, '&amp;') // Escape ampersand
+      .replace(/</g, '&lt;')  // Escape less than
+      .replace(/>/g, '&gt;')  // Escape greater than
+      .replace(/"/g, '&quot;') // Escape double quote
+      .replace(/'/g, '&apos;') // Escape single quote
+}
