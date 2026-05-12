@@ -1,9 +1,9 @@
 import { Request, Response } from 'express'
 import {
-  CreateAppointmentRequest,
-  SessionMethodRequest,
-  IcsFeedbackSubmission,
   AppointmentIcsResponse,
+  CreateAppointmentRequest,
+  IcsFeedbackSubmission,
+  SessionMethodRequest,
 } from '@community-support-api'
 import { format, parse } from 'date-fns'
 import z, { ZodError } from 'zod'
@@ -16,7 +16,7 @@ import AppointmentService from '../services/AppointmentService'
 import ScheduleIcsPresenter from './schedule-ics/scheduleIcsPresenter'
 import IcsFeedbackHowSessionTookPlacePresenter from './ics-feedback/icsFeedbackHowSessionTookPlacePresenter'
 import ReferenceDataService from '../services/referenceDataService'
-import { DateValidationOptions, TimeValidationOptions, validateDate, validateTime } from '../utils/validateDateTime'
+import { DateValidationOptions, TimeValidationOptions } from '../utils/validateDateTime'
 import RecordSessionAttendancePresenter from './record-ics/RecordSessionAttendancePresenter'
 import IcsFeedbackCheckYourAnswersPresenter from './check-ics-feedback/icsFeedbackCheckYourAnswersPresenter'
 import SessionFeedbackPresenter from './session-feedback/sessionFeedbackPresenter'
@@ -26,10 +26,7 @@ import AppointmentValidator from './AppointmentValidator'
 import { IcsFeedbackHowSessionTookPlaceFormData } from './ics-feedback/icsFeedbackHowSessionTookPlaceViewModel'
 import { SessionFeedbackFormDataSchema } from '../validation/SessionFeedbackFormData'
 import RecordSessionDetailsPresenter from './record-ics/RecordSessionDetailsPresenter'
-import {
-  RecordSessionDetailsFormData,
-  RecordSessionDetailsFormViewModel,
-} from './record-ics/RecordSessionDetailsViewModel'
+import { RecordSessionDetailsFormViewModel } from './record-ics/RecordSessionDetailsViewModel'
 import {
   RecordSessionDetailsError,
   RecordSessionDetailsFormDataSchema,
@@ -551,7 +548,7 @@ class AppointmentController {
     }
   }
 
-  recordAttendance(req: Request, res: Response): Promise<void> {
+  async recordAttendance(req: Request, res: Response): Promise<void> {
     const caseRefId = req.params.caseRefId as string
     return RecordSessionAttendanceFormDataSchema.parseAsync(req.body)
       .then(data => {
@@ -694,31 +691,32 @@ class AppointmentController {
     const { caseRefId } = req.params as { caseRefId: string }
     const { username } = res.locals.user
     const validationErrors: RecordSessionDetailsError = res.locals.errors
-    const { IcsFeedbackSubmission } = req.session || null
-    const sessionDetails = IcsFeedbackSubmission ? IcsFeedbackSubmission.sessionDetails : null
+    const icsFeedbackSubmission = this.ensureFeedbackSubmission(req, caseRefId)
+    const sessionDetails = icsFeedbackSubmission ? icsFeedbackSubmission.sessionDetails : null
     const appointmentData = await this.appointmentService.getICS(caseRefId.toString(), username)
     const presenter = new RecordSessionDetailsPresenter(caseRefId, appointmentData, sessionDetails, validationErrors)
     return presenter.renderPage(res)
   }
 
   async recordSessionDetails(req: Request, res: Response): Promise<void> {
-    const { caseRefId } = req.params
+    const { caseRefId } = req.params as { caseRefId: string }
     const bodyData: RecordSessionDetailsFormViewModel = req.body
-    const icsFeedbackSubmission = req.session.IcsFeedbackSubmission
+    const icsFeedbackSubmission = this.ensureFeedbackSubmission(req, caseRefId)
     if (!icsFeedbackSubmission) {
       res.redirect(`/progress/${caseRefId}`)
       return
     }
     RecordSessionDetailsFormDataSchema.parseAsync(req.body)
       .then(data => {
-        const formData: RecordSessionDetailsFormData = {}
-
-        formData.wasPersonLate = data.wasPersonLate === 'Yes'
-        formData.lateReason = data.lateReason
-        formData['sessionDuration-hours'] = data['sessionDuration-hours']
-        formData['sessionDuration-minutes'] = data['sessionDuration-minutes']
-        icsFeedbackSubmission.sessionDetails = formData
-        req.session.IcsFeedbackSubmission = icsFeedbackSubmission
+        icsFeedbackSubmission.sessionDetails = {
+          wasPersonLate: data.wasPersonLate === 'Yes',
+          lateReason: data.lateReason,
+          duration: {
+            hours: data['sessionDuration-hours'],
+            minutes: data['sessionDuration-minutes'],
+          },
+        }
+        req.session.icsFeedbackSubmissionsMap[caseRefId] = icsFeedbackSubmission
         return res.redirect(`/ics-feedback/${caseRefId}/session-feedback`)
       })
       .catch(error => {
@@ -732,7 +730,7 @@ class AppointmentController {
               minutes: bodyData['sessionDuration-minutes'] ? Number(bodyData['sessionDuration-minutes']) : null,
             },
           }
-          req.session.IcsFeedbackSubmission = icsFeedbackSubmission
+          req.session.icsFeedbackSubmissionsMap[caseRefId] = icsFeedbackSubmission
 
           const errors: { [key: string]: string[] } = z.flattenError(error).fieldErrors
           const ids = Object.keys(errors)

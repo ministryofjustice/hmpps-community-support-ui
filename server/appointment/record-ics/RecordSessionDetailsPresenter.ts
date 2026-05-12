@@ -41,7 +41,7 @@ export default class RecordSessionDetailsPresenter extends PresenterBase<
     private readonly session: {
       wasPersonLate?: boolean | null
       lateReason?: string | null
-      duration?: { hours: number; minutes?: number | null } | null
+      duration?: { hours: number | null; minutes?: number | null } | null
     },
     private readonly validationErrors?: RecordSessionDetailsError,
   ) {
