@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test'
 import { randomUUID } from 'node:crypto'
+import { format, addDays, addMonths } from 'date-fns'
 import type { AppointmentIcsResponse } from '@community-support-api'
 import { login, resetStubs } from '../testUtils'
 import communitySupport from '../mockApis/communitySupport'
@@ -13,7 +14,7 @@ const phoneAppointmentIcsResponse: AppointmentIcsResponse = {
   appointmentId: randomUUID(),
   referralId: REFERRAL_ID,
   appointmentType: 'ICS',
-  appointmentDate: '2026-06-15',
+  appointmentDate: format(addMonths(new Date(), 1), 'yyyy-MM-dd'),
   appointmentTime: { hour: 1, minute: 0, amPm: 'pm' },
   appointmentStatus: 'SCHEDULED',
   sessionMethod: {
@@ -24,7 +25,7 @@ const phoneAppointmentIcsResponse: AppointmentIcsResponse = {
   sessionCommunications: ['Phone', 'Text'],
   referralFirstName: 'Alice',
   referralLastName: 'Smith',
-  createdAt: '2026-05-01T09:00:00Z',
+  createdAt: format(addDays(new Date(), -11), "yyyy-MM-dd'T'HH:mm:ss'Z'"),
 }
 
 const inPersonProbationAppointmentIcsResponse: AppointmentIcsResponse = {
@@ -32,7 +33,7 @@ const inPersonProbationAppointmentIcsResponse: AppointmentIcsResponse = {
   appointmentId: randomUUID(),
   referralId: REFERRAL_ID,
   appointmentType: 'ICS',
-  appointmentDate: '2026-07-20',
+  appointmentDate: format(addMonths(new Date(), 2), 'yyyy-MM-dd'),
   appointmentTime: { hour: 10, minute: 30, amPm: 'am' },
   appointmentStatus: 'SCHEDULED',
   sessionMethod: {
@@ -43,7 +44,7 @@ const inPersonProbationAppointmentIcsResponse: AppointmentIcsResponse = {
   sessionCommunications: ['Phone'],
   referralFirstName: 'Carlos',
   referralLastName: 'Garcia',
-  createdAt: '2026-06-01T09:00:00Z',
+  createdAt: format(addDays(new Date(), -11), "yyyy-MM-dd'T'HH:mm:ss'Z'"),
 }
 
 const otherLocationAppointmentIcsResponse: AppointmentIcsResponse = {
@@ -51,7 +52,7 @@ const otherLocationAppointmentIcsResponse: AppointmentIcsResponse = {
   appointmentId: randomUUID(),
   referralId: REFERRAL_ID,
   appointmentType: 'ICS',
-  appointmentDate: '2026-07-20',
+  appointmentDate: format(addMonths(new Date(), 2), 'yyyy-MM-dd'),
   appointmentTime: { hour: 10, minute: 30, amPm: 'am' },
   appointmentStatus: 'SCHEDULED',
   sessionMethod: {
@@ -66,7 +67,7 @@ const otherLocationAppointmentIcsResponse: AppointmentIcsResponse = {
   sessionCommunications: ['Phone', 'Text'],
   referralFirstName: 'Bob',
   referralLastName: 'Jones',
-  createdAt: '2026-06-01T09:00:00Z',
+  createdAt: format(addDays(new Date(), -11), "yyyy-MM-dd'T'HH:mm:ss'Z'"),
 }
 
 test.describe('View Session Details Page', () => {
@@ -94,7 +95,7 @@ test.describe('View Session Details Page', () => {
     await communitySupport.stubGetIcsById(REFERRAL_ID, ICS_ID, phoneAppointmentIcsResponse)
     await page.goto(ViewChangeSessionDetailsPage.url(REFERRAL_ID, ICS_ID))
     const viewChangePage = await ViewChangeSessionDetailsPage.verifyOnPage(page)
-    await expect(viewChangePage.dateRow).toContainText('15 June 2026')
+    await expect(viewChangePage.dateRow).toContainText(format(addMonths(new Date(), 1), 'd MMMM yyyy'))
   })
 
   test('should display the correct start time for a phone appointment', async ({ page }) => {

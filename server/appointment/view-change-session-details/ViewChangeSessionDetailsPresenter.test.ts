@@ -1,6 +1,7 @@
 import { Response } from 'express'
 import { AppointmentIcsResponse } from '@community-support-api'
 import { randomUUID } from 'node:crypto'
+import { format, addDays, addMonths } from 'date-fns'
 import ViewChangeSessionDetailsPresenter from './ViewChangeSessionDetailsPresenter'
 import type { ViewChangeSessionDetailsViewModel } from './viewChangeSessionDetailsViewModel'
 
@@ -12,7 +13,7 @@ const basePhoneResponse: AppointmentIcsResponse = {
   appointmentId: randomUUID(),
   referralId: REFERRAL_ID,
   appointmentType: 'ICS',
-  appointmentDate: '2026-06-15',
+  appointmentDate: format(addMonths(new Date(), 1), 'yyyy-MM-dd'),
   appointmentTime: { hour: 1, minute: 0, amPm: 'pm' },
   appointmentStatus: 'SCHEDULED',
   sessionMethod: {
@@ -23,7 +24,7 @@ const basePhoneResponse: AppointmentIcsResponse = {
   sessionCommunications: ['Phone', 'Text'],
   referralFirstName: 'Alice',
   referralLastName: 'Smith',
-  createdAt: '2026-05-01T09:00:00Z',
+  createdAt: format(addDays(new Date(), -11), "yyyy-MM-dd'T'HH:mm:ss'Z'"),
 }
 
 const baseInPersonProbationResponse: AppointmentIcsResponse = {
@@ -101,7 +102,10 @@ describe('ViewChangeSessionDetailsPresenter', () => {
       const viewModel: ViewChangeSessionDetailsViewModel = renderCall[1].content
       const { rows } = viewModel.icsDetailsSummary
 
-      expect(rows[0]).toEqual({ key: { text: 'Date' }, value: { text: '15 June 2026' } })
+      expect(rows[0]).toEqual({
+        key: { text: 'Date' },
+        value: { text: format(addMonths(new Date(), 1), 'd MMMM yyyy') },
+      })
     })
 
     it('should build the ICS details summary with formatted time', () => {
