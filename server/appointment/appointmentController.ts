@@ -6,7 +6,6 @@ import {
   SessionMethodRequest,
 } from '@community-support-api'
 import { format, parse } from 'date-fns'
-import z, { ZodError, parseAsync, ZodType } from 'zod'
 import timeFormat from '../utils/timeFormat'
 import { ErrorMiddlewareErrors, HowSessionTookPlace, IcsFeedbackHowSessionTookPlaceSession } from '../@types/express'
 import ConfirmIcsPresenter, { type AdditionalInformation } from './confirm-ics/confirmIcsPresenter'
@@ -29,6 +28,7 @@ import { SessionFeedbackFormDataSchema } from '../validation/SessionFeedbackForm
 import ViewChangeSessionDetailsPresenter from './view-change-session-details/ViewChangeSessionDetailsPresenter'
 import RecordSessionDetailsPresenter from './record-ics/RecordSessionDetailsPresenter'
 import { RecordSessionDetailsFormDataSchema } from '../validation/RecordSessionDetailsFormData'
+import validateRequestBodyAgainstSchema from '../validation/validationUtils'
 
 interface ScheduleFormData {
   sessionDate?: string
@@ -545,7 +545,7 @@ class AppointmentController {
   recordIcsAppointmentAttendance(req: Request, res: Response): Promise<void> {
     const { caseRefId } = req.params
 
-    return foo(RecordSessionAttendanceFormDataSchema, req, res, data => {
+    return validateRequestBodyAgainstSchema(RecordSessionAttendanceFormDataSchema, req, res, data => {
       req.session.IcsFeedbackSubmission = {
         caseReferenceId: caseRefId.toString(),
         record: {
@@ -598,7 +598,7 @@ class AppointmentController {
     // set whatDidYouDo even if it fails validation ie it is longer than 3000 characters
     currentSubmission.sessionFeedback.whatHappened = req.body.whatDidYouDo || ''
 
-    foo(SessionFeedbackFormDataSchema, req, res, () => {
+    validateRequestBodyAgainstSchema(SessionFeedbackFormDataSchema, req, res, () => {
       res.redirect(`/ics-feedback/${caseRefId}/feedback`)
     })
   }
@@ -669,7 +669,7 @@ class AppointmentController {
       res.redirect(`/progress/${caseRefId}`)
       return
     }
-    foo(RecordSessionDetailsFormDataSchema, req, res, data => {
+    validateRequestBodyAgainstSchema(RecordSessionDetailsFormDataSchema, req, res, data => {
       icsFeedbackSubmission.sessionDetails = {
         wasPersonLate: data.wasPersonLate === 'Yes',
         lateReason: data.lateReason,
@@ -685,24 +685,3 @@ class AppointmentController {
 }
 
 export default AppointmentController
-
-const foo = <Schema extends ZodType>(
-  schema: Schema,
-  req: Request,
-  res: Response,
-  successFunction: (data: z.infer<typeof schema>) => void,
-): Promise<void> =>
-  parseAsync(schema, req.body)
-    .then(successFunction)
-    .catch(error => {
-      if (!(error instanceof ZodError)) {
-        return res.redirect('/error')
-      }
-      const errors = z.flattenError(error).fieldErrors
-      req.session.formKeys = []
-      Object.entries(errors).forEach(([field, errorMessage]) => {
-        req.session.formKeys.push(field)
-        req.flash(`${field}Error`, `${errorMessage}`)
-      })
-      return res.redirect(req.url)
-    })
