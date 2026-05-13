@@ -558,16 +558,19 @@ class AppointmentController {
           const { content } = res.locals
 
           const errorMessages: Record<string, string | undefined> = {
-            happened: content.attendanceForm?.radios?.error,
-            attended: content.attendanceForm?.radios?.options[1]?.radios?.error,
+            happened: content.attendanceForm?.happenedRadios?.error,
+            attended: content.attendanceForm?.attendedRadios?.error,
           }
 
           const errors = z.flattenError(error).fieldErrors
+          req.session.formKeys = []
           for (const field of Object.keys(errors)) {
             const errorMessage = errorMessages[field]
-            if (errorMessage) req.flash(`${field}Error`, `${errorMessage}`)
+            if (errorMessage) {
+              req.session.formKeys.push(field)
+              req.flash(`${field}Error`, `${errorMessage}`)
+            }
           }
-          req.session.formKeys = ['happened', 'attended']
           res.redirect(`/ics-feedback/${caseRefId}/attendance`)
           return
         }

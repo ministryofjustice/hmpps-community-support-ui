@@ -248,6 +248,21 @@ describe('AppointmentController', () => {
               },
             ],
           },
+          happenedRadios: {
+            id: 'happened',
+            heading: 'Did the session happen?',
+            hint: 'The session happened if something was delivered. ',
+            error: 'Select yes if the session happened',
+            yesLabel: 'Yes',
+            noLabel: 'No',
+          },
+          attendedRadios: {
+            id: 'attended',
+            heading: 'Did {{ firstname }} come to the appointment?',
+            error: 'Select yes if {{ firstname }} came to the appointment',
+            yesLabel: 'Yes',
+            noLabel: 'No',
+          },
           submitButtonText: 'Continue',
         },
       } as const
@@ -257,12 +272,10 @@ describe('AppointmentController', () => {
       const caseRefId = randomUUID()
       req = { ...req, params: { caseRefId }, body: {} } as unknown as Request
       await appointmentController.recordIcsAppointmentAttendance(req, res)
-      {
-        const { formKeys } = req.session
-        expect(formKeys).toHaveLength(2)
-        expect(formKeys).toContain('happened')
-        expect(formKeys).toContain('attended')
-      }
+
+      const { formKeys } = req.session
+      expect(formKeys).toHaveLength(1)
+      expect(formKeys).toContain('happened')
 
       expect(req.flash).toHaveBeenCalledWith('happenedError', 'Select yes if the session happened')
       expect(req.flash).not.toHaveBeenCalledWith('attendedError')
@@ -272,26 +285,24 @@ describe('AppointmentController', () => {
       const caseRefId = randomUUID()
       req = { ...req, params: { caseRefId }, body: { happened: 'No' } } as unknown as Request
       await appointmentController.recordIcsAppointmentAttendance(req, res)
-      {
-        const { formKeys } = req.session
-        expect(formKeys).toHaveLength(2)
-        expect(formKeys).toContain('happened')
-        expect(formKeys).toContain('attended')
-      }
+
+      const { formKeys } = req.session
+      expect(formKeys).toHaveLength(1)
+      expect(formKeys).toContain('attended')
+
       expect(req.flash).not.toHaveBeenCalledWith('happenedError')
-      expect(req.flash).toHaveBeenCalledWith('attendedError', 'Select yes if firstname came to the appointment')
+      expect(req.flash).toHaveBeenCalledWith('attendedError', 'Select yes if {{ firstname }} came to the appointment')
       expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseRefId}/attendance`)
     })
     test('bad body data', async () => {
       const caseRefId = randomUUID()
       req = { ...req, params: { caseRefId }, body: { message: 'hello' } } as unknown as Request
       await appointmentController.recordIcsAppointmentAttendance(req, res)
-      {
-        const { formKeys } = req.session
-        expect(formKeys).toHaveLength(2)
-        expect(formKeys).toContain('happened')
-        expect(formKeys).toContain('attended')
-      }
+
+      const { formKeys } = req.session
+      expect(formKeys).toHaveLength(1)
+      expect(formKeys).toContain('happened')
+
       expect(req.flash).toHaveBeenCalledWith('happenedError', 'Select yes if the session happened')
       expect(req.flash).not.toHaveBeenCalledWith('attendedError')
       expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseRefId}/attendance`)
