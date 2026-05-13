@@ -6,7 +6,7 @@ import {
   SessionMethodRequest,
 } from '@community-support-api'
 import { format, parse } from 'date-fns'
-import z, { ZodError } from 'zod'
+import z, { ZodError, parseAsync, ZodType } from 'zod'
 import timeFormat from '../utils/timeFormat'
 import { ErrorMiddlewareErrors, HowSessionTookPlace, IcsFeedbackHowSessionTookPlaceSession } from '../@types/express'
 import ConfirmIcsPresenter, { type AdditionalInformation } from './confirm-ics/confirmIcsPresenter'
@@ -728,15 +728,14 @@ class AppointmentController {
 
 export default AppointmentController
 
-const foo = <Schema extends z.ZodType>(
+const foo = <Schema extends ZodType>(
   schema: Schema,
   caseRefId: string,
   req: Request,
   res: Response,
   successFunction: (data: z.infer<typeof schema>) => void,
 ): Promise<void> =>
-  z
-    .parseAsync(schema, req.body)
+  parseAsync(schema, req.body)
     .then(successFunction)
     .catch(error => {
       if (!(error instanceof ZodError)) {
