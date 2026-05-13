@@ -24,7 +24,7 @@ export default class ConfirmIcsPresenter extends PresenterBase<ConfirmIcsViewMod
     viewModel.pageHeader = content.pageHeader
     viewModel.submitButtonText = content.submitButtonText
     viewModel.submitHref = `/referral/${this.referralId}/appointment/submit-ics`
-    viewModel.backlinkHref = `/referral/${this.referralId}/appointment/schedule-ics`
+    viewModel.backLink = { href: `/referral/${this.referralId}/appointment/schedule-ics` }
     viewModel.icsDetailsSummary = this.buildIcsDetailsSummary()
     if (this.isAppointmentInPast()) {
       viewModel.notificationBanner = this.buildPastAppointmentBanner()
