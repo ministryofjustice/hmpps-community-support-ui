@@ -546,40 +546,16 @@ class AppointmentController {
   recordIcsAppointmentAttendance(req: Request, res: Response): Promise<void> {
     const { caseRefId } = req.params
 
-    return RecordSessionAttendanceFormDataSchema.parseAsync(req.body)
-      .then(data => {
-        req.session.IcsFeedbackSubmission = {
-          caseReferenceId: caseRefId.toString(),
-          record: {
-            didSessionHappen: data.happened === 'Yes',
-            didPersonAttend: data.happened === 'No' ? data.attended === 'Yes' : true,
-          },
-        }
-        res.redirect(recordAttendanceRedirectUrl(data, caseRefId.toString()))
-      })
-      .catch(error => {
-        if (error instanceof ZodError) {
-          const { content } = res.locals
-
-          const errorMessages: Record<string, string | undefined> = {
-            happened: content.attendanceForm?.happenedRadios?.error,
-            attended: content.attendanceForm?.attendedRadios?.error,
-          }
-
-          const errors = z.flattenError(error).fieldErrors
-          req.session.formKeys = []
-          for (const field of Object.keys(errors)) {
-            const errorMessage = errorMessages[field]
-            if (errorMessage) {
-              req.session.formKeys.push(field)
-              req.flash(`${field}Error`, `${errorMessage}`)
-            }
-          }
-          res.redirect(`/ics-feedback/${caseRefId}/attendance`)
-          return
-        }
-        res.redirect('/error')
-      })
+    return foo(RecordSessionAttendanceFormDataSchema, caseRefId.toString(), req, res, data => {
+      req.session.IcsFeedbackSubmission = {
+        caseReferenceId: caseRefId.toString(),
+        record: {
+          didSessionHappen: data.happened === 'Yes',
+          didPersonAttend: data.happened === 'No' ? data.attended === 'Yes' : true,
+        },
+      }
+      res.redirect(recordAttendanceRedirectUrl(data, caseRefId.toString()))
+    })
   }
 
   async getSessionFeedback(req: Request, res: Response): Promise<void> {
@@ -751,3 +727,26 @@ class AppointmentController {
 }
 
 export default AppointmentController
+
+const foo = <Schema extends z.ZodType>(
+  schema: Schema,
+  caseRefId: string,
+  req: Request,
+  res: Response,
+  successFunction: (data: z.infer<typeof schema>) => void,
+): Promise<void> =>
+  z
+    .parseAsync(schema, req.body)
+    .then(successFunction)
+    .catch(error => {
+      if (!(error instanceof ZodError)) {
+        return res.redirect('/error')
+      }
+      const errors = z.flattenError(error).fieldErrors
+      req.session.formKeys = []
+      Object.entries(errors).forEach(([field, errorMessage]) => {
+        req.session.formKeys.push(field)
+        req.flash(`${field}Error`, `${errorMessage}`)
+      })
+      return res.redirect(`/ics-feedback/${caseRefId}/attendance`)
+    })
