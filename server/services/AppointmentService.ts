@@ -15,4 +15,8 @@ export default class AppointmentService {
   ): Promise<AppointmentIcsResponse> {
     return this.communitySupportApiClient.submitICS(caseRefId, createAppointmentRequest, username)
   }
+
+  getIcsById(referralId: string, icsId: string, username: string): Promise<AppointmentIcsResponse> {
+    return this.communitySupportApiClient.getIcsById(referralId, icsId, username)
+  }
 }

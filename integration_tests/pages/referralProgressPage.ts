@@ -37,7 +37,7 @@ export default class ReferralProgressPage extends AbstractPage {
     this.icsTitle = page.locator('h3')
     this.backLink = page.getByRole('link', { name: 'Back', exact: true })
     this.scheduleSessionLink = page.getByRole('link', { name: 'Schedule session', exact: true })
-    this.viewOrChangeDetailsLink = page.getByRole('link', { name: 'View or change details', exact: true })
+    this.viewOrChangeDetailsLink = page.getByRole('link', { name: 'View details', exact: true })
     this.addAttendanceAndFeedbackLink = page.getByRole('link', { name: 'Add attendance and feedback', exact: true })
   }
 

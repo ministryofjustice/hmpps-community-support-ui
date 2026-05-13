@@ -24,6 +24,7 @@ import { ReferralProgressBannerContent } from '../referral/progress/ReferralProg
 import AppointmentValidator from './AppointmentValidator'
 import { IcsFeedbackHowSessionTookPlaceFormData } from './ics-feedback/icsFeedbackHowSessionTookPlaceViewModel'
 import { SessionFeedbackFormDataSchema } from '../validation/SessionFeedbackFormData'
+import ViewChangeSessionDetailsPresenter from './view-change-session-details/ViewChangeSessionDetailsPresenter'
 import RecordSessionDetailsPresenter from './record-ics/RecordSessionDetailsPresenter'
 import { RecordSessionDetailsFormViewModel } from './record-ics/RecordSessionDetailsViewModel'
 import {
@@ -481,6 +482,14 @@ class AppointmentController {
     return { ...base, addressLine1, addressLine2, townOrCity, county, postcode }
   }
 
+  async viewChangeSessionDetails(req: Request, res: Response): Promise<void> {
+    const { referralId, icsId } = req.params as { referralId: string; icsId: string }
+    const { username } = res.locals.user
+    const appointmentIcsResponse = await this.appointmentService.getIcsById(referralId, icsId, username)
+    const presenter = new ViewChangeSessionDetailsPresenter(appointmentIcsResponse, referralId, icsId)
+    return presenter.renderPage(res)
+  }
+
   attendance(req: Request, res: Response): Promise<void> {
     const { caseRefId } = req.params
     const { username } = res.locals.user
@@ -659,7 +668,7 @@ class AppointmentController {
 
     req.session.referralProgressBanner = {
       caseReference: id,
-      heading: 'ICS Scheduled',
+      heading: 'ICS scheduled',
       body: `The ICS has been scheduled for ${date} at ${time}`,
     } as ReferralProgressBannerContent
   }
