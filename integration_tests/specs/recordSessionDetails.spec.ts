@@ -34,13 +34,13 @@ test.describe('Session Details Page', () => {
         didSessionHappen: true,
       },
     })
+    await test.step('go to initial contact session details page', async () => {
+      await page.goto(SessionDetailsPage.url(pastMeeting.caseRefId))
+    })
   })
 
   // IPB-2253:AC1/AC2
   test('Session Details page should display correct content', async ({ page }) => {
-    await test.step('go to initial contact session details page', async () => {
-      await page.goto(SessionDetailsPage.url(pastMeeting.caseRefId))
-    })
     const sessionDetailsPage = await SessionDetailsPage.verifyOnPage(page)
     await test.step('check summary content', async () => {
       const { summary } = sessionDetailsPage
@@ -70,9 +70,6 @@ test.describe('Session Details Page', () => {
 
   // IPB-2253:AC3
   test('Clicking Yes to "Was Person Late?" should display correct content', async ({ page }) => {
-    await test.step('go to initial contact session details page', async () => {
-      await page.goto(SessionDetailsPage.url(pastMeeting.caseRefId))
-    })
     const sessionDetailsPage = await SessionDetailsPage.verifyOnPage(page)
     await test.step('check was person late content after clicking Yes', async () => {
       const [wasLateYes] = sessionDetailsPage.wasPersonLateRadios.items
@@ -85,9 +82,6 @@ test.describe('Session Details Page', () => {
 
   // IPB-2253:AC4.1
   test('Successful submission not late', async ({ page }) => {
-    await test.step('go to initial contact session details page', async () => {
-      await page.goto(SessionDetailsPage.url(pastMeeting.caseRefId))
-    })
     const sessionDetailsPage = await SessionDetailsPage.verifyOnPage(page)
     await sessionDetailsPage.wasPersonLateRadios.items[1].input.click()
     await sessionDetailsPage.duration.items[0].input.fill('1')
@@ -98,9 +92,6 @@ test.describe('Session Details Page', () => {
 
   // IPB-2253:AC4.2
   test('Successful submission late', async ({ page }) => {
-    await test.step('go to initial contact session details page', async () => {
-      await page.goto(SessionDetailsPage.url(pastMeeting.caseRefId))
-    })
     const sessionDetailsPage = await SessionDetailsPage.verifyOnPage(page)
     await sessionDetailsPage.wasPersonLateRadios.items[0].input.click()
     await sessionDetailsPage.lateReason.input.fill('Missed the bus')
@@ -112,9 +103,6 @@ test.describe('Session Details Page', () => {
 
   // IPB-2253:AC5/AC6
   test('Error messages should show correct content', async ({ page }) => {
-    await test.step('go to initial contact session details page', async () => {
-      await page.goto(SessionDetailsPage.url(pastMeeting.caseRefId))
-    })
     const sessionDetailsPage = await SessionDetailsPage.verifyOnPage(page)
     await test.step('click continue without filling out the form', async () => {
       await sessionDetailsPage.continueButton.click()
@@ -143,9 +131,6 @@ test.describe('Session Details Page', () => {
 
   // IPB-2253:AC7
   test('Invalid minutes should show correct error', async ({ page }) => {
-    await test.step('go to initial contact session details page', async () => {
-      await page.goto(SessionDetailsPage.url(pastMeeting.caseRefId))
-    })
     const sessionDetailsPage = await SessionDetailsPage.verifyOnPage(page)
     await test.step('fill form with invalid minutes', async () => {
       await sessionDetailsPage.wasPersonLateRadios.items[1].input.click()
@@ -168,9 +153,6 @@ test.describe('Session Details Page', () => {
 
   // IPB-2253:AC8
   test('Non numerical duration should show correct errors', async ({ page }) => {
-    await test.step('go to initial contact session details page', async () => {
-      await page.goto(SessionDetailsPage.url(pastMeeting.caseRefId))
-    })
     const sessionDetailsPage = await SessionDetailsPage.verifyOnPage(page)
     await test.step('fill form with non numerical duration', async () => {
       await sessionDetailsPage.wasPersonLateRadios.items[1].input.click()
@@ -197,9 +179,6 @@ test.describe('Session Details Page', () => {
 
   // IPB-2253:AC9
   test('Too big duration input should show correct errors', async ({ page }) => {
-    await test.step('go to initial contact session details page', async () => {
-      await page.goto(SessionDetailsPage.url(pastMeeting.caseRefId))
-    })
     const sessionDetailsPage = await SessionDetailsPage.verifyOnPage(page)
     await test.step('fill form with too big duration', async () => {
       await sessionDetailsPage.wasPersonLateRadios.items[1].input.click()
@@ -226,9 +205,6 @@ test.describe('Session Details Page', () => {
 
   // IPB-2253:AC10
   test('Back link navigation', async ({ page }) => {
-    await test.step('go to initial contact session details page', async () => {
-      await page.goto(SessionDetailsPage.url(pastMeeting.caseRefId))
-    })
     const sessionDetailsPage = await SessionDetailsPage.verifyOnPage(page)
     await sessionDetailsPage.backLink.click()
     await expect(page).toHaveURL(IcsFeedbackHowSessionTookPlacePage.url(pastMeeting.caseRefId))
