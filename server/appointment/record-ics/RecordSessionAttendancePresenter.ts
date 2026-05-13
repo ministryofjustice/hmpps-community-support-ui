@@ -9,14 +9,12 @@ import { AppointmentIcsResponse } from '@community-support-api'
 import { isPast } from 'date-fns'
 import nunjucks from 'nunjucks'
 import PresenterBase from '../../presenter/presenterBase'
-import { govFrontendSummaryListRow } from '../../utils/viewUtils'
-import dateFormat from '../../utils/dateFormat'
-import timeFormat from '../../utils/timeFormat'
 import getAppointmentDateTime from '../../utils/getAppointmentDateTime'
 import {
   GovukFrontendRadiosItemWithConditional,
   GovukFrontendRadiosWithConditional,
 } from '../../@types/govukFrontend/derived'
+import buildAppointmentDetails from './AppointmentDetailsModel'
 
 export interface RecordSessionAttendanceFormViewModel {
   radios: GovukFrontendRadiosWithConditional
@@ -94,16 +92,6 @@ export default class RecordSessionAttendancePresenter extends PresenterBase<
       this.errors = [error]
     } else {
       this.errors = error
-    }
-  }
-
-  private buildAppointmentDetails(content: ApointmentDetailsContent): GovukFrontendSummaryList {
-    return {
-      rows: [
-        govFrontendSummaryListRow(content.dateLabel, dateFormat(new Date(this.data.appointmentDate))),
-        govFrontendSummaryListRow(content.startTimeLabel, timeFormat(this.data.appointmentTime)),
-      ],
-      attributes: { 'data-testid': 'appointment-details' },
     }
   }
 
@@ -205,7 +193,7 @@ export default class RecordSessionAttendancePresenter extends PresenterBase<
       backLink: { href: nunjucks.renderString(content.backLink, { id: this.caseRefId }) },
       pageHeader: content.pageHeader,
       description: content.description,
-      appointment: this.buildAppointmentDetails(content.appointmentDetails),
+      appointment: buildAppointmentDetails(content.appointmentDetails, this.data),
       form: isPast(getAppointmentDateTime(this.data)) ? this.buildForm(content.attendanceForm) : undefined,
       submitHref: `/ics-feedback/attendance/${this.caseRefId}`,
     }

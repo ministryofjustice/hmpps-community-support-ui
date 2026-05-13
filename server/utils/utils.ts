@@ -25,9 +25,9 @@ export const initialiseName = (fullName?: string): string | null => {
 export const escapeHtml = (str?: string): string | null => {
   if (!str) return null
   return str
-      .replace(/&/g, '&amp;') // Escape ampersand
-      .replace(/</g, '&lt;')  // Escape less than
-      .replace(/>/g, '&gt;')  // Escape greater than
-      .replace(/"/g, '&quot;') // Escape double quote
-      .replace(/'/g, '&apos;') // Escape single quote
+    .replace(/&/g, '&amp;') // Escape ampersand
+    .replace(/</g, '&lt;') // Escape less than
+    .replace(/>/g, '&gt;') // Escape greater than
+    .replace(/"/g, '&quot;') // Escape double quote
+    .replace(/'/g, '&apos;') // Escape single quote
 }

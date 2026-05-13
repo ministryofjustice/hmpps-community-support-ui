@@ -31,7 +31,10 @@ import {
 import { components } from '../../@types/communitySupportApi/imported'
 import { escapeHtml } from '../../utils/utils'
 
-export default class RecordSessionDetailsPresenter extends PresenterBase<RecordSessionDetailsViewModel, RecordSessionDetailsContent> {
+export default class RecordSessionDetailsPresenter extends PresenterBase<
+  RecordSessionDetailsViewModel,
+  RecordSessionDetailsContent
+> {
   constructor(
     private readonly caseRefId: string,
     private readonly data: AppointmentIcsResponse,
