@@ -32,6 +32,11 @@
             isPageHeading: true
           }
         }) %}
+          <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+            <h2 class="govuk-fieldset__heading">
+              {{ content.form.label }}
+            </h2>
+          </legend>
           {{ govukTextarea(content.form.textarea) }}
           {{ govukButton(content.form.button) }}
         {% endcall %}
