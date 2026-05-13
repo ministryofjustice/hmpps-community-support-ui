@@ -34,8 +34,17 @@
         "href": "/cases-in-progress"
       }
     ],
-    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
-    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
+    "unassignedColumnHeaders": [
+      "Name",
+      "CRN/prison number",
+      "Date received"
+    ],
+    "inProgressColumnHeaders": [
+      "Name",
+      "CRN/prison number",
+      "Assigned to",
+      "Date received"
+    ],
     "noCasesMessage": "There are no {0} cases to view."
   },
   "/cases-in-progress": {
@@ -54,8 +63,17 @@
         "href": "/cases-in-progress"
       }
     ],
-    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
-    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
+    "unassignedColumnHeaders": [
+      "Name",
+      "CRN/prison number",
+      "Date received"
+    ],
+    "inProgressColumnHeaders": [
+      "Name",
+      "CRN/prison number",
+      "Assigned to",
+      "Date received"
+    ],
     "noCasesMessage": "There are no {0} cases to view."
   },
   "/referral-details/:id": {
@@ -143,8 +161,15 @@
         "href": "/change-log"
       }
     ],
-    "progressActiveColumnHeaders": ["Date and time", "Status", "Action"],
-    "progressInactiveColumnHeaders": ["Status", "Action"]
+    "progressActiveColumnHeaders": [
+      "Date and time",
+      "Status",
+      "Action"
+    ],
+    "progressInactiveColumnHeaders": [
+      "Status",
+      "Action"
+    ]
   },
   "/ics-feedback/:id/did-session-take-place": {
     "submitButtonText": "Continue",
@@ -193,33 +218,6 @@
   },
   "/ics-feedback": {
     "attendanceForm": {
-      "radios": {
-        "id": "happened",
-        "heading": "Did the session happen?",
-        "hint": "The session happened if something was delivered. ",
-        "error": "Select yes if the session happened",
-        "options": [
-          {
-            "label": "Yes"
-          },
-          {
-            "label": "No",
-            "radios": {
-              "id": "attended",
-              "heading": "Did {{ firstname }} come to the appointment?",
-              "error": "Select yes if {{ firstname }} came to the appointment",
-              "options": [
-                {
-                  "label": "Yes"
-                },
-                {
-                  "label": "No"
-                }
-              ]
-            }
-          }
-        ]
-      },
       "happenedRadios": {
         "id": "happened",
         "heading": "Did the session happen?",
