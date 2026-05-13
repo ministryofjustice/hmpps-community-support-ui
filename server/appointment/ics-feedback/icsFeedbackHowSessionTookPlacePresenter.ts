@@ -225,7 +225,7 @@ export default class IcsFeedbackHowSessionTookPlacePresenter extends PresenterBa
       pageHeader,
       submitButtonText: content.submitButtonText,
       submitHref: `/ics-feedback/${this.caseRefId}/did-session-take-place`,
-      backlinkHref: `/ics-feedback/attendance/${this.caseRefId}`,
+      backLink: { href: `/ics-feedback/attendance/${this.caseRefId}` },
       sessionLocationLines: this.buildSessionLocationLines(),
       errorList: Object.entries(this.validationErrors ?? {}).map(([key, error]) => ({
         href: `#${key}`,
