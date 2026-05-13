@@ -124,11 +124,9 @@ export default function routes({
 
   post('/ics-feedback/:caseRefId/session-feedback', (req, res) => appointmentController.submitSessionFeedback(req, res))
 
-  get('/ics-feedback/:caseRefId/session-details', async (req, res) => appointmentController.sessionDetails(req, res))
+  get('/ics-feedback/:caseRefId/session-details', (req, res) => appointmentController.sessionDetails(req, res))
 
-  post('/ics-feedback/:caseRefId/session-details', async (req, res) =>
-    appointmentController.recordSessionDetails(req, res),
-  )
+  post('/ics-feedback/:caseRefId/session-details', (req, res) => appointmentController.recordSessionDetails(req, res))
 
   get('/ics-feedback/:caseRefId/session-details', async (req, res) => appointmentController.sessionDetails(req, res))
 

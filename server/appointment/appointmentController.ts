@@ -28,7 +28,6 @@ import { IcsFeedbackHowSessionTookPlaceFormData } from './ics-feedback/icsFeedba
 import { SessionFeedbackFormDataSchema } from '../validation/SessionFeedbackFormData'
 import ViewChangeSessionDetailsPresenter from './view-change-session-details/ViewChangeSessionDetailsPresenter'
 import RecordSessionDetailsPresenter from './record-ics/RecordSessionDetailsPresenter'
-import { RecordSessionDetailsFormViewModel } from './record-ics/RecordSessionDetailsViewModel'
 import { RecordSessionDetailsFormDataSchema } from '../validation/RecordSessionDetailsFormData'
 
 interface ScheduleFormData {
@@ -546,7 +545,7 @@ class AppointmentController {
   recordIcsAppointmentAttendance(req: Request, res: Response): Promise<void> {
     const { caseRefId } = req.params
 
-    return foo(RecordSessionAttendanceFormDataSchema, caseRefId.toString(), req, res, data => {
+    return foo(RecordSessionAttendanceFormDataSchema, req, res, data => {
       req.session.IcsFeedbackSubmission = {
         caseReferenceId: caseRefId.toString(),
         record: {
@@ -680,13 +679,24 @@ class AppointmentController {
 
   recordSessionDetails(req: Request, res: Response): Promise<void> {
     const { caseRefId } = req.params as { caseRefId: string }
-    const bodyData: RecordSessionDetailsFormViewModel = req.body
     const icsFeedbackSubmission = this.ensureFeedbackSubmission(req, caseRefId)
     if (!icsFeedbackSubmission) {
       res.redirect(`/progress/${caseRefId}`)
       return
     }
-    RecordSessionDetailsFormDataSchema.parseAsync(req.body)
+    foo(RecordSessionDetailsFormDataSchema, req, res, data => {
+      icsFeedbackSubmission.sessionDetails = {
+        wasPersonLate: data.wasPersonLate === 'Yes',
+        lateReason: data.lateReason,
+        duration: {
+          hours: data['sessionDuration-hours'],
+          minutes: data['sessionDuration-minutes'],
+        },
+      }
+      req.session.icsFeedbackSubmissionsMap[caseRefId] = icsFeedbackSubmission
+      res.redirect(`/ics-feedback/${caseRefId}/session-feedback`)
+    })
+    /* RecordSessionDetailsFormDataSchema.parseAsync(req.body)
       .then(data => {
         icsFeedbackSubmission.sessionDetails = {
           wasPersonLate: data.wasPersonLate === 'Yes',
@@ -722,7 +732,7 @@ class AppointmentController {
           return
         }
         res.redirect('/error')
-      })
+      }) */
   }
 }
 
@@ -730,7 +740,6 @@ export default AppointmentController
 
 const foo = <Schema extends ZodType>(
   schema: Schema,
-  caseRefId: string,
   req: Request,
   res: Response,
   successFunction: (data: z.infer<typeof schema>) => void,
@@ -747,5 +756,5 @@ const foo = <Schema extends ZodType>(
         req.session.formKeys.push(field)
         req.flash(`${field}Error`, `${errorMessage}`)
       })
-      return res.redirect(`/ics-feedback/${caseRefId}/attendance`)
+      return res.redirect(req.url)
     })
