@@ -37,7 +37,7 @@ export declare module 'express-session' {
     icsFeedbackSubmissionsMap: Record<string, IcsFeedbackSubmission>
     icsFeedbackPendingFormData: Record<string, Record<string, string>>
     referralProgressBanner?: ReferralProgressBannerContent
-    IcsFeedbackSubmission: IcsFeedbackSubmission
+    IcsFeedbackSubmission: IcsFeedbackSubmission & { caseReferenceId: string }
   }
 }
 

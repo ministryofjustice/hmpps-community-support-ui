@@ -546,6 +546,7 @@ class AppointmentController {
     return RecordSessionAttendanceFormDataSchema.parseAsync(req.body)
       .then(data => {
         req.session.IcsFeedbackSubmission = {
+          caseReferenceId: caseRefId.toString(),
           record: {
             didSessionHappen: data.happened === 'Yes',
             didPersonAttend: data.happened === 'No' ? data.attended === 'Yes' : true,

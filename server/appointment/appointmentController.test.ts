@@ -312,6 +312,7 @@ describe('AppointmentController', () => {
       req = { ...req, params: { caseRefId }, body: { happened: 'Yes' } } as unknown as Request
       await appointmentController.recordIcsAppointmentAttendance(req, res)
       expect(req.session.IcsFeedbackSubmission).toStrictEqual({
+        caseReferenceId: caseRefId,
         record: { didPersonAttend: true, didSessionHappen: true },
       })
       expect(req.flash).not.toHaveBeenCalledWith('happenedError')
@@ -323,6 +324,7 @@ describe('AppointmentController', () => {
       req = { ...req, params: { caseRefId }, body: { happened: 'No', attended: 'Yes' } } as unknown as Request
       await appointmentController.recordIcsAppointmentAttendance(req, res)
       expect(req.session.IcsFeedbackSubmission).toStrictEqual({
+        caseReferenceId: caseRefId,
         record: { didPersonAttend: true, didSessionHappen: false },
       })
       expect(req.flash).not.toHaveBeenCalledWith('happenedError')
@@ -334,6 +336,7 @@ describe('AppointmentController', () => {
       req = { ...req, params: { caseRefId }, body: { happened: 'No', attended: 'No' } } as unknown as Request
       await appointmentController.recordIcsAppointmentAttendance(req, res)
       expect(req.session.IcsFeedbackSubmission).toStrictEqual({
+        caseReferenceId: caseRefId,
         record: { didPersonAttend: false, didSessionHappen: false },
       })
       expect(req.flash).not.toHaveBeenCalledWith('happenedError')
