@@ -233,21 +233,6 @@
         "yesLabel": "Yes",
         "noLabel": "No"
       },
-      "happenedRadios": {
-        "id": "happened",
-        "heading": "Did the session happen?",
-        "hint": "The session happened if something was delivered. ",
-        "error": "Select yes if the session happened",
-        "yesLabel": "Yes",
-        "noLabel": "No"
-      },
-      "attendedRadios": {
-        "id": "attended",
-        "heading": "Did {{ firstname }} come to the appointment?",
-        "error": "Select yes if {{ firstname }} came to the appointment",
-        "yesLabel": "Yes",
-        "noLabel": "No"
-      },
       "submitButtonText": "Continue"
     }
   },
