@@ -662,7 +662,7 @@ export interface components {
     }
     ReferralDetailsTableDataDto: {
       referralDate: string
-      assignedTo: string[]
+      assignedTo: CaseWorkerDto[]
     }
     ReferralAppointmentHistoryDto: {
       /** Format: uuid */
