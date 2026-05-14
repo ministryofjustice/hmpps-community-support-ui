@@ -5,6 +5,7 @@ import {
   ReferralInformationDto,
   IcsFeedbackSubmission,
 } from '@community-support-api'
+import { GovukFrontendErrorSummaryErrorListElement } from '@govuk-frontend'
 import { HmppsUser } from '../../interfaces/hmppsUser'
 import { ReferralProgressBannerContent } from '../../referral/progress/ReferralProgressBannerContent'
 
@@ -36,6 +37,7 @@ export declare module 'express-session' {
     icsFeedbackSubmissionsMap: Record<string, IcsFeedbackSubmission>
     icsFeedbackPendingFormData: Record<string, Record<string, string>>
     referralProgressBanner?: ReferralProgressBannerContent
+    IcsFeedbackSubmission: IcsFeedbackSubmission & { caseReferenceId: string }
   }
 }
 
@@ -55,6 +57,11 @@ export declare global {
 
     interface Locals {
       user: HmppsUser
+      errors: ErrorMiddlewareErrors
     }
   }
+}
+interface ErrorMiddlewareErrors {
+  list: Array<GovukFrontendErrorSummaryErrorListElement>
+  messages: Record<string, GovukFrontendErrorMessage>
 }

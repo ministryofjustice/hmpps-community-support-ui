@@ -66,7 +66,7 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
     viewModel.pageHeader = content.pageHeader
     viewModel.submitButtonText = content.submitButtonText
     viewModel.submitHref = `/referral/${this.caseReference}/appointment/schedule-ics`
-    viewModel.backlinkHref = `/progress/${this.caseReference}`
+    viewModel.backLink = { href: `/progress/${this.caseReference}` }
     viewModel.probationOfficesSelectItems = this.buildProbationOfficesSelectItems()
     viewModel.prisonsSelectItems = this.buildPrisonsSelectItems()
     viewModel.serviceName = this.referralInformation.communityServiceProviderName

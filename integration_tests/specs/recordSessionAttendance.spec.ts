@@ -108,23 +108,23 @@ test.describe('RecordSessionAttendancePage', () => {
         await expect(row.value).toHaveText(format(pastDate, 'h:mmaaa'))
       })
     })
-    await test.step('session attended radios have the correct content', async () => {
+    await test.step('session happened radios have the correct content', async () => {
       await expect(recordSessionAttendancePage.sessionHappenedRadios.fieldset.legend).toHaveText(
         'Did the session happen?',
       )
       await expect(recordSessionAttendancePage.sessionHappenedRadios.fieldset.hint).toHaveText(
         'The session happened if something was delivered.',
       )
-      expect(recordSessionAttendancePage.sessionAttendedRadios.items).toHaveLength(2)
-      const [item1, item2] = recordSessionAttendancePage.sessionAttendedRadios.items
+      expect(recordSessionAttendancePage.sessionHappenedRadios.items).toHaveLength(2)
+      const [item1, item2] = recordSessionAttendancePage.sessionHappenedRadios.items
       await expect(item1.label).toHaveText('Yes')
       await expect(item2.label).toHaveText('No')
     })
-    await test.step('session happend radios have the correct content', async () => {
+    await test.step('session attended radios have the correct content', async () => {
       const [, attendNo] = recordSessionAttendancePage.sessionHappenedRadios.items
       await attendNo.input.click()
-      expect(recordSessionAttendancePage.sessionHappenedRadios.items).toHaveLength(2)
-      const [item1, item2] = recordSessionAttendancePage.sessionHappenedRadios.items
+      expect(recordSessionAttendancePage.sessionAttendedRadios.items).toHaveLength(2)
+      const [item1, item2] = recordSessionAttendancePage.sessionAttendedRadios.items
       await expect(item1.label).toHaveText('Yes')
       await expect(item2.label).toHaveText('No')
     })
@@ -213,7 +213,6 @@ test.describe('RecordSessionAttendancePage', () => {
       const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
       await recordSessionAttendancePage.continueButton.click()
     })
-    await expect(page).toHaveURL(RecordSessionAttendancePage.url(pastMeeting.caseRefId, 'happened'))
     await test.step('check error content', async () => {
       const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
       await test.step('check banner content', async () => {
@@ -229,6 +228,35 @@ test.describe('RecordSessionAttendancePage', () => {
         await expect(recordSessionAttendancePage.sessionHappenedRadios.errorText).toHaveText(
           'Error: Select yes if the session happened',
         )
+      })
+    })
+  })
+  // NO AC - check validaiton session data is cleared away after use
+  test('validation errors get cleared after page render', async ({ page }) => {
+    await test.step('go to initial contact session details page', async () => {
+      await page.goto(RecordSessionAttendancePage.url(pastMeeting.caseRefId))
+    })
+    await test.step('click continue without selecting radio option', async () => {
+      const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
+      await recordSessionAttendancePage.continueButton.click()
+    })
+    await test.step('check error content', async () => {
+      const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
+      await test.step('check banner content', async () => {
+        await expect(recordSessionAttendancePage.errorSummary.locator).toBeVisible()
+      })
+      await test.step('check radio content', async () => {
+        await expect(recordSessionAttendancePage.sessionHappenedRadios.errorText).toBeVisible()
+      })
+    })
+    await test.step('visit page again', async () => {
+      await page.goto(RecordSessionAttendancePage.url(pastMeeting.caseRefId))
+      const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
+      await test.step('check banner content', async () => {
+        await expect(recordSessionAttendancePage.errorSummary.locator).not.toBeVisible()
+      })
+      await test.step('check radio content', async () => {
+        await expect(recordSessionAttendancePage.sessionHappenedRadios.errorText).not.toBeVisible()
       })
     })
   })
@@ -260,7 +288,6 @@ test.describe('RecordSessionAttendancePage', () => {
       await recordSessionAttendancePage.continueButton.click()
     })
 
-    await expect(page).toHaveURL(RecordSessionAttendancePage.url(pastMeeting.caseRefId, 'attended'))
     await test.step('check error content', async () => {
       const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
       await test.step('check banner content', async () => {

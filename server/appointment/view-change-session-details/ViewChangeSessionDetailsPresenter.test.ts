@@ -88,7 +88,7 @@ describe('ViewChangeSessionDetailsPresenter', () => {
         'appointment/viewChangeSessionDetails',
         expect.objectContaining({
           content: expect.objectContaining<Partial<ViewChangeSessionDetailsViewModel>>({
-            backlinkHref: `/progress/${REFERRAL_ID}`,
+            backLink: { href: `/progress/${REFERRAL_ID}` },
           }),
         }),
       )

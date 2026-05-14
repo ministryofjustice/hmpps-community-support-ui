@@ -111,19 +111,18 @@ export default function routes({
     await referralController.showReferralProgressDetails(req, res)
   })
 
-  get('/ics-feedback/attendance/:caseRefId', async (req, res) => appointmentController.attendance(req, res))
+  get('/ics-feedback/:caseRefId/attendance', async (req, res) =>
+    appointmentController.icsAppointmentAttendance(req, res),
+  )
+  post('/ics-feedback/:caseRefId/attendance', async (req, res) =>
+    appointmentController.recordIcsAppointmentAttendance(req, res),
+  )
 
   get('/ics-feedback/feedback/:caseRefId', async (req, res) => appointmentController.checkFeedback(req, res))
 
-  post('/ics-feedback/attendance/:caseRefId', async (req, res) => appointmentController.recordAttendance(req, res))
+  get('/ics-feedback/:caseRefId/session-feedback', (req, res) => appointmentController.getSessionFeedback(req, res))
 
-  get('/ics-feedback/:caseRefId/session-feedback', async (req, res) => {
-    appointmentController.getSessionFeedback(req, res)
-  })
-
-  post('/ics-feedback/:caseRefId/session-feedback', async (req, res) => {
-    appointmentController.submitSessionFeedback(req, res)
-  })
+  post('/ics-feedback/:caseRefId/session-feedback', (req, res) => appointmentController.submitSessionFeedback(req, res))
 
   get('/ics-feedback/:caseRefId/session-details', async (req, res) => appointmentController.sessionDetails(req, res))
 

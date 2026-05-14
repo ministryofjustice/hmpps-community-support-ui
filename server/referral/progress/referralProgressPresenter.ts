@@ -30,7 +30,7 @@ const getStatusConfig = (caseReference: string, appointmentId: string = ''): Rec
   NEEDS_FEEDBACK: {
     label: 'Needs feedback',
     tagClass: 'govuk-tag--red',
-    actions: [{ label: 'Add attendance and feedback', href: `/ics-feedback/attendance/${caseReference}` }],
+    actions: [{ label: 'Add attendance and feedback', href: `/ics-feedback/${caseReference}/attendance` }],
   },
   DID_NOT_HAPPEN: {
     label: 'Did not happen',

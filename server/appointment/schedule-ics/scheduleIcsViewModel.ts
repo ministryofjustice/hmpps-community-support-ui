@@ -1,3 +1,5 @@
+import { GovukFrontendBackLink } from '@govuk-frontend'
+
 export type SelectItem = {
   value: string | number
   text: string
@@ -27,7 +29,7 @@ export type ScheduleIcsViewModel = {
   pageHeader: string
   submitButtonText: string
   submitHref: string
-  backlinkHref: string
+  backLink: GovukFrontendBackLink
   probationOfficesSelectItems: SelectItem[]
   prisonsSelectItems: SelectItem[]
   serviceName: string

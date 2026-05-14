@@ -1,4 +1,4 @@
-import { GovukFrontendInput, GovukFrontendSelect } from '@govuk-frontend'
+import { GovukFrontendBackLink, GovukFrontendInput, GovukFrontendSelect } from '@govuk-frontend'
 import { GovukFrontendRadiosWithConditional } from '../../@types/govukFrontend/derived'
 
 export interface IcsFeedbackHowSessionTookPlaceFormData {
@@ -18,7 +18,7 @@ export type IcsFeedbackHowSessionTookPlaceViewModel = {
   pageHeader: string
   submitButtonText: string
   submitHref: string
-  backlinkHref: string
+  backLink: GovukFrontendBackLink
   sessionLocationLines: string[]
   errorList: Array<{ href: string; text: string }>
   phoneCallReasonInputArgs: GovukFrontendInput

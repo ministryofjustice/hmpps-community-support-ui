@@ -1,7 +1,6 @@
 {% extends "../partials/layout.njk" %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
-{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "moj/components/date-picker/macro.njk" import mojDatePicker %}
@@ -18,7 +17,6 @@
 {% block content %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-  {{ govukBackLink({ href: content.backlinkHref }) }}
 
   <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
 

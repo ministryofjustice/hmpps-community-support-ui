@@ -1,10 +1,10 @@
-import { GovukFrontendNotificationBanner, GovukFrontendSummaryList } from '@govuk-frontend'
+import { GovukFrontendBackLink, GovukFrontendNotificationBanner, GovukFrontendSummaryList } from '@govuk-frontend'
 
 export type ConfirmIcsViewModel = {
   pageHeader: string
   submitButtonText: string
   submitHref: string
-  backlinkHref: string
+  backLink: GovukFrontendBackLink
   icsDetailsSummary: GovukFrontendSummaryList
   notificationBanner?: GovukFrontendNotificationBanner
 }

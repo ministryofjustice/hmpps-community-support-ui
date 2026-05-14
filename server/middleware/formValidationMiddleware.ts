@@ -42,10 +42,12 @@ export default class FormValidation {
       }
     })
 
+    delete req.session.formKeys
+
     res.locals.errors = { list, messages }
   }
 
-  static setFormKeys(req: Request, res: Response): void {
+  static setFormKeysFromRequestBody(req: Request, res: Response): void {
     const requestFormBody = req.body || {}
 
     if (Object.keys(requestFormBody).length !== 0) {
