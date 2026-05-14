@@ -680,7 +680,7 @@ class AppointmentController {
       },
     }
     req.session.icsFeedbackSubmissionsMap[caseRefId] = icsFeedbackSubmission
-    return validateRequestBodyAgainstSchema(RecordSessionDetailsFormDataSchema, req, res, () => {
+    validateRequestBodyAgainstSchema(RecordSessionDetailsFormDataSchema, req, res, () => {
       res.redirect(`/ics-feedback/${caseRefId}/session-feedback`)
     })
   }
