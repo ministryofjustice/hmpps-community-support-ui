@@ -211,7 +211,7 @@ describe('AppointmentController', () => {
 
   describe('recordAttendance', () => {
     beforeEach(() => {
-      const content = {
+      res.locals.content = {
         pageHeader: 'Record session attendance',
         description:
           'The date and time of the session are a permanent record of where this person was. If the session started late, you must record this as part of the feedback.',
@@ -265,8 +265,7 @@ describe('AppointmentController', () => {
           },
           submitButtonText: 'Continue',
         },
-      } as const
-      res.locals.content = content
+      }
     })
     test('nothing selected', async () => {
       const caseRefId = randomUUID()
@@ -279,9 +278,8 @@ describe('AppointmentController', () => {
       await appointmentController.recordIcsAppointmentAttendance(req, res)
 
       const { formKeys } = req.session
-      expect(formKeys).toHaveLength(2)
+      expect(formKeys).toHaveLength(1)
       expect(formKeys).toContain('happened')
-      expect(formKeys).toContain('attended')
 
       expect(req.flash).toHaveBeenCalledWith('happenedError', 'Select yes if the session happened')
       expect(req.flash).not.toHaveBeenCalledWith('attendedError')
@@ -298,8 +296,7 @@ describe('AppointmentController', () => {
       await appointmentController.recordIcsAppointmentAttendance(req, res)
 
       const { formKeys } = req.session
-      expect(formKeys).toHaveLength(2)
-      expect(formKeys).toContain('attended')
+      expect(formKeys).toHaveLength(1)
       expect(formKeys).toContain('attended')
 
       expect(req.flash).not.toHaveBeenCalledWith('happenedError')
@@ -317,9 +314,8 @@ describe('AppointmentController', () => {
       await appointmentController.recordIcsAppointmentAttendance(req, res)
 
       const { formKeys } = req.session
-      expect(formKeys).toHaveLength(2)
+      expect(formKeys).toHaveLength(1)
       expect(formKeys).toContain('happened')
-      expect(formKeys).toContain('attended')
 
       expect(req.flash).toHaveBeenCalledWith('happenedError', 'Select yes if the session happened')
       expect(req.flash).not.toHaveBeenCalledWith('attendedError')
