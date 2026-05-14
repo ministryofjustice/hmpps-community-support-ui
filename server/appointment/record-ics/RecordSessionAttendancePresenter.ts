@@ -1,22 +1,18 @@
 import { Response } from 'express'
-import {
-  GovukFrontendBackLink,
-  GovukFrontendButton,
-  GovukFrontendErrorSummary,
-  GovukFrontendSummaryList,
-} from '@govuk-frontend'
+import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendSummaryList } from '@govuk-frontend'
 import { AppointmentIcsResponse } from '@community-support-api'
 import { isPast } from 'date-fns'
-import nunjucks from 'nunjucks'
 import PresenterBase from '../../presenter/presenterBase'
 import { govFrontendSummaryListRow } from '../../utils/viewUtils'
 import dateFormat from '../../utils/dateFormat'
 import timeFormat from '../../utils/timeFormat'
 import getAppointmentDateTime from '../../utils/getAppointmentDateTime'
 import {
+  ConditionalInput,
   GovukFrontendRadiosItemWithConditional,
   GovukFrontendRadiosWithConditional,
 } from '../../@types/govukFrontend/derived'
+import { ErrorMiddlewareErrors } from '../../@types/express'
 
 export interface RecordSessionAttendanceFormViewModel {
   radios: GovukFrontendRadiosWithConditional
@@ -24,7 +20,6 @@ export interface RecordSessionAttendanceFormViewModel {
 }
 
 export interface RecordSessionAttendanceViewModel {
-  errorSummary?: GovukFrontendErrorSummary
   pageHeader: string
   description: string
   appointment: GovukFrontendSummaryList
@@ -38,21 +33,21 @@ interface ApointmentDetailsContent {
   startTimeLabel: string
 }
 
-interface FormOptionContent {
-  label: string
-  radios?: RadiosContent
-}
-
 interface RadiosContent {
   id: string
   heading: string
-  hint?: string
   error: string
-  options: FormOptionContent[]
+  yesLabel: string
+  noLabel: string
+}
+
+type RadiosWithHintContent = RadiosContent & {
+  hint: string
 }
 
 interface FormContent {
-  radios: RadiosContent
+  happenedRadios: RadiosWithHintContent
+  attendedRadios: RadiosContent
   submitButtonText: string
 }
 
@@ -64,37 +59,21 @@ export interface RecordSessionAttendanceContent {
   backLink: string
 }
 
-const condiditionalTemplate =
-  `{% from "govuk/components/radios/macro.njk" import govukRadios %}{{ govukRadios(content.radios) }}` as const
-
-const gatherErrors = ({ id, options, error }: RadiosContent): Record<string, string> => {
-  const children = options
-    .map(option => option.radios)
-    .filter(radios => !!radios)
-    .map(gatherErrors)
-    .reduce<Record<string, string>>((acc, child) => ({ ...acc, ...child }), {})
-  const result = { ...children }
-  result[id] = error
-  return result
-}
-
+export type RecordSessionAttendancePresenterData = Pick<
+  AppointmentIcsResponse,
+  'appointmentDate' | 'appointmentTime' | 'referralFirstName'
+>
 export default class RecordSessionAttendancePresenter extends PresenterBase<
   RecordSessionAttendanceViewModel,
   RecordSessionAttendanceContent
 > {
-  private readonly errors: string[]
+  private errors: ErrorMiddlewareErrors
 
   constructor(
     private readonly caseRefId: string,
-    private readonly data: AppointmentIcsResponse,
-    error: string | string[] = [],
+    private readonly data: RecordSessionAttendancePresenterData,
   ) {
     super()
-    if (typeof error === 'string') {
-      this.errors = [error]
-    } else {
-      this.errors = error
-    }
   }
 
   private buildAppointmentDetails(content: ApointmentDetailsContent): GovukFrontendSummaryList {
@@ -107,62 +86,72 @@ export default class RecordSessionAttendancePresenter extends PresenterBase<
     }
   }
 
-  private buildConditional(content: RadiosContent): string {
-    const radios = this.buildRadios(content)
-    return nunjucks.renderString(condiditionalTemplate, { content: { radios } })
+  private buildAttendedRadios({ id, error, heading, yesLabel, noLabel }: RadiosContent): ConditionalInput {
+    const errorText = this.errors.messages[id]
+      ? error.replace('{{ firstname }}', this.data.referralFirstName)
+      : undefined
+    const errorHtml = errorText
+      ? `
+    <p id="${id}-error" class="govuk-error-message">
+      <span class="govuk-visually-hidden">Error:</span> ${errorText}
+    </p>`
+      : ''
+    const yesRadio: string = `<div class="govuk-radios__item">
+        <input class="govuk-radios__input" id="${id}-${yesLabel}" name="${id}" type="radio" value="${yesLabel}">
+        <label class="govuk-radios__label" for="${id}-${yesLabel}">${yesLabel}</label>
+      </div>`
+    const noRadio: string = `<div class="govuk-radios__item">
+        <input class="govuk-radios__input" id="${id}-${noLabel}" name="${id}" type="radio" value="${noLabel}">
+        <label class="govuk-radios__label" for="${id}-${noLabel}">${noLabel}</label>
+      </div>`
+    const radiosTemplate = `<div class="govuk-form-group">
+  <fieldset class="govuk-fieldset" data-testid="fieldset-${id}">
+    <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+      <h2 class="govuk-fieldset__heading">
+        ${heading.replace('{{ firstname }}', this.data.referralFirstName)}
+      </h2>
+    </legend>
+    ${errorHtml}
+    <div class="govuk-radios" data-module="govuk-radios" data-testid="${id}">
+      ${yesRadio}
+      ${noRadio}
+    </div>
+  </fieldset>
+</div>`
+    return { html: radiosTemplate }
   }
 
-  private buildItem(
-    name: string,
-    { label, radios }: FormOptionContent,
-    checked: boolean = false,
-  ): GovukFrontendRadiosItemWithConditional {
-    return {
-      id: `${name}-${label}`,
-      value: label,
-      checked,
-      text: label,
-      conditional: radios ? { html: this.buildConditional(radios) } : undefined,
-    }
-  }
-
-  private buildRadios({ id, heading, hint, options, error }: RadiosContent): GovukFrontendRadiosWithConditional {
-    const renderedHeading = nunjucks.renderString(heading, { firstname: this.data.referralFirstName })
-    const renderedError = nunjucks.renderString(error, { firstname: this.data.referralFirstName })
-    if (id === 'happened' && this.errors.includes('attended')) {
-      return {
-        name: id,
-        hint: hint ? { text: hint } : undefined,
-        items: options.map(option => this.buildItem(id, option, option.label === 'No')),
-        fieldset: {
-          attributes: { 'data-testid': `fieldset-${id}` },
-          legend: {
-            text: renderedHeading,
-            classes: 'govuk-fieldset__legend--m',
-          },
-        },
-        errorMessage: this.errors.includes(id)
-          ? {
-              text: renderedError,
-            }
-          : null,
-        attributes: { 'data-testid': id },
-      }
-    }
+  private buildHappenedRadios(content: FormContent): GovukFrontendRadiosWithConditional {
+    const { id, heading, hint, yesLabel, noLabel, error } = content.happenedRadios
+    const items: GovukFrontendRadiosItemWithConditional[] = [
+      {
+        id: `${id}-${yesLabel}`,
+        value: yesLabel,
+        text: yesLabel,
+      },
+      {
+        id: `${id}-${noLabel}`,
+        value: noLabel,
+        text: noLabel,
+        checked: this.errors.messages.attended, // check if attended so that attended radios is shown
+        conditional: this.buildAttendedRadios(content.attendedRadios),
+      },
+    ]
     return {
       name: id,
       hint: hint ? { text: hint } : undefined,
-      items: options.map(option => this.buildItem(id, option)),
+      items,
       fieldset: {
         attributes: { 'data-testid': `fieldset-${id}` },
         legend: {
-          text: renderedHeading,
+          text: heading.replace('{{ firstname }}', this.data.referralFirstName),
           classes: 'govuk-fieldset__legend--m',
         },
       },
-      errorMessage: this.errors.includes(id)
+      errorMessage: this.errors.messages[id]
         ? {
-            text: renderedError,
+            text: error.replace('{{ firstname }}', this.data.referralFirstName),
+            id,
           }
         : null,
       attributes: { 'data-testid': id },
@@ -171,43 +160,23 @@ export default class RecordSessionAttendancePresenter extends PresenterBase<
 
   private buildForm(content: FormContent): RecordSessionAttendanceFormViewModel | undefined {
     return {
-      radios: this.buildRadios(content.radios),
+      radios: this.buildHappenedRadios(content),
       button: {
         text: content.submitButtonText,
       },
     }
   }
 
-  private buildErrorSummary(errorLookup: Record<string, string>): GovukFrontendErrorSummary | undefined {
-    if (this.errors.length === 0) {
-      return undefined
-    }
-    return {
-      titleText: 'There is a problem',
-      errorList: this.errors.map(error => ({ text: errorLookup[error] })),
-      attributes: {
-        'data-testid': 'error-messages',
-      },
-    }
-  }
-
   buildPageContent(res: Response): RecordSessionAttendanceViewModel {
     const content = this.buildStaticContent(res)
-    const errorLookup = gatherErrors(content.attendanceForm.radios)
-    const renderedErrorLookup = Object.fromEntries(
-      Object.entries(errorLookup).map(([key, value]) => [
-        key,
-        nunjucks.renderString(value, { firstname: this.data.referralFirstName }),
-      ]),
-    )
+    this.errors = res.locals.errors
     return {
-      errorSummary: this.buildErrorSummary(renderedErrorLookup),
-      backLink: { href: nunjucks.renderString(content.backLink, { id: this.caseRefId }) },
+      backLink: { href: content.backLink.replace('{{ id }}', this.caseRefId) },
       pageHeader: content.pageHeader,
       description: content.description,
       appointment: this.buildAppointmentDetails(content.appointmentDetails),
       form: isPast(getAppointmentDateTime(this.data)) ? this.buildForm(content.attendanceForm) : undefined,
-      submitHref: `/ics-feedback/attendance/${this.caseRefId}`,
+      submitHref: `/ics-feedback/${this.caseRefId}/attendance`,
     }
   }
 

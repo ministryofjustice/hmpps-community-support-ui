@@ -36,7 +36,7 @@ describe('FormValidation Middleware', () => {
   describe('setFormKeys', () => {
     it('should set form keys in req.session.formKeys', () => {
       req.body = { field1: 'value1', field2: 'value2', _csrf: 'token' }
-      FormValidation.setFormKeys(req, res)
+      FormValidation.setFormKeysFromRequestBody(req, res)
       expect(req.session.formKeys).toEqual(['field1', 'field2'])
     })
   })

@@ -930,7 +930,6 @@ export interface operations {
       header?: never
       path: {
         caseReference: string
-        icsId: string
       }
       cookie?: never
     }
