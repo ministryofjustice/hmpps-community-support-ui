@@ -157,7 +157,7 @@ test.describe('Session Details Page', () => {
     await test.step('fill form with non numerical duration', async () => {
       await sessionDetailsPage.wasPersonLateRadios.items[1].input.click()
       await sessionDetailsPage.duration.items[0].input.fill('cat')
-      await sessionDetailsPage.duration.items[1].input.fill('dog')
+      await sessionDetailsPage.duration.items[1].input.fill('3.14159')
       await sessionDetailsPage.continueButton.click()
       await expect(page).toHaveURL(SessionDetailsPage.url(pastMeeting.caseRefId))
     })

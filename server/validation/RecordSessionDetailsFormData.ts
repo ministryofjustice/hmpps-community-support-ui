@@ -19,11 +19,19 @@ export const RecordSessionDetailsFormDataSchema = z.object({
   wasPersonLate: z.literal(['Yes', 'No'], { error: 'Please select Yes or No' }),
   lateReason: z.string(),
   'sessionDuration-hours': zodNumber(
-    num => num.gte(0, { error: INVALID_HOURS_ERROR_MESSAGE }).lt(100, { error: INVALID_HOURS_ERROR_MESSAGE }),
+    num =>
+      num
+        .int({ error: INVALID_HOURS_ERROR_MESSAGE })
+        .gte(0, { error: INVALID_HOURS_ERROR_MESSAGE })
+        .lt(100, { error: INVALID_HOURS_ERROR_MESSAGE }),
     INVALID_HOURS_ERROR_MESSAGE,
   ),
   'sessionDuration-minutes': zodNumber(
-    num => num.gte(0, { error: INVALID_MINUTES_ERROR_MESSAGE }).lt(60, { error: INVALID_MINUTES_ERROR_MESSAGE }),
+    num =>
+      num
+        .int({ error: INVALID_MINUTES_ERROR_MESSAGE })
+        .gte(0, { error: INVALID_MINUTES_ERROR_MESSAGE })
+        .lt(60, { error: INVALID_MINUTES_ERROR_MESSAGE }),
     INVALID_MINUTES_ERROR_MESSAGE,
   ),
 })

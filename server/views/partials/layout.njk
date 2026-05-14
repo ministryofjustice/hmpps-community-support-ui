@@ -2,6 +2,7 @@
 
 {% from "govuk/components/phase-banner/macro.njk" import govukPhaseBanner %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 
 {% block head %}
   <link href="{{ '/assets/css/index.css' | assetMap }}" rel="stylesheet"/>
@@ -30,6 +31,27 @@
     {{ govukBackLink(content.backLink) }}
   </nav>
   {%- endif -%}
+</div>
+
+<script nonce="{{ cspNonce }}">
+    console.log('{{ errors | dump | safe }}')
+</script>
+
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    {% if errors.list.length %}
+      {{ govukErrorSummary({
+        titleText: "There is a problem",
+        errorList: errors.list,
+        attributes:{"data-testid":"error-messages"}
+      }) }}
+    {% endif %}
+    {% block contentBody %}
+    {% endblock %}
+  </div>
 </div>
 {% endblock %}
 

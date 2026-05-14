@@ -545,15 +545,17 @@ class AppointmentController {
   recordIcsAppointmentAttendance(req: Request, res: Response): Promise<void> {
     const { caseRefId } = req.params
 
+    req.session.IcsFeedbackSubmission = {
+      caseReferenceId: caseRefId.toString(),
+      record: {
+        didSessionHappen: req.body.happened === 'Yes',
+        didPersonAttend: req.body.happened === 'No' ? req.body.attended === 'Yes' : true,
+      },
+    }
     return validateRequestBodyAgainstSchema(RecordSessionAttendanceFormDataSchema, req, res, data => {
-      req.session.IcsFeedbackSubmission = {
-        caseReferenceId: caseRefId.toString(),
-        record: {
-          didSessionHappen: data.happened === 'Yes',
-          didPersonAttend: data.happened === 'No' ? data.attended === 'Yes' : true,
-        },
+      if (data) {
+        res.redirect(recordAttendanceRedirectUrl(data, caseRefId.toString()))
       }
-      res.redirect(recordAttendanceRedirectUrl(data, caseRefId.toString()))
     })
   }
 
@@ -669,16 +671,16 @@ class AppointmentController {
       res.redirect(`/progress/${caseRefId}`)
       return
     }
-    validateRequestBodyAgainstSchema(RecordSessionDetailsFormDataSchema, req, res, data => {
-      icsFeedbackSubmission.sessionDetails = {
-        wasPersonLate: data.wasPersonLate === 'Yes',
-        lateReason: data.lateReason,
-        duration: {
-          hours: data['sessionDuration-hours'],
-          minutes: data['sessionDuration-minutes'],
-        },
-      }
-      req.session.icsFeedbackSubmissionsMap[caseRefId] = icsFeedbackSubmission
+    icsFeedbackSubmission.sessionDetails = {
+      wasPersonLate: req.body.wasPersonLate ? req.body.wasPersonLate === 'Yes' : null,
+      lateReason: req.body.lateReason,
+      duration: {
+        hours: req.body['sessionDuration-hours'],
+        minutes: req.body['sessionDuration-minutes'],
+      },
+    }
+    req.session.icsFeedbackSubmissionsMap[caseRefId] = icsFeedbackSubmission
+    return validateRequestBodyAgainstSchema(RecordSessionDetailsFormDataSchema, req, res, () => {
       res.redirect(`/ics-feedback/${caseRefId}/session-feedback`)
     })
   }
