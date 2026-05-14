@@ -8,7 +8,7 @@ import {
 import { format, parse } from 'date-fns'
 import z, { ZodError } from 'zod'
 import timeFormat from '../utils/timeFormat'
-import { HowSessionTookPlace, IcsFeedbackHowSessionTookPlaceSession } from '../@types/express'
+import { ErrorMiddlewareErrors, HowSessionTookPlace, IcsFeedbackHowSessionTookPlaceSession } from '../@types/express'
 import ConfirmIcsPresenter, { type AdditionalInformation } from './confirm-ics/confirmIcsPresenter'
 import InitialContactSessionDetailsPresenter from '../referral/InitialContactSessionDetailsPresenter'
 import ReferralService from '../services/referralService'
@@ -29,10 +29,7 @@ import { SessionFeedbackFormDataSchema } from '../validation/SessionFeedbackForm
 import ViewChangeSessionDetailsPresenter from './view-change-session-details/ViewChangeSessionDetailsPresenter'
 import RecordSessionDetailsPresenter from './record-ics/RecordSessionDetailsPresenter'
 import { RecordSessionDetailsFormViewModel } from './record-ics/RecordSessionDetailsViewModel'
-import {
-  RecordSessionDetailsError,
-  RecordSessionDetailsFormDataSchema,
-} from '../validation/RecordSessionDetailsFormData'
+import { RecordSessionDetailsFormDataSchema } from '../validation/RecordSessionDetailsFormData'
 
 interface ScheduleFormData {
   sessionDate?: string
@@ -697,7 +694,7 @@ class AppointmentController {
   async sessionDetails(req: Request, res: Response): Promise<void> {
     const { caseRefId } = req.params as { caseRefId: string }
     const { username } = res.locals.user
-    const validationErrors: RecordSessionDetailsError = res.locals.errors
+    const validationErrors: ErrorMiddlewareErrors = res.locals.errors
     const icsFeedbackSubmission = this.ensureFeedbackSubmission(req, caseRefId)
     const sessionDetails = icsFeedbackSubmission ? icsFeedbackSubmission.sessionDetails : null
     const appointmentData = await this.appointmentService.getICS(caseRefId.toString(), username)

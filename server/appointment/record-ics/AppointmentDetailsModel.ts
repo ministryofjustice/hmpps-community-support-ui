@@ -9,9 +9,14 @@ export interface AppointmentDetailsContent {
   startTimeLabel: string
 }
 
+export type RecordSessionAttendancePresenterData = Pick<
+  AppointmentIcsResponse,
+  'appointmentDate' | 'appointmentTime' | 'referralFirstName'
+>
+
 const buildAppointmentDetails = (
   content: AppointmentDetailsContent,
-  data: AppointmentIcsResponse,
+  data: RecordSessionAttendancePresenterData,
 ): GovukFrontendSummaryList => {
   return {
     rows: [

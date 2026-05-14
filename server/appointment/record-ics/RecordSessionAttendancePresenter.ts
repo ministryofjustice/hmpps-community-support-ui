@@ -1,6 +1,5 @@
 import { Response } from 'express'
 import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendSummaryList } from '@govuk-frontend'
-import { AppointmentIcsResponse } from '@community-support-api'
 import { isPast } from 'date-fns'
 import PresenterBase from '../../presenter/presenterBase'
 import getAppointmentDateTime from '../../utils/getAppointmentDateTime'
@@ -10,7 +9,7 @@ import {
   GovukFrontendRadiosWithConditional,
 } from '../../@types/govukFrontend/derived'
 import { ErrorMiddlewareErrors } from '../../@types/express'
-import buildAppointmentDetails from './AppointmentDetailsModel'
+import buildAppointmentDetails, { RecordSessionAttendancePresenterData } from './AppointmentDetailsModel'
 
 export interface RecordSessionAttendanceFormViewModel {
   radios: GovukFrontendRadiosWithConditional
@@ -57,10 +56,6 @@ export interface RecordSessionAttendanceContent {
   backLink: string
 }
 
-export type RecordSessionAttendancePresenterData = Pick<
-  AppointmentIcsResponse,
-  'appointmentDate' | 'appointmentTime' | 'referralFirstName'
->
 export default class RecordSessionAttendancePresenter extends PresenterBase<
   RecordSessionAttendanceViewModel,
   RecordSessionAttendanceContent

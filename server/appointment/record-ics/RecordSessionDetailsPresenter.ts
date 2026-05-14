@@ -1,5 +1,4 @@
 import { Response } from 'express'
-import { AppointmentIcsResponse } from '@community-support-api'
 import {
   GovukFrontendBackLink,
   GovukFrontendButton,
@@ -19,17 +18,14 @@ import {
   WasPersonLateRadioContent,
   WasPersonLateRadioItemsContent,
 } from './RecordSessionDetailsViewModel'
-import buildAppointmentDetails from './AppointmentDetailsModel'
+import buildAppointmentDetails, { RecordSessionAttendancePresenterData } from './AppointmentDetailsModel'
 import {
   GovukFrontendRadiosItemWithConditional,
   GovukFrontendRadiosWithConditional,
 } from '../../@types/govukFrontend/derived'
-import {
-  RecordSessionDetailsError,
-  RecordSessionDetailsErrorMessages,
-} from '../../validation/RecordSessionDetailsFormData'
 import { components } from '../../@types/communitySupportApi/imported'
 import { escapeHtml } from '../../utils/utils'
+import { ErrorMiddlewareErrors } from '../../@types/express'
 
 export default class RecordSessionDetailsPresenter extends PresenterBase<
   RecordSessionDetailsViewModel,
@@ -37,9 +33,9 @@ export default class RecordSessionDetailsPresenter extends PresenterBase<
 > {
   constructor(
     private readonly caseRefId: string,
-    private readonly data: AppointmentIcsResponse,
+    private readonly data: RecordSessionAttendancePresenterData,
     private readonly session: components['schemas']['SessionDetailsRequest'],
-    private readonly validationErrors?: RecordSessionDetailsError,
+    private readonly validationErrors?: ErrorMiddlewareErrors,
   ) {
     super()
   }
@@ -86,7 +82,7 @@ export default class RecordSessionDetailsPresenter extends PresenterBase<
   private buildWasPersonLateRadio(
     content: WasPersonLateRadioContent,
     formData: RecordSessionDetailsFormData,
-    errorMessages?: RecordSessionDetailsErrorMessages,
+    errorMessages?: Record<string, GovukFrontendErrorMessage>,
   ): GovukFrontendRadiosWithConditional {
     return {
       name: content.name,
@@ -141,7 +137,7 @@ export default class RecordSessionDetailsPresenter extends PresenterBase<
   private buildSessionDurationTimeInput(
     content: SessionDurationTimeInputContent,
     formData: RecordSessionDetailsFormData,
-    errorMessages?: RecordSessionDetailsErrorMessages,
+    errorMessages?: Record<string, GovukFrontendErrorMessage>,
   ): TimeInput {
     const errors: GovukFrontendErrorMessage[] = []
     if (errorMessages['sessionDuration-hours']) {

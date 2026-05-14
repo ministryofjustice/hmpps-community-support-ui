@@ -28,19 +28,5 @@ export const RecordSessionDetailsFormDataSchema = z.object({
   ),
 })
 
-export type RecordSessionDetailsErrorMessages = {
-  wasPersonLate: { text: string }
-  'sessionDuration-hours': { text: string }
-  'sessionDuration-minutes': { text: string }
-}
-
-export type RecordSessionDetailsError = {
-  list: {
-    href: string
-    text: string
-  }[]
-  messages: RecordSessionDetailsErrorMessages
-}
-
 type RecordSessionDetailsFormData = z.infer<typeof RecordSessionAttendanceFormDataSchema>
 export default RecordSessionDetailsFormData
