@@ -1,11 +1,7 @@
 import { Response } from 'express'
 import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendSummaryList } from '@govuk-frontend'
-import { AppointmentIcsResponse } from '@community-support-api'
 import { isPast } from 'date-fns'
 import PresenterBase from '../../presenter/presenterBase'
-import { govFrontendSummaryListRow } from '../../utils/viewUtils'
-import dateFormat from '../../utils/dateFormat'
-import timeFormat from '../../utils/timeFormat'
 import getAppointmentDateTime from '../../utils/getAppointmentDateTime'
 import {
   ConditionalInput,
@@ -13,6 +9,7 @@ import {
   GovukFrontendRadiosWithConditional,
 } from '../../@types/govukFrontend/derived'
 import { ErrorMiddlewareErrors } from '../../@types/express'
+import buildAppointmentDetails, { RecordSessionAttendancePresenterData } from './AppointmentDetailsModel'
 
 export interface RecordSessionAttendanceFormViewModel {
   radios: GovukFrontendRadiosWithConditional
@@ -59,10 +56,6 @@ export interface RecordSessionAttendanceContent {
   backLink: string
 }
 
-export type RecordSessionAttendancePresenterData = Pick<
-  AppointmentIcsResponse,
-  'appointmentDate' | 'appointmentTime' | 'referralFirstName'
->
 export default class RecordSessionAttendancePresenter extends PresenterBase<
   RecordSessionAttendanceViewModel,
   RecordSessionAttendanceContent
@@ -74,16 +67,6 @@ export default class RecordSessionAttendancePresenter extends PresenterBase<
     private readonly data: RecordSessionAttendancePresenterData,
   ) {
     super()
-  }
-
-  private buildAppointmentDetails(content: ApointmentDetailsContent): GovukFrontendSummaryList {
-    return {
-      rows: [
-        govFrontendSummaryListRow(content.dateLabel, dateFormat(new Date(this.data.appointmentDate))),
-        govFrontendSummaryListRow(content.startTimeLabel, timeFormat(this.data.appointmentTime)),
-      ],
-      attributes: { 'data-testid': 'appointment-details' },
-    }
   }
 
   private buildAttendedRadios({ id, error, heading, yesLabel, noLabel }: RadiosContent): ConditionalInput {
@@ -174,7 +157,7 @@ export default class RecordSessionAttendancePresenter extends PresenterBase<
       backLink: { href: content.backLink.replace('{{ id }}', this.caseRefId) },
       pageHeader: content.pageHeader,
       description: content.description,
-      appointment: this.buildAppointmentDetails(content.appointmentDetails),
+      appointment: buildAppointmentDetails(content.appointmentDetails, this.data),
       form: isPast(getAppointmentDateTime(this.data)) ? this.buildForm(content.attendanceForm) : undefined,
       submitHref: `/ics-feedback/${this.caseRefId}/attendance`,
     }

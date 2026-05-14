@@ -259,5 +259,37 @@
       "submitButtonText": "Continue"
     },
     "backLink": "/ics-feedback/{{ id }}/session-details"
+  },
+  "/ics-feedback/:id/session-details": {
+    "pageHeader": "Session details",
+    "appointmentDetails": {
+      "dateLabel": "Date",
+      "startTimeLabel": "Start time"
+    },
+    "wasPersonLateRadio": {
+      "name": "wasPersonLate",
+      "title": "Was {{ firstname }} late?",
+      "items": {
+        "yesText": "Yes",
+        "noText": "No",
+        "lateReasonName": "lateReason",
+        "lateReasonLabel": "Why was {{ firstname }} late?"
+      }
+    },
+    "sessionDurationTimeInput": {
+      "id": "sessionDuration",
+      "fieldset": {
+        "id": "fieldset-sessionDuration",
+        "text": "How long did the session last?"
+      },
+      "items": {
+        "hoursName": "hours",
+        "hoursLabel": "Hour",
+        "minutesName": "minutes",
+        "minutesLabel": "Minute"
+      }
+    },
+    "submitButtonText": "Continue",
+    "backLinkHref": "/ics-feedback/{{ id }}/did-session-take-place"
   }
 }

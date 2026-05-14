@@ -1,0 +1,97 @@
+{% from "govuk/macros/attributes.njk" import govukAttributes %}
+{% from "govuk/components/error-message/macro.njk" import govukErrorMessage %}
+{% from "govuk/components/fieldset/macro.njk" import govukFieldset %}
+{% from "govuk/components/hint/macro.njk" import govukHint %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+
+{% set describedBy = params.fieldset.describedBy if params.fieldset.describedBy else "" %}
+
+{% set hasFieldset = true if params.fieldset else false %}
+
+{%- if params.items | length %}
+  {% set timeInputItems = params.items %}
+{% else %}
+  {% set timeInputItems = [
+    {
+      name: "Hour",
+      classes: "govuk-input--width-2"
+    },
+    {
+      name: "Minute",
+      classes: "govuk-input--width-2"
+    }
+  ] %}
+{% endif %}
+
+{% set innerHtml %}
+{% if params.hint %}
+  {% set hintId = params.id + "-hint" %}
+  {% set describedBy = describedBy + " " + hintId if describedBy else hintId %}
+  {{ govukHint({
+    id: hintId,
+    classes: params.hint.classes,
+    attributes: params.hint.attributes,
+    html: params.hint.html,
+    text: params.hint.text
+  }) | trim | indent(2) }}
+{% endif %}
+{% if params.errorMessages %}
+  {% for errorMessage in params.errorMessages %}
+    {% set errorId = params.id + "-error-" + loop.index %}
+    {% set describedBy = describedBy + " " + errorId if describedBy else errorId %}
+    {{ govukErrorMessage({
+      id: errorId,
+      classes: errorMessage.classes,
+      attributes: errorMessage.attributes,
+      html: errorMessage.html,
+      text: errorMessage.text,
+      visuallyHiddenText: errorMessage.visuallyHiddenText
+    }) | trim | indent(2) }}
+  {% endfor %}
+{% endif %}
+  <div class="govuk-date-input {%- if params.classes %} {{ params.classes }}{% endif %}"
+    {{- govukAttributes(params.attributes) -}}
+    {%- if params.id %} id="{{ params.id }}"{% endif %}>
+    {% if params.formGroup.beforeInputs %}
+    {{ params.formGroup.beforeInputs.html | safe | trim | indent(4) if params.formGroup.beforeInputs.html else params.formGroup.beforeInputs.text }}
+    {% endif %}
+    {% for item in timeInputItems %}
+    <div class="govuk-date-input__item">
+      {{ govukInput({
+        label: item.label if item.label else {
+          text: item.name | capitalize,
+          classes: "govuk-date-input__label"
+        },
+        id: item.id if item.id else (params.id + "-" + item.name),
+        classes: "govuk-date-input__input " + (item.classes if item.classes),
+        name: (params.namePrefix + "-" + item.name) if params.namePrefix else item.name,
+        value: item.value,
+        type: "text",
+        inputmode: item.inputmode if item.inputmode else "numeric",
+        autocomplete: item.autocomplete,
+        pattern: item.pattern,
+        attributes: item.attributes
+      }) | trim | indent(6) }}
+    </div>
+    {% endfor %}
+    {% if params.formGroup.afterInputs %}
+    {{ params.formGroup.afterInputs.html | safe | trim | indent(4) if params.formGroup.afterInputs.html else params.formGroup.afterInputs.text }}
+    {% endif %}
+  </div>
+{% endset -%}
+
+<div class="govuk-form-group {%- if params.errorMessages | length %} govuk-form-group--error{% endif %} {%- if params.formGroup.classes %} {{ params.formGroup.classes }}{% endif %}" {{- govukAttributes(params.formGroup.attributes) }}>
+{% if hasFieldset %}
+  {{ govukFieldset({
+    describedBy: describedBy,
+    classes: params.fieldset.classes,
+    role: 'group',
+    attributes: params.fieldset.attributes,
+    legend: params.fieldset.legend,
+    html: innerHtml | trim
+  }) | trim | indent(2) }}
+{% else %}
+  {{ innerHtml | safe | trim }}
+{% endif %}
+</div>
