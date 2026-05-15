@@ -1,5 +1,25 @@
 import z, { ZodType, parseAsync, ZodError } from 'zod'
 import { Request, Response } from 'express'
+import { ErrorMiddlewareErrors } from '../@types/express'
+
+export const formatDynamicErrorMessages = (
+  errors: ErrorMiddlewareErrors,
+  searchValue: string,
+  replaceValue: string,
+  fields: string | string[],
+) => {
+  fields = typeof fields === 'string' ? [fields] : fields
+  const dynamicErrors = errors.list.filter(({ href }) => fields.map(field => `#${field}`).includes(href))
+  dynamicErrors.forEach(error => {
+    error.text = error.text.replace(searchValue, replaceValue || '')
+  })
+  const dynamicFieldErrors = Object.entries(errors.messages)
+    .filter(([key, _]) => fields.includes(key))
+    .map(([_, val]) => val)
+  dynamicFieldErrors.forEach(error => {
+    error.text = error.text.replace(searchValue, replaceValue || '')
+  })
+}
 
 const validateRequestBodyAgainstSchema = <Schema extends ZodType>(
   schema: Schema,

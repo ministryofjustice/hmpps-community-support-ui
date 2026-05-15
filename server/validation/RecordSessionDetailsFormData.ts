@@ -1,40 +1,75 @@
 import { z } from 'zod'
-import { RecordSessionAttendanceFormDataSchema } from './RecordSessionAttendanceFormData'
 
-const INVALID_HOURS_ERROR_MESSAGE = 'Invalid hours - Please enter a number between 0 and 99'
-const INVALID_MINUTES_ERROR_MESSAGE = 'Invalid minutes - Please enter a number between 0 and 59'
+const HOURS_TOO_MANY_CHAR_ERROR = {
+  error: 'Hours must be 2 characters or less',
+}
+const MINUTES_TOO_MANY_CHAR_ERROR = {
+  error: 'Minutes must be 2 characters or less',
+}
+const INVALID_HOURS_ERROR = {
+  error: 'Hours must only include numbers 0 to 9',
+}
+const INVALID_MINUTES_ERROR = {
+  error: 'Minutes must only include numbers 0 to 9',
+}
+const HOURS_OOB_ERROR = {
+  error: 'Hours must be positive',
+}
+const MINUTES_OOB_ERROR = {
+  error: 'Minutes must be between 0 and 60',
+}
 
-// Using coerce will turn empty strings or undefined values into 0
-// Using zodNumber will throw an error when the input is empty
-const zodNumber = (configure?: (num: z.ZodNumber) => z.ZodNumber, errorMessage?: string) =>
-  z.preprocess(
-    value => {
-      if (value === '' || value === undefined) return undefined
-      return Number(value)
-    },
-    configure ? configure(z.number({ error: errorMessage })) : z.number({ error: errorMessage }),
-  )
+const hours = z.coerce
+  .number(INVALID_HOURS_ERROR)
+  .int(INVALID_HOURS_ERROR)
+  .gte(0, HOURS_OOB_ERROR)
+  .max(99, HOURS_TOO_MANY_CHAR_ERROR)
 
-export const RecordSessionDetailsFormDataSchema = z.object({
-  wasPersonLate: z.literal(['Yes', 'No'], { error: 'Please select Yes or No' }),
+const minutes = z.coerce
+  .number(INVALID_MINUTES_ERROR)
+  .int(INVALID_MINUTES_ERROR)
+  .gte(0, MINUTES_OOB_ERROR)
+  .superRefine((val, ctx) => {
+    if (val > 99) {
+      ctx.addIssue(MINUTES_TOO_MANY_CHAR_ERROR.error)
+    } else if (val > 59) {
+      ctx.addIssue(MINUTES_OOB_ERROR.error)
+    }
+  })
+
+const checkDuration = (val: any) => {
+  return !(val['sessionDuration-hours'] === 0 && val['sessionDuration-minutes'] === 0)
+}
+
+const checkLateReason = (val: any) => {
+  if (val.wasPersonLate === 'Yes') {
+    return val.lateReason.length > 0
+  }
+  return true
+}
+
+const baseSchema = z.object({
+  wasPersonLate: z.literal(['Yes', 'No'], { error: 'Select yes if {{ firstname }} was late' }),
   lateReason: z.string(),
-  'sessionDuration-hours': zodNumber(
-    num =>
-      num
-        .int({ error: INVALID_HOURS_ERROR_MESSAGE })
-        .gte(0, { error: INVALID_HOURS_ERROR_MESSAGE })
-        .lt(100, { error: INVALID_HOURS_ERROR_MESSAGE }),
-    INVALID_HOURS_ERROR_MESSAGE,
-  ),
-  'sessionDuration-minutes': zodNumber(
-    num =>
-      num
-        .int({ error: INVALID_MINUTES_ERROR_MESSAGE })
-        .gte(0, { error: INVALID_MINUTES_ERROR_MESSAGE })
-        .lt(60, { error: INVALID_MINUTES_ERROR_MESSAGE }),
-    INVALID_MINUTES_ERROR_MESSAGE,
-  ),
+  'sessionDuration-hours': hours,
+  'sessionDuration-minutes': minutes,
 })
 
-type RecordSessionDetailsFormData = z.infer<typeof RecordSessionAttendanceFormDataSchema>
+export const RecordSessionDetailsFormDataSchema = baseSchema
+  .refine(checkLateReason, {
+    message: 'Enter why {{ firstname }} was late',
+    path: ['lateReason'],
+  })
+  .refine(checkDuration, {
+    message: 'Enter how long the session lasted',
+    path: ['sessionDuration-hours'],
+
+    when(payload) {
+      return baseSchema
+        .pick({ 'sessionDuration-hours': true, 'sessionDuration-minutes': true })
+        .safeParse(payload.value).success
+    },
+  })
+
+type RecordSessionDetailsFormData = z.infer<typeof RecordSessionDetailsFormDataSchema>
 export default RecordSessionDetailsFormData

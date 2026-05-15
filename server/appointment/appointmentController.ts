@@ -28,7 +28,7 @@ import { SessionFeedbackFormDataSchema } from '../validation/SessionFeedbackForm
 import ViewChangeSessionDetailsPresenter from './view-change-session-details/ViewChangeSessionDetailsPresenter'
 import RecordSessionDetailsPresenter from './record-ics/RecordSessionDetailsPresenter'
 import { RecordSessionDetailsFormDataSchema } from '../validation/RecordSessionDetailsFormData'
-import validateRequestBodyAgainstSchema from '../validation/validationUtils'
+import validateRequestBodyAgainstSchema, { formatDynamicErrorMessages } from '../validation/validationUtils'
 
 interface ScheduleFormData {
   sessionDate?: string
@@ -660,6 +660,12 @@ class AppointmentController {
     const icsFeedbackSubmission = this.ensureFeedbackSubmission(req, caseRefId)
     const sessionDetails = icsFeedbackSubmission ? icsFeedbackSubmission.sessionDetails : null
     const appointmentData = await this.appointmentService.getICS(caseRefId.toString(), username)
+
+    formatDynamicErrorMessages(validationErrors, '{{ firstname }}', appointmentData.referralFirstName, [
+      'wasPersonLate',
+      'lateReason',
+    ])
+
     const presenter = new RecordSessionDetailsPresenter(caseRefId, appointmentData, sessionDetails, validationErrors)
     return presenter.renderPage(res)
   }
