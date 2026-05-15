@@ -36,7 +36,10 @@ describe('ReferralDetailsPresenter', () => {
       },
       referralDetailsTableData: {
         referralDate: '2026-05-09T11:23:00.780Z',
-        assignedTo: ['assigned1', 'assigned2'],
+        assignedTo: [
+          { fullName: 'assigned1', emailAddress: 'assigned1@email.com' },
+          { fullName: 'assigned2', emailAddress: 'assigned2@email.com' },
+        ],
       },
     }
     expected = {
@@ -238,7 +241,8 @@ describe('ReferralDetailsPresenter', () => {
               text: 'Assigned to',
             },
             value: {
-              text: 'assigned1, assigned2',
+              text: 'Unassigned',
+              html: 'assigned1 (<a href="mailto:assigned1@email.com" class="govuk-link">assigned1@email.com</a>)<br>assigned2 (<a href="mailto:assigned2@email.com" class="govuk-link">assigned2@email.com</a>)',
             },
             actions: {
               items: [
@@ -258,6 +262,8 @@ describe('ReferralDetailsPresenter', () => {
     const content = ReferralDetailsContent.build()
     const response = { locals: { content } } as unknown as Response
     const pageContent = presenter.buildPageContent(response)
+
+    delete expected.referral.rows[1].value.text
     expect(pageContent).toStrictEqual(expected)
   })
   test('default values', () => {
@@ -272,6 +278,7 @@ describe('ReferralDetailsPresenter', () => {
     const response = { locals: { content } } as unknown as Response
     const pageContent = presenter.buildPageContent(response)
 
+    delete expected.referral.rows[1].value.html
     expected.referral.rows[1].value.text = 'Unassigned'
     expected.contact.rows[0].value.text = 'Not available'
     expected.contact.rows[1].value.text = 'Not available'
@@ -291,6 +298,8 @@ describe('ReferralDetailsPresenter', () => {
     const content = ReferralDetailsContent.build()
     const response = { locals: { content } } as unknown as Response
     const pageContent = presenter.buildPageContent(response)
+
+    delete expected.referral.rows[1].value.html
     expected.referral.rows[1].value.text = 'Unassigned'
     expected.contact.rows[0].value.text = 'Not available'
     expected.contact.rows[1].value.text = 'Not available'
