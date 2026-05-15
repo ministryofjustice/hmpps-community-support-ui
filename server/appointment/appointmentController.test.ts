@@ -51,11 +51,11 @@ describe('AppointmentController', () => {
     firstName: 'John',
   }
 
-  const mockIcsId = crypto.randomUUID()
+  const mockIcsId = randomUUID()
 
   const mockAppointmentIcsResponse: AppointmentIcsResponse = {
     appointmentIcsId: mockIcsId,
-    appointmentId: crypto.randomUUID(),
+    appointmentId: randomUUID(),
     referralId,
     appointmentType: 'ICS',
     appointmentDate: '2026-03-27',
@@ -718,6 +718,95 @@ describe('AppointmentController', () => {
       expect(appointmentService.getIcsById).toHaveBeenCalledWith(referralId, mockIcsId, 'user1')
       expect(ViewChangeSessionDetailsPresenter).toHaveBeenCalledWith(mockAppointmentIcsResponse, referralId, mockIcsId)
       expect(ViewChangeSessionDetailsPresenter.prototype.renderPage).toHaveBeenCalledWith(viewChangeRes)
+    })
+  })
+  describe('How they tried to contact the person', () => {
+    let caseReferenceId = ''
+    const username = 'username'
+    beforeEach(() => {
+      caseReferenceId = randomUUID()
+      req = {
+        ...req,
+        url: `/ics-feedback/${caseReferenceId}/how-they-tried-to-contact-the-person`,
+        session: {
+          IcsFeedbackSubmission: {
+            caseReferenceId,
+            record: {
+              didSessionHappen: false,
+              didPersonAttend: false,
+            },
+          },
+        },
+        params: { caseRefId: caseReferenceId },
+        locals: {
+          user: username,
+          content: {
+            pageHeader:
+              'How did you try to contact {{ firstname }} and what do you know about why they did not attend?',
+            feedbackForm: {
+              textarea: {
+                id: 'howTheyTriedToContactThePerson',
+                name: 'howTheyTriedToContactThePerson',
+                label: 'How did you try to contact {{ firstname }} and what do you know about why they did not attend?',
+                hint: 'Include when you tried to contact them and how many times.',
+                error:
+                  'Enter how you tried to contact {{ first name }} and what you know about why they did not attend ',
+                rows: '5',
+              },
+              submitButtonText: 'Continue',
+            },
+            backLink: '/ics-feedback/{{ id }}/attendance',
+          },
+        },
+      } as unknown as Request
+      jest.spyOn(appointmentService, 'getICS').mockResolvedValue(mockAppointmentIcsResponse)
+    })
+    test('empty form data', async () => {
+      req.body = {}
+      await appointmentController.recordHowTheyTriedToContactThePersion(req, res)
+      expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseReferenceId}/how-they-tried-to-contact-the-person`)
+      expect(req.flash).toHaveBeenCalledWith(
+        'howTheyTriedToContactThePersonError',
+        'Enter how you tried to contact John and what you know about why they did not attend',
+      )
+    })
+    test('empty text', async () => {
+      req.body = { howTheyTriedToContactThePerson: '' }
+      await appointmentController.recordHowTheyTriedToContactThePersion(req, res)
+      expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseReferenceId}/how-they-tried-to-contact-the-person`)
+      expect(req.flash).toHaveBeenCalledWith(
+        'howTheyTriedToContactThePersonError',
+        'Enter how you tried to contact John and what you know about why they did not attend',
+      )
+    })
+    test('too much text', async () => {
+      req.body = { howTheyTriedToContactThePerson: new Array(401).fill('a').join('') }
+      await appointmentController.recordHowTheyTriedToContactThePersion(req, res)
+      expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseReferenceId}/how-they-tried-to-contact-the-person`)
+      expect(req.flash).toHaveBeenCalledWith(
+        'howTheyTriedToContactThePersonError',
+        'How you tried to contact John and what you know about why they did not attend must be 400 characters or less',
+      )
+    })
+    test('happy path', async () => {
+      req.body = { howTheyTriedToContactThePerson: new Array(400).fill('a').join('') }
+      await appointmentController.recordHowTheyTriedToContactThePersion(req, res)
+      expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseReferenceId}/check-answers`)
+      expect(req.flash).not.toHaveBeenCalled()
+    })
+    test('redirect when case reference id is different from the session', async () => {
+      const caseRefId = randomUUID()
+      req.params.caseRefId = caseRefId
+      await appointmentController.howTheyTriedToContactThePersion(req, res)
+      expect(req.session.IcsFeedbackSubmission).toBeUndefined()
+      expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseRefId}/attendance`)
+      expect(req.flash).not.toHaveBeenCalled()
+    })
+    test('redirect when session data is missing', async () => {
+      delete req.session.IcsFeedbackSubmission
+      await appointmentController.howTheyTriedToContactThePersion(req, res)
+      expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseReferenceId}/attendance`)
+      expect(req.flash).not.toHaveBeenCalled()
     })
   })
 })

@@ -121,8 +121,7 @@ test.describe('RecordSessionAttendancePage', () => {
       await expect(item2.label).toHaveText('No')
     })
     await test.step('session attended radios have the correct content', async () => {
-      const [, attendNo] = recordSessionAttendancePage.sessionHappenedRadios.items
-      await attendNo.input.click()
+      await recordSessionAttendancePage.sessionHappenedRadios.select('No')
       expect(recordSessionAttendancePage.sessionAttendedRadios.items).toHaveLength(2)
       const [item1, item2] = recordSessionAttendancePage.sessionAttendedRadios.items
       await expect(item1.label).toHaveText('Yes')
@@ -282,10 +281,8 @@ test.describe('RecordSessionAttendancePage', () => {
     })
     await test.step('select attended no and click continue without clicking drop down radios', async () => {
       const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
-      const [, attendNo] = recordSessionAttendancePage.sessionHappenedRadios.items
-      await attendNo.input.click()
-
-      await recordSessionAttendancePage.continueButton.click()
+      await recordSessionAttendancePage.sessionHappenedRadios.select('No')
+      await recordSessionAttendancePage.clickContinue()
     })
 
     await test.step('check error content', async () => {
