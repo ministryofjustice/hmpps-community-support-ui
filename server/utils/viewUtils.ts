@@ -46,9 +46,8 @@ export const govFrontendSummaryList = (
 })
 
 export const createMailtoLink = (fullName: string, emailAddress: string): string => {
-  if (!fullName || !emailAddress) {
-    return fullName || 'Unknown'
-  }
+  if (!fullName) return 'Unknown'
+  if (!emailAddress) return fullName
 
   return `${fullName} (<a href="mailto:${emailAddress}" class="govuk-link">${emailAddress}</a>)`
 }
