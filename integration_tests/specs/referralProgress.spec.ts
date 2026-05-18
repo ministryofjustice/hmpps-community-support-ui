@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test'
 import { randomUUID } from 'crypto'
 import { ReferralProgress } from '@community-support-api'
-import { login, resetStubs } from '../testUtils'
+import { daysAfter, login, resetStubs } from '../testUtils'
 import communitySupport from '../mockApis/communitySupport'
 import buildReferralProgress from '../../server/testutils/buildReferralProgress'
 import ReferralProgressPage from '../pages/referralProgressPage'
@@ -9,12 +9,6 @@ import CaseListPage from '../pages/caseListPage'
 import ScheduleIcsPage from '../pages/scheduleIcsPage'
 
 test.describe('Referral Progress Page', () => {
-  function daysAfter(base: Date, days: number, hour: number = 10): string {
-    const d = new Date(base)
-    d.setDate(d.getDate() + days)
-    d.setHours(hour, 0, 0, 0)
-    return d.toISOString()
-  }
 
   const caseReference = 'AB1234CD'
   const baseDate = new Date('2026-03-25T10:00:00')

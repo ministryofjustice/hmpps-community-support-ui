@@ -10,12 +10,14 @@ import AppointmentService from '../services/AppointmentService'
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
 import ScheduleIcsContentFactory from '../testutils/factories/ScheduleIcsContent'
 import IcsFeedbackContentFactory from '../testutils/factories/IcsFeedbackContent'
+import IcsFeedbackCheckContentFactory from '../testutils/factories/IcsFeedbackCheckContent'
 import ReferenceDataService from '../services/referenceDataService'
 import { prisonsData, probationOfficesData } from '../../integration_tests/mockData/referenceData'
 import {
   referralInformationInCommunity,
   referralInformationInPrison,
 } from '../../integration_tests/mockData/referralInformationData'
+import IcsFeedbackCheckYourAnswersPresenter from './check-ics-feedback/icsFeedbackCheckYourAnswersPresenter'
 
 jest.mock('./confirm-ics/confirmIcsPresenter')
 jest.mock('../services/AppointmentService')
@@ -23,6 +25,7 @@ jest.mock('./schedule-ics/scheduleIcsPresenter')
 jest.mock('./ics-feedback/icsFeedbackHowSessionTookPlacePresenter')
 jest.mock('../services/referralService')
 jest.mock('../services/referenceDataService')
+jest.mock('./check-ics-feedback/icsFeedbackCheckYourAnswersPresenter')
 
 describe('AppointmentController', () => {
   let appointmentService: AppointmentService
@@ -73,7 +76,7 @@ describe('AppointmentController', () => {
 
     req = {
       params: { referralId },
-      session: { createAppointmentRequest: null },
+      session: { createAppointmentRequest: null, icsFeedbackSubmission: null },
       flash: jest.fn(),
     } as unknown as Request
 
@@ -499,6 +502,52 @@ describe('AppointmentController', () => {
         county: '',
         postcode: 'N1 6XE',
       })
+    })
+  })
+
+  describe('checkIcsFeedback', () => {
+    let icsFeedbackCheckReq: Request
+    let icsFeedbackCheckRes: Response
+
+    beforeEach(() => {
+      IcsFeedbackCheckYourAnswersPresenter.prototype.renderPage = jest.fn()
+
+      icsFeedbackCheckReq = {
+        params: { caseRefId: 'AB1234CD' },
+        session: { icsFeedbackSubmission: null },
+        method: 'GET',
+        body: {},
+        flash: jest.fn(),
+      } as unknown as Request
+
+      icsFeedbackCheckRes = {
+        locals: { user: { username: 'user1' }, content: IcsFeedbackCheckContentFactory.build() },
+        render: jest.fn(),
+        redirect: jest.fn(),
+      } as unknown as Response
+    })
+
+    it('redirects to progress page if no feedback submission in session', async () => {
+      await appointmentController.checkIcsFeedback(icsFeedbackCheckReq, icsFeedbackCheckRes)
+
+      expect(icsFeedbackCheckReq.session.icsFeedbackSubmission).toBeNull()
+      expect(icsFeedbackCheckRes.redirect).toHaveBeenCalledWith('/progress/AB1234CD')
+    })
+
+    it('renders the check your answers page with presenter if feedback submission exists in session', async () => {
+      const mockSubmission: IcsFeedbackSubmission = {
+        record: {
+          didSessionHappen: true,
+          howSessionTookPlace: { type: 'PHONE', additionalDetails: 'Video not available' },
+        },
+      } as unknown as IcsFeedbackSubmission
+
+      icsFeedbackCheckReq.session.icsFeedbackSubmission = mockSubmission
+
+      await appointmentController.checkIcsFeedback(icsFeedbackCheckReq, icsFeedbackCheckRes)
+
+      expect(IcsFeedbackCheckYourAnswersPresenter).toHaveBeenCalledWith(mockSubmission)
+      expect(IcsFeedbackCheckYourAnswersPresenter.prototype.renderPage).toHaveBeenCalledWith(icsFeedbackCheckRes)
     })
   })
 })

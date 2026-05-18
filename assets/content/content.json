@@ -251,5 +251,52 @@
       "submitButtonText": "Continue"
     },
     "backLink": "/ics-feedback/{{ id }}/session-details"
+  },
+  "/ics-feedback/:id/check-answers": {
+    "pageHeader": "Check your answers before submitting feedback",
+    "summaryLists": [
+      {
+        "summaryTitle": "Record session attendance",
+        "rows": [
+          {
+            "text": "Did the session happen?",
+            "hint": "Whether the session happened"
+          },
+          {
+            "text": "How the session took place",
+            "hint": "How the session took place"
+          }
+        ]
+      },
+      {
+        "summaryTitle": "Session details",
+        "rows": [
+          {
+            "text": "Was firstname late?",
+            "hint": "If firstname was late"
+          },
+          {
+            "text": "Why firstname was late?",
+            "hint": "If firstname was late"
+          },
+          {
+            "text": "Session duration",
+            "hint": "How long did the session last"
+          }
+        ]
+      },
+      {
+        "summaryTitle": "Session feedback",
+        "rows": [
+          {
+            "text": "What happened in the session",
+            "hint": "What happened in the session"
+          }
+        ]
+      }
+    ],
+    "submitButtonText": "Submit feedback",
+    "submitHref": "/ics-feedback/caseRefId/submit",
+    "backLinkHref": "/back"
   }
 }

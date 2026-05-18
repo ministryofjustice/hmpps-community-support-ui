@@ -42,6 +42,17 @@ export const seedReferralInformation = async (page: Page, referralInformation: o
   })
 }
 
+export const seedIcsFeedbackSessionData = async (
+  page: Page,
+  caseRefId: string,
+  icsFeedbackSubmission: object,
+): Promise<void> => {
+  await page.request.post('/test/setup-ics-feedback-session', {
+    data: { caseRefId, icsFeedbackSubmission },
+    headers: { 'Content-Type': 'application/json' },
+  })
+}
+
 export const duplicateData = (dataToDuplicate: unknown, timesToDuplicates: number): Array<unknown> => {
   const duplicatedData = []
   // eslint-disable-next-line no-plusplus
@@ -51,13 +62,20 @@ export const duplicateData = (dataToDuplicate: unknown, timesToDuplicates: numbe
   return duplicatedData
 }
 
-export const seedSessionFeedbackSession = async (
+export const seedSessionWithIcsFeedback = async (
   page: Page,
   caseRefId: string,
   icsFeedbackSubmission: object,
 ): Promise<void> => {
-  await page.request.post('/test/setup-session-feedback-session', {
-    data: { caseRefId, icsFeedbackSubmission },
+  await page.request.post('/test/setup-ics-feedback-session', {
+    data: { icsFeedbackSubmission },
     headers: { 'Content-Type': 'application/json' },
   })
+}
+
+export const daysAfter = (base: Date, days: number, hour = 10): string => {
+  const d = new Date(base)
+  d.setDate(d.getDate() + days)
+  d.setHours(hour, 0, 0, 0)
+  return d.toISOString()
 }

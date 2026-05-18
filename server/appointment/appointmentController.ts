@@ -498,14 +498,33 @@ class AppointmentController {
     return res.redirect(`/referral/${referralId}/appointment/schedule-ics`)
   }
 
-  async checkFeedback(req: Request, res: Response): Promise<void> {
+  async submitFeedback(req: Request, res: Response): Promise<void> {
     const caseRefId = req.params.caseRefId as string
-    const icsFeedbackSubmission = this.getFeedbackSubmission(req, caseRefId)
+    const { username } = res.locals.user
+    let { icsFeedbackSubmission } = req.session
 
-    if (icsFeedbackSubmission) {
-      const presenter = new IcsFeedbackCheckYourAnswersPresenter(icsFeedbackSubmission)
-      presenter.renderPage(res)
-    } else {
+    const { appointmentIcsId } = await this.appointmentService.getICS(caseRefId, username)
+    icsFeedbackSubmission = {
+      record: {
+        didSessionHappen: true,
+        didPersonAttend: true,
+      },
+      sessionDetails: {
+        duration: {
+          hours: 1,
+        },
+        wasPersonLate: false,
+      },
+      sessionFeedback: {
+        whatHappened: 'We had a session.',
+      },
+    }
+
+    console.log('Submitting feedback for', icsFeedbackSubmission)
+
+    if (icsFeedbackSubmission && appointmentIcsId) {
+      await this.appointmentService.submitIcsFeedback(caseRefId, appointmentIcsId, icsFeedbackSubmission, username)
+      delete req.session.icsFeedbackSubmission
       res.redirect(`/progress/${caseRefId}`)
     }
   }
@@ -599,6 +618,33 @@ class AppointmentController {
       res.redirect(`/ics-feedback/${caseRefId}/session-feedback`)
     }
     return Promise.resolve()
+  }
+
+  async checkIcsFeedback(req: Request, res: Response): Promise<void> {
+    const caseRefId = req.params.caseRefId as string
+    let { icsFeedbackSubmission } = req.session
+    // TODO REMOVE
+    icsFeedbackSubmission = {
+      record: {
+        didSessionHappen: true,
+        didPersonAttend: true,
+      },
+      sessionDetails: {
+        duration: {
+          hours: 1,
+        },
+        wasPersonLate: false,
+      },
+      sessionFeedback: {
+        whatHappened: 'We had a session.',
+      },
+    }
+    if (icsFeedbackSubmission) {
+      const presenter = new IcsFeedbackCheckYourAnswersPresenter(icsFeedbackSubmission, caseRefId)
+      presenter.renderPage(res)
+    } else {
+      res.redirect(`/progress/${caseRefId}`)
+    }
   }
 
   private getFeedbackSubmission(req: Request, caseRefId: string): IcsFeedbackSubmission | null {
