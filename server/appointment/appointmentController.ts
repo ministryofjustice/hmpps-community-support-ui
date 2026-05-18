@@ -6,7 +6,6 @@ import {
   SessionMethodRequest,
 } from '@community-support-api'
 import { format, parse } from 'date-fns'
-import z, { ZodError } from 'zod'
 import timeFormat from '../utils/timeFormat'
 import { ErrorMiddlewareErrors, HowSessionTookPlace, IcsFeedbackHowSessionTookPlaceSession } from '../@types/express'
 import ConfirmIcsPresenter, { type AdditionalInformation } from './confirm-ics/confirmIcsPresenter'
@@ -28,8 +27,8 @@ import { IcsFeedbackHowSessionTookPlaceFormData } from './ics-feedback/icsFeedba
 import { SessionFeedbackFormDataSchema } from '../validation/SessionFeedbackFormData'
 import ViewChangeSessionDetailsPresenter from './view-change-session-details/ViewChangeSessionDetailsPresenter'
 import RecordSessionDetailsPresenter from './record-ics/RecordSessionDetailsPresenter'
-import { RecordSessionDetailsFormViewModel } from './record-ics/RecordSessionDetailsViewModel'
 import { RecordSessionDetailsFormDataSchema } from '../validation/RecordSessionDetailsFormData'
+import validateRequestBodyAgainstSchema from '../validation/validationUtils'
 
 interface ScheduleFormData {
   sessionDate?: string
@@ -546,40 +545,18 @@ class AppointmentController {
   recordIcsAppointmentAttendance(req: Request, res: Response): Promise<void> {
     const { caseRefId } = req.params
 
-    return RecordSessionAttendanceFormDataSchema.parseAsync(req.body)
-      .then(data => {
-        req.session.IcsFeedbackSubmission = {
-          caseReferenceId: caseRefId.toString(),
-          record: {
-            didSessionHappen: data.happened === 'Yes',
-            didPersonAttend: data.happened === 'No' ? data.attended === 'Yes' : true,
-          },
-        }
+    req.session.IcsFeedbackSubmission = {
+      caseReferenceId: caseRefId.toString(),
+      record: {
+        didSessionHappen: req.body.happened === 'Yes',
+        didPersonAttend: req.body.happened === 'No' ? req.body.attended === 'Yes' : true,
+      },
+    }
+    return validateRequestBodyAgainstSchema(RecordSessionAttendanceFormDataSchema, req, res, data => {
+      if (data) {
         res.redirect(recordAttendanceRedirectUrl(data, caseRefId.toString()))
-      })
-      .catch(error => {
-        if (error instanceof ZodError) {
-          const { content } = res.locals
-
-          const errorMessages: Record<string, string | undefined> = {
-            happened: content.attendanceForm?.happenedRadios?.error,
-            attended: content.attendanceForm?.attendedRadios?.error,
-          }
-
-          const errors = z.flattenError(error).fieldErrors
-          req.session.formKeys = []
-          for (const field of Object.keys(errors)) {
-            const errorMessage = errorMessages[field]
-            if (errorMessage) {
-              req.session.formKeys.push(field)
-              req.flash(`${field}Error`, `${errorMessage}`)
-            }
-          }
-          res.redirect(`/ics-feedback/${caseRefId}/attendance`)
-          return
-        }
-        res.redirect('/error')
-      })
+      }
+    })
   }
 
   async getSessionFeedback(req: Request, res: Response): Promise<void> {
@@ -604,43 +581,28 @@ class AppointmentController {
   async submitSessionFeedback(req: Request, res: Response): Promise<void> {
     const caseRefId = req.params.caseRefId as string
     const { username } = res.locals.user
-    try {
-      const icsAppointment = await this.appointmentService.getICS(caseRefId, username)
+    const icsAppointment = await this.appointmentService.getICS(caseRefId, username)
 
-      if (!icsAppointment) {
-        req.flash('error', 'Appointment not found.')
-        res.redirect(`/ics-feedback/${caseRefId}/session-feedback`)
-        return Promise.resolve()
-      }
-
-      const currentSubmission = this.getFeedbackSubmission(req, caseRefId)
-
-      if (!currentSubmission || !currentSubmission.record) {
-        req.flash('error', 'Feedback record is missing. Please start the feedback process again.')
-        res.redirect(`/ics-feedback/${caseRefId}/session-feedback`)
-        return Promise.resolve()
-      }
-
-      currentSubmission.sessionFeedback ??= {}
-
-      const validated = await SessionFeedbackFormDataSchema.parseAsync(req.body)
-      currentSubmission.sessionFeedback.whatHappened = validated.whatDidYouDo
-
-      res.redirect(`/ics-feedback/${caseRefId}/feedback`)
-    } catch (error) {
-      const currentSubmission = this.getFeedbackSubmission(req, caseRefId)
-      if (currentSubmission && currentSubmission?.sessionFeedback) {
-        currentSubmission.sessionFeedback.whatHappened = req.body.whatDidYouDo ?? ''
-      }
-      if (error instanceof z.ZodError) {
-        error.issues.forEach(issue => {
-          const field = String(issue.path[0] ?? '')
-          req.flash(`${field}Error`, issue.message)
-        })
-      }
+    if (!icsAppointment) {
+      req.flash('error', 'Appointment not found.')
       res.redirect(`/ics-feedback/${caseRefId}/session-feedback`)
+      return
     }
-    return Promise.resolve()
+
+    const currentSubmission = this.getFeedbackSubmission(req, caseRefId)
+
+    if (!currentSubmission || !currentSubmission.record) {
+      req.flash('error', 'Feedback record is missing. Please start the feedback process again.')
+      res.redirect(`/ics-feedback/${caseRefId}/session-feedback`)
+      return
+    }
+    currentSubmission.sessionFeedback ??= {}
+    // set whatDidYouDo even if it fails validation ie it is longer than 3000 characters
+    currentSubmission.sessionFeedback.whatHappened = req.body.whatDidYouDo || ''
+
+    validateRequestBodyAgainstSchema(SessionFeedbackFormDataSchema, req, res, () => {
+      res.redirect(`/ics-feedback/${caseRefId}/feedback`)
+    })
   }
 
   private getFeedbackSubmission(req: Request, caseRefId: string): IcsFeedbackSubmission | null {
@@ -704,49 +666,23 @@ class AppointmentController {
 
   recordSessionDetails(req: Request, res: Response): Promise<void> {
     const { caseRefId } = req.params as { caseRefId: string }
-    const bodyData: RecordSessionDetailsFormViewModel = req.body
     const icsFeedbackSubmission = this.ensureFeedbackSubmission(req, caseRefId)
     if (!icsFeedbackSubmission) {
       res.redirect(`/progress/${caseRefId}`)
       return
     }
-    RecordSessionDetailsFormDataSchema.parseAsync(req.body)
-      .then(data => {
-        icsFeedbackSubmission.sessionDetails = {
-          wasPersonLate: data.wasPersonLate === 'Yes',
-          lateReason: data.lateReason,
-          duration: {
-            hours: data['sessionDuration-hours'],
-            minutes: data['sessionDuration-minutes'],
-          },
-        }
-        req.session.icsFeedbackSubmissionsMap[caseRefId] = icsFeedbackSubmission
-        return res.redirect(`/ics-feedback/${caseRefId}/session-feedback`)
-      })
-      .catch(error => {
-        if (error instanceof ZodError) {
-          // Persist the entered values
-          icsFeedbackSubmission.sessionDetails = {
-            wasPersonLate: bodyData.wasPersonLate ? bodyData.wasPersonLate === 'Yes' : null,
-            lateReason: bodyData.lateReason!,
-            duration: {
-              hours: bodyData['sessionDuration-hours'] ? Number(bodyData['sessionDuration-hours']) : null,
-              minutes: bodyData['sessionDuration-minutes'] ? Number(bodyData['sessionDuration-minutes']) : null,
-            },
-          }
-          req.session.icsFeedbackSubmissionsMap[caseRefId] = icsFeedbackSubmission
-
-          const errors: { [key: string]: string[] } = z.flattenError(error).fieldErrors
-          const ids = Object.keys(errors)
-          if (!req.session.formKeys.includes('wasPersonLate')) {
-            req.session.formKeys.unshift('wasPersonLate')
-          }
-          ids.forEach(id => req.flash(`${id}Error`, errors[id][0]))
-          res.redirect(`/ics-feedback/${caseRefId}/session-details`)
-          return
-        }
-        res.redirect('/error')
-      })
+    icsFeedbackSubmission.sessionDetails = {
+      wasPersonLate: req.body.wasPersonLate ? req.body.wasPersonLate === 'Yes' : null,
+      lateReason: req.body.lateReason,
+      duration: {
+        hours: req.body['sessionDuration-hours'],
+        minutes: req.body['sessionDuration-minutes'],
+      },
+    }
+    req.session.icsFeedbackSubmissionsMap[caseRefId] = icsFeedbackSubmission
+    validateRequestBodyAgainstSchema(RecordSessionDetailsFormDataSchema, req, res, () => {
+      res.redirect(`/ics-feedback/${caseRefId}/session-feedback`)
+    })
   }
 }
 

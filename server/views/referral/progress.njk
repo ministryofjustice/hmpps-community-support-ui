@@ -7,26 +7,21 @@
 {% set pageTitle = "Referral progress – " + applicationName %}
 {% set mainClasses = "govuk-body" %}
 
-{% block content %}
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-      {% if content.notificationBanner %}
-        {{ govukNotificationBanner(content.notificationBanner) }}
-      {% endif %}
+{% block contentBody %}
+  {% if content.notificationBanner %}
+    {{ govukNotificationBanner(content.notificationBanner) }}
+  {% endif %}
 
-      <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
+  <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
 
-      {{ mojSubNavigation(content.navBar) }}
+  {{ mojSubNavigation(content.navBar) }}
 
-      <h2 class="govuk-heading-m">Referral progress</h2>
-      <h3 class="govuk-heading-s">Initial contact session (ICS)</h3>
+  <h2 class="govuk-heading-m">Referral progress</h2>
+  <h3 class="govuk-heading-s">Initial contact session (ICS)</h3>
 
-      {% if content.icsAppointmentTable and content.icsAppointmentTable.rows.length %}
-        {{ govukTable(content.icsAppointmentTable) }}
-      {% else %}
-        <p class="govuk-body">No appointments scheduled</p>
-      {% endif %}
-    </div>
-  </div>
-
+  {% if content.icsAppointmentTable and content.icsAppointmentTable.rows.length %}
+    {{ govukTable(content.icsAppointmentTable) }}
+  {% else %}
+    <p class="govuk-body">No appointments scheduled</p>
+  {% endif %}
 {% endblock %}

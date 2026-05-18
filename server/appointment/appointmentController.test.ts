@@ -211,7 +211,7 @@ describe('AppointmentController', () => {
 
   describe('recordAttendance', () => {
     beforeEach(() => {
-      const content = {
+      res.locals.content = {
         pageHeader: 'Record session attendance',
         description:
           'The date and time of the session are a permanent record of where this person was. If the session started late, you must record this as part of the feedback.',
@@ -265,12 +265,16 @@ describe('AppointmentController', () => {
           },
           submitButtonText: 'Continue',
         },
-      } as const
-      res.locals.content = content
+      }
     })
     test('nothing selected', async () => {
       const caseRefId = randomUUID()
-      req = { ...req, params: { caseRefId }, body: {} } as unknown as Request
+      req = {
+        ...req,
+        params: { caseRefId },
+        body: {},
+        url: `/ics-feedback/${caseRefId}/attendance`,
+      } as unknown as Request
       await appointmentController.recordIcsAppointmentAttendance(req, res)
 
       const { formKeys } = req.session
@@ -283,7 +287,12 @@ describe('AppointmentController', () => {
     })
     test('happened selected, but attended unselected', async () => {
       const caseRefId = randomUUID()
-      req = { ...req, params: { caseRefId }, body: { happened: 'No' } } as unknown as Request
+      req = {
+        ...req,
+        params: { caseRefId },
+        body: { happened: 'No' },
+        url: `/ics-feedback/${caseRefId}/attendance`,
+      } as unknown as Request
       await appointmentController.recordIcsAppointmentAttendance(req, res)
 
       const { formKeys } = req.session
@@ -296,7 +305,12 @@ describe('AppointmentController', () => {
     })
     test('bad body data', async () => {
       const caseRefId = randomUUID()
-      req = { ...req, params: { caseRefId }, body: { message: 'hello' } } as unknown as Request
+      req = {
+        ...req,
+        params: { caseRefId },
+        body: { message: 'hello' },
+        url: `/ics-feedback/${caseRefId}/attendance`,
+      } as unknown as Request
       await appointmentController.recordIcsAppointmentAttendance(req, res)
 
       const { formKeys } = req.session
@@ -309,7 +323,12 @@ describe('AppointmentController', () => {
     })
     test('session happened', async () => {
       const caseRefId = randomUUID()
-      req = { ...req, params: { caseRefId }, body: { happened: 'Yes' } } as unknown as Request
+      req = {
+        ...req,
+        params: { caseRefId },
+        body: { happened: 'Yes' },
+        url: `/ics-feedback/${caseRefId}/attendance`,
+      } as unknown as Request
       await appointmentController.recordIcsAppointmentAttendance(req, res)
       expect(req.session.IcsFeedbackSubmission).toStrictEqual({
         caseReferenceId: caseRefId,
@@ -321,7 +340,12 @@ describe('AppointmentController', () => {
     })
     test('session did not happen but was attended', async () => {
       const caseRefId = randomUUID()
-      req = { ...req, params: { caseRefId }, body: { happened: 'No', attended: 'Yes' } } as unknown as Request
+      req = {
+        ...req,
+        params: { caseRefId },
+        body: { happened: 'No', attended: 'Yes' },
+        url: `/ics-feedback/${caseRefId}/attendance`,
+      } as unknown as Request
       await appointmentController.recordIcsAppointmentAttendance(req, res)
       expect(req.session.IcsFeedbackSubmission).toStrictEqual({
         caseReferenceId: caseRefId,
@@ -333,7 +357,12 @@ describe('AppointmentController', () => {
     })
     test('session did not happen and was not attended', async () => {
       const caseRefId = randomUUID()
-      req = { ...req, params: { caseRefId }, body: { happened: 'No', attended: 'No' } } as unknown as Request
+      req = {
+        ...req,
+        params: { caseRefId },
+        body: { happened: 'No', attended: 'No' },
+        url: `/ics-feedback/${caseRefId}/attendance`,
+      } as unknown as Request
       await appointmentController.recordIcsAppointmentAttendance(req, res)
       expect(req.session.IcsFeedbackSubmission).toStrictEqual({
         caseReferenceId: caseRefId,

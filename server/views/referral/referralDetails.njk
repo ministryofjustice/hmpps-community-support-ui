@@ -7,14 +7,11 @@
 {% set pageTitle = "Referral - Community Support" %}
 {% set mainClasses = "govuk-body" %}
 
-{% block content %}
-
-<div class="govuk-grid-row">
-<div class="govuk-grid-column-two-thirds">
-{% if content.successBanner %}
+{% block contentBody %}
+  {% if content.successBanner %}
     {% set html %}
       <h3 class="govuk-notification-banner__heading">
-      	{{ content.successBanner.successBannerHeading }}
+        {{ content.successBanner.successBannerHeading }}
       </h3>
     {% endset %}
     {% set html = html ~ "<p class=\"govuk-body\">" ~ content.successBanner.successBannerMessage ~ "</p>"%}
@@ -22,19 +19,15 @@
       html: html,
       type: "success",
       attributes: {
-      	"data-testid": "success-message"
+        "data-testid": "success-message"
       }
     }) }}
-{% endif %}
-<h1 class="govuk-heading-l">Referral for {{ content.name }}</h1>
-{{ mojSubNavigation(content.subNav) }}
-<h2 class="govuk-heading-m">Case details</h2>
-{{ govukSummaryList(content.personal) }}
-{{ govukSummaryList(content.equality) }}
-{{ govukSummaryList(content.contact) }}
-{{ govukSummaryList(content.referral) }}
-
-</div>
-</div>
-
+  {% endif %}
+  <h1 class="govuk-heading-l">Referral for {{ content.name }}</h1>
+  {{ mojSubNavigation(content.subNav) }}
+  <h2 class="govuk-heading-m">Case details</h2>
+  {{ govukSummaryList(content.personal) }}
+  {{ govukSummaryList(content.equality) }}
+  {{ govukSummaryList(content.contact) }}
+  {{ govukSummaryList(content.referral) }}
 {% endblock %}
