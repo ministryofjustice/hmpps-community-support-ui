@@ -37,11 +37,11 @@ const minutes = z.coerce
     }
   })
 
-const checkDuration = (val: any) => {
+const checkDuration = (val: { 'sessionDuration-hours': number; 'sessionDuration-minutes': number }) => {
   return !(val['sessionDuration-hours'] === 0 && val['sessionDuration-minutes'] === 0)
 }
 
-const checkLateReason = (val: any) => {
+const checkLateReason = (val: { wasPersonLate: string; lateReason: string }) => {
   if (val.wasPersonLate === 'Yes') {
     return val.lateReason.length > 0
   }

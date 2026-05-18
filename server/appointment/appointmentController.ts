@@ -7,7 +7,7 @@ import {
 } from '@community-support-api'
 import { format, parse } from 'date-fns'
 import timeFormat from '../utils/timeFormat'
-import { ErrorMiddlewareErrors, HowSessionTookPlace, IcsFeedbackHowSessionTookPlaceSession } from '../@types/express'
+import { HowSessionTookPlace, IcsFeedbackHowSessionTookPlaceSession } from '../@types/express'
 import ConfirmIcsPresenter, { type AdditionalInformation } from './confirm-ics/confirmIcsPresenter'
 import InitialContactSessionDetailsPresenter from '../referral/InitialContactSessionDetailsPresenter'
 import ReferralService from '../services/referralService'
@@ -656,15 +656,16 @@ class AppointmentController {
   async sessionDetails(req: Request, res: Response): Promise<void> {
     const { caseRefId } = req.params as { caseRefId: string }
     const { username } = res.locals.user
-    const validationErrors: ErrorMiddlewareErrors = res.locals.errors
     const icsFeedbackSubmission = this.ensureFeedbackSubmission(req, caseRefId)
     const sessionDetails = icsFeedbackSubmission ? icsFeedbackSubmission.sessionDetails : null
     const appointmentData = await this.appointmentService.getICS(caseRefId.toString(), username)
 
-    formatDynamicErrorMessages(validationErrors, '{{ firstname }}', appointmentData.referralFirstName, [
-      'wasPersonLate',
-      'lateReason',
-    ])
+    const validationErrors = formatDynamicErrorMessages(
+      res.locals.errors,
+      '{{ firstname }}',
+      appointmentData.referralFirstName,
+    )
+    res.locals.errors = validationErrors
 
     const presenter = new RecordSessionDetailsPresenter(caseRefId, appointmentData, sessionDetails, validationErrors)
     return presenter.renderPage(res)

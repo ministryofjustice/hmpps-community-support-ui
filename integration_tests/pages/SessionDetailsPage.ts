@@ -35,10 +35,7 @@ export default class SessionDetailsPage extends AbstractPage {
       page.locator('[data-testid="wasPersonLate"]'),
       page.locator('[data-testid="fieldset-wasPersonLate"]'),
     )
-    const lateReason = new TextArea(
-      page.locator('[data-testid="lateReason"]'),
-      page.locator('[data-testid="lateReasonLabel"]'),
-    )
+    const lateReason = TextArea.create(page.locator('[data-testid="lateReason"]'))
     const duration = await TimeInput.create(
       page.locator('[data-testid="sessionDuration"]'),
       page.locator('[data-testid="fieldset-sessionDuration"]'),

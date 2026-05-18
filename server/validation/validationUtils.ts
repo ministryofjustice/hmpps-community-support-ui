@@ -1,24 +1,30 @@
 import z, { ZodType, parseAsync, ZodError } from 'zod'
 import { Request, Response } from 'express'
+import { GovukFrontendErrorMessage, GovukFrontendErrorSummaryErrorListElement } from '@govuk-frontend'
 import { ErrorMiddlewareErrors } from '../@types/express'
 
 export const formatDynamicErrorMessages = (
   errors: ErrorMiddlewareErrors,
   searchValue: string,
   replaceValue: string,
-  fields: string | string[],
-) => {
-  fields = typeof fields === 'string' ? [fields] : fields
-  const dynamicErrors = errors.list.filter(({ href }) => fields.map(field => `#${field}`).includes(href))
-  dynamicErrors.forEach(error => {
-    error.text = error.text.replace(searchValue, replaceValue || '')
+): ErrorMiddlewareErrors => {
+  const formattedErrors: ErrorMiddlewareErrors = {
+    list: new Array<GovukFrontendErrorSummaryErrorListElement>(),
+    messages: {},
+  }
+  errors.list.forEach(error => {
+    const formattedError: GovukFrontendErrorSummaryErrorListElement = {}
+    formattedError.href = error.href
+    formattedError.text = error.text.replace(searchValue, replaceValue || '')
+    formattedErrors.list.push(formattedError)
   })
-  const dynamicFieldErrors = Object.entries(errors.messages)
-    .filter(([key, _]) => fields.includes(key))
-    .map(([_, val]) => val)
-  dynamicFieldErrors.forEach(error => {
-    error.text = error.text.replace(searchValue, replaceValue || '')
+  const fieldErrors: [string, GovukFrontendErrorMessage][] = Object.entries(errors.messages)
+  fieldErrors.forEach(([key, error]) => {
+    const formattedError: GovukFrontendErrorMessage = {}
+    formattedError.text = error.text.replace(searchValue, replaceValue || '')
+    formattedErrors.messages[key] = formattedError
   })
+  return formattedErrors
 }
 
 const validateRequestBodyAgainstSchema = <Schema extends ZodType>(
