@@ -6,7 +6,7 @@ export default function setUpFormValidation(): Router {
 
   router.use((req: Request, res: Response, next: NextFunction) => {
     if (req.method === 'GET') FormValidation.setFieldErrors(req, res)
-    if (req.method === 'POST') FormValidation.setFormKeys(req, res)
+    if (req.method === 'POST') FormValidation.setFormKeysFromRequestBody(req, res)
     next()
   })
 

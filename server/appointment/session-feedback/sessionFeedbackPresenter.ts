@@ -10,6 +10,7 @@ import PresenterBase from '../../presenter/presenterBase'
 import { FormErrors } from '../../interfaces/formErrors'
 
 export interface SessionFeedbackFormViewModel {
+  label: string
   textarea: GovukFrontendTextarea
   button: GovukFrontendButton
 }
@@ -25,6 +26,7 @@ export interface SessionFeedbackViewModel {
 }
 
 interface FormContent {
+  label: string
   textarea: {
     id: string
     name: string
@@ -56,6 +58,7 @@ export default class SessionFeedbackPresenter extends PresenterBase<SessionFeedb
     const fieldError = errors?.messages[content.textarea.name] || errors?.messages[content.textarea.id]
     const fieldData = this.formData?.sessionFeedback?.whatHappened ?? ''
     return {
+      label: content.textarea.label,
       textarea: {
         id: content.textarea.id,
         name: content.textarea.name,

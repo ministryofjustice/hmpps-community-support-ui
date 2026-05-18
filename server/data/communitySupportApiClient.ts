@@ -99,6 +99,10 @@ export default class CommunitySupportApiClient extends RestClient {
     return this.get({ path: `/bff/referral-information/${caseReference}` }, asSystem(username))
   }
 
+  getIcsById(referralId: string, icsId: string, username: string): Promise<AppointmentIcsResponse> {
+    return this.get({ path: `/bff/referral/${referralId}/ics/${icsId}` }, asSystem(username))
+  }
+
   async submitIcsFeedback(
     caseRefId: string,
     icsId: string,

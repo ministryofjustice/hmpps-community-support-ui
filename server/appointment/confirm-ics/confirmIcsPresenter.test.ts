@@ -80,7 +80,7 @@ describe('ConfirmIcsPresenter', () => {
         expect.objectContaining({
           content: expect.objectContaining<Partial<ConfirmIcsViewModel>>({
             submitHref: `/referral/${referralId}/appointment/submit-ics`,
-            backlinkHref: `/referral/${referralId}/appointment/schedule-ics`,
+            backLink: { href: `/referral/${referralId}/appointment/schedule-ics` },
           }),
         }),
       )

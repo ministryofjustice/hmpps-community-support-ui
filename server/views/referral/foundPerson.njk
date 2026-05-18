@@ -6,17 +6,11 @@
 {% set pageTitle = applicationName + " - Found a Person" %}
 {% set mainClasses = "govuk-body" %}
 
-{% block content %}
-
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-      <h1 class="govuk-heading-l">{{content.staticContent.pageHeader}}</h1>
-        {{ govukSummaryList(content.personSummary) }}
-        {{ govukButton({
-          text: content.staticContent.continueButtonText,
-          href: content.staticContent.continueButtonLink
-        }) }}
-    </div>
- </div>
-
+{% block contentBody %}
+  <h1 class="govuk-heading-l">{{content.staticContent.pageHeader}}</h1>
+    {{ govukSummaryList(content.personSummary) }}
+    {{ govukButton({
+      text: content.staticContent.continueButtonText,
+      href: content.staticContent.continueButtonLink
+    }) }}
 {% endblock %}

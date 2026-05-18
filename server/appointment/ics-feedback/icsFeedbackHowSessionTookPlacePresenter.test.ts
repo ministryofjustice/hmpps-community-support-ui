@@ -76,7 +76,7 @@ describe('IcsFeedbackPresenter', () => {
         expect.objectContaining({
           content: expect.objectContaining<Partial<IcsFeedbackHowSessionTookPlaceViewModel>>({
             submitHref: `/ics-feedback/${caseRefId}/did-session-take-place`,
-            backlinkHref: `/ics-feedback/attendance/${caseRefId}`,
+            backLink: { href: `/ics-feedback/attendance/${caseRefId}` },
           }),
         }),
       )

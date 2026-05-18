@@ -662,7 +662,7 @@ export interface components {
     }
     ReferralDetailsTableDataDto: {
       referralDate: string
-      assignedTo: string[]
+      assignedTo: CaseWorkerDto[]
     }
     ReferralAppointmentHistoryDto: {
       /** Format: uuid */
@@ -930,7 +930,6 @@ export interface operations {
       header?: never
       path: {
         caseReference: string
-        icsId: string
       }
       cookie?: never
     }

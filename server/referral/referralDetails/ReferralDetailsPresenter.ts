@@ -13,7 +13,7 @@ import {
   ReferralDetailsCard,
   ReferralDetailsContent,
 } from './ReferralDetailsViewModel'
-import { govFrontendSummaryListRow } from '../../utils/viewUtils'
+import { govFrontendSummaryListRow, createMailtoLink } from '../../utils/viewUtils'
 
 export interface ReferralDetailsViewModel {
   name: string
@@ -132,7 +132,9 @@ export default class ReferralDetailsPresenter extends PresenterBase<ReferralDeta
     const { referralDate, assignedTo } = referralDetailsTableData
     const assignedToArray = assignedTo || []
     const assignedToListIsPopulated = assignedToArray.length > 0
-    const assignedToValue = assignedToListIsPopulated ? assignedTo.join(', ') : cardContent.assignedToDefaultValue
+    const assignedToValue = assignedToListIsPopulated
+      ? assignedTo.map(user => createMailtoLink(user.fullName, user.emailAddress)).join('<br>')
+      : cardContent.assignedToDefaultValue
     return {
       card: {
         title: { text: cardContent.heading },

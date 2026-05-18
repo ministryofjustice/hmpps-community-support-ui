@@ -10,10 +10,10 @@ import { ReferralProgress, ReferralAppointmentHistory } from '@community-support
 
 import PresenterBase from '../../presenter/presenterBase'
 import { ReferralProgressContent, ReferralProgressViewModel } from './referralProgressViewModel'
+import { ReferralProgressBannerContent } from './ReferralProgressBannerContent'
 
 type TabKey = 'caseDetails' | 'progress' | 'changeLog'
 type StatusKey = ReferralAppointmentHistory['status'] | 'NOT_SCHEDULED'
-type SuccessBannerType = 'SCHEDULED_ICS' | 'RESCHEDULE_ICS' | 'COMPLETED_ICS' | undefined
 type StatusConfig = { label: string; tagClass: string; actions: { label: string; href: string }[] }
 
 const getStatusConfig = (caseReference: string, appointmentId: string = ''): Record<StatusKey, StatusConfig> => ({
@@ -25,12 +25,12 @@ const getStatusConfig = (caseReference: string, appointmentId: string = ''): Rec
   SCHEDULED: {
     label: 'Scheduled',
     tagClass: 'govuk-tag--blue',
-    actions: [{ label: 'View or change details', href: `/referral/${caseReference}/ics/${appointmentId}` }],
+    actions: [{ label: 'View details', href: `/referral/${caseReference}/ics/${appointmentId}/view-session-details` }],
   },
   NEEDS_FEEDBACK: {
     label: 'Needs feedback',
     tagClass: 'govuk-tag--red',
-    actions: [{ label: 'Add attendance and feedback', href: `/ics-feedback/attendance/${caseReference}` }],
+    actions: [{ label: 'Add attendance and feedback', href: `/ics-feedback/${caseReference}/attendance` }],
   },
   DID_NOT_HAPPEN: {
     label: 'Did not happen',
@@ -71,7 +71,7 @@ export default class ReferralProgressPresenter extends PresenterBase<
   constructor(
     private readonly referralProgress: ReferralProgress,
     private readonly caseReference: string,
-    private readonly successBannerType?: SuccessBannerType,
+    private readonly bannerContent?: ReferralProgressBannerContent,
   ) {
     super()
     this.name = referralProgress.fullName
@@ -91,7 +91,7 @@ export default class ReferralProgressPresenter extends PresenterBase<
       navBar: this.buildSubNav(content),
       actionLinkHref: '#',
       backLink: { href: '/cases-in-progress' },
-      notificationBanner: this.getNotificationBanner(content, latestAppointment),
+      notificationBanner: this.getNotificationBanner(),
       icsAppointmentTable: this.buildIcsAppointmentTable(content, !!latestAppointment),
     }
   }
@@ -131,36 +131,10 @@ export default class ReferralProgressPresenter extends PresenterBase<
     }
   }
 
-  private getNotificationBanner(
-    content: ReferralProgressContent,
-    latestAppointment?: ReferralAppointmentHistory,
-  ): GovukFrontendNotificationBanner | undefined {
-    if (!latestAppointment || !this.successBannerType) return undefined
+  private getNotificationBanner(): GovukFrontendNotificationBanner | undefined {
+    if (this.bannerContent?.caseReference !== this.caseReference) return undefined
 
-    switch (this.successBannerType) {
-      case 'SCHEDULED_ICS':
-        if (latestAppointment.status !== 'SCHEDULED') return undefined
-
-        return this.buildSuccessBanner(
-          content.scheduledIcsBannerHeading,
-          `${content.scheduledIcsBannerMessage} ${this.formatAppointmentDateTime(latestAppointment.dateTime)}.`,
-        )
-
-      case 'RESCHEDULE_ICS':
-        return this.buildSuccessBanner(
-          content.sessionFeedbackBannerHeading,
-          content.sessionFeedbackRescheduleIcsBannerMessage,
-        )
-
-      case 'COMPLETED_ICS':
-        return this.buildSuccessBanner(
-          content.sessionFeedbackBannerHeading,
-          content.sessionFeedbackCompletedIcsBannerMessage,
-        )
-
-      default:
-        return undefined
-    }
+    return this.buildSuccessBanner(this.bannerContent.heading, this.bannerContent.body)
   }
 
   protected getTemplatePath(): string {

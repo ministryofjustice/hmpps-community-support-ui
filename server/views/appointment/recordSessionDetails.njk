@@ -1,0 +1,26 @@
+{% extends "../partials/layout.njk" %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/fieldset/macro.njk" import govukFieldset %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/error-message/macro.njk" import govukErrorMessage %}
+{% from "components/time-input-no-meridiem/macro.njk" import timeInputNoMeridiem %}
+
+{% set pageTitle = "Record session details - ICS feedback - [service name]" %}
+{% set mainClasses = "govuk-body" %}
+
+{% block contentBody %}
+  <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
+
+  {{ govukSummaryList(content.appointment) }}
+
+  <form method="post" action="{{ content.submitHref }}">
+  <input type="hidden" name="_csrf" value="{{csrfToken}}">
+
+  {{ govukRadios(content.wasPersonLateRadio) }}
+  {{ timeInputNoMeridiem(content.sessionDurationTimeInput) }}
+
+  {{ govukButton(content.submitButton) }}
+  </form>
+{% endblock %}

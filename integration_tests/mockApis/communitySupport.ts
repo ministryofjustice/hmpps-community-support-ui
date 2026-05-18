@@ -296,6 +296,23 @@ export default {
         jsonBody: mockRespData,
       },
     }),
+  stubGetIcsById: (
+    referralId: string,
+    icsId: string,
+    mockData: AppointmentIcsResponse,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: `/community-support/bff/referral/${referralId}/ics/${icsId}`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: mockData,
+      },
+    }),
   stubGetReferralProgress: (
     referralProgress: ReferralProgress,
     caseReference: string,

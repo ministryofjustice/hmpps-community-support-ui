@@ -17,11 +17,21 @@ export const govFrontendSummaryListRow = (
   key: string,
   value: GovukFrontendSummaryListRowValue | string,
   actions: Array<GovukFrontendSummaryListRowActionsItem> = null,
-): GovukFrontendSummaryListRow => ({
-  key: { text: key },
-  value: typeof value === 'string' ? { text: value } : value,
-  actions: actions && actions.length > 0 ? { items: actions } : null,
-})
+): GovukFrontendSummaryListRow => {
+  if (typeof value === 'string' && (value.includes('<a') || value.includes('<p'))) {
+    return {
+      key: { text: key },
+      value: { html: value },
+      actions: actions && actions.length > 0 ? { items: actions } : null,
+    }
+  }
+
+  return {
+    key: { text: key },
+    value: typeof value === 'string' ? { text: value } : value,
+    actions: actions && actions.length > 0 ? { items: actions } : null,
+  }
+}
 
 export const govFrontendSummaryList = (
   summaryListItems: GovukFrontendSummaryListRow[],
@@ -34,6 +44,13 @@ export const govFrontendSummaryList = (
   rows: summaryListItems,
   attributes,
 })
+
+export const createMailtoLink = (fullName: string, emailAddress: string): string => {
+  if (!fullName) return 'Unknown'
+  if (!emailAddress) return fullName
+
+  return `${fullName} (<a href="mailto:${emailAddress}" class="govuk-link">${emailAddress}</a>)`
+}
 
 export default class ViewUtils {
   static escape = escapeSpecialHtmlCharacters

@@ -1,4 +1,9 @@
-import { CreateAppointmentRequest, AppointmentIcsResponse, IcsFeedbackSubmission, IcsFeedbackSubmissionResponse } from '@community-support-api'
+import {
+  CreateAppointmentRequest,
+  AppointmentIcsResponse,
+  IcsFeedbackSubmission,
+  IcsFeedbackSubmissionResponse,
+} from '@community-support-api'
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
 
 export default class AppointmentService {
@@ -14,6 +19,10 @@ export default class AppointmentService {
     username: string,
   ): Promise<AppointmentIcsResponse> {
     return this.communitySupportApiClient.submitICS(caseRefId, createAppointmentRequest, username)
+  }
+
+  getIcsById(referralId: string, icsId: string, username: string): Promise<AppointmentIcsResponse> {
+    return this.communitySupportApiClient.getIcsById(referralId, icsId, username)
   }
 
   submitIcsFeedback(

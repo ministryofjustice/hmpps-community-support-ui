@@ -31,88 +31,83 @@
       	"data-testid": "success-message"
       }
     }) }}
-  {% endif %}
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-      <h1 class="govuk-heading-l">Who do you want to assign this case to?</h1>
-      <form method="post" novalidate action="/referral/{{content.referralId}}/assign">
-        <input type="hidden" name="_csrf" value="{{csrfToken}}">
-        <div id="caseworker-container" data-max="5">
-          {% for i in range(0, 5) %}
-            {% set index = i %}
-            {% set caseworker = caseworkers[i] if caseworkers and caseworkers | length > i else {} %}
-            {% set isUsed = caseworker.emailAddress | default("") | trim | length > 0 %}
-            {% set inputAttributes = {
-              "data-name": "caseworkers[%index%][email_address]",
-              "data-id": "caseworkers[%index%][email_address]",
-              "data-testid": "caseWorkerInput",
-              "autocomplete": "email"
-            } %}
-            {% set labelText = "Caseworker" %}
-            {% if index > 0 %}
-              {% set labelText = labelText ~ " " ~ (index + 1) %}
-            {% endif %}
-            {% if not isUsed and index >= 1 %}
-              {% set inputAttributes = {
-                "data-name": "caseworkers[%index%][email_address]",
-                "data-id": "caseworkers[%index%][email_address]",
-                "data-testid": "caseWorkerInput",
-                "autocomplete": "email",
-                "disabled": ""
-              } %}
-            {% endif %}
-            <div class="moj-add-another__item caseworker-block"
-                 data-caseworker-index="{{ index }}"
-                 {% if not isUsed and index >= 1 %}hidden{% endif %}>
-              {% call govukFieldset({
-                classes: "govuk-fieldset",
-                legend: {
-                  text: labelText,
-                  classes: "moj-add-another__title govuk-fieldset__legend--m",
-                  isPageHeading: false
-                }
-              }) %}
-                {{ govukInput({
-                  id: "caseworkers[" ~ index ~ "][email_address]",
-                  name: "caseworkers[" ~ index ~ "][email_address]",
-                  label: { html: "Enter the caseworker's email address", classes: "govuk-!-font-weight-bold" },
-                  value: caseworker.emailAddress or "",
-                  errorMessage: errors["caseworkers[" ~ index ~ "][email_address]"],
-                  attributes: inputAttributes
-                }) }}
-                {# Remove button – shown only for visible blocks after the first #}
-                {% if index >= 0 %}
-                  {% set classesList = "govuk-button--secondary moj-add-another__remove-button remove-caseworker govuk-visually-hidden" if (index == 0) else "govuk-button--secondary remove-caseworker moj-add-another__remove-button" %}
-                  {{ govukButton({
-                    text: "Remove",
-                    classes: classesList,
-                    type: "button",
-                    attributes: {
-                      "data-testid": "removeCaseWorkerButton"
-                    }
-                  }) }}
-                {% endif %}
-              {% endcall %}
-            </div>
-          {% endfor %}
-
-          <div class="moj-button-action">
-            {{ govukButton({
-              text: "Add another caseworker",
-              classes: "govuk-button--secondary moj-add-another__add-button govuk-!-margin-bottom-4",
-              type: "button",
-              attributes: {
-                "data-testid": "addAnotherCaseWorker"
-              }
+{% endif %}
+  <h1 class="govuk-heading-l">Who do you want to assign this case to?</h1>
+  <form method="post" novalidate action="/referral/{{content.referralId}}/assign">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    <div id="caseworker-container" data-max="5">
+      {% for i in range(0, 5) %}
+        {% set index = i %}
+        {% set caseworker = caseworkers[i] if caseworkers and caseworkers | length > i else {} %}
+        {% set isUsed = caseworker.emailAddress | default("") | trim | length > 0 %}
+        {% set inputAttributes = {
+          "data-name": "caseworkers[%index%][email_address]",
+          "data-id": "caseworkers[%index%][email_address]",
+          "data-testid": "caseWorkerInput",
+          "autocomplete": "email"
+        } %}
+        {% set labelText = "Caseworker" %}
+        {% if index > 0 %}
+          {% set labelText = labelText ~ " " ~ (index + 1) %}
+        {% endif %}
+        {% if not isUsed and index >= 1 %}
+          {% set inputAttributes = {
+            "data-name": "caseworkers[%index%][email_address]",
+            "data-id": "caseworkers[%index%][email_address]",
+            "data-testid": "caseWorkerInput",
+            "autocomplete": "email",
+            "disabled": ""
+          } %}
+        {% endif %}
+        <div class="moj-add-another__item caseworker-block"
+             data-caseworker-index="{{ index }}"
+             {% if not isUsed and index >= 1 %}hidden{% endif %}>
+          {% call govukFieldset({
+            classes: "govuk-fieldset",
+            legend: {
+              text: labelText,
+              classes: "moj-add-another__title govuk-fieldset__legend--m",
+              isPageHeading: false
+            }
+          }) %}
+            {{ govukInput({
+              id: "caseworkers[" ~ index ~ "][email_address]",
+              name: "caseworkers[" ~ index ~ "][email_address]",
+              label: { html: "Enter the caseworker's email address", classes: "govuk-!-font-weight-bold" },
+              value: caseworker.emailAddress or "",
+              errorMessage: errors["caseworkers[" ~ index ~ "][email_address]"],
+              attributes: inputAttributes
             }) }}
-          </div>
-          <div class="moj-button-action">
-            {{ govukButton({ text: "Submit" }) }}
-          </div>
+            {# Remove button – shown only for visible blocks after the first #}
+            {% if index >= 0 %}
+              {% set classesList = "govuk-button--secondary moj-add-another__remove-button remove-caseworker govuk-visually-hidden" if (index == 0) else "govuk-button--secondary remove-caseworker moj-add-another__remove-button" %}
+              {{ govukButton({
+                text: "Remove",
+                classes: classesList,
+                type: "button",
+                attributes: {
+                  "data-testid": "removeCaseWorkerButton"
+                }
+              }) }}
+            {% endif %}
+          {% endcall %}
         </div>
-      </form>
-    </div>
-  </div>
+      {% endfor %}
 
+      <div class="moj-button-action">
+        {{ govukButton({
+          text: "Add another caseworker",
+          classes: "govuk-button--secondary moj-add-another__add-button govuk-!-margin-bottom-4",
+          type: "button",
+          attributes: {
+            "data-testid": "addAnotherCaseWorker"
+          }
+        }) }}
+      </div>
+      <div class="moj-button-action">
+        {{ govukButton({ text: "Submit" }) }}
+      </div>
+    </div>
+  </form>
   <script type="module" src="{{ '/assets/js/add-another-caseworker.js' | assetMap }}"></script>
 {% endblock %}

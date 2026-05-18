@@ -2,41 +2,29 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/fieldset/macro.njk" import govukFieldset %}
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
-{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 
 {% set pageTitle = "Session feedback – ICS feedback - [service name]" %}
 {% set mainClasses = "govuk-body" %}
 
-{% block content %}
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
-    {% if errors.list.length %}
-      {{ govukErrorSummary({
-        titleText: "There is a problem",
-        errorList: errors.list
-      }) }}
-    {% endif %}
-
-    <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
-    {% if content.description %}
-      <p class="govuk-body" data-testid="subheading">{{ content.description }}</p>
-    {% endif %}
-    {% if content.form %}
-      <form method="post" action="{{ content.submitHref }}">
-        <input type="hidden" name="_csrf" value="{{csrfToken}}">
-        {% call govukFieldset({
-          classes: "govuk-fieldset",
-          legend: {
-            text: content.label,
-            classes: "govuk-fieldset__legend govuk-fieldset__legend--m",
-            isPageHeading: true
-          }
-        }) %}
-          {{ govukTextarea(content.form.textarea) }}
-          {{ govukButton(content.form.button) }}
-        {% endcall %}
-      </form>
-    {% endif %}
-  </div>
-</div>
+{% block contentBody %}
+  <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
+  {% if content.description %}
+    <p class="govuk-body" data-testid="subheading">{{ content.description }}</p>
+  {% endif %}
+  {% if content.form %}
+    <form method="post" action="{{ content.submitHref }}">
+      <input type="hidden" name="_csrf" value="{{csrfToken}}">
+      {% call govukFieldset({
+        classes: "govuk-fieldset",
+        legend: {
+          text: content.label,
+          classes: "govuk-fieldset__legend govuk-fieldset__legend--m",
+          isPageHeading: true
+        }
+      }) %}
+        {{ govukTextarea(content.form.textarea) }}
+        {{ govukButton(content.form.button) }}
+      {% endcall %}
+    </form>
+  {% endif %}
 {% endblock %}

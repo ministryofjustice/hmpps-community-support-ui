@@ -3,6 +3,7 @@ import { GovukFrontendNotificationBanner, GovukFrontendSummaryList } from '@govu
 import { Response } from 'express'
 import PresenterBase from '../../presenter/presenterBase'
 import { ConfirmIcsContent, ConfirmIcsViewModel } from './confirmIcsViewModel'
+import { buildIcsSummaryRows, formatAddress } from '../icsDetailsSummaryBuilder'
 
 export type AdditionalInformation = {
   firstName: string
@@ -23,7 +24,7 @@ export default class ConfirmIcsPresenter extends PresenterBase<ConfirmIcsViewMod
     viewModel.pageHeader = content.pageHeader
     viewModel.submitButtonText = content.submitButtonText
     viewModel.submitHref = `/referral/${this.referralId}/appointment/submit-ics`
-    viewModel.backlinkHref = `/referral/${this.referralId}/appointment/schedule-ics`
+    viewModel.backLink = { href: `/referral/${this.referralId}/appointment/schedule-ics` }
     viewModel.icsDetailsSummary = this.buildIcsDetailsSummary()
     if (this.isAppointmentInPast()) {
       viewModel.notificationBanner = this.buildPastAppointmentBanner()
@@ -74,47 +75,23 @@ export default class ConfirmIcsPresenter extends PresenterBase<ConfirmIcsViewMod
     const isInPerson =
       sessionMethodRequest.type === 'PROBATION_OFFICE' || sessionMethodRequest.type === 'OTHER_LOCATION'
 
-    const sessionCommunications: string[] = sessionCommunication.map(communication =>
-      this.formatSessionCommunication(communication),
-    )
+    let locationValue: { text: string } | { html: string } | undefined
+    if (isInPerson) {
+      locationValue =
+        sessionMethodRequest.type === 'PROBATION_OFFICE'
+          ? { text: 'Probation office' }
+          : { html: formatAddress(sessionMethodRequest) }
+    }
 
-    const rows = [
-      {
-        key: { text: 'Date' },
-        value: { text: this.formatDate(date) },
-      },
-      {
-        key: { text: 'Start time' },
-        value: { text: this.formatTime(time) },
-      },
-      {
-        key: { text: 'Method' },
-        value: { text: this.formatSessionMethod(sessionMethodRequest.type) },
-      },
-      ...(isNotInPerson && sessionMethodRequest.additionalDetails
-        ? [
-            {
-              key: { text: 'Reason session is not in-person' },
-              value: { text: sessionMethodRequest.additionalDetails },
-            },
-          ]
-        : []),
-      ...(isInPerson
-        ? [
-            {
-              key: { text: 'Location' },
-              value:
-                sessionMethodRequest.type === 'PROBATION_OFFICE'
-                  ? { text: 'Probation office' }
-                  : { html: this.formatAddress() },
-            },
-          ]
-        : []),
-      {
-        key: { text: `How ${this.additionalInformation.firstName} was informed about the session` },
-        value: { text: sessionCommunications.join(', ') },
-      },
-    ]
+    const rows = buildIcsSummaryRows({
+      formattedDate: this.formatDate(date),
+      formattedTime: this.formatTime(time),
+      methodDisplay: this.formatSessionMethod(sessionMethodRequest.type),
+      reason: isNotInPerson ? sessionMethodRequest.additionalDetails : null,
+      locationValue,
+      personFirstName: this.additionalInformation.firstName,
+      communicationsDisplay: sessionCommunication.map(c => this.formatSessionCommunication(c)).join(', '),
+    })
 
     return {
       card: {
@@ -131,12 +108,6 @@ export default class ConfirmIcsPresenter extends PresenterBase<ConfirmIcsViewMod
       },
       rows,
     }
-  }
-
-  private formatAddress(): string {
-    const { addressLine1, addressLine2, townOrCity, county, postcode } =
-      this.createAppointmentRequest.sessionMethodRequest
-    return [addressLine1, addressLine2, townOrCity, county, postcode].filter(Boolean).join('<br>')
   }
 
   private isAppointmentInPast(): boolean {

@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import { AppointmentIcsResponse, CreateAppointmentRequest, IcsFeedbackSubmission } from '@community-support-api'
+import { randomUUID } from 'crypto'
 import AppointmentController from './appointmentController'
 import ConfirmIcsPresenter, { type AdditionalInformation } from './confirm-ics/confirmIcsPresenter'
 import ScheduleIcsPresenter from './schedule-ics/scheduleIcsPresenter'
@@ -17,6 +18,7 @@ import {
   referralInformationInCommunity,
   referralInformationInPrison,
 } from '../../integration_tests/mockData/referralInformationData'
+import ViewChangeSessionDetailsPresenter from './view-change-session-details/ViewChangeSessionDetailsPresenter'
 import IcsFeedbackCheckYourAnswersPresenter from './check-ics-feedback/icsFeedbackCheckYourAnswersPresenter'
 
 jest.mock('./confirm-ics/confirmIcsPresenter')
@@ -25,6 +27,7 @@ jest.mock('./schedule-ics/scheduleIcsPresenter')
 jest.mock('./ics-feedback/icsFeedbackHowSessionTookPlacePresenter')
 jest.mock('../services/referralService')
 jest.mock('../services/referenceDataService')
+jest.mock('./view-change-session-details/ViewChangeSessionDetailsPresenter')
 jest.mock('./check-ics-feedback/icsFeedbackCheckYourAnswersPresenter')
 
 describe('AppointmentController', () => {
@@ -51,6 +54,27 @@ describe('AppointmentController', () => {
     firstName: 'John',
   }
 
+  const mockIcsId = crypto.randomUUID()
+
+  const mockAppointmentIcsResponse: AppointmentIcsResponse = {
+    appointmentIcsId: mockIcsId,
+    appointmentId: crypto.randomUUID(),
+    referralId,
+    appointmentType: 'ICS',
+    appointmentDate: '2026-03-27',
+    appointmentTime: { hour: 1, minute: 0, amPm: 'pm' },
+    appointmentStatus: 'SCHEDULED',
+    sessionMethod: {
+      appointmentCategory: 'VIRTUAL',
+      type: 'PHONE',
+      whyNotInPersonReason: 'Lorem ipsum dolor sit amet.',
+    },
+    sessionCommunications: ['Phone'],
+    referralFirstName: 'John',
+    referralLastName: 'Doe',
+    createdAt: '2026-03-01T10:00:00Z',
+  }
+
   const mockReferralInformationInCommunity = referralInformationInCommunity
   const mockReferralInformationInPrison = referralInformationInPrison
 
@@ -73,6 +97,7 @@ describe('AppointmentController', () => {
     appointmentController = new AppointmentController(referralService, appointmentService, referenceDataService)
 
     ConfirmIcsPresenter.prototype.renderPage = jest.fn()
+    ViewChangeSessionDetailsPresenter.prototype.renderPage = jest.fn()
 
     req = {
       params: { referralId },
@@ -184,6 +209,171 @@ describe('AppointmentController', () => {
         expect.any(Object),
       )
       expect(ScheduleIcsPresenter.prototype.renderPage).toHaveBeenCalledWith(scheduleIcsRes)
+    })
+  })
+
+  describe('recordAttendance', () => {
+    beforeEach(() => {
+      res.locals.content = {
+        pageHeader: 'Record session attendance',
+        description:
+          'The date and time of the session are a permanent record of where this person was. If the session started late, you must record this as part of the feedback.',
+        appointmentDetails: {
+          dateLabel: 'Date',
+          startTimeLabel: 'Start time',
+        },
+        backLink: '/progress/id',
+        attendanceForm: {
+          radios: {
+            id: 'happened',
+            heading: 'Did the session happen?',
+            hint: 'The session happened if something was delivered. ',
+            error: 'Select yes if the session happened',
+            options: [
+              {
+                label: 'Yes',
+              },
+              {
+                label: 'No',
+                radios: {
+                  id: 'attended',
+                  heading: 'Did firstname come to the appointment?',
+                  error: 'Select yes if firstname came to the appointment',
+                  options: [
+                    {
+                      label: 'Yes',
+                    },
+                    {
+                      label: 'No',
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+          happenedRadios: {
+            id: 'happened',
+            heading: 'Did the session happen?',
+            hint: 'The session happened if something was delivered. ',
+            error: 'Select yes if the session happened',
+            yesLabel: 'Yes',
+            noLabel: 'No',
+          },
+          attendedRadios: {
+            id: 'attended',
+            heading: 'Did {{ firstname }} come to the appointment?',
+            error: 'Select yes if {{ firstname }} came to the appointment',
+            yesLabel: 'Yes',
+            noLabel: 'No',
+          },
+          submitButtonText: 'Continue',
+        },
+      }
+    })
+    test('nothing selected', async () => {
+      const caseRefId = randomUUID()
+      req = {
+        ...req,
+        params: { caseRefId },
+        body: {},
+        url: `/ics-feedback/${caseRefId}/attendance`,
+      } as unknown as Request
+      await appointmentController.recordIcsAppointmentAttendance(req, res)
+
+      const { formKeys } = req.session
+      expect(formKeys).toHaveLength(1)
+      expect(formKeys).toContain('happened')
+
+      expect(req.flash).toHaveBeenCalledWith('happenedError', 'Select yes if the session happened')
+      expect(req.flash).not.toHaveBeenCalledWith('attendedError')
+      expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseRefId}/attendance`)
+    })
+    test('happened selected, but attended unselected', async () => {
+      const caseRefId = randomUUID()
+      req = {
+        ...req,
+        params: { caseRefId },
+        body: { happened: 'No' },
+        url: `/ics-feedback/${caseRefId}/attendance`,
+      } as unknown as Request
+      await appointmentController.recordIcsAppointmentAttendance(req, res)
+
+      const { formKeys } = req.session
+      expect(formKeys).toHaveLength(1)
+      expect(formKeys).toContain('attended')
+
+      expect(req.flash).not.toHaveBeenCalledWith('happenedError')
+      expect(req.flash).toHaveBeenCalledWith('attendedError', 'Select yes if {{ firstname }} came to the appointment')
+      expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseRefId}/attendance`)
+    })
+    test('bad body data', async () => {
+      const caseRefId = randomUUID()
+      req = {
+        ...req,
+        params: { caseRefId },
+        body: { message: 'hello' },
+        url: `/ics-feedback/${caseRefId}/attendance`,
+      } as unknown as Request
+      await appointmentController.recordIcsAppointmentAttendance(req, res)
+
+      const { formKeys } = req.session
+      expect(formKeys).toHaveLength(1)
+      expect(formKeys).toContain('happened')
+
+      expect(req.flash).toHaveBeenCalledWith('happenedError', 'Select yes if the session happened')
+      expect(req.flash).not.toHaveBeenCalledWith('attendedError')
+      expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseRefId}/attendance`)
+    })
+    test('session happened', async () => {
+      const caseRefId = randomUUID()
+      req = {
+        ...req,
+        params: { caseRefId },
+        body: { happened: 'Yes' },
+        url: `/ics-feedback/${caseRefId}/attendance`,
+      } as unknown as Request
+      await appointmentController.recordIcsAppointmentAttendance(req, res)
+      expect(req.session.IcsFeedbackSubmission).toStrictEqual({
+        caseReferenceId: caseRefId,
+        record: { didPersonAttend: true, didSessionHappen: true },
+      })
+      expect(req.flash).not.toHaveBeenCalledWith('happenedError')
+      expect(req.flash).not.toHaveBeenCalledWith('attendedError')
+      expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseRefId}/did-session-take-place`)
+    })
+    test('session did not happen but was attended', async () => {
+      const caseRefId = randomUUID()
+      req = {
+        ...req,
+        params: { caseRefId },
+        body: { happened: 'No', attended: 'Yes' },
+        url: `/ics-feedback/${caseRefId}/attendance`,
+      } as unknown as Request
+      await appointmentController.recordIcsAppointmentAttendance(req, res)
+      expect(req.session.IcsFeedbackSubmission).toStrictEqual({
+        caseReferenceId: caseRefId,
+        record: { didPersonAttend: true, didSessionHappen: false },
+      })
+      expect(req.flash).not.toHaveBeenCalledWith('happenedError')
+      expect(req.flash).not.toHaveBeenCalledWith('attendedError')
+      expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseRefId}/why-did-the-session-not-happen`)
+    })
+    test('session did not happen and was not attended', async () => {
+      const caseRefId = randomUUID()
+      req = {
+        ...req,
+        params: { caseRefId },
+        body: { happened: 'No', attended: 'No' },
+        url: `/ics-feedback/${caseRefId}/attendance`,
+      } as unknown as Request
+      await appointmentController.recordIcsAppointmentAttendance(req, res)
+      expect(req.session.IcsFeedbackSubmission).toStrictEqual({
+        caseReferenceId: caseRefId,
+        record: { didPersonAttend: false, didSessionHappen: false },
+      })
+      expect(req.flash).not.toHaveBeenCalledWith('happenedError')
+      expect(req.flash).not.toHaveBeenCalledWith('attendedError')
+      expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseRefId}/how-they-tried-to-contact-the-person`)
     })
   })
 
@@ -505,6 +695,35 @@ describe('AppointmentController', () => {
     })
   })
 
+  describe('viewChangeSessionDetails', () => {
+    let viewChangeReq: Request
+    let viewChangeRes: Response
+
+    beforeEach(() => {
+      viewChangeReq = {
+        params: { referralId, icsId: mockIcsId },
+        session: {},
+        flash: jest.fn(),
+      } as unknown as Request
+
+      viewChangeRes = {
+        locals: { user: { username: 'user1' }, content: {} },
+        render: jest.fn(),
+        redirect: jest.fn(),
+      } as unknown as Response
+    })
+
+    it('should call getIcsById and render the view-change session details page', async () => {
+      jest.spyOn(appointmentService, 'getIcsById').mockResolvedValue(mockAppointmentIcsResponse)
+
+      await appointmentController.viewChangeSessionDetails(viewChangeReq, viewChangeRes)
+
+      expect(appointmentService.getIcsById).toHaveBeenCalledWith(referralId, mockIcsId, 'user1')
+      expect(ViewChangeSessionDetailsPresenter).toHaveBeenCalledWith(mockAppointmentIcsResponse, referralId, mockIcsId)
+      expect(ViewChangeSessionDetailsPresenter.prototype.renderPage).toHaveBeenCalledWith(viewChangeRes)
+    })
+  })
+
   describe('checkIcsFeedback', () => {
     let icsFeedbackCheckReq: Request
     let icsFeedbackCheckRes: Response
@@ -546,7 +765,10 @@ describe('AppointmentController', () => {
 
       await appointmentController.checkIcsFeedback(icsFeedbackCheckReq, icsFeedbackCheckRes)
 
-      expect(IcsFeedbackCheckYourAnswersPresenter).toHaveBeenCalledWith(mockSubmission)
+      expect(IcsFeedbackCheckYourAnswersPresenter).toHaveBeenCalledWith(
+        mockSubmission,
+        icsFeedbackCheckReq.params.caseRefId,
+      )
       expect(IcsFeedbackCheckYourAnswersPresenter.prototype.renderPage).toHaveBeenCalledWith(icsFeedbackCheckRes)
     })
   })
