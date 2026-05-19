@@ -73,15 +73,15 @@ export default function routes({
     await caseListController.showCaseList(req, res)
   })
 
-  get('/referral/:referralId/assign', async (req, res, next) => {
+  get('/referral/:identifier/assign', async (req, res, next) => {
     await referralController.showAssignCaseWorkersPage(req, res, next)
   })
 
-  post('/referral/:referralId/assign', async (req, res) => {
+  post('/referral/:identifier/assign', async (req, res) => {
     await referralController.submitReferralUserAssignments(req, res)
   })
 
-  get('/referral/referral-assignments/:referralId', async (req, res, next) => {
+  get('/referral/referral-assignments/:identifier', async (req, res, next) => {
     await referralController.showAssignCaseWorkersPage(req, res, next)
   })
 
