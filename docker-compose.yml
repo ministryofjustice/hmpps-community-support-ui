@@ -109,7 +109,7 @@ services:
     restart: always
 
   postgresql:
-    image: postgres:18.3
+    image: postgres:18.4
     container_name: postgres
     networks:
       - hmpps
