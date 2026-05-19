@@ -69,7 +69,6 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
   }
 
   private buildFeedbackSummaries(content: IcsFeedbackCheckYourAnswersContent): Array<SummaryListWithTitle> {
-    console.log('WAS IN PERSON', this.wasSessionInPerson(this.icsFeedbackSubmission.record.howSessionTookPlace?.type))
     const summaries = [
       // Session attendance summary
       this.buildSummary(content.summaryLists.filter(item => item.summaryTitle === 'Record session attendance')[0], [
