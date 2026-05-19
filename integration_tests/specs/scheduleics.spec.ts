@@ -298,7 +298,7 @@ test.describe('Schedule ICS Page', () => {
       await scheduleIcsPage.informedByOtherMethodInput.fill('Some other method')
       await scheduleIcsPage.saveAndContinueButton.click()
     })
-    await ScheduleIcsPage.verifyFieldErrorOnPage(page, 'ByPhone', 'Enter why the session is not in-person', false)
+    await ScheduleIcsPage.verifyFieldErrorOnPage(page, 'ByPhone', 'Enter why the session is not in person', false)
   })
 
   test('AC6.1.2 should return error if session taken by video but reason is blank when submission', async ({
@@ -317,7 +317,7 @@ test.describe('Schedule ICS Page', () => {
       await scheduleIcsPage.informedByOtherMethodInput.fill('Some other method')
       await scheduleIcsPage.saveAndContinueButton.click()
     })
-    await ScheduleIcsPage.verifyFieldErrorOnPage(page, 'ByVideo', 'Enter why the session is not in-person', false)
+    await ScheduleIcsPage.verifyFieldErrorOnPage(page, 'ByVideo', 'Enter why the session is not in person', false)
   })
 
   test('AC6.1.3 should return error if session taken by phone but reason is more than maximum length when submission', async ({
@@ -342,7 +342,7 @@ test.describe('Schedule ICS Page', () => {
     await ScheduleIcsPage.verifyFieldErrorOnPage(
       page,
       'ByPhone',
-      'Why is this session not in-person must be 100 characters or less',
+      'Why is this session not in person must be 100 characters or less',
       false,
     )
   })
@@ -369,7 +369,7 @@ test.describe('Schedule ICS Page', () => {
     await ScheduleIcsPage.verifyFieldErrorOnPage(
       page,
       'ByVideo',
-      'Why is this session not in-person must be 100 characters or less',
+      'Why is this session not in person must be 100 characters or less',
       false,
     )
   })
@@ -889,7 +889,7 @@ test.describe('Schedule ICS Page', () => {
       await scheduleIcsPage.phoneCallRadioButton.click()
       await scheduleIcsPage.saveAndContinueButton.click()
     })
-    await ScheduleIcsPage.verifyFieldErrorOnPage(page, 'ByPhone', 'Enter why the session is not in-person', false)
+    await ScheduleIcsPage.verifyFieldErrorOnPage(page, 'ByPhone', 'Enter why the session is not in person', false)
   })
 
   test('AC12.2 should return error if session taken by video but reason is blank when submission', async ({ page }) => {
@@ -904,7 +904,7 @@ test.describe('Schedule ICS Page', () => {
       await scheduleIcsPage.videoCallRadioButton.click()
       await scheduleIcsPage.saveAndContinueButton.click()
     })
-    await ScheduleIcsPage.verifyFieldErrorOnPage(page, 'ByVideo', 'Enter why the session is not in-person', false)
+    await ScheduleIcsPage.verifyFieldErrorOnPage(page, 'ByVideo', 'Enter why the session is not in person', false)
   })
 
   test('AC12.3 should return error if no prison was selected (custody)', async ({ page }) => {
