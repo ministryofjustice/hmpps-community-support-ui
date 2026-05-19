@@ -1,10 +1,5 @@
 import { Request, Response } from 'express'
-import {
-  AppointmentIcsResponse,
-  CreateAppointmentRequest,
-  IcsFeedbackSubmission,
-  SessionMethodRequest,
-} from '@community-support-api'
+import { AppointmentIcsResponse, CreateAppointmentRequest, SessionMethodRequest } from '@community-support-api'
 import { format, parse } from 'date-fns'
 import timeFormat from '../utils/timeFormat'
 import { ErrorMiddlewareErrors, HowSessionTookPlace, IcsFeedbackHowSessionTookPlaceSession } from '../@types/express'

@@ -8,7 +8,6 @@ import communitySupport from '../mockApis/communitySupport'
 
 test.describe('Ics Feedback CYA Page', () => {
   const caseRefId = 'DC2964SE'
-  const icsId = randomUUID()
   const REFERRAL_PROGRESS_URL = `/progress/${caseRefId}`
   const baseDate = new Date('2026-03-25T10:00:00')
   const icsFeedbackSubmissionNoAddress = {

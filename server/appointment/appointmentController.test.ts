@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { AppointmentIcsResponse, CreateAppointmentRequest, IcsFeedbackSubmission } from '@community-support-api'
+import { AppointmentIcsResponse, CreateAppointmentRequest } from '@community-support-api'
 import { randomUUID } from 'crypto'
 import AppointmentController from './appointmentController'
 import ConfirmIcsPresenter, { type AdditionalInformation } from './confirm-ics/confirmIcsPresenter'
