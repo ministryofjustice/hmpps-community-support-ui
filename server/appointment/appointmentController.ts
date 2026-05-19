@@ -29,6 +29,8 @@ import ViewChangeSessionDetailsPresenter from './view-change-session-details/Vie
 import RecordSessionDetailsPresenter from './record-ics/RecordSessionDetailsPresenter'
 import { RecordSessionDetailsFormDataSchema } from '../validation/RecordSessionDetailsFormData'
 import validateRequestBodyAgainstSchema from '../validation/validationUtils'
+import WhyDidSessionNotHappenPresenter from './why-did-session-not-happen/WhyDidSessionNotHappenPresenter'
+import { WhyDidSessionNotHappenFormDataSchema } from '../validation/WhyDidSessionNotHappenFormData'
 
 interface ScheduleFormData {
   sessionDate?: string
@@ -682,6 +684,44 @@ class AppointmentController {
     req.session.icsFeedbackSubmissionsMap[caseRefId] = icsFeedbackSubmission
     validateRequestBodyAgainstSchema(RecordSessionDetailsFormDataSchema, req, res, () => {
       res.redirect(`/ics-feedback/${caseRefId}/session-feedback`)
+    })
+  }
+
+  async whyDidSessionNotHappen(req: Request, res: Response): Promise<void> {
+    const { caseRefId } = req.params as { caseRefId: string }
+    const { username } = res.locals.user
+    const validationErrors: ErrorMiddlewareErrors = res.locals.errors
+    const icsFeedbackSubmission = req.session?.IcsFeedbackSubmission
+    const sessionDetails = icsFeedbackSubmission ? icsFeedbackSubmission.record?.sessionNotHappenReason : null
+    const appointmentData = await this.appointmentService.getICS(caseRefId.toString(), username)
+    const presenter = new WhyDidSessionNotHappenPresenter(
+      caseRefId,
+      appointmentData.referralFirstName,
+      sessionDetails,
+      validationErrors,
+    )
+    return presenter.renderPage(res)
+  }
+
+  recordWhySessionDidNotHappen(req: Request, res: Response): Promise<void> {
+    const { caseRefId } = req.params as { caseRefId: string }
+    const icsFeedbackSubmission = req.session?.IcsFeedbackSubmission
+    if (!icsFeedbackSubmission) {
+      res.redirect(`/progress/${caseRefId}`)
+      return
+    }
+    const details: string =
+      (req.body.whyDidSessionNotHappen === 'SERVICE_PROVIDER_ISSUE' && req.body.serviceProviderIssueDetails) ||
+      (req.body.whyDidSessionNotHappen === 'REFERRAL_COULD_NOT_TAKE_PART' &&
+        req.body.referralCouldNotTakePartDetails) ||
+      (req.body.whyDidSessionNotHappen === 'REFERRAL_DID_NOT_COMPLY' && req.body.referralDidNotComplyDetails) ||
+      undefined
+    icsFeedbackSubmission.record.sessionNotHappenReason = {
+      reason: req.body.whyDidSessionNotHappen,
+      details,
+    }
+    validateRequestBodyAgainstSchema(WhyDidSessionNotHappenFormDataSchema, req, res, () => {
+      res.redirect(`/ics-feedback/${caseRefId}/feedback`)
     })
   }
 }
