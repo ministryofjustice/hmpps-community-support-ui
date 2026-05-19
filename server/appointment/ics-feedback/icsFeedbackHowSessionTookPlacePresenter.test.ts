@@ -58,7 +58,7 @@ describe('IcsFeedbackPresenter', () => {
     it.each([
       ['PHONE', 'VIRTUAL', 'Did the session take place by phone call?'],
       ['VIDEO', 'VIRTUAL', 'Did the session take place by video call?'],
-      ['IN_PERSON_PROBATION_OFFICE', 'IN_PERSON', 'Did the session take place in person at this probation office?'],
+      ['IN_PERSON_PROBATION_OFFICE', 'IN_PERSON', 'Did the session take place in person at this location?'],
       ['IN_PERSON_OTHER_LOCATION', 'IN_PERSON', 'Did the session take place in person at this location?'],
     ])('builds correct pageHeader for sessionMethodType %s', (type, appointmentCategory, expectedHeader) => {
       const sm = { type, appointmentCategory } as SessionMethod
@@ -76,7 +76,7 @@ describe('IcsFeedbackPresenter', () => {
         expect.objectContaining({
           content: expect.objectContaining<Partial<IcsFeedbackHowSessionTookPlaceViewModel>>({
             submitHref: `/ics-feedback/${caseRefId}/did-session-take-place`,
-            backLink: { href: `/ics-feedback/attendance/${caseRefId}` },
+            backLink: { href: `/ics-feedback/${caseRefId}/attendance` },
           }),
         }),
       )
