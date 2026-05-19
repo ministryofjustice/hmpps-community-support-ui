@@ -34,17 +34,8 @@
         "href": "/cases-in-progress"
       }
     ],
-    "unassignedColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Date received"
-    ],
-    "inProgressColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Assigned to",
-      "Date received"
-    ],
+    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
+    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
     "noCasesMessage": "There are no {0} cases to view."
   },
   "/cases-in-progress": {
@@ -63,17 +54,8 @@
         "href": "/cases-in-progress"
       }
     ],
-    "unassignedColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Date received"
-    ],
-    "inProgressColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Assigned to",
-      "Date received"
-    ],
+    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
+    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
     "noCasesMessage": "There are no {0} cases to view."
   },
   "/referral-details/:id": {
@@ -161,15 +143,8 @@
         "href": "/change-log"
       }
     ],
-    "progressActiveColumnHeaders": [
-      "Date and time",
-      "Status",
-      "Action"
-    ],
-    "progressInactiveColumnHeaders": [
-      "Status",
-      "Action"
-    ]
+    "progressActiveColumnHeaders": ["Date and time", "Status", "Action"],
+    "progressInactiveColumnHeaders": ["Status", "Action"]
   },
   "/ics-feedback/:id/did-session-take-place": {
     "submitButtonText": "Continue",
@@ -180,8 +155,8 @@
       "IN_PERSON_OTHER_LOCATION": "Did the session take place in person at this location?",
       "default": "Did the session take place?"
     },
-    "videoCallReasonLabel": "Why was this session not in-person?",
-    "phoneCallReasonLabel": "Why was this session not in-person?",
+    "videoCallReasonLabel": "Why was this session not in person?",
+    "phoneCallReasonLabel": "Why was this session not in person?",
     "probationOfficeSelectBlankText": "Select probation office",
     "probationOfficeSelectLabel": "Select a probation office",
     "addressLine1Label": "Address line 1",

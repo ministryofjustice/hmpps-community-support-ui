@@ -209,10 +209,10 @@ class AppointmentValidator {
             break
         }
         if (!reason || reason.trim() === '') {
-          errors[reasonKey] = { text: 'Enter why the session is not in-person' }
+          errors[reasonKey] = { text: 'Enter why the session is not in person' }
         } else if (reason.length > MAX_REASON_LENGTH) {
           errors[reasonKey] = {
-            text: `Why is this session not in-person must be ${MAX_REASON_LENGTH} characters or less`,
+            text: `Why is this session not in person must be ${MAX_REASON_LENGTH} characters or less`,
           }
         }
       }
