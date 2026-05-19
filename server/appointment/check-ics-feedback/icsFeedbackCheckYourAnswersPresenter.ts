@@ -22,11 +22,11 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
 
   protected buildPageContent(res: Response) {
     const content = this.buildStaticContent(res)
-    console.log(content)
     return {
       ...content,
       submitHref: content.submitHref.replace('caseRefId', this.caseRefId),
       feedbackSummarys: this.buildFeedbackSummaries(content),
+      backLink: { href: content.backLinkHref.replace('caseRefId', this.caseRefId) },
     } as IcsFeedbackCheckYourAnswersViewModel
   }
 
@@ -48,6 +48,15 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
             },
             value: {
               text: values[index],
+              html: row.text === 'Location' ? values[index] : null,
+            },
+            actions: {
+              items: [
+                {
+                  href: row.changeHref.replace('caseRefId', this.caseRefId),
+                  text: 'Change',
+                },
+              ],
             },
             hint: row.hint,
             attributes: {
@@ -60,22 +69,25 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
   }
 
   private buildFeedbackSummaries(content: IcsFeedbackCheckYourAnswersContent): Array<SummaryListWithTitle> {
-    console.log(content.summaryLists)
+    console.log('WAS IN PERSON', this.wasSessionInPerson(this.icsFeedbackSubmission.record.howSessionTookPlace?.type))
     const summaries = [
       // Session attendance summary
       this.buildSummary(content.summaryLists.filter(item => item.summaryTitle === 'Record session attendance')[0], [
         this.icsFeedbackSubmission.record.didPersonAttend ? 'Yes' : 'No',
-        this.icsFeedbackSubmission.record.howSessionTookPlace?.type || null,
+        this.getSessionMethodString(this.icsFeedbackSubmission.record.howSessionTookPlace?.type) || null,
+        this.wasSessionInPerson(this.icsFeedbackSubmission.record.howSessionTookPlace?.type)
+          ? this.formatAddress(this.icsFeedbackSubmission.record.howSessionTookPlace)
+          : null,
         this.icsFeedbackSubmission.record.howSessionTookPlace?.additionalDetails || null,
       ]),
       // Session details summary
       this.buildSummary(content.summaryLists.filter(item => item.summaryTitle === 'Session details')[0], [
-        this.icsFeedbackSubmission.sessionDetails.wasPersonLate ? 'Yes' : 'No',
-        this.icsFeedbackSubmission.sessionDetails.lateReason || null,
-        this.icsFeedbackSubmission.sessionDetails.duration
+        this.icsFeedbackSubmission.sessionDetails?.wasPersonLate ? 'Yes' : 'No',
+        this.icsFeedbackSubmission.sessionDetails?.lateReason || null,
+        this.icsFeedbackSubmission.sessionDetails?.duration
           ? this.buildSessionLength(
-              this.icsFeedbackSubmission.sessionDetails.duration.hours,
-              this.icsFeedbackSubmission.sessionDetails.duration.hours,
+              this.icsFeedbackSubmission.sessionDetails?.duration.hours,
+              this.icsFeedbackSubmission.sessionDetails?.duration.hours,
             )
           : null,
       ]),
@@ -94,5 +106,36 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
       return `${hoursString}${minutesString}`
     }
     return `${minutes} minutes`
+  }
+
+  private wasSessionInPerson(type: string): boolean {
+    const inPersonTypes = ['IN_PERSON_PROBATION_OFFICE', 'IN_PERSON_OTHER_LOCATION']
+    return inPersonTypes.includes(type)
+  }
+
+  private formatAddress(addressDetails: IcsFeedbackSubmission['record']['howSessionTookPlace']): string {
+    if (addressDetails.pdu) {
+      return addressDetails.pdu
+    }
+    const { addressLine1, addressLine2, townOrCity, county, postcode } = addressDetails
+    const addressLines = { addressLine1, addressLine2, townOrCity, county, postcode }
+    return Object.values(addressLines).join('<br />')
+  }
+
+  private getSessionMethodString(type: IcsFeedbackSubmission['record']['howSessionTookPlace']['type']): string | null {
+    switch (type) {
+      case 'IN_PERSON_OTHER_LOCATION':
+        return 'Other Location'
+      case 'OTHER_LOCATION':
+        return 'Other Location'
+      case 'IN_PERSON_PROBATION_OFFICE':
+        return 'Probation Office'
+      case 'PHONE':
+        return 'Phone call'
+      case 'VIDEO':
+        return 'Video call'
+      default:
+        return null
+    }
   }
 }

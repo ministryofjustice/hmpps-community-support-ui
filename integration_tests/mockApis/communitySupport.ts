@@ -338,8 +338,8 @@ export default {
   ): SuperAgentRequest =>
     stubFor({
       request: {
-        method: 'GET',
-        urlPathPattern: `/community-support//bff/referral/${caseRefId}/ics/${icsId}/feedback`,
+        method: 'POST',
+        urlPathPattern: `/community-support/bff/referral/${caseRefId}/ics/${icsId}/feedback`,
       },
       response: {
         status: httpStatus,

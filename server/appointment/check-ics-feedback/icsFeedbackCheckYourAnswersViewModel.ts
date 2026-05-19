@@ -1,10 +1,10 @@
-import { GovukFrontendSummaryList } from '@govuk-frontend'
+import { GovukFrontendBackLink, GovukFrontendSummaryList } from '@govuk-frontend'
 
 export type IcsFeedbackCheckYourAnswersViewModel = {
   pageHeader: string
   submitButtonText: string
   submitHref: string
-  backlinkHref: string
+  backLink: GovukFrontendBackLink
   feedbackSummarys: Array<SummaryListWithTitle>
 }
 
@@ -13,7 +13,7 @@ export type IcsFeedbackCheckYourAnswersContent = {
   summaryLists: Array<IcsFeedbackSummaryListContent>
   submitButtonText: string
   submitHref: string
-  backlinkHref: string
+  backLinkHref: string
 }
 
 export type SummaryListWithTitle = GovukFrontendSummaryList & {
@@ -28,4 +28,5 @@ export type IcsFeedbackSummaryListContent = {
 export type IcsFeedbackSummaryListContentRow = {
   text: string
   hint: string
+  changeHref: string
 }

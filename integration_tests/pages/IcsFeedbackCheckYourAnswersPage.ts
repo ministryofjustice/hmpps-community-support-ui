@@ -10,6 +10,8 @@ class IcsFeedbackCheckYourAnswersPage extends AbstractPage {
 
   readonly sessionFeedbackSummary: Locator
 
+  readonly locationRowTitle: Locator
+
   readonly submitButton: Locator
 
   static url(caseRefId: string) {
@@ -22,7 +24,8 @@ class IcsFeedbackCheckYourAnswersPage extends AbstractPage {
     this.attendanceSummary = page.locator('h2', { hasText: 'Record session attendance' })
     this.sessionDetailsSummary = page.locator('h2', { hasText: 'Session details' })
     this.sessionFeedbackSummary = page.locator('h2', { hasText: 'Session feedback' })
-    this.submitButton = page.locator('button', { hasText: 'Submit feedback'})
+    this.submitButton = page.locator('button', { hasText: 'Submit feedback' })
+    this.locationRowTitle = page.locator('dt', { hasText: 'Location' })
   }
 
   static async verifyOnPage(page: Page): Promise<IcsFeedbackCheckYourAnswersPage> {

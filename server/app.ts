@@ -58,11 +58,8 @@ export default function createApp(services: Services): express.Application {
       res.status(200).json({ ok: true })
     })
     app.post('/test/seed-session-ics-feedback', (req, res) => {
-      if (!req.session.icsFeedbackSubmissionsMap) {
-        req.session.icsFeedbackSubmissionsMap = {}
-      }
       if (req.body?.caseRefId !== '') {
-        req.session.icsFeedbackSubmissionsMap[req.body.caseRefId] = req.body.icsFeedbackSubmission
+        req.session.icsFeedbackSubmission = req.body.icsFeedbackSubmission
       }
       res.status(200).json({ ok: true })
     })
@@ -71,11 +68,8 @@ export default function createApp(services: Services): express.Application {
       res.sendStatus(200)
     })
     app.post('/test/setup-session-feedback-session', (req, res) => {
-      if (!req.session.icsFeedbackSubmissionsMap) {
-        req.session.icsFeedbackSubmissionsMap = {}
-      }
       if (req.body?.caseRefId !== '') {
-        req.session.icsFeedbackSubmissionsMap[req.body.caseRefId] = req.body.icsFeedbackSubmission
+        req.session.icsFeedbackSubmission = req.body.icsFeedbackSubmission
       }
       res.status(200).json({ ok: true })
     })

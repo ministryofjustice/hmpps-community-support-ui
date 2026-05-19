@@ -33,12 +33,10 @@ export declare module 'express-session' {
     assignmentResults: ReferralUserAssignmentResponse
     createAppointmentRequest: CreateAppointmentRequest
     referralInformation: ReferralInformationDto
-    icsFeedbackSubmission: IcsFeedbackSubmission
     icsFeedbackHowSessionTookPlaceSubmission: Record<string, IcsFeedbackHowSessionTookPlaceSession>
-    icsFeedbackSubmissionsMap: Record<string, IcsFeedbackSubmission>
     icsFeedbackPendingFormData: Record<string, Record<string, string>>
     referralProgressBanner?: ReferralProgressBannerContent
-    IcsFeedbackSubmission: IcsFeedbackSubmission & { caseReferenceId: string }
+    icsFeedbackSubmission: IcsFeedbackSubmission & { caseReferenceId: string }
   }
 }
 

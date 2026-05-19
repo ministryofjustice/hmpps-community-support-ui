@@ -9,7 +9,7 @@ import IcsFeedbackSessionDetailsPage from '../pages/IcsFeedbackSessionDetailsPag
 const CASE_REFERENCE = 'AB1234CD'
 const SESSION_FEEDBACK_URL = `/ics-feedback/${CASE_REFERENCE}/session-feedback`
 const SESSION_DETAILS_URL = IcsFeedbackSessionDetailsPage.url(CASE_REFERENCE)
-const CHECK_ANSWERS_URL = `/ics-feedback/${CASE_REFERENCE}/feedback`
+const CHECK_ANSWERS_URL = `/ics-feedback/${CASE_REFERENCE}/check-answers`
 
 const REFERRAL_ID = randomUUID()
 const ICS_ID = randomUUID()
