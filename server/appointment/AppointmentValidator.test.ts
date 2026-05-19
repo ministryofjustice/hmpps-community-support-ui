@@ -21,7 +21,7 @@ describe('AppointmentValidator', () => {
 
     it('returns the correct message for IN_PERSON_PROBATION_OFFICE', () => {
       expect(validator.validationsErrorMessage('IN_PERSON_PROBATION_OFFICE')).toBe(
-        'Select yes if the session took place in person at probation office',
+        'Select yes if the session took place in person at this location',
       )
     })
 
@@ -65,7 +65,7 @@ describe('AppointmentValidator', () => {
       expect(formData.phoneCall).toBe('')
       expect(errors).toEqual(
         expect.objectContaining({
-          phoneCall: { text: 'Select yes if the session took place in person at probation office' },
+          phoneCall: { text: 'Select yes if the session took place in person at this location' },
         }),
       )
     })

@@ -73,7 +73,7 @@ export default class IcsFeedbackHowSessionTookPlacePresenter extends PresenterBa
     return {
       id: 'probation-delivery-unit',
       name: 'probationDeliveryUnit',
-      label: { text: content.probationOfficeSelectLabel },
+      label: { text: content.probationOfficeSelectLabel, classes: 'govuk-visually-hidden' },
       items: [blankItem, ...officeItems],
       value: this.formData?.probationDeliveryUnit ?? null,
       errorMessage: this.validationErrors?.probationDeliveryUnit ?? null,
@@ -225,7 +225,7 @@ export default class IcsFeedbackHowSessionTookPlacePresenter extends PresenterBa
       pageHeader,
       submitButtonText: content.submitButtonText,
       submitHref: `/ics-feedback/${this.caseRefId}/did-session-take-place`,
-      backLink: { href: `/ics-feedback/attendance/${this.caseRefId}` },
+      backLink: { href: `/ics-feedback/${this.caseRefId}/attendance` },
       sessionLocationLines: this.buildSessionLocationLines(),
       errorList: Object.entries(this.validationErrors ?? {}).map(([key, error]) => ({
         href: `#${key}`,
