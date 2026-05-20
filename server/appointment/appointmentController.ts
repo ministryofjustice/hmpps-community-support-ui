@@ -645,7 +645,6 @@ class AppointmentController {
   async sessionDetails(req: Request, res: Response): Promise<void> {
     const { caseRefId } = req.params as { caseRefId: string }
     const { username } = res.locals.user
-    const validationErrors: ErrorMiddlewareErrors = res.locals.errors
     const { icsFeedbackSubmission } = req.session
     const sessionDetails = icsFeedbackSubmission ? icsFeedbackSubmission.sessionDetails : null
     const appointmentData = await this.appointmentService.getICS(caseRefId.toString(), username)
