@@ -16,6 +16,7 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
   constructor(
     private readonly icsFeedbackSubmission: IcsFeedbackSubmission,
     private readonly caseRefId: string,
+    private readonly firstName: string,
   ) {
     super()
   }
@@ -44,7 +45,7 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
           }
           return {
             key: {
-              text: row.text,
+              text: row.text.includes('firstname') ? row.text.replace('firstname', this.firstName) : row.text,
             },
             value: {
               text: values[index],
@@ -59,9 +60,6 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
               ],
             },
             hint: row.hint,
-            attributes: {
-              'data-testid': `${index}-row`,
-            },
           }
         })
         .filter(row => row !== null) as GovukFrontendSummaryListRow[],

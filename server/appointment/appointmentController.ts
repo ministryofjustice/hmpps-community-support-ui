@@ -615,10 +615,16 @@ class AppointmentController {
 
   async checkIcsFeedback(req: Request, res: Response): Promise<void> {
     const caseRefId = req.params.caseRefId as string
+    const { username } = res.locals
     const { icsFeedbackSubmission } = req.session
+    const appointmentData = await this.appointmentService.getICS(caseRefId, username)
 
     if (icsFeedbackSubmission && caseRefId === icsFeedbackSubmission.caseReferenceId) {
-      const presenter = new IcsFeedbackCheckYourAnswersPresenter(icsFeedbackSubmission, caseRefId)
+      const presenter = new IcsFeedbackCheckYourAnswersPresenter(
+        icsFeedbackSubmission,
+        caseRefId,
+        appointmentData.referralFirstName,
+      )
       presenter.renderPage(res)
     } else {
       res.redirect(`/progress/${caseRefId}`)

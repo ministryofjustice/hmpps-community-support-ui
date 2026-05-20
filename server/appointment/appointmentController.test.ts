@@ -746,6 +746,7 @@ describe('AppointmentController', () => {
     })
 
     it('renders the check your answers page with presenter if feedback submission exists in session', async () => {
+      jest.spyOn(appointmentService, 'getICS').mockResolvedValue(mockAppointmentIcsResponse)
       const mockSubmission = {
         record: {
           didSessionHappen: true,
@@ -758,7 +759,11 @@ describe('AppointmentController', () => {
 
       await appointmentController.checkIcsFeedback(icsFeedbackCheckReq, icsFeedbackCheckRes)
 
-      expect(IcsFeedbackCheckYourAnswersPresenter).toHaveBeenCalledWith(mockSubmission, 'AB1234CD')
+      expect(IcsFeedbackCheckYourAnswersPresenter).toHaveBeenCalledWith(
+        mockSubmission,
+        'AB1234CD',
+        mockAppointmentIcsResponse.referralFirstName,
+      )
       expect(IcsFeedbackCheckYourAnswersPresenter.prototype.renderPage).toHaveBeenCalledWith(icsFeedbackCheckRes)
     })
   })

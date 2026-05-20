@@ -102,6 +102,7 @@ test.describe('Ics Feedback CYA Page', () => {
   }
   test.beforeEach(async ({ page }) => {
     await resetStubs()
+    await communitySupport.stubGetICS(caseRefId, mockAppointmentIcsResponse)
     await page.goto('/')
     await login(page)
   })
@@ -162,6 +163,14 @@ test.describe('Ics Feedback CYA Page', () => {
     const icsFeedbackCheckYourAnswersPage = await IcsFeedbackCheckYourAnswersPage.verifyOnPage(page)
     expect(icsFeedbackCheckYourAnswersPage.locationRowTitle).toBeVisible()
     expect(icsFeedbackCheckYourAnswersPage.sessionFeedbackSummary).toBeVisible()
+  })
+
+  test('when the ICS has taken place display persons first name in was late question', async ({ page }) => {
+    await seedSessionWithIcsFeedback(page, caseRefId, icsFeedbackSubmissionOtherAddress)
+    await page.goto(`ics-feedback/${caseRefId}/check-answers`)
+    const icsFeedbackCheckYourAnswersPage = await IcsFeedbackCheckYourAnswersPage.verifyOnPage(page)
+    expect(page.getByText(`Was ${mockAppointmentIcsResponse.referralFirstName} late?`)).toBeVisible()
+    expect(icsFeedbackCheckYourAnswersPage.sessionDetailsSummary).toBeVisible()
   })
 
   // AC6
