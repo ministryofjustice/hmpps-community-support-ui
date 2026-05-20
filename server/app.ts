@@ -76,12 +76,6 @@ export default function createApp(services: Services): express.Application {
       req.session.referralProgressBanner = req.body.referralProgressBanner
       res.sendStatus(200)
     })
-    app.post('/test/setup-session-feedback-session', (req, res) => {
-      if (req.body?.caseRefId !== '') {
-        req.session.icsFeedbackSubmission = req.body.icsFeedbackSubmission
-      }
-      res.status(200).json({ ok: true })
-    })
   }
 
   app.use(setUpCsrf())
