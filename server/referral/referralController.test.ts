@@ -202,7 +202,7 @@ describe('ReferralController', () => {
     it('should render the case assignment page on a GET request for a new referral', async () => {
       req = {
         method: 'GET',
-        params: { referralId: 'referral-id-1' },
+        params: { identifier: 'referral-id-1' },
         flash: jest.fn(),
       } as unknown as Request
       await referralController.showAssignCaseWorkersPage(req, res, next)
@@ -217,7 +217,7 @@ describe('ReferralController', () => {
     it('should flash not found error redirect when no referral is found', async () => {
       req = {
         method: 'GET',
-        params: { referralId: 'referral-id-123' },
+        params: { identifier: 'referral-id-123' },
         flash: jest.fn(),
       } as unknown as Request
       const mockErrorData = { responseStatus: 404 }
@@ -244,7 +244,7 @@ describe('ReferralController', () => {
     it('should refer the assigned case workers for the referral with existing assignments', async () => {
       req = {
         method: 'GET',
-        params: { referralId: 'referral-id-123' },
+        params: { identifier: 'referral-id-123' },
         flash: jest.fn(),
       } as unknown as Request
       const caseworkers = [

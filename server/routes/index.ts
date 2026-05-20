@@ -73,15 +73,15 @@ export default function routes({
     await caseListController.showCaseList(req, res)
   })
 
-  get('/referral/:referralId/assign', async (req, res, next) => {
+  get('/referral/:identifier/assign', async (req, res, next) => {
     await referralController.showAssignCaseWorkersPage(req, res, next)
   })
 
-  post('/referral/:referralId/assign', async (req, res) => {
+  post('/referral/:identifier/assign', async (req, res) => {
     await referralController.submitReferralUserAssignments(req, res)
   })
 
-  get('/referral/referral-assignments/:referralId', async (req, res, next) => {
+  get('/referral/referral-assignments/:identifier', async (req, res, next) => {
     await referralController.showAssignCaseWorkersPage(req, res, next)
   })
 
@@ -127,6 +127,14 @@ export default function routes({
   get('/ics-feedback/:caseRefId/session-details', (req, res) => appointmentController.sessionDetails(req, res))
 
   post('/ics-feedback/:caseRefId/session-details', (req, res) => appointmentController.recordSessionDetails(req, res))
+
+  get('/ics-feedback/:caseRefId/why-did-the-session-not-happen', (req, res) =>
+    appointmentController.whyDidSessionNotHappen(req, res),
+  )
+
+  post('/ics-feedback/:caseRefId/why-did-the-session-not-happen', (req, res) =>
+    appointmentController.recordWhySessionDidNotHappen(req, res),
+  )
 
   return router
 }

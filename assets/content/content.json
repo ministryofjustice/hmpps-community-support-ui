@@ -34,17 +34,8 @@
         "href": "/cases-in-progress"
       }
     ],
-    "unassignedColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Date received"
-    ],
-    "inProgressColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Assigned to",
-      "Date received"
-    ],
+    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
+    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
     "noCasesMessage": "There are no {0} cases to view."
   },
   "/cases-in-progress": {
@@ -63,17 +54,8 @@
         "href": "/cases-in-progress"
       }
     ],
-    "unassignedColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Date received"
-    ],
-    "inProgressColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Assigned to",
-      "Date received"
-    ],
+    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
+    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
     "noCasesMessage": "There are no {0} cases to view."
   },
   "/referral-details/:id": {
@@ -161,27 +143,20 @@
         "href": "/change-log"
       }
     ],
-    "progressActiveColumnHeaders": [
-      "Date and time",
-      "Status",
-      "Action"
-    ],
-    "progressInactiveColumnHeaders": [
-      "Status",
-      "Action"
-    ]
+    "progressActiveColumnHeaders": ["Date and time", "Status", "Action"],
+    "progressInactiveColumnHeaders": ["Status", "Action"]
   },
   "/ics-feedback/:id/did-session-take-place": {
     "submitButtonText": "Continue",
     "pageHeaders": {
       "PHONE": "Did the session take place by phone call?",
       "VIDEO": "Did the session take place by video call?",
-      "IN_PERSON_PROBATION_OFFICE": "Did the session take place in person at this probation office?",
+      "IN_PERSON_PROBATION_OFFICE": "Did the session take place in person at this location?",
       "IN_PERSON_OTHER_LOCATION": "Did the session take place in person at this location?",
       "default": "Did the session take place?"
     },
-    "videoCallReasonLabel": "Why was this session not in-person?",
-    "phoneCallReasonLabel": "Why was this session not in-person?",
+    "videoCallReasonLabel": "Why was this session not in person?",
+    "phoneCallReasonLabel": "Why was this session not in person?",
     "probationOfficeSelectBlankText": "Select probation office",
     "probationOfficeSelectLabel": "Select a probation office",
     "addressLine1Label": "Address line 1",
@@ -291,5 +266,30 @@
     },
     "submitButtonText": "Continue",
     "backLinkHref": "/ics-feedback/{{ id }}/did-session-take-place"
+  },
+  "/ics-feedback/:id/why-did-the-session-not-happen": {
+    "pageHeader": "Why did the session not happen?",
+    "whyDidSessionNotHappenRadio": {
+      "name": "whyDidSessionNotHappen",
+      "items": {
+        "serviceProviderIssueText": "There was an issue with the service provider or logistics, for example a problem with a room booking or a fire alarm",
+        "serviceProviderIssueDetails": {
+          "name": "serviceProviderIssueDetails",
+          "hint": "Give details of any issues that meant the session could not happen."
+        },
+        "referralCouldNotTakePartText": "{{ firstname }} could not take part, for example because of illness or a crisis",
+        "referralCouldNotTakePartDetails": {
+          "name": "referralCouldNotTakePartDetails",
+          "hint": "Give details about why they were unable to take part, such as what happened and who was involved."
+        },
+        "referralDidNotComplyText": "{{ firstname }} did not comply, for example they were disruptive or disengaged",
+        "referralDidNotComplyDetails": {
+          "name": "referralDidNotComplyDetails",
+          "hint": "Give details about their behaviour and how they were unable to take part."
+        }
+      }
+    },
+    "submitButtonText": "Continue",
+    "backLinkHref": "/ics-feedback/{{ id }}/attendance"
   }
 }

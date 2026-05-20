@@ -39,7 +39,7 @@
       {% for i in range(0, 5) %}
         {% set index = i %}
         {% set caseworker = caseworkers[i] if caseworkers and caseworkers | length > i else {} %}
-        {% set isUsed = caseworker.emailAddress | default("") | trim | length > 0 %}
+        {% set isUsed = caseworker.emailAddress is defined %}
         {% set inputAttributes = {
           "data-name": "caseworkers[%index%][email_address]",
           "data-id": "caseworkers[%index%][email_address]",
