@@ -128,5 +128,13 @@ export default function routes({
 
   post('/ics-feedback/:caseRefId/session-details', (req, res) => appointmentController.recordSessionDetails(req, res))
 
+  get('/ics-feedback/:caseRefId/why-did-the-session-not-happen', (req, res) =>
+    appointmentController.whyDidSessionNotHappen(req, res),
+  )
+
+  post('/ics-feedback/:caseRefId/why-did-the-session-not-happen', (req, res) =>
+    appointmentController.recordWhySessionDidNotHappen(req, res),
+  )
+
   return router
 }

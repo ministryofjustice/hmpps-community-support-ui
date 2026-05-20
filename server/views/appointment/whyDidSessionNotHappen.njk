@@ -1,0 +1,15 @@
+{% extends "../partials/layout.njk" %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+
+{% set pageTitle = "Why did the session not happen? – ICS feedback - [service name] " %}
+{% set mainClasses = "govuk-body" %}
+
+{% block contentBody %}
+  <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
+  <form method="post" action="{{ content.submitHref }}">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    {{ govukRadios(content.whyDidSessionNotHappenRadio) }}
+    {{ govukButton(content.submitButton) }}
+  </form>
+{% endblock %}
