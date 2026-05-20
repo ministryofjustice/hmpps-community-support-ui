@@ -23,6 +23,8 @@ import { SessionFeedbackFormDataSchema } from '../validation/SessionFeedbackForm
 import ViewChangeSessionDetailsPresenter from './view-change-session-details/ViewChangeSessionDetailsPresenter'
 import RecordSessionDetailsPresenter from './record-ics/RecordSessionDetailsPresenter'
 import { RecordSessionDetailsFormDataSchema } from '../validation/RecordSessionDetailsFormData'
+import HowTheyTriedToContactThePersonPresenter from './howTheyTriedToContactThePerson/howTheyTriedToContactThePersonPresenter'
+import icsFeedbackHowTheyTriedToContactThePersonFormDataSchema from '../validation/icsFeedbackHowTheyTriedToContactThePersonFormDataSchema'
 import validateRequestBodyAgainstSchema, { formatDynamicErrorMessages } from '../validation/validationUtils'
 import WhyDidSessionNotHappenPresenter from './why-did-session-not-happen/WhyDidSessionNotHappenPresenter'
 import { WhyDidSessionNotHappenFormDataSchema } from '../validation/WhyDidSessionNotHappenFormData'
@@ -539,25 +541,24 @@ class AppointmentController {
     const { list } = res.locals.errors
     const attendedItem = list.find(({ href }) => href === '#attended')
     if (attendedItem) {
-      attendedItem.text = attendedItem.text.replace('{{ firstname }}', icsSessionData.referralFirstName || '')
+      attendedItem.text = attendedItem.text.replace('{{ firstname }}', icsSessionData.referralFirstName)
     }
-
-    const presenter = new RecordSessionAttendancePresenter(caseRefId.toString(), icsSessionData)
+    const record = req.session.IcsFeedbackSubmission?.record || {}
+    const presenter = new RecordSessionAttendancePresenter(caseRefId.toString(), icsSessionData, record)
     presenter.renderPage(res)
   }
 
   recordIcsAppointmentAttendance(req: Request, res: Response): Promise<void> {
-    const { caseRefId } = req.params
-
-    req.session.icsFeedbackSubmission = {
-      caseReferenceId: caseRefId.toString(),
-      record: {
-        didSessionHappen: req.body.happened === 'Yes',
-        didPersonAttend: req.body.happened === 'No' ? req.body.attended === 'Yes' : true,
-      },
-    }
     return validateRequestBodyAgainstSchema(RecordSessionAttendanceFormDataSchema, req, res, data => {
       if (data) {
+        const { caseRefId } = req.params
+        req.session.IcsFeedbackSubmission = {
+          caseReferenceId: caseRefId.toString(),
+          record: {
+            didSessionHappen: data.happened === 'Yes',
+            didPersonAttend: data.happened === 'No' ? data.attended === 'Yes' : true,
+          },
+        }
         res.redirect(recordAttendanceRedirectUrl(data, caseRefId.toString()))
       }
     })
@@ -681,6 +682,45 @@ class AppointmentController {
     validateRequestBodyAgainstSchema(RecordSessionDetailsFormDataSchema, req, res, () => {
       res.redirect(`/ics-feedback/${caseRefId}/session-feedback`)
     })
+  }
+
+  async howTheyTriedToContactThePersion(req: Request, res: Response): Promise<void> {
+    const caseRefId = req.params.caseRefId as string
+    const icsFeedback = req.session.IcsFeedbackSubmission
+    if (!icsFeedback || icsFeedback.caseReferenceId !== caseRefId) {
+      delete req.session.IcsFeedbackSubmission
+      res.redirect(`/ics-feedback/${caseRefId}/attendance`)
+      return
+    }
+    const { username } = res.locals.user
+    const { referralFirstName } = await this.appointmentService.getICS(caseRefId.toString(), username)
+    const presenter = new HowTheyTriedToContactThePersonPresenter(
+      caseRefId,
+      referralFirstName,
+      req.session.IcsFeedbackSubmission,
+    )
+    presenter.renderPage(res)
+  }
+
+  async recordHowTheyTriedToContactThePersion(req: Request, res: Response): Promise<void> {
+    const caseRefId = req.params.caseRefId as string
+    const { username } = res.locals.user
+    const { referralFirstName } = await this.appointmentService.getICS(caseRefId.toString(), username)
+    await validateRequestBodyAgainstSchema(
+      icsFeedbackHowTheyTriedToContactThePersonFormDataSchema(referralFirstName),
+      req,
+      res,
+      ({ howTheyTriedToContactThePerson }) => {
+        const icsFeedback = req.session.IcsFeedbackSubmission
+        const { record } = icsFeedback
+        const newRecord = { ...record, noAttendanceInformation: howTheyTriedToContactThePerson }
+        const newFeedback = { ...icsFeedback, record: newRecord }
+
+        req.session.IcsFeedbackSubmission = newFeedback
+
+        res.redirect(`/ics-feedback/${caseRefId}/check-answers`)
+      },
+    )
   }
 
   async whyDidSessionNotHappen(req: Request, res: Response): Promise<void> {
