@@ -1,5 +1,5 @@
-import AbstractPage from './abstractPage'
 import { expect, Locator, Page } from '@playwright/test'
+import AbstractPage from './abstractPage'
 import ErrorSummary from './components/errorSummary'
 import RadiosWithFieldSet from './components/radiosWithFieldSet'
 import TextArea from './components/textArea'
@@ -32,18 +32,9 @@ export default class IcsFeedbackWhyDidTheSessionNotHappenPage extends AbstractPa
       page.locator('[data-testid="whyDidSessionNotHappen"]'),
       page.locator('[data-testid="fieldset-whyDidSessionNotHappen"]'),
     )
-    const serviceProviderIssue = new TextArea(
-      page.locator('[data-testid="serviceProviderIssueInput"]'),
-      page.locator('[data-testid="serviceProviderIssueHint"]'),
-    )
-    const referralCouldNotTakePart = new TextArea(
-      page.locator('[data-testid="referralCouldNotTakePartInput"]'),
-      page.locator('[data-testid="referralCouldNotTakePartHint"]'),
-    )
-    const referralDidNotComply = new TextArea(
-      page.locator('[data-testid="referralDidNotComplyInput"]'),
-      page.locator('[data-testid="referralDidNotComplyHint"]'),
-    )
+    const serviceProviderIssue = TextArea.create(page.locator('[data-testid="serviceProviderIssueDetails"]'))
+    const referralCouldNotTakePart = TextArea.create(page.locator('[data-testid="referralCouldNotTakePartDetails"]'))
+    const referralDidNotComply = TextArea.create(page.locator('[data-testid="referralDidNotComplyDetails"]'))
     const submit = page.getByRole('button', { name: 'Continue', exact: true })
 
     return new IcsFeedbackWhyDidTheSessionNotHappenPage(
@@ -55,7 +46,7 @@ export default class IcsFeedbackWhyDidTheSessionNotHappenPage extends AbstractPa
       serviceProviderIssue,
       referralCouldNotTakePart,
       referralDidNotComply,
-      submit
+      submit,
     )
   }
 }

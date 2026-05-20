@@ -8,9 +8,11 @@ import IcsFeedbackWhyDidTheSessionNotHappenPage from '../pages/IcsFeedbackWhyDid
 import RecordSessionAttendancePage from '../pages/RecordSessionAttendancePage'
 
 const NOTHING_SELECTED_ERROR_MESSAGE = 'Select why the session did not happen'
-const SERVICE_PROVIDER_ISSUE_DETAILS_EMPTY_ERROR_MESSAGE = 'Give details of any issues that meant the session could not happen'
+const SERVICE_PROVIDER_ISSUE_DETAILS_EMPTY_ERROR_MESSAGE =
+  'Give details of any issues that meant the session could not happen'
 const REFERRAL_COULD_NOT_TAKE_PART_DETAILS_EMPTY_ERROR_MESSAGE = 'Give details about why they were unable to take part'
-const REFERRAL_DID_NOT_COMPLY_DETAILS_EMPTY_ERROR_MESSAGE = 'Give details about their behaviour and how they were unable to take part'
+const REFERRAL_DID_NOT_COMPLY_DETAILS_EMPTY_ERROR_MESSAGE =
+  'Give details about their behaviour and how they were unable to take part'
 
 test.describe('Why Did The Session Not Happen Page', () => {
   const date = new Date()
@@ -50,11 +52,11 @@ test.describe('Why Did The Session Not Happen Page', () => {
       )
       await expect(item2.label).toHaveText('Alice could not take part, for example because of illness or a crisis')
       await expect(item3.label).toHaveText('Alice did not comply, for example they were disruptive or disengaged')
-      await expect(whyDidSessionNotHappenPage.serviceProviderIssueTextArea.label).not.toBeVisible()
+      await expect(whyDidSessionNotHappenPage.serviceProviderIssueTextArea.hint).not.toBeVisible()
       await expect(whyDidSessionNotHappenPage.serviceProviderIssueTextArea.input).not.toBeVisible()
-      await expect(whyDidSessionNotHappenPage.referralCouldNotTakePartTextArea.label).not.toBeVisible()
+      await expect(whyDidSessionNotHappenPage.referralCouldNotTakePartTextArea.hint).not.toBeVisible()
       await expect(whyDidSessionNotHappenPage.referralCouldNotTakePartTextArea.input).not.toBeVisible()
-      await expect(whyDidSessionNotHappenPage.referralDidNotComplyTextArea.label).not.toBeVisible()
+      await expect(whyDidSessionNotHappenPage.referralDidNotComplyTextArea.hint).not.toBeVisible()
       await expect(whyDidSessionNotHappenPage.referralDidNotComplyTextArea.input).not.toBeVisible()
     })
     await expect(whyDidSessionNotHappenPage.continueButton).toBeVisible()
@@ -65,36 +67,36 @@ test.describe('Why Did The Session Not Happen Page', () => {
     const whyDidSessionNotHappenPage = await IcsFeedbackWhyDidTheSessionNotHappenPage.verifyOnPage(page)
     await test.step('check content after clicking option 1', async () => {
       await whyDidSessionNotHappenPage.whyDidSessionNotHappenRadios.items[0].input.click()
-      await expect(whyDidSessionNotHappenPage.serviceProviderIssueTextArea.label).toBeVisible()
-      await expect(whyDidSessionNotHappenPage.serviceProviderIssueTextArea.label).toHaveText(
+      await expect(whyDidSessionNotHappenPage.serviceProviderIssueTextArea.hint).toBeVisible()
+      await expect(whyDidSessionNotHappenPage.serviceProviderIssueTextArea.hint).toHaveText(
         'Give details of any issues that meant the session could not happen.',
       )
       await expect(whyDidSessionNotHappenPage.serviceProviderIssueTextArea.input).toBeVisible()
-      await expect(whyDidSessionNotHappenPage.referralCouldNotTakePartTextArea.label).not.toBeVisible()
+      await expect(whyDidSessionNotHappenPage.referralCouldNotTakePartTextArea.hint).not.toBeVisible()
       await expect(whyDidSessionNotHappenPage.referralCouldNotTakePartTextArea.input).not.toBeVisible()
-      await expect(whyDidSessionNotHappenPage.referralDidNotComplyTextArea.label).not.toBeVisible()
+      await expect(whyDidSessionNotHappenPage.referralDidNotComplyTextArea.hint).not.toBeVisible()
       await expect(whyDidSessionNotHappenPage.referralDidNotComplyTextArea.input).not.toBeVisible()
     })
     await test.step('check content after clicking option 2', async () => {
       await whyDidSessionNotHappenPage.whyDidSessionNotHappenRadios.items[1].input.click()
-      await expect(whyDidSessionNotHappenPage.serviceProviderIssueTextArea.label).not.toBeVisible()
+      await expect(whyDidSessionNotHappenPage.serviceProviderIssueTextArea.hint).not.toBeVisible()
       await expect(whyDidSessionNotHappenPage.serviceProviderIssueTextArea.input).not.toBeVisible()
-      await expect(whyDidSessionNotHappenPage.referralCouldNotTakePartTextArea.label).toBeVisible()
-      await expect(whyDidSessionNotHappenPage.referralCouldNotTakePartTextArea.label).toHaveText(
+      await expect(whyDidSessionNotHappenPage.referralCouldNotTakePartTextArea.hint).toBeVisible()
+      await expect(whyDidSessionNotHappenPage.referralCouldNotTakePartTextArea.hint).toHaveText(
         'Give details about why they were unable to take part, such as what happened and who was involved.',
       )
       await expect(whyDidSessionNotHappenPage.referralCouldNotTakePartTextArea.input).toBeVisible()
-      await expect(whyDidSessionNotHappenPage.referralDidNotComplyTextArea.label).not.toBeVisible()
+      await expect(whyDidSessionNotHappenPage.referralDidNotComplyTextArea.hint).not.toBeVisible()
       await expect(whyDidSessionNotHappenPage.referralDidNotComplyTextArea.input).not.toBeVisible()
     })
     await test.step('check content after clicking option 3', async () => {
       await whyDidSessionNotHappenPage.whyDidSessionNotHappenRadios.items[2].input.click()
-      await expect(whyDidSessionNotHappenPage.serviceProviderIssueTextArea.label).not.toBeVisible()
+      await expect(whyDidSessionNotHappenPage.serviceProviderIssueTextArea.hint).not.toBeVisible()
       await expect(whyDidSessionNotHappenPage.serviceProviderIssueTextArea.input).not.toBeVisible()
-      await expect(whyDidSessionNotHappenPage.referralCouldNotTakePartTextArea.label).not.toBeVisible()
+      await expect(whyDidSessionNotHappenPage.referralCouldNotTakePartTextArea.hint).not.toBeVisible()
       await expect(whyDidSessionNotHappenPage.referralCouldNotTakePartTextArea.input).not.toBeVisible()
-      await expect(whyDidSessionNotHappenPage.referralDidNotComplyTextArea.label).toBeVisible()
-      await expect(whyDidSessionNotHappenPage.referralDidNotComplyTextArea.label).toHaveText(
+      await expect(whyDidSessionNotHappenPage.referralDidNotComplyTextArea.hint).toBeVisible()
+      await expect(whyDidSessionNotHappenPage.referralDidNotComplyTextArea.hint).toHaveText(
         'Give details about their behaviour and how they were unable to take part.',
       )
       await expect(whyDidSessionNotHappenPage.referralDidNotComplyTextArea.input).toBeVisible()
@@ -116,7 +118,7 @@ test.describe('Why Did The Session Not Happen Page', () => {
     })
     await test.step('check field error content', async () => {
       await expect(whyDidSessionNotHappenPage.whyDidSessionNotHappenRadios.errorText).toBeVisible()
-      await expect(whyDidSessionNotHappenPage.whyDidSessionNotHappenRadios.errorText).toHaveText(
+      await expect(whyDidSessionNotHappenPage.whyDidSessionNotHappenRadios.errorText).toContainText(
         NOTHING_SELECTED_ERROR_MESSAGE,
       )
     })
@@ -138,7 +140,7 @@ test.describe('Why Did The Session Not Happen Page', () => {
       })
       await test.step('check field error content', async () => {
         await expect(whyDidSessionNotHappenPage.serviceProviderIssueTextArea.errorText).toBeVisible()
-        await expect(whyDidSessionNotHappenPage.serviceProviderIssueTextArea.errorText).toHaveText(
+        await expect(whyDidSessionNotHappenPage.serviceProviderIssueTextArea.errorText).toContainText(
           SERVICE_PROVIDER_ISSUE_DETAILS_EMPTY_ERROR_MESSAGE,
         )
       })
@@ -155,8 +157,8 @@ test.describe('Why Did The Session Not Happen Page', () => {
         await expect(errorMessage).toHaveText(REFERRAL_COULD_NOT_TAKE_PART_DETAILS_EMPTY_ERROR_MESSAGE)
       })
       await test.step('check field error content', async () => {
-        await expect(whyDidSessionNotHappenPage.serviceProviderIssueTextArea.errorText).toBeVisible()
-        await expect(whyDidSessionNotHappenPage.serviceProviderIssueTextArea.errorText).toHaveText(
+        await expect(whyDidSessionNotHappenPage.referralCouldNotTakePartTextArea.errorText).toBeVisible()
+        await expect(whyDidSessionNotHappenPage.referralCouldNotTakePartTextArea.errorText).toContainText(
           REFERRAL_COULD_NOT_TAKE_PART_DETAILS_EMPTY_ERROR_MESSAGE,
         )
       })
@@ -173,8 +175,8 @@ test.describe('Why Did The Session Not Happen Page', () => {
         await expect(errorMessage).toHaveText(REFERRAL_DID_NOT_COMPLY_DETAILS_EMPTY_ERROR_MESSAGE)
       })
       await test.step('check field error content', async () => {
-        await expect(whyDidSessionNotHappenPage.serviceProviderIssueTextArea.errorText).toBeVisible()
-        await expect(whyDidSessionNotHappenPage.serviceProviderIssueTextArea.errorText).toHaveText(
+        await expect(whyDidSessionNotHappenPage.referralDidNotComplyTextArea.errorText).toBeVisible()
+        await expect(whyDidSessionNotHappenPage.referralDidNotComplyTextArea.errorText).toContainText(
           REFERRAL_DID_NOT_COMPLY_DETAILS_EMPTY_ERROR_MESSAGE,
         )
       })

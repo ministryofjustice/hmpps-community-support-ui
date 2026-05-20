@@ -109,6 +109,7 @@ export default class WhyDidSessionNotHappenPresenter extends PresenterBase<
   ): GovukFrontendRadiosWithConditional {
     return {
       name: content.name,
+      fieldset: { attributes: { 'data-testid': `fieldset-${content.name}` } },
       errorMessage: errorMessages.whyDidSessionNotHappen,
       attributes: { 'data-testid': content.name },
       items: this.buildWhyDidSessionNotHappenRadioItems(content.items, formData, errorMessages),
