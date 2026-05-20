@@ -102,35 +102,33 @@ class ReferralController {
   }
 
   async showAssignCaseWorkersPage(req: Request, res: Response, next: NextFunction) {
-    const { referralId } = req.params as { referralId: string }
+    const { identifier } = req.params as { identifier: string }
     const { username } = res.locals.user
     const viewModel = {
-      referralId,
-      backLink: { href: `/referral-details/${referralId}` },
+      content: {
+        referralId: identifier,
+        backLink: { href: `/referral-details/${identifier}` },
+      },
     }
     try {
-      const caseworkers = await this.referralService.getReferralUserAssignments(referralId, username)
-      return res.render('referral/assign', { content: { ...viewModel }, caseworkers })
+      const caseworkers = await this.referralService.getReferralUserAssignments(identifier, username)
+      return res.render('referral/assign', { ...viewModel, caseworkers })
     } catch (error) {
       if (error.responseStatus === 404) {
-        req.flash('referralIdError', `No referral with identifier '${referralId}' found`)
+        req.flash('referralIdError', `No referral with identifier '${identifier}' found`)
         return res.render('referral/assign', {
-          content: {
-            ...viewModel,
-          },
+          ...viewModel,
           errorsList: [
             {
               href: '#referralIdError',
-              text: `No referral with identifier '${referralId}' found`,
+              text: `No referral with identifier '${identifier}' found`,
             },
           ],
         })
       }
       req.flash('retrievalError', 'An unexpected error when retrieving user assignments. Please try again.')
       return res.render('referral/assign', {
-        content: {
-          ...viewModel,
-        },
+        ...viewModel,
         errorsList: [
           {
             href: '#retrievalError',
@@ -143,8 +141,15 @@ class ReferralController {
 
   async submitReferralUserAssignments(req: Request, res: Response): Promise<void> {
     const { username } = res.locals.user
-    const { referralId } = req.params as { referralId: string }
+    const { identifier } = req.params as { identifier: string }
     const { caseworkers } = req.body
+    const viewModel = {
+      content: {
+        referralId: identifier,
+        backLink: { href: `/referral-details/${identifier}` },
+      },
+    }
+
     let errorsList: Array<{ href: string; text: string }> = []
 
     const referralUserAssignmentsRequest = {
@@ -155,22 +160,32 @@ class ReferralController {
 
     try {
       const referralUserAssignmentsResponse = await this.referralService.submitReferralUserAssignments(
-        referralId,
+        identifier,
         referralUserAssignmentsRequest,
         username,
       )
       if (referralUserAssignmentsResponse.success) {
         req.session.assignmentResults = referralUserAssignmentsResponse as ReferralUserAssignmentsResponse
-        return res.redirect(`/referral-details/${referralId}`)
+        return res.redirect(`/referral-details/${identifier}`)
       }
       req.session.assignmentResults = referralUserAssignmentsResponse as ReferralUserAssignmentsResponse
-      return res.redirect(`/referral/${referralId}/assign`)
+      return res.redirect(`/referral/${identifier}/assign`)
     } catch (error) {
       if (error.responseStatus === 400) {
         const referralUserAssignmentsResponse = error.data || {}
         const formattedCaseworkers = caseworkers.map((item: { email_address?: string }) => ({
-          emailAddress: item?.email_address,
+          emailAddress: item?.email_address ?? '',
         }))
+        const uniqueCaseworkers = Array.from(
+          new Map(formattedCaseworkers.map((item: { emailAddress: string }) => [item.emailAddress, item])).values(),
+        )
+
+        if (referralUserAssignmentsResponse.failureList.length === 0 && referralUserAssignmentsResponse.message) {
+          errorsList.push({
+            href: `#generalError`,
+            text: referralUserAssignmentsResponse.message,
+          })
+        }
 
         const fieldErrors: Record<string, { text: string }> = {}
         referralUserAssignmentsResponse.failureList.forEach((failure: AssignmentFailureDto, index: number) => {
@@ -186,32 +201,27 @@ class ReferralController {
         })
 
         return res.render('referral/assign', {
-          referralId,
-          caseworkers: formattedCaseworkers,
+          ...viewModel,
+          caseworkers: uniqueCaseworkers,
           errorsList,
           errors: fieldErrors,
         })
       }
+
       if (error.responseStatus === 404) {
-        req.flash('referralIdError', `No referral with identifier '${referralId}' found`)
-        errorsList = [{ href: '#referralIdError', text: `No referral with identifier '${referralId}' found` }]
+        req.flash('referralError', `No referral with identifier '${identifier}' found`)
+        errorsList = [{ href: '#referralError', text: `No referral with identifier '${identifier}' found` }]
       } else {
         req.flash('assignmentError', 'An unexpected error when assigning case workers. Please try again.')
         errorsList = [
           { href: '#assignmentError', text: `An unexpected error when assigning case workers. Please try again.` },
         ]
       }
-      return res.render('referral/assign', { referralId, errorsList })
+      return res.render('referral/assign', {
+        ...viewModel,
+        errorsList,
+      })
     }
-  }
-
-  async showAssignedCaseWorkersPage(req: Request, res: Response, next: NextFunction) {
-    const { referralId } = req.params as { referralId: string }
-
-    if (referralId) {
-      return res.render('referral/assign', { referralId })
-    }
-    return res.render('referral/assign')
   }
 
   async showReferralProgressDetails(req: Request, res: Response) {
