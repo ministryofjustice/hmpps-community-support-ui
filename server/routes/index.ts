@@ -131,7 +131,7 @@ export default function routes({
   })
 
   post('/ics-feedback/:caseRefId/submit', async (req, res) => {
-    appointmentController.submitFeedback(req, res)
+    return await appointmentController.submitFeedback(req, res)
   })
   get('/ics-feedback/:caseRefId/why-did-the-session-not-happen', (req, res) =>
     appointmentController.whyDidSessionNotHappen(req, res),
