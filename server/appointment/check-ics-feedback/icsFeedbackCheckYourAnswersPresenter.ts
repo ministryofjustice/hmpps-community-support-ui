@@ -70,7 +70,7 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
     const summaries = [
       // Session attendance summary
       this.buildSummary(content.summaryLists.filter(item => item.summaryTitle === 'Record session attendance')[0], [
-        this.icsFeedbackSubmission.record.didPersonAttend ? 'Yes' : 'No',
+        this.icsFeedbackSubmission.record.didSessionHappen ? 'Yes' : 'No',
         this.getSessionMethodString(this.icsFeedbackSubmission.record.howSessionTookPlace?.type) || null,
         this.wasSessionInPerson(this.icsFeedbackSubmission.record.howSessionTookPlace?.type)
           ? this.formatAddress(this.icsFeedbackSubmission.record.howSessionTookPlace)
