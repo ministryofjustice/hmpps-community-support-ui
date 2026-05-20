@@ -34,8 +34,17 @@
         "href": "/cases-in-progress"
       }
     ],
-    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
-    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
+    "unassignedColumnHeaders": [
+      "Name",
+      "CRN/prison number",
+      "Date received"
+    ],
+    "inProgressColumnHeaders": [
+      "Name",
+      "CRN/prison number",
+      "Assigned to",
+      "Date received"
+    ],
     "noCasesMessage": "There are no {0} cases to view."
   },
   "/cases-in-progress": {
@@ -54,8 +63,17 @@
         "href": "/cases-in-progress"
       }
     ],
-    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
-    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
+    "unassignedColumnHeaders": [
+      "Name",
+      "CRN/prison number",
+      "Date received"
+    ],
+    "inProgressColumnHeaders": [
+      "Name",
+      "CRN/prison number",
+      "Assigned to",
+      "Date received"
+    ],
     "noCasesMessage": "There are no {0} cases to view."
   },
   "/referral-details/:id": {
@@ -143,8 +161,15 @@
         "href": "/change-log"
       }
     ],
-    "progressActiveColumnHeaders": ["Date and time", "Status", "Action"],
-    "progressInactiveColumnHeaders": ["Status", "Action"]
+    "progressActiveColumnHeaders": [
+      "Date and time",
+      "Status",
+      "Action"
+    ],
+    "progressInactiveColumnHeaders": [
+      "Status",
+      "Action"
+    ]
   },
   "/ics-feedback/:id/did-session-take-place": {
     "submitButtonText": "Continue",
@@ -291,5 +316,20 @@
     },
     "submitButtonText": "Continue",
     "backLinkHref": "/ics-feedback/{{ id }}/attendance"
+  },
+  "/ics-feedback/:id/how-they-tried-to-contact-the-person": {
+    "pageHeader": "How did you try to contact {{ firstname }} and what do you know about why they did not attend?",
+    "feedbackForm": {
+      "textarea": {
+        "id": "howTheyTriedToContactThePerson",
+        "name": "howTheyTriedToContactThePerson",
+        "label": "How did you try to contact {{ firstname }} and what do you know about why they did not attend?",
+        "hint": "Include when you tried to contact them and how many times.",
+        "error": "Enter how you tried to contact {{ first name }} and what you know about why they did not attend ",
+        "rows": "5"
+      },
+      "submitButtonText": "Continue"
+    },
+    "backLink": "/ics-feedback/{{ id }}/attendance"
   }
 }

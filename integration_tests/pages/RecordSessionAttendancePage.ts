@@ -19,6 +19,18 @@ export default class RecordSessionAttendancePage extends AbstractPage {
     super(page)
   }
 
+  async selectHappened(option: string) {
+    await this.sessionHappenedRadios.select(option)
+  }
+
+  async selectAttended(option: string) {
+    await this.sessionAttendedRadios.select(option)
+  }
+
+  async clickContinue() {
+    await this.continueButton.click()
+  }
+
   static url(caseRefId: string): string {
     return `/ics-feedback/${caseRefId}/attendance`
   }
