@@ -43,22 +43,32 @@ export default function createApp(services: Services): express.Application {
   if (process.env.NODE_ENV !== 'production') {
     // Test-only route: seeds the session with a createAppointmentRequest for integration tests.
     // Registered before CSRF middleware so it is not blocked by CSRF protection.
-    app.post('/test/setup-appointment-session', (req, res) => {
+    app.post('/test/setup-appointment-session', async (req, res) => {
       req.session.createAppointmentRequest = req.body
+      res.status(200).json({ ok: true })
+    })
+    app.post('/test/setup-ics-feedback-session', (req, res) => {
+      if (!req.session.icsFeedbackSubmission) {
+        req.session.icsFeedbackSubmission = req.body.icsFeedbackSubmission
+      }
       res.status(200).json({ ok: true })
     })
     app.post('/test/setup-referral-information', (req, res) => {
       req.session.referralInformation = req.body
       res.status(200).json({ ok: true })
     })
+    app.post('/test/seed-session-ics-feedback', (req, res) => {
+      if (req.body?.caseRefId !== '') {
+        req.session.icsFeedbackSubmission = req.body.icsFeedbackSubmission
+      }
+      res.status(200).json({ ok: true })
+    })
     app.post('/test/setup-session-feedback-session', (req, res) => {
-      if (!req.session.icsFeedbackSubmissionsMap) {
-        req.session.icsFeedbackSubmissionsMap = {}
-        req.session.IcsFeedbackSubmission = { record: { didSessionHappen: true }, caseReferenceId: '' }
+      if (!req.session.icsFeedbackSubmission) {
+        req.session.icsFeedbackSubmission = { record: { didSessionHappen: true }, caseReferenceId: '' }
       }
       if (req.body?.caseRefId !== '') {
-        req.session.icsFeedbackSubmissionsMap[req.body.caseRefId] = req.body.icsFeedbackSubmission
-        req.session.IcsFeedbackSubmission = req.body.icsFeedbackSubmission
+        req.session.icsFeedbackSubmission = req.body.icsFeedbackSubmission
       }
       res.status(200).json({ ok: true })
     })

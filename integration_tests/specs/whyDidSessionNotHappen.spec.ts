@@ -30,11 +30,12 @@ test.describe('Why Did The Session Not Happen Page', () => {
     await page.goto('/')
     await login(page)
 
-    await seedSessionFeedbackSession(page, pastMeeting.caseRefId, {
+    await seedSessionFeedbackSession(page, {
       record: {
         didSessionHappen: false,
         didPersonAttend: true,
       },
+      caseReferenceId: pastMeeting.caseRefId,
     })
     await test.step('go to why did the session not happen page', async () => {
       await page.goto(IcsFeedbackWhyDidTheSessionNotHappenPage.url(pastMeeting.caseRefId))

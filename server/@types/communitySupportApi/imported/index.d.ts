@@ -442,7 +442,13 @@ export interface components {
     }
     SessionMethodRequest: {
       /** @enum {string} */
-      type: 'PHONE' | 'VIDEO' | 'PROBATION_OFFICE' | 'OTHER_LOCATION'
+      type:
+        | 'PHONE'
+        | 'VIDEO'
+        | 'IN_PERSON_PROBATION_OFFICE'
+        | 'IN_PERSON_OTHER_LOCATION'
+        | 'PROBATION_OFFICE'
+        | 'OTHER_LOCATION'
       additionalDetails?: string | null
       pdu?: string | null
       addressLine1?: string | null
@@ -662,7 +668,7 @@ export interface components {
     }
     ReferralDetailsTableDataDto: {
       referralDate: string
-      assignedTo: CaseWorkerDto[]
+      assignedTo: components['schemas']['CaseWorkerDto'][]
     }
     ReferralAppointmentHistoryDto: {
       /** Format: uuid */

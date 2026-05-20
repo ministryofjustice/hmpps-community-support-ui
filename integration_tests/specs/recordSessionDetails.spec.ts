@@ -34,7 +34,7 @@ test.describe('Session Details Page', () => {
     await page.goto('/')
     await login(page)
 
-    await seedSessionFeedbackSession(page, pastMeeting.caseRefId, {
+    await seedSessionFeedbackSession(page, {
       record: {
         didSessionHappen: true,
       },

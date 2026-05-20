@@ -260,6 +260,69 @@
     },
     "backLink": "/ics-feedback/{{ id }}/session-details"
   },
+  "/ics-feedback/:id/check-answers": {
+    "pageHeader": "Check your answers before submitting feedback",
+    "summaryLists": [
+      {
+        "summaryTitle": "Record session attendance",
+        "rows": [
+          {
+            "text": "Did the session happen?",
+            "hint": "Whether the session happened",
+            "changeHref": "/ics-feedback/caseRefId/attendance"
+          },
+          {
+            "text": "How the session took place",
+            "hint": "How the session took place",
+            "changeHref": "/ics-feedback/caseRefId/did-session-take-place"
+          },
+          {
+            "text": "Location",
+            "hint": "Location of session",
+            "changeHref": "/ics-feedback/caseRefId/did-session-take-place"
+          },
+          {
+            "text": "Reason session not in person",
+            "hint": "Why was the session not in person",
+            "changeHref": "/ics-feedback/caseRefId/did-session-take-place"
+          }
+        ]
+      },
+      {
+        "summaryTitle": "Session details",
+        "rows": [
+          {
+            "text": "Was firstname late?",
+            "hint": "If firstname was late",
+            "changeHref": "/ics-feedback/caseRefId/session-details"
+          },
+          {
+            "text": "Why firstname was late?",
+            "hint": "If firstname was late",
+            "changeHref": "/ics-feedback/caseRefId/session-details"
+          },
+          {
+            "text": "Session duration",
+            "hint": "How long did the session last",
+            "changeHref": "/ics-feedback/caseRefId/session-details"
+          }
+        ]
+      },
+      {
+        "summaryTitle": "Session feedback",
+        "rows": [
+          {
+            "text": "What happened in the session",
+            "hint": "What happened in the session",
+            "changeHref": "/ics-feedback/caseRefId/session-feedback"
+          }
+        ]
+      }
+    ],
+    "submitButtonText": "Submit feedback",
+    "submitHref": "/ics-feedback/caseRefId/submit",
+    "backLinkHref": "/ics-feedback/caseRefId/session-feedback"
+  },
   "/ics-feedback/:id/session-details": {
     "pageHeader": "Session details",
     "appointmentDetails": {

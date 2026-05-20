@@ -1,5 +1,10 @@
 import type { SuperAgentRequest } from 'superagent'
-import { AppointmentIcsResponse, ProbationOffice, ReferralInformation } from '@community-support-api'
+import {
+  AppointmentIcsResponse,
+  IcsFeedbackSubmission,
+  ProbationOffice,
+  ReferralInformation,
+} from '@community-support-api'
 import { stubFor } from './wiremock'
 import { duplicateData } from '../testUtils'
 import referralDetailsPageData from '../mockData/referralDetailsPageData'
@@ -322,6 +327,24 @@ export default {
         status: httpStatus,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: referralProgress,
+        transformers: ['response-template'],
+      },
+    }),
+  stubIcsFeedbackSubmission: (
+    icsFeedback: IcsFeedbackSubmission,
+    icsId: string,
+    caseRefId: string,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'POST',
+        urlPathPattern: `/community-support/bff/referral/${caseRefId}/ics/${icsId}/feedback`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: icsFeedback,
         transformers: ['response-template'],
       },
     }),
