@@ -28,7 +28,7 @@ import { SessionFeedbackFormDataSchema } from '../validation/SessionFeedbackForm
 import ViewChangeSessionDetailsPresenter from './view-change-session-details/ViewChangeSessionDetailsPresenter'
 import RecordSessionDetailsPresenter from './record-ics/RecordSessionDetailsPresenter'
 import { RecordSessionDetailsFormDataSchema } from '../validation/RecordSessionDetailsFormData'
-import validateRequestBodyAgainstSchema from '../validation/validationUtils'
+import validateRequestBodyAgainstSchema, { formatDynamicErrorMessages } from '../validation/validationUtils'
 import WhyDidSessionNotHappenPresenter from './why-did-session-not-happen/WhyDidSessionNotHappenPresenter'
 import { WhyDidSessionNotHappenFormDataSchema } from '../validation/WhyDidSessionNotHappenFormData'
 
@@ -658,10 +658,17 @@ class AppointmentController {
   async sessionDetails(req: Request, res: Response): Promise<void> {
     const { caseRefId } = req.params as { caseRefId: string }
     const { username } = res.locals.user
-    const validationErrors: ErrorMiddlewareErrors = res.locals.errors
     const icsFeedbackSubmission = this.ensureFeedbackSubmission(req, caseRefId)
     const sessionDetails = icsFeedbackSubmission ? icsFeedbackSubmission.sessionDetails : null
     const appointmentData = await this.appointmentService.getICS(caseRefId.toString(), username)
+
+    const validationErrors = formatDynamicErrorMessages(
+      res.locals.errors,
+      '{{ firstname }}',
+      appointmentData.referralFirstName,
+    )
+    res.locals.errors = validationErrors
+
     const presenter = new RecordSessionDetailsPresenter(caseRefId, appointmentData, sessionDetails, validationErrors)
     return presenter.renderPage(res)
   }

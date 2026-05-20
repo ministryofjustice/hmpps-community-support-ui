@@ -43,25 +43,34 @@ export default class RecordSessionDetailsPresenter extends PresenterBase<
   private buildLateReasonTextArea(
     content: WasPersonLateRadioItemsContent,
     formData: RecordSessionDetailsFormData,
+    errorMessage?: GovukFrontendErrorMessage,
   ): string {
+    const errorText: string = errorMessage ? errorMessage.text : undefined
+    const errorHtml: string = errorText
+      ? `
+    <p id="${content.lateReasonName}Error" class="govuk-error-message">
+      <span class="govuk-visually-hidden">Error:</span> ${errorText}
+    </p>`
+      : ''
     return `
-    <div class="govuk-form-group">
+    <div class="govuk-form-group ${errorText ? 'govuk-form-group--error' : ''}" data-testid=${content.lateReasonName} >
       <h1 class="govuk-label-wrapper">
         <label class="govuk-label govuk-label--s"
-          data-testid=${content.lateReasonName}Label for=${content.lateReasonName}>
+          id=${content.lateReasonName}Label>
           ${content.lateReasonLabel.replace('{{ firstname }}', this.data.referralFirstName)}
         </label>
       </h1>
-      <textarea class="govuk-textarea" id=${content.lateReasonName} name=${content.lateReasonName} rows="5" spellcheck="false"
-        data-testid=${content.lateReasonName}>${escapeHtml(formData.lateReason) ?? ''}</textarea>
+      ${errorHtml}
+      <textarea class="govuk-textarea" id=${content.lateReasonName}Input name=${content.lateReasonName} rows="5" spellcheck="false" >${escapeHtml(formData.lateReason) ?? ''}</textarea>
     </div>`
   }
 
   private buildWasPersonLateRadioItems(
     content: WasPersonLateRadioItemsContent,
     formData: RecordSessionDetailsFormData,
+    errorMessage?: GovukFrontendErrorMessage,
   ): GovukFrontendRadiosItemWithConditional[] {
-    const htmlString = this.buildLateReasonTextArea(content, formData)
+    const htmlString = this.buildLateReasonTextArea(content, formData, errorMessage)
     return [
       {
         id: 'YesRadio',
@@ -96,7 +105,7 @@ export default class RecordSessionDetailsPresenter extends PresenterBase<
       },
       errorMessage: errorMessages.wasPersonLate,
       attributes: { 'data-testid': content.name },
-      items: this.buildWasPersonLateRadioItems(content.items, formData),
+      items: this.buildWasPersonLateRadioItems(content.items, formData, errorMessages.lateReason),
     }
   }
 
