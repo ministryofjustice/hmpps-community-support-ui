@@ -84,7 +84,7 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
         this.icsFeedbackSubmission.sessionDetails?.duration
           ? this.buildSessionLength(
               this.icsFeedbackSubmission.sessionDetails?.duration.hours,
-              this.icsFeedbackSubmission.sessionDetails?.duration.hours,
+              this.icsFeedbackSubmission.sessionDetails?.duration.minutes,
             )
           : null,
       ]),
