@@ -724,7 +724,7 @@ describe('AppointmentController', () => {
         ...req,
         url: `/ics-feedback/${caseReferenceId}/how-they-tried-to-contact-the-person`,
         session: {
-          IcsFeedbackSubmission: {
+          icsFeedbackSubmission: {
             caseReferenceId,
             record: {
               didSessionHappen: false,
@@ -758,7 +758,7 @@ describe('AppointmentController', () => {
     })
     test('empty form data', async () => {
       req.body = {}
-      await appointmentController.recordHowTheyTriedToContactThePersion(req, res)
+      await appointmentController.recordHowTheyTriedToContactThePerson(req, res)
       expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseReferenceId}/how-they-tried-to-contact-the-person`)
       expect(req.flash).toHaveBeenCalledWith(
         'howTheyTriedToContactThePersonError',
@@ -767,7 +767,7 @@ describe('AppointmentController', () => {
     })
     test('empty text', async () => {
       req.body = { howTheyTriedToContactThePerson: '' }
-      await appointmentController.recordHowTheyTriedToContactThePersion(req, res)
+      await appointmentController.recordHowTheyTriedToContactThePerson(req, res)
       expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseReferenceId}/how-they-tried-to-contact-the-person`)
       expect(req.flash).toHaveBeenCalledWith(
         'howTheyTriedToContactThePersonError',
@@ -776,7 +776,7 @@ describe('AppointmentController', () => {
     })
     test('too much text', async () => {
       req.body = { howTheyTriedToContactThePerson: new Array(401).fill('a').join('') }
-      await appointmentController.recordHowTheyTriedToContactThePersion(req, res)
+      await appointmentController.recordHowTheyTriedToContactThePerson(req, res)
       expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseReferenceId}/how-they-tried-to-contact-the-person`)
       expect(req.flash).toHaveBeenCalledWith(
         'howTheyTriedToContactThePersonError',
@@ -785,23 +785,75 @@ describe('AppointmentController', () => {
     })
     test('happy path', async () => {
       req.body = { howTheyTriedToContactThePerson: new Array(400).fill('a').join('') }
-      await appointmentController.recordHowTheyTriedToContactThePersion(req, res)
-      expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseReferenceId}/check-answers`)
+      await appointmentController.recordHowTheyTriedToContactThePerson(req, res)
       expect(req.flash).not.toHaveBeenCalled()
+      expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseReferenceId}/check-answers`)
     })
     test('redirect when case reference id is different from the session', async () => {
       const caseRefId = randomUUID()
       req.params.caseRefId = caseRefId
-      await appointmentController.howTheyTriedToContactThePersion(req, res)
-      expect(req.session.IcsFeedbackSubmission).toBeUndefined()
+      await appointmentController.howTheyTriedToContactThePerson(req, res)
+      expect(req.session.icsFeedbackSubmission).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseRefId}/attendance`)
       expect(req.flash).not.toHaveBeenCalled()
     })
     test('redirect when session data is missing', async () => {
-      delete req.session.IcsFeedbackSubmission
-      await appointmentController.howTheyTriedToContactThePersion(req, res)
+      delete req.session.icsFeedbackSubmission
+      await appointmentController.howTheyTriedToContactThePerson(req, res)
       expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseReferenceId}/attendance`)
       expect(req.flash).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('checkIcsFeedback', () => {
+    let icsFeedbackCheckReq: Request
+    let icsFeedbackCheckRes: Response
+
+    beforeEach(() => {
+      IcsFeedbackCheckYourAnswersPresenter.prototype.renderPage = jest.fn()
+
+      icsFeedbackCheckReq = {
+        params: { caseRefId: 'AB1234CD' },
+        session: { icsFeedbackSubmission: null },
+        method: 'GET',
+        body: {},
+        flash: jest.fn(),
+      } as unknown as Request
+
+      icsFeedbackCheckRes = {
+        locals: { user: { username: 'user1' }, content: IcsFeedbackCheckContentFactory.build() },
+        render: jest.fn(),
+        redirect: jest.fn(),
+      } as unknown as Response
+    })
+
+    it('redirects to progress page if no feedback submission in session', async () => {
+      await appointmentController.checkIcsFeedback(icsFeedbackCheckReq, icsFeedbackCheckRes)
+
+      expect(icsFeedbackCheckReq.session.icsFeedbackSubmission).toBeNull()
+      expect(icsFeedbackCheckRes.redirect).toHaveBeenCalledWith('/progress/AB1234CD')
+    })
+
+    it('renders the check your answers page with presenter if feedback submission exists in session', async () => {
+      jest.spyOn(appointmentService, 'getICS').mockResolvedValue(mockAppointmentIcsResponse)
+      const mockSubmission = {
+        record: {
+          didSessionHappen: true,
+          howSessionTookPlace: { type: 'PHONE' as const, additionalDetails: 'Video not available' },
+        },
+        caseReferenceId: 'AB1234CD',
+      }
+
+      icsFeedbackCheckReq.session.icsFeedbackSubmission = mockSubmission
+
+      await appointmentController.checkIcsFeedback(icsFeedbackCheckReq, icsFeedbackCheckRes)
+
+      expect(IcsFeedbackCheckYourAnswersPresenter).toHaveBeenCalledWith(
+        mockSubmission,
+        'AB1234CD',
+        mockAppointmentIcsResponse.referralFirstName,
+      )
+      expect(IcsFeedbackCheckYourAnswersPresenter.prototype.renderPage).toHaveBeenCalledWith(icsFeedbackCheckRes)
     })
   })
 })

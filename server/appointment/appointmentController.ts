@@ -543,7 +543,7 @@ class AppointmentController {
     if (attendedItem) {
       attendedItem.text = attendedItem.text.replace('{{ firstname }}', icsSessionData.referralFirstName)
     }
-    const record = req.session.IcsFeedbackSubmission?.record || {}
+    const record = req.session.icsFeedbackSubmission?.record || {}
     const presenter = new RecordSessionAttendancePresenter(caseRefId.toString(), icsSessionData, record)
     presenter.renderPage(res)
   }
@@ -552,7 +552,7 @@ class AppointmentController {
     return validateRequestBodyAgainstSchema(RecordSessionAttendanceFormDataSchema, req, res, data => {
       if (data) {
         const { caseRefId } = req.params
-        req.session.IcsFeedbackSubmission = {
+        req.session.icsFeedbackSubmission = {
           caseReferenceId: caseRefId.toString(),
           record: {
             didSessionHappen: data.happened === 'Yes',
@@ -684,11 +684,11 @@ class AppointmentController {
     })
   }
 
-  async howTheyTriedToContactThePersion(req: Request, res: Response): Promise<void> {
+  async howTheyTriedToContactThePerson(req: Request, res: Response): Promise<void> {
     const caseRefId = req.params.caseRefId as string
-    const icsFeedback = req.session.IcsFeedbackSubmission
+    const icsFeedback = req.session.icsFeedbackSubmission
     if (!icsFeedback || icsFeedback.caseReferenceId !== caseRefId) {
-      delete req.session.IcsFeedbackSubmission
+      delete req.session.icsFeedbackSubmission
       res.redirect(`/ics-feedback/${caseRefId}/attendance`)
       return
     }
@@ -697,26 +697,27 @@ class AppointmentController {
     const presenter = new HowTheyTriedToContactThePersonPresenter(
       caseRefId,
       referralFirstName,
-      req.session.IcsFeedbackSubmission,
+      req.session.icsFeedbackSubmission,
     )
     presenter.renderPage(res)
   }
 
-  async recordHowTheyTriedToContactThePersion(req: Request, res: Response): Promise<void> {
+  async recordHowTheyTriedToContactThePerson(req: Request, res: Response): Promise<void> {
     const caseRefId = req.params.caseRefId as string
     const { username } = res.locals.user
     const { referralFirstName } = await this.appointmentService.getICS(caseRefId.toString(), username)
+
     await validateRequestBodyAgainstSchema(
       icsFeedbackHowTheyTriedToContactThePersonFormDataSchema(referralFirstName),
       req,
       res,
       ({ howTheyTriedToContactThePerson }) => {
-        const icsFeedback = req.session.IcsFeedbackSubmission
-        const { record } = icsFeedback
+        const { icsFeedbackSubmission } = req.session
+        const { record } = icsFeedbackSubmission || {}
         const newRecord = { ...record, noAttendanceInformation: howTheyTriedToContactThePerson }
-        const newFeedback = { ...icsFeedback, record: newRecord }
+        const newFeedback = { ...icsFeedbackSubmission, record: newRecord }
 
-        req.session.IcsFeedbackSubmission = newFeedback
+        req.session.icsFeedbackSubmission = newFeedback
 
         res.redirect(`/ics-feedback/${caseRefId}/check-answers`)
       },
