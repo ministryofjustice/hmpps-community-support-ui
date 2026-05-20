@@ -15,7 +15,7 @@ class IcsFeedbackCheckYourAnswersPage extends AbstractPage {
   readonly submitButton: Locator
 
   static url(caseRefId: string) {
-    return `/ics-feedback/${caseRefId}/check-your-answers`
+    return `/ics-feedback/${caseRefId}/check-answers`
   }
 
   private constructor(page: Page) {
