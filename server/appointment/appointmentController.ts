@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { AppointmentIcsResponse, CreateAppointmentRequest, SessionMethodRequest } from '@community-support-api'
 import { format, parse } from 'date-fns'
 import timeFormat from '../utils/timeFormat'
-import { ErrorMiddlewareErrors, HowSessionTookPlace, IcsFeedbackHowSessionTookPlaceSession } from '../@types/express'
+import { HowSessionTookPlace, IcsFeedbackHowSessionTookPlaceSession } from '../@types/express'
 import ConfirmIcsPresenter, { type AdditionalInformation } from './confirm-ics/confirmIcsPresenter'
 import InitialContactSessionDetailsPresenter from '../referral/InitialContactSessionDetailsPresenter'
 import ReferralService from '../services/referralService'
@@ -23,7 +23,7 @@ import { SessionFeedbackFormDataSchema } from '../validation/SessionFeedbackForm
 import ViewChangeSessionDetailsPresenter from './view-change-session-details/ViewChangeSessionDetailsPresenter'
 import RecordSessionDetailsPresenter from './record-ics/RecordSessionDetailsPresenter'
 import { RecordSessionDetailsFormDataSchema } from '../validation/RecordSessionDetailsFormData'
-import validateRequestBodyAgainstSchema from '../validation/validationUtils'
+import validateRequestBodyAgainstSchema, { formatDynamicErrorMessages } from '../validation/validationUtils'
 
 interface ScheduleFormData {
   sessionDate?: string
@@ -649,6 +649,14 @@ class AppointmentController {
     const { icsFeedbackSubmission } = req.session
     const sessionDetails = icsFeedbackSubmission ? icsFeedbackSubmission.sessionDetails : null
     const appointmentData = await this.appointmentService.getICS(caseRefId.toString(), username)
+
+    const validationErrors = formatDynamicErrorMessages(
+      res.locals.errors,
+      '{{ firstname }}',
+      appointmentData.referralFirstName,
+    )
+    res.locals.errors = validationErrors
+
     const presenter = new RecordSessionDetailsPresenter(caseRefId, appointmentData, sessionDetails, validationErrors)
     return presenter.renderPage(res)
   }

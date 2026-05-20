@@ -292,7 +292,7 @@ test.describe('ICS Feedback - In person appointment location display', () => {
     await page.goto(IcsFeedbackPage.url(inPersonIcsId))
     const icsFeedbackPage = await IcsFeedbackPage.verifyOnPage(page)
 
-    await expect(icsFeedbackPage.header).toHaveText('Did the session take place in person at this probation office?')
+    await expect(icsFeedbackPage.header).toHaveText('Did the session take place in person at this location?')
     await expect(icsFeedbackPage.sessionLocation).toBeVisible()
     await expect(icsFeedbackPage.sessionLocation).toContainText('Manchester Probation Office')
   })
@@ -356,7 +356,7 @@ test.describe('ICS Feedback - In person appointment location display', () => {
     await IcsFeedbackPage.verifyFieldErrorOnPage(
       page,
       'phoneCall',
-      'Select yes if the session took place in person at probation office',
+      'Select yes if the session took place in person at this location',
     )
   })
 

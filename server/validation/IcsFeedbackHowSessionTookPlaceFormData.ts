@@ -7,7 +7,7 @@ const VALID_POSTCODE = /^[a-zA-Z0-9\s]*$/
 const SESSION_METHOD_MESSAGES: Record<string, string> = {
   PHONE: 'Select yes if the session took place by phone call',
   VIDEO: 'Select yes if the session took place by video call',
-  IN_PERSON_PROBATION_OFFICE: 'Select yes if the session took place in person at probation office',
+  IN_PERSON_PROBATION_OFFICE: 'Select yes if the session took place in person at this location',
   IN_PERSON_OTHER_LOCATION: 'Select yes if the session took place in person at this location',
 }
 

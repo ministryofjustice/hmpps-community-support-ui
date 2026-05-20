@@ -8,6 +8,7 @@ import {
 import { MojSubNavigation } from '@moj-frontend'
 import { ReferralProgress, ReferralAppointmentHistory } from '@community-support-api'
 
+import { isPast } from 'date-fns'
 import PresenterBase from '../../presenter/presenterBase'
 import { ReferralProgressContent, ReferralProgressViewModel } from './referralProgressViewModel'
 import { ReferralProgressBannerContent } from './ReferralProgressBannerContent'
@@ -59,6 +60,14 @@ const getStatusConfig = (caseReference: string, appointmentId: string = ''): Rec
     actions: [{ label: 'View feedback', href: '#' }],
   },
 })
+
+type AppointmentStatus = ReferralAppointmentHistory['status']
+const getAppointmentStatus = ({ status, dateTime }: ReferralAppointmentHistory): AppointmentStatus => {
+  if (status !== 'SCHEDULED') {
+    return status
+  }
+  return isPast(dateTime) ? 'NEEDS_FEEDBACK' : status
+}
 
 export default class ReferralProgressPresenter extends PresenterBase<
   ReferralProgressViewModel,
@@ -187,12 +196,12 @@ export default class ReferralProgressPresenter extends PresenterBase<
   private buildInProgressTableRows(): GovukFrontendTableRow[] {
     const latestAppointments = this.getLatestAppointments()
 
-    const configMap = getStatusConfig(this.caseReference, latestAppointments.at(0)?.appointmentId)
-
-    return latestAppointments.map(item => {
-      const config = configMap[item.status] ?? configMap.NOT_SCHEDULED
+    return latestAppointments.map(appointment => {
+      const configMap = getStatusConfig(this.caseReference, appointment.appointmentId)
+      const appointmentStatus = getAppointmentStatus(appointment)
+      const config = configMap[appointmentStatus] ?? configMap.NOT_SCHEDULED
       return [
-        { text: this.formatAppointmentDateTime(item.dateTime) },
+        { text: this.formatAppointmentDateTime(appointment.dateTime) },
         { html: `<span class="govuk-tag ${config.tagClass}">${config.label}</span>` },
         { html: this.renderActions(config.actions) },
       ]
