@@ -58,7 +58,7 @@ test.describe('Session Details Page', () => {
     await test.step('check was person late radios content', async () => {
       await expect(sessionDetailsPage.wasPersonLateRadios.fieldset.legend).toHaveText('Was Alice late?')
       await expect(sessionDetailsPage.lateReason.label).not.toBeVisible()
-      await expect(sessionDetailsPage.lateReason.input).not.toBeVisible()
+      await expect(sessionDetailsPage.lateReason.input!).not.toBeVisible()
       expect(sessionDetailsPage.wasPersonLateRadios.items).toHaveLength(2)
       const [item1, item2] = sessionDetailsPage.wasPersonLateRadios.items
       await expect(item1.label).toHaveText('Yes')

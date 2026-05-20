@@ -136,5 +136,13 @@ export default function routes({
     appointmentController.recordWhySessionDidNotHappen(req, res),
   )
 
+  get('/ics-feedback/:caseRefId/how-they-tried-to-contact-the-person', (req, res) =>
+    appointmentController.howTheyTriedToContactThePersion(req, res),
+  )
+
+  post('/ics-feedback/:caseRefId/how-they-tried-to-contact-the-person', (req, res) =>
+    appointmentController.recordHowTheyTriedToContactThePersion(req, res),
+  )
+
   return router
 }
