@@ -33,10 +33,7 @@ export default class RadiosWithFieldSet {
   ) {}
 
   async select(label: string) {
-    const item = this.itemsRecord[label]
-    if (item) {
-      await item.select()
-    }
+    await this.itemsRecord[label]?.select()
   }
 
   getItem(label: string): RadioItem | undefined {
