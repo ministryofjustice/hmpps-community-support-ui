@@ -64,13 +64,11 @@ export default function createApp(services: Services): express.Application {
       res.status(200).json({ ok: true })
     })
     app.post('/test/setup-session-feedback-session', (req, res) => {
-      if (!req.session.icsFeedbackSubmissionsMap) {
-        req.session.icsFeedbackSubmissionsMap = {}
-        req.session.IcsFeedbackSubmission = { record: { didSessionHappen: true }, caseReferenceId: '' }
+      if (!req.session.icsFeedbackSubmission) {
+        req.session.icsFeedbackSubmission = { record: { didSessionHappen: true }, caseReferenceId: '' }
       }
       if (req.body?.caseRefId !== '') {
-        req.session.icsFeedbackSubmissionsMap[req.body.caseRefId] = req.body.icsFeedbackSubmission
-        req.session.IcsFeedbackSubmission = req.body.icsFeedbackSubmission
+        req.session.icsFeedbackSubmission = req.body.icsFeedbackSubmission
       }
       res.status(200).json({ ok: true })
     })

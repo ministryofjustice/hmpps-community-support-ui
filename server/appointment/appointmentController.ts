@@ -687,7 +687,7 @@ class AppointmentController {
     const { caseRefId } = req.params as { caseRefId: string }
     const { username } = res.locals.user
     const validationErrors: ErrorMiddlewareErrors = res.locals.errors
-    const icsFeedbackSubmission = req.session?.IcsFeedbackSubmission
+    const icsFeedbackSubmission = req.session?.icsFeedbackSubmission
     const sessionDetails = icsFeedbackSubmission ? icsFeedbackSubmission.record?.sessionNotHappenReason : null
     const appointmentData = await this.appointmentService.getICS(caseRefId.toString(), username)
     const presenter = new WhyDidSessionNotHappenPresenter(
@@ -701,7 +701,7 @@ class AppointmentController {
 
   recordWhySessionDidNotHappen(req: Request, res: Response): Promise<void> {
     const { caseRefId } = req.params as { caseRefId: string }
-    const icsFeedbackSubmission = req.session?.IcsFeedbackSubmission
+    const icsFeedbackSubmission = req.session?.icsFeedbackSubmission
     if (!icsFeedbackSubmission) {
       res.redirect(`/progress/${caseRefId}`)
       return
