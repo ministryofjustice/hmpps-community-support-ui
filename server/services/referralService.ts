@@ -26,16 +26,16 @@ export default class ReferralService {
     return this.communitySupportApiClient.submitReferralById(referralId, username)
   }
 
-  async getReferralUserAssignments(referralId: string, username: string) {
-    return this.communitySupportApiClient.getReferralUserAssignments(referralId, username)
+  async getReferralUserAssignments(caseIdentifier: string, username: string) {
+    return this.communitySupportApiClient.getReferralUserAssignments(caseIdentifier, username)
   }
 
   async submitReferralUserAssignments(
-    referralId: string,
+    caseIdentifier: string,
     assignmentsData: ReferralUserAssignmentsRequest,
     username: string,
   ) {
-    return this.communitySupportApiClient.submitReferralUserAssignments(referralId, assignmentsData, username)
+    return this.communitySupportApiClient.submitReferralUserAssignments(caseIdentifier, assignmentsData, username)
   }
 
   getReferralProgress(caseReference: string, username: string): Promise<ReferralProgress> {
