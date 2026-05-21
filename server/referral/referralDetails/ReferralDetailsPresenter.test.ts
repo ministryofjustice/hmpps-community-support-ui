@@ -37,8 +37,8 @@ describe('ReferralDetailsPresenter', () => {
       referralDetailsTableData: {
         referralDate: '2026-05-09T11:23:00.780Z',
         assignedTo: [
-          { fullName: 'assigned1', emailAddress: 'assigned1@email.com' },
-          { fullName: 'assigned2', emailAddress: 'assigned2@email.com' },
+          { fullName: 'assigned1', emailAddress: 'assigned1@email.com', userType: 'EXTERNAL' },
+          { fullName: 'assigned2', emailAddress: 'assigned2@email.com', userType: 'EXTERNAL' },
         ],
       },
     }

@@ -1,18 +1,18 @@
 import { Locator } from '@playwright/test'
 
 export default class TextArea {
-  static create(textAreaLocator: Locator): TextArea {
-    const inputLocator: Locator = textAreaLocator.locator('> textarea.govuk-textarea')
-    const labelLocator: Locator = textAreaLocator.locator('> h1.govuk-label-wrapper')
-    const hintLocator: Locator = textAreaLocator.locator('> .govuk-hint')
-    const errorTextLocator: Locator = textAreaLocator.locator('> p.govuk-error-message')
-    return new TextArea(inputLocator, labelLocator, hintLocator, errorTextLocator)
+  static create(textAreaLocator: Locator): Promise<TextArea> {
+    const input = textAreaLocator.locator('> textarea.govuk-textarea')
+    const label = textAreaLocator.locator('> h1.govuk-label-wrapper')
+    const hint = textAreaLocator.locator('> .govuk-hint')
+    const errorText = textAreaLocator.locator('> p.govuk-error-message')
+    return Promise.resolve(new TextArea(input, label, hint, errorText))
   }
 
-  constructor(
-    readonly input: Locator,
-    readonly label: Locator,
-    readonly hint: Locator,
-    readonly errorText: Locator,
+  private constructor(
+    public readonly input: Locator,
+    public readonly label: Locator,
+    public readonly hint: Locator,
+    public readonly errorText: Locator,
   ) {}
 }

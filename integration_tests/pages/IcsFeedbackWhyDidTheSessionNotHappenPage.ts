@@ -32,9 +32,11 @@ export default class IcsFeedbackWhyDidTheSessionNotHappenPage extends AbstractPa
       page.locator('[data-testid="whyDidSessionNotHappen"]'),
       page.locator('[data-testid="fieldset-whyDidSessionNotHappen"]'),
     )
-    const serviceProviderIssue = TextArea.create(page.locator('[data-testid="serviceProviderIssueDetails"]'))
-    const referralCouldNotTakePart = TextArea.create(page.locator('[data-testid="referralCouldNotTakePartDetails"]'))
-    const referralDidNotComply = TextArea.create(page.locator('[data-testid="referralDidNotComplyDetails"]'))
+    const serviceProviderIssue = await TextArea.create(page.locator('[data-testid="serviceProviderIssueDetails"]'))
+    const referralCouldNotTakePart = await TextArea.create(
+      page.locator('[data-testid="referralCouldNotTakePartDetails"]'),
+    )
+    const referralDidNotComply = await TextArea.create(page.locator('[data-testid="referralDidNotComplyDetails"]'))
     const submit = page.getByRole('button', { name: 'Continue', exact: true })
 
     return new IcsFeedbackWhyDidTheSessionNotHappenPage(

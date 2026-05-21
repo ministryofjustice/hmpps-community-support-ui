@@ -9,4 +9,8 @@ export default class RadioItem {
     this.input = locator.locator('input')
     this.label = locator.locator('label')
   }
+
+  async select() {
+    await this.input.check()
+  }
 }

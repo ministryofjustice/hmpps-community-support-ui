@@ -118,8 +118,6 @@ export default function routes({
     appointmentController.recordIcsAppointmentAttendance(req, res),
   )
 
-  get('/ics-feedback/feedback/:caseRefId', async (req, res) => appointmentController.checkFeedback(req, res))
-
   get('/ics-feedback/:caseRefId/session-feedback', (req, res) => appointmentController.getSessionFeedback(req, res))
 
   post('/ics-feedback/:caseRefId/session-feedback', (req, res) => appointmentController.submitSessionFeedback(req, res))
@@ -128,12 +126,27 @@ export default function routes({
 
   post('/ics-feedback/:caseRefId/session-details', (req, res) => appointmentController.recordSessionDetails(req, res))
 
+  get('/ics-feedback/:caseRefId/check-answers', async (req, res) => {
+    appointmentController.checkIcsFeedback(req, res)
+  })
+
+  post('/ics-feedback/:caseRefId/submit', async (req, res) => {
+    appointmentController.submitFeedback(req, res)
+  })
   get('/ics-feedback/:caseRefId/why-did-the-session-not-happen', (req, res) =>
     appointmentController.whyDidSessionNotHappen(req, res),
   )
 
   post('/ics-feedback/:caseRefId/why-did-the-session-not-happen', (req, res) =>
     appointmentController.recordWhySessionDidNotHappen(req, res),
+  )
+
+  get('/ics-feedback/:caseRefId/how-they-tried-to-contact-the-person', (req, res) =>
+    appointmentController.howTheyTriedToContactThePerson(req, res),
+  )
+
+  post('/ics-feedback/:caseRefId/how-they-tried-to-contact-the-person', (req, res) =>
+    appointmentController.recordHowTheyTriedToContactThePerson(req, res),
   )
 
   return router

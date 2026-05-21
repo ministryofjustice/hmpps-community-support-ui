@@ -7,9 +7,11 @@
 {% set mainClasses = "govuk-body" %}
 
 {% block content %}
-
-<h1 class="govuk-heading-xl">{{ content.pageHeader }}</h1>
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+<h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
     {% for feedbackSummary in content.feedbackSummarys %}
+       <h2 class="govuk-heading-m">{{ feedbackSummary.summaryTitle }}</h2>
        {{ govukSummaryList(feedbackSummary) }}
     {% endfor %}
 
@@ -20,5 +22,6 @@
         classes: "govuk-!-margin-top-6"
     }) }}
     </form>
-
+</div>
+</div>
 {% endblock %}

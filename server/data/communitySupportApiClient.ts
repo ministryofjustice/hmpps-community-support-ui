@@ -17,6 +17,8 @@ import type {
   AppointmentIcsResponse,
   ReferralProgress,
   ProbationOffice,
+  IcsFeedbackSubmission,
+  IcsFeedbackSubmissionResponse,
 } from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
@@ -99,5 +101,17 @@ export default class CommunitySupportApiClient extends RestClient {
 
   getIcsById(referralId: string, icsId: string, username: string): Promise<AppointmentIcsResponse> {
     return this.get({ path: `/bff/referral/${referralId}/ics/${icsId}` }, asSystem(username))
+  }
+
+  async submitIcsFeedback(
+    caseRefId: string,
+    icsId: string,
+    icsFeedback: IcsFeedbackSubmission,
+    username: string,
+  ): Promise<IcsFeedbackSubmissionResponse> {
+    return this.post(
+      { path: `/bff/referral/${caseRefId}/ics/${icsId}/feedback`, data: icsFeedback },
+      asSystem(username),
+    )
   }
 }

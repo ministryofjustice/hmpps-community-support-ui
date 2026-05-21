@@ -16,11 +16,11 @@ test.describe('Session Details Page', () => {
   const EMPTY_RADIO_ERROR_MESSAGE = 'Select yes if Alice was late'
   const EMPTY_LATE_REASON_ERROR_MESSAGE = 'Enter why Alice was late'
   const EMPTY_DURATION_ERROR_MESSAGE = 'Enter how long the session lasted'
-  const INVALID_HOURS_ERROR_MESSAGE = 'Hours must only include numbers 0 to 9'
-  const INVALID_MINUTES_ERROR_MESSAGE = 'Minutes must only include numbers 0 to 9'
-  const MINUTES_OOB_ERROR_MESSAGE = 'Minutes must be between 0 and 60'
-  const HOURS_TOO_MANY_CHAR_ERROR_MESSAGE = 'Hours must be 2 characters or less'
-  const MINUTES_TOO_MANY_CHAR_ERROR_MESSAGE = 'Minutes must be 2 characters or less'
+  const INVALID_HOURS_ERROR_MESSAGE = 'Hour must only include numbers 0 to 9'
+  const INVALID_MINUTES_ERROR_MESSAGE = 'Minute must only include numbers 0 to 9'
+  const MINUTES_OOB_ERROR_MESSAGE = 'Minute must be between 0 and 60'
+  const HOURS_TOO_MANY_CHAR_ERROR_MESSAGE = 'Hour must be 2 characters or less'
+  const MINUTES_TOO_MANY_CHAR_ERROR_MESSAGE = 'Minute must be 2 characters or less'
 
   const pastMeeting = {
     caseRefId: randomUUID(),
@@ -34,7 +34,7 @@ test.describe('Session Details Page', () => {
     await page.goto('/')
     await login(page)
 
-    await seedSessionFeedbackSession(page, pastMeeting.caseRefId, {
+    await seedSessionFeedbackSession(page, {
       record: {
         didSessionHappen: true,
       },
@@ -58,7 +58,7 @@ test.describe('Session Details Page', () => {
     await test.step('check was person late radios content', async () => {
       await expect(sessionDetailsPage.wasPersonLateRadios.fieldset.legend).toHaveText('Was Alice late?')
       await expect(sessionDetailsPage.lateReason.label).not.toBeVisible()
-      await expect(sessionDetailsPage.lateReason.input).not.toBeVisible()
+      await expect(sessionDetailsPage.lateReason.input!).not.toBeVisible()
       expect(sessionDetailsPage.wasPersonLateRadios.items).toHaveLength(2)
       const [item1, item2] = sessionDetailsPage.wasPersonLateRadios.items
       await expect(item1.label).toHaveText('Yes')

@@ -34,8 +34,17 @@
         "href": "/cases-in-progress"
       }
     ],
-    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
-    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
+    "unassignedColumnHeaders": [
+      "Name",
+      "CRN/prison number",
+      "Date received"
+    ],
+    "inProgressColumnHeaders": [
+      "Name",
+      "CRN/prison number",
+      "Assigned to",
+      "Date received"
+    ],
     "noCasesMessage": "There are no {0} cases to view."
   },
   "/cases-in-progress": {
@@ -54,8 +63,17 @@
         "href": "/cases-in-progress"
       }
     ],
-    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
-    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
+    "unassignedColumnHeaders": [
+      "Name",
+      "CRN/prison number",
+      "Date received"
+    ],
+    "inProgressColumnHeaders": [
+      "Name",
+      "CRN/prison number",
+      "Assigned to",
+      "Date received"
+    ],
     "noCasesMessage": "There are no {0} cases to view."
   },
   "/referral-details/:id": {
@@ -143,8 +161,15 @@
         "href": "/change-log"
       }
     ],
-    "progressActiveColumnHeaders": ["Date and time", "Status", "Action"],
-    "progressInactiveColumnHeaders": ["Status", "Action"]
+    "progressActiveColumnHeaders": [
+      "Date and time",
+      "Status",
+      "Action"
+    ],
+    "progressInactiveColumnHeaders": [
+      "Status",
+      "Action"
+    ]
   },
   "/ics-feedback/:id/did-session-take-place": {
     "submitButtonText": "Continue",
@@ -235,6 +260,69 @@
     },
     "backLink": "/ics-feedback/{{ id }}/session-details"
   },
+  "/ics-feedback/:id/check-answers": {
+    "pageHeader": "Check your answers before submitting feedback",
+    "summaryLists": [
+      {
+        "summaryTitle": "Record session attendance",
+        "rows": [
+          {
+            "text": "Did the session happen?",
+            "hint": "Whether the session happened",
+            "changeHref": "/ics-feedback/caseRefId/attendance"
+          },
+          {
+            "text": "How the session took place",
+            "hint": "How the session took place",
+            "changeHref": "/ics-feedback/caseRefId/did-session-take-place"
+          },
+          {
+            "text": "Location",
+            "hint": "Location of session",
+            "changeHref": "/ics-feedback/caseRefId/did-session-take-place"
+          },
+          {
+            "text": "Reason session not in person",
+            "hint": "Why was the session not in person",
+            "changeHref": "/ics-feedback/caseRefId/did-session-take-place"
+          }
+        ]
+      },
+      {
+        "summaryTitle": "Session details",
+        "rows": [
+          {
+            "text": "Was firstname late?",
+            "hint": "If firstname was late",
+            "changeHref": "/ics-feedback/caseRefId/session-details"
+          },
+          {
+            "text": "Why firstname was late?",
+            "hint": "If firstname was late",
+            "changeHref": "/ics-feedback/caseRefId/session-details"
+          },
+          {
+            "text": "Session duration",
+            "hint": "How long did the session last",
+            "changeHref": "/ics-feedback/caseRefId/session-details"
+          }
+        ]
+      },
+      {
+        "summaryTitle": "Session feedback",
+        "rows": [
+          {
+            "text": "What happened in the session",
+            "hint": "What happened in the session",
+            "changeHref": "/ics-feedback/caseRefId/session-feedback"
+          }
+        ]
+      }
+    ],
+    "submitButtonText": "Submit feedback",
+    "submitHref": "/ics-feedback/caseRefId/submit",
+    "backLinkHref": "/ics-feedback/caseRefId/session-feedback"
+  },
   "/ics-feedback/:id/session-details": {
     "pageHeader": "Session details",
     "appointmentDetails": {
@@ -291,5 +379,20 @@
     },
     "submitButtonText": "Continue",
     "backLinkHref": "/ics-feedback/{{ id }}/attendance"
+  },
+  "/ics-feedback/:id/how-they-tried-to-contact-the-person": {
+    "pageHeader": "How did you try to contact {{ firstname }} and what do you know about why they did not attend?",
+    "feedbackForm": {
+      "textarea": {
+        "id": "howTheyTriedToContactThePerson",
+        "name": "howTheyTriedToContactThePerson",
+        "label": "How did you try to contact {{ firstname }} and what do you know about why they did not attend?",
+        "hint": "Include when you tried to contact them and how many times.",
+        "error": "Enter how you tried to contact {{ first name }} and what you know about why they did not attend ",
+        "rows": "5"
+      },
+      "submitButtonText": "Continue"
+    },
+    "backLink": "/ics-feedback/{{ id }}/attendance"
   }
 }
