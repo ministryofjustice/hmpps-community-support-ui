@@ -758,7 +758,7 @@ class AppointmentController {
       details,
     }
     validateRequestBodyAgainstSchema(WhyDidSessionNotHappenFormDataSchema, req, res, () => {
-      res.redirect(`/ics-feedback/${caseRefId}/feedback`)
+      res.redirect(`/ics-feedback/${caseRefId}/check-answers`)
     })
   }
 }
