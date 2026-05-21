@@ -60,6 +60,62 @@ const recordAttendanceRedirectUrl = (data: RecordSessionAttendanceFormData, case
   return `/ics-feedback/${caseRefId}/how-they-tried-to-contact-the-person`
 }
 
+const restartFeedback = (req: Request, res: Response): boolean => {
+  const caseRefId = req.params.caseRefId as string | undefined
+  if (!caseRefId) {
+    return false
+  }
+  const icsFeedback = req.session.icsFeedbackSubmission
+  if (!icsFeedback || icsFeedback.caseReferenceId !== caseRefId) {
+    delete req.session.icsFeedbackSubmission
+    res.redirect(`/ics-feedback/${caseRefId}/attendance`)
+    return true
+  }
+  return false
+}
+
+const buildHowSessionTookPlace = (formData: IcsFeedbackHowSessionTookPlaceFormData): HowSessionTookPlace => {
+  if (formData.phoneCall === 'yes') {
+    return { type: 'PHONE' }
+  }
+  const formType = formData.howSessionTookPlace
+  if (formType === 'PHONE') {
+    return { type: 'PHONE', additionalDetails: formData.phoneCallReason }
+  }
+  if (formType === 'VIDEO') {
+    return { type: 'VIDEO', additionalDetails: formData.videoCallReason }
+  }
+  if (formType === 'IN_PERSON_PROBATION_OFFICE') {
+    return { type: 'IN_PERSON_PROBATION_OFFICE', pdu: formData.probationDeliveryUnit }
+  }
+  return {
+    type: 'IN_PERSON_OTHER_LOCATION',
+    addressLine1: formData.addressLine1,
+    addressLine2: formData.addressLine2,
+    townOrCity: formData.townOrCity,
+    county: formData.county,
+    postcode: formData.postcode,
+  }
+}
+
+const loadIcsFeedbackFromSession = (
+  icsFeedback: IcsFeedbackHowSessionTookPlaceSession | undefined,
+): IcsFeedbackHowSessionTookPlaceFormData => {
+  if (!icsFeedback?.howSessionTookPlace) return {}
+  const { type, additionalDetails, pdu, addressLine1, addressLine2, townOrCity, county, postcode } =
+    icsFeedback.howSessionTookPlace
+  if (type === 'PHONE') {
+    if (additionalDetails) {
+      return { phoneCall: 'no', howSessionTookPlace: 'PHONE', phoneCallReason: additionalDetails }
+    }
+    return { phoneCall: 'yes' }
+  }
+  const base: IcsFeedbackHowSessionTookPlaceFormData = { phoneCall: 'no', howSessionTookPlace: type }
+  if (type === 'VIDEO') return { ...base, videoCallReason: additionalDetails }
+  if (type === 'IN_PERSON_PROBATION_OFFICE') return { ...base, probationDeliveryUnit: pdu }
+  return { ...base, addressLine1, addressLine2, townOrCity, county, postcode }
+}
+
 class AppointmentController {
   private readonly validator = new AppointmentValidator()
 
@@ -67,7 +123,7 @@ class AppointmentController {
     private readonly referralService: ReferralService,
     private readonly appointmentService: AppointmentService,
     private readonly referenceDataService: ReferenceDataService,
-  ) {}
+  ) { }
 
   async checkIcs(req: Request, res: Response): Promise<void> {
     const { username } = res.locals.user
@@ -390,13 +446,10 @@ class AppointmentController {
       .then(presenter => presenter.renderPage(res))
   }
 
-  async didSessionTakePlace(req: Request, res: Response): Promise<void> {
+  async recordDidSessionTakePlace(req: Request, res: Response): Promise<void> {
     const { caseRefId } = req.params as { caseRefId: string }
     const { username } = res.locals.user
-    const [probationOffices, icsAppointment] = await Promise.all([
-      this.referenceDataService.getProbationOffices(),
-      this.appointmentService.getICS(caseRefId, username),
-    ])
+    const icsAppointment = await this.appointmentService.getICS(caseRefId, username)
     const { sessionMethod } = icsAppointment
 
     if (req.method === 'POST') {
@@ -434,7 +487,7 @@ class AppointmentController {
       const storedHowSessionTookPlace = icsFeedbackSubmission?.record?.howSessionTookPlace as
         | HowSessionTookPlace
         | undefined
-      formData = this.loadIcsFeedbackFromSession(
+      formData = loadIcsFeedbackFromSession(
         storedHowSessionTookPlace ? { howSessionTookPlace: storedHowSessionTookPlace } : undefined,
       )
     }
@@ -685,15 +738,12 @@ class AppointmentController {
   }
 
   async howTheyTriedToContactThePerson(req: Request, res: Response): Promise<void> {
-    const caseRefId = req.params.caseRefId as string
-    const icsFeedback = req.session.icsFeedbackSubmission
-    if (!icsFeedback || icsFeedback.caseReferenceId !== caseRefId) {
-      delete req.session.icsFeedbackSubmission
-      res.redirect(`/ics-feedback/${caseRefId}/attendance`)
+    if (restartFeedback(req, res)) {
       return
     }
     const { username } = res.locals.user
-    const { referralFirstName } = await this.appointmentService.getICS(caseRefId.toString(), username)
+    const caseRefId = req.params.caseRefId as string
+    const { referralFirstName } = await this.appointmentService.getICS(caseRefId, username)
     const presenter = new HowTheyTriedToContactThePersonPresenter(
       caseRefId,
       referralFirstName,
