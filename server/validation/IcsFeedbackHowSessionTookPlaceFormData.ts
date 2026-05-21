@@ -14,34 +14,29 @@ const SESSION_METHOD_MESSAGES: Record<string, string> = {
 export const phoneCallErrorMessage = (sessionMethodType: string): string =>
   SESSION_METHOD_MESSAGES[sessionMethodType] ?? 'Select yes if the session took place'
 
-const toTrimmedString = (v: unknown): string => (typeof v === 'string' ? v.trim() : '')
-
-export const baseFormSchema = z.object({
-  phoneCall: z.preprocess(toTrimmedString, z.string()),
-  howSessionTookPlace: z.preprocess(toTrimmedString, z.string()),
-  phoneCallReason: z.preprocess(toTrimmedString, z.string()),
-  videoCallReason: z.preprocess(toTrimmedString, z.string()),
-  probationDeliveryUnit: z.preprocess(toTrimmedString, z.string()),
-  addressLine1: z.preprocess(toTrimmedString, z.string()),
-  addressLine2: z.preprocess(toTrimmedString, z.string()),
-  townOrCity: z.preprocess(toTrimmedString, z.string()),
-  county: z.preprocess(toTrimmedString, z.string()),
-  postcode: z.preprocess(toTrimmedString, z.string()),
-})
-
-export type IcsFeedbackFormData = z.infer<typeof baseFormSchema>
-
-export const buildIcsFeedbackFormSchema = (sessionMethodType: string) =>
-  baseFormSchema.superRefine((data, ctx) => {
+export const IcsFeedbackFormSchema = z
+  .object({
+    sessionMethodType: z.string(),
+    phoneCall: z.string().trim().optional(),
+    howSessionTookPlace: z.string().trim().optional(),
+    phoneCallReason: z.string().trim().optional(),
+    videoCallReason: z.string().trim().optional(),
+    probationDeliveryUnit: z.string().trim().optional(),
+    addressLine1: z.string().trim().optional(),
+    addressLine2: z.string().trim().optional(),
+    townOrCity: z.string().trim().optional(),
+    county: z.string().trim().optional(),
+    postcode: z.string().trim().optional(),
+  })
+  .superRefine((data, ctx) => {
     if (!data.phoneCall) {
       ctx.addIssue({
         code: 'custom',
-        message: phoneCallErrorMessage(sessionMethodType),
+        message: phoneCallErrorMessage(data.sessionMethodType),
         path: ['phoneCall'],
       })
       return
     }
-
     if (data.phoneCall !== 'no') return
 
     if (!data.howSessionTookPlace) {
@@ -180,3 +175,5 @@ export const buildIcsFeedbackFormSchema = (sessionMethodType: string) =>
       }
     }
   })
+
+export type IcsFeedbackFormData = z.infer<typeof IcsFeedbackFormSchema>

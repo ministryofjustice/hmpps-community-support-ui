@@ -28,6 +28,7 @@ import icsFeedbackHowTheyTriedToContactThePersonFormDataSchema from '../validati
 import validateRequestBodyAgainstSchema, { formatDynamicErrorMessages } from '../validation/validationUtils'
 import WhyDidSessionNotHappenPresenter from './why-did-session-not-happen/WhyDidSessionNotHappenPresenter'
 import { WhyDidSessionNotHappenFormDataSchema } from '../validation/WhyDidSessionNotHappenFormData'
+import { IcsFeedbackFormSchema } from '../validation/IcsFeedbackHowSessionTookPlaceFormData'
 
 interface ScheduleFormData {
   sessionDate?: string
@@ -399,33 +400,29 @@ class AppointmentController {
     const { sessionMethod } = icsAppointment
 
     if (req.method === 'POST') {
-      const { formData, errors } = this.validator.validateIcsFeedbackForm(req, sessionMethod.type)
+      if (!req.session.icsFeedbackPendingFormData) {
+        req.session.icsFeedbackPendingFormData = {}
+      }
+      req.session.icsFeedbackPendingFormData[caseRefId] = req.body as Record<string, string>
 
-      if (Object.keys(errors).length > 0) {
-        if (!req.session.icsFeedbackPendingFormData) {
-          req.session.icsFeedbackPendingFormData = {}
+      req.body.sessionMethodType = sessionMethod.type
+      return validateRequestBodyAgainstSchema(IcsFeedbackFormSchema, req, res, () => {
+        let { icsFeedbackSubmission } = req.session
+        if (!icsFeedbackSubmission?.record) {
+          icsFeedbackSubmission = {
+            ...icsFeedbackSubmission,
+            record: { didSessionHappen: true },
+          }
         }
-        req.session.icsFeedbackPendingFormData[caseRefId] = formData as Record<string, string>
-        Object.entries(errors).forEach(([field, error]) => {
-          req.flash(`${field}Error`, error.text)
-        })
-        req.session.formKeys = [...new Set([...(req.session.formKeys ?? []), ...Object.keys(errors)])]
-        return res.redirect(`/ics-feedback/${caseRefId}/did-session-take-place`)
-      }
-
-      let { icsFeedbackSubmission } = req.session
-      if (!icsFeedbackSubmission?.record) {
-        icsFeedbackSubmission = {
-          ...icsFeedbackSubmission,
-          record: { didSessionHappen: true },
+        icsFeedbackSubmission.record = {
+          ...icsFeedbackSubmission.record,
+          howSessionTookPlace: this.buildHowSessionTookPlace(
+            req.body as IcsFeedbackHowSessionTookPlaceFormData,
+          ) as SessionMethodRequest,
         }
-      }
-      icsFeedbackSubmission.record = {
-        ...icsFeedbackSubmission.record,
-        howSessionTookPlace: this.buildHowSessionTookPlace(formData) as SessionMethodRequest,
-      }
-
-      return res.redirect(`/ics-feedback/${caseRefId}/session-details`)
+        req.session.icsFeedbackSubmission = icsFeedbackSubmission
+        return res.redirect(`/ics-feedback/${caseRefId}/session-details`)
+      })
     }
 
     let formData: IcsFeedbackHowSessionTookPlaceFormData
@@ -441,7 +438,7 @@ class AppointmentController {
         storedHowSessionTookPlace ? { howSessionTookPlace: storedHowSessionTookPlace } : undefined,
       )
     }
-    const validationErrors = res.locals.errors?.messages as Record<string, { text: string }> | undefined
+    const validationErrors = res.locals.errors
     const presenter = new IcsFeedbackHowSessionTookPlacePresenter(
       caseRefId,
       sessionMethod,
@@ -452,7 +449,7 @@ class AppointmentController {
     return presenter.renderPage(res)
   }
 
-  buildHowSessionTookPlace(formData: IcsFeedbackHowSessionTookPlaceFormData): HowSessionTookPlace {
+  buildHowSessionTookPlace(formData: IcsFeedbackHowSessionTookPlaceFormData): Partial<HowSessionTookPlace> {
     if (formData.phoneCall === 'yes') {
       return { type: 'PHONE' }
     }
@@ -466,14 +463,17 @@ class AppointmentController {
     if (formType === 'IN_PERSON_PROBATION_OFFICE') {
       return { type: 'IN_PERSON_PROBATION_OFFICE', pdu: formData.probationDeliveryUnit }
     }
-    return {
-      type: 'IN_PERSON_OTHER_LOCATION',
-      addressLine1: formData.addressLine1,
-      addressLine2: formData.addressLine2,
-      townOrCity: formData.townOrCity,
-      county: formData.county,
-      postcode: formData.postcode,
+    if (formType === 'IN_PERSON_OTHER_LOCATION') {
+      return {
+        type: 'IN_PERSON_OTHER_LOCATION',
+        addressLine1: formData.addressLine1,
+        addressLine2: formData.addressLine2,
+        townOrCity: formData.townOrCity,
+        county: formData.county,
+        postcode: formData.postcode,
+      }
     }
+    return {}
   }
 
   loadIcsFeedbackFromSession(

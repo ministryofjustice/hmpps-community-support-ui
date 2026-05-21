@@ -11,6 +11,7 @@ import {
   GovukFrontendRadiosItemWithConditional,
   GovukFrontendRadiosWithConditional,
 } from '../../@types/govukFrontend/derived'
+import { ErrorMiddlewareErrors } from '../../@types/express'
 
 export default class IcsFeedbackHowSessionTookPlacePresenter extends PresenterBase<
   IcsFeedbackHowSessionTookPlaceViewModel,
@@ -21,7 +22,7 @@ export default class IcsFeedbackHowSessionTookPlacePresenter extends PresenterBa
     private readonly sessionMethod: SessionMethod,
     private readonly probationOffices: ProbationOffice[],
     private readonly formData?: IcsFeedbackHowSessionTookPlaceFormData,
-    private readonly validationErrors?: Record<string, { text: string }>,
+    private readonly validationErrors?: ErrorMiddlewareErrors,
   ) {
     super()
   }
@@ -42,11 +43,11 @@ export default class IcsFeedbackHowSessionTookPlacePresenter extends PresenterBa
 
   private buildVideoCallReasonInputArgs(content: IcsFeedbackHowSessionTookPlaceContent): GovukFrontendInput {
     return {
-      id: 'video-call-reason',
+      id: 'videoCallReason',
       name: 'videoCallReason',
       type: 'text',
       value: this.formData?.videoCallReason ?? null,
-      errorMessage: this.validationErrors?.videoCallReason ?? null,
+      errorMessage: this.validationErrors?.messages.videoCallReason ?? null,
       spellcheck: false,
       label: { text: content.videoCallReasonLabel },
     }
@@ -54,11 +55,11 @@ export default class IcsFeedbackHowSessionTookPlacePresenter extends PresenterBa
 
   private buildPhoneCallReasonInputArgs(content: IcsFeedbackHowSessionTookPlaceContent): GovukFrontendInput {
     return {
-      id: 'phone-call-reason',
+      id: 'phoneCallReason',
       name: 'phoneCallReason',
       type: 'text',
       value: this.formData?.phoneCallReason ?? null,
-      errorMessage: this.validationErrors?.phoneCallReason ?? null,
+      errorMessage: this.validationErrors?.messages.phoneCallReason ?? null,
       spellcheck: false,
       label: { text: content.phoneCallReasonLabel },
     }
@@ -71,12 +72,12 @@ export default class IcsFeedbackHowSessionTookPlacePresenter extends PresenterBa
       text: office.name,
     }))
     return {
-      id: 'probation-delivery-unit',
+      id: 'probationDeliveryUnit',
       name: 'probationDeliveryUnit',
       label: { text: content.probationOfficeSelectLabel, classes: 'govuk-visually-hidden' },
       items: [blankItem, ...officeItems],
       value: this.formData?.probationDeliveryUnit ?? null,
-      errorMessage: this.validationErrors?.probationDeliveryUnit ?? null,
+      errorMessage: this.validationErrors?.messages.probationDeliveryUnit ?? null,
     }
   }
 
@@ -84,44 +85,44 @@ export default class IcsFeedbackHowSessionTookPlacePresenter extends PresenterBa
     return [
       {
         label: { text: content.addressLine1Label },
-        id: 'address-line-1',
+        id: 'addressLine1',
         name: 'addressLine1',
         value: this.formData?.addressLine1 ?? null,
-        errorMessage: this.validationErrors?.addressLine1 ?? null,
+        errorMessage: this.validationErrors?.messages.addressLine1 ?? null,
         autocomplete: 'address-line1',
       },
       {
         label: { text: content.addressLine2Label },
-        id: 'address-line-2',
+        id: 'addressLine2',
         name: 'addressLine2',
         value: this.formData?.addressLine2 ?? null,
-        errorMessage: this.validationErrors?.addressLine2 ?? null,
+        errorMessage: this.validationErrors?.messages.addressLine2 ?? null,
         autocomplete: 'address-line2',
       },
       {
         label: { text: content.townOrCityLabel },
         classes: 'govuk-!-width-two-thirds',
-        id: 'address-town-or-city',
+        id: 'townOrCity',
         name: 'townOrCity',
         value: this.formData?.townOrCity ?? null,
-        errorMessage: this.validationErrors?.townOrCity ?? null,
+        errorMessage: this.validationErrors?.messages.townOrCity ?? null,
         autocomplete: 'address-level2',
       },
       {
         label: { text: content.countyLabel },
         classes: 'govuk-!-width-two-thirds',
-        id: 'address-county',
+        id: 'county',
         name: 'county',
         value: this.formData?.county ?? null,
-        errorMessage: this.validationErrors?.county ?? null,
+        errorMessage: this.validationErrors?.messages.county ?? null,
       },
       {
         label: { text: content.postcodeLabel },
         classes: 'govuk-input--width-10',
-        id: 'address-postcode',
+        id: 'postcode',
         name: 'postcode',
         value: this.formData?.postcode ?? null,
-        errorMessage: this.validationErrors?.postcode ?? null,
+        errorMessage: this.validationErrors?.messages.postcode ?? null,
         autocomplete: 'postal-code',
       },
     ]
@@ -172,7 +173,7 @@ export default class IcsFeedbackHowSessionTookPlacePresenter extends PresenterBa
     })
 
     return {
-      idPrefix: 'how-session-took-place',
+      idPrefix: 'howSessionTookPlace',
       name: 'howSessionTookPlace',
       fieldset: {
         legend: {
@@ -181,7 +182,7 @@ export default class IcsFeedbackHowSessionTookPlacePresenter extends PresenterBa
         },
       },
       hint: { text: content.howSessionHint },
-      errorMessage: this.validationErrors?.howSessionTookPlace ?? null,
+      errorMessage: this.validationErrors?.messages.howSessionTookPlace ?? null,
       items,
     }
   }
@@ -192,7 +193,7 @@ export default class IcsFeedbackHowSessionTookPlacePresenter extends PresenterBa
     howSessionHtml: string,
   ): GovukFrontendRadiosWithConditional {
     return {
-      idPrefix: 'phone-call',
+      idPrefix: 'phoneCall',
       name: 'phoneCall',
       fieldset: {
         legend: {
@@ -200,7 +201,7 @@ export default class IcsFeedbackHowSessionTookPlacePresenter extends PresenterBa
           classes: 'govuk-visually-hidden',
         },
       },
-      errorMessage: this.validationErrors?.phoneCall ?? null,
+      errorMessage: this.validationErrors?.messages.phoneCall ?? null,
       items: [
         {
           value: 'yes',
@@ -227,10 +228,6 @@ export default class IcsFeedbackHowSessionTookPlacePresenter extends PresenterBa
       submitHref: `/ics-feedback/${this.caseRefId}/did-session-take-place`,
       backLink: { href: `/ics-feedback/${this.caseRefId}/attendance` },
       sessionLocationLines: this.buildSessionLocationLines(),
-      errorList: Object.entries(this.validationErrors ?? {}).map(([key, error]) => ({
-        href: `#${key}`,
-        text: error.text,
-      })),
       phoneCallReasonInputArgs: this.buildPhoneCallReasonInputArgs(content),
       videoCallReasonInputArgs: this.buildVideoCallReasonInputArgs(content),
       probationDeliveryUnitSelectArgs: this.buildProbationDeliveryUnitSelectArgs(content),

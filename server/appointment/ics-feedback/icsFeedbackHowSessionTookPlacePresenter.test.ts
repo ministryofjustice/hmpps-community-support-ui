@@ -135,34 +135,6 @@ describe('IcsFeedbackPresenter', () => {
       expect(selectItems[0].text).toBe('Select probation office')
     })
 
-    it('builds errorList from validationErrors', () => {
-      const errors = {
-        phoneCall: { text: 'Select whether the session took place by phone call' },
-        howSessionTookPlace: { text: 'Select how the session took place' },
-      }
-      const presenter = new IcsFeedbackHowSessionTookPlacePresenter(
-        caseRefId,
-        sessionMethod,
-        probationOfficesData,
-        {},
-        errors,
-      )
-      presenter.renderPage(res)
-      const renderCall = (res.render as jest.Mock).mock.calls[0]
-      const viewModel: IcsFeedbackHowSessionTookPlaceViewModel = renderCall[1].content
-      expect(viewModel.errorList).toHaveLength(2)
-      expect(viewModel.errorList[0]).toEqual({ href: '#phoneCall', text: errors.phoneCall.text })
-      expect(viewModel.errorList[1]).toEqual({ href: '#howSessionTookPlace', text: errors.howSessionTookPlace.text })
-    })
-
-    it('returns empty errorList when no validation errors are given', () => {
-      const presenter = new IcsFeedbackHowSessionTookPlacePresenter(caseRefId, sessionMethod, probationOfficesData)
-      presenter.renderPage(res)
-      const renderCall = (res.render as jest.Mock).mock.calls[0]
-      const viewModel: IcsFeedbackHowSessionTookPlaceViewModel = renderCall[1].content
-      expect(viewModel.errorList).toHaveLength(0)
-    })
-
     it('handles empty probationOffices gracefully', () => {
       const presenter = new IcsFeedbackHowSessionTookPlacePresenter(caseRefId, sessionMethod, [])
       presenter.renderPage(res)

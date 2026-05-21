@@ -543,6 +543,7 @@ describe('AppointmentController', () => {
 
     it('saves submitted form data to session, flashes errors and redirects on invalid POST', async () => {
       icsFeedbackReq.method = 'POST'
+      icsFeedbackReq.url = '/ics-feedback/ics-123/did-session-take-place'
       icsFeedbackReq.body = { phoneCall: 'no' } // missing howSessionTookPlace
 
       await appointmentController.didSessionTakePlace(icsFeedbackReq, icsFeedbackRes)
@@ -556,6 +557,7 @@ describe('AppointmentController', () => {
 
     it('saves submitted form data with nested field to session and redirects on invalid POST', async () => {
       icsFeedbackReq.method = 'POST'
+      icsFeedbackReq.url = '/ics-feedback/ics-123/did-session-take-place'
       icsFeedbackReq.body = { phoneCall: 'no', howSessionTookPlace: 'PHONE', phoneCallReason: '' }
 
       await appointmentController.didSessionTakePlace(icsFeedbackReq, icsFeedbackRes)
