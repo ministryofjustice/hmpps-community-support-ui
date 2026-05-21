@@ -20,7 +20,6 @@ export type IcsFeedbackHowSessionTookPlaceViewModel = {
   submitHref: string
   backLink: GovukFrontendBackLink
   sessionLocationLines: string[]
-  errorList: Array<{ href: string; text: string }>
   phoneCallReasonInputArgs: GovukFrontendInput
   videoCallReasonInputArgs: GovukFrontendInput
   probationDeliveryUnitSelectArgs: GovukFrontendSelect

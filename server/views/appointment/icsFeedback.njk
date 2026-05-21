@@ -1,6 +1,5 @@
 {% extends "../partials/layout.njk" %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
@@ -8,17 +7,7 @@
 {% set pageTitle = applicationName + " - " + content.pageHeader %}
 {% set mainClasses = "govuk-body" %}
 
-{% block content %}
-
-  {% if content.errorList and content.errorList | length > 0 %}
-    {{ govukErrorSummary({
-      titleText: "There is a problem",
-      errorList: content.errorList,
-      attributes: {
-        "data-testid": "error-messages"
-      }
-    }) }}
-  {% endif %}
+{% block contentBody %}
 
   <form method="post" action="{{ content.submitHref }}">
     <input type="hidden" name="_csrf" value="{{csrfToken}}">

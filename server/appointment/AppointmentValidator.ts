@@ -2,12 +2,6 @@ import { Request } from 'express'
 import { ReferralInformation } from '@community-support-api'
 import { format } from 'date-fns'
 import { validateDate, DateValidationOptions, validateTime, TimeValidationOptions } from '../utils/validateDateTime'
-import { IcsFeedbackHowSessionTookPlaceFormData } from './ics-feedback/icsFeedbackHowSessionTookPlaceViewModel'
-import {
-  buildIcsFeedbackFormSchema,
-  baseFormSchema,
-  phoneCallErrorMessage,
-} from '../validation/IcsFeedbackHowSessionTookPlaceFormData'
 
 export interface ScheduleFormData {
   sessionDate?: string
@@ -269,31 +263,6 @@ class AppointmentValidator {
       formData,
       errors,
     }
-  }
-
-  validationsErrorMessage(sessionMethodType: string): string {
-    return phoneCallErrorMessage(sessionMethodType)
-  }
-
-  validateIcsFeedbackForm(
-    req: Request,
-    sessionMethodType: string,
-  ): { formData: IcsFeedbackHowSessionTookPlaceFormData; errors: Record<string, { text: string }> } {
-    const schema = buildIcsFeedbackFormSchema(sessionMethodType)
-    const result = schema.safeParse(req.body)
-
-    if (result.success) {
-      return { formData: result.data, errors: {} }
-    }
-
-    const formData = baseFormSchema.safeParse(req.body).data ?? {}
-    const errors = Object.fromEntries(
-      result.error.issues
-        .filter(issue => issue.path.length > 0)
-        .map(issue => [issue.path[0] as string, { text: issue.message }]),
-    )
-
-    return { formData, errors }
   }
 }
 
