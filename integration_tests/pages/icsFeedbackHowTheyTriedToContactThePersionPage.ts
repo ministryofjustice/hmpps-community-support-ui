@@ -11,7 +11,7 @@ export default class IcsFeedbackHowTheyTriedToContactThePersionPage extends Abst
   static async create(page: Page): Promise<IcsFeedbackHowTheyTriedToContactThePersionPage> {
     const errors = await ErrorSummary.create(page.locator('[data-testid="error-messages"]'))
     const backLink = page.getByRole('link', { name: 'Back', exact: true })
-    const textArea = new TextArea(page.locator('[data-testid="textarea-input"]'))
+    const textArea = await TextArea.create(page.locator('[data-testid="textarea-input"]'))
     const continueButton = page.getByRole('button', { name: 'Continue' })
     return new IcsFeedbackHowTheyTriedToContactThePersionPage(page, errors, backLink, textArea, continueButton)
   }
