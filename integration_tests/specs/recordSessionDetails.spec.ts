@@ -16,11 +16,11 @@ test.describe('Session Details Page', () => {
   const EMPTY_RADIO_ERROR_MESSAGE = 'Select yes if Alice was late'
   const EMPTY_LATE_REASON_ERROR_MESSAGE = 'Enter why Alice was late'
   const EMPTY_DURATION_ERROR_MESSAGE = 'Enter how long the session lasted'
-  const INVALID_HOURS_ERROR_MESSAGE = 'Hours must only include numbers 0 to 9'
-  const INVALID_MINUTES_ERROR_MESSAGE = 'Minutes must only include numbers 0 to 9'
-  const MINUTES_OOB_ERROR_MESSAGE = 'Minutes must be between 0 and 60'
-  const HOURS_TOO_MANY_CHAR_ERROR_MESSAGE = 'Hours must be 2 characters or less'
-  const MINUTES_TOO_MANY_CHAR_ERROR_MESSAGE = 'Minutes must be 2 characters or less'
+  const INVALID_HOURS_ERROR_MESSAGE = 'Hour must only include numbers 0 to 9'
+  const INVALID_MINUTES_ERROR_MESSAGE = 'Minute must only include numbers 0 to 9'
+  const MINUTES_OOB_ERROR_MESSAGE = 'Minute must be between 0 and 60'
+  const HOURS_TOO_MANY_CHAR_ERROR_MESSAGE = 'Hour must be 2 characters or less'
+  const MINUTES_TOO_MANY_CHAR_ERROR_MESSAGE = 'Minute must be 2 characters or less'
 
   const pastMeeting = {
     caseRefId: randomUUID(),
