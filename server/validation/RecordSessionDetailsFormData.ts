@@ -1,22 +1,22 @@
 import { z } from 'zod'
 
 const HOURS_TOO_MANY_CHAR_ERROR = {
-  error: 'Hours must be 2 characters or less',
+  error: 'Hour must be 2 characters or less',
 }
 const MINUTES_TOO_MANY_CHAR_ERROR = {
-  error: 'Minutes must be 2 characters or less',
+  error: 'Minute must be 2 characters or less',
 }
 const INVALID_HOURS_ERROR = {
-  error: 'Hours must only include numbers 0 to 9',
+  error: 'Hour must only include numbers 0 to 9',
 }
 const INVALID_MINUTES_ERROR = {
-  error: 'Minutes must only include numbers 0 to 9',
+  error: 'Minute must only include numbers 0 to 9',
 }
 const HOURS_OOB_ERROR = {
-  error: 'Hours must be positive',
+  error: 'Hour must be positive',
 }
 const MINUTES_OOB_ERROR = {
-  error: 'Minutes must be between 0 and 60',
+  error: 'Minute must be between 0 and 60',
 }
 
 const hours = z.coerce
