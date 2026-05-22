@@ -201,21 +201,6 @@ const mapTypeToSessionTakePlace = (type: SessionMethodRequest['type']): string =
   }
 }
 
-const fooMap = (type: SessionMethodRequest['type']): HowSessionTookPlaceType => {
-  switch (type) {
-    case 'PHONE':
-      return 'PHONE'
-    case 'VIDEO':
-      return 'VIDEO'
-    case 'PROBATION_OFFICE':
-      return 'IN_PERSON_PROBATION_OFFICE'
-    case 'OTHER_LOCATION':
-      return 'IN_PERSON_OTHER_LOCATION'
-    default:
-      return 'IN_PERSON_OTHER_LOCATION'
-  }
-}
-
 const getReasonKey = (sessionTakePlace: string): string | null => {
   switch (sessionTakePlace) {
     case 'ByPhone':
@@ -414,14 +399,7 @@ const getPendingFormData = (req: Request) => {
   )
 }
 
-const storePending = (req: Request, caseRefId: string) => {
-  if (!req.session.icsFeedbackPendingFormData) {
-    req.session.icsFeedbackPendingFormData = {}
-  }
-  req.session.icsFeedbackPendingFormData[caseRefId] = req.body as Record<string, string>
-}
-
-const storePending2 = (req: Request) => {
+const storePending = (req: Request) => {
   if (!req.session.icsFeedbackPendingFormData2) {
     req.session.icsFeedbackPendingFormData2 = {}
   }
@@ -558,7 +536,7 @@ class AppointmentController {
     const icsAppointment = await this.appointmentService.getICS(caseRefId, username)
     const { sessionMethod } = icsAppointment
 
-    storePending2(req)
+    storePending(req)
 
     req.body.sessionMethodType = sessionMethod.type
     return validateRequestBodyAgainstSchema(IcsFeedbackFormSchema, req, res, () => {
