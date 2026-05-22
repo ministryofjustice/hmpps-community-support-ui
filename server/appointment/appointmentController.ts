@@ -114,20 +114,40 @@ const loadIcsFeedbackFromSession = (
   if (!icsFeedback?.howSessionTookPlace) return {}
   const { type, additionalDetails, pdu, addressLine1, addressLine2, townOrCity, county, postcode } =
     icsFeedback.howSessionTookPlace
-  if (type === 'PHONE') {
-    if (additionalDetails) {
+  switch (type) {
+    case 'PHONE':
+      return additionalDetails
+        ? {
+            phoneCall: 'no',
+            howSessionTookPlace: 'PHONE',
+            phoneCallReason: additionalDetails,
+          }
+        : { phoneCall: 'yes' }
+    case 'VIDEO':
       return {
         phoneCall: 'no',
-        howSessionTookPlace: 'PHONE',
-        phoneCallReason: additionalDetails,
+        howSessionTookPlace: type,
+        videoCallReason: additionalDetails,
       }
-    }
-    return { phoneCall: 'yes' }
+    case 'IN_PERSON_PROBATION_OFFICE':
+      return {
+        phoneCall: 'no',
+        howSessionTookPlace: type,
+        probationDeliveryUnit: pdu,
+      }
+    case 'IN_PERSON_OTHER_LOCATION':
+      return {
+        phoneCall: 'no',
+        howSessionTookPlace: type,
+        addressLine1,
+        addressLine2,
+        townOrCity,
+        county,
+        postcode,
+      }
+    default:
+      return {}
   }
-  const base: IcsFeedbackHowSessionTookPlaceFormData = { phoneCall: 'no', howSessionTookPlace: type }
-  if (type === 'VIDEO') return { ...base, videoCallReason: additionalDetails }
-  if (type === 'IN_PERSON_PROBATION_OFFICE') return { ...base, probationDeliveryUnit: pdu }
-  return { ...base, addressLine1, addressLine2, townOrCity, county, postcode }
 }
 
 class AppointmentController {
