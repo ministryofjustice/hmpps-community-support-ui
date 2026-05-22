@@ -553,6 +553,7 @@ describe('AppointmentController', () => {
       expect(icsFeedbackReq.session.icsFeedbackPendingFormData?.['ics-123']).toEqual(
         expect.objectContaining({ phoneCall: 'no' }),
       )
+      expect(icsFeedbackReq.session.icsFeedbackPendingFormData2).toEqual(expect.objectContaining({ phoneCall: 'no' }))
     })
 
     it('saves submitted form data with nested field to session and redirects on invalid POST', async () => {
@@ -567,6 +568,8 @@ describe('AppointmentController', () => {
       expect(icsFeedbackReq.session.icsFeedbackPendingFormData?.['ics-123']).toEqual(
         expect.objectContaining({ phoneCall: 'no', howSessionTookPlace: 'PHONE', phoneCallReason: '' }),
       )
+      expect(icsFeedbackReq.session.icsFeedbackPendingFormData2).toEqual(expect.objectContaining({ phoneCall: 'no' }))
+      expect(icsFeedbackReq.session.icsFeedbackPendingFormData2).toEqual(expect.objectContaining({ phoneCall: 'no' }))
     })
 
     it('restores form data from session on GET after failed POST', async () => {
@@ -584,6 +587,7 @@ describe('AppointmentController', () => {
         undefined,
       )
       expect(icsFeedbackReq.session.icsFeedbackPendingFormData?.['ics-123']).toBeUndefined()
+      expect(icsFeedbackReq.session.icsFeedbackPendingFormData2).toBeUndefined()
     })
 
     it('saves howSessionTookPlace to session and redirects on valid POST with phoneCall yes (no prior session)', async () => {

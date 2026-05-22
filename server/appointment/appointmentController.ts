@@ -373,6 +373,54 @@ const loadFormFromSession = (
   return formData
 }
 
+const getIcsFeedbackPendingFormData = (req: Request, caseRefId: string) => {
+  let formData: IcsFeedbackHowSessionTookPlaceFormData
+  if (req.session.icsFeedbackPendingFormData?.[caseRefId]) {
+    formData = req.session.icsFeedbackPendingFormData[caseRefId] as IcsFeedbackHowSessionTookPlaceFormData
+    delete req.session.icsFeedbackPendingFormData[caseRefId]
+  } else {
+    const { icsFeedbackSubmission } = req.session
+    const storedHowSessionTookPlace = icsFeedbackSubmission?.record?.howSessionTookPlace as
+      | HowSessionTookPlace
+      | undefined
+    formData = loadIcsFeedbackFromSession(
+      storedHowSessionTookPlace ? { howSessionTookPlace: storedHowSessionTookPlace } : undefined,
+    )
+  }
+  return formData
+}
+
+const getPendingFormData = (req: Request) => {
+  let formData: IcsFeedbackHowSessionTookPlaceFormData
+  if (req.session.icsFeedbackPendingFormData2) {
+    formData = req.session.icsFeedbackPendingFormData2 as IcsFeedbackHowSessionTookPlaceFormData
+    delete req.session.icsFeedbackPendingFormData2
+  } else {
+    const { icsFeedbackSubmission } = req.session
+    const storedHowSessionTookPlace = icsFeedbackSubmission?.record?.howSessionTookPlace as
+      | HowSessionTookPlace
+      | undefined
+    formData = loadIcsFeedbackFromSession(
+      storedHowSessionTookPlace ? { howSessionTookPlace: storedHowSessionTookPlace } : undefined,
+    )
+  }
+  return formData
+}
+
+const storePending = (req: Request, caseRefId: string) => {
+  if (!req.session.icsFeedbackPendingFormData) {
+    req.session.icsFeedbackPendingFormData = {}
+  }
+  req.session.icsFeedbackPendingFormData[caseRefId] = req.body as Record<string, string>
+}
+
+const storePending2 = (req: Request) => {
+  if (!req.session.icsFeedbackPendingFormData2) {
+    req.session.icsFeedbackPendingFormData2 = {}
+  }
+  req.session.icsFeedbackPendingFormData2 = req.body
+}
+
 class AppointmentController {
   private readonly validator = new AppointmentValidator()
 
@@ -486,19 +534,8 @@ class AppointmentController {
     ])
     const { sessionMethod } = icsAppointment
 
-    let formData: IcsFeedbackHowSessionTookPlaceFormData
-    if (req.session.icsFeedbackPendingFormData?.[caseRefId]) {
-      formData = req.session.icsFeedbackPendingFormData[caseRefId] as IcsFeedbackHowSessionTookPlaceFormData
-      delete req.session.icsFeedbackPendingFormData[caseRefId]
-    } else {
-      const { icsFeedbackSubmission } = req.session
-      const storedHowSessionTookPlace = icsFeedbackSubmission?.record?.howSessionTookPlace as
-        | HowSessionTookPlace
-        | undefined
-      formData = loadIcsFeedbackFromSession(
-        storedHowSessionTookPlace ? { howSessionTookPlace: storedHowSessionTookPlace } : undefined,
-      )
-    }
+    const formData = getIcsFeedbackPendingFormData(req, caseRefId)
+    const formData2 = getPendingFormData(req)
     const validationErrors = res.locals.errors
     const presenter = new IcsFeedbackHowSessionTookPlacePresenter(
       caseRefId,
@@ -516,10 +553,8 @@ class AppointmentController {
     const icsAppointment = await this.appointmentService.getICS(caseRefId, username)
     const { sessionMethod } = icsAppointment
 
-    if (!req.session.icsFeedbackPendingFormData) {
-      req.session.icsFeedbackPendingFormData = {}
-    }
-    req.session.icsFeedbackPendingFormData[caseRefId] = req.body as Record<string, string>
+    storePending(req, caseRefId)
+    storePending2(req)
 
     req.body.sessionMethodType = sessionMethod.type
     return validateRequestBodyAgainstSchema(IcsFeedbackFormSchema, req, res, () => {
