@@ -34,7 +34,7 @@ export declare module 'express-session' {
     assignmentResults: ReferralUserAssignmentResponse
     createAppointmentRequest: CreateAppointmentRequest
     referralInformation: ReferralInformationDto
-    icsFeedbackPendingFormData2: Record<string, string>
+    pending: Record<string, string>
     referralProgressBanner?: ReferralProgressBannerContent
     icsFeedbackSubmission: IcsFeedbackSubmission & { caseReferenceId: string }
   }

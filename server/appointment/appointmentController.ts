@@ -384,9 +384,9 @@ const loadFormFromSession = (
 }
 
 const getPendingFormData = (req: Request) => {
-  if (req.session.icsFeedbackPendingFormData2) {
-    const formData = req.session.icsFeedbackPendingFormData2
-    delete req.session.icsFeedbackPendingFormData2
+  if (req.session.pending) {
+    const formData = req.session.pending
+    delete req.session.pending
     return formData
   }
   const { icsFeedbackSubmission } = req.session
@@ -400,10 +400,10 @@ const getPendingFormData = (req: Request) => {
 }
 
 const storePending = (req: Request) => {
-  if (!req.session.icsFeedbackPendingFormData2) {
-    req.session.icsFeedbackPendingFormData2 = {}
+  if (!req.session.pending) {
+    req.session.pending = {}
   }
-  req.session.icsFeedbackPendingFormData2 = req.body as Record<string, string>
+  req.session.pending = req.body as Record<string, string>
 }
 
 class AppointmentController {

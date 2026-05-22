@@ -550,7 +550,7 @@ describe('AppointmentController', () => {
 
       expect(icsFeedbackReq.flash).toHaveBeenCalled()
       expect(icsFeedbackRes.redirect).toHaveBeenCalledWith('/ics-feedback/ics-123/did-session-take-place')
-      expect(icsFeedbackReq.session.icsFeedbackPendingFormData2).toEqual(expect.objectContaining({ phoneCall: 'no' }))
+      expect(icsFeedbackReq.session.pending).toEqual(expect.objectContaining({ phoneCall: 'no' }))
     })
 
     it('saves submitted form data with nested field to session and redirects on invalid POST', async () => {
@@ -562,12 +562,12 @@ describe('AppointmentController', () => {
 
       expect(icsFeedbackReq.flash).toHaveBeenCalledWith('phoneCallReasonError', expect.any(String))
       expect(icsFeedbackRes.redirect).toHaveBeenCalledWith('/ics-feedback/ics-123/did-session-take-place')
-      expect(icsFeedbackReq.session.icsFeedbackPendingFormData2).toEqual(expect.objectContaining({ phoneCall: 'no' }))
-      expect(icsFeedbackReq.session.icsFeedbackPendingFormData2).toEqual(expect.objectContaining({ phoneCall: 'no' }))
+      expect(icsFeedbackReq.session.pending).toEqual(expect.objectContaining({ phoneCall: 'no' }))
+      expect(icsFeedbackReq.session.pending).toEqual(expect.objectContaining({ phoneCall: 'no' }))
     })
 
     it('restores form data from session on GET after failed POST', async () => {
-      icsFeedbackReq.session.icsFeedbackPendingFormData2 = {
+      icsFeedbackReq.session.pending = {
         phoneCall: 'no',
         howSessionTookPlace: 'PHONE',
         phoneCallReason: '',
@@ -582,7 +582,7 @@ describe('AppointmentController', () => {
         { phoneCall: 'no', howSessionTookPlace: 'PHONE', phoneCallReason: '' },
         undefined,
       )
-      expect(icsFeedbackReq.session.icsFeedbackPendingFormData2).toBeUndefined()
+      expect(icsFeedbackReq.session.pending).toBeUndefined()
     })
 
     it('saves howSessionTookPlace to session and redirects on valid POST with phoneCall yes (no prior session)', async () => {
