@@ -413,32 +413,6 @@ class AppointmentController {
     ])
     const { sessionMethod } = icsAppointment
 
-    if (req.method === 'POST') {
-      if (!req.session.icsFeedbackPendingFormData) {
-        req.session.icsFeedbackPendingFormData = {}
-      }
-      req.session.icsFeedbackPendingFormData[caseRefId] = req.body as Record<string, string>
-
-      req.body.sessionMethodType = sessionMethod.type
-      return validateRequestBodyAgainstSchema(IcsFeedbackFormSchema, req, res, () => {
-        let { icsFeedbackSubmission } = req.session
-        if (!icsFeedbackSubmission?.record) {
-          icsFeedbackSubmission = {
-            ...icsFeedbackSubmission,
-            record: { didSessionHappen: true },
-          }
-        }
-        icsFeedbackSubmission.record = {
-          ...icsFeedbackSubmission.record,
-          howSessionTookPlace: this.buildHowSessionTookPlace(
-            req.body as IcsFeedbackHowSessionTookPlaceFormData,
-          ) as SessionMethodRequest,
-        }
-        req.session.icsFeedbackSubmission = icsFeedbackSubmission
-        return res.redirect(`/ics-feedback/${caseRefId}/session-details`)
-      })
-    }
-
     let formData: IcsFeedbackHowSessionTookPlaceFormData
     if (req.session.icsFeedbackPendingFormData?.[caseRefId]) {
       formData = req.session.icsFeedbackPendingFormData[caseRefId] as IcsFeedbackHowSessionTookPlaceFormData
@@ -461,6 +435,37 @@ class AppointmentController {
       validationErrors,
     )
     return presenter.renderPage(res)
+  }
+
+  async recordDidSessionTakePlace(req: Request, res: Response): Promise<void> {
+    const { caseRefId } = req.params as { caseRefId: string }
+    const { username } = res.locals.user
+    const icsAppointment = await this.appointmentService.getICS(caseRefId, username)
+    const { sessionMethod } = icsAppointment
+
+    if (!req.session.icsFeedbackPendingFormData) {
+      req.session.icsFeedbackPendingFormData = {}
+    }
+    req.session.icsFeedbackPendingFormData[caseRefId] = req.body as Record<string, string>
+
+    req.body.sessionMethodType = sessionMethod.type
+    return validateRequestBodyAgainstSchema(IcsFeedbackFormSchema, req, res, () => {
+      let { icsFeedbackSubmission } = req.session
+      if (!icsFeedbackSubmission?.record) {
+        icsFeedbackSubmission = {
+          ...icsFeedbackSubmission,
+          record: { didSessionHappen: true },
+        }
+      }
+      icsFeedbackSubmission.record = {
+        ...icsFeedbackSubmission.record,
+        howSessionTookPlace: this.buildHowSessionTookPlace(
+          req.body as IcsFeedbackHowSessionTookPlaceFormData,
+        ) as SessionMethodRequest,
+      }
+      req.session.icsFeedbackSubmission = icsFeedbackSubmission
+      return res.redirect(`/ics-feedback/${caseRefId}/session-details`)
+    })
   }
 
   buildHowSessionTookPlace(formData: IcsFeedbackHowSessionTookPlaceFormData): Partial<HowSessionTookPlace> {
