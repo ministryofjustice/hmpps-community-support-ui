@@ -546,7 +546,7 @@ describe('AppointmentController', () => {
       icsFeedbackReq.url = '/ics-feedback/ics-123/did-session-take-place'
       icsFeedbackReq.body = { phoneCall: 'no' } // missing howSessionTookPlace
 
-      await appointmentController.recordDidSessionTakePlace(icsFeedbackReq, icsFeedbackRes)
+      await appointmentController.didSessionTakePlace(icsFeedbackReq, icsFeedbackRes)
 
       expect(icsFeedbackReq.flash).toHaveBeenCalled()
       expect(icsFeedbackRes.redirect).toHaveBeenCalledWith('/ics-feedback/ics-123/did-session-take-place')
@@ -560,7 +560,7 @@ describe('AppointmentController', () => {
       icsFeedbackReq.url = '/ics-feedback/ics-123/did-session-take-place'
       icsFeedbackReq.body = { phoneCall: 'no', howSessionTookPlace: 'PHONE', phoneCallReason: '' }
 
-      await appointmentController.recordDidSessionTakePlace(icsFeedbackReq, icsFeedbackRes)
+      await appointmentController.didSessionTakePlace(icsFeedbackReq, icsFeedbackRes)
 
       expect(icsFeedbackReq.flash).toHaveBeenCalledWith('phoneCallReasonError', expect.any(String))
       expect(icsFeedbackRes.redirect).toHaveBeenCalledWith('/ics-feedback/ics-123/did-session-take-place')
@@ -597,7 +597,7 @@ describe('AppointmentController', () => {
         caseReferenceId: 'ics-123',
       }
 
-      await appointmentController.recordDidSessionTakePlace(icsFeedbackReq, icsFeedbackRes)
+      await appointmentController.didSessionTakePlace(icsFeedbackReq, icsFeedbackRes)
 
       expect(icsFeedbackReq.session.icsFeedbackSubmission.record.howSessionTookPlace).toEqual({
         type: 'PHONE' as const,
@@ -610,7 +610,7 @@ describe('AppointmentController', () => {
       icsFeedbackReq.body = { phoneCall: 'yes' }
       icsFeedbackReq.session.icsFeedbackSubmission = { record: { didSessionHappen: true }, caseReferenceId: 'ics-123' }
 
-      await appointmentController.recordDidSessionTakePlace(icsFeedbackReq, icsFeedbackRes)
+      await appointmentController.didSessionTakePlace(icsFeedbackReq, icsFeedbackRes)
 
       expect(icsFeedbackReq.session.icsFeedbackSubmission.record.howSessionTookPlace).toEqual({
         type: 'PHONE',
@@ -623,7 +623,7 @@ describe('AppointmentController', () => {
       icsFeedbackReq.body = { phoneCall: 'no', howSessionTookPlace: 'PHONE', phoneCallReason: 'Video not available' }
       icsFeedbackReq.session.icsFeedbackSubmission = { record: { didSessionHappen: true }, caseReferenceId: 'ics-123' }
 
-      await appointmentController.recordDidSessionTakePlace(icsFeedbackReq, icsFeedbackRes)
+      await appointmentController.didSessionTakePlace(icsFeedbackReq, icsFeedbackRes)
 
       expect(icsFeedbackReq.session.icsFeedbackSubmission.record.howSessionTookPlace).toEqual({
         type: 'PHONE',
@@ -637,7 +637,7 @@ describe('AppointmentController', () => {
       icsFeedbackReq.body = { phoneCall: 'no', howSessionTookPlace: 'VIDEO', videoCallReason: 'Teams only' }
       icsFeedbackReq.session.icsFeedbackSubmission = { record: { didSessionHappen: true }, caseReferenceId: 'ics-123' }
 
-      await appointmentController.recordDidSessionTakePlace(icsFeedbackReq, icsFeedbackRes)
+      await appointmentController.didSessionTakePlace(icsFeedbackReq, icsFeedbackRes)
 
       expect(icsFeedbackReq.session.icsFeedbackSubmission.record.howSessionTookPlace).toEqual({
         type: 'VIDEO',
@@ -655,7 +655,7 @@ describe('AppointmentController', () => {
       }
       icsFeedbackReq.session.icsFeedbackSubmission = { record: { didSessionHappen: true }, caseReferenceId: 'ics-123' }
 
-      await appointmentController.recordDidSessionTakePlace(icsFeedbackReq, icsFeedbackRes)
+      await appointmentController.didSessionTakePlace(icsFeedbackReq, icsFeedbackRes)
 
       expect(icsFeedbackReq.session.icsFeedbackSubmission.record.howSessionTookPlace).toEqual({
         type: 'IN_PERSON_PROBATION_OFFICE',
@@ -676,7 +676,7 @@ describe('AppointmentController', () => {
       }
       icsFeedbackReq.session.icsFeedbackSubmission = { record: { didSessionHappen: true }, caseReferenceId: 'ics-123' }
 
-      await appointmentController.recordDidSessionTakePlace(icsFeedbackReq, icsFeedbackRes)
+      await appointmentController.didSessionTakePlace(icsFeedbackReq, icsFeedbackRes)
 
       expect(icsFeedbackReq.session.icsFeedbackSubmission.record.howSessionTookPlace).toEqual({
         type: 'IN_PERSON_OTHER_LOCATION',
