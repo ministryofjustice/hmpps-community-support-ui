@@ -558,7 +558,6 @@ class AppointmentController {
     const icsAppointment = await this.appointmentService.getICS(caseRefId, username)
     const { sessionMethod } = icsAppointment
 
-    storePending(req, caseRefId)
     storePending2(req)
 
     req.body.sessionMethodType = sessionMethod.type
