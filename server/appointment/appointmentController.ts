@@ -74,6 +74,51 @@ const restartFeedback = (req: Request, res: Response): boolean => {
   return false
 }
 
+const buildHowSessionTookPlace = (formData: IcsFeedbackHowSessionTookPlaceFormData): Partial<HowSessionTookPlace> => {
+  if (formData.phoneCall === 'yes') {
+    return { type: 'PHONE' }
+  }
+  const formType = formData.howSessionTookPlace
+  if (formType === 'PHONE') {
+    return { type: 'PHONE', additionalDetails: formData.phoneCallReason }
+  }
+  if (formType === 'VIDEO') {
+    return { type: 'VIDEO', additionalDetails: formData.videoCallReason }
+  }
+  if (formType === 'IN_PERSON_PROBATION_OFFICE') {
+    return { type: 'IN_PERSON_PROBATION_OFFICE', pdu: formData.probationDeliveryUnit }
+  }
+  if (formType === 'IN_PERSON_OTHER_LOCATION') {
+    return {
+      type: 'IN_PERSON_OTHER_LOCATION',
+      addressLine1: formData.addressLine1,
+      addressLine2: formData.addressLine2,
+      townOrCity: formData.townOrCity,
+      county: formData.county,
+      postcode: formData.postcode,
+    }
+  }
+  return {}
+}
+
+const loadIcsFeedbackFromSession = (
+  icsFeedback: IcsFeedbackHowSessionTookPlaceSession | undefined,
+): IcsFeedbackHowSessionTookPlaceFormData => {
+  if (!icsFeedback?.howSessionTookPlace) return {}
+  const { type, additionalDetails, pdu, addressLine1, addressLine2, townOrCity, county, postcode } =
+    icsFeedback.howSessionTookPlace
+  if (type === 'PHONE') {
+    if (additionalDetails) {
+      return { phoneCall: 'no', howSessionTookPlace: 'PHONE', phoneCallReason: additionalDetails }
+    }
+    return { phoneCall: 'yes' }
+  }
+  const base: IcsFeedbackHowSessionTookPlaceFormData = { phoneCall: 'no', howSessionTookPlace: type }
+  if (type === 'VIDEO') return { ...base, videoCallReason: additionalDetails }
+  if (type === 'IN_PERSON_PROBATION_OFFICE') return { ...base, probationDeliveryUnit: pdu }
+  return { ...base, addressLine1, addressLine2, townOrCity, county, postcode }
+}
+
 class AppointmentController {
   private readonly validator = new AppointmentValidator()
 
@@ -413,32 +458,6 @@ class AppointmentController {
     ])
     const { sessionMethod } = icsAppointment
 
-    if (req.method === 'POST') {
-      if (!req.session.icsFeedbackPendingFormData) {
-        req.session.icsFeedbackPendingFormData = {}
-      }
-      req.session.icsFeedbackPendingFormData[caseRefId] = req.body as Record<string, string>
-
-      req.body.sessionMethodType = sessionMethod.type
-      return validateRequestBodyAgainstSchema(IcsFeedbackFormSchema, req, res, () => {
-        let { icsFeedbackSubmission } = req.session
-        if (!icsFeedbackSubmission?.record) {
-          icsFeedbackSubmission = {
-            ...icsFeedbackSubmission,
-            record: { didSessionHappen: true },
-          }
-        }
-        icsFeedbackSubmission.record = {
-          ...icsFeedbackSubmission.record,
-          howSessionTookPlace: this.buildHowSessionTookPlace(
-            req.body as IcsFeedbackHowSessionTookPlaceFormData,
-          ) as SessionMethodRequest,
-        }
-        req.session.icsFeedbackSubmission = icsFeedbackSubmission
-        return res.redirect(`/ics-feedback/${caseRefId}/session-details`)
-      })
-    }
-
     let formData: IcsFeedbackHowSessionTookPlaceFormData
     if (req.session.icsFeedbackPendingFormData?.[caseRefId]) {
       formData = req.session.icsFeedbackPendingFormData[caseRefId] as IcsFeedbackHowSessionTookPlaceFormData
@@ -448,7 +467,7 @@ class AppointmentController {
       const storedHowSessionTookPlace = icsFeedbackSubmission?.record?.howSessionTookPlace as
         | HowSessionTookPlace
         | undefined
-      formData = this.loadIcsFeedbackFromSession(
+      formData = loadIcsFeedbackFromSession(
         storedHowSessionTookPlace ? { howSessionTookPlace: storedHowSessionTookPlace } : undefined,
       )
     }
@@ -463,49 +482,35 @@ class AppointmentController {
     return presenter.renderPage(res)
   }
 
-  buildHowSessionTookPlace(formData: IcsFeedbackHowSessionTookPlaceFormData): Partial<HowSessionTookPlace> {
-    if (formData.phoneCall === 'yes') {
-      return { type: 'PHONE' }
-    }
-    const formType = formData.howSessionTookPlace
-    if (formType === 'PHONE') {
-      return { type: 'PHONE', additionalDetails: formData.phoneCallReason }
-    }
-    if (formType === 'VIDEO') {
-      return { type: 'VIDEO', additionalDetails: formData.videoCallReason }
-    }
-    if (formType === 'IN_PERSON_PROBATION_OFFICE') {
-      return { type: 'IN_PERSON_PROBATION_OFFICE', pdu: formData.probationDeliveryUnit }
-    }
-    if (formType === 'IN_PERSON_OTHER_LOCATION') {
-      return {
-        type: 'IN_PERSON_OTHER_LOCATION',
-        addressLine1: formData.addressLine1,
-        addressLine2: formData.addressLine2,
-        townOrCity: formData.townOrCity,
-        county: formData.county,
-        postcode: formData.postcode,
-      }
-    }
-    return {}
-  }
+  async recordDidSessionTakePlace(req: Request, res: Response): Promise<void> {
+    const { caseRefId } = req.params as { caseRefId: string }
+    const { username } = res.locals.user
+    const icsAppointment = await this.appointmentService.getICS(caseRefId, username)
+    const { sessionMethod } = icsAppointment
 
-  loadIcsFeedbackFromSession(
-    icsFeedback: IcsFeedbackHowSessionTookPlaceSession | undefined,
-  ): IcsFeedbackHowSessionTookPlaceFormData {
-    if (!icsFeedback?.howSessionTookPlace) return {}
-    const { type, additionalDetails, pdu, addressLine1, addressLine2, townOrCity, county, postcode } =
-      icsFeedback.howSessionTookPlace
-    if (type === 'PHONE') {
-      if (additionalDetails) {
-        return { phoneCall: 'no', howSessionTookPlace: 'PHONE', phoneCallReason: additionalDetails }
-      }
-      return { phoneCall: 'yes' }
+    if (!req.session.icsFeedbackPendingFormData) {
+      req.session.icsFeedbackPendingFormData = {}
     }
-    const base: IcsFeedbackHowSessionTookPlaceFormData = { phoneCall: 'no', howSessionTookPlace: type }
-    if (type === 'VIDEO') return { ...base, videoCallReason: additionalDetails }
-    if (type === 'IN_PERSON_PROBATION_OFFICE') return { ...base, probationDeliveryUnit: pdu }
-    return { ...base, addressLine1, addressLine2, townOrCity, county, postcode }
+    req.session.icsFeedbackPendingFormData[caseRefId] = req.body as Record<string, string>
+
+    req.body.sessionMethodType = sessionMethod.type
+    return validateRequestBodyAgainstSchema(IcsFeedbackFormSchema, req, res, () => {
+      let { icsFeedbackSubmission } = req.session
+      if (!icsFeedbackSubmission?.record) {
+        icsFeedbackSubmission = {
+          ...icsFeedbackSubmission,
+          record: { didSessionHappen: true },
+        }
+      }
+      icsFeedbackSubmission.record = {
+        ...icsFeedbackSubmission.record,
+        howSessionTookPlace: buildHowSessionTookPlace(
+          req.body as IcsFeedbackHowSessionTookPlaceFormData,
+        ) as SessionMethodRequest,
+      }
+      req.session.icsFeedbackSubmission = icsFeedbackSubmission
+      return res.redirect(`/ics-feedback/${caseRefId}/session-details`)
+    })
   }
 
   async viewChangeSessionDetails(req: Request, res: Response): Promise<void> {
