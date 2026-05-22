@@ -1,18 +1,8 @@
 import { Request, Response } from 'express'
-import {
-  AppointmentIcsResponse,
-  CreateAppointmentRequest,
-  IcsFeedbackSubmission,
-  SessionMethodRequest,
-} from '@community-support-api'
+import { AppointmentIcsResponse, CreateAppointmentRequest, SessionMethodRequest } from '@community-support-api'
 import { format, parse } from 'date-fns'
 import timeFormat from '../utils/timeFormat'
-import {
-  ErrorMiddlewareErrors,
-  HowSessionTookPlace,
-  HowSessionTookPlaceType,
-  IcsFeedbackHowSessionTookPlaceSession,
-} from '../@types/express'
+import { ErrorMiddlewareErrors, HowSessionTookPlace, IcsFeedbackHowSessionTookPlaceSession } from '../@types/express'
 import ConfirmIcsPresenter, { type AdditionalInformation } from './confirm-ics/confirmIcsPresenter'
 import InitialContactSessionDetailsPresenter from '../referral/InitialContactSessionDetailsPresenter'
 import ReferralService from '../services/referralService'
