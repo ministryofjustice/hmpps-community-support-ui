@@ -60,6 +60,20 @@ const recordAttendanceRedirectUrl = (data: RecordSessionAttendanceFormData, case
   return `/ics-feedback/${caseRefId}/how-they-tried-to-contact-the-person`
 }
 
+const restartFeedback = (req: Request, res: Response): boolean => {
+  const caseRefId = req.params.caseRefId as string | undefined
+  if (!caseRefId) {
+    return false
+  }
+  const icsFeedback = req.session.icsFeedbackSubmission
+  if (!icsFeedback || icsFeedback.caseReferenceId !== caseRefId) {
+    delete req.session.icsFeedbackSubmission
+    res.redirect(`/ics-feedback/${caseRefId}/attendance`)
+    return true
+  }
+  return false
+}
+
 class AppointmentController {
   private readonly validator = new AppointmentValidator()
 
@@ -685,13 +699,10 @@ class AppointmentController {
   }
 
   async howTheyTriedToContactThePerson(req: Request, res: Response): Promise<void> {
-    const caseRefId = req.params.caseRefId as string
-    const icsFeedback = req.session.icsFeedbackSubmission
-    if (!icsFeedback || icsFeedback.caseReferenceId !== caseRefId) {
-      delete req.session.icsFeedbackSubmission
-      res.redirect(`/ics-feedback/${caseRefId}/attendance`)
+    if (restartFeedback(req, res)) {
       return
     }
+    const caseRefId = req.params.caseRefId as string
     const { username } = res.locals.user
     const { referralFirstName } = await this.appointmentService.getICS(caseRefId.toString(), username)
     const presenter = new HowTheyTriedToContactThePersonPresenter(
