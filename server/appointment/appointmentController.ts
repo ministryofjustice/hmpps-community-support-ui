@@ -78,27 +78,34 @@ const buildHowSessionTookPlace = (formData: IcsFeedbackHowSessionTookPlaceFormDa
   if (formData.phoneCall === 'yes') {
     return { type: 'PHONE' }
   }
-  const formType = formData.howSessionTookPlace
-  if (formType === 'PHONE') {
-    return { type: 'PHONE', additionalDetails: formData.phoneCallReason }
+  switch (formData.howSessionTookPlace) {
+    case 'PHONE':
+      return {
+        type: 'PHONE',
+        additionalDetails: formData.phoneCallReason,
+      }
+    case 'VIDEO':
+      return {
+        type: 'VIDEO',
+        additionalDetails: formData.videoCallReason,
+      }
+    case 'IN_PERSON_PROBATION_OFFICE':
+      return {
+        type: 'IN_PERSON_PROBATION_OFFICE',
+        pdu: formData.probationDeliveryUnit,
+      }
+    case 'IN_PERSON_OTHER_LOCATION':
+      return {
+        type: 'IN_PERSON_OTHER_LOCATION',
+        addressLine1: formData.addressLine1,
+        addressLine2: formData.addressLine2,
+        townOrCity: formData.townOrCity,
+        county: formData.county,
+        postcode: formData.postcode,
+      }
+    default:
+      return {}
   }
-  if (formType === 'VIDEO') {
-    return { type: 'VIDEO', additionalDetails: formData.videoCallReason }
-  }
-  if (formType === 'IN_PERSON_PROBATION_OFFICE') {
-    return { type: 'IN_PERSON_PROBATION_OFFICE', pdu: formData.probationDeliveryUnit }
-  }
-  if (formType === 'IN_PERSON_OTHER_LOCATION') {
-    return {
-      type: 'IN_PERSON_OTHER_LOCATION',
-      addressLine1: formData.addressLine1,
-      addressLine2: formData.addressLine2,
-      townOrCity: formData.townOrCity,
-      county: formData.county,
-      postcode: formData.postcode,
-    }
-  }
-  return {}
 }
 
 const loadIcsFeedbackFromSession = (
@@ -109,7 +116,11 @@ const loadIcsFeedbackFromSession = (
     icsFeedback.howSessionTookPlace
   if (type === 'PHONE') {
     if (additionalDetails) {
-      return { phoneCall: 'no', howSessionTookPlace: 'PHONE', phoneCallReason: additionalDetails }
+      return {
+        phoneCall: 'no',
+        howSessionTookPlace: 'PHONE',
+        phoneCallReason: additionalDetails,
+      }
     }
     return { phoneCall: 'yes' }
   }
