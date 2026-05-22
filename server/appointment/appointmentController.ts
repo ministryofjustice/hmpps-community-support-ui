@@ -1,8 +1,18 @@
 import { Request, Response } from 'express'
-import { AppointmentIcsResponse, CreateAppointmentRequest, SessionMethodRequest } from '@community-support-api'
+import {
+  AppointmentIcsResponse,
+  CreateAppointmentRequest,
+  IcsFeedbackSubmission,
+  SessionMethodRequest,
+} from '@community-support-api'
 import { format, parse } from 'date-fns'
 import timeFormat from '../utils/timeFormat'
-import { ErrorMiddlewareErrors, HowSessionTookPlace, IcsFeedbackHowSessionTookPlaceSession } from '../@types/express'
+import {
+  ErrorMiddlewareErrors,
+  HowSessionTookPlace,
+  HowSessionTookPlaceType,
+  IcsFeedbackHowSessionTookPlaceSession,
+} from '../@types/express'
 import ConfirmIcsPresenter, { type AdditionalInformation } from './confirm-ics/confirmIcsPresenter'
 import InitialContactSessionDetailsPresenter from '../referral/InitialContactSessionDetailsPresenter'
 import ReferralService from '../services/referralService'
@@ -191,6 +201,21 @@ const mapTypeToSessionTakePlace = (type: SessionMethodRequest['type']): string =
   }
 }
 
+const fooMap = (type: SessionMethodRequest['type']): HowSessionTookPlaceType => {
+  switch (type) {
+    case 'PHONE':
+      return 'PHONE'
+    case 'VIDEO':
+      return 'VIDEO'
+    case 'PROBATION_OFFICE':
+      return 'IN_PERSON_PROBATION_OFFICE'
+    case 'OTHER_LOCATION':
+      return 'IN_PERSON_OTHER_LOCATION'
+    default:
+      return 'IN_PERSON_OTHER_LOCATION'
+  }
+}
+
 const getReasonKey = (sessionTakePlace: string): string | null => {
   switch (sessionTakePlace) {
     case 'ByPhone':
@@ -373,38 +398,20 @@ const loadFormFromSession = (
   return formData
 }
 
-const getIcsFeedbackPendingFormData = (req: Request, caseRefId: string) => {
-  let formData: IcsFeedbackHowSessionTookPlaceFormData
-  if (req.session.icsFeedbackPendingFormData?.[caseRefId]) {
-    formData = req.session.icsFeedbackPendingFormData[caseRefId] as IcsFeedbackHowSessionTookPlaceFormData
-    delete req.session.icsFeedbackPendingFormData[caseRefId]
-  } else {
-    const { icsFeedbackSubmission } = req.session
-    const storedHowSessionTookPlace = icsFeedbackSubmission?.record?.howSessionTookPlace as
-      | HowSessionTookPlace
-      | undefined
-    formData = loadIcsFeedbackFromSession(
-      storedHowSessionTookPlace ? { howSessionTookPlace: storedHowSessionTookPlace } : undefined,
-    )
-  }
-  return formData
-}
-
 const getPendingFormData = (req: Request) => {
-  let formData: IcsFeedbackHowSessionTookPlaceFormData
   if (req.session.icsFeedbackPendingFormData2) {
-    formData = req.session.icsFeedbackPendingFormData2 as IcsFeedbackHowSessionTookPlaceFormData
+    const formData = req.session.icsFeedbackPendingFormData2
     delete req.session.icsFeedbackPendingFormData2
-  } else {
-    const { icsFeedbackSubmission } = req.session
-    const storedHowSessionTookPlace = icsFeedbackSubmission?.record?.howSessionTookPlace as
-      | HowSessionTookPlace
-      | undefined
-    formData = loadIcsFeedbackFromSession(
-      storedHowSessionTookPlace ? { howSessionTookPlace: storedHowSessionTookPlace } : undefined,
-    )
+    return formData
   }
-  return formData
+  const { icsFeedbackSubmission } = req.session
+  const storedHowSessionTookPlace = icsFeedbackSubmission?.record?.howSessionTookPlace as
+    | HowSessionTookPlace
+    | undefined
+
+  return loadIcsFeedbackFromSession(
+    storedHowSessionTookPlace ? { howSessionTookPlace: storedHowSessionTookPlace } : undefined,
+  )
 }
 
 const storePending = (req: Request, caseRefId: string) => {
@@ -418,7 +425,7 @@ const storePending2 = (req: Request) => {
   if (!req.session.icsFeedbackPendingFormData2) {
     req.session.icsFeedbackPendingFormData2 = {}
   }
-  req.session.icsFeedbackPendingFormData2 = req.body
+  req.session.icsFeedbackPendingFormData2 = req.body as Record<string, string>
 }
 
 class AppointmentController {
@@ -533,9 +540,7 @@ class AppointmentController {
       this.appointmentService.getICS(caseRefId, username),
     ])
     const { sessionMethod } = icsAppointment
-
-    const formData = getIcsFeedbackPendingFormData(req, caseRefId)
-    const formData2 = getPendingFormData(req)
+    const formData = getPendingFormData(req)
     const validationErrors = res.locals.errors
     const presenter = new IcsFeedbackHowSessionTookPlacePresenter(
       caseRefId,

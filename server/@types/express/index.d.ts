@@ -9,8 +9,9 @@ import { GovukFrontendErrorSummaryErrorListElement } from '@govuk-frontend'
 import { HmppsUser } from '../../interfaces/hmppsUser'
 import { ReferralProgressBannerContent } from '../../referral/progress/ReferralProgressBannerContent'
 
+export type HowSessionTookPlaceType = 'PHONE' | 'VIDEO' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION'
 export interface HowSessionTookPlace {
-  type: 'PHONE' | 'VIDEO' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION'
+  type: HowSessionTookPlaceType
   additionalDetails?: string
   pdu?: string
   addressLine1?: string

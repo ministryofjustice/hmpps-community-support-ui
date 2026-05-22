@@ -550,9 +550,6 @@ describe('AppointmentController', () => {
 
       expect(icsFeedbackReq.flash).toHaveBeenCalled()
       expect(icsFeedbackRes.redirect).toHaveBeenCalledWith('/ics-feedback/ics-123/did-session-take-place')
-      expect(icsFeedbackReq.session.icsFeedbackPendingFormData?.['ics-123']).toEqual(
-        expect.objectContaining({ phoneCall: 'no' }),
-      )
       expect(icsFeedbackReq.session.icsFeedbackPendingFormData2).toEqual(expect.objectContaining({ phoneCall: 'no' }))
     })
 
@@ -565,16 +562,15 @@ describe('AppointmentController', () => {
 
       expect(icsFeedbackReq.flash).toHaveBeenCalledWith('phoneCallReasonError', expect.any(String))
       expect(icsFeedbackRes.redirect).toHaveBeenCalledWith('/ics-feedback/ics-123/did-session-take-place')
-      expect(icsFeedbackReq.session.icsFeedbackPendingFormData?.['ics-123']).toEqual(
-        expect.objectContaining({ phoneCall: 'no', howSessionTookPlace: 'PHONE', phoneCallReason: '' }),
-      )
       expect(icsFeedbackReq.session.icsFeedbackPendingFormData2).toEqual(expect.objectContaining({ phoneCall: 'no' }))
       expect(icsFeedbackReq.session.icsFeedbackPendingFormData2).toEqual(expect.objectContaining({ phoneCall: 'no' }))
     })
 
     it('restores form data from session on GET after failed POST', async () => {
-      icsFeedbackReq.session.icsFeedbackPendingFormData = {
-        'ics-123': { phoneCall: 'no', howSessionTookPlace: 'PHONE', phoneCallReason: '' },
+      icsFeedbackReq.session.icsFeedbackPendingFormData2 = {
+        phoneCall: 'no',
+        howSessionTookPlace: 'PHONE',
+        phoneCallReason: '',
       }
 
       await appointmentController.didSessionTakePlace(icsFeedbackReq, icsFeedbackRes)
@@ -586,7 +582,6 @@ describe('AppointmentController', () => {
         { phoneCall: 'no', howSessionTookPlace: 'PHONE', phoneCallReason: '' },
         undefined,
       )
-      expect(icsFeedbackReq.session.icsFeedbackPendingFormData?.['ics-123']).toBeUndefined()
       expect(icsFeedbackReq.session.icsFeedbackPendingFormData2).toBeUndefined()
     })
 
