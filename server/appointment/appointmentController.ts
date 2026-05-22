@@ -101,6 +101,24 @@ const buildHowSessionTookPlace = (formData: IcsFeedbackHowSessionTookPlaceFormDa
   return {}
 }
 
+const loadIcsFeedbackFromSession = (
+  icsFeedback: IcsFeedbackHowSessionTookPlaceSession | undefined,
+): IcsFeedbackHowSessionTookPlaceFormData => {
+  if (!icsFeedback?.howSessionTookPlace) return {}
+  const { type, additionalDetails, pdu, addressLine1, addressLine2, townOrCity, county, postcode } =
+    icsFeedback.howSessionTookPlace
+  if (type === 'PHONE') {
+    if (additionalDetails) {
+      return { phoneCall: 'no', howSessionTookPlace: 'PHONE', phoneCallReason: additionalDetails }
+    }
+    return { phoneCall: 'yes' }
+  }
+  const base: IcsFeedbackHowSessionTookPlaceFormData = { phoneCall: 'no', howSessionTookPlace: type }
+  if (type === 'VIDEO') return { ...base, videoCallReason: additionalDetails }
+  if (type === 'IN_PERSON_PROBATION_OFFICE') return { ...base, probationDeliveryUnit: pdu }
+  return { ...base, addressLine1, addressLine2, townOrCity, county, postcode }
+}
+
 class AppointmentController {
   private readonly validator = new AppointmentValidator()
 
@@ -449,7 +467,7 @@ class AppointmentController {
       const storedHowSessionTookPlace = icsFeedbackSubmission?.record?.howSessionTookPlace as
         | HowSessionTookPlace
         | undefined
-      formData = this.loadIcsFeedbackFromSession(
+      formData = loadIcsFeedbackFromSession(
         storedHowSessionTookPlace ? { howSessionTookPlace: storedHowSessionTookPlace } : undefined,
       )
     }
@@ -493,24 +511,6 @@ class AppointmentController {
       req.session.icsFeedbackSubmission = icsFeedbackSubmission
       return res.redirect(`/ics-feedback/${caseRefId}/session-details`)
     })
-  }
-
-  loadIcsFeedbackFromSession(
-    icsFeedback: IcsFeedbackHowSessionTookPlaceSession | undefined,
-  ): IcsFeedbackHowSessionTookPlaceFormData {
-    if (!icsFeedback?.howSessionTookPlace) return {}
-    const { type, additionalDetails, pdu, addressLine1, addressLine2, townOrCity, county, postcode } =
-      icsFeedback.howSessionTookPlace
-    if (type === 'PHONE') {
-      if (additionalDetails) {
-        return { phoneCall: 'no', howSessionTookPlace: 'PHONE', phoneCallReason: additionalDetails }
-      }
-      return { phoneCall: 'yes' }
-    }
-    const base: IcsFeedbackHowSessionTookPlaceFormData = { phoneCall: 'no', howSessionTookPlace: type }
-    if (type === 'VIDEO') return { ...base, videoCallReason: additionalDetails }
-    if (type === 'IN_PERSON_PROBATION_OFFICE') return { ...base, probationDeliveryUnit: pdu }
-    return { ...base, addressLine1, addressLine2, townOrCity, county, postcode }
   }
 
   async viewChangeSessionDetails(req: Request, res: Response): Promise<void> {
