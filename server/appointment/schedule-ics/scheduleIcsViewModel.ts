@@ -1,4 +1,5 @@
 import { GovukFrontendBackLink } from '@govuk-frontend'
+import { ErrorMiddlewareErrors } from '../../@types/express'
 
 export type SelectItem = {
   value: string | number
@@ -36,8 +37,7 @@ export type ScheduleIcsViewModel = {
   isPersonInCommunity: boolean
   firstName: string
   formData: ScheduleFormData
-  errors: Record<string, { text: string }>
-  errorList: Array<{ href: string; text: string }>
+  errors: ErrorMiddlewareErrors
 }
 
 export type ScheduleIcsContent = {

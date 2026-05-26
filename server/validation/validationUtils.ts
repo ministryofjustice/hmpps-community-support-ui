@@ -12,6 +12,7 @@ export const formatDynamicErrorMessages = (
     list: new Array<GovukFrontendErrorSummaryErrorListElement>(),
     messages: {},
   }
+  if (!errors || !errors.list) return formattedErrors
   errors.list.forEach(error => {
     const formattedError: GovukFrontendErrorSummaryErrorListElement = {}
     formattedError.href = error.href

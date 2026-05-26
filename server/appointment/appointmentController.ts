@@ -29,6 +29,7 @@ import validateRequestBodyAgainstSchema, { formatDynamicErrorMessages } from '..
 import WhyDidSessionNotHappenPresenter from './why-did-session-not-happen/WhyDidSessionNotHappenPresenter'
 import { WhyDidSessionNotHappenFormDataSchema } from '../validation/WhyDidSessionNotHappenFormData'
 import { IcsFeedbackFormSchema } from '../validation/IcsFeedbackHowSessionTookPlaceFormData'
+import { ScheduleIcsAppointmentSchema } from '../validation/ScheduleIcsAppointmentFormData'
 
 interface ScheduleFormData {
   sessionDate?: string
@@ -428,27 +429,40 @@ class AppointmentController {
     const referralInformation = await this.referralService.getReferralInformation(referralId, username)
 
     if (req.method === 'POST') {
-      const validationResults = this.validator.validateAppointment(req, referralInformation)
-
-      createAppointmentRequest = this.saveFormToSession(validationResults.formData)
-      if (Object.keys(validationResults.errors).length > 0) {
-        const presenter = new ScheduleIcsPresenter(
-          referralId,
-          probationOffices,
-          prisons,
-          referralInformation,
-          validationResults.formData,
-          validationResults.errors,
-        )
-        return presenter.renderPage(res)
-      }
-
+      const informedMethodArr: string[] =
+        typeof req.body.informedMethod === 'string' ? [req.body.informedMethod] : req.body.informedMethod
+      createAppointmentRequest = this.saveFormToSession({
+        sessionDate: req.body.sessionDate,
+        'sessionTime-hour': req.body['sessionTime-hour'],
+        'sessionTime-minute': req.body['sessionTime-minute'],
+        'sessionTime-meridiem': req.body['sessionTime-meridiem']?.toLowerCase(),
+        sessionTakePlace: req.body.sessionTakePlace,
+        ByPhone: req.body.ByPhone,
+        ByVideo: req.body.ByVideo,
+        probationOffice: req.body.probationOfficeList,
+        prison: req.body.prisonList,
+        addressLine1: req.body.addressLine1,
+        addressLine2: req.body.addressLine2,
+        addressTown: req.body.addressTown,
+        addressCounty: req.body.addressCounty,
+        addressPostcode: req.body.addressPostcode,
+        informedMethod: informedMethodArr,
+        otherMethodOfContact: req.body.otherMethodOfContact,
+      })
       req.session.createAppointmentRequest = createAppointmentRequest
-
-      return res.redirect(`/referral/${referralId}/appointment/confirm-ics`)
+      req.body.referralCrn = referralInformation.crn
+      return validateRequestBodyAgainstSchema(ScheduleIcsAppointmentSchema, req, res, () => {
+        return res.redirect(`/referral/${referralId}/appointment/confirm-ics`)
+      })
     }
+    const validationErrors: ErrorMiddlewareErrors = formatDynamicErrorMessages(
+      res.locals.errors,
+      '{{ firstname }}',
+      referralInformation.firstName,
+    )
+    res.locals.errors = validationErrors
     const formData = loadFormFromSession(createAppointmentRequest, this.validator)
-    const presenter = new ScheduleIcsPresenter(referralId, probationOffices, prisons, referralInformation, formData)
+    const presenter = new ScheduleIcsPresenter(referralId, probationOffices, prisons, referralInformation, formData, validationErrors)
 
     return presenter.renderPage(res)
   }
