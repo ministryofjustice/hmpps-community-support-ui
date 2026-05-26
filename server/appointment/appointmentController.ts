@@ -462,7 +462,14 @@ class AppointmentController {
     )
     res.locals.errors = validationErrors
     const formData = loadFormFromSession(createAppointmentRequest, this.validator)
-    const presenter = new ScheduleIcsPresenter(referralId, probationOffices, prisons, referralInformation, formData, validationErrors)
+    const presenter = new ScheduleIcsPresenter(
+      referralId,
+      probationOffices,
+      prisons,
+      referralInformation,
+      formData,
+      validationErrors,
+    )
 
     return presenter.renderPage(res)
   }
