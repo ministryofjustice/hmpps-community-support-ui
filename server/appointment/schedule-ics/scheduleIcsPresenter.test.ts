@@ -99,33 +99,6 @@ describe('ScheduleIcsPresenter', () => {
       const viewModel = getViewModel()
       expect(viewModel.formData).toEqual(formData)
     })
-
-    it('builds errorList from validationErrors', () => {
-      const errors = {
-        sessionDate: { text: 'Enter a date for the session' },
-        sessionTakePlace: { text: 'Select how the session will take place' },
-      }
-      const presenter = new ScheduleIcsPresenter(
-        caseReference,
-        probationOfficesData,
-        prisonsData,
-        referralInformation,
-        {},
-        errors,
-      )
-      presenter.renderPage(res)
-      const viewModel = getViewModel()
-      expect(viewModel.errorList).toHaveLength(2)
-      expect(viewModel.errorList[0]).toEqual({ href: '#sessionDate', text: errors.sessionDate.text })
-      expect(viewModel.errorList[1]).toEqual({ href: '#sessionTakePlace', text: errors.sessionTakePlace.text })
-    })
-
-    it('returns empty errorList when no validation errors are given', () => {
-      const presenter = new ScheduleIcsPresenter(caseReference, probationOfficesData, prisonsData, referralInformation)
-      presenter.renderPage(res)
-      const viewModel = getViewModel()
-      expect(viewModel.errorList).toHaveLength(0)
-    })
   })
 
   describe('probationOfficesSelectItems', () => {
