@@ -20,6 +20,7 @@ import {
 } from '../../integration_tests/mockData/referralInformationData'
 import ViewChangeSessionDetailsPresenter from './view-change-session-details/ViewChangeSessionDetailsPresenter'
 import IcsFeedbackCheckYourAnswersPresenter from './check-ics-feedback/icsFeedbackCheckYourAnswersPresenter'
+import { ReferralProgressBannerContent } from '../referral/progress/ReferralProgressBannerContent'
 
 jest.mock('./confirm-ics/confirmIcsPresenter')
 jest.mock('../services/AppointmentService')
@@ -855,6 +856,41 @@ describe('AppointmentController', () => {
         mockAppointmentIcsResponse.referralFirstName,
       )
       expect(IcsFeedbackCheckYourAnswersPresenter.prototype.renderPage).toHaveBeenCalledWith(icsFeedbackCheckRes)
+    })
+
+    it('redirects to progress page after submitting feedback', async () => {
+      jest.spyOn(appointmentService, 'submitIcsFeedback').mockResolvedValue(undefined)
+      jest.spyOn(appointmentService, 'getICS').mockResolvedValue(mockAppointmentIcsResponse)
+      const caseRefId = 'AB1234CD'
+      const username = 'user1'
+      const mockSubmission = {
+        record: {
+          didSessionHappen: true,
+          howSessionTookPlace: { type: 'PHONE' as const, additionalDetails: 'Video not available' },
+        },
+        caseReferenceId: caseRefId,
+      }
+      const bannerContent = {
+        caseReference: caseRefId,
+        heading: 'Session feedback submitted',
+        body: 'The ICS is now complete.',
+      } as ReferralProgressBannerContent
+
+      icsFeedbackCheckReq.method = 'POST'
+      icsFeedbackCheckReq.params.caseRefId = caseRefId
+      icsFeedbackCheckReq.session.icsFeedbackSubmission = mockSubmission
+
+      await appointmentController.submitFeedback(icsFeedbackCheckReq, icsFeedbackCheckRes)
+
+      expect(appointmentService.submitIcsFeedback).toHaveBeenCalledWith(
+        caseRefId,
+        mockAppointmentIcsResponse.appointmentIcsId,
+        mockSubmission,
+        username,
+      )
+      expect(icsFeedbackCheckReq.session.icsFeedbackSubmission).toBeFalsy()
+      expect(icsFeedbackCheckReq.session.referralProgressBanner).toEqual(bannerContent)
+      expect(icsFeedbackCheckRes.redirect).toHaveBeenCalledWith(`/progress/${caseRefId}`)
     })
   })
 })

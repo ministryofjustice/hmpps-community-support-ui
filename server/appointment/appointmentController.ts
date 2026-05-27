@@ -582,6 +582,11 @@ class AppointmentController {
     if (icsFeedbackSubmission && appointmentIcsId) {
       await this.appointmentService.submitIcsFeedback(caseRefId, appointmentIcsId, icsFeedbackSubmission, username)
       delete req.session.icsFeedbackSubmission
+      req.session.referralProgressBanner = {
+        caseReference: caseRefId,
+        heading: 'Session feedback submitted',
+        body: 'The ICS is now complete.',
+      } as ReferralProgressBannerContent
       res.redirect(`/progress/${caseRefId}`)
     }
   }
