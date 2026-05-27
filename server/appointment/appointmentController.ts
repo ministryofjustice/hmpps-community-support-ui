@@ -1,5 +1,10 @@
 import { Request, Response } from 'express'
-import { AppointmentIcsResponse, CreateAppointmentRequest, SessionMethodRequest } from '@community-support-api'
+import {
+  AppointmentIcsResponse,
+  CreateAppointmentRequest,
+  SessionMethod,
+  SessionMethodRequest,
+} from '@community-support-api'
 import { format, parse } from 'date-fns'
 import timeFormat from '../utils/timeFormat'
 import { ErrorMiddlewareErrors, HowSessionTookPlace, IcsFeedbackHowSessionTookPlaceSession } from '../@types/express'
@@ -74,10 +79,28 @@ const restartFeedback = (req: Request, res: Response): boolean => {
   return false
 }
 
-const buildHowSessionTookPlace = (formData: IcsFeedbackHowSessionTookPlaceFormData): Partial<HowSessionTookPlace> => {
-  if (formData.phoneCall === 'yes') {
-    return { type: 'PHONE' }
+const buildHowSessionTookPlace = (
+  formData: IcsFeedbackHowSessionTookPlaceFormData,
+  plannedSessionMethod: SessionMethod,
+): Partial<HowSessionTookPlace> => {
+  if (formData.didSessionTakePlaceAsPlanned === 'yes') {
+    if (plannedSessionMethod.type === 'IN_PERSON_PROBATION_OFFICE') {
+      return { type: plannedSessionMethod.type, pdu: plannedSessionMethod.probationOfficeName }
+    }
+
+    if (plannedSessionMethod.type === 'IN_PERSON_OTHER_LOCATION') {
+      return {
+        type: plannedSessionMethod,
+        addressLine1: plannedSessionMethod.addressLine1 || '',
+        addressLine2: plannedSessionMethod.addressLine2 || '',
+        townOrCity: plannedSessionMethod.townOrCity || '',
+        county: plannedSessionMethod.county || '',
+        postcode: plannedSessionMethod.postcode || '',
+      }
+    }
+    return { type: plannedSessionMethod.type }
   }
+
   switch (formData.howSessionTookPlace) {
     case 'PHONE':
       return {
@@ -541,9 +564,10 @@ class AppointmentController {
         ...icsFeedbackSubmission.record,
         howSessionTookPlace: buildHowSessionTookPlace(
           req.body as IcsFeedbackHowSessionTookPlaceFormData,
+          sessionMethod,
         ) as SessionMethodRequest,
       }
-      req.session.icsFeedbackSubmission = icsFeedbackSubmission
+      req.session.icsFeedbackSubmission = icsFeedbackSubmission // Debug log to check the updated session data
       return res.redirect(`/ics-feedback/${caseRefId}/session-details`)
     })
   }

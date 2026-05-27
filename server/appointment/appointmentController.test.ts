@@ -557,19 +557,18 @@ describe('AppointmentController', () => {
     it('saves submitted form data with nested field to session and redirects on invalid POST', async () => {
       icsFeedbackReq.method = 'POST'
       icsFeedbackReq.url = '/ics-feedback/ics-123/did-session-take-place'
-      icsFeedbackReq.body = { phoneCall: 'no', howSessionTookPlace: 'PHONE', phoneCallReason: '' }
+      icsFeedbackReq.body = { didSessionTakePlaceAsPlanned: 'no', howSessionTookPlace: 'PHONE', phoneCallReason: '' }
 
       await appointmentController.recordDidSessionTakePlace(icsFeedbackReq, icsFeedbackRes)
 
       expect(icsFeedbackReq.flash).toHaveBeenCalledWith('phoneCallReasonError', expect.any(String))
       expect(icsFeedbackRes.redirect).toHaveBeenCalledWith('/ics-feedback/ics-123/did-session-take-place')
-      expect(icsFeedbackReq.session.pending).toEqual(expect.objectContaining({ phoneCall: 'no' }))
-      expect(icsFeedbackReq.session.pending).toEqual(expect.objectContaining({ phoneCall: 'no' }))
+      expect(icsFeedbackReq.session.pending).toEqual(expect.objectContaining({ didSessionTakePlaceAsPlanned: 'no' }))
     })
 
     it('restores form data from session on GET after failed POST', async () => {
       icsFeedbackReq.session.pending = {
-        phoneCall: 'no',
+        didSessionTakePlaceAsPlanned: 'no',
         howSessionTookPlace: 'PHONE',
         phoneCallReason: '',
       }
@@ -580,7 +579,7 @@ describe('AppointmentController', () => {
         'ics-123',
         mockIcsAppointment.sessionMethod,
         probationOfficesData,
-        { phoneCall: 'no', howSessionTookPlace: 'PHONE', phoneCallReason: '' },
+        { didSessionTakePlaceAsPlanned: 'no', howSessionTookPlace: 'PHONE', phoneCallReason: '' },
         undefined,
       )
       expect(icsFeedbackReq.session.pending).toBeUndefined()
@@ -588,7 +587,7 @@ describe('AppointmentController', () => {
 
     it('saves howSessionTookPlace to session and redirects on valid POST with phoneCall yes (no prior session)', async () => {
       icsFeedbackReq.method = 'POST'
-      icsFeedbackReq.body = { phoneCall: 'yes' }
+      icsFeedbackReq.body = { didSessionTakePlaceAsPlanned: 'yes' }
       icsFeedbackReq.session.icsFeedbackSubmission = {
         record: {
           didSessionHappen: true,
@@ -607,7 +606,10 @@ describe('AppointmentController', () => {
 
     it('saves howSessionTookPlace to session and redirects on valid POST with phoneCall yes', async () => {
       icsFeedbackReq.method = 'POST'
-      icsFeedbackReq.body = { phoneCall: 'yes' }
+      icsFeedbackReq.body = {
+        didSessionTakePlaceAsPlanned: 'yes',
+        phoneCall: 'yes',
+      }
       icsFeedbackReq.session.icsFeedbackSubmission = { record: { didSessionHappen: true }, caseReferenceId: 'ics-123' }
 
       await appointmentController.recordDidSessionTakePlace(icsFeedbackReq, icsFeedbackRes)
@@ -620,7 +622,11 @@ describe('AppointmentController', () => {
 
     it('saves howSessionTookPlace to session and redirects on valid POST with PHONE (howSessionTookPlace)', async () => {
       icsFeedbackReq.method = 'POST'
-      icsFeedbackReq.body = { phoneCall: 'no', howSessionTookPlace: 'PHONE', phoneCallReason: 'Video not available' }
+      icsFeedbackReq.body = {
+        didSessionTakePlaceAsPlanned: 'no',
+        howSessionTookPlace: 'PHONE',
+        phoneCallReason: 'Video not available',
+      }
       icsFeedbackReq.session.icsFeedbackSubmission = { record: { didSessionHappen: true }, caseReferenceId: 'ics-123' }
 
       await appointmentController.recordDidSessionTakePlace(icsFeedbackReq, icsFeedbackRes)
@@ -634,7 +640,11 @@ describe('AppointmentController', () => {
 
     it('saves howSessionTookPlace to session and redirects on valid POST with VIDEO', async () => {
       icsFeedbackReq.method = 'POST'
-      icsFeedbackReq.body = { phoneCall: 'no', howSessionTookPlace: 'VIDEO', videoCallReason: 'Teams only' }
+      icsFeedbackReq.body = {
+        didSessionTakePlaceAsPlanned: 'no',
+        howSessionTookPlace: 'VIDEO',
+        videoCallReason: 'Teams only',
+      }
       icsFeedbackReq.session.icsFeedbackSubmission = { record: { didSessionHappen: true }, caseReferenceId: 'ics-123' }
 
       await appointmentController.recordDidSessionTakePlace(icsFeedbackReq, icsFeedbackRes)
@@ -649,7 +659,7 @@ describe('AppointmentController', () => {
     it('saves howSessionTookPlace to session and redirects on valid POST with IN_PERSON_PROBATION_OFFICE', async () => {
       icsFeedbackReq.method = 'POST'
       icsFeedbackReq.body = {
-        phoneCall: 'no',
+        didSessionTakePlaceAsPlanned: 'no',
         howSessionTookPlace: 'IN_PERSON_PROBATION_OFFICE',
         probationDeliveryUnit: 'PDU-123',
       }
@@ -666,7 +676,7 @@ describe('AppointmentController', () => {
     it('saves howSessionTookPlace to session and redirects on valid POST with IN_PERSON_OTHER_LOCATION', async () => {
       icsFeedbackReq.method = 'POST'
       icsFeedbackReq.body = {
-        phoneCall: 'no',
+        didSessionTakePlaceAsPlanned: 'no',
         howSessionTookPlace: 'IN_PERSON_OTHER_LOCATION',
         addressLine1: '56 Carlisle Road',
         addressLine2: '',

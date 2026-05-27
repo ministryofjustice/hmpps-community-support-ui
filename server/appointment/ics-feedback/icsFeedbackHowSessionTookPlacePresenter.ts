@@ -193,25 +193,25 @@ export default class IcsFeedbackHowSessionTookPlacePresenter extends PresenterBa
     howSessionHtml: string,
   ): GovukFrontendRadiosWithConditional {
     return {
-      idPrefix: 'phoneCall',
-      name: 'phoneCall',
+      idPrefix: 'didSessionTakePlaceAsPlanned',
+      name: 'didSessionTakePlaceAsPlanned',
       fieldset: {
         legend: {
           text: pageHeader,
           classes: 'govuk-visually-hidden',
         },
       },
-      errorMessage: this.validationErrors?.messages.phoneCall ?? null,
+      errorMessage: this.validationErrors?.messages.didSessionTakePlaceAsPlanned ?? null,
       items: [
         {
           value: 'yes',
           text: content.yesText,
-          checked: this.formData?.phoneCall === 'yes',
+          checked: this.formData?.didSessionTakePlaceAsPlanned === 'yes',
         },
         {
           value: 'no',
           text: content.noText,
-          checked: this.formData?.phoneCall === 'no',
+          checked: this.formData?.didSessionTakePlaceAsPlanned === 'no',
           conditional: { html: howSessionHtml },
         },
       ],
