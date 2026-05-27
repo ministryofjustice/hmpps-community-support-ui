@@ -154,7 +154,7 @@ class ReferralController {
       },
     }
 
-    let errors: ErrorMiddlewareErrors = { list: [], messages: {} }
+    const errors: ErrorMiddlewareErrors = { list: [], messages: {} }
 
     const referralUserAssignmentsRequest = {
       emails: caseworkers
@@ -187,7 +187,7 @@ class ReferralController {
         if (referralUserAssignmentsResponse.failureList.length === 0 && referralUserAssignmentsResponse.message) {
           errors.list.push({ href: `#generalError`, text: referralUserAssignmentsResponse.message })
           errors.messages.generalError = { text: referralUserAssignmentsResponse.message }
-          }
+        }
 
         const fieldErrors: Record<string, { text: string }> = {}
         referralUserAssignmentsResponse.failureList.forEach((failure: AssignmentFailureDto, index: number) => {
@@ -207,7 +207,6 @@ class ReferralController {
           fieldErrors,
         })
       }
-
 
       if (error.responseStatus === 404) {
         req.flash('referralError', `No referral with identifier '${identifier}' found`)
