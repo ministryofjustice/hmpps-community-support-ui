@@ -8,6 +8,7 @@ import logger from '../../logger'
 import CheckReferralInformationPresenter from './check-referral-information/checkReferralInformationPresenter'
 import ReferralDetailsPresenter from './referralDetails/ReferralDetailsPresenter'
 import ReferralProgressPresenter from './progress/referralProgressPresenter'
+import { ErrorMiddlewareErrors } from '../@types/express'
 
 class ReferralController {
   constructor(
@@ -118,23 +119,26 @@ class ReferralController {
         req.flash('referralIdError', `No referral with identifier '${identifier}' found`)
         return res.render('referral/assign', {
           ...viewModel,
-          errorsList: [
-            {
-              href: '#referralIdError',
-              text: `No referral with identifier '${identifier}' found`,
-            },
-          ],
+          errors: {
+            list: [{ href: '#referralIdError', text: `No referral with identifier '${identifier}' found` }],
+            messages: { referralIdError: { text: `No referral with identifier '${identifier}' found` } },
+          },
         })
       }
       req.flash('retrievalError', 'An unexpected error when retrieving user assignments. Please try again.')
       return res.render('referral/assign', {
         ...viewModel,
-        errorsList: [
-          {
-            href: '#retrievalError',
-            text: `An unexpected error when retrieving user assignments. Please try again.`,
+        errors: {
+          list: [
+            {
+              href: '#retrievalError',
+              text: `An unexpected error when retrieving user assignments. Please try again.`,
+            },
+          ],
+          messages: {
+            retrievalError: { text: `An unexpected error when retrieving user assignments. Please try again.` },
           },
-        ],
+        },
       })
     }
   }
@@ -150,7 +154,7 @@ class ReferralController {
       },
     }
 
-    let errorsList: Array<{ href: string; text: string }> = []
+    let errors: ErrorMiddlewareErrors = { list: [], messages: {} }
 
     const referralUserAssignmentsRequest = {
       emails: caseworkers
@@ -181,11 +185,9 @@ class ReferralController {
         )
 
         if (referralUserAssignmentsResponse.failureList.length === 0 && referralUserAssignmentsResponse.message) {
-          errorsList.push({
-            href: `#generalError`,
-            text: referralUserAssignmentsResponse.message,
-          })
-        }
+          errors.list.push({ href: `#generalError`, text: referralUserAssignmentsResponse.message })
+          errors.messages.generalError = { text: referralUserAssignmentsResponse.message }
+          }
 
         const fieldErrors: Record<string, { text: string }> = {}
         referralUserAssignmentsResponse.failureList.forEach((failure: AssignmentFailureDto, index: number) => {
@@ -194,33 +196,25 @@ class ReferralController {
           }
           const key = `caseworkers[${index}][email_address]`
           fieldErrors[key] = { text: failure.reason.trim() }
-          errorsList.push({
-            href: `#caseworkers[${index}][email_address]`,
-            text: failure.reason.trim(),
-          })
+          errors.list.push({ href: `#caseworkers[${index}][email_address]`, text: failure.reason.trim() })
+          errors.messages[`caseworkers[${index}][email_address]`] = { text: failure.reason.trim() }
         })
 
         return res.render('referral/assign', {
           ...viewModel,
           caseworkers: uniqueCaseworkers,
-          errorsList,
-          errors: fieldErrors,
+          errors,
+          fieldErrors,
         })
       }
 
+
       if (error.responseStatus === 404) {
         req.flash('referralError', `No referral with identifier '${identifier}' found`)
-        errorsList = [{ href: '#referralError', text: `No referral with identifier '${identifier}' found` }]
       } else {
         req.flash('assignmentError', 'An unexpected error when assigning case workers. Please try again.')
-        errorsList = [
-          { href: '#assignmentError', text: `An unexpected error when assigning case workers. Please try again.` },
-        ]
       }
-      return res.render('referral/assign', {
-        ...viewModel,
-        errorsList,
-      })
+      return res.redirect(`referral/${identifier}/assign`)
     }
   }
 
