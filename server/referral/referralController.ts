@@ -34,7 +34,7 @@ class ReferralController {
       .then(presenter => presenter.renderPage(res))
   }
 
-  async handleFindPersonRequest(req: Request, res: Response, next: NextFunction) {
+  async handleFindPersonRequest(req: Request, res: Response) {
     if (req.method === 'POST') {
       const { personIdentifier } = req.body
       const { username } = res.locals.user
@@ -56,7 +56,7 @@ class ReferralController {
     return res.render('referral/findPerson', {})
   }
 
-  async viewConfirmation(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async viewConfirmation(req: Request, res: Response): Promise<void> {
     const referralId = req.params.id as string
     const { username } = res.locals.user
     const referral = await this.referralService.getReferralById(referralId, username)

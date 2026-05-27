@@ -64,7 +64,7 @@ describe('ReferralController', () => {
   })
   describe('showFindPersonPage', () => {
     it('should render the find a person page on a GET request', async () => {
-      await referralController.handleFindPersonRequest(req, res, next)
+      await referralController.handleFindPersonRequest(req, res)
       expect(res.render).toHaveBeenCalledWith('referral/findPerson', {})
     })
     it('should render the found person page on a successful POST request', async () => {
@@ -82,7 +82,7 @@ describe('ReferralController', () => {
       } as Person
       personService.getPersonByIdentifier.mockResolvedValue(mockPersonData)
 
-      await referralController.handleFindPersonRequest(req, res, next)
+      await referralController.handleFindPersonRequest(req, res)
 
       expect(personService.getPersonByIdentifier).toHaveBeenCalledWith('person123', 'user1')
       expect(req.flash).not.toHaveBeenCalled()
@@ -98,7 +98,7 @@ describe('ReferralController', () => {
       const mockErrorData = { responseStatus: 404 }
       personService.getPersonByIdentifier.mockRejectedValue(mockErrorData)
 
-      await referralController.handleFindPersonRequest(req, res, next)
+      await referralController.handleFindPersonRequest(req, res)
 
       expect(personService.getPersonByIdentifier).toHaveBeenCalledWith('person123', 'user1')
       expect(req.flash).toHaveBeenCalledWith('personIdentifierError', "No person with identifier 'person123' found")
@@ -113,7 +113,7 @@ describe('ReferralController', () => {
       const mockErrorData = { responseStatus: 500 }
       personService.getPersonByIdentifier.mockRejectedValue(mockErrorData)
 
-      await referralController.handleFindPersonRequest(req, res, next)
+      await referralController.handleFindPersonRequest(req, res)
 
       expect(personService.getPersonByIdentifier).toHaveBeenCalledWith('person123', 'user1')
       expect(req.flash).toHaveBeenCalledWith('personIdentifierError', 'An unexpected error occurred. Please try again.')
@@ -191,7 +191,7 @@ describe('ReferralController', () => {
       res.locals.content = ConfirmationContent.build()
       referralService.getReferralById.mockResolvedValue(mockReferralData)
 
-      await referralController.viewConfirmation(req, res, next)
+      await referralController.viewConfirmation(req, res)
 
       expect(referralService.getReferralById).toHaveBeenCalledWith('referral123', 'user1')
       expect(ConfirmationPresenter).toHaveBeenCalledWith(mockReferralData)

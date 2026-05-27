@@ -170,7 +170,7 @@ describe('AppointmentController', () => {
       referenceDataService.getProbationOffices.mockResolvedValue(probationOfficesData)
       referenceDataService.getPrisons.mockResolvedValue(prisonsData)
 
-      await appointmentController.scheduleIcs(scheduleIcsCommunityReq, scheduleIcsRes)
+      await appointmentController.showScheduleIcs(scheduleIcsCommunityReq, scheduleIcsRes)
 
       expect(ScheduleIcsPresenter).toHaveBeenCalledWith(
         referralId,
@@ -185,7 +185,7 @@ describe('AppointmentController', () => {
 
     it('should render schedule-ics page - custody ', async () => {
       referralService.getReferralInformation.mockResolvedValue(mockReferralInformationInPrison)
-      await appointmentController.scheduleIcs(scheduleIcsPrisonReq, scheduleIcsRes)
+      await appointmentController.showScheduleIcs(scheduleIcsPrisonReq, scheduleIcsRes)
 
       expect(ScheduleIcsPresenter).toHaveBeenCalledWith(
         referralId,
@@ -202,7 +202,7 @@ describe('AppointmentController', () => {
       referralService.getReferralInformation.mockResolvedValue(mockReferralInformationInCommunity)
       req.session.createAppointmentRequest = mockCreateAppointmentRequest
 
-      await appointmentController.scheduleIcs(scheduleIcsCommunityReq, scheduleIcsRes)
+      await appointmentController.showScheduleIcs(scheduleIcsCommunityReq, scheduleIcsRes)
 
       expect(ScheduleIcsPresenter).toHaveBeenCalledWith(
         referralId,

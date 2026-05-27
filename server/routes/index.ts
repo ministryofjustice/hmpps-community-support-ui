@@ -43,15 +43,15 @@ export default function routes({
 
   get('/referral-details/:id', async (req, res) => referralController.showReferralDetailsPage(req, res))
 
-  getOrPost('/referral/new/find-a-person', async (req, res, next) => {
-    await referralController.handleFindPersonRequest(req, res, next)
+  getOrPost('/referral/new/find-a-person', async (req, res) => {
+    await referralController.handleFindPersonRequest(req, res)
   })
 
-  get('/referral/new/select-a-service', async (req, res, next) => {
-    await communityServiceProviderController.showCommunityServiceProviderPage(req, res, next)
+  get('/referral/new/select-a-service', async (req, res) => {
+    await communityServiceProviderController.showCommunityServiceProviderPage(req, res)
   })
 
-  get('/referral/:id/confirmation', async (req, res, next) => referralController.viewConfirmation(req, res, next))
+  get('/referral/:id/confirmation', async (req, res) => referralController.viewConfirmation(req, res))
 
   get('/referral/check-referral-information/:id', async (req, res) =>
     referralController.checkReferralInformation(req, res),
@@ -87,11 +87,21 @@ export default function routes({
 
   get('/referral/:referralId/appointment/confirm-ics', async (req, res) => appointmentController.checkIcs(req, res))
 
-  getOrPost('/referral/:referralId/appointment/schedule-ics', async (req, res) =>
+  get('/referral/:referralId/appointment/schedule-ics', async (req, res) =>
+    appointmentController.showScheduleIcs(req, res),
+  )
+
+  post('/referral/:referralId/appointment/schedule-ics', async (req, res) =>
     appointmentController.scheduleIcs(req, res),
   )
 
   get('/referral-details/:caseRefId/check-change-ics', (req, res) => appointmentController.changeIcs(req, res))
+
+  // HANNAH
+  get('/referral/:caseRefId/appointment/change-ics', async (req, res) => {
+    console.log('new - caseRefId :', req.params.caseRefId)
+    await appointmentController.showScheduleIcs2(req, res)
+  })
 
   get('/ics-feedback/:caseRefId/did-session-take-place', async (req, res) =>
     appointmentController.didSessionTakePlace(req, res),

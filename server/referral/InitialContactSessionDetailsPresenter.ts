@@ -170,12 +170,12 @@ export default class InitialContactSessionDetailsPresenter extends PresenterBase
 
   buildPageContent(res: Response): InitialContactSessionDetailsViewModel {
     const content = this.buildStaticContent(res)
-    const linkId = { id: this.referralId }
+    console.log('--buildPageContent - referralId :', this.referralId)
     return {
       title: content.title,
       heading: content.heading,
-      details: this.buildDetails(content.details, nunjucks.renderString(content.links.change, linkId), this.name),
-      backLink: { href: nunjucks.renderString(content.links.back, linkId) },
+      details: this.buildDetails(content.details, content.links.change.replace('{{ id }}', this.referralId), this.name),
+      backLink: { href: content.links.back.replace('{{ id }}', this.referralId) },
     }
   }
 

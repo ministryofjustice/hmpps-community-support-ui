@@ -8,11 +8,13 @@ import ScheduleIcsPage from '../pages/scheduleIcsPage'
 import { referralInformationInCommunity, referralInformationInPrison } from '../mockData/referralInformationData'
 import buildReferralProgress from '../../server/testutils/buildReferralProgress'
 import { probationOfficesData } from '../mockData/referenceData'
+import ReferralProgressPage from '../pages/referralProgressPage'
+import ConfirmIcsPage from '../pages/confirmIcsPage'
 
 const CASE_REFERENCE = 'AB1234CD'
-const SCHEDULE_ICS_URL = `/referral/${CASE_REFERENCE}/appointment/schedule-ics`
-const REFERRAL_PROGRESS_URL = `/progress/${CASE_REFERENCE}`
-const CHECK_ICS_URL = `/referral/${CASE_REFERENCE}/appointment/confirm-ics`
+const SCHEDULE_ICS_URL = ScheduleIcsPage.url(CASE_REFERENCE) // `/referral/${CASE_REFERENCE}/appointment/schedule-ics`
+const REFERRAL_PROGRESS_URL = ReferralProgressPage.url(CASE_REFERENCE) // `/progress/${CASE_REFERENCE}`
+const CHECK_ICS_URL = ConfirmIcsPage.url(CASE_REFERENCE) // `/referral/${CASE_REFERENCE}/appointment/confirm-ics`
 
 test.describe('Schedule ICS Page', () => {
   const id = CASE_REFERENCE

@@ -6,6 +6,9 @@ import communitySupport from '../mockApis/communitySupport'
 import initialContactSessionDetailsPageData from '../mockData/initialContactSessionDetailsPageData'
 import InitialContactSessionDetailsPage from '../pages/InitialContactSessionDetailsPage'
 import ReferralProgressPage from '../pages/referralProgressPage'
+import prisonApi from '../mockApis/prisonApi'
+import { probationOfficesData } from '../mockData/referenceData'
+import { referralInformationInPrison, referralInformationInPrisonCustom } from '../mockData/referralInformationData'
 
 test.describe('Initial Contact Session Details Page', () => {
   const virtual = {
@@ -125,5 +128,23 @@ test.describe('Initial Contact Session Details Page', () => {
         await expect(rows[4].key).toHaveText(`How ${inPerson.data.referralFirstName} was informed about the session`)
       })
     })
+  })
+  test('Change details new', async ({ page }) => {
+    console.log('caseref :', inPerson.caseRefId)
+    await prisonApi.stubGetPrisons()
+    await communitySupport.stubGetProbationOffices(probationOfficesData)
+    const { referralId } = inPerson.data
+    console.log('referralId :', referralId)
+    const data = referralInformationInPrisonCustom(inPerson.caseRefId, referralId)
+    console.log('data :', data)
+    await communitySupport.stubGetReferralInformation(200, referralId, data)
+
+    console.log('caseref :', inPerson.caseRefId)
+    const url = InitialContactSessionDetailsPage.url(inPerson.caseRefId)
+    console.log('url :', url)
+    await page.goto(url)
+
+    const referralDetailsPage = await InitialContactSessionDetailsPage.verifyOnPage(page)
+    await referralDetailsPage.clickChange()
   })
 })

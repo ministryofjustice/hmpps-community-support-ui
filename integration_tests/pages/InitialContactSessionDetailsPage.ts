@@ -8,6 +8,7 @@ export default class InitialContactSessionDetailsPage extends AbstractPage {
     readonly header: Locator,
     readonly backLink: Locator,
     readonly details: SummaryList,
+    readonly changeLink: Locator,
   ) {
     super(page)
   }
@@ -20,7 +21,12 @@ export default class InitialContactSessionDetailsPage extends AbstractPage {
     const header = page.locator('h1')
     await expect(header).toBeVisible()
     const backLink = page.getByRole('link', { name: 'Back', exact: true })
+    const changeLink = page.getByRole('link', { name: 'Change   (ICS details)' })
     const details = await SummaryList.create(page.locator('[data-testid="details"]'))
-    return new InitialContactSessionDetailsPage(page, header, backLink, details)
+    return new InitialContactSessionDetailsPage(page, header, backLink, details, changeLink)
+  }
+
+  async clickChange() {
+    await this.changeLink.click()
   }
 }

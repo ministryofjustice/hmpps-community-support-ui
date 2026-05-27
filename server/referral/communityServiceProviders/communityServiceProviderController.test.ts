@@ -42,7 +42,7 @@ describe('CommunityServiceProviderController', () => {
 
       communityServiceProviderService.getCommunityServiceProviders.mockResolvedValue(mockCommunityServiceProviderData)
 
-      await communityServiceProviderController.showCommunityServiceProviderPage(req, res, next)
+      await communityServiceProviderController.showCommunityServiceProviderPage(req, res)
 
       expect(communityServiceProviderService.getCommunityServiceProviders).toHaveBeenCalledWith('CRN123', 'user1')
       expect(CommunityServiceProviderPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
