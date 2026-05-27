@@ -20,6 +20,7 @@ import {
 } from '../../integration_tests/mockData/referralInformationData'
 import ViewChangeSessionDetailsPresenter from './view-change-session-details/ViewChangeSessionDetailsPresenter'
 import IcsFeedbackCheckYourAnswersPresenter from './check-ics-feedback/icsFeedbackCheckYourAnswersPresenter'
+import { ReferralProgressBannerContent } from '../referral/progress/ReferralProgressBannerContent'
 
 jest.mock('./confirm-ics/confirmIcsPresenter')
 jest.mock('../services/AppointmentService')
@@ -559,19 +560,18 @@ describe('AppointmentController', () => {
     it('saves submitted form data with nested field to session and redirects on invalid POST', async () => {
       icsFeedbackReq.method = 'POST'
       icsFeedbackReq.url = '/ics-feedback/ics-123/did-session-take-place'
-      icsFeedbackReq.body = { phoneCall: 'no', howSessionTookPlace: 'PHONE', phoneCallReason: '' }
+      icsFeedbackReq.body = { didSessionTakePlaceAsPlanned: 'no', howSessionTookPlace: 'PHONE', phoneCallReason: '' }
 
       await appointmentController.recordDidSessionTakePlace(icsFeedbackReq, icsFeedbackRes)
 
       expect(icsFeedbackReq.flash).toHaveBeenCalledWith('phoneCallReasonError', expect.any(String))
       expect(icsFeedbackRes.redirect).toHaveBeenCalledWith('/ics-feedback/ics-123/did-session-take-place')
-      expect(icsFeedbackReq.session.pending).toEqual(expect.objectContaining({ phoneCall: 'no' }))
-      expect(icsFeedbackReq.session.pending).toEqual(expect.objectContaining({ phoneCall: 'no' }))
+      expect(icsFeedbackReq.session.pending).toEqual(expect.objectContaining({ didSessionTakePlaceAsPlanned: 'no' }))
     })
 
     it('restores form data from session on GET after failed POST', async () => {
       icsFeedbackReq.session.pending = {
-        phoneCall: 'no',
+        didSessionTakePlaceAsPlanned: 'no',
         howSessionTookPlace: 'PHONE',
         phoneCallReason: '',
       }
@@ -582,7 +582,7 @@ describe('AppointmentController', () => {
         'ics-123',
         mockIcsAppointment.sessionMethod,
         probationOfficesData,
-        { phoneCall: 'no', howSessionTookPlace: 'PHONE', phoneCallReason: '' },
+        { didSessionTakePlaceAsPlanned: 'no', howSessionTookPlace: 'PHONE', phoneCallReason: '' },
         undefined,
       )
       expect(icsFeedbackReq.session.pending).toBeUndefined()
@@ -590,7 +590,7 @@ describe('AppointmentController', () => {
 
     it('saves howSessionTookPlace to session and redirects on valid POST with phoneCall yes (no prior session)', async () => {
       icsFeedbackReq.method = 'POST'
-      icsFeedbackReq.body = { phoneCall: 'yes' }
+      icsFeedbackReq.body = { didSessionTakePlaceAsPlanned: 'yes' }
       icsFeedbackReq.session.icsFeedbackSubmission = {
         record: {
           didSessionHappen: true,
@@ -609,7 +609,10 @@ describe('AppointmentController', () => {
 
     it('saves howSessionTookPlace to session and redirects on valid POST with phoneCall yes', async () => {
       icsFeedbackReq.method = 'POST'
-      icsFeedbackReq.body = { phoneCall: 'yes' }
+      icsFeedbackReq.body = {
+        didSessionTakePlaceAsPlanned: 'yes',
+        phoneCall: 'yes',
+      }
       icsFeedbackReq.session.icsFeedbackSubmission = { record: { didSessionHappen: true }, caseReferenceId: 'ics-123' }
 
       await appointmentController.recordDidSessionTakePlace(icsFeedbackReq, icsFeedbackRes)
@@ -622,7 +625,11 @@ describe('AppointmentController', () => {
 
     it('saves howSessionTookPlace to session and redirects on valid POST with PHONE (howSessionTookPlace)', async () => {
       icsFeedbackReq.method = 'POST'
-      icsFeedbackReq.body = { phoneCall: 'no', howSessionTookPlace: 'PHONE', phoneCallReason: 'Video not available' }
+      icsFeedbackReq.body = {
+        didSessionTakePlaceAsPlanned: 'no',
+        howSessionTookPlace: 'PHONE',
+        phoneCallReason: 'Video not available',
+      }
       icsFeedbackReq.session.icsFeedbackSubmission = { record: { didSessionHappen: true }, caseReferenceId: 'ics-123' }
 
       await appointmentController.recordDidSessionTakePlace(icsFeedbackReq, icsFeedbackRes)
@@ -636,7 +643,11 @@ describe('AppointmentController', () => {
 
     it('saves howSessionTookPlace to session and redirects on valid POST with VIDEO', async () => {
       icsFeedbackReq.method = 'POST'
-      icsFeedbackReq.body = { phoneCall: 'no', howSessionTookPlace: 'VIDEO', videoCallReason: 'Teams only' }
+      icsFeedbackReq.body = {
+        didSessionTakePlaceAsPlanned: 'no',
+        howSessionTookPlace: 'VIDEO',
+        videoCallReason: 'Teams only',
+      }
       icsFeedbackReq.session.icsFeedbackSubmission = { record: { didSessionHappen: true }, caseReferenceId: 'ics-123' }
 
       await appointmentController.recordDidSessionTakePlace(icsFeedbackReq, icsFeedbackRes)
@@ -651,7 +662,7 @@ describe('AppointmentController', () => {
     it('saves howSessionTookPlace to session and redirects on valid POST with IN_PERSON_PROBATION_OFFICE', async () => {
       icsFeedbackReq.method = 'POST'
       icsFeedbackReq.body = {
-        phoneCall: 'no',
+        didSessionTakePlaceAsPlanned: 'no',
         howSessionTookPlace: 'IN_PERSON_PROBATION_OFFICE',
         probationDeliveryUnit: 'PDU-123',
       }
@@ -668,7 +679,7 @@ describe('AppointmentController', () => {
     it('saves howSessionTookPlace to session and redirects on valid POST with IN_PERSON_OTHER_LOCATION', async () => {
       icsFeedbackReq.method = 'POST'
       icsFeedbackReq.body = {
-        phoneCall: 'no',
+        didSessionTakePlaceAsPlanned: 'no',
         howSessionTookPlace: 'IN_PERSON_OTHER_LOCATION',
         addressLine1: '56 Carlisle Road',
         addressLine2: '',
@@ -858,6 +869,41 @@ describe('AppointmentController', () => {
         mockAppointmentIcsResponse.referralFirstName,
       )
       expect(IcsFeedbackCheckYourAnswersPresenter.prototype.renderPage).toHaveBeenCalledWith(icsFeedbackCheckRes)
+    })
+
+    it('redirects to progress page after submitting feedback', async () => {
+      jest.spyOn(appointmentService, 'submitIcsFeedback').mockResolvedValue(undefined)
+      jest.spyOn(appointmentService, 'getICS').mockResolvedValue(mockAppointmentIcsResponse)
+      const caseRefId = 'AB1234CD'
+      const username = 'user1'
+      const mockSubmission = {
+        record: {
+          didSessionHappen: true,
+          howSessionTookPlace: { type: 'PHONE' as const, additionalDetails: 'Video not available' },
+        },
+        caseReferenceId: caseRefId,
+      }
+      const bannerContent = {
+        caseReference: caseRefId,
+        heading: 'Session feedback submitted',
+        body: 'The ICS is now complete.',
+      } as ReferralProgressBannerContent
+
+      icsFeedbackCheckReq.method = 'POST'
+      icsFeedbackCheckReq.params.caseRefId = caseRefId
+      icsFeedbackCheckReq.session.icsFeedbackSubmission = mockSubmission
+
+      await appointmentController.submitFeedback(icsFeedbackCheckReq, icsFeedbackCheckRes)
+
+      expect(appointmentService.submitIcsFeedback).toHaveBeenCalledWith(
+        caseRefId,
+        mockAppointmentIcsResponse.appointmentIcsId,
+        mockSubmission,
+        username,
+      )
+      expect(icsFeedbackCheckReq.session.icsFeedbackSubmission).toBeFalsy()
+      expect(icsFeedbackCheckReq.session.referralProgressBanner).toEqual(bannerContent)
+      expect(icsFeedbackCheckRes.redirect).toHaveBeenCalledWith(`/progress/${caseRefId}`)
     })
   })
 })

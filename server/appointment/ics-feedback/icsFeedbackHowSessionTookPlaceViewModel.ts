@@ -2,6 +2,7 @@ import { GovukFrontendBackLink, GovukFrontendInput, GovukFrontendSelect } from '
 import { GovukFrontendRadiosWithConditional } from '../../@types/govukFrontend/derived'
 
 export interface IcsFeedbackHowSessionTookPlaceFormData {
+  didSessionTakePlaceAsPlanned?: string
   phoneCall?: string
   phoneCallReason?: string
   howSessionTookPlace?: string

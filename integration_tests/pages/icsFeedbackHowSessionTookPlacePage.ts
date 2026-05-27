@@ -8,9 +8,9 @@ export default class IcsFeedbackHowSessionTookPlacePage extends AbstractPage {
 
   readonly errorHeader: Locator
 
-  readonly phoneCallYesRadio: Locator
+  readonly didSessionTakePlaceAsPlannedYesRadio: Locator
 
-  readonly phoneCallNoRadio: Locator
+  readonly didSessionTakePlaceAsPlannedNoRadio: Locator
 
   readonly videoCallRadio: Locator
 
@@ -51,8 +51,12 @@ export default class IcsFeedbackHowSessionTookPlacePage extends AbstractPage {
     this.header = page.locator('h1')
     this.sessionLocation = page.locator('[data-testid="session-location"]')
     this.errorHeader = page.locator('h2', { hasText: 'There is a problem' })
-    this.phoneCallYesRadio = page.locator('input[type="radio"][name="phoneCall"][value="yes"]')
-    this.phoneCallNoRadio = page.locator('input[type="radio"][name="phoneCall"][value="no"]')
+    this.didSessionTakePlaceAsPlannedYesRadio = page.locator(
+      'input[type="radio"][name="didSessionTakePlaceAsPlanned"][value="yes"]',
+    )
+    this.didSessionTakePlaceAsPlannedNoRadio = page.locator(
+      'input[type="radio"][name="didSessionTakePlaceAsPlanned"][value="no"]',
+    )
     this.videoCallRadio = page.locator('input[type="radio"][name="howSessionTookPlace"][value="VIDEO"]')
     this.videoCallReasonInput = page.locator('input[type="text"][name="videoCallReason"]')
     this.phoneCallHowRadio = page.locator('input[type="radio"][name="howSessionTookPlace"][value="PHONE"]')
@@ -75,8 +79,8 @@ export default class IcsFeedbackHowSessionTookPlacePage extends AbstractPage {
   static async verifyOnPage(page: Page): Promise<IcsFeedbackHowSessionTookPlacePage> {
     const icsFeedbackPage = new IcsFeedbackHowSessionTookPlacePage(page)
     await expect(icsFeedbackPage.header).toBeVisible()
-    await expect(icsFeedbackPage.phoneCallYesRadio).toBeVisible()
-    await expect(icsFeedbackPage.phoneCallNoRadio).toBeVisible()
+    await expect(icsFeedbackPage.didSessionTakePlaceAsPlannedYesRadio).toBeVisible()
+    await expect(icsFeedbackPage.didSessionTakePlaceAsPlannedNoRadio).toBeVisible()
     await expect(icsFeedbackPage.continueButton).toBeVisible()
     return icsFeedbackPage
   }
