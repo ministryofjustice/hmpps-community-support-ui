@@ -178,6 +178,7 @@ describe('AppointmentController', () => {
         prisonsData,
         mockReferralInformationInCommunity,
         expect.any(Object),
+        expect.any(Object),
       )
       expect(ScheduleIcsPresenter.prototype.renderPage).toHaveBeenCalledWith(scheduleIcsRes)
     })
@@ -191,6 +192,7 @@ describe('AppointmentController', () => {
         probationOfficesData,
         prisonsData,
         mockReferralInformationInPrison,
+        expect.any(Object),
         expect.any(Object),
       )
       expect(ScheduleIcsPresenter.prototype.renderPage).toHaveBeenCalledWith(scheduleIcsRes)
@@ -207,6 +209,7 @@ describe('AppointmentController', () => {
         probationOfficesData,
         prisonsData,
         mockReferralInformationInCommunity,
+        expect.any(Object),
         expect.any(Object),
       )
       expect(ScheduleIcsPresenter.prototype.renderPage).toHaveBeenCalledWith(scheduleIcsRes)
