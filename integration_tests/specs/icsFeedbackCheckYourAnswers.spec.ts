@@ -188,9 +188,9 @@ test.describe('Ics Feedback CYA Page', () => {
     await icsFeedbackCheckYourAnswersPage.submitButton.click()
     await test.step('should navigate to the progress screen', async () => {
       await expect(page).toHaveURL(REFERRAL_PROGRESS_URL)
-      await expect(page.locator('h2')).toHaveText('Referral progress')
-      await expect(page.getByText('Session feedback submitted')).toBeVisible()
-      await expect(page.getByText('The ICS is now complete.')).toBeVisible()
+      await expect(page.locator('h2', { hasText: 'Referral progress' })).toBeVisible()
+      await expect(page.locator('h3', { hasText: 'Session feedback submitted' })).toBeVisible()
+      await expect(page.locator('p', { hasText: 'The ICS is now complete.' })).toBeVisible()
     })
   })
 })
