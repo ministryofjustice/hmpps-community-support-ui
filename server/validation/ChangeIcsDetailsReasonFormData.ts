@@ -8,7 +8,7 @@ const REASON_TOO_MANY_CHARS_ERROR = { error: `Reason for change must be ${MAX_CH
 
 export const ChangeIcsDetailsReasonSchema = z.object({
   requestedBy: z.string(NOTHING_SELECTED_ERROR),
-  reasonForChange: z.string().min(1, REASON_EMPTY_ERROR).max(MAX_CHARS, REASON_TOO_MANY_CHARS_ERROR),
+  reasonForChange: z.string().nonempty(REASON_EMPTY_ERROR).max(MAX_CHARS, REASON_TOO_MANY_CHARS_ERROR),
 })
 
 type ChangeIcsDetailsReasonFormData = z.infer<typeof ChangeIcsDetailsReasonSchema>
