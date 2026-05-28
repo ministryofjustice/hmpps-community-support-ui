@@ -135,7 +135,9 @@
   },
   "/referral/:id/appointment/schedule-ics": {
     "pageHeader": "Schedule the ICS",
-    "submitButtonText": "Save and continue"
+    "submitButtonText": "Save and continue",
+    "submitHref": "/referral/{{ caseRef }}/appointment/schedule-ics",
+    "backLink": "/progress/{{ caseRef }}"
   },
   "/referral/:id/appointment/confirm-ics": {
     "pageHeader": "Check the details before scheduling the ICS",
@@ -397,7 +399,9 @@
   },
   "/referral/:id/appointment/change-ics": {
     "pageHeader": "Schedule the ICS",
-    "submitButtonText": "Save and continue"
+    "submitButtonText": "Save and continue",
+    "submitHref": "/referral/{{ caseRef }}/appointment/schedule-ics",
+    "backLink": "/progress/{{ caseRef }}"
   },
   "/referral/:id/ics-change-details/reason": {
     "pageHeader": "Reason for changing the session details",
