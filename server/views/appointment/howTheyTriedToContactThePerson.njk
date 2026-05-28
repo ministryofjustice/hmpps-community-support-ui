@@ -7,20 +7,10 @@
 {% set pageTitle = "How did you try to contact the person and why did they not attend? - ICS feedback - [service name]" %}
 {% set mainClasses = "govuk-body" %}
 
-{% block content %}
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
-    {% if errors.list.length %}
-      {{ govukErrorSummary({
-        titleText: "There is a problem",
-        errorList: errors.list
-      }) }}
-    {% endif %}
-    <form method="post">
-      <input type="hidden" name="_csrf" value="{{csrfToken}}">
-        {{ govukTextarea(content.form.textarea) }}
-        {{ govukButton(content.form.button) }}
-    </form>
-  </div>
-</div>
+{% block contentBody %}
+<form method="post">
+  <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    {{ govukTextarea(content.form.textarea) }}
+    {{ govukButton(content.form.button) }}
+</form>
 {% endblock %}
