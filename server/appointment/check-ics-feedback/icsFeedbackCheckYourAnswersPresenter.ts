@@ -123,8 +123,6 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
     switch (type) {
       case 'IN_PERSON_OTHER_LOCATION':
         return 'Other Location'
-      case 'OTHER_LOCATION':
-        return 'Other Location'
       case 'IN_PERSON_PROBATION_OFFICE':
         return 'Probation Office'
       case 'PHONE':
