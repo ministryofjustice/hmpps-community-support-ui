@@ -160,6 +160,11 @@ export default class RecordSessionAttendancePresenter extends PresenterBase<
 
   buildPageContent(res: Response): RecordSessionAttendanceViewModel {
     const content = this.buildStaticContent(res)
+    console.log('data :', this.data)
+    const date = getAppointmentDateTime(this.data)
+    console.log('date : ', date)
+    const isPastValue = isPast(date)
+    console.log('isPastValue : ', isPastValue)
     this.errors = res.locals.errors
     return {
       backLink: { href: content.backLink.replace('{{ id }}', this.caseRefId) },
