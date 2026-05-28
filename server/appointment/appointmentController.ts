@@ -1,5 +1,10 @@
 import { Request, Response } from 'express'
-import { AppointmentIcsResponse, CreateAppointmentRequest, SessionMethodRequest } from '@community-support-api'
+import {
+  AppointmentIcsResponse,
+  CreateAppointmentRequest,
+  SessionMethod,
+  SessionMethodRequest,
+} from '@community-support-api'
 import { format, parse } from 'date-fns'
 import timeFormat from '../utils/timeFormat'
 import { ErrorMiddlewareErrors, HowSessionTookPlace, IcsFeedbackHowSessionTookPlaceSession } from '../@types/express'
@@ -29,6 +34,7 @@ import validateRequestBodyAgainstSchema, { formatDynamicErrorMessages } from '..
 import WhyDidSessionNotHappenPresenter from './why-did-session-not-happen/WhyDidSessionNotHappenPresenter'
 import { WhyDidSessionNotHappenFormDataSchema } from '../validation/WhyDidSessionNotHappenFormData'
 import { IcsFeedbackFormSchema } from '../validation/IcsFeedbackHowSessionTookPlaceFormData'
+import { ScheduleIcsAppointmentSchema } from '../validation/ScheduleIcsAppointmentFormData'
 
 interface ScheduleFormData {
   sessionDate?: string
@@ -74,10 +80,28 @@ const restartFeedback = (req: Request, res: Response): boolean => {
   return false
 }
 
-const buildHowSessionTookPlace = (formData: IcsFeedbackHowSessionTookPlaceFormData): Partial<HowSessionTookPlace> => {
-  if (formData.phoneCall === 'yes') {
-    return { type: 'PHONE' }
+const buildHowSessionTookPlace = (
+  formData: IcsFeedbackHowSessionTookPlaceFormData,
+  plannedSessionMethod: SessionMethod,
+): Partial<HowSessionTookPlace> => {
+  if (formData.didSessionTakePlaceAsPlanned === 'yes') {
+    if (plannedSessionMethod.type === 'IN_PERSON_PROBATION_OFFICE') {
+      return { type: plannedSessionMethod.type, pdu: plannedSessionMethod.probationOfficeName }
+    }
+
+    if (plannedSessionMethod.type === 'IN_PERSON_OTHER_LOCATION') {
+      return {
+        type: plannedSessionMethod,
+        addressLine1: plannedSessionMethod.addressLine1 || '',
+        addressLine2: plannedSessionMethod.addressLine2 || '',
+        townOrCity: plannedSessionMethod.townOrCity || '',
+        county: plannedSessionMethod.county || '',
+        postcode: plannedSessionMethod.postcode || '',
+      }
+    }
+    return { type: plannedSessionMethod.type }
   }
+
   switch (formData.howSessionTookPlace) {
     case 'PHONE':
       return {
@@ -428,27 +452,47 @@ class AppointmentController {
     const referralInformation = await this.referralService.getReferralInformation(referralId, username)
 
     if (req.method === 'POST') {
-      const validationResults = this.validator.validateAppointment(req, referralInformation)
-
-      createAppointmentRequest = this.saveFormToSession(validationResults.formData)
-      if (Object.keys(validationResults.errors).length > 0) {
-        const presenter = new ScheduleIcsPresenter(
-          referralId,
-          probationOffices,
-          prisons,
-          referralInformation,
-          validationResults.formData,
-          validationResults.errors,
-        )
-        return presenter.renderPage(res)
-      }
-
+      const informedMethodArr: string[] =
+        typeof req.body.informedMethod === 'string' ? [req.body.informedMethod] : req.body.informedMethod
+      createAppointmentRequest = this.saveFormToSession({
+        sessionDate: req.body.sessionDate,
+        'sessionTime-hour': req.body['sessionTime-hour'],
+        'sessionTime-minute': req.body['sessionTime-minute'],
+        'sessionTime-meridiem': req.body['sessionTime-meridiem']?.toLowerCase(),
+        sessionTakePlace: req.body.sessionTakePlace,
+        ByPhone: req.body.ByPhone,
+        ByVideo: req.body.ByVideo,
+        probationOffice: req.body.probationOfficeList,
+        prison: req.body.prisonList,
+        addressLine1: req.body.addressLine1,
+        addressLine2: req.body.addressLine2,
+        addressTown: req.body.addressTown,
+        addressCounty: req.body.addressCounty,
+        addressPostcode: req.body.addressPostcode,
+        informedMethod: informedMethodArr,
+        otherMethodOfContact: req.body.otherMethodOfContact,
+      })
       req.session.createAppointmentRequest = createAppointmentRequest
-
-      return res.redirect(`/referral/${referralId}/appointment/confirm-ics`)
+      req.body.referralCrn = referralInformation.crn
+      return validateRequestBodyAgainstSchema(ScheduleIcsAppointmentSchema, req, res, () => {
+        return res.redirect(`/referral/${referralId}/appointment/confirm-ics`)
+      })
     }
+    const validationErrors: ErrorMiddlewareErrors = formatDynamicErrorMessages(
+      res.locals.errors,
+      '{{ firstname }}',
+      referralInformation.firstName,
+    )
+    res.locals.errors = validationErrors
     const formData = loadFormFromSession(createAppointmentRequest, this.validator)
-    const presenter = new ScheduleIcsPresenter(referralId, probationOffices, prisons, referralInformation, formData)
+    const presenter = new ScheduleIcsPresenter(
+      referralId,
+      probationOffices,
+      prisons,
+      referralInformation,
+      formData,
+      validationErrors,
+    )
 
     return presenter.renderPage(res)
   }
@@ -541,9 +585,10 @@ class AppointmentController {
         ...icsFeedbackSubmission.record,
         howSessionTookPlace: buildHowSessionTookPlace(
           req.body as IcsFeedbackHowSessionTookPlaceFormData,
+          sessionMethod,
         ) as SessionMethodRequest,
       }
-      req.session.icsFeedbackSubmission = icsFeedbackSubmission
+      req.session.icsFeedbackSubmission = icsFeedbackSubmission // Debug log to check the updated session data
       return res.redirect(`/ics-feedback/${caseRefId}/session-details`)
     })
   }
@@ -582,6 +627,11 @@ class AppointmentController {
     if (icsFeedbackSubmission && appointmentIcsId) {
       await this.appointmentService.submitIcsFeedback(caseRefId, appointmentIcsId, icsFeedbackSubmission, username)
       delete req.session.icsFeedbackSubmission
+      req.session.referralProgressBanner = {
+        caseReference: caseRefId,
+        heading: 'Session feedback submitted',
+        body: 'The ICS is now complete.',
+      } as ReferralProgressBannerContent
       res.redirect(`/progress/${caseRefId}`)
     }
   }

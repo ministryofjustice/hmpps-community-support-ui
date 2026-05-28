@@ -59,7 +59,7 @@ test.describe('ICS Feedback - Did session take place by phone call?', () => {
   test('selecting Yes shows no sub-questions', async ({ page }) => {
     await page.goto(IcsFeedbackPage.url(ICS_ID))
     const icsFeedbackPage = await IcsFeedbackPage.verifyOnPage(page)
-    await icsFeedbackPage.phoneCallYesRadio.click()
+    await icsFeedbackPage.didSessionTakePlaceAsPlannedYesRadio.click()
     await expect(icsFeedbackPage.videoCallRadio).not.toBeVisible()
     await expect(icsFeedbackPage.probationOfficeRadio).not.toBeVisible()
     await expect(icsFeedbackPage.somewhereElseRadio).not.toBeVisible()
@@ -68,7 +68,7 @@ test.describe('ICS Feedback - Did session take place by phone call?', () => {
   test('selecting No reveals the how-session sub-question', async ({ page }) => {
     await page.goto(IcsFeedbackPage.url(ICS_ID))
     const icsFeedbackPage = await IcsFeedbackPage.verifyOnPage(page)
-    await icsFeedbackPage.phoneCallNoRadio.click()
+    await icsFeedbackPage.didSessionTakePlaceAsPlannedNoRadio.click()
     await expect(icsFeedbackPage.videoCallRadio).toBeVisible()
     await expect(icsFeedbackPage.probationOfficeRadio).toBeVisible()
     await expect(icsFeedbackPage.somewhereElseRadio).toBeVisible()
@@ -77,7 +77,7 @@ test.describe('ICS Feedback - Did session take place by phone call?', () => {
   test('selecting Video call reveals the reason input', async ({ page }) => {
     await page.goto(IcsFeedbackPage.url(ICS_ID))
     const icsFeedbackPage = await IcsFeedbackPage.verifyOnPage(page)
-    await icsFeedbackPage.phoneCallNoRadio.click()
+    await icsFeedbackPage.didSessionTakePlaceAsPlannedNoRadio.click()
     await icsFeedbackPage.videoCallRadio.click()
     await expect(icsFeedbackPage.videoCallReasonInput).toBeVisible()
   })
@@ -85,7 +85,7 @@ test.describe('ICS Feedback - Did session take place by phone call?', () => {
   test('selecting In person meeting - probation office reveals the PDU select', async ({ page }) => {
     await page.goto(IcsFeedbackPage.url(ICS_ID))
     const icsFeedbackPage = await IcsFeedbackPage.verifyOnPage(page)
-    await icsFeedbackPage.phoneCallNoRadio.click()
+    await icsFeedbackPage.didSessionTakePlaceAsPlannedNoRadio.click()
     await icsFeedbackPage.probationOfficeRadio.click()
     await expect(icsFeedbackPage.probationDeliveryUnitSelect).toBeVisible()
   })
@@ -93,7 +93,7 @@ test.describe('ICS Feedback - Did session take place by phone call?', () => {
   test('selecting Inperson meeting - somewhere else reveals address fields', async ({ page }) => {
     await page.goto(IcsFeedbackPage.url(ICS_ID))
     const icsFeedbackPage = await IcsFeedbackPage.verifyOnPage(page)
-    await icsFeedbackPage.phoneCallNoRadio.click()
+    await icsFeedbackPage.didSessionTakePlaceAsPlannedNoRadio.click()
     await icsFeedbackPage.somewhereElseRadio.click()
     await expect(icsFeedbackPage.addressLine1Input).toBeVisible()
     await expect(icsFeedbackPage.addressLine2Input).toBeVisible()
@@ -108,7 +108,7 @@ test.describe('ICS Feedback - Did session take place by phone call?', () => {
     await icsFeedbackPage.continueButton.click()
     await IcsFeedbackPage.verifyFieldErrorOnPage(
       page,
-      'phoneCall',
+      'didSessionTakePlaceAsPlanned',
       'Select yes if the session took place by phone call',
     )
   })
@@ -116,7 +116,7 @@ test.describe('ICS Feedback - Did session take place by phone call?', () => {
   test('shows validation error when No selected but no sub-option chosen', async ({ page }) => {
     await page.goto(IcsFeedbackPage.url(ICS_ID))
     const icsFeedbackPage = await IcsFeedbackPage.verifyOnPage(page)
-    await icsFeedbackPage.phoneCallNoRadio.click()
+    await icsFeedbackPage.didSessionTakePlaceAsPlannedNoRadio.click()
     await icsFeedbackPage.continueButton.click()
     await IcsFeedbackPage.verifyFieldErrorOnPage(page, 'howSessionTookPlace', 'Select how the session took place')
   })
@@ -124,7 +124,7 @@ test.describe('ICS Feedback - Did session take place by phone call?', () => {
   test('shows validation error when Video call selected without a reason', async ({ page }) => {
     await page.goto(IcsFeedbackPage.url(ICS_ID))
     const icsFeedbackPage = await IcsFeedbackPage.verifyOnPage(page)
-    await icsFeedbackPage.phoneCallNoRadio.click()
+    await icsFeedbackPage.didSessionTakePlaceAsPlannedNoRadio.click()
     await icsFeedbackPage.videoCallRadio.click()
     await icsFeedbackPage.continueButton.click()
     await IcsFeedbackPage.verifyFieldErrorOnPage(page, 'videoCallReason', 'Enter why the session was not in person')
@@ -133,7 +133,7 @@ test.describe('ICS Feedback - Did session take place by phone call?', () => {
   test('shows validation error when probation office selected without a PDU', async ({ page }) => {
     await page.goto(IcsFeedbackPage.url(ICS_ID))
     const icsFeedbackPage = await IcsFeedbackPage.verifyOnPage(page)
-    await icsFeedbackPage.phoneCallNoRadio.click()
+    await icsFeedbackPage.didSessionTakePlaceAsPlannedNoRadio.click()
     await icsFeedbackPage.probationOfficeRadio.click()
     await icsFeedbackPage.continueButton.click()
     await IcsFeedbackPage.verifyFieldErrorOnPage(page, 'probationDeliveryUnit', 'Select a probation office')
@@ -144,7 +144,7 @@ test.describe('ICS Feedback - Did session take place by phone call?', () => {
   }) => {
     await page.goto(IcsFeedbackPage.url(ICS_ID))
     const icsFeedbackPage = await IcsFeedbackPage.verifyOnPage(page)
-    await icsFeedbackPage.phoneCallNoRadio.click()
+    await icsFeedbackPage.didSessionTakePlaceAsPlannedNoRadio.click()
     await icsFeedbackPage.somewhereElseRadio.click()
     await icsFeedbackPage.continueButton.click()
     await IcsFeedbackPage.verifyFieldErrorOnPage(page, 'addressLine1', 'Enter an address line 1')
@@ -155,7 +155,7 @@ test.describe('ICS Feedback - Did session take place by phone call?', () => {
   test('submits successfully when Yes (phone call) selected and redirects', async ({ page }) => {
     await page.goto(IcsFeedbackPage.url(ICS_ID))
     const icsFeedbackPage = await IcsFeedbackPage.verifyOnPage(page)
-    await icsFeedbackPage.phoneCallYesRadio.click()
+    await icsFeedbackPage.didSessionTakePlaceAsPlannedYesRadio.click()
     await icsFeedbackPage.continueButton.click()
     await expect(page).toHaveURL(IcsFeedbackPage.sessionDetailsUrl(ICS_ID))
   })
@@ -163,7 +163,7 @@ test.describe('ICS Feedback - Did session take place by phone call?', () => {
   test('submits successfully when Video call selected with a reason', async ({ page }) => {
     await page.goto(IcsFeedbackPage.url(ICS_ID))
     const icsFeedbackPage = await IcsFeedbackPage.verifyOnPage(page)
-    await icsFeedbackPage.phoneCallNoRadio.click()
+    await icsFeedbackPage.didSessionTakePlaceAsPlannedNoRadio.click()
     await icsFeedbackPage.videoCallRadio.click()
     await icsFeedbackPage.videoCallReasonInput.fill('Remote access only')
     await icsFeedbackPage.continueButton.click()
@@ -173,7 +173,7 @@ test.describe('ICS Feedback - Did session take place by phone call?', () => {
   test('submits successfully when somewhere else selected with full address', async ({ page }) => {
     await page.goto(IcsFeedbackPage.url(ICS_ID))
     const icsFeedbackPage = await IcsFeedbackPage.verifyOnPage(page)
-    await icsFeedbackPage.phoneCallNoRadio.click()
+    await icsFeedbackPage.didSessionTakePlaceAsPlannedNoRadio.click()
     await icsFeedbackPage.somewhereElseRadio.click()
     await icsFeedbackPage.addressLine1Input.fill('56 Carlisle Road')
     await icsFeedbackPage.townOrCityInput.fill('London')
@@ -211,7 +211,7 @@ test.describe('ICS Feedback - Did session take place by video call?', () => {
   test('selecting No reveals phone call option with reason input', async ({ page }) => {
     await page.goto(IcsFeedbackPage.url(videoIcsId))
     const icsFeedbackPage = await IcsFeedbackPage.verifyOnPage(page)
-    await icsFeedbackPage.phoneCallNoRadio.click()
+    await icsFeedbackPage.didSessionTakePlaceAsPlannedNoRadio.click()
     await expect(icsFeedbackPage.phoneCallHowRadio).toBeVisible()
     await icsFeedbackPage.phoneCallHowRadio.click()
     await expect(icsFeedbackPage.phoneCallReasonInput).toBeVisible()
@@ -220,14 +220,14 @@ test.describe('ICS Feedback - Did session take place by video call?', () => {
   test('video call option is not shown when session method is VIDEO', async ({ page }) => {
     await page.goto(IcsFeedbackPage.url(videoIcsId))
     const icsFeedbackPage = await IcsFeedbackPage.verifyOnPage(page)
-    await icsFeedbackPage.phoneCallNoRadio.click()
+    await icsFeedbackPage.didSessionTakePlaceAsPlannedNoRadio.click()
     await expect(icsFeedbackPage.videoCallRadio).not.toBeVisible()
   })
 
   test('shows validation error when phone call selected without a reason', async ({ page }) => {
     await page.goto(IcsFeedbackPage.url(videoIcsId))
     const icsFeedbackPage = await IcsFeedbackPage.verifyOnPage(page)
-    await icsFeedbackPage.phoneCallNoRadio.click()
+    await icsFeedbackPage.didSessionTakePlaceAsPlannedNoRadio.click()
     await icsFeedbackPage.phoneCallHowRadio.click()
     await icsFeedbackPage.continueButton.click()
     await IcsFeedbackPage.verifyFieldErrorOnPage(page, 'phoneCallReason', 'Enter why the session was not in person')
@@ -239,7 +239,7 @@ test.describe('ICS Feedback - Did session take place by video call?', () => {
     await icsFeedbackPage.continueButton.click()
     await IcsFeedbackPage.verifyFieldErrorOnPage(
       page,
-      'phoneCall',
+      'didSessionTakePlaceAsPlanned',
       'Select yes if the session took place by video call',
     )
   })
@@ -247,7 +247,7 @@ test.describe('ICS Feedback - Did session take place by video call?', () => {
   test('submits successfully when phone call selected with a reason', async ({ page }) => {
     await page.goto(IcsFeedbackPage.url(videoIcsId))
     const icsFeedbackPage = await IcsFeedbackPage.verifyOnPage(page)
-    await icsFeedbackPage.phoneCallNoRadio.click()
+    await icsFeedbackPage.didSessionTakePlaceAsPlannedNoRadio.click()
     await icsFeedbackPage.phoneCallHowRadio.click()
     await icsFeedbackPage.phoneCallReasonInput.fill('Video was not available')
     await icsFeedbackPage.continueButton.click()
@@ -355,7 +355,7 @@ test.describe('ICS Feedback - In person appointment location display', () => {
     await icsFeedbackPage.continueButton.click()
     await IcsFeedbackPage.verifyFieldErrorOnPage(
       page,
-      'phoneCall',
+      'didSessionTakePlaceAsPlanned',
       'Select yes if the session took place in person at this location',
     )
   })
@@ -383,7 +383,7 @@ test.describe('ICS Feedback - In person appointment location display', () => {
     await icsFeedbackPage.continueButton.click()
     await IcsFeedbackPage.verifyFieldErrorOnPage(
       page,
-      'phoneCall',
+      'didSessionTakePlaceAsPlanned',
       'Select yes if the session took place in person at this location',
     )
   })
@@ -408,7 +408,7 @@ test.describe('ICS Feedback - In person appointment location display', () => {
 
     await page.goto(IcsFeedbackPage.url(inPersonIcsId))
     const icsFeedbackPage = await IcsFeedbackPage.verifyOnPage(page)
-    await icsFeedbackPage.phoneCallNoRadio.click()
+    await icsFeedbackPage.didSessionTakePlaceAsPlannedNoRadio.click()
     await icsFeedbackPage.phoneCallHowRadio.click()
     await icsFeedbackPage.continueButton.click()
     await IcsFeedbackPage.verifyFieldErrorOnPage(page, 'phoneCallReason', 'Enter why the session was not in person')
@@ -434,7 +434,7 @@ test.describe('ICS Feedback - In person appointment location display', () => {
 
     await page.goto(IcsFeedbackPage.url(inPersonIcsId))
     const icsFeedbackPage = await IcsFeedbackPage.verifyOnPage(page)
-    await icsFeedbackPage.phoneCallNoRadio.click()
+    await icsFeedbackPage.didSessionTakePlaceAsPlannedNoRadio.click()
     await icsFeedbackPage.videoCallRadio.click()
     await icsFeedbackPage.continueButton.click()
     await IcsFeedbackPage.verifyFieldErrorOnPage(page, 'videoCallReason', 'Enter why the session was not in person')
@@ -460,7 +460,7 @@ test.describe('ICS Feedback - In person appointment location display', () => {
 
     await page.goto(IcsFeedbackPage.url(inPersonIcsId))
     const icsFeedbackPage = await IcsFeedbackPage.verifyOnPage(page)
-    await icsFeedbackPage.phoneCallNoRadio.click()
+    await icsFeedbackPage.didSessionTakePlaceAsPlannedNoRadio.click()
     await icsFeedbackPage.phoneCallHowRadio.click()
     await icsFeedbackPage.phoneCallReasonInput.fill('In-person was not possible')
     await icsFeedbackPage.continueButton.click()
@@ -487,7 +487,7 @@ test.describe('ICS Feedback - In person appointment location display', () => {
 
     await page.goto(IcsFeedbackPage.url(inPersonIcsId))
     const icsFeedbackPage = await IcsFeedbackPage.verifyOnPage(page)
-    await icsFeedbackPage.phoneCallNoRadio.click()
+    await icsFeedbackPage.didSessionTakePlaceAsPlannedNoRadio.click()
     await icsFeedbackPage.videoCallRadio.click()
     await icsFeedbackPage.videoCallReasonInput.fill('Office was unavailable')
     await icsFeedbackPage.continueButton.click()
@@ -533,7 +533,7 @@ test.describe('ICS Feedback - Did session take place in person at this location 
   test('selecting No reveals phone call, video call, probation office and somewhere else options', async ({ page }) => {
     await page.goto(IcsFeedbackPage.url(otherLocationIcsId))
     const icsFeedbackPage = await IcsFeedbackPage.verifyOnPage(page)
-    await icsFeedbackPage.phoneCallNoRadio.click()
+    await icsFeedbackPage.didSessionTakePlaceAsPlannedNoRadio.click()
     await expect(icsFeedbackPage.phoneCallHowRadio).toBeVisible()
     await expect(icsFeedbackPage.videoCallRadio).toBeVisible()
     await expect(icsFeedbackPage.probationOfficeRadio).toBeVisible()
@@ -543,7 +543,7 @@ test.describe('ICS Feedback - Did session take place in person at this location 
   test('selecting No and somewhere else reveals address fields for a different location', async ({ page }) => {
     await page.goto(IcsFeedbackPage.url(otherLocationIcsId))
     const icsFeedbackPage = await IcsFeedbackPage.verifyOnPage(page)
-    await icsFeedbackPage.phoneCallNoRadio.click()
+    await icsFeedbackPage.didSessionTakePlaceAsPlannedNoRadio.click()
     await icsFeedbackPage.somewhereElseRadio.click()
     await expect(icsFeedbackPage.addressLine1Input).toBeVisible()
     await expect(icsFeedbackPage.addressLine2Input).toBeVisible()
@@ -557,7 +557,7 @@ test.describe('ICS Feedback - Did session take place in person at this location 
   }) => {
     await page.goto(IcsFeedbackPage.url(otherLocationIcsId))
     const icsFeedbackPage = await IcsFeedbackPage.verifyOnPage(page)
-    await icsFeedbackPage.phoneCallNoRadio.click()
+    await icsFeedbackPage.didSessionTakePlaceAsPlannedNoRadio.click()
     await icsFeedbackPage.somewhereElseRadio.click()
     await icsFeedbackPage.continueButton.click()
     await IcsFeedbackPage.verifyFieldErrorOnPage(page, 'addressLine1', 'Enter an address line 1')
@@ -568,7 +568,7 @@ test.describe('ICS Feedback - Did session take place in person at this location 
   test('submits successfully when No and somewhere else selected with a different address', async ({ page }) => {
     await page.goto(IcsFeedbackPage.url(otherLocationIcsId))
     const icsFeedbackPage = await IcsFeedbackPage.verifyOnPage(page)
-    await icsFeedbackPage.phoneCallNoRadio.click()
+    await icsFeedbackPage.didSessionTakePlaceAsPlannedNoRadio.click()
     await icsFeedbackPage.somewhereElseRadio.click()
     await icsFeedbackPage.addressLine1Input.fill('12 New Street')
     await icsFeedbackPage.townOrCityInput.fill('Manchester')

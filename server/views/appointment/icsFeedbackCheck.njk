@@ -6,9 +6,7 @@
 {% set pageTitle = applicationName + " - Referral" %}
 {% set mainClasses = "govuk-body" %}
 
-{% block content %}
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
+{% block contentBody %}
 <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
     {% for feedbackSummary in content.feedbackSummarys %}
        <h2 class="govuk-heading-m">{{ feedbackSummary.summaryTitle }}</h2>

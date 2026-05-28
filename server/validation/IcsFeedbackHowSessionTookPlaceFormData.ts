@@ -16,6 +16,7 @@ export const phoneCallErrorMessage = (sessionMethodType: string): string =>
 
 export const IcsFeedbackFormSchema = z
   .object({
+    didSessionTakePlaceAsPlanned: z.string().trim().optional(),
     sessionMethodType: z.string(),
     phoneCall: z.string().trim().optional(),
     howSessionTookPlace: z.string().trim().optional(),
@@ -29,15 +30,15 @@ export const IcsFeedbackFormSchema = z
     postcode: z.string().trim().optional(),
   })
   .superRefine((data, ctx) => {
-    if (!data.phoneCall) {
+    if (!data.didSessionTakePlaceAsPlanned) {
       ctx.addIssue({
         code: 'custom',
         message: phoneCallErrorMessage(data.sessionMethodType),
-        path: ['phoneCall'],
+        path: ['didSessionTakePlaceAsPlanned'],
       })
       return
     }
-    if (data.phoneCall !== 'no') return
+    if (data.didSessionTakePlaceAsPlanned !== 'no') return
 
     if (!data.howSessionTookPlace) {
       ctx.addIssue({

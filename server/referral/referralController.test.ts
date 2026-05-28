@@ -221,12 +221,12 @@ describe('ReferralController', () => {
         flash: jest.fn(),
       } as unknown as Request
       const mockErrorData = { responseStatus: 404 }
-      const errorsList = [
-        {
-          href: '#referralIdError',
-          text: `No referral with identifier 'referral-id-123' found`,
+      const errors = {
+        list: [{ href: '#referralIdError', text: `No referral with identifier 'referral-id-123' found` }],
+        messages: {
+          referralIdError: { text: `No referral with identifier 'referral-id-123' found` },
         },
-      ]
+      }
       referralService.getReferralUserAssignments.mockRejectedValue(mockErrorData)
 
       await referralController.showAssignCaseWorkersPage(req, res, next)
@@ -238,7 +238,7 @@ describe('ReferralController', () => {
           referralId: 'referral-id-123',
           backLink: { href: '/referral-details/referral-id-123' },
         },
-        errorsList,
+        errors,
       })
     })
     it('should refer the assigned case workers for the referral with existing assignments', async () => {

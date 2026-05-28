@@ -87,14 +87,18 @@ describe('IcsFeedbackPresenter', () => {
       presenter.renderPage(res)
       const viewModel: IcsFeedbackHowSessionTookPlaceViewModel = (res.render as jest.Mock).mock.calls[0][1].content
       const radios = viewModel.didSessionTakePlaceRadiosArgs('<div>how session html</div>')
-      expect(radios.name).toBe('phoneCall')
+      expect(radios.name).toBe('didSessionTakePlaceAsPlanned')
       expect(radios.items).toHaveLength(2)
       expect(radios.items[0].value).toBe('yes')
       expect(radios.items[1].value).toBe('no')
     })
 
     it('sets checked state on didSessionTakePlaceRadiosArgs items from formData', () => {
-      const formData = { phoneCall: 'no', howSessionTookPlace: 'VIDEO', videoCallReason: 'Remote access only' }
+      const formData = {
+        didSessionTakePlaceAsPlanned: 'no',
+        howSessionTookPlace: 'VIDEO',
+        videoCallReason: 'Remote access only',
+      }
       const presenter = new IcsFeedbackHowSessionTookPlacePresenter(
         caseRefId,
         sessionMethod,

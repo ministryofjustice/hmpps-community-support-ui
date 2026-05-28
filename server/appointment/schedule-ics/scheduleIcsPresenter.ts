@@ -4,6 +4,7 @@ import { Prison } from '@prison-api'
 import PresenterBase from '../../presenter/presenterBase'
 import { ScheduleIcsContent, ScheduleIcsViewModel, SelectItem, ScheduleFormData } from './scheduleIcsViewModel'
 import isIdentifierACrn from '../../utils/isIdentifierACrn'
+import { ErrorMiddlewareErrors } from '../../@types/express'
 
 export interface ValidationError {
   key: string
@@ -17,7 +18,7 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
     private readonly prisons: Prison[],
     private readonly referralInformation: ReferralInformation,
     private readonly formData?: ScheduleFormData,
-    private readonly validationErrors?: Record<string, { text: string }>,
+    private readonly validationErrors?: ErrorMiddlewareErrors,
   ) {
     super()
   }
@@ -74,10 +75,6 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
     viewModel.firstName = this.referralInformation.firstName
     viewModel.formData = this.formData
     viewModel.errors = this.validationErrors
-    viewModel.errorList = Object.entries(viewModel.errors ?? {}).map(([key, error]) => ({
-      href: `#${key}`,
-      text: error.text,
-    }))
     return viewModel
   }
 
