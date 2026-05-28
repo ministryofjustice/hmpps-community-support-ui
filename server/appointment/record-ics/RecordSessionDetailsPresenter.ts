@@ -54,7 +54,7 @@ export default class RecordSessionDetailsPresenter extends PresenterBase<
       : ''
     return `
     <div class="govuk-form-group ${errorText ? 'govuk-form-group--error' : ''}" data-testid=${content.lateReasonName} >
-      <h1 class="govuk-label-wrapper">
+      <h1 class="govuk-label-wrapper govuk-label">
         <label class="govuk-label govuk-label--s"
           id=${content.lateReasonName}Label>
           ${content.lateReasonLabel.replace('{{ firstname }}', this.data.referralFirstName)}

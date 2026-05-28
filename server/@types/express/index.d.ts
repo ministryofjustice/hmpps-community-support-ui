@@ -7,6 +7,7 @@ import {
 } from '@community-support-api'
 import { GovukFrontendErrorSummaryErrorListElement } from '@govuk-frontend'
 import { HmppsUser } from '../../interfaces/hmppsUser'
+import { ChangeAppointmentDetails } from '../../appointment/change-ics-details-reason/ChangeAppointmentDetails'
 import { ReferralProgressBannerContent } from '../../referral/progress/ReferralProgressBannerContent'
 
 export interface HowSessionTookPlace {
@@ -32,6 +33,7 @@ export declare module 'express-session' {
     referralCreationDetails: CreateReferralRequest
     assignmentResults: ReferralUserAssignmentResponse
     createAppointmentRequest: CreateAppointmentRequest
+    ChangeAppointmentDetails: ChangeAppointmentDetails
     referralInformation: ReferralInformationDto
     pending: Record<string, string>
     referralProgressBanner?: ReferralProgressBannerContent
