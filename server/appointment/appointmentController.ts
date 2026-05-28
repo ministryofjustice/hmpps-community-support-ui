@@ -192,11 +192,11 @@ const mapSessionTakePlaceToType = (takePlace: string): SessionMethodRequest['typ
     case 'ByVideo':
       return 'VIDEO'
     case 'InProbationOffice':
-      return 'PROBATION_OFFICE'
+      return 'IN_PERSON_PROBATION_OFFICE'
     case 'InSomewhereElse':
-      return 'OTHER_LOCATION'
+      return 'IN_PERSON_OTHER_LOCATION'
     default:
-      return 'OTHER_LOCATION'
+      return 'IN_PERSON_OTHER_LOCATION'
   }
 }
 
@@ -206,9 +206,9 @@ const mapTypeToSessionTakePlace = (type: SessionMethodRequest['type']): string =
       return 'ByPhone'
     case 'VIDEO':
       return 'ByVideo'
-    case 'PROBATION_OFFICE':
+    case 'IN_PERSON_PROBATION_OFFICE':
       return 'InProbationOffice'
-    case 'OTHER_LOCATION':
+    case 'IN_PERSON_OTHER_LOCATION':
       return 'InSomewhereElse'
     default:
       return 'InSomewhereElse'
@@ -251,10 +251,10 @@ const loadSessionMethodFromSession = (
         break
     }
   }
-  if (method.type === 'PROBATION_OFFICE') {
+  if (method.type === 'IN_PERSON_PROBATION_OFFICE') {
     updatedFormData.probationOffice = method.additionalDetails
   }
-  if (method.type === 'OTHER_LOCATION') {
+  if (method.type === 'IN_PERSON_OTHER_LOCATION') {
     updatedFormData.addressLine1 = method.addressLine1 || ''
     updatedFormData.addressLine2 = method.addressLine2 || ''
     updatedFormData.addressTown = method.townOrCity || ''
@@ -379,7 +379,7 @@ const loadFormFromSession = (
       }
     }
 
-    if (method.type === 'OTHER_LOCATION') {
+    if (method.type === 'IN_PERSON_OTHER_LOCATION') {
       formData.addressLine1 = method.addressLine1 || ''
       formData.addressLine2 = method.addressLine2 || ''
       formData.addressTown = method.townOrCity || ''
