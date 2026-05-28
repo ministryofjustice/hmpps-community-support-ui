@@ -9,7 +9,7 @@ export type ChangeIcsDetailsReasonViewModel = {
   pageHeader: string
   serviceName: string
   whoRequestedRadios: GovukFrontendRadios
-  reason: GovukFrontendTextarea
+  reasonTextarea: GovukFrontendTextarea
   submitButton: GovukFrontendButton
   submitHref: string
   backLink: GovukFrontendBackLink

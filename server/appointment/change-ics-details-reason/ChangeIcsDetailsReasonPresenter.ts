@@ -1,13 +1,4 @@
 import { Response } from 'express'
-import PresenterBase from '../../presenter/presenterBase'
-import {
-  ChangeIcsDetailsReasonContent,
-  ChangeIcsDetailsReasonFormData,
-  ChangeIcsDetailsReasonViewModel, ReasonTextareaContent,
-  WhoRequestedRadioContent,
-  WhoRequestedRadioItemsContent,
-} from './ChangeIcsDetailsReasonViewModel'
-import { ErrorMiddlewareErrors } from '../../@types/express'
 import {
   GovukFrontendBackLink,
   GovukFrontendButton,
@@ -16,6 +7,16 @@ import {
   GovukFrontendRadiosItem,
   GovukFrontendTextarea,
 } from '@govuk-frontend'
+import PresenterBase from '../../presenter/presenterBase'
+import {
+  ChangeIcsDetailsReasonContent,
+  ChangeIcsDetailsReasonFormData,
+  ChangeIcsDetailsReasonViewModel,
+  ReasonTextareaContent,
+  WhoRequestedRadioContent,
+  WhoRequestedRadioItemsContent,
+} from './ChangeIcsDetailsReasonViewModel'
+import { ErrorMiddlewareErrors } from '../../@types/express'
 import { ChangeAppointmentDetails } from './ChangeAppointmentDetails'
 
 export default class ChangeIcsDetailsReasonPresenter extends PresenterBase<
@@ -34,25 +35,24 @@ export default class ChangeIcsDetailsReasonPresenter extends PresenterBase<
   private buildWhoRequestedRadioItems(
     content: WhoRequestedRadioItemsContent,
     formData: ChangeIcsDetailsReasonFormData,
+    radioId: string,
   ): GovukFrontendRadiosItem[] {
     return [
       {
-        id: 'DELIVERY_PARTNER',
-        value: 'DELIVERY_PARTNER',
+        id: radioId,
+        value: content.deliveryPartnerText,
         text: content.deliveryPartnerText,
-        checked: formData.requestedBy === 'DELIVERY_PARTNER',
+        checked: formData.requestedBy === content.deliveryPartnerText,
       },
       {
-        id: 'REFEREE',
-        value: 'REFEREE',
+        value: this.referralFullName,
         text: this.referralFullName,
-        checked: formData.requestedBy === 'REFEREE',
+        checked: formData.requestedBy === this.referralFullName,
       },
       {
-        id: 'PROBATION_PRACTITIONER',
-        value: 'PROBATION_PRACTITIONER',
+        value: content.probationPractitionerText,
         text: content.probationPractitionerText,
-        checked: formData.requestedBy === 'PROBATION_PRACTITIONER',
+        checked: formData.requestedBy === content.probationPractitionerText,
       },
     ]
   }
@@ -75,7 +75,7 @@ export default class ChangeIcsDetailsReasonPresenter extends PresenterBase<
       hint: { text: content.hint },
       errorMessage: errorMessages.requestedBy,
       attributes: { 'data-testid': content.name },
-      items: this.buildWhoRequestedRadioItems(content.items, formData),
+      items: this.buildWhoRequestedRadioItems(content.items, formData, content.name),
     }
   }
 
@@ -92,6 +92,7 @@ export default class ChangeIcsDetailsReasonPresenter extends PresenterBase<
         classes: 'govuk-label--m',
       },
       value: formData.reasonForChange,
+      formGroup: { attributes: { 'data-testid': content.name } },
       errorMessage: errorMessages.reasonForChange,
     }
   }
@@ -111,10 +112,12 @@ export default class ChangeIcsDetailsReasonPresenter extends PresenterBase<
 
   protected buildPageContent(res: Response): ChangeIcsDetailsReasonViewModel {
     const content: ChangeIcsDetailsReasonContent = this.buildStaticContent(res)
-    const formData: ChangeIcsDetailsReasonFormData = this.session ? {
-      requestedBy: this.session.requestedBy,
-      reasonForChange: this.session.reasonForChange,
-    } : {}
+    const formData: ChangeIcsDetailsReasonFormData = this.session
+      ? {
+          requestedBy: this.session.requestedBy,
+          reasonForChange: this.session.reasonForChange,
+        }
+      : {}
     return {
       pageHeader: content.pageHeader,
       serviceName: content.serviceName,
@@ -123,7 +126,7 @@ export default class ChangeIcsDetailsReasonPresenter extends PresenterBase<
         formData,
         this.validationErrors?.messages,
       ),
-      reason: this.buildReasonTextarea(content.reasonTextarea, formData, this.validationErrors?.messages),
+      reasonTextarea: this.buildReasonTextarea(content.reasonTextarea, formData, this.validationErrors?.messages),
       submitButton: this.buildSubmitButton(content.submitButtonText),
       submitHref: `/referral/${this.caseRefId}/ics-change-details/reason`,
       backLink: this.buildBackLink(content.backLinkHref),

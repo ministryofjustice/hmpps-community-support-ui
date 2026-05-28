@@ -11,7 +11,7 @@
   <form method="post" action="{{ content.submitHref }}">
     <input type="hidden" name="_csrf" value="{{csrfToken}}">
     {{ govukRadios(content.whoRequestedRadios) }}
-    {{ govukTextarea(content.reason) }}
+    {{ govukTextarea(content.reasonTextarea) }}
     {{ govukButton(content.submitButton) }}
   </form>
 {% endblock %}
