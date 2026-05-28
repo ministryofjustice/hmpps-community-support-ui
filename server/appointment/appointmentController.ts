@@ -35,6 +35,8 @@ import WhyDidSessionNotHappenPresenter from './why-did-session-not-happen/WhyDid
 import { WhyDidSessionNotHappenFormDataSchema } from '../validation/WhyDidSessionNotHappenFormData'
 import { IcsFeedbackFormSchema } from '../validation/IcsFeedbackHowSessionTookPlaceFormData'
 import { ScheduleIcsAppointmentSchema } from '../validation/ScheduleIcsAppointmentFormData'
+import ChangeIcsDetailsReasonPresenter from './change-ics-details-reason/ChangeIcsDetailsReasonPresenter'
+import { ChangeIcsDetailsReasonSchema } from '../validation/ChangeIcsDetailsReasonFormData'
 
 interface ScheduleFormData {
   sessionDate?: string
@@ -860,6 +862,32 @@ class AppointmentController {
     }
     validateRequestBodyAgainstSchema(WhyDidSessionNotHappenFormDataSchema, req, res, () => {
       res.redirect(`/ics-feedback/${caseRefId}/check-answers`)
+    })
+  }
+
+  async changeIcsDetailsReason(req: Request, res: Response): Promise<void> {
+    const { caseRefId } = req.params as { caseRefId: string }
+    const { username } = res.locals.user
+    const { ChangeAppointmentDetails } = req.session
+    const validationErrors: ErrorMiddlewareErrors = res.locals.errors
+    const appointmentData = await this.appointmentService.getICS(caseRefId.toString(), username)
+    const presenter = new ChangeIcsDetailsReasonPresenter(
+      caseRefId,
+      `${appointmentData.referralFirstName} ${appointmentData.referralLastName}`,
+      ChangeAppointmentDetails,
+      validationErrors,
+    )
+    presenter.renderPage(res)
+  }
+
+  recordChangeIcsDetailsReason(req: Request, res: Response): void {
+    const { caseRefId } = req.params as { caseRefId: string }
+    req.session.ChangeAppointmentDetails = {
+      requestedBy: req.body.requestedBy,
+      reasonForChange: req.body.reasonForChange,
+    }
+    validateRequestBodyAgainstSchema(ChangeIcsDetailsReasonSchema, req, res, () => {
+      return res.redirect(`/referral/${caseRefId}/ics-change-details/check-answers`)
     })
   }
 }

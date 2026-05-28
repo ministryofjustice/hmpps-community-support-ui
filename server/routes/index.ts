@@ -153,5 +153,9 @@ export default function routes({
     appointmentController.recordHowTheyTriedToContactThePerson(req, res),
   )
 
+  get('/referral/:caseRefId/ics-change-details/reason', (req, res) => appointmentController.changeIcsDetailsReason(req, res))
+
+  post( '/referral/:caseRefId/ics-change-details/reason', (req, res) => appointmentController.recordChangeIcsDetailsReason(req, res))
+
   return router
 }
