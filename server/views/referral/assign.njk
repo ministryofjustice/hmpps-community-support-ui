@@ -7,16 +7,7 @@
 {% set pageTitle = applicationName + " - Who do you want to assign this case to? - Referral - [service name] " %}
 {% set mainClasses = "govuk-body" %}
 
-{% block content %}
-  {% if errorsList %}
-    {{ govukErrorSummary({
-      titleText: "There is a problem",
-      errorList: errorsList,
-      attributes: {
-        "data-testid": "error-messages"
-      }
-    }) }}
-  {% endif %}
+{% block contentBody %}
   {% if success %}
     {% set html %}
       <h3 class="govuk-notification-banner__heading">
@@ -75,7 +66,7 @@
               name: "caseworkers[" ~ index ~ "][email_address]",
               label: { html: "Enter the caseworker's email address", classes: "govuk-!-font-weight-bold" },
               value: caseworker.emailAddress or "",
-              errorMessage: errors["caseworkers[" ~ index ~ "][email_address]"],
+              errorMessage: fieldErrors["caseworkers[" ~ index ~ "][email_address]"],
               attributes: inputAttributes
             }) }}
             {# Remove button – shown only for visible blocks after the first #}
