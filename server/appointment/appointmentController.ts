@@ -507,6 +507,31 @@ class AppointmentController {
     return res.redirect(`/referral/${referralId}/appointment/confirm-ics`)
   }
 
+  async rescheduleIcs(req: Request, res: Response): Promise<void> {
+    const { username } = res.locals.user
+    const caseRefId = req.params.caseRefId as string
+    let createAppointmentRequest = req.session?.createAppointmentRequest
+    const probationOffices = await this.referenceDataService.getProbationOffices()
+    const prisons = await this.referenceDataService.getPrisons()
+    const referralInformation = await this.referralService.getReferralInformation(caseRefId, username)
+    const validationResults = this.validator.validateAppointment(req, referralInformation)
+
+    createAppointmentRequest = this.saveFormToSession(validationResults.formData)
+    if (Object.keys(validationResults.errors).length > 0) {
+      const presenter = new ScheduleIcsPresenter(
+        caseRefId,
+        probationOffices,
+        prisons,
+        referralInformation,
+        validationResults.formData,
+        validationResults.errors,
+      )
+      return presenter.renderPage(res)
+    }
+    req.session.createAppointmentRequest = createAppointmentRequest
+    return res.redirect(`/referral/${caseRefId}/ics-change-details/reason`)
+  }
+
   private saveFormToSession(formData: ScheduleFormData): CreateAppointmentRequest {
     let createAppointmentRequest = {} as CreateAppointmentRequest
 
@@ -546,11 +571,11 @@ class AppointmentController {
   }
 
   changeIcs(req: Request, res: Response): Promise<void> {
-    const { caseRefId } = req.params
+    const caseRefId = req.params.caseRefId as string
     const { username } = res.locals.user
     return this.appointmentService
       .getICS(caseRefId.toString(), username)
-      .then(data => new InitialContactSessionDetailsPresenter(data))
+      .then(data => new InitialContactSessionDetailsPresenter(data, caseRefId))
       .then(presenter => presenter.renderPage(res))
   }
 

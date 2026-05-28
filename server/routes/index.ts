@@ -103,6 +103,8 @@ export default function routes({
     await appointmentController.showScheduleIcs2(req, res)
   })
 
+  post('/referral/:caseRefId/appointment/change-ics', (req, res) => appointmentController.rescheduleIcs(req, res))
+
   get('/ics-feedback/:caseRefId/did-session-take-place', async (req, res) =>
     appointmentController.didSessionTakePlace(req, res),
   )

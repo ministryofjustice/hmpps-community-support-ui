@@ -101,14 +101,17 @@ export default class InitialContactSessionDetailsPresenter extends PresenterBase
 
   private readonly sessionCommunication: string
 
-  constructor({
-    referralFirstName,
-    appointmentDate,
-    appointmentTime,
-    sessionMethod,
-    sessionCommunications,
-    referralId,
-  }: AppointmentIcsResponse) {
+  constructor(
+    {
+      referralFirstName,
+      appointmentDate,
+      appointmentTime,
+      sessionMethod,
+      sessionCommunications,
+      referralId,
+    }: AppointmentIcsResponse,
+    private readonly caseRef: string | null = null,
+  ) {
     super()
     this.referralId = referralId
     this.name = referralFirstName
@@ -174,8 +177,12 @@ export default class InitialContactSessionDetailsPresenter extends PresenterBase
     return {
       title: content.title,
       heading: content.heading,
-      details: this.buildDetails(content.details, content.links.change.replace('{{ id }}', this.referralId), this.name),
-      backLink: { href: content.links.back.replace('{{ id }}', this.referralId) },
+      details: this.buildDetails(
+        content.details,
+        content.links.change.replace('{{ id }}', this.caseRef || this.referralId),
+        this.name,
+      ),
+      backLink: { href: content.links.back.replace('{{ id }}', this.caseRef || this.referralId) },
     }
   }
 
