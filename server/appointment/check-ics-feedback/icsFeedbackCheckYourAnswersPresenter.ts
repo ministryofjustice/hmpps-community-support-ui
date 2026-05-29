@@ -35,35 +35,41 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
     return 'appointment/icsFeedbackCheck'
   }
 
-  private buildSummary(content: IcsFeedbackSummaryListContent, values: Array<string>): SummaryListWithTitle {
-    return {
-      summaryTitle: content.summaryTitle,
-      rows: content.rows
-        .map((row, index) => {
-          if (!values[index]) {
-            return null
-          }
-          return {
-            key: {
-              text: row.text.includes('firstname') ? row.text.replace('firstname', this.firstName) : row.text,
-            },
-            value: {
-              text: values[index],
-              html: row.text === 'Location' ? values[index] : null,
-            },
-            actions: {
-              items: [
-                {
-                  href: row.changeHref.replace('caseRefId', this.caseRefId),
-                  text: 'Change',
+  private buildSummary(
+    content: IcsFeedbackSummaryListContent,
+    values: Array<string>,
+    shouldDisplay = true,
+  ): SummaryListWithTitle | null {
+    return shouldDisplay
+      ? {
+          summaryTitle: content.summaryTitle,
+          rows: content.rows
+            .map((row, index) => {
+              if (!values[index]) {
+                return null
+              }
+              return {
+                key: {
+                  text: row.text.includes('firstname') ? row.text.replace('firstname', this.firstName) : row.text,
                 },
-              ],
-            },
-            hint: row.hint,
-          }
-        })
-        .filter(row => row !== null) as GovukFrontendSummaryListRow[],
-    }
+                value: {
+                  text: values[index],
+                  html: row.text === 'Location' || row.text.includes('did not happen') ? values[index] : null,
+                },
+                actions: {
+                  items: [
+                    {
+                      href: row.changeHref.replace('caseRefId', this.caseRefId),
+                      text: 'Change',
+                    },
+                  ],
+                },
+                hint: row.hint,
+              }
+            })
+            .filter(row => row !== null) as GovukFrontendSummaryListRow[],
+        }
+      : null
   }
 
   private buildFeedbackSummaries(content: IcsFeedbackCheckYourAnswersContent): Array<SummaryListWithTitle> {
@@ -71,6 +77,7 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
       // Session attendance summary
       this.buildSummary(content.summaryLists.filter(item => item.summaryTitle === 'Record session attendance')[0], [
         this.icsFeedbackSubmission.record.didSessionHappen ? 'Yes' : 'No',
+        this.getPersonAttendanceString(),
         this.getSessionMethodString(this.icsFeedbackSubmission.record.howSessionTookPlace?.type) || null,
         this.wasSessionInPerson(this.icsFeedbackSubmission.record.howSessionTookPlace?.type)
           ? this.formatAddress(this.icsFeedbackSubmission.record.howSessionTookPlace)
@@ -78,19 +85,24 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
         this.icsFeedbackSubmission.record.howSessionTookPlace?.additionalDetails || null,
       ]),
       // Session details summary
-      this.buildSummary(content.summaryLists.filter(item => item.summaryTitle === 'Session details')[0], [
-        this.icsFeedbackSubmission.sessionDetails?.wasPersonLate ? 'Yes' : 'No',
-        this.icsFeedbackSubmission.sessionDetails?.lateReason || null,
-        this.icsFeedbackSubmission.sessionDetails?.duration
-          ? this.buildSessionLength(
-              this.icsFeedbackSubmission.sessionDetails?.duration.hours,
-              this.icsFeedbackSubmission.sessionDetails?.duration.minutes,
-            )
-          : null,
-      ]),
+      this.buildSummary(
+        content.summaryLists.filter(item => item.summaryTitle === 'Session details')[0],
+        [
+          this.icsFeedbackSubmission.sessionDetails?.wasPersonLate ? 'Yes' : 'No',
+          this.icsFeedbackSubmission.sessionDetails?.lateReason || null,
+          this.icsFeedbackSubmission.sessionDetails?.duration
+            ? this.buildSessionLength(
+                this.icsFeedbackSubmission.sessionDetails?.duration.hours,
+                this.icsFeedbackSubmission.sessionDetails?.duration.minutes,
+              )
+            : null,
+        ],
+        this.icsFeedbackSubmission.record.didSessionHappen,
+      ),
       // Session feedback summary
       this.buildSummary(content.summaryLists.filter(item => item.summaryTitle === 'Session feedback')[0], [
-        this.icsFeedbackSubmission.sessionFeedback.whatHappened,
+        this.icsFeedbackSubmission.sessionFeedback?.whatHappened || null,
+        this.getDidNotHappenReason() || null,
       ]),
     ]
     return summaries.filter(summary => summary !== null) as Array<SummaryListWithTitle>
@@ -103,6 +115,23 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
       return `${hoursString}${minutesString}`
     }
     return `${minutes} minutes`
+  }
+
+  private getPersonAttendanceString(): string | null {
+    if (!this.icsFeedbackSubmission.record.didSessionHappen) {
+      return this.icsFeedbackSubmission.record.didPersonAttend ? 'Yes' : 'No'
+    }
+    return null
+  }
+
+  private getDidNotHappenReason(): string | null {
+    if (!this.icsFeedbackSubmission.record.didSessionHappen) {
+      if (this.icsFeedbackSubmission.record.didPersonAttend) {
+        return `${this.firstName} did not comply<br /><br /> ${this.icsFeedbackSubmission.record.sessionNotHappenReason?.details}`
+      }
+      return null
+    }
+    return null
   }
 
   private wasSessionInPerson(type: string): boolean {
