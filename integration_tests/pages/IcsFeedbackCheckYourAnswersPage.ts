@@ -14,6 +14,8 @@ class IcsFeedbackCheckYourAnswersPage extends AbstractPage {
 
   readonly submitButton: Locator
 
+  readonly backLink: Locator
+
   static url(caseRefId: string) {
     return `/ics-feedback/${caseRefId}/check-answers`
   }
@@ -26,6 +28,7 @@ class IcsFeedbackCheckYourAnswersPage extends AbstractPage {
     this.sessionFeedbackSummary = page.locator('h2', { hasText: 'Session feedback' })
     this.submitButton = page.locator('button', { hasText: 'Submit feedback' })
     this.locationRowTitle = page.locator('dt', { hasText: 'Location' })
+    this.backLink = page.locator('.govuk-back-link')
   }
 
   static async verifyOnPage(page: Page): Promise<IcsFeedbackCheckYourAnswersPage> {
