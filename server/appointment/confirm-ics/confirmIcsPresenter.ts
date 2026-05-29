@@ -34,6 +34,7 @@ export default class ConfirmIcsPresenter extends PresenterBase<ConfirmIcsViewMod
       viewModel.notificationBanner = this.buildPastAppointmentBanner()
     }
     if (this.changeAppointmentDetails) {
+      viewModel.backLink = { href: this.additionalInformation.changeReasonHref }
       viewModel.icsChangeReasonSummary = this.buildChangeReasonSummary()
     }
     return viewModel

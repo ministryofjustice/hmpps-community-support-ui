@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 import { ReferralProgress } from '@community-support-api'
-import { login, resetStubs, seedAppointmentSession } from '../testUtils'
+import { login, resetStubs, seedAppointmentSession, seedChangeAppointmentDetails } from '../testUtils'
 import ConfirmIcsPage from '../pages/confirmIcsPage'
 import communitySupport from '../mockApis/communitySupport'
 import prisonApi from '../mockApis/prisonApi'
@@ -9,6 +9,7 @@ import { referralInformationInCommunity } from '../mockData/referralInformationD
 import { probationOfficesData } from '../mockData/referenceData'
 import ScheduleIcsPage from '../pages/scheduleIcsPage'
 import ReferralProgressPage from '../pages/referralProgressPage'
+import ChangeIcsDetailsReasonPage from '../pages/ChangeIcsDetailsReasonPage'
 
 const REFERRAL_ID = 'b190ac1e-1e2a-41c2-a4ac-3ceb9d2dcb1e' as const
 const REFERRAL_PROGRESS_URL = `/progress/${REFERRAL_ID}`
@@ -109,6 +110,11 @@ const mockAppointmentIcsResponse = {
   createdAt: '2026-04-22T10:15:30Z',
 }
 
+const changeAppointmentDetails = {
+  requestedBy: 'Probation practitioner',
+  reasonForChange: 'There were technical issues',
+}
+
 test.describe('Confirm ICS Page', () => {
   const referralProgressWithAppointments: ReferralProgress = buildReferralProgress([
     { events: [{ status: 'SCHEDULED' }] },
@@ -154,8 +160,8 @@ test.describe('Confirm ICS Page', () => {
     await seedAppointmentSession(page, phoneAppointmentRequest)
     await page.goto(ConfirmIcsPage.url(REFERRAL_ID))
     const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
-    await expect(confirmIcsPage.changeLink).toBeVisible()
-    await confirmIcsPage.changeLink.click()
+    await expect(confirmIcsPage.changeLinks).toBeVisible()
+    await confirmIcsPage.changeLinks.click()
     await expect(page).toHaveURL(ScheduleIcsPage.url(REFERRAL_ID))
   })
 
@@ -238,6 +244,46 @@ test.describe('Confirm ICS Page', () => {
       await page.goto(ReferralProgressPage.url(REFERRAL_ID))
       await expect(page).toHaveURL(REFERRAL_PROGRESS_URL)
       await ReferralProgressPage.verifyNoBanner(page)
+    })
+  })
+
+  test('should display the Reason for change summary card details when rescheduling', async ({ page }) => {
+    await seedAppointmentSession(page, phoneAppointmentRequest)
+    await seedChangeAppointmentDetails(page, changeAppointmentDetails)
+    await page.goto(ConfirmIcsPage.rescheduleUrl(REFERRAL_ID))
+    const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
+
+    await expect(confirmIcsPage.changeDetailsSummary).toBeVisible()
+    await expect(confirmIcsPage.requestedByRow).toBeVisible()
+    await expect(confirmIcsPage.requestedByRow).toContainText('Probation practitioner')
+    await expect(confirmIcsPage.reasonForChangeRow).toBeVisible()
+    await expect(confirmIcsPage.reasonForChangeRow).toContainText('There were technical issues')
+  })
+
+  test.describe('change links should work correctly when rescheduling the appointment', () => {
+    test('Ics Details summary change link', async ({ page }) => {
+      await seedAppointmentSession(page, phoneAppointmentRequest)
+      await seedChangeAppointmentDetails(page, changeAppointmentDetails)
+      await page.goto(ConfirmIcsPage.rescheduleUrl(REFERRAL_ID))
+      const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
+
+      const [icsDetailsChangeLink, icsReasonChangeLink] = await confirmIcsPage.changeLinks.all()
+      await expect(icsDetailsChangeLink).toBeVisible()
+      await expect(icsReasonChangeLink).toBeVisible()
+      await icsDetailsChangeLink.click()
+      await expect(page).toHaveURL(ScheduleIcsPage.rescheduleUrl(REFERRAL_ID))
+    })
+    test('Reason for change summary change link', async ({ page }) => {
+      await seedAppointmentSession(page, phoneAppointmentRequest)
+      await seedChangeAppointmentDetails(page, changeAppointmentDetails)
+      await page.goto(ConfirmIcsPage.rescheduleUrl(REFERRAL_ID))
+      const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
+
+      const [icsDetailsChangeLink, icsReasonChangeLink] = await confirmIcsPage.changeLinks.all()
+      await expect(icsDetailsChangeLink).toBeVisible()
+      await expect(icsReasonChangeLink).toBeVisible()
+      await icsReasonChangeLink.click()
+      await expect(page).toHaveURL(ChangeIcsDetailsReasonPage.url(REFERRAL_ID))
     })
   })
 })

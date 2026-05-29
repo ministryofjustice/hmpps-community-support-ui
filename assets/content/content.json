@@ -413,5 +413,9 @@
     },
     "submitButtonText": "Save and continue",
     "backLinkHref": "/referral/{{ id }}/ics-change-details"
+  },
+  "/referral/:id/ics-change-details/check-answers": {
+    "pageHeader": "Check the details before scheduling the ICS",
+    "submitButtonText": "Submit"
   }
 }

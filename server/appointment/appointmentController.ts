@@ -897,21 +897,21 @@ class AppointmentController {
 
   async changeIcsDetailsCYA(req: Request, res: Response): Promise<void> {
     const { username } = res.locals.user
-    const { referralId } = req.params as { referralId: string }
+    const { caseRefId } = req.params as { caseRefId: string }
     const createAppointmentRequest = req.session?.createAppointmentRequest
     const ChangeAppointmentDetails = req.session?.ChangeAppointmentDetails
     if (!createAppointmentRequest) {
-      return res.redirect(`/referral/${referralId}/ics-change-details`)
+      return res.redirect(`/referral/${caseRefId}/ics-change-details`)
     }
     if (!ChangeAppointmentDetails) {
-      return res.redirect(`/referral/${referralId}/ics-change-details/reason`)
+      return res.redirect(`/referral/${caseRefId}/ics-change-details/reason`)
     }
-    const referralInformation = await this.referralService.getReferralInformation(referralId, username)
+    const referralInformation = await this.referralService.getReferralInformation(caseRefId, username)
     const additionalDetails: AdditionalInformation = {
       firstName: referralInformation.firstName,
-      submitHref: `/referral/${referralId}/ics-change-details/submit-ics`,
-      scheduleIcsHref: `/referral/${referralId}/ics-change-details`,
-      changeReasonHref: `/referral/${referralId}/ics-change-details/reason`,
+      submitHref: `/referral/${caseRefId}/ics-change-details/submit-ics`,
+      scheduleIcsHref: `/referral/${caseRefId}/ics-change-details`,
+      changeReasonHref: `/referral/${caseRefId}/ics-change-details/reason`,
     }
     const presenter = new ConfirmIcsPresenter(createAppointmentRequest, additionalDetails, ChangeAppointmentDetails)
     return presenter.renderPage(res)

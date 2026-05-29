@@ -53,6 +53,8 @@ describe('AppointmentController', () => {
 
   const mockAdditionalDetails: AdditionalInformation = {
     firstName: 'John',
+    submitHref: `/referral/${referralId}/appointment/submit-ics`,
+    scheduleIcsHref: `/referral/${referralId}/appointment/schedule-ics`,
   }
 
   const mockIcsId = randomUUID()
@@ -158,7 +160,7 @@ describe('AppointmentController', () => {
 
       await appointmentController.checkIcs(req, res)
 
-      expect(ConfirmIcsPresenter).toHaveBeenCalledWith(mockCreateAppointmentRequest, referralId, mockAdditionalDetails)
+      expect(ConfirmIcsPresenter).toHaveBeenCalledWith(mockCreateAppointmentRequest, mockAdditionalDetails)
       expect(ConfirmIcsPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
     })
   })

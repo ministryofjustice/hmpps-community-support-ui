@@ -60,6 +60,10 @@ export default class ScheduleIcsPage extends AbstractPage {
     return `/referral/${referralId}/appointment/schedule-ics`
   }
 
+  static rescheduleUrl(referralId: string): string {
+    return `/referral/${referralId}/ics-change-details`
+  }
+
   private constructor(page: Page) {
     super(page)
     this.header = page.locator('h1', { hasText: 'Schedule the ICS' })

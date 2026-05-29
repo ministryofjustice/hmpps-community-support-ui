@@ -25,7 +25,7 @@ export default abstract class IcsSummaryPage extends AbstractPage {
 
   protected constructor(page: Page) {
     super(page)
-    this.icsDetailsSummary = page.locator('.govuk-summary-card')
+    this.icsDetailsSummary = page.locator('.govuk-summary-card', { hasText: 'ICS details' })
     this.dateRow = page.locator('.govuk-summary-list__row', { hasText: 'Date' })
     this.startTimeRow = page.locator('.govuk-summary-list__row', { hasText: 'Start time' })
     this.methodRow = page.locator('.govuk-summary-list__row', { hasText: 'Method' })
