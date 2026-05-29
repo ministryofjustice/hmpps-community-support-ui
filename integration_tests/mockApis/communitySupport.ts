@@ -284,6 +284,19 @@ export default {
         transformers: ['response-template'],
       },
     }),
+  stubGetICSNotFound: (caseRefId: string): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: `/community-support/bff/referral-details/${caseRefId}/ics`,
+      },
+      response: {
+        status: 404,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: undefined,
+        transformers: ['response-template'],
+      },
+    }),
   stubSubmitICS: (caseRefId: string, mockRespData: AppointmentIcsResponse, httpStatus = 200): SuperAgentRequest =>
     stubFor({
       request: {

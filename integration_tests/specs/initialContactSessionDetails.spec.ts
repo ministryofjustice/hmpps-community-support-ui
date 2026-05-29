@@ -1,7 +1,6 @@
 import { expect, test } from '@playwright/test'
 
-import { randomUUID } from 'node:crypto'
-import { login, resetStubs } from '../testUtils'
+import { login, randomCaseReferenceId, resetStubs } from '../testUtils'
 import communitySupport from '../mockApis/communitySupport'
 import initialContactSessionDetailsPageData from '../mockData/initialContactSessionDetailsPageData'
 import InitialContactSessionDetailsPage from '../pages/InitialContactSessionDetailsPage'
@@ -9,12 +8,12 @@ import ReferralProgressPage from '../pages/referralProgressPage'
 
 test.describe('Initial Contact Session Details Page', () => {
   const virtual = {
-    caseRefId: randomUUID(),
+    caseRefId: randomCaseReferenceId(),
     data: initialContactSessionDetailsPageData.virtual(),
   } as const
 
   const inPerson = {
-    caseRefId: randomUUID(),
+    caseRefId: randomCaseReferenceId(),
     data: initialContactSessionDetailsPageData.inPerson(),
   } as const
 
@@ -58,7 +57,7 @@ test.describe('Initial Contact Session Details Page', () => {
     const backlink = referralDetailsPage.backLink
     await test.step('check backlink', async () => {
       await backlink.click()
-      await expect(page).toHaveURL(ReferralProgressPage.url(virtual.data.referralId))
+      await expect(page).toHaveURL(ReferralProgressPage.url(virtual.caseRefId))
     })
   })
 

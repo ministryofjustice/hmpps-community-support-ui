@@ -42,7 +42,7 @@ describe('AppointmentController', () => {
   let referralService: jest.Mocked<ReferralService>
   let referenceDataService: jest.Mocked<ReferenceDataService>
 
-  const referralId = crypto.randomUUID()
+  const caseRefId = crypto.randomUUID()
 
   const mockCreateAppointmentRequest: CreateAppointmentRequest = {
     date: '2026-03-27',
@@ -62,7 +62,7 @@ describe('AppointmentController', () => {
   const mockAppointmentIcsResponse: AppointmentIcsResponse = {
     appointmentIcsId: mockIcsId,
     appointmentId: randomUUID(),
-    referralId,
+    referralId: caseRefId,
     appointmentType: 'ICS',
     appointmentDate: '2026-03-27',
     appointmentTime: { hour: 1, minute: 0, amPm: 'pm' },
@@ -89,9 +89,9 @@ describe('AppointmentController', () => {
       getProbationOffices: jest.fn().mockResolvedValue([]),
       getPrisons: jest.fn().mockResolvedValue([]),
     } as unknown as jest.Mocked<ReferenceDataService>
-    ;(ReferenceDataService as jest.MockedClass<typeof ReferenceDataService>).mockImplementation(
-      () => referenceDataService,
-    )
+      ; (ReferenceDataService as jest.MockedClass<typeof ReferenceDataService>).mockImplementation(
+        () => referenceDataService,
+      )
 
     referenceDataService.getProbationOffices.mockResolvedValue(probationOfficesData)
     referenceDataService.getPrisons.mockResolvedValue(prisonsData)
@@ -103,7 +103,7 @@ describe('AppointmentController', () => {
     ViewChangeSessionDetailsPresenter.prototype.renderPage = jest.fn()
 
     req = {
-      params: { referralId },
+      params: { referralId: caseRefId },
       session: { createAppointmentRequest: null, icsFeedbackSubmission: null },
       flash: jest.fn(),
     } as unknown as Request
@@ -118,7 +118,7 @@ describe('AppointmentController', () => {
 
     scheduleIcsCommunityReq = {
       params: {
-        referralId,
+        caseRefId,
         probationOfficesData,
         prisonsData,
         mockReferralInformationInCommunity,
@@ -130,7 +130,7 @@ describe('AppointmentController', () => {
 
     scheduleIcsPrisonReq = {
       params: {
-        referralId,
+        caseRefId,
         probationOfficesData,
         prisonsData,
         mockReferralInformationInPrison,
@@ -151,7 +151,7 @@ describe('AppointmentController', () => {
     it('should redirect to schedule-ics page when createAppointmentRequest is not in session', async () => {
       referralService.getReferralInformation.mockResolvedValue(mockReferralInformationInCommunity)
       await appointmentController.checkIcs(req, res)
-      expect(res.redirect).toHaveBeenCalledWith(`/referral/${referralId}/appointment/schedule-ics`)
+      expect(res.redirect).toHaveBeenCalledWith(`/referral/${caseRefId}/appointment/schedule-ics`)
     })
 
     it('should create presenter with createAppointmentRequest from session and render page', async () => {
@@ -175,7 +175,7 @@ describe('AppointmentController', () => {
       await appointmentController.showScheduleIcs(scheduleIcsCommunityReq, scheduleIcsRes)
 
       expect(ScheduleIcsPresenter).toHaveBeenCalledWith(
-        referralId,
+        caseRefId,
         probationOfficesData,
         prisonsData,
         mockReferralInformationInCommunity,
@@ -190,7 +190,7 @@ describe('AppointmentController', () => {
       await appointmentController.showScheduleIcs(scheduleIcsPrisonReq, scheduleIcsRes)
 
       expect(ScheduleIcsPresenter).toHaveBeenCalledWith(
-        referralId,
+        caseRefId,
         probationOfficesData,
         prisonsData,
         mockReferralInformationInPrison,
@@ -207,7 +207,7 @@ describe('AppointmentController', () => {
       await appointmentController.showScheduleIcs(scheduleIcsCommunityReq, scheduleIcsRes)
 
       expect(ScheduleIcsPresenter).toHaveBeenCalledWith(
-        referralId,
+        caseRefId,
         probationOfficesData,
         prisonsData,
         mockReferralInformationInCommunity,
@@ -277,7 +277,6 @@ describe('AppointmentController', () => {
       }
     })
     test('nothing selected', async () => {
-      const caseRefId = randomUUID()
       req = {
         ...req,
         params: { caseRefId },
@@ -295,7 +294,6 @@ describe('AppointmentController', () => {
       expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseRefId}/attendance`)
     })
     test('happened selected, but attended unselected', async () => {
-      const caseRefId = randomUUID()
       req = {
         ...req,
         params: { caseRefId },
@@ -313,7 +311,6 @@ describe('AppointmentController', () => {
       expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseRefId}/attendance`)
     })
     test('bad body data', async () => {
-      const caseRefId = randomUUID()
       req = {
         ...req,
         params: { caseRefId },
@@ -331,7 +328,6 @@ describe('AppointmentController', () => {
       expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseRefId}/attendance`)
     })
     test('session happened', async () => {
-      const caseRefId = randomUUID()
       req = {
         ...req,
         params: { caseRefId },
@@ -348,7 +344,6 @@ describe('AppointmentController', () => {
       expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseRefId}/did-session-take-place`)
     })
     test('session did not happen but was attended', async () => {
-      const caseRefId = randomUUID()
       req = {
         ...req,
         params: { caseRefId },
@@ -365,7 +360,6 @@ describe('AppointmentController', () => {
       expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseRefId}/why-did-the-session-not-happen`)
     })
     test('session did not happen and was not attended', async () => {
-      const caseRefId = randomUUID()
       req = {
         ...req,
         params: { caseRefId },
@@ -390,7 +384,7 @@ describe('AppointmentController', () => {
     const mockIcsAppointment: AppointmentIcsResponse = {
       appointmentIcsId: 'ics-123',
       appointmentId: 'appointment-456',
-      referralId,
+      referralId: caseRefId,
       appointmentType: 'ICS',
       appointmentDate: '2026-04-21',
       appointmentTime: { hour: 10, minute: 0, amPm: 'AM' },
@@ -404,7 +398,7 @@ describe('AppointmentController', () => {
 
     beforeEach(() => {
       IcsFeedbackHowSessionTookPlacePresenter.prototype.renderPage = jest.fn()
-      ;(appointmentService.getICS as jest.Mock).mockResolvedValue(mockIcsAppointment)
+        ; (appointmentService.getICS as jest.Mock).mockResolvedValue(mockIcsAppointment)
 
       icsFeedbackReq = {
         params: { caseRefId: 'ics-123' },
@@ -710,7 +704,7 @@ describe('AppointmentController', () => {
 
     beforeEach(() => {
       viewChangeReq = {
-        params: { referralId, icsId: mockIcsId },
+        params: { referralId: caseRefId, icsId: mockIcsId },
         session: {},
         flash: jest.fn(),
       } as unknown as Request
@@ -727,8 +721,8 @@ describe('AppointmentController', () => {
 
       await appointmentController.viewChangeSessionDetails(viewChangeReq, viewChangeRes)
 
-      expect(appointmentService.getIcsById).toHaveBeenCalledWith(referralId, mockIcsId, 'user1')
-      expect(ViewChangeSessionDetailsPresenter).toHaveBeenCalledWith(mockAppointmentIcsResponse, referralId, mockIcsId)
+      expect(appointmentService.getIcsById).toHaveBeenCalledWith(caseRefId, mockIcsId, 'user1')
+      expect(ViewChangeSessionDetailsPresenter).toHaveBeenCalledWith(mockAppointmentIcsResponse, caseRefId, mockIcsId)
       expect(ViewChangeSessionDetailsPresenter.prototype.renderPage).toHaveBeenCalledWith(viewChangeRes)
     })
   })
@@ -807,7 +801,6 @@ describe('AppointmentController', () => {
       expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseReferenceId}/check-answers`)
     })
     test('redirect when case reference id is different from the session', async () => {
-      const caseRefId = randomUUID()
       req.params.caseRefId = caseRefId
       await appointmentController.howTheyTriedToContactThePerson(req, res)
       expect(req.session.icsFeedbackSubmission).toBeUndefined()
@@ -876,7 +869,6 @@ describe('AppointmentController', () => {
     it('redirects to progress page after submitting feedback', async () => {
       jest.spyOn(appointmentService, 'submitIcsFeedback').mockResolvedValue(undefined)
       jest.spyOn(appointmentService, 'getICS').mockResolvedValue(mockAppointmentIcsResponse)
-      const caseRefId = 'AB1234CD'
       const username = 'user1'
       const mockSubmission = {
         record: {

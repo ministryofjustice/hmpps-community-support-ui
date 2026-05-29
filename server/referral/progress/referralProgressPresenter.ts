@@ -37,7 +37,7 @@ const getStatusConfig = (caseReference: string, appointmentId: string = ''): Rec
     label: 'Did not happen',
     tagClass: 'govuk-tag--purple',
     actions: [
-      { label: 'Reschedule', href: '#' },
+      { label: 'Reschedule', href: `/referral-details/${caseReference}/check-change-ics` },
       { label: 'View feedback', href: '#' },
     ],
   },
@@ -45,14 +45,14 @@ const getStatusConfig = (caseReference: string, appointmentId: string = ''): Rec
     label: 'Did not attend',
     tagClass: 'govuk-tag--purple',
     actions: [
-      { label: 'Reschedule', href: '#' },
+      { label: 'Reschedule', href: `/referral-details/${caseReference}/check-change-ics` },
       { label: 'View feedback', href: '#' },
     ],
   },
   RESCHEDULED: {
     label: 'Rescheduled',
     tagClass: 'govuk-tag--grey',
-    actions: [{ label: 'View or change details', href: `/referral/${caseReference}/ics/${appointmentId}` }],
+    actions: [{ label: 'View or change details', href: `/referral-details/${caseReference}/check-change-ics` }],
   },
   COMPLETED: {
     label: 'Completed',

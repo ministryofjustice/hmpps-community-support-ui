@@ -85,8 +85,6 @@ export default class InitialContactSessionDetailsPresenter extends PresenterBase
   InitialContactSessionDetailsViewModel,
   InitialContactSessionDetailsContent
 > {
-  private readonly referralId: string
-
   private readonly name: string
 
   private readonly date: string
@@ -108,12 +106,10 @@ export default class InitialContactSessionDetailsPresenter extends PresenterBase
       appointmentTime,
       sessionMethod,
       sessionCommunications,
-      referralId,
     }: AppointmentIcsResponse,
-    private readonly caseRef: string | null = null,
+    private readonly caseRef: string,
   ) {
     super()
-    this.referralId = referralId
     this.name = referralFirstName
     this.date = appointmentDate
     this.time = timeFormat(appointmentTime)
@@ -176,12 +172,8 @@ export default class InitialContactSessionDetailsPresenter extends PresenterBase
     return {
       title: content.title,
       heading: content.heading,
-      details: this.buildDetails(
-        content.details,
-        content.links.change.replace('{{ id }}', this.caseRef || this.referralId),
-        this.name,
-      ),
-      backLink: { href: content.links.back.replace('{{ id }}', this.caseRef || this.referralId) },
+      details: this.buildDetails(content.details, content.links.change.replace('{{ id }}', this.caseRef), this.name),
+      backLink: { href: content.links.back.replace('{{ id }}', this.caseRef) },
     }
   }
 

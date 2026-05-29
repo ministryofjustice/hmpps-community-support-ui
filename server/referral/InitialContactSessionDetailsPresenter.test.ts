@@ -1,5 +1,6 @@
 import { Response } from 'express'
 import { AppointmentIcsResponse } from '@community-support-api'
+import { randomUUID } from 'node:crypto'
 import InitialContactSessionDetailsPresenter, {
   InitialContactSessionDetailsContent,
 } from './InitialContactSessionDetailsPresenter'
@@ -25,11 +26,13 @@ describe('InitialContactSessionDetailsPresenter', () => {
   }
   const response = { locals: { content } } as unknown as Response
 
+  const caseRef = 'ref-id'
+
   describe('virtual meeting', () => {
     const virtualMeetingData = {
       appointmentIcsId: 'ics-id',
       appointmentId: 'appt-id',
-      referralId: 'ref-id',
+      referralId: randomUUID(),
       appointmentType: 'ICS',
       appointmentDate: '2026-02-01',
       appointmentTime: {
@@ -49,7 +52,7 @@ describe('InitialContactSessionDetailsPresenter', () => {
       createdAt: '2026-01-10T09:00:00Z',
     } as AppointmentIcsResponse
 
-    const presenter = new InitialContactSessionDetailsPresenter(virtualMeetingData)
+    const presenter = new InitialContactSessionDetailsPresenter(virtualMeetingData, caseRef)
     const viewModel = presenter.buildPageContent(response)
     test('buildPageContent the correct view model', () => {
       expect(viewModel).toMatchSnapshot()
@@ -98,7 +101,7 @@ describe('InitialContactSessionDetailsPresenter', () => {
       createdAt: '2026-01-12T08:30:00Z',
     } as AppointmentIcsResponse
     test('buildPageContent the correct view model', () => {
-      const presenter = new InitialContactSessionDetailsPresenter(inPersonMeetingData)
+      const presenter = new InitialContactSessionDetailsPresenter(inPersonMeetingData, caseRef)
       const viewModel = presenter.buildPageContent(response)
       expect(viewModel).toMatchSnapshot()
       // reason row IS NOT in viewModel
@@ -122,7 +125,7 @@ describe('InitialContactSessionDetailsPresenter', () => {
     test('with postcode', () => {
       const data = { ...inPersonMeetingData, sessionMethod: { ...inPersonMeetingData.sessionMethod } }
       data.sessionMethod.postcode = 'A11 11A'
-      const presenter = new InitialContactSessionDetailsPresenter(data)
+      const presenter = new InitialContactSessionDetailsPresenter(data, caseRef)
       expect(presenter.buildPageContent(response)).toMatchSnapshot()
     })
 
@@ -133,7 +136,7 @@ describe('InitialContactSessionDetailsPresenter', () => {
       data.sessionMethod.townOrCity = 'Mockington'
       data.sessionMethod.county = 'Mockinghamshire'
       data.sessionMethod.postcode = 'MK0 1AA'
-      const presenter = new InitialContactSessionDetailsPresenter(data)
+      const presenter = new InitialContactSessionDetailsPresenter(data, caseRef)
       expect(presenter.buildPageContent(response)).toMatchSnapshot()
     })
   })
