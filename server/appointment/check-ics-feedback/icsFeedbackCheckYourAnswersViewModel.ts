@@ -13,7 +13,9 @@ export type IcsFeedbackCheckYourAnswersContent = {
   summaryLists: Array<IcsFeedbackSummaryListContent>
   submitButtonText: string
   submitHref: string
-  backLinkHref: string
+  didNotAttendbackLinkHref: string
+  noSessionbackLinkHref: string
+  attendedBackLinkHref: string
 }
 
 export type SummaryListWithTitle = GovukFrontendSummaryList & {

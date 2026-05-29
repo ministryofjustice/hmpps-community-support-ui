@@ -301,14 +301,21 @@
           {
             "text": "Why the session did not happen?",
             "hint": "Why the session did not happen",
-            "changeHref": "/ics-feedback/caseRefId/session-feedback"
+            "changeHref": "/ics-feedback/caseRefId/why-did-the-session-not-happen"
+          },
+          {
+            "text": "Details about how you tried to contact firstname and why they did not attend ",
+            "hint": "details about how you tried to contact them and why they did not attend’",
+            "changeHref": "/ics-feedback/caseRefId/how-they-tried-to-contact-the-person"
           }
         ]
       }
     ],
     "submitButtonText": "Submit feedback",
     "submitHref": "/ics-feedback/caseRefId/submit",
-    "backLinkHref": "/ics-feedback/caseRefId/session-feedback"
+    "didNotAttendbackLinkHref": "/ics-feedback/caseRefId/how-they-tried-to-contact-the-person",
+    "noSessionbackLinkHref": "/ics-feedback/caseRefId/why-did-the-session-not-happen",
+    "attendedBackLinkHref": "/ics-feedback/caseRefId/session-feedback"
   },
   "/ics-feedback/:id/session-details": {
     "pageHeader": "Session details",

@@ -27,7 +27,7 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
       ...content,
       submitHref: content.submitHref.replace('caseRefId', this.caseRefId),
       feedbackSummarys: this.buildFeedbackSummaries(content),
-      backLink: { href: content.backLinkHref.replace('caseRefId', this.caseRefId) },
+      backLink: { href: this.getBackLinkHref(content) },
     } as IcsFeedbackCheckYourAnswersViewModel
   }
 
@@ -103,6 +103,7 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
       this.buildSummary(content.summaryLists.filter(item => item.summaryTitle === 'Session feedback')[0], [
         this.icsFeedbackSubmission.sessionFeedback?.whatHappened || null,
         this.getDidNotHappenReason() || null,
+        this.getDidNotAttendReason() || null,
       ]),
     ]
     return summaries.filter(summary => summary !== null) as Array<SummaryListWithTitle>
@@ -132,6 +133,23 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
       return null
     }
     return null
+  }
+
+  private getDidNotAttendReason(): string | null {
+    if (!this.icsFeedbackSubmission.record.didSessionHappen && !this.icsFeedbackSubmission.record.didPersonAttend) {
+      return this.icsFeedbackSubmission.record.noAttendanceInformation
+    }
+    return null
+  }
+
+  private getBackLinkHref(content: IcsFeedbackCheckYourAnswersContent): string {
+    if (!this.icsFeedbackSubmission.record.didSessionHappen && this.icsFeedbackSubmission.record.didPersonAttend) {
+      return content.noSessionbackLinkHref.replace('caseRefId', this.caseRefId)
+    }
+    if (!this.icsFeedbackSubmission.record.didPersonAttend && !this.icsFeedbackSubmission.record.didSessionHappen) {
+      return content.didNotAttendbackLinkHref.replace('caseRefId', this.caseRefId)
+    }
+    return content.attendedBackLinkHref.replace('caseRefId', this.caseRefId)
   }
 
   private wasSessionInPerson(type: string): boolean {

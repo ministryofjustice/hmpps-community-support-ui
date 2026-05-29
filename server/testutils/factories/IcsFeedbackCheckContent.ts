@@ -39,5 +39,7 @@ export default IcsFeedbackCheckContentFactory.define(({ transientParams }) => ({
   ],
   submitButtonText: transientParams.submitButtonText || 'Save and continue',
   submitHref: transientParams.submitHref || '/submit',
-  backLinkHref: transientParams.backLinkHref || '/back',
+  attendedBackLinkHref: transientParams.attendedBackLinkHref || '/back',
+  didNotAttendbackLinkHref: transientParams.didNotAttendbackLinkHref || '/back',
+  noSessionbackLinkHref: transientParams.noSessionbackLinkHref || '/back',
 }))
