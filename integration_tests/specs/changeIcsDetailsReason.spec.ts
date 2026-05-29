@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test'
 import { subDays } from 'date-fns'
 import { randomUUID } from 'node:crypto'
 import initialContactSessionDetailsPageData from '../mockData/initialContactSessionDetailsPageData'
-import { login, resetStubs } from '../testUtils'
+import { daysAfter, login, resetStubs, seedAppointmentSession } from '../testUtils'
 import communitySupport from '../mockApis/communitySupport'
 import ChangeIcsDetailsPage from '../pages/ChangeIcsDetailsPage'
 import ChangeIcsDetailsReasonPage from '../pages/ChangeIcsDetailsReasonPage'
@@ -11,6 +11,16 @@ import ChangeIcsDetailsCYAPage from '../pages/ChangeIcsDetailsCYAPage'
 const NOTHING_SELECTED_ERROR_MESSAGE = 'Select who requested this change'
 const REASON_EMPTY_ERROR_MESSAGE = 'Enter the reason for this change'
 const REASON_TOO_MANY_CHARS_ERROR_MESSAGE = 'Reason for change must be 500 characters or less'
+
+const phoneAppointmentRequest = {
+  date: daysAfter(new Date(), 7),
+  time: { hour: 1, minute: 0, amPm: 'pm' },
+  sessionMethodRequest: {
+    type: 'PHONE',
+    additionalDetails: 'The referral dont have a vehicle',
+  },
+  sessionCommunication: ['informedByPhone'],
+}
 
 test.describe('Reschedule Ics Appointment Reason Page', () => {
   const date = new Date()
@@ -130,6 +140,7 @@ test.describe('Reschedule Ics Appointment Reason Page', () => {
 
   // IPB-2341:AC7
   test('Navigation to Check Details Page', async ({ page }) => {
+    await seedAppointmentSession(page, phoneAppointmentRequest)
     const changeIcsDetailsReasonPage = await ChangeIcsDetailsReasonPage.verifyOnPage(page)
     await changeIcsDetailsReasonPage.whoRequestedRadios.items[1].input.click()
     await changeIcsDetailsReasonPage.reasonTextarea.input.fill('Had work')

@@ -110,7 +110,7 @@ test.describe('Ics Feedback CYA Page', () => {
   test('should display the ics feedback check your answers page if we have session data for the case', async ({
     page,
   }) => {
-    await seedSessionWithIcsFeedback(page, caseRefId, icsFeedbackSubmissionNoAddress)
+    await seedSessionWithIcsFeedback(page, icsFeedbackSubmissionNoAddress)
     await page.goto(`ics-feedback/${caseRefId}/check-answers`)
     const icsFeedbackCheckYourAnswersPage = await IcsFeedbackCheckYourAnswersPage.verifyOnPage(page)
     expect(icsFeedbackCheckYourAnswersPage.attendanceSummary).toBeVisible()
@@ -127,7 +127,7 @@ test.describe('Ics Feedback CYA Page', () => {
 
   // AC2.1
   test('when we have valid session data should always display the attendance summary', async ({ page }) => {
-    await seedSessionWithIcsFeedback(page, caseRefId, icsFeedbackSubmissionNoAddress)
+    await seedSessionWithIcsFeedback(page, icsFeedbackSubmissionNoAddress)
     await page.goto(`ics-feedback/${caseRefId}/check-answers`)
     const icsFeedbackCheckYourAnswersPage = await IcsFeedbackCheckYourAnswersPage.verifyOnPage(page)
     expect(icsFeedbackCheckYourAnswersPage.attendanceSummary).toBeVisible()
@@ -135,7 +135,7 @@ test.describe('Ics Feedback CYA Page', () => {
 
   // AC2.2
   test('when the ICS has taken place we should see the session details section', async ({ page }) => {
-    await seedSessionWithIcsFeedback(page, caseRefId, icsFeedbackSubmissionNoAddress)
+    await seedSessionWithIcsFeedback(page, icsFeedbackSubmissionNoAddress)
     await page.goto(`ics-feedback/${caseRefId}/check-answers`)
     const icsFeedbackCheckYourAnswersPage = await IcsFeedbackCheckYourAnswersPage.verifyOnPage(page)
     expect(icsFeedbackCheckYourAnswersPage.sessionDetailsSummary).toBeVisible()
@@ -143,14 +143,14 @@ test.describe('Ics Feedback CYA Page', () => {
 
   // AC2.3
   test('when the ICS has taken place we should see the session feedback section', async ({ page }) => {
-    await seedSessionWithIcsFeedback(page, caseRefId, icsFeedbackSubmissionNoAddress)
+    await seedSessionWithIcsFeedback(page, icsFeedbackSubmissionNoAddress)
     await page.goto(`ics-feedback/${caseRefId}/check-answers`)
     const icsFeedbackCheckYourAnswersPage = await IcsFeedbackCheckYourAnswersPage.verifyOnPage(page)
     expect(icsFeedbackCheckYourAnswersPage.sessionFeedbackSummary).toBeVisible()
   })
 
   test('when the ICS has taken place in a PDU display the PDU', async ({ page }) => {
-    await seedSessionWithIcsFeedback(page, caseRefId, icsFeedbackSubmissionPdu)
+    await seedSessionWithIcsFeedback(page, icsFeedbackSubmissionPdu)
     await page.goto(`ics-feedback/${caseRefId}/check-answers`)
     const icsFeedbackCheckYourAnswersPage = await IcsFeedbackCheckYourAnswersPage.verifyOnPage(page)
     expect(icsFeedbackCheckYourAnswersPage.locationRowTitle).toBeVisible()
@@ -158,7 +158,7 @@ test.describe('Ics Feedback CYA Page', () => {
   })
 
   test('when the ICS has taken place in a custom location display the address', async ({ page }) => {
-    await seedSessionWithIcsFeedback(page, caseRefId, icsFeedbackSubmissionOtherAddress)
+    await seedSessionWithIcsFeedback(page, icsFeedbackSubmissionOtherAddress)
     await page.goto(`ics-feedback/${caseRefId}/check-answers`)
     const icsFeedbackCheckYourAnswersPage = await IcsFeedbackCheckYourAnswersPage.verifyOnPage(page)
     expect(icsFeedbackCheckYourAnswersPage.locationRowTitle).toBeVisible()
@@ -166,7 +166,7 @@ test.describe('Ics Feedback CYA Page', () => {
   })
 
   test('when the ICS has taken place display persons first name in was late question', async ({ page }) => {
-    await seedSessionWithIcsFeedback(page, caseRefId, icsFeedbackSubmissionOtherAddress)
+    await seedSessionWithIcsFeedback(page, icsFeedbackSubmissionOtherAddress)
     await page.goto(`ics-feedback/${caseRefId}/check-answers`)
     const icsFeedbackCheckYourAnswersPage = await IcsFeedbackCheckYourAnswersPage.verifyOnPage(page)
     expect(page.getByText(`Was ${mockAppointmentIcsResponse.referralFirstName} late?`)).toBeVisible()
@@ -175,7 +175,7 @@ test.describe('Ics Feedback CYA Page', () => {
 
   // AC6
   test('when I submit feedback successfully I am taken to the referral progress page', async ({ page }) => {
-    await seedSessionWithIcsFeedback(page, caseRefId, icsFeedbackSubmissionNoAddress)
+    await seedSessionWithIcsFeedback(page, icsFeedbackSubmissionNoAddress)
     await communitySupport.stubGetICS(caseRefId, mockAppointmentIcsResponse)
     await communitySupport.stubIcsFeedbackSubmission(
       icsFeedbackSubmissionNoAddress,
