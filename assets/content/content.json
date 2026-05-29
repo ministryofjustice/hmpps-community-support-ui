@@ -34,17 +34,8 @@
         "href": "/cases-in-progress"
       }
     ],
-    "unassignedColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Date received"
-    ],
-    "inProgressColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Assigned to",
-      "Date received"
-    ],
+    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
+    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
     "noCasesMessage": "There are no {0} cases to view."
   },
   "/cases-in-progress": {
@@ -63,17 +54,8 @@
         "href": "/cases-in-progress"
       }
     ],
-    "unassignedColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Date received"
-    ],
-    "inProgressColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Assigned to",
-      "Date received"
-    ],
+    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
+    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
     "noCasesMessage": "There are no {0} cases to view."
   },
   "/referral-details/:id": {
@@ -161,15 +143,8 @@
         "href": "/change-log"
       }
     ],
-    "progressActiveColumnHeaders": [
-      "Date and time",
-      "Status",
-      "Action"
-    ],
-    "progressInactiveColumnHeaders": [
-      "Status",
-      "Action"
-    ]
+    "progressActiveColumnHeaders": ["Date and time", "Status", "Action"],
+    "progressInactiveColumnHeaders": ["Status", "Action"]
   },
   "/ics-feedback/:id/did-session-take-place": {
     "submitButtonText": "Continue",
@@ -272,6 +247,11 @@
             "changeHref": "/ics-feedback/caseRefId/attendance"
           },
           {
+            "text": "Did firstname come to the appointment?",
+            "hint": "Did firstname come to the appointment?",
+            "changeHref": "/ics-feedback/caseRefId/attendance"
+          },
+          {
             "text": "How the session took place",
             "hint": "How the session took place",
             "changeHref": "/ics-feedback/caseRefId/did-session-take-place"
@@ -314,6 +294,11 @@
           {
             "text": "What happened in the session",
             "hint": "What happened in the session",
+            "changeHref": "/ics-feedback/caseRefId/session-feedback"
+          },
+          {
+            "text": "Why the session did not happen?",
+            "hint": "Why the session did not happen",
             "changeHref": "/ics-feedback/caseRefId/session-feedback"
           }
         ]

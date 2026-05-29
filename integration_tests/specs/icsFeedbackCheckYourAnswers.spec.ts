@@ -67,6 +67,17 @@ test.describe('Ics Feedback CYA Page', () => {
     },
     caseReferenceId: caseRefId,
   }
+  const icsFeedbackSubmissionDidNotComply = {
+    record: {
+      didSessionHappen: false,
+      didPersonAttend: true,
+      sessionNotHappenReason: {
+        reason: 'REFERRAL_DID_NOT_COMPLY',
+        details: 'A reason',
+      },
+    },
+    caseReferenceId: caseRefId,
+  }
   const appointmentScheduled: ReferralProgress = buildReferralProgress([
     {
       appointmentId: randomUUID(),
@@ -171,6 +182,17 @@ test.describe('Ics Feedback CYA Page', () => {
     const icsFeedbackCheckYourAnswersPage = await IcsFeedbackCheckYourAnswersPage.verifyOnPage(page)
     expect(page.getByText(`Was ${mockAppointmentIcsResponse.referralFirstName} late?`)).toBeVisible()
     expect(icsFeedbackCheckYourAnswersPage.sessionDetailsSummary).toBeVisible()
+  })
+
+  test('when the ICS was attended but person did not comply, display did not comply with reason in session details', async ({
+    page,
+  }) => {
+    await seedSessionWithIcsFeedback(page, caseRefId, icsFeedbackSubmissionDidNotComply)
+    await page.goto(`ics-feedback/${caseRefId}/check-answers`)
+    const icsFeedbackCheckYourAnswersPage = await IcsFeedbackCheckYourAnswersPage.verifyOnPage(page)
+    expect(page.getByText('Why the session did not happen?')).toBeVisible()
+    expect(page.getByText(`${mockAppointmentIcsResponse.referralFirstName} did not comply`)).toBeVisible()
+    expect(icsFeedbackCheckYourAnswersPage.sessionFeedbackSummary).toBeVisible()
   })
 
   // AC6
