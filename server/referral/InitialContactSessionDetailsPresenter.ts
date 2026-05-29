@@ -101,14 +101,17 @@ export default class InitialContactSessionDetailsPresenter extends PresenterBase
 
   private readonly sessionCommunication: string
 
-  constructor({
-    referralFirstName,
-    appointmentDate,
-    appointmentTime,
-    sessionMethod,
-    sessionCommunications,
-    referralId,
-  }: AppointmentIcsResponse) {
+  constructor(
+    {
+      referralFirstName,
+      appointmentDate,
+      appointmentTime,
+      sessionMethod,
+      sessionCommunications,
+      referralId,
+    }: AppointmentIcsResponse,
+    private readonly caseRef: string | null = null,
+  ) {
     super()
     this.referralId = referralId
     this.name = referralFirstName
@@ -170,12 +173,15 @@ export default class InitialContactSessionDetailsPresenter extends PresenterBase
 
   buildPageContent(res: Response): InitialContactSessionDetailsViewModel {
     const content = this.buildStaticContent(res)
-    const linkId = { id: this.referralId }
     return {
       title: content.title,
       heading: content.heading,
-      details: this.buildDetails(content.details, nunjucks.renderString(content.links.change, linkId), this.name),
-      backLink: { href: nunjucks.renderString(content.links.back, linkId) },
+      details: this.buildDetails(
+        content.details,
+        content.links.change.replace('{{ id }}', this.caseRef || this.referralId),
+        this.name,
+      ),
+      backLink: { href: content.links.back.replace('{{ id }}', this.caseRef || this.referralId) },
     }
   }
 
