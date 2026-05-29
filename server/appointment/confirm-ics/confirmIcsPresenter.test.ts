@@ -123,10 +123,10 @@ describe('ConfirmIcsPresenter', () => {
       })
     })
 
-    it('should not include reason session is not in-person when method is PROBATION_OFFICE', () => {
+    it('should not include reason session is not in-person when method is IN_PERSON_PROBATION_OFFICE', () => {
       const inPersonRequest: CreateAppointmentRequest = {
         ...baseRequest,
-        sessionMethodRequest: { type: 'PROBATION_OFFICE' },
+        sessionMethodRequest: { type: 'IN_PERSON_PROBATION_OFFICE' },
       }
       const presenter = new ConfirmIcsPresenter(inPersonRequest, referralId, additionInformation)
       presenter.renderPage(res)
@@ -168,10 +168,10 @@ describe('ConfirmIcsPresenter', () => {
     })
 
     describe('location row for in-person sessions', () => {
-      it('should include Location row with "Probation office" when method is PROBATION_OFFICE', () => {
+      it('should include Location row with "Probation office" when method is IN_PERSON_PROBATION_OFFICE', () => {
         const inPersonRequest: CreateAppointmentRequest = {
           ...baseRequest,
-          sessionMethodRequest: { type: 'PROBATION_OFFICE' },
+          sessionMethodRequest: { type: 'IN_PERSON_PROBATION_OFFICE' },
         }
         const presenter = new ConfirmIcsPresenter(inPersonRequest, referralId, additionInformation)
         presenter.renderPage(res)
@@ -183,11 +183,11 @@ describe('ConfirmIcsPresenter', () => {
         expect(locationRow).toEqual({ key: { text: 'Location' }, value: { text: 'Probation office' } })
       })
 
-      it('should include Location row with formatted address when method is OTHER_LOCATION', () => {
+      it('should include Location row with formatted address when method is IN_PERSON_OTHER_LOCATION', () => {
         const otherLocationRequest: CreateAppointmentRequest = {
           ...baseRequest,
           sessionMethodRequest: {
-            type: 'OTHER_LOCATION',
+            type: 'IN_PERSON_OTHER_LOCATION',
             addressLine1: '123 Main Street',
             addressLine2: 'Flat 4',
             townOrCity: 'Leeds',
@@ -208,11 +208,11 @@ describe('ConfirmIcsPresenter', () => {
         })
       })
 
-      it('should omit blank address fields in Location row for OTHER_LOCATION', () => {
+      it('should omit blank address fields in Location row for IN_PERSON_OTHER_LOCATION', () => {
         const otherLocationRequest: CreateAppointmentRequest = {
           ...baseRequest,
           sessionMethodRequest: {
-            type: 'OTHER_LOCATION',
+            type: 'IN_PERSON_OTHER_LOCATION',
             addressLine1: '123 Main Street',
             townOrCity: 'Leeds',
             postcode: 'LS1 1AA',

@@ -379,5 +379,24 @@
       "submitButtonText": "Continue"
     },
     "backLink": "/ics-feedback/{{ id }}/attendance"
+  },
+  "/referral/:id/ics-change-details/reason": {
+    "pageHeader": "Reason for changing the session details",
+    "serviceName": "",
+    "whoRequestedRadio": {
+      "name": "requestedBy",
+      "title": "Who requested this change?",
+      "hint": "Select one option.",
+      "items": {
+        "deliveryPartnerText": "Delivery partner",
+        "probationPractitionerText": "Probation practitioner"
+      }
+    },
+    "reasonTextarea": {
+      "name": "reasonForChange",
+      "label": "What is the reason for this change?"
+    },
+    "submitButtonText": "Save and continue",
+    "backLinkHref": "/referral/{{ id }}/ics-change-details"
   }
 }

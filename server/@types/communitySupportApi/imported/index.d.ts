@@ -4,7 +4,7 @@
  */
 
 export interface paths {
-  '/referral/{referralId}/assign': {
+  '/referral/{identifier}/assign': {
     parameters: {
       query?: never
       header?: never
@@ -242,7 +242,7 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/bff/referral-assignments/{referralId}': {
+  '/bff/referral-assignments/{identifier}': {
     parameters: {
       query?: never
       header?: never
@@ -251,6 +251,23 @@ export interface paths {
     }
     /** Get assigned case workers of a referral */
     get: operations['getAssignedCaseWorkers']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/ics-feedback/{icsFeedbackId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get a single ICS feedback record by its ID */
+    get: operations['getIcsFeedback']
     put?: never
     post?: never
     delete?: never
@@ -442,13 +459,7 @@ export interface components {
     }
     SessionMethodRequest: {
       /** @enum {string} */
-      type:
-        | 'PHONE'
-        | 'VIDEO'
-        | 'IN_PERSON_PROBATION_OFFICE'
-        | 'IN_PERSON_OTHER_LOCATION'
-        | 'PROBATION_OFFICE'
-        | 'OTHER_LOCATION'
+      type: 'PHONE' | 'VIDEO' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION'
       additionalDetails?: string | null
       pdu?: string | null
       addressLine1?: string | null
@@ -725,7 +736,7 @@ export interface operations {
       query?: never
       header?: never
       path: {
-        referralId: string
+        identifier: string
       }
       cookie?: never
     }
@@ -846,6 +857,15 @@ export interface operations {
       }
       /** @description Referral or ICS appointment not found */
       404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+      /** @description ICS feedback already exists for this appointment */
+      409: {
         headers: {
           [name: string]: unknown
         }
@@ -1193,7 +1213,7 @@ export interface operations {
       query?: never
       header?: never
       path: {
-        referralId: string
+        identifier: string
       }
       cookie?: never
     }
@@ -1269,6 +1289,37 @@ export interface operations {
         }
       }
       /** @description Person not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getIcsFeedback: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        icsFeedbackId: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description ICS feedback found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['AppointmentIcsFeedbackResponse']
+        }
+      }
+      /** @description ICS feedback not found */
       404: {
         headers: {
           [name: string]: unknown

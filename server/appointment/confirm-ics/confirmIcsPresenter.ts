@@ -54,8 +54,8 @@ export default class ConfirmIcsPresenter extends PresenterBase<ConfirmIcsViewMod
     const methods: Record<string, string> = {
       PHONE: 'Phone call',
       VIDEO: 'Video call',
-      PROBATION_OFFICE: 'In person',
-      OTHER_LOCATION: 'Other location',
+      IN_PERSON_PROBATION_OFFICE: 'In person',
+      IN_PERSON_OTHER_LOCATION: 'Other location',
     }
     return methods[type] ?? type
   }
@@ -73,12 +73,13 @@ export default class ConfirmIcsPresenter extends PresenterBase<ConfirmIcsViewMod
     const { date, time, sessionMethodRequest, sessionCommunication } = this.createAppointmentRequest
     const isNotInPerson = sessionMethodRequest.type === 'PHONE' || sessionMethodRequest.type === 'VIDEO'
     const isInPerson =
-      sessionMethodRequest.type === 'PROBATION_OFFICE' || sessionMethodRequest.type === 'OTHER_LOCATION'
+      sessionMethodRequest.type === 'IN_PERSON_PROBATION_OFFICE' ||
+      sessionMethodRequest.type === 'IN_PERSON_OTHER_LOCATION'
 
     let locationValue: { text: string } | { html: string } | undefined
     if (isInPerson) {
       locationValue =
-        sessionMethodRequest.type === 'PROBATION_OFFICE'
+        sessionMethodRequest.type === 'IN_PERSON_PROBATION_OFFICE'
           ? { text: 'Probation office' }
           : { html: formatAddress(sessionMethodRequest) }
     }

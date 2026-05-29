@@ -58,7 +58,7 @@ const inPersonAppointmentRequest = {
   date: futureDateStr,
   time: { hour: 10, minute: 30, amPm: 'am' },
   sessionMethodRequest: {
-    type: 'PROBATION_OFFICE',
+    type: 'IN_PERSON_PROBATION_OFFICE',
   },
   sessionCommunication: ['informedByPhone', 'Letter'],
 }
@@ -67,7 +67,7 @@ const otherLocationAppointmentRequest = {
   date: futureDateStr,
   time: { hour: 10, minute: 30, amPm: 'am' },
   sessionMethodRequest: {
-    type: 'OTHER_LOCATION',
+    type: 'IN_PERSON_OTHER_LOCATION',
     addressLine1: '123 Main Street',
     addressLine2: 'Flat 4',
     townOrCity: 'Leeds',
