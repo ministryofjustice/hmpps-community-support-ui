@@ -144,10 +144,10 @@ const loadIcsFeedbackFromSession = (
     case 'PHONE':
       return additionalDetails
         ? {
-            phoneCall: 'no',
-            howSessionTookPlace: 'PHONE',
-            phoneCallReason: additionalDetails,
-          }
+          phoneCall: 'no',
+          howSessionTookPlace: 'PHONE',
+          phoneCallReason: additionalDetails,
+        }
         : { phoneCall: 'yes' }
     case 'VIDEO':
       return {
@@ -441,6 +441,25 @@ const createIcsSessionData = ({
   }
 }
 
+const createMethodSessionData = (method: SessionMethod): SessionMethodRequest => ({
+  ...method,
+  additionalDetails: method.whyNotInPersonReason,
+})
+
+const createIcsSessionData = ({
+  appointmentDate,
+  appointmentTime,
+  sessionMethod,
+  sessionCommunications,
+}: AppointmentIcsResponse): CreateAppointmentRequest => {
+  return {
+    date: appointmentDate,
+    time: appointmentTime,
+    sessionMethodRequest: createMethodSessionData(sessionMethod),
+    sessionCommunication: sessionCommunications,
+  }
+}
+
 class AppointmentController {
   private readonly validator = new AppointmentValidator()
 
@@ -448,7 +467,7 @@ class AppointmentController {
     private readonly referralService: ReferralService,
     private readonly appointmentService: AppointmentService,
     private readonly referenceDataService: ReferenceDataService,
-  ) {}
+  ) { }
 
   async checkIcs(req: Request, res: Response): Promise<void> {
     const { username } = res.locals.user
