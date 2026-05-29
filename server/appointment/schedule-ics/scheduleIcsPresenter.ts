@@ -57,25 +57,23 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
     ]
   }
 
-  private isPersonInCommunity(): boolean {
-    return isIdentifierACrn(this.referralInformation.crn)
-  }
-
   buildPageContent(res: Response): ScheduleIcsViewModel {
-    const viewModel = {} as ScheduleIcsViewModel
     const content = this.buildStaticContent(res)
-    viewModel.pageHeader = content.pageHeader
-    viewModel.submitButtonText = content.submitButtonText
-    viewModel.submitHref = `/referral/${this.caseReference}/appointment/schedule-ics`
-    viewModel.backLink = { href: `/progress/${this.caseReference}` }
-    viewModel.probationOfficesSelectItems = this.buildProbationOfficesSelectItems()
-    viewModel.prisonsSelectItems = this.buildPrisonsSelectItems()
-    viewModel.serviceName = this.referralInformation.communityServiceProviderName
-    viewModel.isPersonInCommunity = this.isPersonInCommunity()
-    viewModel.firstName = this.referralInformation.firstName
-    viewModel.formData = this.formData
-    viewModel.errors = this.validationErrors
-    return viewModel
+    const submitHref = content.submitHref.replace('{{ caseRef }}', this.caseReference)
+    const backLinkHref = content.backLink.replace('{{ caseRef }}', this.caseReference)
+    return {
+      pageHeader: content.pageHeader,
+      submitButtonText: content.submitButtonText,
+      submitHref,
+      backLink: { href: backLinkHref },
+      probationOfficesSelectItems: this.buildProbationOfficesSelectItems(),
+      prisonsSelectItems: this.buildPrisonsSelectItems(),
+      serviceName: this.referralInformation.communityServiceProviderName,
+      isPersonInCommunity: isIdentifierACrn(this.referralInformation.crn),
+      firstName: this.referralInformation.firstName,
+      formData: this.formData,
+      errors: this.validationErrors,
+    }
   }
 
   getTemplatePath(): string {
