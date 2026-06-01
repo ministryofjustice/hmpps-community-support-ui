@@ -35,6 +35,13 @@ export const seedAppointmentSession = async (page: Page, appointmentRequest: obj
   })
 }
 
+export const seedChangeAppointmentDetails = async (page: Page, changeAppointmentDetails: object): Promise<void> => {
+  await page.request.post('/test/setup-change-appointment-details', {
+    data: changeAppointmentDetails,
+    headers: { 'Content-Type': 'application/json' },
+  })
+}
+
 export const seedReferralInformation = async (page: Page, referralInformation: object): Promise<void> => {
   await page.request.post('/test/setup-referral-information', {
     data: referralInformation,
@@ -51,11 +58,7 @@ export const duplicateData = (dataToDuplicate: unknown, timesToDuplicates: numbe
   return duplicatedData
 }
 
-export const seedSessionWithIcsFeedback = async (
-  page: Page,
-  caseRefId: string,
-  icsFeedbackSubmission: object,
-): Promise<void> => {
+export const seedSessionWithIcsFeedback = async (page: Page, icsFeedbackSubmission: object): Promise<void> => {
   await page.request.post('/test/setup-ics-feedback-session', {
     data: { icsFeedbackSubmission },
     headers: { 'Content-Type': 'application/json' },
@@ -64,13 +67,6 @@ export const seedSessionWithIcsFeedback = async (
 
 export const seedSessionFeedbackSession = async (page: Page, icsFeedbackSubmission: object): Promise<void> => {
   await page.request.post('/test/setup-session-feedback-session', {
-    data: { icsFeedbackSubmission },
-    headers: { 'Content-Type': 'application/json' },
-  })
-}
-
-export const seedFullIcsFeedbackSessionData = async (page: Page, icsFeedbackSubmission: object): Promise<void> => {
-  await page.request.post('/test/setup-ics-feedback-session', {
     data: { icsFeedbackSubmission },
     headers: { 'Content-Type': 'application/json' },
   })

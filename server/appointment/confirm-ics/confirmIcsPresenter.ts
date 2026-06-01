@@ -1,19 +1,23 @@
 import { CreateAppointmentRequest } from '@community-support-api'
-import { GovukFrontendNotificationBanner, GovukFrontendSummaryList } from '@govuk-frontend'
+import { GovukFrontendNotificationBanner, GovukFrontendSummaryList, GovukFrontendSummaryListRow } from '@govuk-frontend'
 import { Response } from 'express'
 import PresenterBase from '../../presenter/presenterBase'
 import { ConfirmIcsContent, ConfirmIcsViewModel } from './confirmIcsViewModel'
 import { buildIcsSummaryRows, formatAddress } from '../icsDetailsSummaryBuilder'
+import { ChangeAppointmentDetails } from '../change-ics-details-reason/ChangeAppointmentDetails'
 
 export type AdditionalInformation = {
   firstName: string
+  submitHref: string
+  scheduleIcsHref: string
+  changeReasonHref?: string
 }
 
 export default class ConfirmIcsPresenter extends PresenterBase<ConfirmIcsViewModel, ConfirmIcsContent> {
   constructor(
     private readonly createAppointmentRequest: CreateAppointmentRequest,
-    private readonly referralId: string,
     private readonly additionalInformation: AdditionalInformation,
+    private readonly changeAppointmentDetails?: ChangeAppointmentDetails,
   ) {
     super()
   }
@@ -23,11 +27,15 @@ export default class ConfirmIcsPresenter extends PresenterBase<ConfirmIcsViewMod
     const content = this.buildStaticContent(res)
     viewModel.pageHeader = content.pageHeader
     viewModel.submitButtonText = content.submitButtonText
-    viewModel.submitHref = `/referral/${this.referralId}/appointment/submit-ics`
-    viewModel.backLink = { href: `/referral/${this.referralId}/appointment/schedule-ics` }
+    viewModel.submitHref = this.additionalInformation.submitHref
+    viewModel.backLink = { href: this.additionalInformation.scheduleIcsHref }
     viewModel.icsDetailsSummary = this.buildIcsDetailsSummary()
     if (this.isAppointmentInPast()) {
       viewModel.notificationBanner = this.buildPastAppointmentBanner()
+    }
+    if (this.changeAppointmentDetails) {
+      viewModel.backLink = { href: this.additionalInformation.changeReasonHref }
+      viewModel.icsChangeReasonSummary = this.buildChangeReasonSummary()
     }
     return viewModel
   }
@@ -100,9 +108,31 @@ export default class ConfirmIcsPresenter extends PresenterBase<ConfirmIcsViewMod
         actions: {
           items: [
             {
-              href: `/referral/${this.referralId}/appointment/schedule-ics`,
+              href: this.additionalInformation.scheduleIcsHref,
               text: 'Change',
               visuallyHiddenText: 'ICS details',
+            },
+          ],
+        },
+      },
+      rows,
+    }
+  }
+
+  private buildChangeReasonSummary(): GovukFrontendSummaryList {
+    const rows: GovukFrontendSummaryListRow[] = [
+      { key: { text: 'Who requested the change' }, value: { text: this.changeAppointmentDetails.requestedBy } },
+      { key: { text: 'Reason for the change' }, value: { text: this.changeAppointmentDetails.reasonForChange } },
+    ]
+    return {
+      card: {
+        title: { text: 'Reason for change' },
+        actions: {
+          items: [
+            {
+              href: this.additionalInformation.changeReasonHref,
+              text: 'Change',
+              visuallyHiddenText: 'reason for change details',
             },
           ],
         },

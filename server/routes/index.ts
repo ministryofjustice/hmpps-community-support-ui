@@ -161,5 +161,9 @@ export default function routes({
     appointmentController.recordChangeIcsDetailsReason(req, res),
   )
 
+  get('/referral/:caseRefId/ics-change-details/check-answers', (req, res) =>
+    appointmentController.changeIcsDetailsCYA(req, res),
+  )
+
   return router
 }

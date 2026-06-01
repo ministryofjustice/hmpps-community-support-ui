@@ -413,5 +413,9 @@
     "submitButtonText": "Save and continue",
     "submitHref": "/referral/{{ caseRef }}/appointment/change-ics",
     "backLink": "/referral-details/{{ caseRef }}/check-change-ics"
+  },
+  "/referral/:id/ics-change-details/check-answers": {
+    "pageHeader": "Check the details before scheduling the ICS",
+    "submitButtonText": "Submit"
   }
 }

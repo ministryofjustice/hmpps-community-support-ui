@@ -439,8 +439,12 @@ class AppointmentController {
       return res.redirect(`/referral/${referralId}/appointment/schedule-ics`)
     }
     const referralInformation = await this.referralService.getReferralInformation(referralId, username)
-    const additionalDetails: AdditionalInformation = { firstName: referralInformation.firstName }
-    const presenter = new ConfirmIcsPresenter(createAppointmentRequest, referralId, additionalDetails)
+    const additionalDetails: AdditionalInformation = {
+      firstName: referralInformation.firstName,
+      submitHref: `/referral/${referralId}/appointment/submit-ics`,
+      scheduleIcsHref: `/referral/${referralId}/appointment/schedule-ics`,
+    }
+    const presenter = new ConfirmIcsPresenter(createAppointmentRequest, additionalDetails)
     return presenter.renderPage(res)
   }
 
@@ -898,6 +902,28 @@ class AppointmentController {
     validateRequestBodyAgainstSchema(ChangeIcsDetailsReasonSchema, req, res, () => {
       return res.redirect(`/referral/${caseRefId}/ics-change-details/check-answers`)
     })
+  }
+
+  async changeIcsDetailsCYA(req: Request, res: Response): Promise<void> {
+    const { username } = res.locals.user
+    const { caseRefId } = req.params as { caseRefId: string }
+    const createAppointmentRequest = req.session?.createAppointmentRequest
+    const ChangeAppointmentDetails = req.session?.ChangeAppointmentDetails
+    if (!createAppointmentRequest) {
+      return res.redirect(`/referral/${caseRefId}/ics-change-details`)
+    }
+    if (!ChangeAppointmentDetails) {
+      return res.redirect(`/referral/${caseRefId}/ics-change-details/reason`)
+    }
+    const referralInformation = await this.referralService.getReferralInformation(caseRefId, username)
+    const additionalDetails: AdditionalInformation = {
+      firstName: referralInformation.firstName,
+      submitHref: `/referral/${caseRefId}/ics-change-details/submit-ics`,
+      scheduleIcsHref: `/referral/${caseRefId}/ics-change-details`,
+      changeReasonHref: `/referral/${caseRefId}/ics-change-details/reason`,
+    }
+    const presenter = new ConfirmIcsPresenter(createAppointmentRequest, additionalDetails, ChangeAppointmentDetails)
+    return presenter.renderPage(res)
   }
 }
 
