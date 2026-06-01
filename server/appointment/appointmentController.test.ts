@@ -53,8 +53,8 @@ describe('AppointmentController', () => {
 
   const mockAdditionalDetails: AdditionalInformation = {
     firstName: 'John',
-    submitHref: `/referral/${referralId}/appointment/submit-ics`,
-    scheduleIcsHref: `/referral/${referralId}/appointment/schedule-ics`,
+    submitHref: `/referral/${caseRefId}/appointment/submit-ics`,
+    scheduleIcsHref: `/referral/${caseRefId}/appointment/schedule-ics`,
   }
 
   const mockIcsId = randomUUID()
@@ -89,9 +89,9 @@ describe('AppointmentController', () => {
       getProbationOffices: jest.fn().mockResolvedValue([]),
       getPrisons: jest.fn().mockResolvedValue([]),
     } as unknown as jest.Mocked<ReferenceDataService>
-      ; (ReferenceDataService as jest.MockedClass<typeof ReferenceDataService>).mockImplementation(
-        () => referenceDataService,
-      )
+    ;(ReferenceDataService as jest.MockedClass<typeof ReferenceDataService>).mockImplementation(
+      () => referenceDataService,
+    )
 
     referenceDataService.getProbationOffices.mockResolvedValue(probationOfficesData)
     referenceDataService.getPrisons.mockResolvedValue(prisonsData)
@@ -398,7 +398,7 @@ describe('AppointmentController', () => {
 
     beforeEach(() => {
       IcsFeedbackHowSessionTookPlacePresenter.prototype.renderPage = jest.fn()
-        ; (appointmentService.getICS as jest.Mock).mockResolvedValue(mockIcsAppointment)
+      ;(appointmentService.getICS as jest.Mock).mockResolvedValue(mockIcsAppointment)
 
       icsFeedbackReq = {
         params: { caseRefId: 'ics-123' },
