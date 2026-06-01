@@ -87,9 +87,9 @@ export default function routes({
 
   get('/referral/:referralId/appointment/confirm-ics', async (req, res) => appointmentController.checkIcs(req, res))
 
-  getOrPost('/referral/:referralId/appointment/schedule-ics', async (req, res) =>
-    appointmentController.scheduleIcs(req, res),
-  )
+  get('/referral/:referralId/appointment/schedule-ics', (req, res) => appointmentController.showScheduleIcs(req, res))
+
+  post('/referral/:referralId/appointment/schedule-ics', (req, res) => appointmentController.scheduleIcs(req, res))
 
   get('/referral-details/:caseRefId/check-change-ics', (req, res) => appointmentController.changeIcs(req, res))
 

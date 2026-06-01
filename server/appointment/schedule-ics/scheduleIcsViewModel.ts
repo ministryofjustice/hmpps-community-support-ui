@@ -43,4 +43,6 @@ export type ScheduleIcsViewModel = {
 export type ScheduleIcsContent = {
   pageHeader: string
   submitButtonText: string
+  submitHref: string
+  backLink: string
 }

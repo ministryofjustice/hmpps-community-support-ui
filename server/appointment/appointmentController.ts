@@ -448,42 +448,17 @@ class AppointmentController {
     return presenter.renderPage(res)
   }
 
-  async scheduleIcs(req: Request, res: Response): Promise<void> {
+  async showScheduleIcs(req: Request, res: Response): Promise<void> {
     const { username } = res.locals.user
     const { referralId } = req.params as { referralId: string }
-    let createAppointmentRequest = req.session?.createAppointmentRequest
-    const probationOffices = await this.referenceDataService.getProbationOffices()
-    const prisons = await this.referenceDataService.getPrisons()
+    const createAppointmentRequest = req.session?.createAppointmentRequest
 
-    const referralInformation = await this.referralService.getReferralInformation(referralId, username)
+    const [probationOffices, prisons, referralInformation] = await Promise.all([
+      this.referenceDataService.getProbationOffices(),
+      this.referenceDataService.getPrisons(),
+      this.referralService.getReferralInformation(referralId, username),
+    ])
 
-    if (req.method === 'POST') {
-      const informedMethodArr: string[] =
-        typeof req.body.informedMethod === 'string' ? [req.body.informedMethod] : req.body.informedMethod
-      createAppointmentRequest = this.saveFormToSession({
-        sessionDate: req.body.sessionDate,
-        'sessionTime-hour': req.body['sessionTime-hour'],
-        'sessionTime-minute': req.body['sessionTime-minute'],
-        'sessionTime-meridiem': req.body['sessionTime-meridiem']?.toLowerCase(),
-        sessionTakePlace: req.body.sessionTakePlace,
-        ByPhone: req.body.ByPhone,
-        ByVideo: req.body.ByVideo,
-        probationOffice: req.body.probationOfficeList,
-        prison: req.body.prisonList,
-        addressLine1: req.body.addressLine1,
-        addressLine2: req.body.addressLine2,
-        addressTown: req.body.addressTown,
-        addressCounty: req.body.addressCounty,
-        addressPostcode: req.body.addressPostcode,
-        informedMethod: informedMethodArr,
-        otherMethodOfContact: req.body.otherMethodOfContact,
-      })
-      req.session.createAppointmentRequest = createAppointmentRequest
-      req.body.referralCrn = referralInformation.crn
-      return validateRequestBodyAgainstSchema(ScheduleIcsAppointmentSchema, req, res, () => {
-        return res.redirect(`/referral/${referralId}/appointment/confirm-ics`)
-      })
-    }
     const validationErrors: ErrorMiddlewareErrors = formatDynamicErrorMessages(
       res.locals.errors,
       '{{ firstname }}',
@@ -501,6 +476,40 @@ class AppointmentController {
     )
 
     return presenter.renderPage(res)
+  }
+
+  async scheduleIcs(req: Request, res: Response): Promise<void> {
+    const { username } = res.locals.user
+    const { referralId } = req.params as { referralId: string }
+    let createAppointmentRequest = req.session?.createAppointmentRequest
+
+    const referralInformation = await this.referralService.getReferralInformation(referralId, username)
+
+    const informedMethodArr: string[] =
+      typeof req.body.informedMethod === 'string' ? [req.body.informedMethod] : req.body.informedMethod
+    createAppointmentRequest = this.saveFormToSession({
+      sessionDate: req.body.sessionDate,
+      'sessionTime-hour': req.body['sessionTime-hour'],
+      'sessionTime-minute': req.body['sessionTime-minute'],
+      'sessionTime-meridiem': req.body['sessionTime-meridiem']?.toLowerCase(),
+      sessionTakePlace: req.body.sessionTakePlace,
+      ByPhone: req.body.ByPhone,
+      ByVideo: req.body.ByVideo,
+      probationOffice: req.body.probationOfficeList,
+      prison: req.body.prisonList,
+      addressLine1: req.body.addressLine1,
+      addressLine2: req.body.addressLine2,
+      addressTown: req.body.addressTown,
+      addressCounty: req.body.addressCounty,
+      addressPostcode: req.body.addressPostcode,
+      informedMethod: informedMethodArr,
+      otherMethodOfContact: req.body.otherMethodOfContact,
+    })
+    req.session.createAppointmentRequest = createAppointmentRequest
+    req.body.referralCrn = referralInformation.crn
+    return validateRequestBodyAgainstSchema(ScheduleIcsAppointmentSchema, req, res, () => {
+      return res.redirect(`/referral/${referralId}/appointment/confirm-ics`)
+    })
   }
 
   private saveFormToSession(formData: ScheduleFormData): CreateAppointmentRequest {
