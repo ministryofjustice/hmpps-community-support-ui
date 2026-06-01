@@ -219,7 +219,7 @@ test.describe('Ics Feedback CYA Page', () => {
   test('when the ICS was attended but person did not comply, display did not comply with reason in session details', async ({
     page,
   }) => {
-    await seedSessionWithIcsFeedback(page, caseRefId, icsFeedbackSubmissionDidNotComply)
+    await seedSessionWithIcsFeedback(page, icsFeedbackSubmissionDidNotComply)
     await page.goto(`ics-feedback/${caseRefId}/check-answers`)
     const icsFeedbackCheckYourAnswersPage = await IcsFeedbackCheckYourAnswersPage.verifyOnPage(page)
     expect(page.getByText('Why the session did not happen?')).toBeVisible()
@@ -232,7 +232,7 @@ test.describe('Ics Feedback CYA Page', () => {
   })
 
   test('when the ICS was not attended, display no attendance information in session details', async ({ page }) => {
-    await seedSessionWithIcsFeedback(page, caseRefId, icsFeedbackSubmissionDidNotAttend)
+    await seedSessionWithIcsFeedback(page, icsFeedbackSubmissionDidNotAttend)
     await page.goto(`ics-feedback/${caseRefId}/check-answers`)
     const icsFeedbackCheckYourAnswersPage = await IcsFeedbackCheckYourAnswersPage.verifyOnPage(page)
     expect(page.getByText('how you tried to contact')).toBeVisible()
