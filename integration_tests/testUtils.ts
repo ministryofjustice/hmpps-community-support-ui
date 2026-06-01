@@ -78,3 +78,19 @@ export const daysAfter = (base: Date, days: number, hour = 10): string => {
   d.setHours(hour, 0, 0, 0)
   return d.toISOString()
 }
+
+const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' as const
+const digits = '0123456789' as const
+const choice = <T>(arr: T[]) => arr[Math.floor(Math.random() * arr.length)]
+const randomLetter = () => choice(letters.split(''))
+const randomDigit = () => choice(digits.split(''))
+
+export const randomCaseReferenceId = () =>
+  randomLetter() +
+  randomLetter() +
+  randomDigit() +
+  randomDigit() +
+  randomDigit() +
+  randomDigit() +
+  randomLetter() +
+  randomLetter()
