@@ -493,10 +493,6 @@ class AppointmentController {
       referralInformation.firstName,
     )
     res.locals.errors = validationErrors
-    const icsInformation = await this.getExistingIcs(caseRefId, username)
-    if (icsInformation) {
-      req.session.createAppointmentRequest = createIcsSessionData(icsInformation)
-    }
     const formData = loadFormFromSession(req.session.createAppointmentRequest, this.validator)
     const presenter = new ScheduleIcsPresenter(
       caseRefId,
