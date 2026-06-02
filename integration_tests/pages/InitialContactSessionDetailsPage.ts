@@ -25,8 +25,4 @@ export default class InitialContactSessionDetailsPage extends AbstractPage {
     const changeLink = page.getByRole('link', { name: 'Change   (ICS details)' })
     return new InitialContactSessionDetailsPage(page, header, backLink, details, changeLink)
   }
-
-  async clickChange() {
-    await this.changeLink.click()
-  }
 }

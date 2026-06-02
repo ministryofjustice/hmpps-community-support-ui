@@ -39,7 +39,7 @@ test.describe('Change Session Details Page', () => {
     })
     await test.step('when I select to change the scheduled ICS details', async () => {
       const icsDetailsPage = await InitialContactSessionDetailsPage.verifyOnPage(page)
-      await icsDetailsPage.clickChange()
+      await icsDetailsPage.changeLink.click()
       expect(page).toHaveURL(ChangeIcsDetailsPage.url(virtual.caseRefId))
     })
   })
