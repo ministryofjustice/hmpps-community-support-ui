@@ -17,7 +17,7 @@ type TabKey = 'caseDetails' | 'progress' | 'changeLog'
 type StatusKey = ReferralAppointmentHistory['status'] | 'NOT_SCHEDULED'
 type StatusConfig = { label: string; tagClass: string; actions: { label: string; href: string }[] }
 
-const getStatusConfig = (caseReference: string, appointmentId: string = ''): Record<StatusKey, StatusConfig> => ({
+const getStatusConfig = (caseReference: string): Record<StatusKey, StatusConfig> => ({
   NOT_SCHEDULED: {
     label: 'Not scheduled',
     tagClass: 'govuk-tag--grey',
@@ -197,7 +197,7 @@ export default class ReferralProgressPresenter extends PresenterBase<
     const latestAppointments = this.getLatestAppointments()
 
     return latestAppointments.map(appointment => {
-      const configMap = getStatusConfig(this.caseReference, appointment.appointmentId)
+      const configMap = getStatusConfig(this.caseReference)
       const appointmentStatus = getAppointmentStatus(appointment)
       const config = configMap[appointmentStatus] ?? configMap.NOT_SCHEDULED
       return [
