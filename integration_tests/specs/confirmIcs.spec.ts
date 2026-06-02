@@ -1,6 +1,13 @@
 import { expect, test } from '@playwright/test'
 import { ReferralProgress } from '@community-support-api'
-import { login, resetStubs, seedAppointmentSession, seedChangeAppointmentDetails } from '../testUtils'
+import { format } from 'date-fns'
+import {
+  login,
+  randomCaseReferenceId,
+  resetStubs,
+  seedAppointmentSession,
+  seedChangeAppointmentDetails,
+} from '../testUtils'
 import ConfirmIcsPage from '../pages/confirmIcsPage'
 import communitySupport from '../mockApis/communitySupport'
 import prisonApi from '../mockApis/prisonApi'
@@ -10,8 +17,10 @@ import { probationOfficesData } from '../mockData/referenceData'
 import ScheduleIcsPage from '../pages/scheduleIcsPage'
 import ReferralProgressPage from '../pages/referralProgressPage'
 import ChangeIcsDetailsReasonPage from '../pages/ChangeIcsDetailsReasonPage'
+import initialContactSessionDetailsPageData from '../mockData/initialContactSessionDetailsPageData'
+import ChangeIcsDetailsPage from '../pages/ChangeIcsDetailsPage'
 
-const REFERRAL_ID = 'b190ac1e-1e2a-41c2-a4ac-3ceb9d2dcb1e' as const
+const REFERRAL_ID = randomCaseReferenceId()
 const REFERRAL_PROGRESS_URL = `/progress/${REFERRAL_ID}`
 
 function addDays(days: number): Date {
@@ -34,6 +43,11 @@ const pastDate = addDays(-30)
 const futureDateStr = toIsoDateString(futureDate)
 const pastDateStr = toIsoDateString(pastDate)
 const futureDateDisplay = toDisplayDate(futureDate)
+
+const pastMeeting = {
+  caseRefId: REFERRAL_ID,
+  data: initialContactSessionDetailsPageData.virtual(pastDate),
+}
 
 const phoneAppointmentRequest = {
   date: futureDateStr,
@@ -125,7 +139,11 @@ test.describe('Confirm ICS Page', () => {
     await page.goto('/')
     await login(page)
     await communitySupport.stubGetReferralProgress(referralProgressWithAppointments, REFERRAL_ID)
-    await communitySupport.stubGetReferralInformation(200, REFERRAL_ID, referralInformationInCommunity)
+    // await communitySupport.stubGetReferralInformation(200, REFERRAL_ID, referralInformationInCommunity)
+    await communitySupport.stubGetReferralInformation(200, REFERRAL_ID)
+    await communitySupport.stubGetICS(pastMeeting.caseRefId, pastMeeting.data)
+    await prisonApi.stubGetPrisons()
+    await communitySupport.stubGetProbationOffices(probationOfficesData)
   })
 
   test('should display the ICS details summary card details for a phone appointment', async ({ page }) => {
@@ -284,6 +302,44 @@ test.describe('Confirm ICS Page', () => {
       await expect(icsReasonChangeLink).toBeVisible()
       await icsReasonChangeLink.click()
       await expect(page).toHaveURL(ChangeIcsDetailsReasonPage.url(REFERRAL_ID))
+    })
+  })
+  test.describe('Full journey happy path', () => {
+    test('Phone Call', async ({ page }) => {
+      await test.step('Fill out reschedule form', async () => {
+        await page.goto(ChangeIcsDetailsPage.url(REFERRAL_ID))
+        const changeIcsDetailsPage = new ChangeIcsDetailsPage(page)
+        await changeIcsDetailsPage.dateInput.fill(format(futureDate, 'dd/MM/yyyy'))
+        await changeIcsDetailsPage.timeHourInput.fill('1')
+        await changeIcsDetailsPage.timeMinuteInput.fill('0')
+        await changeIcsDetailsPage.timeMeridiemInput.selectOption('PM')
+        await changeIcsDetailsPage.phoneCallRadioButton.check()
+        await changeIcsDetailsPage.phoneCallReasonInput.fill('The referral dont have a vehicle')
+        await changeIcsDetailsPage.informedByPhoneCheckbox.check()
+        await changeIcsDetailsPage.saveAndContinueButton.click()
+      })
+      await test.step('Fill out reason for change form', async () => {
+        const changeIcsDetailsReasonPage = await ChangeIcsDetailsReasonPage.verifyOnPage(page)
+        await changeIcsDetailsReasonPage.whoRequestedRadios.items[0].input.check()
+        await changeIcsDetailsReasonPage.reasonTextarea.input.fill('There were technical issues')
+        await changeIcsDetailsReasonPage.continueButton.click()
+      })
+      await test.step('Check confirmIcs page', async () => {
+        const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
+        await expect(confirmIcsPage.icsDetailsSummary).toBeVisible()
+        await expect(confirmIcsPage.dateRow).toContainText(futureDateDisplay)
+        await expect(confirmIcsPage.startTimeRow).toContainText('1:00pm')
+        await expect(confirmIcsPage.methodRow).toContainText('Phone call')
+        await expect(confirmIcsPage.notInPersonReasonRow).toBeVisible()
+        await expect(confirmIcsPage.notInPersonReasonRow).toContainText('The referral dont have a vehicle')
+        await expect(confirmIcsPage.sessionCommunicationRow).toContainText('Phone call')
+        await expect(confirmIcsPage.changeDetailsSummary).toBeVisible()
+        await expect(confirmIcsPage.requestedByRow).toBeVisible()
+        await expect(confirmIcsPage.requestedByRow).toContainText('Delivery partner')
+        await expect(confirmIcsPage.reasonForChangeRow).toBeVisible()
+        await expect(confirmIcsPage.reasonForChangeRow).toContainText('There were technical issues')
+        // TODO: click submit and expect url to progress
+      })
     })
   })
 })
