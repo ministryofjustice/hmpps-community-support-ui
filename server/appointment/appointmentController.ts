@@ -38,7 +38,7 @@ import { ScheduleIcsAppointmentSchema } from '../validation/ScheduleIcsAppointme
 import ChangeIcsDetailsReasonPresenter from './change-ics-details-reason/ChangeIcsDetailsReasonPresenter'
 import { ChangeIcsDetailsReasonSchema } from '../validation/ChangeIcsDetailsReasonFormData'
 
-interface ScheduleFormData {
+interface ScheduledIcsFormData {
   sessionDate?: string
   'sessionTime-hour'?: string
   'sessionTime-minute'?: string
@@ -176,7 +176,7 @@ const loadIcsFeedbackFromSession = (
   }
 }
 
-const getReasonFromFormData = (formData: ScheduleFormData, sessionTakePlace: string): string | undefined => {
+const getReasonFromFormData = (formData: ScheduledIcsFormData, sessionTakePlace: string): string | undefined => {
   switch (sessionTakePlace) {
     case 'ByPhone':
       return formData.byPhone
@@ -230,8 +230,8 @@ const getReasonKey = (sessionTakePlace: string): string | null => {
 
 const loadSessionMethodFromSession = (
   sessionMethodRequest: SessionMethodRequest,
-  formData: ScheduleFormData,
-): ScheduleFormData => {
+  formData: ScheduledIcsFormData,
+): ScheduledIcsFormData => {
   if (!sessionMethodRequest) {
     return formData
   }
@@ -269,8 +269,8 @@ const loadSessionMethodFromSession = (
 
 const loadInformedMethodsFromSession = (
   sessionCommunications: string[],
-  formData: ScheduleFormData,
-): ScheduleFormData => {
+  formData: ScheduledIcsFormData,
+): ScheduledIcsFormData => {
   let informedMethods = [...sessionCommunications]
 
   const standardMethods = ['informedByPhone', 'informedByTextMessage', 'informedByEmail']
@@ -289,7 +289,7 @@ const loadInformedMethodsFromSession = (
   }
 }
 
-const getSessionMethodFromFormData = (formData: ScheduleFormData): SessionMethodRequest => {
+const getSessionMethodFromFormData = (formData: ScheduledIcsFormData): SessionMethodRequest => {
   const sessionTakePlace = formData.sessionTakePlace || ''
 
   if (sessionTakePlace) {
@@ -321,7 +321,7 @@ const getSessionMethodFromFormData = (formData: ScheduleFormData): SessionMethod
   return {} as SessionMethodRequest
 }
 
-const getInformedMethodsFromFormData = (formData: ScheduleFormData): string[] => {
+const getInformedMethodsFromFormData = (formData: ScheduledIcsFormData): string[] => {
   let informedMethods = Array.isArray(formData.informedMethods) ? [...formData.informedMethods] : []
   if (informedMethods.includes('informedByOtherMethod') && formData.otherMethodOfContact) {
     informedMethods = informedMethods
@@ -334,8 +334,8 @@ const getInformedMethodsFromFormData = (formData: ScheduleFormData): string[] =>
 const loadFormFromSession = (
   createAppointmentRequest: CreateAppointmentRequest,
   validator: AppointmentValidator,
-): ScheduleFormData => {
-  let formData: ScheduleFormData = {}
+): ScheduledIcsFormData => {
+  let formData: ScheduledIcsFormData = {}
 
   if (!createAppointmentRequest) {
     return formData
@@ -467,17 +467,6 @@ class AppointmentController {
     return presenter.renderPage(res)
   }
 
-  private async getExistingIcs(caseRefId: string, username: string): Promise<AppointmentIcsResponse | undefined> {
-    try {
-      return await this.appointmentService.getICS(caseRefId, username)
-    } catch (error) {
-      if (error.responseStatus === 404) {
-        return undefined
-      }
-      throw error
-    }
-  }
-
   async showScheduleIcs(req: Request, res: Response): Promise<void> {
     const { username } = res.locals.user
     const caseRefId = req.params.caseRefId as string
@@ -505,13 +494,20 @@ class AppointmentController {
     return presenter.renderPage(res)
   }
 
+  private async getExistingScheduledIcsFormData(caseRefId: string, username: string): Promise<ScheduledIcsFormData> {
+    const existingIcs = await this.appointmentService.getICS(caseRefId, username)
+    const sessionData = createIcsSessionData(existingIcs)
+    return loadFormFromSession(sessionData, this.validator)
+  }
+
   async showRescheduleIcs(req: Request, res: Response): Promise<void> {
     const { username } = res.locals.user
     const caseRefId = req.params.caseRefId as string
-    const [probationOffices, prisons, referralInformation] = await Promise.all([
+    const [probationOffices, prisons, referralInformation, formData] = await Promise.all([
       this.referenceDataService.getProbationOffices(),
       this.referenceDataService.getPrisons(),
       this.referralService.getReferralInformation(caseRefId, username),
+      this.getExistingScheduledIcsFormData(caseRefId, username),
     ])
 
     const validationErrors: ErrorMiddlewareErrors = formatDynamicErrorMessages(
@@ -520,11 +516,7 @@ class AppointmentController {
       referralInformation.firstName,
     )
     res.locals.errors = validationErrors
-    const icsInformation = await this.getExistingIcs(caseRefId, username)
-    if (icsInformation) {
-      req.session.createAppointmentRequest = createIcsSessionData(icsInformation)
-    }
-    const formData = loadFormFromSession(req.session.createAppointmentRequest, this.validator)
+
     const presenter = new ScheduleIcsPresenter(
       caseRefId,
       probationOffices,
@@ -600,7 +592,7 @@ class AppointmentController {
     })
   }
 
-  private saveFormToSession(formData: ScheduleFormData): CreateAppointmentRequest {
+  private saveFormToSession(formData: ScheduledIcsFormData): CreateAppointmentRequest {
     let createAppointmentRequest = {} as CreateAppointmentRequest
 
     if (!formData) return createAppointmentRequest
