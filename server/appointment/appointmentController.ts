@@ -46,7 +46,7 @@ interface ScheduledIcsFormData {
   sessionTakePlace?: string
   byPhone?: string
   byVideo?: string
-  InSomewhereElse?: string
+  inSomewhereElse?: string
   probationOffice?: string
   prison?: string
   addressLine1?: string
@@ -374,7 +374,7 @@ const loadFormFromSession = (
           formData.byVideo = method.additionalDetails
           break
         case 'InSomewhereElse':
-          formData.InSomewhereElse = method.additionalDetails
+          formData.inSomewhereElse = method.additionalDetails
           break
         default:
           break

@@ -60,4 +60,17 @@ test.describe('Change Session Details Page', () => {
       await expect(page).toHaveURL(InitialContactSessionDetailsPage.url(virtual.caseRefId))
     })
   })
+  // IPB-2365 - AC3, AC4
+  test('Prepopulated', async ({ page }) => {
+    await test.step("given I'm on the Change session details screen", async () => {
+      await page.goto(ChangeIcsDetailsPage.url(virtual.caseRefId))
+    })
+    const changeIcsPage = new ChangeIcsDetailsPage(page)
+    await Promise.all([
+      expect(changeIcsPage.dateInput).toHaveValue('1/2/2026'),
+      expect(changeIcsPage.timeHourInput).toHaveValue('10'),
+      expect(changeIcsPage.timeMinuteInput).toHaveValue('0'),
+      expect(changeIcsPage.timeMeridiemInput).toHaveValue('am'),
+    ])
+  })
 })
