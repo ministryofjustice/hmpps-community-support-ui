@@ -1005,6 +1005,28 @@ class AppointmentController {
     const presenter = new ConfirmIcsPresenter(createAppointmentRequest, additionalDetails, ChangeAppointmentDetails)
     return presenter.renderPage(res)
   }
+
+  async submitChangeIcsDetails(req: Request, res: Response): Promise<void> {
+    const { caseRefId } = req.params as { caseRefId: string }
+    const { username } = res.locals.user
+    const { createAppointmentRequest, ChangeAppointmentDetails } = req.session
+    if (!createAppointmentRequest || !ChangeAppointmentDetails) {
+      res.redirect(`/referral/${caseRefId}/ics-change-details`)
+    }
+    const response = await this.appointmentService.submitRescheduleICS(
+      caseRefId,
+      createAppointmentRequest,
+      ChangeAppointmentDetails,
+      username,
+    )
+    if (response) {
+      delete req.session.createAppointmentRequest
+      delete req.session.ChangeAppointmentDetails
+      this.setIcsSuccessfullyScheduledBanner(req, response, caseRefId)
+    }
+
+    return res.redirect(`/progress/${caseRefId}`)
+  }
 }
 
 export default AppointmentController
