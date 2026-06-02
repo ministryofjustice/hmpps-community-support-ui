@@ -20,8 +20,8 @@ describe('InitialContactSessionDetailsPresenter', () => {
       informedLabel: 'How {{ name }} was informed about the session',
     },
     links: {
-      change: '/referral/{{ id }}/appointment/change-ics',
-      back: '/referral/{{ id }}/appointment/change-ics',
+      change: '/referral/{{ id }}/ics-change-details',
+      back: '/referral/{{ id }}/ics-change-details',
     },
   }
   const response = { locals: { content } } as unknown as Response
