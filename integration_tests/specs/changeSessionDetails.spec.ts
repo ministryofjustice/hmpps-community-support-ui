@@ -40,7 +40,24 @@ test.describe('Change Session Details Page', () => {
     await test.step('when I select to change the scheduled ICS details', async () => {
       const icsDetailsPage = await InitialContactSessionDetailsPage.verifyOnPage(page)
       await icsDetailsPage.changeLink.click()
-      expect(page).toHaveURL(ChangeIcsDetailsPage.url(virtual.caseRefId))
+    })
+    await test.step("then I'm taken to the Change session details screen", async () => {
+      await expect(page).toHaveURL(ChangeIcsDetailsPage.url(virtual.caseRefId))
+      const changeIcsPage = new ChangeIcsDetailsPage(page)
+      await expect(changeIcsPage.header).toHaveText('Change session details')
+    })
+  })
+  // IPB-2365 - AC2
+  test('Back link navigation', async ({ page }) => {
+    await test.step("given I'm on the Change session details screen", async () => {
+      await page.goto(ChangeIcsDetailsPage.url(virtual.caseRefId))
+    })
+    await test.step('when I select to go back', async () => {
+      const changeIcsPage = new ChangeIcsDetailsPage(page)
+      await changeIcsPage.backLink.click()
+    })
+    await test.step("Then I'm taken back to the View or change session details screen", async () => {
+      await expect(page).toHaveURL(InitialContactSessionDetailsPage.url(virtual.caseRefId))
     })
   })
 })

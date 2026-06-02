@@ -60,7 +60,7 @@ export default class ChangeIcsDetailsPage extends AbstractPage {
     return `/referral/${caseRefId}/ics-change-details`
   }
 
-  private constructor(page: Page) {
+  public constructor(page: Page) {
     super(page)
     this.header = page.locator('h1', { hasText: 'Change session details' })
     this.errorHeader = page.locator('h2', { hasText: 'There is a problem' })
