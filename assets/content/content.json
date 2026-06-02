@@ -406,7 +406,7 @@
       "label": "What is the reason for this change?"
     },
     "submitButtonText": "Save and continue",
-    "backLinkHref": "/referral/{{ id }}/ics-change-details"
+    "backLinkHref": "/referral/{{ id }}/appointment/change-ics"
   },
   "/referral/:id/appointment/change-ics": {
     "pageHeader": "Change session details",

@@ -8,6 +8,6 @@ export default class ChangeIcsDetailsPage extends AbstractPage {
   }
 
   static url(caseRefId: string): string {
-    return `/referral/${caseRefId}/ics-change-details`
+    return `/referral/${caseRefId}/appointment/change-ics`
   }
 }
