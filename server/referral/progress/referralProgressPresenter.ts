@@ -26,7 +26,7 @@ const getStatusConfig = (caseReference: string, appointmentId: string = ''): Rec
   SCHEDULED: {
     label: 'Scheduled',
     tagClass: 'govuk-tag--blue',
-    actions: [{ label: 'View details', href: `/referral/${caseReference}/ics/${appointmentId}/view-session-details` }],
+    actions: [{ label: 'View or change details', href: `/referral-details/${caseReference}/check-change-ics` }],
   },
   NEEDS_FEEDBACK: {
     label: 'Needs feedback',
@@ -37,7 +37,7 @@ const getStatusConfig = (caseReference: string, appointmentId: string = ''): Rec
     label: 'Did not happen',
     tagClass: 'govuk-tag--purple',
     actions: [
-      { label: 'Reschedule', href: `/referral-details/${caseReference}/check-change-ics` },
+      { label: 'Reschedule', href: `/referral/${caseReference}/appointment/schedule-ics` },
       { label: 'View feedback', href: '#' },
     ],
   },
@@ -45,7 +45,7 @@ const getStatusConfig = (caseReference: string, appointmentId: string = ''): Rec
     label: 'Did not attend',
     tagClass: 'govuk-tag--purple',
     actions: [
-      { label: 'Reschedule', href: `/referral-details/${caseReference}/check-change-ics` },
+      { label: 'Reschedule', href: `/referral/${caseReference}/appointment/schedule-ics` },
       { label: 'View feedback', href: '#' },
     ],
   },
