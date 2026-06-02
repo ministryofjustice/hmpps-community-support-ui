@@ -509,6 +509,37 @@ class AppointmentController {
     return presenter.renderPage(res)
   }
 
+  async showRescheduleIcs(req: Request, res: Response): Promise<void> {
+    const { username } = res.locals.user
+    const caseRefId = req.params.caseRefId as string
+    const [probationOffices, prisons, referralInformation] = await Promise.all([
+      this.referenceDataService.getProbationOffices(),
+      this.referenceDataService.getPrisons(),
+      this.referralService.getReferralInformation(caseRefId, username),
+    ])
+
+    const validationErrors: ErrorMiddlewareErrors = formatDynamicErrorMessages(
+      res.locals.errors,
+      '{{ firstname }}',
+      referralInformation.firstName,
+    )
+    res.locals.errors = validationErrors
+    const icsInformation = await this.getExistingIcs(caseRefId, username)
+    if (icsInformation) {
+      req.session.createAppointmentRequest = createIcsSessionData(icsInformation)
+    }
+    const formData = loadFormFromSession(req.session.createAppointmentRequest, this.validator)
+    const presenter = new ScheduleIcsPresenter(
+      caseRefId,
+      probationOffices,
+      prisons,
+      referralInformation,
+      formData,
+      validationErrors,
+    )
+    return presenter.renderPage(res)
+  }
+
   async scheduleIcs(req: Request, res: Response): Promise<void> {
     const { username } = res.locals.user
     const { referralId } = req.params as { referralId: string }

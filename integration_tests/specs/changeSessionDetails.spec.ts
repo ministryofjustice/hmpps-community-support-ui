@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { test } from '@playwright/test'
 
 import { login, randomCaseReferenceId, resetStubs } from '../testUtils'
 import communitySupport from '../mockApis/communitySupport'
