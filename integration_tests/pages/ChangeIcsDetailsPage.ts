@@ -57,7 +57,7 @@ export default class ChangeIcsDetailsPage extends AbstractPage {
   readonly informedByOtherMethodInput: Locator
 
   static url(caseRefId: string): string {
-    return `/referral/${caseRefId}/appointment/change-ics`
+    return `/referral/${caseRefId}/ics-change-details`
   }
 
   private constructor(page: Page) {

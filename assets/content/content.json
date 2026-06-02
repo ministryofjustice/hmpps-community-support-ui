@@ -189,7 +189,7 @@
       "informedLabel": "How {{ name }} was informed about the session"
     },
     "links": {
-      "change": "/referral/{{ id }}/appointment/change-ics",
+      "change": "/referral/{{ id }}/ics-change-details",
       "back": "/progress/{{ id }}"
     }
   },
@@ -406,12 +406,12 @@
       "label": "What is the reason for this change?"
     },
     "submitButtonText": "Save and continue",
-    "backLinkHref": "/referral/{{ id }}/appointment/change-ics"
+    "backLinkHref": "/referral/{{ id }}/ics-change-details"
   },
-  "/referral/:id/appointment/change-ics": {
+  "/referral/:id/ics-change-details": {
     "pageHeader": "Change session details",
     "submitButtonText": "Save and continue",
-    "submitHref": "/referral/{{ caseRef }}/appointment/change-ics",
+    "submitHref": "/referral/{{ caseRef }}/ics-change-details",
     "backLink": "/referral-details/{{ caseRef }}/check-change-ics"
   },
   "/referral/:id/ics-change-details/check-answers": {
