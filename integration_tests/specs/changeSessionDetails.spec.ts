@@ -1,4 +1,4 @@
-import { test } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 
 import { login, randomCaseReferenceId, resetStubs } from '../testUtils'
 import communitySupport from '../mockApis/communitySupport'
@@ -6,6 +6,7 @@ import initialContactSessionDetailsPageData from '../mockData/initialContactSess
 import InitialContactSessionDetailsPage from '../pages/InitialContactSessionDetailsPage'
 import prisonApi from '../mockApis/prisonApi'
 import { probationOfficesData } from '../mockData/referenceData'
+import ChangeIcsDetailsPage from '../pages/ChangeIcsDetailsPage'
 
 test.describe('Change Session Details Page', () => {
   const virtual = {
@@ -39,6 +40,7 @@ test.describe('Change Session Details Page', () => {
     await test.step('when I select to change the scheduled ICS details', async () => {
       const icsDetailsPage = await InitialContactSessionDetailsPage.verifyOnPage(page)
       await icsDetailsPage.clickChange()
+      expect(page).toHaveURL(ChangeIcsDetailsPage.url(virtual.caseRefId))
     })
   })
 })
