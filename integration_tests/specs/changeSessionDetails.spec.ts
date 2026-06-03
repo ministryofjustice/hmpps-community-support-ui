@@ -43,7 +43,7 @@ test.describe('Change Session Details Page', () => {
     })
     await test.step("then I'm taken to the Change session details screen", async () => {
       await expect(page).toHaveURL(ChangeIcsDetailsPage.url(virtual.caseRefId))
-      const changeIcsPage = new ChangeIcsDetailsPage(page)
+      const changeIcsPage = await ChangeIcsDetailsPage.createModel(page)
       await expect(changeIcsPage.header).toHaveText('Change session details')
     })
   })
@@ -53,7 +53,7 @@ test.describe('Change Session Details Page', () => {
       await page.goto(ChangeIcsDetailsPage.url(virtual.caseRefId))
     })
     await test.step('when I select to go back', async () => {
-      const changeIcsPage = new ChangeIcsDetailsPage(page)
+      const changeIcsPage = await ChangeIcsDetailsPage.createModel(page)
       await changeIcsPage.backLink.click()
     })
     await test.step("Then I'm taken back to the View or change session details screen", async () => {
@@ -65,12 +65,26 @@ test.describe('Change Session Details Page', () => {
     await test.step("given I'm on the Change session details screen", async () => {
       await page.goto(ChangeIcsDetailsPage.url(virtual.caseRefId))
     })
-    const changeIcsPage = new ChangeIcsDetailsPage(page)
-    await Promise.all([
-      expect(changeIcsPage.dateInput).toHaveValue('1/2/2026'),
-      expect(changeIcsPage.timeHourInput).toHaveValue('10'),
-      expect(changeIcsPage.timeMinuteInput).toHaveValue('0'),
-      expect(changeIcsPage.timeMeridiemInput).toHaveValue('am'),
-    ])
+    const changeIcsPage = await ChangeIcsDetailsPage.createModel(page)
+    await test.step('check date and time is correct', () =>
+      Promise.all([
+        expect(changeIcsPage.dateInput).toHaveValue('1/2/2026'),
+        expect(changeIcsPage.timeHourInput).toHaveValue('10'),
+        expect(changeIcsPage.timeMinuteInput).toHaveValue('0'),
+        expect(changeIcsPage.timeMeridiemInput).toHaveValue('am'),
+      ]))
+    await test.step('check how will session take place radios', async () => {
+      const phoneCallRadio = changeIcsPage.howSessionTookPlaceRadios.getItem('Phone call')
+      await Promise.all([
+        expect(phoneCallRadio!.input).toBeChecked(),
+        expect(changeIcsPage.whyIsSessionNotInPersonDropDown.input).toHaveValue('Welfare check call with Alice'),
+      ])
+    })
+    await test.step('check how they were informed about session radios', async () => {
+      const phoneCallRadio = changeIcsPage.howWasTheyInformedAboutTheSession.getItem('Phone call')
+      await expect(phoneCallRadio!.input).toBeChecked()
+      const textMessageRadio = changeIcsPage.howWasTheyInformedAboutTheSession.getItem('Text message')
+      await expect(textMessageRadio!.input).toBeChecked()
+    })
   })
 })

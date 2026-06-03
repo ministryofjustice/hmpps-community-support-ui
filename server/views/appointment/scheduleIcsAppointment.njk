@@ -70,25 +70,26 @@
 
   {% set phoneCallHtml %}
     {{ govukInput({
-      id: "ByPhone",
-      name: "ByPhone",
+      id: "byPhone",
+      name: "byPhone",
       type: "text",
-      value: content.formData["ByPhone"],
+      value: content.formData["byPhone"],
       errorMessage: errors.messages.ByPhone,
       spellcheck: false,
       classes: "govuk-!-width-full",
       label: {
         text: "Why is this session not in person?"
-      }
+      },
+      attributes:{"data-testid":"why-is-session-not-in-person"}
     }) }}
   {% endset -%}
 
   {% set videoCallHtml %}
     {{ govukInput({
-      id: "ByVideo",
-      name: "ByVideo",
+      id: "byVideo",
+      name: "byVideo",
       type: "text",
-      value: content.formData["ByVideo"],
+      value: content.formData["byVideo"],
       errorMessage: errors.messages.ByVideo,
       spellcheck: false,
       classes: "govuk-!-width-full",
@@ -231,14 +232,16 @@
         text: "How will the session take place?",
         isPageHeading: false,
         classes: "govuk-fieldset__legend govuk-fieldset__legend--m"
-      }
+      },
+      attributes:{"data-testid":"sessionTakePlace-fieldset"}
     },
     value: content.formData["sessionTakePlace"],
     errorMessage: errors.messages.sessionTakePlace,
     hint: {
       text: "Select one option."
     },
-    items: items
+    items: items,
+    attributes:{"data-testid":"sessionTakePlace-radios"}
   }) }}
 
   {% set informMessage = "How was " + content.firstName + " informed about the session?" %}
@@ -251,7 +254,8 @@
           text: informMessage,
           isPageHeading: false,
           classes: "govuk-fieldset__legend govuk-fieldset__legend--m"
-        }
+        },
+        attributes:{"data-testid":"informed-fieldset"}
       },
       hint: {
         text: "Select all that apply."
@@ -278,7 +282,8 @@
         }
       ],
       values: content.formData.informedMethod,
-      errorMessage: errors.messages.informedMethod
+      errorMessage: errors.messages.informedMethod,
+       attributes:{"data-testid":"informed-checkboxes"}
     }) }}
   {% endif %}
 
