@@ -722,11 +722,7 @@ class AppointmentController {
     if (icsFeedbackSubmission && appointmentIcsId) {
       await this.appointmentService.submitIcsFeedback(caseRefId, appointmentIcsId, icsFeedbackSubmission, username)
       delete req.session.icsFeedbackSubmission
-      req.session.referralProgressBanner = {
-        caseReference: caseRefId,
-        heading: 'Session feedback submitted',
-        body: 'The ICS is now complete.',
-      } as ReferralProgressBannerContent
+      this.setReferralProgressBanner(req, caseRefId, 'Session feedback submitted', 'The ICS is now complete.')
       res.redirect(`/progress/${caseRefId}`)
     }
   }
@@ -833,15 +829,23 @@ class AppointmentController {
     }
   }
 
+  private setReferralProgressBanner(req: Request, id: string, heading: string, body?: string): void {
+    req.session.referralProgressBanner = {
+      caseReference: id,
+      heading,
+      ...(body && { body }),
+    } as ReferralProgressBannerContent
+  }
+
   private setIcsSuccessfullyScheduledBanner(req: Request, response: AppointmentIcsResponse, id: string): void {
     const date = format(response.appointmentDate, 'dd MMM yyyy')
     const time = timeFormat(response.appointmentTime)
 
-    req.session.referralProgressBanner = {
-      caseReference: id,
-      heading: 'ICS scheduled',
-      body: `The ICS has been scheduled for ${date} at ${time}`,
-    } as ReferralProgressBannerContent
+    this.setReferralProgressBanner(req, id, 'ICS scheduled', `The ICS has been scheduled for ${date} at ${time}`)
+  }
+
+  private setIcsSuccessfullyRescheduledBanner(req: Request, response: AppointmentIcsResponse, id: string): void {
+    this.setReferralProgressBanner(req, id, 'The ICS details have been changed')
   }
 
   async sessionDetails(req: Request, res: Response): Promise<void> {
@@ -1022,7 +1026,7 @@ class AppointmentController {
     if (response) {
       delete req.session.createAppointmentRequest
       delete req.session.ChangeAppointmentDetails
-      this.setIcsSuccessfullyScheduledBanner(req, response, caseRefId)
+      this.setIcsSuccessfullyRescheduledBanner(req, response, caseRefId)
     }
 
     return res.redirect(`/progress/${caseRefId}`)
