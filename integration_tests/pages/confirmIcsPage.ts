@@ -16,6 +16,8 @@ export default class ConfirmIcsPage extends IcsSummaryPage {
 
   readonly reasonForChangeRow: Locator
 
+  readonly backLink: Locator
+
   static url(referralId: string): string {
     return `/referral/${referralId}/appointment/confirm-ics`
   }
@@ -33,6 +35,7 @@ export default class ConfirmIcsPage extends IcsSummaryPage {
     this.changeDetailsSummary = page.locator('.govuk-summary-card', { hasText: 'Reason for change' })
     this.requestedByRow = page.locator('.govuk-summary-list__row', { hasText: 'Who requested the change' })
     this.reasonForChangeRow = page.locator('.govuk-summary-list__row', { hasText: 'Reason for the change' })
+    this.backLink = page.getByRole('link', { name: 'Back', exact: true })
   }
 
   static async verifyOnPage(page: Page): Promise<ConfirmIcsPage> {

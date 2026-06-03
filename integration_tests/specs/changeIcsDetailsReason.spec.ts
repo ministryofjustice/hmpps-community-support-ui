@@ -6,7 +6,7 @@ import { daysAfter, login, resetStubs, seedAppointmentSession } from '../testUti
 import communitySupport from '../mockApis/communitySupport'
 import ChangeIcsDetailsPage from '../pages/ChangeIcsDetailsPage'
 import ChangeIcsDetailsReasonPage from '../pages/ChangeIcsDetailsReasonPage'
-import ChangeIcsDetailsCYAPage from '../pages/ChangeIcsDetailsCYAPage'
+import ConfirmIcsPage from '../pages/confirmIcsPage'
 
 const NOTHING_SELECTED_ERROR_MESSAGE = 'Select who requested this change'
 const REASON_EMPTY_ERROR_MESSAGE = 'Enter the reason for this change'
@@ -138,13 +138,13 @@ test.describe('Reschedule Ics Appointment Reason Page', () => {
     })
   })
 
-  // IPB-2341:AC7
+  // IPB-2341:AC7 IPB-2216:AC1
   test('Navigation to Check Details Page', async ({ page }) => {
     await seedAppointmentSession(page, phoneAppointmentRequest)
     const changeIcsDetailsReasonPage = await ChangeIcsDetailsReasonPage.verifyOnPage(page)
     await changeIcsDetailsReasonPage.whoRequestedRadios.items[1].input.click()
     await changeIcsDetailsReasonPage.reasonTextarea.input.fill('Had work')
     await changeIcsDetailsReasonPage.continueButton.click()
-    await expect(page).toHaveURL(ChangeIcsDetailsCYAPage.url(pastMeeting.caseRefId))
+    await expect(page).toHaveURL(ConfirmIcsPage.rescheduleUrl(pastMeeting.caseRefId))
   })
 })
