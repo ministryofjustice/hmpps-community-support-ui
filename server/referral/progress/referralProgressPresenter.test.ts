@@ -38,10 +38,15 @@ describe('ReferralProgressPresenter', () => {
     body: 'The ICS has been scheduled for 27 March 2026 at 1:00pm',
   }
 
-  const rescheduleIcsSessionBannerContent: ReferralProgressBannerContent = {
+  const submittedSessionFeedbackBannerContent: ReferralProgressBannerContent = {
     caseReference,
     heading: 'Session feedback submitted',
     body: 'You must now reschedule the ICS.',
+  }
+
+  const rescheduledIcsSessionBannerContent: ReferralProgressBannerContent = {
+    caseReference,
+    heading: 'The ICS details have been changed',
   }
 
   const completedIcsSessionBannerContent: ReferralProgressBannerContent = {
@@ -123,6 +128,28 @@ describe('ReferralProgressPresenter', () => {
     })
   })
 
+  describe('rescheduled ICS banner', () => {
+    it('shows rescheduled ICS success banner', () => {
+      const referralProgressWithAppointment = buildReferralProgress([
+        {
+          appointmentId: randomUUID(),
+          events: [{ status: 'RESCHEDULED', dateTime: daysAfter(baseDate, 1) }],
+        },
+      ])
+
+      const presenter = new ReferralProgressPresenter(
+        referralProgressWithAppointment,
+        caseReference,
+        rescheduledIcsSessionBannerContent,
+      )
+
+      const viewModel = presenter.buildPageContent(mockResponse)
+
+      expect(viewModel.notificationBanner?.type).toEqual('success')
+      expect(viewModel.notificationBanner?.html).toContain('The ICS details have been changed')
+    })
+  })
+
   describe('reschedule ICS banner', () => {
     const scenarios = [
       { name: 'did not happen', finalStatus: 'DID_NOT_HAPPEN' as const },
@@ -145,7 +172,7 @@ describe('ReferralProgressPresenter', () => {
         const presenter = new ReferralProgressPresenter(
           referralProgressWithAppointment,
           caseReference,
-          rescheduleIcsSessionBannerContent,
+          submittedSessionFeedbackBannerContent,
         )
 
         const viewModel = presenter.buildPageContent(mockResponse)
