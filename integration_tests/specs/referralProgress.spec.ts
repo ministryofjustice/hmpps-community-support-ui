@@ -67,10 +67,15 @@ test.describe('Referral Progress Page', () => {
     body: 'The ICS has been scheduled for 27 March 2026 at 1:00pm',
   }
 
-  const rescheduleIcsSessionBannerContent: ReferralProgressBannerContent = {
+  const submittedSessionFeedbackBannerContent: ReferralProgressBannerContent = {
     caseReference,
     heading: 'Session feedback submitted',
     body: 'You must now reschedule the ICS.',
+  }
+
+  const rescheduledIcsSessionBannerContent: ReferralProgressBannerContent = {
+    caseReference,
+    heading: 'The ICS details have been changed',
   }
 
   const completedIcsSessionBannerContent: ReferralProgressBannerContent = {
@@ -267,12 +272,12 @@ test.describe('Referral Progress Page', () => {
       {
         name: 'DID NOT HAPPEN',
         fixture: appointmentDidNotHappen,
-        banner: rescheduleIcsSessionBannerContent,
+        banner: submittedSessionFeedbackBannerContent,
       },
       {
         name: 'DID NOT ATTEND',
         fixture: appointmentDidNotAttend,
-        banner: rescheduleIcsSessionBannerContent,
+        banner: submittedSessionFeedbackBannerContent,
       },
     ]
 
@@ -288,9 +293,22 @@ test.describe('Referral Progress Page', () => {
         await test.step('banner is displayed with correct content', async () => {
           await expect(referralProgressPage.notificationBanner).toBeVisible()
           await expect(referralProgressPage.notificationBanner).toContainText(scenario.banner.heading)
-          await expect(referralProgressPage.notificationBanner).toContainText(scenario.banner.body)
+          await expect(referralProgressPage.notificationBanner).toContainText(scenario.banner.body || '')
         })
       })
     }
+  })
+
+  test('Show ICS reschedule success message', async ({ page }) => {
+    await communitySupport.stubGetReferralProgress(appointmentScheduled, caseReference)
+    await setupReferralProgressSessionBanner(page, rescheduledIcsSessionBannerContent)
+
+    await page.goto(ReferralProgressPage.url(caseReference))
+
+    const referralProgressPage = await ReferralProgressPage.verifyOnPage(page)
+
+    await test.step('can see ICS details success changed notification banner', async () => {
+      await expect(referralProgressPage.notificationBanner).toContainText('The ICS details have been changed ')
+    })
   })
 })

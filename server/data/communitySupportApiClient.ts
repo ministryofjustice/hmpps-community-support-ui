@@ -121,6 +121,6 @@ export default class CommunitySupportApiClient extends RestClient {
     rescheduleAppointmentRequest: CreateAppointmentRequest & ChangeAppointmentDetails,
     username: string,
   ): Promise<AppointmentIcsResponse> {
-    return this.post({ path: `/bff/referral/${caseRefId}/ics`, data: rescheduleAppointmentRequest }, asSystem(username))
+    return this.put({ path: `/bff/referral/${caseRefId}/ics`, data: rescheduleAppointmentRequest }, asSystem(username))
   }
 }
