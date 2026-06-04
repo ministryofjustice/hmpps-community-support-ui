@@ -5,7 +5,7 @@ import ConfirmIcsPage from '../pages/confirmIcsPage'
 import communitySupport from '../mockApis/communitySupport'
 import prisonApi from '../mockApis/prisonApi'
 import buildReferralProgress from '../../server/testutils/buildReferralProgress'
-import { referralInformationInCommunity } from '../mockData/referralInformationData'
+import { referralInformationInCommunity, referralInformationInPrison } from '../mockData/referralInformationData'
 import { probationOfficesData } from '../mockData/referenceData'
 import ScheduleIcsPage from '../pages/scheduleIcsPage'
 import ReferralProgressPage from '../pages/referralProgressPage'
@@ -61,6 +61,16 @@ const inPersonAppointmentRequest = {
   sessionMethodRequest: {
     type: 'IN_PERSON_PROBATION_OFFICE',
     additionalDetails: 'Location of probation office',
+  },
+  sessionCommunication: ['informedByPhone', 'Letter'],
+}
+
+const inPersonPrisonAppointmentRequest = {
+  date: futureDateStr,
+  time: { hour: 10, minute: 30, amPm: 'am' },
+  sessionMethodRequest: {
+    type: 'IN_PERSON_PRISON',
+    additionalDetails: 'Location of prison',
   },
   sessionCommunication: ['informedByPhone', 'Letter'],
 }
@@ -291,7 +301,7 @@ test.describe('Confirm ICS Page', () => {
   })
 
   // IPB-2216:AC8
-  test('Reschedule Ics view location - probation office', async ({ page}) => {
+  test('Reschedule Ics view location - probation office', async ({ page }) => {
     await seedAppointmentSession(page, inPersonAppointmentRequest)
     await seedChangeAppointmentDetails(page, changeAppointmentDetails)
     await page.goto(ConfirmIcsPage.rescheduleUrl(REFERRAL_ID))
@@ -300,6 +310,19 @@ test.describe('Confirm ICS Page', () => {
     await expect(confirmIcsPage.icsDetailsSummary).toBeVisible()
     await expect(confirmIcsPage.locationRow).toBeVisible()
     await expect(confirmIcsPage.locationRow).toContainText('Location of probation office')
+  })
+
+  // IPB-2216:AC9
+  test('Reschedule Ics view location - prison', async ({ page }) => {
+    await communitySupport.stubGetReferralInformation(200, REFERRAL_ID, referralInformationInPrison)
+    await seedAppointmentSession(page, inPersonPrisonAppointmentRequest)
+    await seedChangeAppointmentDetails(page, changeAppointmentDetails)
+    await page.goto(ConfirmIcsPage.rescheduleUrl(REFERRAL_ID))
+    const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
+
+    await expect(confirmIcsPage.icsDetailsSummary).toBeVisible()
+    await expect(confirmIcsPage.locationRow).toBeVisible()
+    await expect(confirmIcsPage.locationRow).toContainText('Location of prison')
   })
 
   // IPB-2216:AC9.2
