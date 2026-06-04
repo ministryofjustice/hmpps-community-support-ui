@@ -1,4 +1,4 @@
-import { Locator, Page } from '@playwright/test'
+import { expect, Locator, Page } from '@playwright/test'
 import AbstractPage from './abstractPage'
 import RadiosWithFieldSet from './components/radiosWithFieldSet'
 import Input from './components/input'
@@ -63,14 +63,16 @@ export default class ChangeIcsDetailsPage extends AbstractPage {
     return `/referral/${caseRefId}/ics-change-details`
   }
 
-  static async createModel(page: Page): Promise<ChangeIcsDetailsPage> {
+  static async verifyOnPage(page: Page): Promise<ChangeIcsDetailsPage> {
+    const header = page.locator('h1')
+    await expect(header).toBeVisible()
     const howSessionTookPlaceRadios = await RadiosWithFieldSet.create(
       page.locator('[data-testid="sessionTakePlace-radios"]'),
       page.locator('[data-testid="sessionTakePlace-fieldset"]'),
     )
     const whyIsSessionNotInPersonDropDown = Input.createFromTestDataId(page, 'why-is-session-not-in-person')
     const howWasTheyInformedAboutTheSession = await CheckBoxWithFieldSet.create(
-      page.locator('[data-testid="informed-radios"]'),
+      page.locator('[data-testid="informed-checkboxes"]'),
       page.locator('[data-testid="informed-fieldset"]'),
     )
 

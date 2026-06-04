@@ -43,7 +43,7 @@ test.describe('Change Session Details Page', () => {
     })
     await test.step("then I'm taken to the Change session details screen", async () => {
       await expect(page).toHaveURL(ChangeIcsDetailsPage.url(virtual.caseRefId))
-      const changeIcsPage = await ChangeIcsDetailsPage.createModel(page)
+      const changeIcsPage = await ChangeIcsDetailsPage.verifyOnPage(page)
       await expect(changeIcsPage.header).toHaveText('Change session details')
     })
   })
@@ -53,7 +53,7 @@ test.describe('Change Session Details Page', () => {
       await page.goto(ChangeIcsDetailsPage.url(virtual.caseRefId))
     })
     await test.step('when I select to go back', async () => {
-      const changeIcsPage = await ChangeIcsDetailsPage.createModel(page)
+      const changeIcsPage = await ChangeIcsDetailsPage.verifyOnPage(page)
       await changeIcsPage.backLink.click()
     })
     await test.step("Then I'm taken back to the View or change session details screen", async () => {
@@ -65,7 +65,7 @@ test.describe('Change Session Details Page', () => {
     await test.step("given I'm on the Change session details screen", async () => {
       await page.goto(ChangeIcsDetailsPage.url(virtual.caseRefId))
     })
-    const changeIcsPage = await ChangeIcsDetailsPage.createModel(page)
+    const changeIcsPage = await ChangeIcsDetailsPage.verifyOnPage(page)
     await test.step('check date and time is correct', () =>
       Promise.all([
         expect(changeIcsPage.dateInput).toHaveValue('1/2/2026'),

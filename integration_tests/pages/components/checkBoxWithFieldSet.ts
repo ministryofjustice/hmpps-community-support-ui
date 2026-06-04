@@ -18,7 +18,7 @@ export default class CheckBoxWithFieldSet {
   static async create(radiosLocator: Locator, fieldsetLocator: Locator): Promise<CheckBoxWithFieldSet> {
     const fieldset = new FieldSet(fieldsetLocator)
     const errorText = fieldsetLocator.locator('> p.govuk-error-message')
-    const itemsLocator = radiosLocator.locator('> div.govuk-radios__item')
+    const itemsLocator = radiosLocator.locator('> div.govuk-checkboxes__item')
     const itemsLocators = await itemsLocator.all()
     const items = itemsLocators.map(item => new CheckBoxItem(item))
     const itemsRecord = await getCheckItemsRecord(items)
