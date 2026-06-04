@@ -1,5 +1,5 @@
 import { Response } from 'express'
-import { GovukFrontendInput, GovukFrontendSelect } from '@govuk-frontend'
+import { GovukFrontendInput, GovukFrontendRadiosItem, GovukFrontendSelect } from '@govuk-frontend'
 import { ProbationOffice, SessionMethod } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
 import {
@@ -7,10 +7,7 @@ import {
   IcsFeedbackHowSessionTookPlaceFormData,
   IcsFeedbackHowSessionTookPlaceViewModel,
 } from './icsFeedbackHowSessionTookPlaceViewModel'
-import {
-  GovukFrontendRadiosItemWithConditional,
-  GovukFrontendRadiosWithConditional,
-} from '../../@types/govukFrontend/derived'
+import { WithConditional, GovukFrontendRadiosWithConditional } from '../../@types/govukFrontend/derived'
 import { ErrorMiddlewareErrors } from '../../@types/express'
 
 export default class IcsFeedbackHowSessionTookPlacePresenter extends PresenterBase<
@@ -136,7 +133,7 @@ export default class IcsFeedbackHowSessionTookPlacePresenter extends PresenterBa
     somewhereElseHtml: string,
   ): GovukFrontendRadiosWithConditional {
     const { type } = this.sessionMethod
-    const items: GovukFrontendRadiosItemWithConditional[] = []
+    const items: WithConditional<GovukFrontendRadiosItem>[] = []
 
     if (type !== 'PHONE') {
       items.push({

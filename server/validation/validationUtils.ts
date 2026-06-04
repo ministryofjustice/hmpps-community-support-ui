@@ -49,3 +49,13 @@ const validateRequestBodyAgainstSchema = <Schema extends ZodType>(
       return res.redirect(req.url)
     })
 export default validateRequestBodyAgainstSchema
+
+export const validateRequestBodyAgainstSchema2 = <Schema extends ZodType>(
+  schema: Schema,
+  req: Request,
+  res: Response,
+  successFunction: (data: z.infer<typeof schema>) => void,
+): Promise<void> => {
+  console.log(JSON.stringify(req.body, null, 2))
+  return validateRequestBodyAgainstSchema(schema, req, res, successFunction)
+}

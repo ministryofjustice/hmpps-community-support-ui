@@ -1,5 +1,10 @@
 import { Response } from 'express'
-import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendErrorMessage } from '@govuk-frontend'
+import {
+  GovukFrontendBackLink,
+  GovukFrontendButton,
+  GovukFrontendErrorMessage,
+  GovukFrontendRadiosItem,
+} from '@govuk-frontend'
 import PresenterBase from '../../presenter/presenterBase'
 import {
   ConditionalTextAreaDetailsContent,
@@ -10,10 +15,7 @@ import {
 } from './WhyDidSessionNotHappenViewModel'
 import { components } from '../../@types/communitySupportApi/imported'
 import { ErrorMiddlewareErrors } from '../../@types/express'
-import {
-  GovukFrontendRadiosItemWithConditional,
-  GovukFrontendRadiosWithConditional,
-} from '../../@types/govukFrontend/derived'
+import { GovukFrontendRadiosWithConditional, WithConditional } from '../../@types/govukFrontend/derived'
 import { escapeHtml } from '../../utils/utils'
 
 export default class WhyDidSessionNotHappenPresenter extends PresenterBase<
@@ -58,7 +60,7 @@ export default class WhyDidSessionNotHappenPresenter extends PresenterBase<
     content: WhyDidSessionNotHappenRadioItemsContent,
     formData: Partial<components['schemas']['SessionNotHappenReasonRequest']>,
     errorMessages?: Record<string, GovukFrontendErrorMessage>,
-  ): GovukFrontendRadiosItemWithConditional[] {
+  ): WithConditional<GovukFrontendRadiosItem>[] {
     const serviceProviderIssueHtml = this.buildWhyDidSessionNotHappenDetailsTextArea(
       content.serviceProviderIssueDetails,
       formData,

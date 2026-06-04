@@ -19,3 +19,18 @@ export type MojPagination = GovukFrontendPagination & {
     text: string
   }
 }
+
+export interface MojDatePicker {
+  id: string
+  name: string
+  value?: string
+  formGroup?: GovukFrontendDateInputFormGroup
+  label: GovukFrontendLabel
+  hint?: GovukFrontendHint
+  errorMessage?: GovukFrontendErrorMessage
+  minDate?: string
+  maxDate?: string
+  excludedDates?: string
+  excludedDays?: string
+  weekStartDay?: string
+}

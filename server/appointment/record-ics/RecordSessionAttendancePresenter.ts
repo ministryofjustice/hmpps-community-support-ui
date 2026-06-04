@@ -1,13 +1,18 @@
 import { Response } from 'express'
-import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendSummaryList } from '@govuk-frontend'
+import {
+  GovukFrontendBackLink,
+  GovukFrontendButton,
+  GovukFrontendRadiosItem,
+  GovukFrontendSummaryList,
+} from '@govuk-frontend'
 import { isPast } from 'date-fns'
 import { IcsFeedbackSubmission } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
 import getAppointmentDateTime from '../../utils/getAppointmentDateTime'
 import {
   ConditionalInput,
-  GovukFrontendRadiosItemWithConditional,
   GovukFrontendRadiosWithConditional,
+  WithConditional,
 } from '../../@types/govukFrontend/derived'
 import { ErrorMiddlewareErrors } from '../../@types/express'
 import buildAppointmentDetails, { RecordSessionAttendancePresenterData } from './AppointmentDetailsModel'
@@ -113,7 +118,7 @@ export default class RecordSessionAttendancePresenter extends PresenterBase<
   private buildHappenedRadios(content: FormContent): GovukFrontendRadiosWithConditional {
     const { id, heading, hint, yesLabel, noLabel, error } = content.happenedRadios
     const { didSessionHappen } = this.record
-    const items: GovukFrontendRadiosItemWithConditional[] = [
+    const items: WithConditional<GovukFrontendRadiosItem>[] = [
       {
         id: `${id}-${yesLabel}`,
         value: yesLabel,

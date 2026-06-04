@@ -3,7 +3,6 @@ import { AppointmentIcsResponse, CreateAppointmentRequest } from '@community-sup
 import { randomUUID } from 'crypto'
 import AppointmentController from './appointmentController'
 import ConfirmIcsPresenter, { type AdditionalInformation } from './confirm-ics/confirmIcsPresenter'
-import ScheduleIcsPresenter from './schedule-ics/scheduleIcsPresenter'
 import IcsFeedbackHowSessionTookPlacePresenter from './ics-feedback/icsFeedbackHowSessionTookPlacePresenter'
 import ConfirmIcsContentFactory from '../testutils/factories/ConfirmIcsContent'
 import ReferralService from '../services/referralService'
@@ -21,6 +20,7 @@ import {
 import ViewChangeSessionDetailsPresenter from './view-change-session-details/ViewChangeSessionDetailsPresenter'
 import IcsFeedbackCheckYourAnswersPresenter from './check-ics-feedback/icsFeedbackCheckYourAnswersPresenter'
 import { ReferralProgressBannerContent } from '../referral/progress/ReferralProgressBannerContent'
+import ScheduleIcsPresenter from './schedule-ics/scheduleIcsPresenter'
 
 jest.mock('./confirm-ics/confirmIcsPresenter')
 jest.mock('../services/AppointmentService')
@@ -30,6 +30,7 @@ jest.mock('../services/referralService')
 jest.mock('../services/referenceDataService')
 jest.mock('./view-change-session-details/ViewChangeSessionDetailsPresenter')
 jest.mock('./check-ics-feedback/icsFeedbackCheckYourAnswersPresenter')
+jest.mock('./schedule-ics/scheduleIcsPresenter')
 
 describe('AppointmentController', () => {
   let appointmentService: AppointmentService
@@ -115,8 +116,6 @@ describe('AppointmentController', () => {
       redirect: jest.fn(),
     } as unknown as Response
 
-    ScheduleIcsPresenter.prototype.renderPage = jest.fn()
-
     scheduleIcsCommunityReq = {
       params: {
         caseRefId,
@@ -142,7 +141,10 @@ describe('AppointmentController', () => {
     } as unknown as Request
 
     scheduleIcsRes = {
-      locals: { user: { username: 'user1' }, content: ScheduleIcsContentFactory.build() },
+      locals: {
+        user: { username: 'user1' },
+        content: ScheduleIcsContentFactory.build(),
+      },
       render: jest.fn(),
       redirect: jest.fn(),
     } as unknown as Response
@@ -167,9 +169,8 @@ describe('AppointmentController', () => {
   })
 
   describe('scheduleIcs', () => {
-    it('should render schedule-ics page - community ', async () => {
+    test('should render schedule-ics page - community ', async () => {
       referralService.getReferralInformation.mockResolvedValue(mockReferralInformationInCommunity)
-      await appointmentController.showScheduleIcs(scheduleIcsCommunityReq, scheduleIcsRes)
       referenceDataService.getProbationOffices.mockResolvedValue(probationOfficesData)
       referenceDataService.getPrisons.mockResolvedValue(prisonsData)
 
@@ -178,30 +179,28 @@ describe('AppointmentController', () => {
       expect(ScheduleIcsPresenter).toHaveBeenCalledWith(
         caseRefId,
         probationOfficesData,
-        prisonsData,
         mockReferralInformationInCommunity,
-        expect.any(Object),
+        undefined,
         expect.any(Object),
       )
       expect(ScheduleIcsPresenter.prototype.renderPage).toHaveBeenCalledWith(scheduleIcsRes)
     })
 
-    it('should render schedule-ics page - custody ', async () => {
+    test('should render schedule-ics page - custody ', async () => {
       referralService.getReferralInformation.mockResolvedValue(mockReferralInformationInPrison)
       await appointmentController.showScheduleIcs(scheduleIcsPrisonReq, scheduleIcsRes)
 
       expect(ScheduleIcsPresenter).toHaveBeenCalledWith(
         caseRefId,
         probationOfficesData,
-        prisonsData,
         mockReferralInformationInPrison,
-        expect.any(Object),
+        undefined,
         expect.any(Object),
       )
       expect(ScheduleIcsPresenter.prototype.renderPage).toHaveBeenCalledWith(scheduleIcsRes)
     })
 
-    it('should create presenter with createAppointmentRequest from session and render page', async () => {
+    test('should create presenter with createAppointmentRequest from session and render page', async () => {
       referralService.getReferralInformation.mockResolvedValue(mockReferralInformationInCommunity)
       req.session.createAppointmentRequest = mockCreateAppointmentRequest
 
@@ -210,9 +209,8 @@ describe('AppointmentController', () => {
       expect(ScheduleIcsPresenter).toHaveBeenCalledWith(
         caseRefId,
         probationOfficesData,
-        prisonsData,
         mockReferralInformationInCommunity,
-        expect.any(Object),
+        undefined,
         expect.any(Object),
       )
       expect(ScheduleIcsPresenter.prototype.renderPage).toHaveBeenCalledWith(scheduleIcsRes)

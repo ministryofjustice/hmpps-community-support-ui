@@ -1,4 +1,4 @@
-class AppointmentValidator {
+export default class AppointmentValidator {
   getReasonKey(sessionTakePlace: string): string | null {
     switch (sessionTakePlace) {
       case 'ByPhone':
@@ -12,5 +12,3 @@ class AppointmentValidator {
     }
   }
 }
-
-export default AppointmentValidator

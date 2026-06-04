@@ -5,6 +5,7 @@ import {
   GovukFrontendErrorMessage,
   GovukFrontendFieldset,
   GovukFrontendInput,
+  GovukFrontendRadiosItem,
 } from '@govuk-frontend'
 import PresenterBase from '../../presenter/presenterBase'
 import {
@@ -19,10 +20,7 @@ import {
   WasPersonLateRadioItemsContent,
 } from './RecordSessionDetailsViewModel'
 import buildAppointmentDetails, { RecordSessionAttendancePresenterData } from './AppointmentDetailsModel'
-import {
-  GovukFrontendRadiosItemWithConditional,
-  GovukFrontendRadiosWithConditional,
-} from '../../@types/govukFrontend/derived'
+import { WithConditional, GovukFrontendRadiosWithConditional } from '../../@types/govukFrontend/derived'
 import { components } from '../../@types/communitySupportApi/imported'
 import { escapeHtml } from '../../utils/utils'
 import { ErrorMiddlewareErrors } from '../../@types/express'
@@ -69,7 +67,7 @@ export default class RecordSessionDetailsPresenter extends PresenterBase<
     content: WasPersonLateRadioItemsContent,
     formData: RecordSessionDetailsFormData,
     errorMessage?: GovukFrontendErrorMessage,
-  ): GovukFrontendRadiosItemWithConditional[] {
+  ): WithConditional<GovukFrontendRadiosItem>[] {
     const htmlString = this.buildLateReasonTextArea(content, formData, errorMessage)
     return [
       {
