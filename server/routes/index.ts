@@ -165,6 +165,10 @@ export default function routes({
     appointmentController.changeIcsDetailsCYA(req, res),
   )
 
+  post('/referral/:caseRefId/ics-change-details/submit-ics', (req, res) =>
+    appointmentController.submitChangeIcsDetails(req, res),
+  )
+
   get('/referral/:caseRefId/ics-change-details', (req, res) => appointmentController.showRescheduleIcs(req, res))
 
   post('/referral/:caseRefId/ics-change-details', (req, res) => appointmentController.rescheduleIcs(req, res))

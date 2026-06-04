@@ -46,7 +46,7 @@ interface ScheduledIcsFormData {
   sessionTakePlace?: string
   byPhone?: string
   byVideo?: string
-  InSomewhereElse?: string
+  inSomewhereElse?: string
   probationOffice?: string
   prison?: string
   addressLine1?: string
@@ -374,7 +374,7 @@ const loadFormFromSession = (
           formData.byVideo = method.additionalDetails
           break
         case 'InSomewhereElse':
-          formData.InSomewhereElse = method.additionalDetails
+          formData.inSomewhereElse = method.additionalDetails
           break
         default:
           break
@@ -722,11 +722,7 @@ class AppointmentController {
     if (icsFeedbackSubmission && appointmentIcsId) {
       await this.appointmentService.submitIcsFeedback(caseRefId, appointmentIcsId, icsFeedbackSubmission, username)
       delete req.session.icsFeedbackSubmission
-      req.session.referralProgressBanner = {
-        caseReference: caseRefId,
-        heading: 'Session feedback submitted',
-        body: 'The ICS is now complete.',
-      } as ReferralProgressBannerContent
+      this.setReferralProgressBanner(req, caseRefId, 'Session feedback submitted', 'The ICS is now complete.')
       res.redirect(`/progress/${caseRefId}`)
     }
   }
@@ -833,15 +829,19 @@ class AppointmentController {
     }
   }
 
+  private setReferralProgressBanner(req: Request, id: string, heading: string, body?: string): void {
+    req.session.referralProgressBanner = {
+      caseReference: id,
+      heading,
+      ...(body && { body }),
+    } as ReferralProgressBannerContent
+  }
+
   private setIcsSuccessfullyScheduledBanner(req: Request, response: AppointmentIcsResponse, id: string): void {
     const date = format(response.appointmentDate, 'dd MMM yyyy')
     const time = timeFormat(response.appointmentTime)
 
-    req.session.referralProgressBanner = {
-      caseReference: id,
-      heading: 'ICS scheduled',
-      body: `The ICS has been scheduled for ${date} at ${time}`,
-    } as ReferralProgressBannerContent
+    this.setReferralProgressBanner(req, id, 'ICS scheduled', `The ICS has been scheduled for ${date} at ${time}`)
   }
 
   async sessionDetails(req: Request, res: Response): Promise<void> {
@@ -1004,6 +1004,28 @@ class AppointmentController {
     }
     const presenter = new ConfirmIcsPresenter(createAppointmentRequest, additionalDetails, ChangeAppointmentDetails)
     return presenter.renderPage(res)
+  }
+
+  async submitChangeIcsDetails(req: Request, res: Response): Promise<void> {
+    const { caseRefId } = req.params as { caseRefId: string }
+    const { username } = res.locals.user
+    const { createAppointmentRequest, ChangeAppointmentDetails } = req.session
+    if (!createAppointmentRequest || !ChangeAppointmentDetails) {
+      res.redirect(`/referral/${caseRefId}/ics-change-details`)
+    }
+    const response = await this.appointmentService.submitRescheduleICS(
+      caseRefId,
+      createAppointmentRequest,
+      ChangeAppointmentDetails,
+      username,
+    )
+    if (response) {
+      delete req.session.createAppointmentRequest
+      delete req.session.ChangeAppointmentDetails
+      this.setReferralProgressBanner(req, caseRefId, 'The ICS details have been changed')
+    }
+
+    return res.redirect(`/progress/${caseRefId}`)
   }
 }
 

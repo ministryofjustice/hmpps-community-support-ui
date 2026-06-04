@@ -5,7 +5,7 @@ import { daysAfter, login, randomCaseReferenceId, resetStubs, seedAppointmentSes
 import communitySupport from '../mockApis/communitySupport'
 import ChangeIcsDetailsPage from '../pages/ChangeIcsDetailsPage'
 import ChangeIcsDetailsReasonPage from '../pages/ChangeIcsDetailsReasonPage'
-import ChangeIcsDetailsCYAPage from '../pages/ChangeIcsDetailsCYAPage'
+import ConfirmIcsPage from '../pages/confirmIcsPage'
 import prisonApi from '../mockApis/prisonApi'
 import { probationOfficesData } from '../mockData/referenceData'
 
@@ -173,7 +173,7 @@ test.describe('Reschedule Ics Appointment Reason Page', () => {
     })
   })
 
-  // IPB-2341:AC7
+  // IPB-2341:AC7 IPB-2216:AC1
   test('Navigation to Check Details Page', async ({ page }) => {
     await test.step('go to change ics details reason page', async () => {
       await page.goto(ChangeIcsDetailsReasonPage.url(pastMeeting.caseRefId))
@@ -183,6 +183,6 @@ test.describe('Reschedule Ics Appointment Reason Page', () => {
     await changeIcsDetailsReasonPage.whoRequestedRadios.items[1].input.click()
     await changeIcsDetailsReasonPage.reasonTextarea.input.fill('Had work')
     await changeIcsDetailsReasonPage.continueButton.click()
-    await expect(page).toHaveURL(ChangeIcsDetailsCYAPage.url(pastMeeting.caseRefId))
+    await expect(page).toHaveURL(ConfirmIcsPage.rescheduleUrl(pastMeeting.caseRefId))
   })
 })

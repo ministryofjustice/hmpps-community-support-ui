@@ -265,11 +265,30 @@ test.describe('Confirm ICS Page', () => {
     })
   })
 
+  // IPB-2216:AC2
+  test('reschedule ics CYA page back link navigation', async ({ page }) => {
+    await seedAppointmentSession(page, phoneAppointmentRequest)
+    await seedChangeAppointmentDetails(page, changeAppointmentDetails)
+    await page.goto(ConfirmIcsPage.rescheduleUrl(REFERRAL_ID))
+    const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
+    await confirmIcsPage.backLink.click()
+    await expect(page).toHaveURL(ChangeIcsDetailsReasonPage.url(REFERRAL_ID))
+  })
+
+  // IPB-2216:AC3/AC4/AC5/AC6/AC7/AC10/AC11/AC12
   test('should display the Reason for change summary card details when rescheduling', async ({ page }) => {
     await seedAppointmentSession(page, phoneAppointmentRequest)
     await seedChangeAppointmentDetails(page, changeAppointmentDetails)
     await page.goto(ConfirmIcsPage.rescheduleUrl(REFERRAL_ID))
     const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
+
+    await expect(confirmIcsPage.icsDetailsSummary).toBeVisible()
+    await expect(confirmIcsPage.dateRow).toContainText(futureDateDisplay)
+    await expect(confirmIcsPage.startTimeRow).toContainText('1:00pm')
+    await expect(confirmIcsPage.methodRow).toContainText('Phone call')
+    await expect(confirmIcsPage.notInPersonReasonRow).toBeVisible()
+    await expect(confirmIcsPage.notInPersonReasonRow).toContainText('The referral dont have a vehicle')
+    await expect(confirmIcsPage.sessionCommunicationRow).toContainText('Phone call')
 
     await expect(confirmIcsPage.changeDetailsSummary).toBeVisible()
     await expect(confirmIcsPage.requestedByRow).toBeVisible()
@@ -278,6 +297,17 @@ test.describe('Confirm ICS Page', () => {
     await expect(confirmIcsPage.reasonForChangeRow).toContainText('There were technical issues')
   })
 
+  // IPB-2216:AC8 TODO
+  // test('Reschedule Ics view location - probation office', async ({ page}) => {
+  //   await seedAppointmentSession(page, inPersonAppointmentRequest)
+  //   await seedChangeAppointmentDetails(page, changeAppointmentDetails)
+  //   await page.goto(ConfirmIcsPage.rescheduleUrl(REFERRAL_ID))
+  //   const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
+  //
+  //
+  // })
+
+  // IPB-2216:AC13/AC14
   test.describe('change links should work correctly when rescheduling the appointment', () => {
     test('Ics Details summary change link', async ({ page }) => {
       await seedAppointmentSession(page, phoneAppointmentRequest)

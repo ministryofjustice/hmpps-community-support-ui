@@ -17,7 +17,7 @@ type TabKey = 'caseDetails' | 'progress' | 'changeLog'
 type StatusKey = ReferralAppointmentHistory['status'] | 'NOT_SCHEDULED'
 type StatusConfig = { label: string; tagClass: string; actions: { label: string; href: string }[] }
 
-const getStatusConfig = (caseReference: string, appointmentId: string = ''): Record<StatusKey, StatusConfig> => ({
+const getStatusConfig = (caseReference: string): Record<StatusKey, StatusConfig> => ({
   NOT_SCHEDULED: {
     label: 'Not scheduled',
     tagClass: 'govuk-tag--grey',
@@ -26,7 +26,7 @@ const getStatusConfig = (caseReference: string, appointmentId: string = ''): Rec
   SCHEDULED: {
     label: 'Scheduled',
     tagClass: 'govuk-tag--blue',
-    actions: [{ label: 'View details', href: `/referral/${caseReference}/ics/${appointmentId}/view-session-details` }],
+    actions: [{ label: 'View or change details', href: `/referral-details/${caseReference}/check-change-ics` }],
   },
   NEEDS_FEEDBACK: {
     label: 'Needs feedback',
@@ -37,7 +37,7 @@ const getStatusConfig = (caseReference: string, appointmentId: string = ''): Rec
     label: 'Did not happen',
     tagClass: 'govuk-tag--purple',
     actions: [
-      { label: 'Reschedule', href: `/referral-details/${caseReference}/check-change-ics` },
+      { label: 'Reschedule', href: `/referral/${caseReference}/appointment/schedule-ics` },
       { label: 'View feedback', href: '#' },
     ],
   },
@@ -45,7 +45,7 @@ const getStatusConfig = (caseReference: string, appointmentId: string = ''): Rec
     label: 'Did not attend',
     tagClass: 'govuk-tag--purple',
     actions: [
-      { label: 'Reschedule', href: `/referral-details/${caseReference}/check-change-ics` },
+      { label: 'Reschedule', href: `/referral/${caseReference}/appointment/schedule-ics` },
       { label: 'View feedback', href: '#' },
     ],
   },
@@ -131,11 +131,13 @@ export default class ReferralProgressPresenter extends PresenterBase<
   }
 
   private buildSuccessBanner(heading: string, body: string): GovukFrontendNotificationBanner {
+    const hasBody = body && body.trim() !== ''
+
     return {
       type: 'success',
       html: `
         <h3 class="govuk-notification-banner__heading">${heading}</h3>
-        <p class="govuk-body">${body}</p>
+        ${hasBody ? `<p class="govuk-body">${body}</p>` : ''}
       `,
     }
   }
@@ -197,7 +199,7 @@ export default class ReferralProgressPresenter extends PresenterBase<
     const latestAppointments = this.getLatestAppointments()
 
     return latestAppointments.map(appointment => {
-      const configMap = getStatusConfig(this.caseReference, appointment.appointmentId)
+      const configMap = getStatusConfig(this.caseReference)
       const appointmentStatus = getAppointmentStatus(appointment)
       const config = configMap[appointmentStatus] ?? configMap.NOT_SCHEDULED
       return [

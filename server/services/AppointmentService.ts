@@ -5,6 +5,7 @@ import {
   IcsFeedbackSubmissionResponse,
 } from '@community-support-api'
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
+import { ChangeAppointmentDetails } from '../appointment/change-ics-details-reason/ChangeAppointmentDetails'
 
 export default class AppointmentService {
   constructor(private communitySupportApiClient: CommunitySupportApiClient) {}
@@ -32,5 +33,15 @@ export default class AppointmentService {
     username: string,
   ): Promise<IcsFeedbackSubmissionResponse> {
     return this.communitySupportApiClient.submitIcsFeedback(caseRefId, icsId, icsFeedback, username)
+  }
+
+  submitRescheduleICS(
+    caseRefId: string,
+    createAppointmentRequest: CreateAppointmentRequest,
+    changeAppointmentDetails: ChangeAppointmentDetails,
+    username: string,
+  ): Promise<AppointmentIcsResponse> {
+    const rescheduleAppointmentRequest = { ...createAppointmentRequest, ...changeAppointmentDetails }
+    return this.communitySupportApiClient.submitRescheduleICS(caseRefId, rescheduleAppointmentRequest, username)
   }
 }
