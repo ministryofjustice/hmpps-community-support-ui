@@ -844,10 +844,6 @@ class AppointmentController {
     this.setReferralProgressBanner(req, id, 'ICS scheduled', `The ICS has been scheduled for ${date} at ${time}`)
   }
 
-  private setIcsSuccessfullyRescheduledBanner(req: Request, response: AppointmentIcsResponse, id: string): void {
-    this.setReferralProgressBanner(req, id, 'The ICS details have been changed')
-  }
-
   async sessionDetails(req: Request, res: Response): Promise<void> {
     const { caseRefId } = req.params as { caseRefId: string }
     const { username } = res.locals.user
@@ -1026,7 +1022,7 @@ class AppointmentController {
     if (response) {
       delete req.session.createAppointmentRequest
       delete req.session.ChangeAppointmentDetails
-      this.setIcsSuccessfullyRescheduledBanner(req, response, caseRefId)
+      this.setReferralProgressBanner(req, caseRefId, 'The ICS details have been changed')
     }
 
     return res.redirect(`/progress/${caseRefId}`)
