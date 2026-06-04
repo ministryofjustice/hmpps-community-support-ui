@@ -309,6 +309,18 @@ export default {
         jsonBody: mockRespData,
       },
     }),
+  stubRescheduleICS: (caseRefId: string, mockRespData: AppointmentIcsResponse, httpStatus = 200): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'PUT',
+        urlPathPattern: `/community-support/bff/referral/${caseRefId}/ics`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: mockRespData,
+      },
+    }),
   stubGetIcsById: (
     referralId: string,
     icsId: string,

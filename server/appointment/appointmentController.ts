@@ -195,6 +195,8 @@ const mapSessionTakePlaceToType = (takePlace: string): SessionMethodRequest['typ
       return 'VIDEO'
     case 'InProbationOffice':
       return 'IN_PERSON_PROBATION_OFFICE'
+    case 'InPrison':
+      return 'IN_PERSON_PRISON'
     case 'InSomewhereElse':
       return 'IN_PERSON_OTHER_LOCATION'
     default:
