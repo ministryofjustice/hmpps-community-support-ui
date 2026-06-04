@@ -181,7 +181,10 @@ describe('ConfirmIcsPresenter', () => {
       it('should include Location row with "Probation office" when method is IN_PERSON_PROBATION_OFFICE', () => {
         const inPersonRequest: CreateAppointmentRequest = {
           ...baseRequest,
-          sessionMethodRequest: { type: 'IN_PERSON_PROBATION_OFFICE' },
+          sessionMethodRequest: {
+            type: 'IN_PERSON_PROBATION_OFFICE',
+            additionalDetails: 'Location of probation office',
+          },
         }
         const presenter = new ConfirmIcsPresenter(inPersonRequest, additionInformation)
         presenter.renderPage(res)
@@ -190,7 +193,7 @@ describe('ConfirmIcsPresenter', () => {
         const viewModel: ConfirmIcsViewModel = renderCall[1].content
         const locationRow = viewModel.icsDetailsSummary.rows.find(row => row.key.text === 'Location')
 
-        expect(locationRow).toEqual({ key: { text: 'Location' }, value: { text: 'Probation office' } })
+        expect(locationRow).toEqual({ key: { text: 'Location' }, value: { text: 'Location of probation office' } })
       })
 
       it('should include Location row with formatted address when method is IN_PERSON_OTHER_LOCATION', () => {
