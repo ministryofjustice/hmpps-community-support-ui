@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, Page, test } from '@playwright/test'
 import { ReferralProgress } from '@community-support-api'
 import { format } from 'date-fns'
 import {
@@ -416,6 +416,119 @@ test.describe('Confirm ICS Page', () => {
     expect(progressPage.table.body).toHaveLength(2)
   })
 
+  enum RequestedBy {
+    DELIVERY_PARTNER,
+    REFEREE,
+    PROBATION_PRACTITIONER,
+  }
+
+  enum InformedMethod {
+    PHONE,
+    EMAIL,
+    TEXT_MESSAGE,
+    OTHER,
+  }
+
+  enum SessionMethod {
+    PHONE,
+    VIDEO,
+    IN_PERSON_PROBATION_OFFICE,
+    IN_PERSON_PRISON,
+    IN_PERSON_OTHER_LOCATION,
+  }
+
+  const fillRescheduleForm = async (
+    page: Page,
+    date: Date,
+    hour: string,
+    minute: string,
+    amPm: string,
+    method: SessionMethod,
+    informedMethods: InformedMethod[],
+    requestedBy: RequestedBy,
+    reasonForChange: string,
+    options: {
+      probationOffice?: string
+      prison?: string
+      notInPersonReason?: string
+      informedOther?: string
+      addressLine1?: string
+      addressLine2?: string
+      town?: string
+      county?: string
+      postcode?: string
+    },
+  ) => {
+    await test.step('Fill out reschedule form', async () => {
+      await page.goto(ChangeIcsDetailsPage.url(REFERRAL_ID))
+      const changeIcsDetailsPage = new ChangeIcsDetailsPage(page)
+      await changeIcsDetailsPage.dateInput.fill(format(date, 'dd/MM/yyyy'))
+      await changeIcsDetailsPage.timeHourInput.fill(hour)
+      await changeIcsDetailsPage.timeMinuteInput.fill(minute)
+      await changeIcsDetailsPage.timeMeridiemInput.selectOption(amPm)
+      switch (method) {
+        case SessionMethod.PHONE:
+          await changeIcsDetailsPage.phoneCallRadioButton.check()
+          await changeIcsDetailsPage.phoneCallReasonInput.fill(options.notInPersonReason ?? '')
+          break
+        case SessionMethod.VIDEO:
+          await changeIcsDetailsPage.videoCallRadioButton.check()
+          await changeIcsDetailsPage.videoCallReasonInput.fill(options.notInPersonReason ?? '')
+          break
+        case SessionMethod.IN_PERSON_PROBATION_OFFICE:
+          await changeIcsDetailsPage.inProbationOfficeRadioButton.check()
+          await changeIcsDetailsPage.probationOfficeSelect.selectOption(options.probationOffice ?? '')
+          break
+        case SessionMethod.IN_PERSON_PRISON:
+          await changeIcsDetailsPage.inPrisonRadioButton.check()
+          await changeIcsDetailsPage.prisonListSelect.selectOption(options.prison ?? '')
+          break
+        case SessionMethod.IN_PERSON_OTHER_LOCATION:
+          await changeIcsDetailsPage.inSomewhereElseRadioButton.check()
+          await changeIcsDetailsPage.addressLine1Input.fill(options.addressLine1 ?? '')
+          await changeIcsDetailsPage.addressLine2Input.fill(options.addressLine2 ?? '')
+          await changeIcsDetailsPage.townInput.fill(options.town ?? '')
+          await changeIcsDetailsPage.countyInput.fill(options.county ?? '')
+          await changeIcsDetailsPage.postcodeInput.fill(options.postcode ?? '')
+          break
+        default:
+          break
+      }
+      if (informedMethods.includes(InformedMethod.PHONE)) {
+        await changeIcsDetailsPage.informedByPhoneCheckbox.check()
+      }
+      if (informedMethods.includes(InformedMethod.EMAIL)) {
+        await changeIcsDetailsPage.informedByEmailCheckbox.check()
+      }
+      if (informedMethods.includes(InformedMethod.TEXT_MESSAGE)) {
+        await changeIcsDetailsPage.informedByTextMessageCheckbox.check()
+      }
+      if (informedMethods.includes(InformedMethod.OTHER)) {
+        await changeIcsDetailsPage.informedByOtherMethodCheckbox.check()
+        await changeIcsDetailsPage.informedByOtherMethodInput.fill(options.informedOther ?? '')
+      }
+      await changeIcsDetailsPage.saveAndContinueButton.click()
+    })
+    await test.step('Fill out reason for change form', async () => {
+      const changeIcsDetailsReasonPage = await ChangeIcsDetailsReasonPage.verifyOnPage(page)
+      switch (requestedBy) {
+        case RequestedBy.DELIVERY_PARTNER:
+          await changeIcsDetailsReasonPage.whoRequestedRadios.items[0].input.check()
+          break
+        case RequestedBy.REFEREE:
+          await changeIcsDetailsReasonPage.whoRequestedRadios.items[1].input.check()
+          break
+        case RequestedBy.PROBATION_PRACTITIONER:
+          await changeIcsDetailsReasonPage.whoRequestedRadios.items[2].input.check()
+          break
+        default:
+          break
+      }
+      await changeIcsDetailsReasonPage.reasonTextarea.input.fill(reasonForChange)
+      await changeIcsDetailsReasonPage.continueButton.click()
+    })
+  }
+
   test.describe('Reschedule ICS - Full journey happy path', () => {
     test.beforeEach(async () => {
       const referralProgressWithRescheduledAppointments: ReferralProgress = buildReferralProgress([
@@ -427,24 +540,20 @@ test.describe('Confirm ICS Page', () => {
     })
 
     test('Phone Call', async ({ page }) => {
-      await test.step('Fill out reschedule form', async () => {
-        await page.goto(ChangeIcsDetailsPage.url(REFERRAL_ID))
-        const changeIcsDetailsPage = new ChangeIcsDetailsPage(page)
-        await changeIcsDetailsPage.dateInput.fill(format(futureDate, 'dd/MM/yyyy'))
-        await changeIcsDetailsPage.timeHourInput.fill('1')
-        await changeIcsDetailsPage.timeMinuteInput.fill('0')
-        await changeIcsDetailsPage.timeMeridiemInput.selectOption('PM')
-        await changeIcsDetailsPage.phoneCallRadioButton.check()
-        await changeIcsDetailsPage.phoneCallReasonInput.fill('The referral dont have a vehicle')
-        await changeIcsDetailsPage.informedByPhoneCheckbox.check()
-        await changeIcsDetailsPage.saveAndContinueButton.click()
-      })
-      await test.step('Fill out reason for change form', async () => {
-        const changeIcsDetailsReasonPage = await ChangeIcsDetailsReasonPage.verifyOnPage(page)
-        await changeIcsDetailsReasonPage.whoRequestedRadios.items[0].input.check()
-        await changeIcsDetailsReasonPage.reasonTextarea.input.fill('There were technical issues')
-        await changeIcsDetailsReasonPage.continueButton.click()
-      })
+      await fillRescheduleForm(
+        page,
+        futureDate,
+        '1',
+        '0',
+        'PM',
+        SessionMethod.PHONE,
+        [InformedMethod.PHONE],
+        RequestedBy.DELIVERY_PARTNER,
+        'There were technical issues',
+        {
+          notInPersonReason: 'The referral dont have a vehicle',
+        },
+      )
       await test.step('Check confirmIcs page', async () => {
         const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
         await expect(confirmIcsPage.icsDetailsSummary).toBeVisible()
@@ -465,25 +574,21 @@ test.describe('Confirm ICS Page', () => {
     })
 
     test('Video Call', async ({ page }) => {
-      await test.step('Fill out reschedule form', async () => {
-        await page.goto(ChangeIcsDetailsPage.url(REFERRAL_ID))
-        const changeIcsDetailsPage = new ChangeIcsDetailsPage(page)
-        await changeIcsDetailsPage.dateInput.fill(format(futureDate, 'dd/MM/yyyy'))
-        await changeIcsDetailsPage.timeHourInput.fill('1')
-        await changeIcsDetailsPage.timeMinuteInput.fill('0')
-        await changeIcsDetailsPage.timeMeridiemInput.selectOption('PM')
-        await changeIcsDetailsPage.videoCallRadioButton.check()
-        await changeIcsDetailsPage.videoCallReasonInput.fill('The referral dont have a vehicle')
-        await changeIcsDetailsPage.informedByOtherMethodCheckbox.check()
-        await changeIcsDetailsPage.informedByOtherMethodInput.fill('Face to face')
-        await changeIcsDetailsPage.saveAndContinueButton.click()
-      })
-      await test.step('Fill out reason for change form', async () => {
-        const changeIcsDetailsReasonPage = await ChangeIcsDetailsReasonPage.verifyOnPage(page)
-        await changeIcsDetailsReasonPage.whoRequestedRadios.items[1].input.check()
-        await changeIcsDetailsReasonPage.reasonTextarea.input.fill('car broke down')
-        await changeIcsDetailsReasonPage.continueButton.click()
-      })
+      await fillRescheduleForm(
+        page,
+        futureDate,
+        '1',
+        '0',
+        'PM',
+        SessionMethod.VIDEO,
+        [InformedMethod.OTHER],
+        RequestedBy.REFEREE,
+        'car broke down',
+        {
+          notInPersonReason: 'The referral dont have a vehicle',
+          informedOther: 'Face to face',
+        },
+      )
       await test.step('Check confirmIcs page', async () => {
         const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
         await expect(confirmIcsPage.icsDetailsSummary).toBeVisible()
@@ -506,26 +611,21 @@ test.describe('Confirm ICS Page', () => {
     })
 
     test('In Person - probation office', async ({ page }) => {
-      await test.step('Fill out reschedule form', async () => {
-        await page.goto(ChangeIcsDetailsPage.url(REFERRAL_ID))
-        const changeIcsDetailsPage = new ChangeIcsDetailsPage(page)
-        await changeIcsDetailsPage.dateInput.fill(format(futureDate, 'dd/MM/yyyy'))
-        await changeIcsDetailsPage.timeHourInput.fill('1')
-        await changeIcsDetailsPage.timeMinuteInput.fill('0')
-        await changeIcsDetailsPage.timeMeridiemInput.selectOption('PM')
-        await changeIcsDetailsPage.inProbationOfficeRadioButton.check()
-        await changeIcsDetailsPage.probationOfficeSelect.selectOption('Derby: Derwent Centre')
-        await changeIcsDetailsPage.informedByTextMessageCheckbox.check()
-        await changeIcsDetailsPage.informedByOtherMethodCheckbox.check()
-        await changeIcsDetailsPage.informedByOtherMethodInput.fill('Face to face')
-        await changeIcsDetailsPage.saveAndContinueButton.click()
-      })
-      await test.step('Fill out reason for change form', async () => {
-        const changeIcsDetailsReasonPage = await ChangeIcsDetailsReasonPage.verifyOnPage(page)
-        await changeIcsDetailsReasonPage.whoRequestedRadios.items[2].input.check()
-        await changeIcsDetailsReasonPage.reasonTextarea.input.fill('reasons')
-        await changeIcsDetailsReasonPage.continueButton.click()
-      })
+      await fillRescheduleForm(
+        page,
+        futureDate,
+        '1',
+        '0',
+        'PM',
+        SessionMethod.IN_PERSON_PROBATION_OFFICE,
+        [InformedMethod.TEXT_MESSAGE, InformedMethod.OTHER],
+        RequestedBy.PROBATION_PRACTITIONER,
+        'reasons',
+        {
+          probationOffice: 'Derby: Derwent Centre',
+          informedOther: 'Face to face',
+        },
+      )
       await test.step('Check confirmIcs page', async () => {
         const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
         await expect(confirmIcsPage.icsDetailsSummary).toBeVisible()
@@ -548,23 +648,20 @@ test.describe('Confirm ICS Page', () => {
 
     test('In Person - prison', async ({ page }) => {
       await communitySupport.stubGetReferralInformation(200, REFERRAL_ID, referralInformationInPrison)
-      await test.step('Fill out reschedule form', async () => {
-        await page.goto(ChangeIcsDetailsPage.url(REFERRAL_ID))
-        const changeIcsDetailsPage = new ChangeIcsDetailsPage(page)
-        await changeIcsDetailsPage.dateInput.fill(format(futureDate, 'dd/MM/yyyy'))
-        await changeIcsDetailsPage.timeHourInput.fill('1')
-        await changeIcsDetailsPage.timeMinuteInput.fill('0')
-        await changeIcsDetailsPage.timeMeridiemInput.selectOption('PM')
-        await changeIcsDetailsPage.inPrisonRadioButton.check()
-        await changeIcsDetailsPage.prisonListSelect.selectOption('Albany (HMP)')
-        await changeIcsDetailsPage.saveAndContinueButton.click()
-      })
-      await test.step('Fill out reason for change form', async () => {
-        const changeIcsDetailsReasonPage = await ChangeIcsDetailsReasonPage.verifyOnPage(page)
-        await changeIcsDetailsReasonPage.whoRequestedRadios.items[2].input.check()
-        await changeIcsDetailsReasonPage.reasonTextarea.input.fill('reasons')
-        await changeIcsDetailsReasonPage.continueButton.click()
-      })
+      await fillRescheduleForm(
+        page,
+        futureDate,
+        '1',
+        '0',
+        'PM',
+        SessionMethod.IN_PERSON_PRISON,
+        [],
+        RequestedBy.PROBATION_PRACTITIONER,
+        'reasons',
+        {
+          prison: 'Albany (HMP)',
+        },
+      )
       await test.step('Check confirmIcs page', async () => {
         const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
         await expect(confirmIcsPage.icsDetailsSummary).toBeVisible()
@@ -584,25 +681,22 @@ test.describe('Confirm ICS Page', () => {
     })
 
     test('In Person - other location', async ({ page }) => {
-      await test.step('Fill out reschedule form', async () => {
-        await page.goto(ChangeIcsDetailsPage.url(REFERRAL_ID))
-        const changeIcsDetailsPage = new ChangeIcsDetailsPage(page)
-        await changeIcsDetailsPage.dateInput.fill(format(futureDate, 'dd/MM/yyyy'))
-        await changeIcsDetailsPage.timeHourInput.fill('1')
-        await changeIcsDetailsPage.timeMinuteInput.fill('0')
-        await changeIcsDetailsPage.timeMeridiemInput.selectOption('PM')
-        await changeIcsDetailsPage.inSomewhereElseRadioButton.check()
-        await changeIcsDetailsPage.addressLine1Input.fill('1 first street')
-        await changeIcsDetailsPage.townInput.fill('townton')
-        await changeIcsDetailsPage.postcodeInput.fill('EC1A 1AA')
-        await changeIcsDetailsPage.saveAndContinueButton.click()
-      })
-      await test.step('Fill out reason for change form', async () => {
-        const changeIcsDetailsReasonPage = await ChangeIcsDetailsReasonPage.verifyOnPage(page)
-        await changeIcsDetailsReasonPage.whoRequestedRadios.items[2].input.check()
-        await changeIcsDetailsReasonPage.reasonTextarea.input.fill('reasons')
-        await changeIcsDetailsReasonPage.continueButton.click()
-      })
+      await fillRescheduleForm(
+        page,
+        futureDate,
+        '1',
+        '0',
+        'PM',
+        SessionMethod.IN_PERSON_OTHER_LOCATION,
+        [],
+        RequestedBy.PROBATION_PRACTITIONER,
+        'reasons',
+        {
+          addressLine1: '1 first street',
+          town: 'townton',
+          postcode: 'EC1A 1AA',
+        },
+      )
       await test.step('Check confirmIcs page', async () => {
         const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
         await expect(confirmIcsPage.icsDetailsSummary).toBeVisible()
