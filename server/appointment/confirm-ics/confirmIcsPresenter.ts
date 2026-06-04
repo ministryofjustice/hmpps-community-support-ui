@@ -88,7 +88,7 @@ export default class ConfirmIcsPresenter extends PresenterBase<ConfirmIcsViewMod
     if (isInPerson) {
       locationValue =
         sessionMethodRequest.type === 'IN_PERSON_PROBATION_OFFICE'
-          ? { text: 'Probation office' }
+          ? { text: sessionMethodRequest.additionalDetails }
           : { html: formatAddress(sessionMethodRequest) }
     }
 

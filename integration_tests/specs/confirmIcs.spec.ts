@@ -60,6 +60,7 @@ const inPersonAppointmentRequest = {
   time: { hour: 10, minute: 30, amPm: 'am' },
   sessionMethodRequest: {
     type: 'IN_PERSON_PROBATION_OFFICE',
+    additionalDetails: 'Location of probation office',
   },
   sessionCommunication: ['informedByPhone', 'Letter'],
 }
@@ -86,6 +87,16 @@ const pastAppointmentRequest = {
     additionalDetails: 'Remote session.',
   },
   sessionCommunication: ['informedByPhone'],
+}
+
+const informedOtherAppointmentRequest = {
+  date: pastDateStr,
+  time: { hour: 9, minute: 0, amPm: 'am ' },
+  sessionMethodRequest: {
+    type: 'PHONE',
+    additionalDetails: 'Remote session.',
+  },
+  sessionCommunication: ['Informed by other method'],
 }
 
 const mockAppointmentIcsResponse = {
@@ -198,12 +209,12 @@ test.describe('Confirm ICS Page', () => {
     await expect(confirmIcsPage.notificationBanner).not.toBeVisible()
   })
 
-  test('should display Location row with "Probation office" for PROBATION_OFFICE method', async ({ page }) => {
+  test('should display Location row with the correct location for PROBATION_OFFICE method', async ({ page }) => {
     await seedAppointmentSession(page, inPersonAppointmentRequest)
     await page.goto(ConfirmIcsPage.url(REFERRAL_ID))
     const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
     await expect(confirmIcsPage.locationRow).toBeVisible()
-    await expect(confirmIcsPage.locationRow).toContainText('Probation office')
+    await expect(confirmIcsPage.locationRow).toContainText('Location of probation office')
   })
 
   test('should display Location row with address lines for OTHER_LOCATION method', async ({ page }) => {
@@ -247,11 +258,30 @@ test.describe('Confirm ICS Page', () => {
     })
   })
 
+  // IPB-2216:AC2
+  test('reschedule ics CYA page back link navigation', async ({ page }) => {
+    await seedAppointmentSession(page, phoneAppointmentRequest)
+    await seedChangeAppointmentDetails(page, changeAppointmentDetails)
+    await page.goto(ConfirmIcsPage.rescheduleUrl(REFERRAL_ID))
+    const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
+    await confirmIcsPage.backLink.click()
+    await expect(page).toHaveURL(ChangeIcsDetailsReasonPage.url(REFERRAL_ID))
+  })
+
+  // IPB-2216:AC3/AC4/AC5/AC6/AC7/AC10/AC11/AC12
   test('should display the Reason for change summary card details when rescheduling', async ({ page }) => {
     await seedAppointmentSession(page, phoneAppointmentRequest)
     await seedChangeAppointmentDetails(page, changeAppointmentDetails)
     await page.goto(ConfirmIcsPage.rescheduleUrl(REFERRAL_ID))
     const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
+
+    await expect(confirmIcsPage.icsDetailsSummary).toBeVisible()
+    await expect(confirmIcsPage.dateRow).toContainText(futureDateDisplay)
+    await expect(confirmIcsPage.startTimeRow).toContainText('1:00pm')
+    await expect(confirmIcsPage.methodRow).toContainText('Phone call')
+    await expect(confirmIcsPage.notInPersonReasonRow).toBeVisible()
+    await expect(confirmIcsPage.notInPersonReasonRow).toContainText('The referral dont have a vehicle')
+    await expect(confirmIcsPage.sessionCommunicationRow).toContainText('Phone call')
 
     await expect(confirmIcsPage.changeDetailsSummary).toBeVisible()
     await expect(confirmIcsPage.requestedByRow).toBeVisible()
@@ -260,6 +290,45 @@ test.describe('Confirm ICS Page', () => {
     await expect(confirmIcsPage.reasonForChangeRow).toContainText('There were technical issues')
   })
 
+  // IPB-2216:AC8
+  test('Reschedule Ics view location - probation office', async ({ page}) => {
+    await seedAppointmentSession(page, inPersonAppointmentRequest)
+    await seedChangeAppointmentDetails(page, changeAppointmentDetails)
+    await page.goto(ConfirmIcsPage.rescheduleUrl(REFERRAL_ID))
+    const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
+
+    await expect(confirmIcsPage.icsDetailsSummary).toBeVisible()
+    await expect(confirmIcsPage.locationRow).toBeVisible()
+    await expect(confirmIcsPage.locationRow).toContainText('Location of probation office')
+  })
+
+  // IPB-2216:AC9.2
+  test('Reschedule Ics view location - other location', async ({ page }) => {
+    await seedAppointmentSession(page, otherLocationAppointmentRequest)
+    await seedChangeAppointmentDetails(page, changeAppointmentDetails)
+    await page.goto(ConfirmIcsPage.rescheduleUrl(REFERRAL_ID))
+    const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
+
+    await expect(confirmIcsPage.locationRow).toBeVisible()
+    await expect(confirmIcsPage.locationRow).toContainText('123 Main Street')
+    await expect(confirmIcsPage.locationRow).toContainText('Flat 4')
+    await expect(confirmIcsPage.locationRow).toContainText('Leeds')
+    await expect(confirmIcsPage.locationRow).toContainText('West Yorkshire')
+    await expect(confirmIcsPage.locationRow).toContainText('LS1 1AA')
+  })
+
+  // IPB-2216:AC10.1
+  test('Reschedule Ics - informed by other should show correct content on CYA page', async ({ page }) => {
+    await seedAppointmentSession(page, informedOtherAppointmentRequest)
+    await seedChangeAppointmentDetails(page, changeAppointmentDetails)
+    await page.goto(ConfirmIcsPage.rescheduleUrl(REFERRAL_ID))
+    const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
+
+    await expect(confirmIcsPage.sessionCommunicationRow).toBeVisible()
+    await expect(confirmIcsPage.sessionCommunicationRow).toContainText('Informed by other method')
+  })
+
+  // IPB-2216:AC13/AC14
   test.describe('change links should work correctly when rescheduling the appointment', () => {
     test('Ics Details summary change link', async ({ page }) => {
       await seedAppointmentSession(page, phoneAppointmentRequest)
@@ -285,5 +354,25 @@ test.describe('Confirm ICS Page', () => {
       await icsReasonChangeLink.click()
       await expect(page).toHaveURL(ChangeIcsDetailsReasonPage.url(REFERRAL_ID))
     })
+  })
+
+  // IPB-2216:AC15
+  test('Reschedule Ics - submit updated details', async ({ page }) => {
+    const referralProgressWithRescheduledAppointments: ReferralProgress = buildReferralProgress([
+      { events: [{ status: 'SCHEDULED' }] },
+      { events: [{ status: 'RESCHEDULED' }] },
+    ])
+    await communitySupport.stubGetReferralProgress(referralProgressWithRescheduledAppointments, REFERRAL_ID)
+    await communitySupport.stubRescheduleICS(REFERRAL_ID, mockAppointmentIcsResponse, 200)
+    await seedAppointmentSession(page, informedOtherAppointmentRequest)
+    await seedChangeAppointmentDetails(page, changeAppointmentDetails)
+    await page.goto(ConfirmIcsPage.rescheduleUrl(REFERRAL_ID))
+    const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
+    await confirmIcsPage.submitButton.click()
+
+    await expect(page).toHaveURL(ReferralProgressPage.url(REFERRAL_ID))
+    const progressPage = await ReferralProgressPage.verifyOnPage(page)
+
+    expect(progressPage.table.body).toHaveLength(2)
   })
 })
