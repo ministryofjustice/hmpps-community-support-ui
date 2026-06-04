@@ -8,20 +8,20 @@ describe('AppointmentValidator', () => {
   })
 
   describe('getReasonKey', () => {
-    it('returns the key for ByPhone', () => {
-      expect(validator.getReasonKey('ByPhone')).toBe('ByPhone')
+    it('returns the key for byPhone', () => {
+      expect(validator.getReasonKey('byPhone')).toBe('byPhone')
     })
 
-    it('returns the key for ByVideo', () => {
-      expect(validator.getReasonKey('ByVideo')).toBe('ByVideo')
+    it('returns the key for byVideo', () => {
+      expect(validator.getReasonKey('byVideo')).toBe('byVideo')
     })
 
-    it('returns the key for InSomewhereElse', () => {
-      expect(validator.getReasonKey('InSomewhereElse')).toBe('InSomewhereElse')
+    it('returns the key for inSomewhereElse', () => {
+      expect(validator.getReasonKey('inSomewhereElse')).toBe('inSomewhereElse')
     })
 
     it('returns null for an unrecognised value', () => {
-      expect(validator.getReasonKey('InProbationOffice')).toBeNull()
+      expect(validator.getReasonKey('inProbationOffice')).toBeNull()
     })
   })
 })

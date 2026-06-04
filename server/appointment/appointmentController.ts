@@ -190,12 +190,16 @@ const getReasonFromFormData = (formData: ScheduledIcsFormData, sessionTakePlace:
 const mapSessionTakePlaceToType = (takePlace: string): SessionMethodRequest['type'] => {
   switch (takePlace) {
     case 'ByPhone':
+    case 'byPhone':
       return 'PHONE'
     case 'ByVideo':
+    case 'byVideo':
       return 'VIDEO'
     case 'InProbationOffice':
+    case 'inProbationOffice':
       return 'IN_PERSON_PROBATION_OFFICE'
     case 'InSomewhereElse':
+    case 'inSomewhereElse':
       return 'IN_PERSON_OTHER_LOCATION'
     default:
       return 'IN_PERSON_OTHER_LOCATION'
@@ -205,24 +209,24 @@ const mapSessionTakePlaceToType = (takePlace: string): SessionMethodRequest['typ
 const mapTypeToSessionTakePlace = (type: SessionMethodRequest['type']): string => {
   switch (type) {
     case 'PHONE':
-      return 'ByPhone'
+      return 'byPhone'
     case 'VIDEO':
-      return 'ByVideo'
+      return 'byVideo'
     case 'IN_PERSON_PROBATION_OFFICE':
-      return 'InProbationOffice'
+      return 'inProbationOffice'
     case 'IN_PERSON_OTHER_LOCATION':
-      return 'InSomewhereElse'
+      return 'inSomewhereElse'
     default:
-      return 'InSomewhereElse'
+      return 'inSomewhereElse'
   }
 }
 
 const getReasonKey = (sessionTakePlace: string): string | null => {
   switch (sessionTakePlace) {
     case 'ByPhone':
-      return 'ByPhone'
+      return 'byPhone'
     case 'ByVideo':
-      return 'ByVideo'
+      return 'byVideo'
     default:
       return null
   }
@@ -295,20 +299,20 @@ const getSessionMethodFromFormData = (formData: ScheduledIcsFormData): SessionMe
   if (sessionTakePlace) {
     const sessionMethod: SessionMethodRequest = { type: mapSessionTakePlaceToType(sessionTakePlace) }
 
-    if (['ByPhone', 'ByVideo'].includes(sessionTakePlace)) {
+    if (['byPhone', 'byVideo'].includes(sessionTakePlace)) {
       const reason = getReasonFromFormData(formData, sessionTakePlace)
       if (reason) sessionMethod.additionalDetails = reason
     }
 
-    if (sessionTakePlace === 'InProbationOffice' && formData.probationOffice) {
+    if (sessionTakePlace === 'inProbationOffice' && formData.probationOffice) {
       sessionMethod.additionalDetails = formData.probationOffice
     }
 
-    if (sessionTakePlace === 'InPrison' && formData.prison) {
+    if (sessionTakePlace === 'inPrison' && formData.prison) {
       sessionMethod.additionalDetails = formData.prison
     }
 
-    if (sessionTakePlace === 'InSomewhereElse') {
+    if (sessionTakePlace === 'inSomewhereElse') {
       sessionMethod.addressLine1 = formData.addressLine1
       sessionMethod.addressLine2 = formData.addressLine2
       sessionMethod.townOrCity = formData.addressTown
@@ -340,6 +344,7 @@ const loadFormFromSession = (
   if (!createAppointmentRequest) {
     return formData
   }
+  console.log('createAppointmentRequest :', JSON.stringify(createAppointmentRequest, null, 2))
   if (createAppointmentRequest.date) {
     try {
       formData.sessionDate = format(parse(createAppointmentRequest.date, 'yyyy-MM-dd', new Date()), 'd/M/yyyy')
@@ -367,13 +372,13 @@ const loadFormFromSession = (
 
     if (method.additionalDetails) {
       switch (validator.getReasonKey(formData.sessionTakePlace)) {
-        case 'ByPhone':
+        case 'byPhone':
           formData.byPhone = method.additionalDetails
           break
-        case 'ByVideo':
+        case 'byVideo':
           formData.byVideo = method.additionalDetails
           break
-        case 'InSomewhereElse':
+        case 'inSomewhereElse':
           formData.inSomewhereElse = method.additionalDetails
           break
         default:
@@ -396,6 +401,7 @@ const loadFormFromSession = (
     formData.informedMethods = []
   }
 
+  console.log('out formData :', JSON.stringify(formData, null, 2))
   return formData
 }
 
@@ -433,12 +439,29 @@ const createIcsSessionData = ({
   sessionMethod,
   sessionCommunications,
 }: AppointmentIcsResponse): CreateAppointmentRequest => {
-  return {
+  console.log('------createIcsSessionData------')
+  console.log(
+    'in :',
+    JSON.stringify(
+      {
+        appointmentDate,
+        appointmentTime,
+        sessionMethod,
+        sessionCommunications,
+      },
+      null,
+      2,
+    ),
+  )
+  const out = {
     date: appointmentDate,
     time: appointmentTime,
     sessionMethodRequest: createMethodSessionData(sessionMethod),
     sessionCommunication: sessionCommunications,
   }
+  console.log('out : ', JSON.stringify(out, null, 2))
+  console.log('======createIcsSessionData======')
+  return out
 }
 
 class AppointmentController {
@@ -531,6 +554,7 @@ class AppointmentController {
   async scheduleIcs(req: Request, res: Response): Promise<void> {
     const { username } = res.locals.user
     const { referralId } = req.params as { referralId: string }
+    // TODO see if we can remove this temp variable
     let createAppointmentRequest = req.session?.createAppointmentRequest
 
     const referralInformation = await this.referralService.getReferralInformation(referralId, username)

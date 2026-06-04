@@ -12,9 +12,9 @@ export interface ScheduleFormData {
   'sessionTime-minute'?: string
   'sessionTime-meridiem'?: string
   sessionTakePlace?: string
-  ByPhone?: string
-  ByVideo?: string
-  InSomewhereElse?: string
+  byPhone?: string
+  byVideo?: string
+  inSomewhereElse?: string
   probationOffice?: string
   prison?: string
   addressLine1?: string

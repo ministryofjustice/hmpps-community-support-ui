@@ -1,4 +1,4 @@
-import { Response } from 'express'
+import { json, Response } from 'express'
 import { ProbationOffice, ReferralInformation } from '@community-support-api'
 import { Prison } from '@prison-api'
 import PresenterBase from '../../presenter/presenterBase'
@@ -61,6 +61,7 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
     const content = this.buildStaticContent(res)
     const submitHref = content.submitHref.replace('{{ caseRef }}', this.caseReference)
     const backLinkHref = content.backLink.replace('{{ caseRef }}', this.caseReference)
+    console.log('buildPageContent - form data :', JSON.stringify(this.formData, null, 2))
     return {
       pageHeader: content.pageHeader,
       submitButtonText: content.submitButtonText,

@@ -1,12 +1,12 @@
 class AppointmentValidator {
   getReasonKey(sessionTakePlace: string): string | null {
     switch (sessionTakePlace) {
-      case 'ByPhone':
-        return 'ByPhone'
-      case 'ByVideo':
-        return 'ByVideo'
-      case 'InSomewhereElse':
-        return 'InSomewhereElse'
+      case 'byPhone':
+        return 'byPhone'
+      case 'byVideo':
+        return 'byVideo'
+      case 'inSomewhereElse':
+        return 'inSomewhereElse'
       default:
         return null
     }

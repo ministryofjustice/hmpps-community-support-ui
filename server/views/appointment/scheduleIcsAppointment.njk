@@ -74,7 +74,7 @@
       name: "byPhone",
       type: "text",
       value: content.formData["byPhone"],
-      errorMessage: errors.messages.ByPhone,
+      errorMessage: errors.messages.byPhone,
       spellcheck: false,
       classes: "govuk-!-width-full",
       label: {
@@ -90,7 +90,7 @@
       name: "byVideo",
       type: "text",
       value: content.formData["byVideo"],
-      errorMessage: errors.messages.ByVideo,
+      errorMessage: errors.messages.byVideo,
       spellcheck: false,
       classes: "govuk-!-width-full",
       label: {
@@ -201,25 +201,25 @@
   {% endif %}
 
   {% set items = [
-    { value: "ByPhone", text: "Phone call", conditional: { html: phoneCallHtml } },
-    { value: "ByVideo", text: "Video call", conditional: { html: videoCallHtml } }
+    { value: "byPhone", text: "Phone call", conditional: { html: phoneCallHtml } },
+    { value: "byVideo", text: "Video call", conditional: { html: videoCallHtml } }
   ] %}
 
   {% if content.isPersonInCommunity %}
     {% set items = (items.push({
-      value: "InProbationOffice",
+      value: "inProbationOffice",
       text: "In-person meeting - probation office",
       conditional: { html: inProbationOfficeHtml }
     }), items) %}
 
     {% set items = (items.push({
-      value: "InSomewhereElse",
+      value: "inSomewhereElse",
       text: "In-person meeting - somewhere else",
       conditional: { html: inSomewhereElseHtml }
     }), items) %}
   {% else %}
     {% set items = (items.push({
-      value: "InPrison",
+      value: "inPrison",
       text: "In-person meeting - prison establishment",
       conditional: { html: inPrisonHtml }
     }), items) %}
@@ -245,6 +245,10 @@
   }) }}
 
   {% set informMessage = "How was " + content.firstName + " informed about the session?" %}
+  {% set phoneChecked = content.formData.informedMethods.includes("Phone") %}
+  {% set textChecked = content.formData.informedMethods.includes("Text") %}
+  {% set emailChecked = content.formData.informedMethods.includes("Email") %}
+  {% set otherChecked = content.formData.informedMethods.includes("Other") %}
   {% if content.isPersonInCommunity %}
     {{ govukCheckboxes({
       id: "informedMethod",
@@ -263,19 +267,23 @@
       items: [
         {
           value: "informedByPhone",
-          text: "Phone call"
+          text: "Phone call",
+          checked: phoneChecked
         },
         {
           value: "informedByTextMessage",
-          text: "Text message"
+          text: "Text message",
+          checked: textChecked
         },
         {
           value: "informedByEmail",
-          text: "Email"
+          text: "Email",
+          checked: emailChecked
         },
         {
           value: "informedByOtherMethod",
           text: "Other",
+          checked: otherChecked,
           conditional: {
             html: otherMethodOfContactHtml
           }
