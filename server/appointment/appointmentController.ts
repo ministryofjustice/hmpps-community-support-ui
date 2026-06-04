@@ -44,7 +44,7 @@ interface ScheduledIcsFormData {
   'sessionTime-minute'?: string
   'sessionTime-meridiem'?: string
   sessionTakePlace?: string
-  byPhone?: string
+  ByPhone?: string
   byVideo?: string
   inSomewhereElse?: string
   probationOffice?: string
@@ -179,7 +179,7 @@ const loadIcsFeedbackFromSession = (
 const getReasonFromFormData = (formData: ScheduledIcsFormData, sessionTakePlace: string): string | undefined => {
   switch (sessionTakePlace) {
     case 'ByPhone':
-      return formData.byPhone
+      return formData.ByPhone
     case 'ByVideo':
       return formData.byVideo
     default:
@@ -246,7 +246,7 @@ const loadSessionMethodFromSession = (
   if (method.additionalDetails) {
     switch (getReasonKey(updatedFormData.sessionTakePlace)) {
       case 'ByPhone':
-        updatedFormData.byPhone = method.additionalDetails
+        updatedFormData.ByPhone = method.additionalDetails
         break
       case 'ByVideo':
         updatedFormData.byVideo = method.additionalDetails
@@ -370,7 +370,7 @@ const loadFormFromSession = (
     if (method.additionalDetails) {
       switch (validator.getReasonKey(formData.sessionTakePlace)) {
         case 'ByPhone':
-          formData.byPhone = method.additionalDetails
+          formData.ByPhone = method.additionalDetails
           break
         case 'ByVideo':
           formData.byVideo = method.additionalDetails
@@ -496,9 +496,13 @@ class AppointmentController {
     return presenter.renderPage(res)
   }
 
-  private async getExistingScheduledIcsFormData(caseRefId: string, username: string): Promise<ScheduledIcsFormData> {
-    const existingIcs = await this.appointmentService.getICS(caseRefId, username)
-    const sessionData = createIcsSessionData(existingIcs)
+  private async getExistingScheduledIcsFormData(
+    caseRefId: string,
+    username: string,
+    existingSessionData: CreateAppointmentRequest | undefined,
+  ): Promise<ScheduledIcsFormData> {
+    const sessionData =
+      existingSessionData || (await this.appointmentService.getICS(caseRefId, username).then(createIcsSessionData))
     return loadFormFromSession(sessionData, this.validator)
   }
 
@@ -509,7 +513,7 @@ class AppointmentController {
       this.referenceDataService.getProbationOffices(),
       this.referenceDataService.getPrisons(),
       this.referralService.getReferralInformation(caseRefId, username),
-      this.getExistingScheduledIcsFormData(caseRefId, username),
+      this.getExistingScheduledIcsFormData(caseRefId, username, req.session?.createAppointmentRequest),
     ])
 
     const validationErrors: ErrorMiddlewareErrors = formatDynamicErrorMessages(
@@ -533,6 +537,7 @@ class AppointmentController {
   async scheduleIcs(req: Request, res: Response): Promise<void> {
     const { username } = res.locals.user
     const { referralId } = req.params as { referralId: string }
+    // TODO see if we can remove this temp var
     let createAppointmentRequest = req.session?.createAppointmentRequest
 
     const referralInformation = await this.referralService.getReferralInformation(referralId, username)
@@ -545,7 +550,7 @@ class AppointmentController {
       'sessionTime-minute': req.body['sessionTime-minute'],
       'sessionTime-meridiem': req.body['sessionTime-meridiem']?.toLowerCase(),
       sessionTakePlace: req.body.sessionTakePlace,
-      byPhone: req.body.ByPhone,
+      ByPhone: req.body.ByPhone,
       byVideo: req.body.ByVideo,
       probationOffice: req.body.probationOfficeList,
       prison: req.body.prisonList,
@@ -566,6 +571,7 @@ class AppointmentController {
 
   async rescheduleIcs(req: Request, res: Response): Promise<void> {
     const caseRefId = req.params.caseRefId as string
+    // TODO see if we can remove this temp var
     let createAppointmentRequest = req.session?.createAppointmentRequest
 
     const informedMethodArr: string[] =
@@ -576,7 +582,7 @@ class AppointmentController {
       'sessionTime-minute': req.body['sessionTime-minute'],
       'sessionTime-meridiem': req.body['sessionTime-meridiem']?.toLowerCase(),
       sessionTakePlace: req.body.sessionTakePlace,
-      byPhone: req.body.ByPhone,
+      ByPhone: req.body.ByPhone,
       byVideo: req.body.ByVideo,
       probationOffice: req.body.probationOfficeList,
       prison: req.body.prisonList,

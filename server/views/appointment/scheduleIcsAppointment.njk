@@ -242,6 +242,16 @@
   }) }}
 
   {% set informMessage = "How was " + content.firstName + " informed about the session?" %}
+  {% set phoneChecked = false %}
+  {% set textChecked = false %}
+  {% set emailChecked = false %}
+  {% set otherChecked = false %}
+  {% if content.formData and content.formData.informedMethods %}
+    {% set phoneChecked = content.formData.informedMethods.includes("Phone") %}
+    {% set textChecked = content.formData.informedMethods.includes("Text") %}
+    {% set emailChecked = content.formData.informedMethods.includes("Email") %}
+    {% set otherChecked = content.formData.informedMethods.includes("Other") %}
+  {% endif %}
   {% if content.isPersonInCommunity %}
     {{ govukCheckboxes({
       id: "informedMethod",
@@ -259,19 +269,23 @@
       items: [
         {
           value: "informedByPhone",
-          text: "Phone call"
+          text: "Phone call",
+          checked: phoneChecked
         },
         {
           value: "informedByTextMessage",
-          text: "Text message"
+          text: "Text message",
+          checked: textChecked
         },
         {
           value: "informedByEmail",
-          text: "Email"
+          text: "Email",
+          checked: emailChecked
         },
         {
           value: "informedByOtherMethod",
           text: "Other",
+          checked: otherChecked,
           conditional: {
             html: otherMethodOfContactHtml
           }
