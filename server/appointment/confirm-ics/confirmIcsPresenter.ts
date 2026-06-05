@@ -63,6 +63,7 @@ export default class ConfirmIcsPresenter extends PresenterBase<ConfirmIcsViewMod
       PHONE: 'Phone call',
       VIDEO: 'Video call',
       IN_PERSON_PROBATION_OFFICE: 'In person',
+      IN_PERSON_PRISON: 'In person',
       IN_PERSON_OTHER_LOCATION: 'Other location',
     }
     return methods[type] ?? type

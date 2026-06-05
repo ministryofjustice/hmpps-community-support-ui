@@ -1,6 +1,13 @@
-import { expect, test } from '@playwright/test'
+import { expect, Page, test } from '@playwright/test'
 import { ReferralProgress } from '@community-support-api'
-import { login, resetStubs, seedAppointmentSession, seedChangeAppointmentDetails } from '../testUtils'
+import { format } from 'date-fns'
+import {
+  login,
+  randomCaseReferenceId,
+  resetStubs,
+  seedAppointmentSession,
+  seedChangeAppointmentDetails,
+} from '../testUtils'
 import ConfirmIcsPage from '../pages/confirmIcsPage'
 import communitySupport from '../mockApis/communitySupport'
 import prisonApi from '../mockApis/prisonApi'
@@ -10,8 +17,10 @@ import { probationOfficesData } from '../mockData/referenceData'
 import ScheduleIcsPage from '../pages/scheduleIcsPage'
 import ReferralProgressPage from '../pages/referralProgressPage'
 import ChangeIcsDetailsReasonPage from '../pages/ChangeIcsDetailsReasonPage'
+import initialContactSessionDetailsPageData from '../mockData/initialContactSessionDetailsPageData'
+import ChangeIcsDetailsPage from '../pages/ChangeIcsDetailsPage'
 
-const REFERRAL_ID = 'b190ac1e-1e2a-41c2-a4ac-3ceb9d2dcb1e' as const
+const REFERRAL_ID = randomCaseReferenceId()
 const REFERRAL_PROGRESS_URL = `/progress/${REFERRAL_ID}`
 
 function addDays(days: number): Date {
@@ -34,6 +43,11 @@ const pastDate = addDays(-30)
 const futureDateStr = toIsoDateString(futureDate)
 const pastDateStr = toIsoDateString(pastDate)
 const futureDateDisplay = toDisplayDate(futureDate)
+
+const pastMeeting = {
+  caseRefId: REFERRAL_ID,
+  data: initialContactSessionDetailsPageData.virtual(pastDate),
+}
 
 const phoneAppointmentRequest = {
   date: futureDateStr,
@@ -146,7 +160,10 @@ test.describe('Confirm ICS Page', () => {
     await page.goto('/')
     await login(page)
     await communitySupport.stubGetReferralProgress(referralProgressWithAppointments, REFERRAL_ID)
-    await communitySupport.stubGetReferralInformation(200, REFERRAL_ID, referralInformationInCommunity)
+    await communitySupport.stubGetReferralInformation(200, REFERRAL_ID)
+    await communitySupport.stubGetICS(pastMeeting.caseRefId, pastMeeting.data)
+    await prisonApi.stubGetPrisons()
+    await communitySupport.stubGetProbationOffices(probationOfficesData)
   })
 
   test('should display the ICS details summary card details for a phone appointment', async ({ page }) => {
@@ -397,5 +414,307 @@ test.describe('Confirm ICS Page', () => {
     const progressPage = await ReferralProgressPage.verifyOnPage(page)
 
     expect(progressPage.table.body).toHaveLength(2)
+  })
+
+  enum RequestedBy {
+    DELIVERY_PARTNER,
+    REFEREE,
+    PROBATION_PRACTITIONER,
+  }
+
+  enum InformedMethod {
+    PHONE,
+    EMAIL,
+    TEXT_MESSAGE,
+    OTHER,
+  }
+
+  enum SessionMethod {
+    PHONE,
+    VIDEO,
+    IN_PERSON_PROBATION_OFFICE,
+    IN_PERSON_PRISON,
+    IN_PERSON_OTHER_LOCATION,
+  }
+
+  const fillRescheduleForm = async (
+    page: Page,
+    date: Date,
+    hour: string,
+    minute: string,
+    amPm: string,
+    method: SessionMethod,
+    informedMethods: InformedMethod[],
+    requestedBy: RequestedBy,
+    reasonForChange: string,
+    options: {
+      probationOffice?: string
+      prison?: string
+      notInPersonReason?: string
+      informedOther?: string
+      addressLine1?: string
+      addressLine2?: string
+      town?: string
+      county?: string
+      postcode?: string
+    },
+  ) => {
+    await test.step('Fill out reschedule form', async () => {
+      await page.goto(ChangeIcsDetailsPage.url(REFERRAL_ID))
+      const changeIcsDetailsPage = new ChangeIcsDetailsPage(page)
+      await changeIcsDetailsPage.dateInput.fill(format(date, 'dd/MM/yyyy'))
+      await changeIcsDetailsPage.timeHourInput.fill(hour)
+      await changeIcsDetailsPage.timeMinuteInput.fill(minute)
+      await changeIcsDetailsPage.timeMeridiemInput.selectOption(amPm)
+      switch (method) {
+        case SessionMethod.PHONE:
+          await changeIcsDetailsPage.phoneCallRadioButton.check()
+          await changeIcsDetailsPage.phoneCallReasonInput.fill(options.notInPersonReason ?? '')
+          break
+        case SessionMethod.VIDEO:
+          await changeIcsDetailsPage.videoCallRadioButton.check()
+          await changeIcsDetailsPage.videoCallReasonInput.fill(options.notInPersonReason ?? '')
+          break
+        case SessionMethod.IN_PERSON_PROBATION_OFFICE:
+          await changeIcsDetailsPage.inProbationOfficeRadioButton.check()
+          await changeIcsDetailsPage.probationOfficeSelect.selectOption(options.probationOffice ?? '')
+          break
+        case SessionMethod.IN_PERSON_PRISON:
+          await changeIcsDetailsPage.inPrisonRadioButton.check()
+          await changeIcsDetailsPage.prisonListSelect.selectOption(options.prison ?? '')
+          break
+        case SessionMethod.IN_PERSON_OTHER_LOCATION:
+          await changeIcsDetailsPage.inSomewhereElseRadioButton.check()
+          await changeIcsDetailsPage.addressLine1Input.fill(options.addressLine1 ?? '')
+          await changeIcsDetailsPage.addressLine2Input.fill(options.addressLine2 ?? '')
+          await changeIcsDetailsPage.townInput.fill(options.town ?? '')
+          await changeIcsDetailsPage.countyInput.fill(options.county ?? '')
+          await changeIcsDetailsPage.postcodeInput.fill(options.postcode ?? '')
+          break
+        default:
+          break
+      }
+      if (informedMethods.includes(InformedMethod.PHONE)) {
+        await changeIcsDetailsPage.informedByPhoneCheckbox.check()
+      }
+      if (informedMethods.includes(InformedMethod.EMAIL)) {
+        await changeIcsDetailsPage.informedByEmailCheckbox.check()
+      }
+      if (informedMethods.includes(InformedMethod.TEXT_MESSAGE)) {
+        await changeIcsDetailsPage.informedByTextMessageCheckbox.check()
+      }
+      if (informedMethods.includes(InformedMethod.OTHER)) {
+        await changeIcsDetailsPage.informedByOtherMethodCheckbox.check()
+        await changeIcsDetailsPage.informedByOtherMethodInput.fill(options.informedOther ?? '')
+      }
+      await changeIcsDetailsPage.saveAndContinueButton.click()
+    })
+    await test.step('Fill out reason for change form', async () => {
+      const changeIcsDetailsReasonPage = await ChangeIcsDetailsReasonPage.verifyOnPage(page)
+      switch (requestedBy) {
+        case RequestedBy.DELIVERY_PARTNER:
+          await changeIcsDetailsReasonPage.whoRequestedRadios.items[0].input.check()
+          break
+        case RequestedBy.REFEREE:
+          await changeIcsDetailsReasonPage.whoRequestedRadios.items[1].input.check()
+          break
+        case RequestedBy.PROBATION_PRACTITIONER:
+          await changeIcsDetailsReasonPage.whoRequestedRadios.items[2].input.check()
+          break
+        default:
+          break
+      }
+      await changeIcsDetailsReasonPage.reasonTextarea.input.fill(reasonForChange)
+      await changeIcsDetailsReasonPage.continueButton.click()
+    })
+  }
+
+  test.describe('Reschedule ICS - Full journey happy path', () => {
+    test.beforeEach(async () => {
+      const referralProgressWithRescheduledAppointments: ReferralProgress = buildReferralProgress([
+        { events: [{ status: 'SCHEDULED' }] },
+        { events: [{ status: 'RESCHEDULED' }] },
+      ])
+      await communitySupport.stubGetReferralProgress(referralProgressWithRescheduledAppointments, REFERRAL_ID)
+      await communitySupport.stubRescheduleICS(REFERRAL_ID, mockAppointmentIcsResponse, 200)
+    })
+
+    test('Phone Call', async ({ page }) => {
+      await fillRescheduleForm(
+        page,
+        futureDate,
+        '1',
+        '0',
+        'PM',
+        SessionMethod.PHONE,
+        [InformedMethod.PHONE],
+        RequestedBy.DELIVERY_PARTNER,
+        'There were technical issues',
+        {
+          notInPersonReason: 'The referral dont have a vehicle',
+        },
+      )
+      await test.step('Check confirmIcs page', async () => {
+        const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
+        await expect(confirmIcsPage.icsDetailsSummary).toBeVisible()
+        await expect(confirmIcsPage.dateRow).toContainText(futureDateDisplay)
+        await expect(confirmIcsPage.startTimeRow).toContainText('1:00pm')
+        await expect(confirmIcsPage.methodRow).toContainText('Phone call')
+        await expect(confirmIcsPage.notInPersonReasonRow).toBeVisible()
+        await expect(confirmIcsPage.notInPersonReasonRow).toContainText('The referral dont have a vehicle')
+        await expect(confirmIcsPage.sessionCommunicationRow).toContainText('Phone call')
+        await expect(confirmIcsPage.changeDetailsSummary).toBeVisible()
+        await expect(confirmIcsPage.requestedByRow).toBeVisible()
+        await expect(confirmIcsPage.requestedByRow).toContainText('Delivery partner')
+        await expect(confirmIcsPage.reasonForChangeRow).toBeVisible()
+        await expect(confirmIcsPage.reasonForChangeRow).toContainText('There were technical issues')
+        await confirmIcsPage.submitButton.click()
+        await expect(page).toHaveURL(ReferralProgressPage.url(REFERRAL_ID))
+      })
+    })
+
+    test('Video Call', async ({ page }) => {
+      await fillRescheduleForm(
+        page,
+        futureDate,
+        '1',
+        '0',
+        'PM',
+        SessionMethod.VIDEO,
+        [InformedMethod.OTHER],
+        RequestedBy.REFEREE,
+        'car broke down',
+        {
+          notInPersonReason: 'The referral dont have a vehicle',
+          informedOther: 'Face to face',
+        },
+      )
+      await test.step('Check confirmIcs page', async () => {
+        const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
+        await expect(confirmIcsPage.icsDetailsSummary).toBeVisible()
+        await expect(confirmIcsPage.dateRow).toContainText(futureDateDisplay)
+        await expect(confirmIcsPage.startTimeRow).toContainText('1:00pm')
+        await expect(confirmIcsPage.methodRow).toContainText('Video call')
+        await expect(confirmIcsPage.notInPersonReasonRow).toBeVisible()
+        await expect(confirmIcsPage.notInPersonReasonRow).toContainText('The referral dont have a vehicle')
+        await expect(confirmIcsPage.sessionCommunicationRow).toContainText('Face to face')
+        await expect(confirmIcsPage.changeDetailsSummary).toBeVisible()
+        await expect(confirmIcsPage.requestedByRow).toBeVisible()
+        await expect(confirmIcsPage.requestedByRow).toContainText(
+          `${pastMeeting.data.referralFirstName} ${pastMeeting.data.referralLastName}`,
+        )
+        await expect(confirmIcsPage.reasonForChangeRow).toBeVisible()
+        await expect(confirmIcsPage.reasonForChangeRow).toContainText('car broke down')
+        await confirmIcsPage.submitButton.click()
+        await expect(page).toHaveURL(ReferralProgressPage.url(REFERRAL_ID))
+      })
+    })
+
+    test('In Person - probation office', async ({ page }) => {
+      await fillRescheduleForm(
+        page,
+        futureDate,
+        '1',
+        '0',
+        'PM',
+        SessionMethod.IN_PERSON_PROBATION_OFFICE,
+        [InformedMethod.TEXT_MESSAGE, InformedMethod.OTHER],
+        RequestedBy.PROBATION_PRACTITIONER,
+        'reasons',
+        {
+          probationOffice: 'Derby: Derwent Centre',
+          informedOther: 'Face to face',
+        },
+      )
+      await test.step('Check confirmIcs page', async () => {
+        const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
+        await expect(confirmIcsPage.icsDetailsSummary).toBeVisible()
+        await expect(confirmIcsPage.dateRow).toContainText(futureDateDisplay)
+        await expect(confirmIcsPage.startTimeRow).toContainText('1:00pm')
+        await expect(confirmIcsPage.methodRow).toContainText('In person')
+        await expect(confirmIcsPage.notInPersonReasonRow).not.toBeVisible()
+        await expect(confirmIcsPage.locationRow).toContainText('Derby: Derwent Centre')
+        await expect(confirmIcsPage.sessionCommunicationRow).toContainText('Face to face')
+        await expect(confirmIcsPage.sessionCommunicationRow).toContainText('Text message')
+        await expect(confirmIcsPage.changeDetailsSummary).toBeVisible()
+        await expect(confirmIcsPage.requestedByRow).toBeVisible()
+        await expect(confirmIcsPage.requestedByRow).toContainText('Probation practitioner')
+        await expect(confirmIcsPage.reasonForChangeRow).toBeVisible()
+        await expect(confirmIcsPage.reasonForChangeRow).toContainText('reasons')
+        await confirmIcsPage.submitButton.click()
+        await expect(page).toHaveURL(ReferralProgressPage.url(REFERRAL_ID))
+      })
+    })
+
+    test('In Person - prison', async ({ page }) => {
+      await communitySupport.stubGetReferralInformation(200, REFERRAL_ID, referralInformationInPrison)
+      await fillRescheduleForm(
+        page,
+        futureDate,
+        '1',
+        '0',
+        'PM',
+        SessionMethod.IN_PERSON_PRISON,
+        [],
+        RequestedBy.PROBATION_PRACTITIONER,
+        'reasons',
+        {
+          prison: 'Albany (HMP)',
+        },
+      )
+      await test.step('Check confirmIcs page', async () => {
+        const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
+        await expect(confirmIcsPage.icsDetailsSummary).toBeVisible()
+        await expect(confirmIcsPage.dateRow).toContainText(futureDateDisplay)
+        await expect(confirmIcsPage.startTimeRow).toContainText('1:00pm')
+        await expect(confirmIcsPage.methodRow).toContainText('In person')
+        await expect(confirmIcsPage.notInPersonReasonRow).not.toBeVisible()
+        await expect(confirmIcsPage.locationRow).toContainText('ALI')
+        await expect(confirmIcsPage.changeDetailsSummary).toBeVisible()
+        await expect(confirmIcsPage.requestedByRow).toBeVisible()
+        await expect(confirmIcsPage.requestedByRow).toContainText('Probation practitioner')
+        await expect(confirmIcsPage.reasonForChangeRow).toBeVisible()
+        await expect(confirmIcsPage.reasonForChangeRow).toContainText('reasons')
+        await confirmIcsPage.submitButton.click()
+        await expect(page).toHaveURL(ReferralProgressPage.url(REFERRAL_ID))
+      })
+    })
+
+    test('In Person - other location', async ({ page }) => {
+      await fillRescheduleForm(
+        page,
+        futureDate,
+        '1',
+        '0',
+        'PM',
+        SessionMethod.IN_PERSON_OTHER_LOCATION,
+        [],
+        RequestedBy.PROBATION_PRACTITIONER,
+        'reasons',
+        {
+          addressLine1: '1 first street',
+          town: 'townton',
+          postcode: 'EC1A 1AA',
+        },
+      )
+      await test.step('Check confirmIcs page', async () => {
+        const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
+        await expect(confirmIcsPage.icsDetailsSummary).toBeVisible()
+        await expect(confirmIcsPage.dateRow).toContainText(futureDateDisplay)
+        await expect(confirmIcsPage.startTimeRow).toContainText('1:00pm')
+        await expect(confirmIcsPage.methodRow).toContainText('Other location')
+        await expect(confirmIcsPage.notInPersonReasonRow).not.toBeVisible()
+        await expect(confirmIcsPage.locationRow).toContainText('1 first street')
+        await expect(confirmIcsPage.locationRow).toContainText('townton')
+        await expect(confirmIcsPage.locationRow).toContainText('EC1A 1AA')
+        await expect(confirmIcsPage.changeDetailsSummary).toBeVisible()
+        await expect(confirmIcsPage.requestedByRow).toBeVisible()
+        await expect(confirmIcsPage.requestedByRow).toContainText('Probation practitioner')
+        await expect(confirmIcsPage.reasonForChangeRow).toBeVisible()
+        await expect(confirmIcsPage.reasonForChangeRow).toContainText('reasons')
+        await confirmIcsPage.submitButton.click()
+        await expect(page).toHaveURL(ReferralProgressPage.url(REFERRAL_ID))
+      })
+    })
   })
 })
