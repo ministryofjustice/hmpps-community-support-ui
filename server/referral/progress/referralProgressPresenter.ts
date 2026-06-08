@@ -26,7 +26,7 @@ const getStatusConfig = (caseReference: string): Record<StatusKey, StatusConfig>
   SCHEDULED: {
     label: 'Scheduled',
     tagClass: 'govuk-tag--blue',
-    actions: [{ label: 'View or change details', href: `/referral-details/${caseReference}/check-change-ics` }],
+    actions: [{ label: 'View or change details', href: `/referral-details/${caseReference}/ics-view-or-change ` }],
   },
   NEEDS_FEEDBACK: {
     label: 'Needs feedback',
@@ -52,7 +52,7 @@ const getStatusConfig = (caseReference: string): Record<StatusKey, StatusConfig>
   RESCHEDULED: {
     label: 'Rescheduled',
     tagClass: 'govuk-tag--grey',
-    actions: [{ label: 'View or change details', href: `/referral-details/${caseReference}/check-change-ics` }],
+    actions: [{ label: 'View or change details', href: `/referral-details/${caseReference}/ics-view-or-change ` }],
   },
   COMPLETED: {
     label: 'Completed',
@@ -131,11 +131,13 @@ export default class ReferralProgressPresenter extends PresenterBase<
   }
 
   private buildSuccessBanner(heading: string, body: string): GovukFrontendNotificationBanner {
+    const hasBody = body && body.trim() !== ''
+
     return {
       type: 'success',
       html: `
         <h3 class="govuk-notification-banner__heading">${heading}</h3>
-        <p class="govuk-body">${body}</p>
+        ${hasBody ? `<p class="govuk-body">${body}</p>` : ''}
       `,
     }
   }

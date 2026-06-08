@@ -459,7 +459,7 @@ export interface components {
     }
     SessionMethodRequest: {
       /** @enum {string} */
-      type: 'PHONE' | 'VIDEO' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION'
+      type: 'PHONE' | 'VIDEO' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_PRISON' | 'IN_PERSON_OTHER_LOCATION'
       additionalDetails?: string | null
       pdu?: string | null
       addressLine1?: string | null
