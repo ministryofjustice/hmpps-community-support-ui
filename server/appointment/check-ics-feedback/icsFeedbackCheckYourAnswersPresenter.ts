@@ -48,6 +48,7 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
               if (!values[index]) {
                 return null
               }
+
               return {
                 key: {
                   text: row.text.includes('firstname') ? row.text.replace('firstname', this.firstName) : row.text,
@@ -61,10 +62,12 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
                     {
                       href: row.changeHref.replace('caseRefId', this.caseRefId),
                       text: 'Change',
+                      visuallyHiddenText: row.hint.includes('firstname')
+                        ? row.hint.replace('firstname', this.firstName)
+                        : row.hint,
                     },
                   ],
                 },
-                hint: row.hint,
               }
             })
             .filter(row => row !== null) as GovukFrontendSummaryListRow[],
