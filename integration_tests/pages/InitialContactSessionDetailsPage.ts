@@ -14,7 +14,7 @@ export default class InitialContactSessionDetailsPage extends AbstractPage {
   }
 
   static url(caseRefId: string): string {
-    return `/referral-details/${caseRefId}/check-change-ics`
+    return `/referral-details/${caseRefId}/ics-view-or-change`
   }
 
   static async verifyOnPage(page: Page): Promise<InitialContactSessionDetailsPage> {

@@ -26,7 +26,7 @@ const getStatusConfig = (caseReference: string): Record<StatusKey, StatusConfig>
   SCHEDULED: {
     label: 'Scheduled',
     tagClass: 'govuk-tag--blue',
-    actions: [{ label: 'View or change details', href: `/referral-details/${caseReference}/check-change-ics` }],
+    actions: [{ label: 'View or change details', href: `/referral-details/${caseReference}/ics-view-or-change ` }],
   },
   NEEDS_FEEDBACK: {
     label: 'Needs feedback',
@@ -52,7 +52,7 @@ const getStatusConfig = (caseReference: string): Record<StatusKey, StatusConfig>
   RESCHEDULED: {
     label: 'Rescheduled',
     tagClass: 'govuk-tag--grey',
-    actions: [{ label: 'View or change details', href: `/referral-details/${caseReference}/check-change-ics` }],
+    actions: [{ label: 'View or change details', href: `/referral-details/${caseReference}/ics-view-or-change ` }],
   },
   COMPLETED: {
     label: 'Completed',
