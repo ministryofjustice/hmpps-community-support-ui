@@ -175,7 +175,7 @@
     "yesText": "Yes",
     "noText": "No"
   },
-  "/referral-details/:id/check-change-ics": {
+  "/referral-details/:id/ics-view-or-change": {
     "title": "View or change session details",
     "heading": "View or change session details",
     "details": {
@@ -412,7 +412,7 @@
     "pageHeader": "Change session details",
     "submitButtonText": "Save and continue",
     "submitHref": "/referral/{{ caseRef }}/ics-change-details",
-    "backLink": "/referral-details/{{ caseRef }}/check-change-ics"
+    "backLink": "/referral-details/{{ caseRef }}/ics-view-or-change"
   },
   "/referral/:id/ics-change-details/check-answers": {
     "pageHeader": "Check the details before scheduling the ICS",
