@@ -250,7 +250,7 @@
           },
           {
             "text": "Did firstname come to the appointment?",
-            "hint": "Did firstname come to the appointment?",
+            "hint": "Did firstname come to the appointment",
             "changeHref": "/ics-feedback/caseRefId/attendance"
           },
           {
@@ -264,7 +264,7 @@
             "changeHref": "/ics-feedback/caseRefId/did-session-take-place"
           },
           {
-            "text": "Reason session not in person",
+            "text": "Reason session was not in person",
             "hint": "Why was the session not in person",
             "changeHref": "/ics-feedback/caseRefId/did-session-take-place"
           }
@@ -274,13 +274,13 @@
         "summaryTitle": "Session details",
         "rows": [
           {
-            "text": "Was firstname late?",
+            "text": "Was firstname late",
             "hint": "If firstname was late",
             "changeHref": "/ics-feedback/caseRefId/session-details"
           },
           {
-            "text": "Why firstname was late?",
-            "hint": "If firstname was late",
+            "text": "Why was firstname was late?",
+            "hint": "Why was firstname was late",
             "changeHref": "/ics-feedback/caseRefId/session-details"
           },
           {

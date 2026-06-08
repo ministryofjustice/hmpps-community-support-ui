@@ -208,7 +208,7 @@ test.describe('Ics Feedback CYA Page', () => {
     await seedSessionWithIcsFeedback(page, icsFeedbackSubmissionOtherAddress)
     await page.goto(`ics-feedback/${caseRefId}/check-answers`)
     const icsFeedbackCheckYourAnswersPage = await IcsFeedbackCheckYourAnswersPage.verifyOnPage(page)
-    expect(page.getByText(`Was ${mockAppointmentIcsResponse.referralFirstName} late?`)).toBeVisible()
+    expect(page.getByText(`Was ${mockAppointmentIcsResponse.referralFirstName} late`)).toBeVisible()
     expect(icsFeedbackCheckYourAnswersPage.sessionDetailsSummary).toBeVisible()
     expect(icsFeedbackCheckYourAnswersPage.backLink).toHaveAttribute(
       'href',
@@ -235,7 +235,11 @@ test.describe('Ics Feedback CYA Page', () => {
     await seedSessionWithIcsFeedback(page, icsFeedbackSubmissionDidNotAttend)
     await page.goto(`ics-feedback/${caseRefId}/check-answers`)
     const icsFeedbackCheckYourAnswersPage = await IcsFeedbackCheckYourAnswersPage.verifyOnPage(page)
-    expect(page.getByText('how you tried to contact')).toBeVisible()
+    expect(
+      page.getByText(
+        `Details about how you tried to contact ${mockAppointmentIcsResponse.referralFirstName} and why they did not attend`,
+      ),
+    ).toBeVisible()
     expect(icsFeedbackCheckYourAnswersPage.sessionFeedbackSummary).toBeVisible()
     expect(icsFeedbackCheckYourAnswersPage.backLink).toHaveAttribute(
       'href',
