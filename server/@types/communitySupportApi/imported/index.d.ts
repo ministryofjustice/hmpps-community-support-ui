@@ -683,7 +683,7 @@ export interface components {
     }
     ReferralAppointmentHistoryDto: {
       /** Format: uuid */
-      appointmentId: string
+      appointmentIcsId: string
       /** @enum {string} */
       type: 'ICS'
       /** Format: date-time */

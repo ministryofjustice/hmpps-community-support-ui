@@ -146,7 +146,8 @@
       }
     ],
     "progressActiveColumnHeaders": ["Date and time", "Status", "Action"],
-    "progressInactiveColumnHeaders": ["Status", "Action"]
+    "progressInactiveColumnHeaders": ["Status", "Action"],
+    "historySummary": "View ICS history"
   },
   "/ics-feedback/:id/did-session-take-place": {
     "submitButtonText": "Continue",
@@ -192,6 +193,10 @@
       "change": "/referral/{{ id }}/ics-change-details",
       "back": "/progress/{{ id }}"
     }
+  },
+  "/referral-details/:id/ics-view-or-change/:id": {
+    "title": "View session details",
+    "heading": "View session details"
   },
   "/ics-feedback": {
     "attendanceForm": {

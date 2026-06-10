@@ -17,7 +17,17 @@ type TabKey = 'caseDetails' | 'progress' | 'changeLog'
 type StatusKey = ReferralAppointmentHistory['status'] | 'NOT_SCHEDULED'
 type StatusConfig = { label: string; tagClass: string; actions: { label: string; href: string }[] }
 
-const getStatusConfig = (caseReference: string): Record<StatusKey, StatusConfig> => ({
+enum StatusKeySortOrder {
+  COMPLETED,
+  SCHEDULED,
+  NEEDS_FEEDBACK,
+  RESCHEDULED, // TODO Rename to CHANGED
+  DID_NOT_HAPPEN,
+  DID_NOT_ATTEND,
+  NOT_SCHEDULED,
+}
+
+const getStatusConfig = (caseReference: string, appointmentIcsId: string): Record<StatusKey, StatusConfig> => ({
   NOT_SCHEDULED: {
     label: 'Not scheduled',
     tagClass: 'govuk-tag--grey',
@@ -26,7 +36,7 @@ const getStatusConfig = (caseReference: string): Record<StatusKey, StatusConfig>
   SCHEDULED: {
     label: 'Scheduled',
     tagClass: 'govuk-tag--blue',
-    actions: [{ label: 'View or change details', href: `/referral-details/${caseReference}/ics-view-or-change ` }],
+    actions: [{ label: 'View or change details', href: `/referral-details/${caseReference}/ics-view-or-change` }],
   },
   NEEDS_FEEDBACK: {
     label: 'Needs feedback',
@@ -50,9 +60,9 @@ const getStatusConfig = (caseReference: string): Record<StatusKey, StatusConfig>
     ],
   },
   RESCHEDULED: {
-    label: 'Rescheduled',
-    tagClass: 'govuk-tag--grey',
-    actions: [{ label: 'View or change details', href: `/referral-details/${caseReference}/ics-view-or-change ` }],
+    label: 'Changed',
+    tagClass: 'govuk-tag--red',
+    actions: [{ label: 'View session details', href: `/referral-details/${caseReference}/ics-view-or-change/${appointmentIcsId}` }],
   },
   COMPLETED: {
     label: 'Completed',
@@ -69,10 +79,7 @@ const getAppointmentStatus = ({ status, dateTime }: ReferralAppointmentHistory):
   return isPast(dateTime) ? 'NEEDS_FEEDBACK' : status
 }
 
-export default class ReferralProgressPresenter extends PresenterBase<
-  ReferralProgressViewModel,
-  ReferralProgressContent
-> {
+export default class ReferralProgressPresenter extends PresenterBase<ReferralProgressViewModel, ReferralProgressContent> {
   private readonly name: string
 
   private readonly tabPaths: Record<TabKey, string>
@@ -93,7 +100,7 @@ export default class ReferralProgressPresenter extends PresenterBase<
 
   buildPageContent(res: Response): ReferralProgressViewModel {
     const content = this.buildStaticContent(res)
-    const [latestAppointment] = this.getLatestAppointments()
+    const [latestAppointment] = this.getAppointments()
 
     return {
       pageHeader: `${content.pageHeader} ${this.name}`,
@@ -102,6 +109,8 @@ export default class ReferralProgressPresenter extends PresenterBase<
       backLink: { href: '/cases-in-progress' },
       notificationBanner: this.getNotificationBanner(),
       icsAppointmentTable: this.buildIcsAppointmentTable(content, !!latestAppointment),
+      historySummary: content.historySummary,
+      icsAppointmentHistoryTable: this.buildIcsAppointmentHistoryTable(content),
     }
   }
 
@@ -176,7 +185,18 @@ export default class ReferralProgressPresenter extends PresenterBase<
         'data-testid': 'referral-progress-table',
       },
       head: this.buildIcsAppointmentColumnHeaders(headers),
-      rows: hasAppointment ? this.buildInProgressTableRows() : this.buildNotScheduledRow(),
+      rows: hasAppointment ? this.buildInProgressTableRow() : this.buildNotScheduledRow(),
+    }
+  }
+
+  private buildIcsAppointmentHistoryTable(content: ReferralProgressContent): GovukFrontendTable {
+    return {
+      attributes: {
+        'data-module': 'moj-sortable-table',
+        'data-testid': 'referral-history-table',
+      },
+      head: this.buildIcsAppointmentColumnHeaders(content.progressActiveColumnHeaders),
+      rows: this.buildAppointmentHistoryTableRows()
     }
   }
 
@@ -185,7 +205,7 @@ export default class ReferralProgressPresenter extends PresenterBase<
   }
 
   private buildNotScheduledRow(): GovukFrontendTableRow[] {
-    const configMap = getStatusConfig(this.caseReference)
+    const configMap = getStatusConfig(this.caseReference, '')
     const config = configMap.NOT_SCHEDULED
     return [
       [
@@ -195,18 +215,28 @@ export default class ReferralProgressPresenter extends PresenterBase<
     ]
   }
 
-  private buildInProgressTableRows(): GovukFrontendTableRow[] {
-    const latestAppointments = this.getLatestAppointments()
+  private buildProgressTableRow(row: ReferralAppointmentHistory): GovukFrontendTableRow {
+    const configMap = getStatusConfig(this.caseReference, row.appointmentIcsId)
+    const appointementStatus = getAppointmentStatus(row)
+    const config = configMap[appointementStatus] ?? configMap.NOT_SCHEDULED
 
-    return latestAppointments.map(appointment => {
-      const configMap = getStatusConfig(this.caseReference)
-      const appointmentStatus = getAppointmentStatus(appointment)
-      const config = configMap[appointmentStatus] ?? configMap.NOT_SCHEDULED
-      return [
-        { text: this.formatAppointmentDateTime(appointment.dateTime) },
-        { html: `<span class="govuk-tag ${config.tagClass}">${config.label}</span>` },
-        { html: this.renderActions(config.actions) },
-      ]
+    return [
+      { text: this.formatAppointmentDateTime(row.dateTime) },
+      { html: `<span class="govuk-tag ${config.tagClass}">${config.label}</span>` },
+      { html: this.renderActions(config.actions) },
+    ]
+  }
+
+  private buildInProgressTableRow(): GovukFrontendTableRow[] {
+    const [current] = this.getAppointments()
+    return [this.buildProgressTableRow(current)]
+  }
+
+  private buildAppointmentHistoryTableRows(): GovukFrontendTableRow[] {
+    const [, ...history] = this.getAppointments()
+
+    return history.map(appointment => {
+      return this.buildProgressTableRow(appointment)
     })
   }
 
@@ -218,18 +248,17 @@ export default class ReferralProgressPresenter extends PresenterBase<
     `
   }
 
-  private getLatestAppointments(): ReferralAppointmentHistory[] {
-    const latest = new Map<string, ReferralAppointmentHistory>()
+  private getAppointments(): ReferralAppointmentHistory[] {
+    const appointments = new Map<string, ReferralAppointmentHistory>()
 
     for (const appt of this.referralProgress.appointments ?? []) {
-      const key = appt.appointmentId ?? `unknown-${appt.dateTime}`
-      const existing = latest.get(key)
-
-      if (!existing || appt.dateTime > existing.dateTime) {
-        latest.set(key, appt)
-      }
+      const key = appt.appointmentIcsId ?? `unknown-${appt.dateTime}`
+      appointments.set(key, appt)
     }
 
-    return [...latest.values()].sort((a, b) => b.dateTime.localeCompare(a.dateTime))
+    // TODO after backend update, remove sort
+    return [...appointments.values()].sort(
+      (a, b) => StatusKeySortOrder[a.status] - StatusKeySortOrder[b.status] || b.dateTime.localeCompare(a.dateTime),
+    )
   }
 }

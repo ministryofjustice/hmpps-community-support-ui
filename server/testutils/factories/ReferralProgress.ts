@@ -11,7 +11,7 @@ export default ReferralProgressFactory.define<ReferralProgress>(({ sequence }) =
   fullName: 'Person Name',
   appointments: [
     {
-      appointmentId: `app-${sequence}`,
+      appointmentIcsId: `app-${sequence}`,
       type: 'ICS',
       dateTime: '2026-03-27T13:00:00',
       status: 'SCHEDULED',

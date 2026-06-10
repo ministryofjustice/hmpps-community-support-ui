@@ -1,5 +1,10 @@
 import { Response } from 'express'
-import { GovukFrontendSummaryList, GovukFrontendBackLink, GovukFrontendSummaryListRow } from '@govuk-frontend'
+import {
+  GovukFrontendSummaryList,
+  GovukFrontendBackLink,
+  GovukFrontendSummaryListRow,
+  GovukFrontendSummaryListCardActions,
+} from '@govuk-frontend'
 import { AppointmentIcsResponse } from '@community-support-api'
 import nunjucks from 'nunjucks'
 import PresenterBase from '../presenter/presenterBase'
@@ -108,6 +113,7 @@ export default class InitialContactSessionDetailsPresenter extends PresenterBase
       sessionCommunications,
     }: AppointmentIcsResponse,
     private readonly caseRef: string,
+    private readonly showChange: boolean = true,
   ) {
     super()
     this.name = referralFirstName
@@ -143,17 +149,11 @@ export default class InitialContactSessionDetailsPresenter extends PresenterBase
 
   private buildDetails(cardContent: DetailsCard, changeLink: string, name: string): GovukFrontendSummaryList {
     const informedLabel = nunjucks.renderString(cardContent.informedLabel, { name })
+    const actions: GovukFrontendSummaryListCardActions = this.showChange ? {items: [{ href: changeLink, text: cardContent.changeLink }]} : {}
     return {
       card: {
         title: { text: cardContent.heading },
-        actions: {
-          items: [
-            {
-              href: changeLink,
-              text: cardContent.changeLink,
-            },
-          ],
-        },
+        actions: actions,
         attributes: { 'data-testid': 'details' },
       },
       rows: [

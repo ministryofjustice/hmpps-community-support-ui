@@ -3,6 +3,7 @@
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 {% from "moj/components/sub-navigation/macro.njk" import mojSubNavigation %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
 
 {% set pageTitle = "Referral progress – " + applicationName %}
 {% set mainClasses = "govuk-body" %}
@@ -21,6 +22,13 @@
 
   {% if content.icsAppointmentTable and content.icsAppointmentTable.rows.length %}
     {{ govukTable(content.icsAppointmentTable) }}
+    {% if content.icsAppointmentHistoryTable and content.icsAppointmentHistoryTable.rows.length %}
+      {% set historyTable = govukTable(content.icsAppointmentHistoryTable) %}
+      {{ govukDetails({
+        summaryText: content.historySummary,
+        html: historyTable
+      }) }}
+    {% endif %}
   {% else %}
     <p class="govuk-body">No appointments scheduled</p>
   {% endif %}
