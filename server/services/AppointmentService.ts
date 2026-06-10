@@ -44,4 +44,8 @@ export default class AppointmentService {
     const rescheduleAppointmentRequest = { ...createAppointmentRequest, ...changeAppointmentDetails }
     return this.communitySupportApiClient.submitRescheduleICS(caseRefId, rescheduleAppointmentRequest, username)
   }
+
+  getIcsSessionFeedback(icsFeedbackId: string, username: string): Promise<IcsFeedbackSubmissionResponse> {
+    return this.communitySupportApiClient.getIcsSessionFeedback(icsFeedbackId, username)
+  }
 }

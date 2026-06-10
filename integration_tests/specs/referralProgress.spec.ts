@@ -11,20 +11,20 @@ import { ReferralProgressBannerContent } from '../../server/referral/progress/Re
 
 test.describe('Referral Progress Page', () => {
   const caseReference = 'AB1234CD'
-  const baseDate = new Date('2026-03-25T10:00:00')
+  const baseDate = new Date('2026-03-25T10:00:00') // remove as its in utils
 
   const referralProgressNoAppointments: ReferralProgress = buildReferralProgress([{ events: [] }])
 
   const appointmentScheduled: ReferralProgress = buildReferralProgress([
     {
-      appointmentId: randomUUID(),
+      appointmentIcsId: randomUUID(),
       events: [{ status: 'SCHEDULED', dateTime: daysAfter(baseDate, 1) }],
     },
   ])
 
   const appointmentDidNotHappen: ReferralProgress = buildReferralProgress([
     {
-      appointmentId: randomUUID(),
+      appointmentIcsId: randomUUID(),
       events: [
         { status: 'SCHEDULED', dateTime: daysAfter(baseDate, 1) },
         { status: 'NEEDS_FEEDBACK', dateTime: daysAfter(baseDate, 2) },
@@ -35,7 +35,7 @@ test.describe('Referral Progress Page', () => {
 
   const appointmentDidNotAttend: ReferralProgress = buildReferralProgress([
     {
-      appointmentId: randomUUID(),
+      appointmentIcsId: randomUUID(),
       events: [
         { status: 'SCHEDULED', dateTime: daysAfter(baseDate, 1) },
         { status: 'NEEDS_FEEDBACK', dateTime: daysAfter(baseDate, 2) },
@@ -46,7 +46,7 @@ test.describe('Referral Progress Page', () => {
 
   const appointmentCompleted: ReferralProgress = buildReferralProgress([
     {
-      appointmentId: randomUUID(),
+      appointmentIcsId: randomUUID(),
       events: [
         { status: 'SCHEDULED', dateTime: daysAfter(baseDate, 0) },
         { status: 'NEEDS_FEEDBACK', dateTime: daysAfter(baseDate, 1) },

@@ -236,7 +236,9 @@ test.describe('Confirm ICS Page', () => {
     await expect(confirmIcsPage.notificationBanner).not.toBeVisible()
   })
 
-  test('should display Location row with the correct location for PROBATION_OFFICE method', async ({ page }) => {
+  test('should display Location row with the correct location for IN_PERSON_PROBATION_OFFICE method', async ({
+    page,
+  }) => {
     await seedAppointmentSession(page, inPersonAppointmentRequest)
     await page.goto(ConfirmIcsPage.url(REFERRAL_ID))
     const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
@@ -244,7 +246,7 @@ test.describe('Confirm ICS Page', () => {
     await expect(confirmIcsPage.locationRow).toContainText('Location of probation office')
   })
 
-  test('should display Location row with address lines for OTHER_LOCATION method', async ({ page }) => {
+  test('should display Location row with address lines for IN_PERSON_OTHER_LOCATION method', async ({ page }) => {
     await seedAppointmentSession(page, otherLocationAppointmentRequest)
     await page.goto(ConfirmIcsPage.url(REFERRAL_ID))
     const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)

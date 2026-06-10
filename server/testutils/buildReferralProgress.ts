@@ -4,10 +4,11 @@ import { randomUUID } from 'crypto'
 type AppointmentEvent = {
   status: ReferralAppointmentHistory['status']
   dateTime?: string
+  icsFeedbackId?: string
 }
 
 type AppointmentGroup = {
-  appointmentId?: string
+  appointmentIcsId?: string
   events: AppointmentEvent[]
 }
 
@@ -19,13 +20,14 @@ export default function buildReferralProgress(
     referralId,
     fullName: 'Test User',
     appointments: groups.flatMap((group, groupIndex) => {
-      const appointmentId = group.appointmentId ?? `app-${groupIndex + 1}`
+      const appointmentIcsId = group.appointmentIcsId ?? `app-${groupIndex + 1}`
 
       return group.events.map((event, eventIndex) => ({
-        appointmentId,
+        appointmentIcsId,
         type: 'ICS',
         dateTime: event.dateTime ?? `2026-03-${25 + groupIndex}T${10 + eventIndex}:00:00`,
         status: event.status,
+        icsFeedbackId: event.icsFeedbackId,
       }))
     }),
   }

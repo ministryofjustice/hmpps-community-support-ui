@@ -123,4 +123,8 @@ export default class CommunitySupportApiClient extends RestClient {
   ): Promise<AppointmentIcsResponse> {
     return this.put({ path: `/bff/referral/${caseRefId}/ics`, data: rescheduleAppointmentRequest }, asSystem(username))
   }
+
+  getIcsSessionFeedback(icsFeedbackId: string, username: string): Promise<IcsFeedbackSubmissionResponse> {
+    return this.get({ path: `/bff/ics-feedback/${icsFeedbackId}` }, asSystem(username))
+  }
 }

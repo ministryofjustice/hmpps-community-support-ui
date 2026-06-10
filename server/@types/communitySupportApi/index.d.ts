@@ -23,7 +23,9 @@ type ReferralAppointmentHistory = components['schemas']['ReferralAppointmentHist
 type ProbationOffice = components['schemas']['ProbationOffice']
 type IcsFeedbackSubmission = components['schemas']['CreateIcsFeedbackRequest']
 type IcsFeedbackSubmissionResponse = components['schemas']['AppointmentIcsFeedbackResponse']
+type SessionFeedbackDetails = components['schemas']['SessionFeedbackDetailsDto']
 type SessionMethod = components['schemas']['SessionMethod']
+type CaseWorkerSummary = components['schemas']['CaseWorkerSummaryDto']
 
 export type {
   Referral,
@@ -49,5 +51,7 @@ export type {
   ProbationOffice,
   IcsFeedbackSubmission,
   IcsFeedbackSubmissionResponse,
+  SessionFeedbackDetails,
   SessionMethod,
+  CaseWorkerSummary,
 }
