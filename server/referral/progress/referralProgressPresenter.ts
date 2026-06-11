@@ -62,7 +62,12 @@ const getStatusConfig = (caseReference: string, appointmentIcsId: string): Recor
   RESCHEDULED: {
     label: 'Changed',
     tagClass: 'govuk-tag--red',
-    actions: [{ label: 'View session details', href: `/referral-details/${caseReference}/ics-view-or-change/${appointmentIcsId}` }],
+    actions: [
+      {
+        label: 'View session details',
+        href: `/referral-details/${caseReference}/changed-ics-details/${appointmentIcsId}`,
+      },
+    ],
   },
   COMPLETED: {
     label: 'Completed',

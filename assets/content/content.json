@@ -113,6 +113,20 @@
       "assignedToDefaultValue": "Unassigned",
       "link": "Assign to caseworker",
       "linkChange": "Change"
+    },
+    "details": {
+      "heading": "ICS details",
+      "changeLink": "Change",
+      "dateLabel": "Date",
+      "startTimeLabel": "Start time",
+      "methodLabel": "Method",
+      "reasonLabel": "Reason session is not in person",
+      "locationLabel": "Location",
+      "informedLabel": "How {{ name }} was informed about the session"
+    },
+    "links": {
+      "change": "/referral/{{ id }}/ics-change-details",
+      "back": "/progress/{{ id }}"
     }
   },
   "/referral/:id/appointment/schedule-ics": {
@@ -178,23 +192,9 @@
   },
   "/referral-details/:id/ics-view-or-change": {
     "title": "View or change session details",
-    "heading": "View or change session details",
-    "details": {
-      "heading": "ICS details",
-      "changeLink": "Change",
-      "dateLabel": "Date",
-      "startTimeLabel": "Start time",
-      "methodLabel": "Method",
-      "reasonLabel": "Reason session is not in person",
-      "locationLabel": "Location",
-      "informedLabel": "How {{ name }} was informed about the session"
-    },
-    "links": {
-      "change": "/referral/{{ id }}/ics-change-details",
-      "back": "/progress/{{ id }}"
-    }
+    "heading": "View or change session details"
   },
-  "/referral-details/:id/ics-view-or-change/:id": {
+  "/referral-details/:id/changed-ics-details/:id": {
     "title": "View session details",
     "heading": "View session details"
   },
