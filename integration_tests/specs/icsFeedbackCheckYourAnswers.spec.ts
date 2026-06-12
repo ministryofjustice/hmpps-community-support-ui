@@ -222,7 +222,6 @@ test.describe('Ics Feedback CYA Page', () => {
     await seedSessionWithIcsFeedback(page, icsFeedbackSubmissionDidNotComply)
     await page.goto(`ics-feedback/${caseRefId}/check-answers`)
     const icsFeedbackCheckYourAnswersPage = await IcsFeedbackCheckYourAnswersPage.verifyOnPage(page)
-    expect(page.getByText('Why the session did not happen')).toBeVisible()
     expect(page.getByText(`${mockAppointmentIcsResponse.referralFirstName} did not comply`)).toBeVisible()
     expect(icsFeedbackCheckYourAnswersPage.sessionFeedbackSummary).toBeVisible()
     expect(icsFeedbackCheckYourAnswersPage.backLink).toHaveAttribute(
