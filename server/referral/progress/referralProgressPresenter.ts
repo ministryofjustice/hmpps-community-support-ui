@@ -50,8 +50,8 @@ const getStatusConfig = (caseReference: string, rowIndex: string = ''): Record<S
       { label: 'View feedback', href: `/ics-feedback/${caseReference}/session/${rowIndex}` },
     ],
   },
-  RESCHEDULED: {
-    label: 'Rescheduled',
+  CHANGED: {
+    label: 'Changed',
     tagClass: 'govuk-tag--grey',
     actions: [{ label: 'View or change details', href: `/referral-details/${caseReference}/ics-view-or-change` }],
   },

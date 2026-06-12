@@ -4,6 +4,24 @@
  */
 
 export interface paths {
+  '/bff/referral/{caseReference}/ics': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get all ICS appointments for a referral */
+    get: operations['getIcsAppointments']
+    /** Change an ICS appointment for a referral */
+    put: operations['changeIcsAppointment']
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/referral/{identifier}/assign': {
     parameters: {
       query?: never
@@ -242,23 +260,6 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/bff/ics-feedback/{icsFeedbackId}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get a single ICS feedback record by its ID */
-    get: operations['getIcsFeedback']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
   '/bff/reference-data/probation-offices': {
     parameters: {
       query?: never
@@ -393,13 +394,7 @@ export interface components {
       appointmentDate: string
       appointmentTime: components['schemas']['AppointmentTimeResponse']
       /** @enum {string} */
-      appointmentStatus:
-        | 'SCHEDULED'
-        | 'NEEDS_FEEDBACK'
-        | 'COMPLETED'
-        | 'RESCHEDULED'
-        | 'DID_NOT_ATTEND'
-        | 'DID_NOT_HAPPEN'
+      appointmentStatus: 'SCHEDULED' | 'NEEDS_FEEDBACK' | 'COMPLETED' | 'CHANGED' | 'DID_NOT_ATTEND' | 'DID_NOT_HAPPEN'
       sessionMethod: components['schemas']['SessionMethod']
       sessionCommunications: string[]
       referralFirstName: string
@@ -563,17 +558,6 @@ export interface components {
       behaviour?: string | null
       strengthsIdentified?: string | null
     }
-    SessionMethodRequest: {
-      /** @enum {string} */
-      type: 'PHONE' | 'VIDEO' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_PRISON' | 'IN_PERSON_OTHER_LOCATION'
-      additionalDetails?: string | null
-      pdu?: string | null
-      addressLine1?: string | null
-      addressLine2?: string | null
-      townOrCity?: string | null
-      county?: string | null
-      postcode?: string | null
-    }
     SessionNotHappenReasonRequest: {
       /** @enum {string} */
       reason: 'SERVICE_PROVIDER_ISSUE' | 'REFERRAL_COULD_NOT_TAKE_PART' | 'REFERRAL_DID_NOT_COMPLY'
@@ -723,7 +707,7 @@ export interface components {
       /** Format: date-time */
       dateTime: string
       /** @enum {string} */
-      status: 'SCHEDULED' | 'NEEDS_FEEDBACK' | 'COMPLETED' | 'RESCHEDULED' | 'DID_NOT_ATTEND' | 'DID_NOT_HAPPEN'
+      status: 'SCHEDULED' | 'NEEDS_FEEDBACK' | 'COMPLETED' | 'CHANGED' | 'DID_NOT_ATTEND' | 'DID_NOT_HAPPEN'
       /** Format: uuid */
       icsFeedbackId?: string | null
     }

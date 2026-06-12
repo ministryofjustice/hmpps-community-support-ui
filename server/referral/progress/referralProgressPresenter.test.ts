@@ -133,7 +133,7 @@ describe('ReferralProgressPresenter', () => {
       const referralProgressWithAppointment = buildReferralProgress([
         {
           appointmentIcsId: randomUUID(),
-          events: [{ status: 'RESCHEDULED', dateTime: daysAfter(baseDate, 1) }],
+          events: [{ status: 'CHANGED', dateTime: daysAfter(baseDate, 1) }],
         },
       ])
 
