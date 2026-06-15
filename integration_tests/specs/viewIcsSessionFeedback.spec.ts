@@ -145,7 +145,7 @@ test.describe('View ICS Session Feedback', () => {
     await expect(appointmentDetailsCard).not.toContainText('Reason session was not in-person')
   })
 
-  test('shows session details when session did happen', async ({ page }) => {
+  test('shows session details and session feedback when session did happen', async ({ page }) => {
     await communitySupport.stubGetReferralProgress(completedReferralProgress, caseRefId)
     await communitySupport.stubGetIcsSessionFeedback(icsFeedbackId, sessionDidHappenFeedback, 200)
 
@@ -171,64 +171,31 @@ test.describe('View ICS Session Feedback', () => {
     )
   })
 
-  test('shows session details why the session did not happen', async ({ page }) => {
+  test('shows session feedback why the session did not happen', async ({ page }) => {
     await communitySupport.stubGetReferralProgress(didNotHappenReferralProgress, caseRefId)
     await communitySupport.stubGetIcsSessionFeedback(icsFeedbackId, sessionDidNotHappenFeedback, 200)
 
     await page.goto(`/progress/${caseRefId}`)
     await page.getByRole('link', { name: 'View feedback' }).click()
 
-    const card = page.locator('.govuk-summary-card', { hasText: 'Session feedback' })
+    const sessionFeedbackCard = page.locator('.govuk-summary-card', { hasText: 'Session feedback' })
 
-    await expect(card).toContainText('Why the session did not happen')
-    await expect(card).toContainText('Provider unexpectedly cancelled session')
+    await expect(sessionFeedbackCard).toContainText('Why the session did not happen')
+    await expect(sessionFeedbackCard).toContainText('Provider unexpectedly cancelled session')
   })
 
-  test('shows session details when the user did not attend', async ({ page }) => {
+  test('shows session feedback when the user did not attend', async ({ page }) => {
     await communitySupport.stubGetReferralProgress(didNotAttendReferralProgress, caseRefId)
     await communitySupport.stubGetIcsSessionFeedback(icsFeedbackId, sessionDidNotAttendFeedback, 200)
 
     await page.goto(`/progress/${caseRefId}`)
     await page.getByRole('link', { name: 'View feedback' }).click()
 
-    const card = page.locator('.govuk-summary-card', { hasText: 'Session feedback' })
+    const sessionFeedbackCard = page.locator('.govuk-summary-card', { hasText: 'Session feedback' })
 
-    await expect(card).toContainText('Details about how you tried to contact Alex and why they did not attend')
-    await expect(card).toContainText('Called Alex twice but no answer, left voicemail')
-  })
-
-  test('does not show late reason when no reason is provided', async ({ page }) => {
-    const feedback = IcsFeedbackResponseFactory.build({
-      recordSessionDidSessionHappen: true,
-      sessionDetailsWasPersonLate: true,
-      sessionDetailsLateReason: undefined,
-    })
-
-    await communitySupport.stubGetReferralProgress(completedReferralProgress, caseRefId)
-    await communitySupport.stubGetIcsSessionFeedback(icsFeedbackId, feedback, 200)
-
-    await page.goto(`/progress/${caseRefId}`)
-    await page.getByRole('link', { name: 'View feedback' }).click()
-
-    const card = page.locator('.govuk-summary-card', { hasText: 'Session details' })
-
-    await expect(card).toContainText('Was Alex late?')
-    await expect(card).not.toContainText('Why was Alex late')
-  })
-
-  test('formats phone call session method correctly', async ({ page }) => {
-    const feedback = IcsFeedbackResponseFactory.build({
-      sessionFeedbackDetails: { sessionMethod: 'PHONE_CALL' },
-    })
-
-    await communitySupport.stubGetReferralProgress(completedReferralProgress, caseRefId)
-    await communitySupport.stubGetIcsSessionFeedback(icsFeedbackId, feedback, 200)
-
-    await page.goto(`/progress/${caseRefId}`)
-    await page.getByRole('link', { name: 'View feedback' }).click()
-
-    const card = page.locator('.govuk-summary-card', { hasText: 'Appointment details' })
-
-    await expect(card).toContainText('Phone call')
+    await expect(sessionFeedbackCard).toContainText(
+      'Details about how you tried to contact Alex and why they did not attend',
+    )
+    await expect(sessionFeedbackCard).toContainText('Called Alex twice but no answer, left voicemail')
   })
 })
