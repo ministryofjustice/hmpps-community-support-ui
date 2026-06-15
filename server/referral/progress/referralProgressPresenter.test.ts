@@ -58,7 +58,7 @@ describe('ReferralProgressPresenter', () => {
   describe('when no appointments exist', () => {
     it('renders NOT SCHEDULED table correctly', () => {
       const referralProgressNoAppointment: ReferralProgress = buildReferralProgress([
-        { appointmentId: randomUUID(), events: [] },
+        { appointmentIcsId: randomUUID(), events: [] },
       ])
 
       const presenter = new ReferralProgressPresenter(referralProgressNoAppointment, caseReference)
@@ -76,7 +76,7 @@ describe('ReferralProgressPresenter', () => {
     it('renders one row per appointmentId and sorts by latest date descending', () => {
       const referralProgressWithAppointments = buildReferralProgress([
         {
-          appointmentId: randomUUID(),
+          appointmentIcsId: randomUUID(),
           events: [
             { status: 'SCHEDULED', dateTime: daysAfter(baseDate, 0) },
             { status: 'NEEDS_FEEDBACK', dateTime: daysAfter(baseDate, 1) },
@@ -84,7 +84,7 @@ describe('ReferralProgressPresenter', () => {
           ],
         },
         {
-          appointmentId: randomUUID(),
+          appointmentIcsId: randomUUID(),
           events: [{ status: 'SCHEDULED', dateTime: daysAfter(baseDate, 3) }],
         },
       ])
@@ -110,7 +110,7 @@ describe('ReferralProgressPresenter', () => {
     it('shows scheduled ICS success banner', () => {
       const referralProgressWithAppointment = buildReferralProgress([
         {
-          appointmentId: randomUUID(),
+          appointmentIcsId: randomUUID(),
           events: [{ status: 'SCHEDULED', dateTime: daysAfter(baseDate, 1) }],
         },
       ])
@@ -132,8 +132,8 @@ describe('ReferralProgressPresenter', () => {
     it('shows rescheduled ICS success banner', () => {
       const referralProgressWithAppointment = buildReferralProgress([
         {
-          appointmentId: randomUUID(),
-          events: [{ status: 'RESCHEDULED', dateTime: daysAfter(baseDate, 1) }],
+          appointmentIcsId: randomUUID(),
+          events: [{ status: 'CHANGED', dateTime: daysAfter(baseDate, 1) }],
         },
       ])
 
@@ -160,7 +160,7 @@ describe('ReferralProgressPresenter', () => {
       it(`shows reschedule ICS banner after ${scenario.name}`, () => {
         const referralProgressWithAppointment = buildReferralProgress([
           {
-            appointmentId: randomUUID(),
+            appointmentIcsId: randomUUID(),
             events: [
               { status: 'SCHEDULED', dateTime: daysAfter(baseDate, 1) },
               { status: 'NEEDS_FEEDBACK', dateTime: daysAfter(baseDate, 2) },
@@ -188,7 +188,7 @@ describe('ReferralProgressPresenter', () => {
     it('shows completed ICS success banner', () => {
       const referralProgressWithAppointment = buildReferralProgress([
         {
-          appointmentId: randomUUID(),
+          appointmentIcsId: randomUUID(),
           events: [
             { status: 'SCHEDULED', dateTime: daysAfter(baseDate, 1) },
             { status: 'NEEDS_FEEDBACK', dateTime: daysAfter(baseDate, 2) },
@@ -231,7 +231,7 @@ describe('ReferralProgressPresenter', () => {
       it(`renders ${scenario.name} correctly`, () => {
         const referralProgressWithAppointment = buildReferralProgress([
           {
-            appointmentId: randomUUID(),
+            appointmentIcsId: randomUUID(),
             events: [
               { status: 'SCHEDULED', dateTime: daysAfter(baseDate, 0) },
               { status: 'NEEDS_FEEDBACK', dateTime: daysAfter(baseDate, 1) },
@@ -253,7 +253,7 @@ describe('ReferralProgressPresenter', () => {
     it('does not render notification banner when banner case reference does not match current referral', () => {
       const referralProgressWithAppointment = buildReferralProgress([
         {
-          appointmentId: randomUUID(),
+          appointmentIcsId: randomUUID(),
           events: [{ status: 'SCHEDULED', dateTime: daysAfter(baseDate, 1) }],
         },
       ])
