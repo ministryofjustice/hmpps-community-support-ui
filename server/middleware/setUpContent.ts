@@ -45,11 +45,11 @@ function getParentPathsForSubPath(subPath: string): Array<string> {
   return paths
 }
 
-function parsePlaceholdersFromPath(path: string): string {
+function parsePlaceholdersFromPath(contentPath: string): string {
   const uuidRegex = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi
   const caseReferenceRegex = /[a-z]{2}\d{4}[a-z]{2}/i
 
-  let pathToParse: string = path
+  let pathToParse: string = contentPath
 
   while (pathToParse.match(uuidRegex)) {
     pathToParse = pathToParse.replace(uuidRegex, ':id')

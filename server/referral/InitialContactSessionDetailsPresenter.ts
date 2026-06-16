@@ -149,11 +149,13 @@ export default class InitialContactSessionDetailsPresenter extends PresenterBase
 
   private buildDetails(cardContent: DetailsCard, changeLink: string, name: string): GovukFrontendSummaryList {
     const informedLabel = nunjucks.renderString(cardContent.informedLabel, { name })
-    const actions: GovukFrontendSummaryListCardActions = this.showChange ? {items: [{ href: changeLink, text: cardContent.changeLink }]} : {}
+    const actions: GovukFrontendSummaryListCardActions = this.showChange
+      ? { items: [{ href: changeLink, text: cardContent.changeLink }] }
+      : {}
     return {
       card: {
         title: { text: cardContent.heading },
-        actions: actions,
+        actions,
         attributes: { 'data-testid': 'details' },
       },
       rows: [

@@ -689,7 +689,7 @@ export interface components {
       /** Format: date-time */
       dateTime: string
       /** @enum {string} */
-      status: 'SCHEDULED' | 'NEEDS_FEEDBACK' | 'COMPLETED' | 'RESCHEDULED' | 'DID_NOT_ATTEND' | 'DID_NOT_HAPPEN'
+      status: 'SCHEDULED' | 'NEEDS_FEEDBACK' | 'COMPLETED' | 'CHANGED' | 'DID_NOT_ATTEND' | 'DID_NOT_HAPPEN'
     }
     ReferralProgressDto: {
       /** Format: uuid */

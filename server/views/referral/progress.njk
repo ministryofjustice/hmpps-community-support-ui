@@ -26,7 +26,8 @@
       {% set historyTable = govukTable(content.icsAppointmentHistoryTable) %}
       {{ govukDetails({
         summaryText: content.historySummary,
-        html: historyTable
+        html: historyTable,
+        attributes: {"data-testid":"view-history-link"}
       }) }}
     {% endif %}
   {% else %}
