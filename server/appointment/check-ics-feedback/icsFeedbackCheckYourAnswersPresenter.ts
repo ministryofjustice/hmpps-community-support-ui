@@ -131,7 +131,23 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
   private getDidNotHappenReason(): string | null {
     if (!this.icsFeedbackSubmission.record.didSessionHappen) {
       if (this.icsFeedbackSubmission.record.didPersonAttend) {
-        return `${this.firstName} did not comply<br /><br /> ${this.icsFeedbackSubmission.record.sessionNotHappenReason?.details}`
+        const { sessionNotHappenReason } = this.icsFeedbackSubmission.record
+        const details = sessionNotHappenReason?.details
+        let reasonText: string
+        switch (sessionNotHappenReason?.reason) {
+          case 'REFERRAL_DID_NOT_COMPLY':
+            reasonText = `${this.firstName} did not comply`
+            break
+          case 'REFERRAL_COULD_NOT_TAKE_PART':
+            reasonText = `${this.firstName} could not take part`
+            break
+          case 'SERVICE_PROVIDER_ISSUE':
+            reasonText = 'Service provider issue'
+            break
+          default:
+            reasonText = sessionNotHappenReason?.reason || ''
+        }
+        return details ? `${reasonText}<br /><br /> ${details}` : reasonText
       }
       return null
     }

@@ -489,17 +489,28 @@ export interface components {
       religionOrBelief?: string | null
       transgender?: string | null
       sexualOrientation?: string | null
+      genderIdentity?: string | null
+      nationalities: string[]
+      interestToImmigration?: boolean | null
       address?: string | null
+      addressType?: string | null
+      addressTypeVerified: boolean
+      /** Format: date */
+      addressStartDate?: string | null
+      addressNotes?: string | null
       phoneNumber?: string | null
+      mobileNumber?: string | null
       emailAddress?: string | null
+      disability?: boolean | null
     }
     PersonDto: {
       /** Format: uuid */
       id: string
       personIdentifier?: string | null
+      title?: string | null
       firstName: string
+      middleNames?: string | null
       lastName: string
-      /** Format: date */
       dateOfBirth: string
       sex?: string | null
       additionalDetails?: components['schemas']['PersonAdditionalDetails'] | null
