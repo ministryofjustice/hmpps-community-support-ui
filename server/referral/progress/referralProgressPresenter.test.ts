@@ -282,7 +282,7 @@ describe('ReferralProgressPresenter', () => {
     })
   })
 
-  describe("scheduled appointment in past", () => {
+  describe('scheduled appointment in past', () => {
     it('renders as Needs Feedback and action links change accordingly', () => {
       const referralProgressWithAppointments = buildReferralProgress([
         { appointmentIcsId: randomUUID(), event: { status: 'SCHEDULED', dateTime: daysBefore(baseDate, 1) } },

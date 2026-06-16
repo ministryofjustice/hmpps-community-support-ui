@@ -19,16 +19,16 @@ type StatusConfig = { label: string; tagClass: string; actions: { label: string;
 
 const getStatusConfig = (
   caseReference: string,
-  appointmentIcsId: string,
-  isCurrent: boolean = false,
+  appointmentIcsId: string = '',
   rowIndex: string = '',
 ): Record<StatusKey, StatusConfig> => {
-  const rescheduleActions = isCurrent
-    ? [
-        { label: 'Reschedule', href: `/referral/${caseReference}/appointment/schedule-ics` },
-        { label: 'View feedback', href: `/ics-feedback/${caseReference}/session/${rowIndex}` },
-      ]
-    : [{ label: 'View feedback', href: `/ics-feedback/${caseReference}/session/${rowIndex}` }]
+  const rescheduleActions =
+    rowIndex === '0'
+      ? [
+          { label: 'Reschedule', href: `/referral/${caseReference}/appointment/schedule-ics` },
+          { label: 'View feedback', href: `/ics-feedback/${caseReference}/session/${rowIndex}` },
+        ]
+      : [{ label: 'View feedback', href: `/ics-feedback/${caseReference}/session/${rowIndex}` }]
   return {
     NOT_SCHEDULED: {
       label: 'Not scheduled',
@@ -185,7 +185,7 @@ export default class ReferralProgressPresenter extends PresenterBase<
   }
 
   private buildNotScheduledRow(): GovukFrontendTableRow[] {
-    const configMap = getStatusConfig(this.caseReference, '')
+    const configMap = getStatusConfig(this.caseReference)
     const config = configMap.NOT_SCHEDULED
     return [
       [
@@ -195,8 +195,8 @@ export default class ReferralProgressPresenter extends PresenterBase<
     ]
   }
 
-  private buildProgressTableRow(row: ReferralAppointmentHistory, isCurrent: boolean = false): GovukFrontendTableRow {
-    const configMap = getStatusConfig(this.caseReference, row.appointmentIcsId, isCurrent)
+  private buildProgressTableRow(row: ReferralAppointmentHistory, rowIndex = '0'): GovukFrontendTableRow {
+    const configMap = getStatusConfig(this.caseReference, row.appointmentIcsId, rowIndex)
     const appointementStatus = getAppointmentStatus(row)
     const config = configMap[appointementStatus] ?? configMap.NOT_SCHEDULED
 
@@ -209,14 +209,14 @@ export default class ReferralProgressPresenter extends PresenterBase<
 
   private buildInProgressTableRow(): GovukFrontendTableRow[] {
     const [current] = this.getAppointments()
-    return [this.buildProgressTableRow(current, true)]
+    return [this.buildProgressTableRow(current)]
   }
 
   private buildAppointmentHistoryTableRows(): GovukFrontendTableRow[] {
     const [, ...history] = this.getAppointments()
 
-    return history.map(appointment => {
-      return this.buildProgressTableRow(appointment)
+    return history.map((appointment, index) => {
+      return this.buildProgressTableRow(appointment, index.toString())
     })
   }
 

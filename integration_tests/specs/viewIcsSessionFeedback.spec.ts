@@ -18,33 +18,45 @@ test.describe('View ICS Session Feedback', () => {
   const didNotHappenReferralProgress: ReferralProgress = buildReferralProgress([
     {
       appointmentIcsId: randomUUID(),
-      events: [
-        { status: 'SCHEDULED', dateTime: daysAfter(baseDate, 1), icsFeedbackId },
-        { status: 'NEEDS_FEEDBACK', dateTime: daysAfter(baseDate, 2), icsFeedbackId },
-        { status: 'DID_NOT_HAPPEN', dateTime: daysAfter(baseDate, 3), icsFeedbackId },
-      ],
+      event: { status: 'DID_NOT_HAPPEN', dateTime: daysAfter(baseDate, 3), icsFeedbackId },
+    },
+    {
+      appointmentIcsId: randomUUID(),
+      event: { status: 'NEEDS_FEEDBACK', dateTime: daysAfter(baseDate, 2), icsFeedbackId },
+    },
+    {
+      appointmentIcsId: randomUUID(),
+      event: { status: 'CHANGED', dateTime: daysAfter(baseDate, 1), icsFeedbackId },
     },
   ])
 
   const didNotAttendReferralProgress: ReferralProgress = buildReferralProgress([
     {
       appointmentIcsId: randomUUID(),
-      events: [
-        { status: 'SCHEDULED', dateTime: daysAfter(baseDate, 1), icsFeedbackId },
-        { status: 'NEEDS_FEEDBACK', dateTime: daysAfter(baseDate, 2), icsFeedbackId },
-        { status: 'DID_NOT_ATTEND', dateTime: daysAfter(baseDate, 3, 13), icsFeedbackId },
-      ],
+      event: { status: 'DID_NOT_ATTEND', dateTime: daysAfter(baseDate, 3, 13), icsFeedbackId },
+    },
+    {
+      appointmentIcsId: randomUUID(),
+      event: { status: 'NEEDS_FEEDBACK', dateTime: daysAfter(baseDate, 2), icsFeedbackId },
+    },
+    {
+      appointmentIcsId: randomUUID(),
+      event: { status: 'CHANGED', dateTime: daysAfter(baseDate, 1), icsFeedbackId },
     },
   ])
 
   const completedReferralProgress: ReferralProgress = buildReferralProgress([
     {
       appointmentIcsId: randomUUID(),
-      events: [
-        { status: 'SCHEDULED', dateTime: daysAfter(baseDate, 0), icsFeedbackId },
-        { status: 'NEEDS_FEEDBACK', dateTime: daysAfter(baseDate, 1), icsFeedbackId },
-        { status: 'COMPLETED', dateTime: daysAfter(baseDate, 3, 12), icsFeedbackId },
-      ],
+      event: { status: 'COMPLETED', dateTime: daysAfter(baseDate, 3, 12), icsFeedbackId },
+    },
+    {
+      appointmentIcsId: randomUUID(),
+      event: { status: 'NEEDS_FEEDBACK', dateTime: daysAfter(baseDate, 1), icsFeedbackId },
+    },
+    {
+      appointmentIcsId: randomUUID(),
+      event: { status: 'SCHEDULED', dateTime: daysAfter(baseDate, 0), icsFeedbackId },
     },
   ])
 

@@ -89,13 +89,13 @@ test.describe('Ics Feedback CYA Page', () => {
   const appointmentScheduled: ReferralProgress = buildReferralProgress([
     {
       appointmentIcsId: randomUUID(),
-      events: [{ status: 'SCHEDULED', dateTime: daysAfter(baseDate, 1) }],
+      event: { status: 'SCHEDULED', dateTime: daysAfter(baseDate, 1) },
     },
   ])
   const feedbackCompleted: ReferralProgress = buildReferralProgress([
     {
       appointmentIcsId: randomUUID(),
-      events: [{ status: 'COMPLETED', dateTime: daysAfter(baseDate, 1) }],
+      event: { status: 'COMPLETED', dateTime: daysAfter(baseDate, 1) },
     },
   ])
   const mockAppointmentIcsResponse = {
