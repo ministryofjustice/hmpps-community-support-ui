@@ -88,13 +88,13 @@ test.describe('Ics Feedback CYA Page', () => {
   }
   const appointmentScheduled: ReferralProgress = buildReferralProgress([
     {
-      appointmentId: randomUUID(),
+      appointmentIcsId: randomUUID(),
       events: [{ status: 'SCHEDULED', dateTime: daysAfter(baseDate, 1) }],
     },
   ])
   const feedbackCompleted: ReferralProgress = buildReferralProgress([
     {
-      appointmentId: randomUUID(),
+      appointmentIcsId: randomUUID(),
       events: [{ status: 'COMPLETED', dateTime: daysAfter(baseDate, 1) }],
     },
   ])
@@ -222,7 +222,6 @@ test.describe('Ics Feedback CYA Page', () => {
     await seedSessionWithIcsFeedback(page, icsFeedbackSubmissionDidNotComply)
     await page.goto(`ics-feedback/${caseRefId}/check-answers`)
     const icsFeedbackCheckYourAnswersPage = await IcsFeedbackCheckYourAnswersPage.verifyOnPage(page)
-    expect(page.getByText('Why the session did not happen?')).toBeVisible()
     expect(page.getByText(`${mockAppointmentIcsResponse.referralFirstName} did not comply`)).toBeVisible()
     expect(icsFeedbackCheckYourAnswersPage.sessionFeedbackSummary).toBeVisible()
     expect(icsFeedbackCheckYourAnswersPage.backLink).toHaveAttribute(

@@ -10,3 +10,10 @@ const timeFormat = ({ hour, minute, amPm }: Time) => {
   return `${correctedHour}:${correctedMinute}${amPm}`
 }
 export default timeFormat
+
+export const isoToFormattedTime = (iso: string): string =>
+  timeFormat({
+    hour: new Date(iso).getHours() % 12 || 12,
+    minute: new Date(iso).getMinutes(),
+    amPm: new Date(iso).getHours() >= 12 ? 'pm' : 'am',
+  })

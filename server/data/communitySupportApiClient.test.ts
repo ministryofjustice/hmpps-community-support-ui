@@ -9,12 +9,15 @@ import type {
   ReferralProgress,
   ReferralInformation,
   ProbationOffice,
+  IcsFeedbackSubmissionResponse,
 } from '@community-support-api'
 import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import { AgentConfig, ApiConfig } from '@ministryofjustice/hmpps-rest-client'
+import { randomUUID } from 'node:crypto'
 import CommunitySupportApiClient from './communitySupportApiClient'
 import ReferralProgressFactory from '../testutils/factories/ReferralProgress'
 import ReferralInformationFactory from '../testutils/factories/ReferralInformation'
+import IcsFeedbackResponseFactory from '../testutils/factories/IcsFeedbackSubmissionResponse'
 
 describe('CommunitySupportApiClient tests', () => {
   let communitySupportApiClient: CommunitySupportApiClient
@@ -282,6 +285,22 @@ describe('CommunitySupportApiClient tests', () => {
       const result = communitySupportApiClient.getReferralInformation(caseReference, 'user1')
 
       expect(result).resolves.toEqual(mockReferralInformation)
+    })
+  })
+  describe('getIcsFeedbackSubmissionResponse tests', () => {
+    it('should return the progress of a referral with a 200 response', () => {
+      const icsFeedbackId = randomUUID()
+      const mockIcsFeedbackResponse: IcsFeedbackSubmissionResponse = IcsFeedbackResponseFactory.build()
+
+      nock('http://localhost:8080', {
+        reqheaders: { authorization: 'Bearer dummy-token' },
+      })
+        .get(`/bff/ics-feedback/${icsFeedbackId}`)
+        .reply(200, mockIcsFeedbackResponse)
+
+      const result = communitySupportApiClient.getIcsSessionFeedback(icsFeedbackId, 'user1')
+
+      expect(result).resolves.toEqual(mockIcsFeedbackResponse)
     })
   })
 })

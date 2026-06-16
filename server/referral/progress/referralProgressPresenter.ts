@@ -21,13 +21,14 @@ const getStatusConfig = (
   caseReference: string,
   appointmentIcsId: string,
   isCurrent: boolean = false,
+  rowIndex: string = '',
 ): Record<StatusKey, StatusConfig> => {
   const rescheduleActions = isCurrent
     ? [
         { label: 'Reschedule', href: `/referral/${caseReference}/appointment/schedule-ics` },
-        { label: 'View feedback', href: '#' },
+        { label: 'View feedback', href: `/ics-feedback/${caseReference}/session/${rowIndex}` },
       ]
-    : [{ label: 'View feedback', href: '#' }]
+    : [{ label: 'View feedback', href: `/ics-feedback/${caseReference}/session/${rowIndex}` }]
   return {
     NOT_SCHEDULED: {
       label: 'Not scheduled',
@@ -67,7 +68,7 @@ const getStatusConfig = (
     COMPLETED: {
       label: 'Completed',
       tagClass: 'govuk-tag--green',
-      actions: [{ label: 'View feedback', href: '#' }],
+      actions: [{ label: 'View feedback', href: `/ics-feedback/${caseReference}/session/${rowIndex}` }],
     },
   }
 }

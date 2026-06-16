@@ -284,7 +284,7 @@
             "changeHref": "/ics-feedback/caseRefId/session-details"
           },
           {
-            "text": "Why was firstname was late?",
+            "text": "Why was firstname was late",
             "hint": "Why was firstname was late",
             "changeHref": "/ics-feedback/caseRefId/session-details"
           },
@@ -304,7 +304,7 @@
             "changeHref": "/ics-feedback/caseRefId/session-feedback"
           },
           {
-            "text": "Why the session did not happen?",
+            "text": "Why the session did not happen",
             "hint": "Why the session did not happen",
             "changeHref": "/ics-feedback/caseRefId/why-did-the-session-not-happen"
           },

@@ -4,6 +4,7 @@ import { randomUUID } from 'crypto'
 type AppointmentEvent = {
   status: ReferralAppointmentHistory['status']
   dateTime?: string
+  icsFeedbackId?: string
 }
 
 type Appointment = {
@@ -26,6 +27,7 @@ export default function buildReferralProgress(
         type: 'ICS',
         dateTime: appointment.event.dateTime ?? `2026-03-${25 + appIndex}T${10 + appIndex}:00:00`,
         status: appointment.event.status,
+        icsFeedbackId: appointment.event.icsFeedbackId,
       }
     }),
   }

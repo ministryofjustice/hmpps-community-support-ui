@@ -63,7 +63,6 @@ export default class ConfirmIcsPresenter extends PresenterBase<ConfirmIcsViewMod
       PHONE: 'Phone call',
       VIDEO: 'Video call',
       IN_PERSON_PROBATION_OFFICE: 'In person',
-      IN_PERSON_PRISON: 'In person',
       IN_PERSON_OTHER_LOCATION: 'Other location',
     }
     return methods[type] ?? type
@@ -83,14 +82,14 @@ export default class ConfirmIcsPresenter extends PresenterBase<ConfirmIcsViewMod
     const isNotInPerson = sessionMethodRequest.type === 'PHONE' || sessionMethodRequest.type === 'VIDEO'
     const isInPerson =
       sessionMethodRequest.type === 'IN_PERSON_PROBATION_OFFICE' ||
-      sessionMethodRequest.type === 'IN_PERSON_PRISON' ||
       sessionMethodRequest.type === 'IN_PERSON_OTHER_LOCATION'
 
     let locationValue: { text: string } | { html: string } | undefined
     if (isInPerson) {
-      locationValue = ['IN_PERSON_PROBATION_OFFICE', 'IN_PERSON_PRISON'].includes(sessionMethodRequest.type)
-        ? { text: sessionMethodRequest.additionalDetails }
-        : { html: formatAddress(sessionMethodRequest) }
+      locationValue =
+        sessionMethodRequest.type === 'IN_PERSON_PROBATION_OFFICE'
+          ? { text: sessionMethodRequest.additionalDetails }
+          : { html: formatAddress(sessionMethodRequest) }
     }
 
     const rows = buildIcsSummaryRows({

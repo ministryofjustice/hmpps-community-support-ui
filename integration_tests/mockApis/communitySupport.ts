@@ -2,6 +2,7 @@ import type { SuperAgentRequest } from 'superagent'
 import {
   AppointmentIcsResponse,
   IcsFeedbackSubmission,
+  IcsFeedbackSubmissionResponse,
   ProbationOffice,
   ReferralInformation,
 } from '@community-support-api'
@@ -11,9 +12,6 @@ import referralDetailsPageData from '../mockData/referralDetailsPageData'
 import { referralInformationInCommunity } from '../mockData/referralInformationData'
 import { components } from '../../server/@types/communitySupportApi/imported'
 
-export interface AssignCaseWorkersRequest {
-  emails: string[]
-}
 export interface AssignmentFailureDto {
   emailAddress: string
   reason: string
@@ -387,6 +385,23 @@ export default {
         status: httpStatus,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: referralInformation,
+        transformers: ['response-template'],
+      },
+    }),
+  stubGetIcsSessionFeedback: (
+    icsFeedbackId: string,
+    icsFeedbackSubmissionResponse: IcsFeedbackSubmissionResponse,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: `/community-support/bff/ics-feedback/${icsFeedbackId}`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: icsFeedbackSubmissionResponse,
         transformers: ['response-template'],
       },
     }),
