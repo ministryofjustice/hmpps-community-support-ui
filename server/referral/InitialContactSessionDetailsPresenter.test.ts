@@ -146,7 +146,7 @@ describe('InitialContactSessionDetailsPresenter', () => {
     })
   })
 
-  describe('historical meeting', () =>{
+  describe('historical meeting', () => {
     const historicalMeetingData = {
       appointmentIcsId: 'ics-id',
       appointmentId: 'appt-id',
@@ -171,7 +171,7 @@ describe('InitialContactSessionDetailsPresenter', () => {
       changeAppointmentDetails: {
         changeRequestedBy: 'REFERRAL_USER',
         reasonForChange: 'Medical emergency',
-      }
+      },
     } as AppointmentIcsResponse
 
     test('historical appointment', () => {
