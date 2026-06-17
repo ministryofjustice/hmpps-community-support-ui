@@ -311,6 +311,11 @@
         ]
       }
     ],
+    "didNotHappenReasonLabels": {
+      "serviceProviderIssue": "Service provider issue",
+      "referralCouldNotTakePart": "{{ firstname }} could not take part",
+      "referralDidNotComply": "{{ firstname }} did not comply"
+    },
     "submitButtonText": "Submit feedback",
     "submitHref": "/ics-feedback/caseRefId/submit",
     "didNotAttendbackLinkHref": "/ics-feedback/caseRefId/how-they-tried-to-contact-the-person",

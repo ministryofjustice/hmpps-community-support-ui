@@ -105,7 +105,7 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
       // Session feedback summary
       this.buildSummary(content.summaryLists.filter(item => item.summaryTitle === 'Session feedback')[0], [
         this.icsFeedbackSubmission.sessionFeedback?.whatHappened || null,
-        this.getDidNotHappenReason() || null,
+        this.getDidNotHappenReason(content) || null,
         this.getDidNotAttendReason() || null,
       ]),
     ]
@@ -128,7 +128,7 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
     return null
   }
 
-  private getDidNotHappenReason(): string | null {
+  private getDidNotHappenReason(content: IcsFeedbackCheckYourAnswersContent): string | null {
     if (!this.icsFeedbackSubmission.record.didSessionHappen) {
       if (this.icsFeedbackSubmission.record.didPersonAttend) {
         const { sessionNotHappenReason } = this.icsFeedbackSubmission.record
@@ -136,13 +136,19 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
         let reasonText: string
         switch (sessionNotHappenReason?.reason) {
           case 'REFERRAL_DID_NOT_COMPLY':
-            reasonText = `${this.firstName} did not comply`
+            reasonText = content.didNotHappenReasonLabels.referralDidNotComply.replace(
+              '{{ firstname }}',
+              this.firstName,
+            )
             break
           case 'REFERRAL_COULD_NOT_TAKE_PART':
-            reasonText = `${this.firstName} could not take part`
+            reasonText = content.didNotHappenReasonLabels.referralCouldNotTakePart.replace(
+              '{{ firstname }}',
+              this.firstName,
+            )
             break
           case 'SERVICE_PROVIDER_ISSUE':
-            reasonText = 'Service provider issue'
+            reasonText = content.didNotHappenReasonLabels.serviceProviderIssue
             break
           default:
             reasonText = sessionNotHappenReason?.reason || ''
