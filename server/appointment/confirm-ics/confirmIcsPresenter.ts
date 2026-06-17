@@ -1,13 +1,14 @@
-import { CreateAppointmentRequest } from '@community-support-api'
+import { CreateAppointmentRequest, ChangeAppointmentDetails } from '@community-support-api'
 import { GovukFrontendNotificationBanner, GovukFrontendSummaryList, GovukFrontendSummaryListRow } from '@govuk-frontend'
 import { Response } from 'express'
 import PresenterBase from '../../presenter/presenterBase'
 import { ConfirmIcsContent, ConfirmIcsViewModel } from './confirmIcsViewModel'
 import { buildIcsSummaryRows, formatAddress } from '../icsDetailsSummaryBuilder'
-import { ChangeAppointmentDetails } from '../change-ics-details-reason/ChangeAppointmentDetails'
+import { getChangeRequesterLabel } from '../change-ics-details-reason/ChangeAppointmentDetails'
 
 export type AdditionalInformation = {
   firstName: string
+  lastName: string
   submitHref: string
   scheduleIcsHref: string
   changeReasonHref?: string
@@ -120,8 +121,15 @@ export default class ConfirmIcsPresenter extends PresenterBase<ConfirmIcsViewMod
   }
 
   private buildChangeReasonSummary(): GovukFrontendSummaryList {
+    const referrerName = [this.additionalInformation.firstName, this.additionalInformation.lastName]
+      .filter(Boolean)
+      .join(' ')
+
     const rows: GovukFrontendSummaryListRow[] = [
-      { key: { text: 'Who requested the change' }, value: { text: this.changeAppointmentDetails.requestedBy } },
+      {
+        key: { text: 'Who requested the change' },
+        value: { text: getChangeRequesterLabel(this.changeAppointmentDetails.changeRequestedBy, referrerName) },
+      },
       { key: { text: 'Reason for the change' }, value: { text: this.changeAppointmentDetails.reasonForChange } },
     ]
     return {

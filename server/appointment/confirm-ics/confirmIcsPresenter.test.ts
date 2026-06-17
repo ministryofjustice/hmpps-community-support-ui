@@ -1,9 +1,9 @@
 import { Response } from 'express'
-import { CreateAppointmentRequest } from '@community-support-api'
+import { CreateAppointmentRequest, ChangeAppointmentDetails } from '@community-support-api'
 import type { ConfirmIcsContent, ConfirmIcsViewModel } from './confirmIcsViewModel'
 import ConfirmIcsPresenter, { type AdditionalInformation } from './confirmIcsPresenter'
 import ConfirmIcsContentFactory from '../../testutils/factories/ConfirmIcsContent'
-import { ChangeAppointmentDetails } from '../change-ics-details-reason/ChangeAppointmentDetails'
+import { ChangeRequesterType } from '../change-ics-details-reason/ChangeAppointmentDetails'
 
 function addDays(days: number): Date {
   const d = new Date()
@@ -41,12 +41,14 @@ describe('ConfirmIcsPresenter', () => {
 
   const additionInformation: AdditionalInformation = {
     firstName: 'John',
+    lastName: 'Doe',
     submitHref: `/referral/${referralId}/appointment/submit-ics`,
     scheduleIcsHref: `/referral/${referralId}/appointment/schedule-ics`,
   }
 
   const rescheduleAdditionInformation: AdditionalInformation = {
     firstName: 'John',
+    lastName: 'Doe',
     submitHref: `/referral/${referralId}/ics-change-details/submit-ics`,
     scheduleIcsHref: `/referral/${referralId}/ics-change-details`,
     changeReasonHref: `/referral/${referralId}/ics-change-details/reason`,
@@ -293,7 +295,7 @@ describe('ConfirmIcsPresenter', () => {
 
     describe('reschedule ics chack answers page', () => {
       const changeAppointmentDetails: ChangeAppointmentDetails = {
-        requestedBy: 'Probation practitioner',
+        changeRequestedBy: ChangeRequesterType.PROBATION_PRACTITIONER,
         reasonForChange: 'There were technical issues',
       }
       it('should include a reason for change card when the appointment is being rescheduled', () => {
