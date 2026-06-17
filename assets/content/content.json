@@ -114,7 +114,7 @@
       "link": "Assign to caseworker",
       "linkChange": "Change"
     },
-    "details": {
+    "icsDetails": {
       "heading": "ICS details",
       "changeLink": "Change",
       "dateLabel": "Date",
@@ -123,6 +123,11 @@
       "reasonLabel": "Reason session is not in person",
       "locationLabel": "Location",
       "informedLabel": "How {{ name }} was informed about the session"
+    },
+    "reasonForChange": {
+      "heading": "Reason for change",
+      "whoRequestedLabel": "Who requested the change",
+      "reasonLabel": "Reason for the change"
     },
     "links": {
       "change": "/referral/{{ id }}/ics-change-details",

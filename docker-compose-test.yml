@@ -8,6 +8,8 @@ services:
     restart: always
     ports:
       - "9091:8080"
+    volumes:
+      - ./wiremock_mappings:/home/wiremock/mappings
 
 networks:
   hmpps_int:

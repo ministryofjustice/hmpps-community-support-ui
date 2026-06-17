@@ -9,7 +9,7 @@ describe('InitialContactSessionDetailsPresenter', () => {
   const content: InitialContactSessionDetailsContent = {
     title: 'View or change session details',
     heading: 'View or change session details',
-    details: {
+    icsDetails: {
       heading: 'ICS details',
       changeLink: 'Change',
       dateLabel: 'Date',
@@ -18,6 +18,11 @@ describe('InitialContactSessionDetailsPresenter', () => {
       reasonLabel: 'Reason session is not in person',
       locationLabel: 'Location',
       informedLabel: 'How {{ name }} was informed about the session',
+    },
+    reasonForChange: {
+      heading: 'Reason for change',
+      whoRequestedLabel: 'Who requested the change',
+      reasonLabel: 'Reason for the change',
     },
     links: {
       change: '/referral/{{ id }}/ics-change-details',
@@ -58,19 +63,19 @@ describe('InitialContactSessionDetailsPresenter', () => {
       expect(viewModel).toMatchSnapshot()
     })
     test('reason row IS in viewModel', () => {
-      expect(viewModel.details.rows).toEqual(
+      expect(viewModel.icsDetails.rows).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
-            key: { text: content.details.reasonLabel },
+            key: { text: content.icsDetails.reasonLabel },
           }),
         ]),
       )
     })
     test('location row IS NOT in viewModel', () => {
-      expect(viewModel.details.rows).not.toEqual(
+      expect(viewModel.icsDetails.rows).not.toEqual(
         expect.arrayContaining([
           expect.objectContaining({
-            key: { text: content.details.locationLabel },
+            key: { text: content.icsDetails.locationLabel },
           }),
         ]),
       )
@@ -105,18 +110,18 @@ describe('InitialContactSessionDetailsPresenter', () => {
       const viewModel = presenter.buildPageContent(response)
       expect(viewModel).toMatchSnapshot()
       // reason row IS NOT in viewModel
-      expect(viewModel.details.rows).not.toEqual(
+      expect(viewModel.icsDetails.rows).not.toEqual(
         expect.arrayContaining([
           expect.objectContaining({
-            key: { text: content.details.reasonLabel },
+            key: { text: content.icsDetails.reasonLabel },
           }),
         ]),
       )
       // location row IS in viewModel
-      expect(viewModel.details.rows).toEqual(
+      expect(viewModel.icsDetails.rows).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
-            key: { text: content.details.locationLabel },
+            key: { text: content.icsDetails.locationLabel },
           }),
         ]),
       )
@@ -138,6 +143,49 @@ describe('InitialContactSessionDetailsPresenter', () => {
       data.sessionMethod.postcode = 'MK0 1AA'
       const presenter = new InitialContactSessionDetailsPresenter(data, caseRef)
       expect(presenter.buildPageContent(response)).toMatchSnapshot()
+    })
+  })
+
+  describe('historical meeting', () =>{
+    const historicalMeetingData = {
+      appointmentIcsId: 'ics-id',
+      appointmentId: 'appt-id',
+      referralId: randomUUID(),
+      appointmentType: 'ICS',
+      appointmentDate: '2026-02-01',
+      appointmentTime: {
+        hour: 10,
+        minute: 0,
+        amPm: 'am',
+      },
+      appointmentStatus: 'CHANGED',
+      sessionMethod: {
+        appointmentCategory: 'VIRTUAL',
+        type: 'PHONE',
+        whyNotInPersonReason: 'Welfare check call',
+      },
+      sessionCommunications: ['Phone', 'Text'],
+      referralFirstName: 'Alice',
+      referralLastName: 'Smith',
+      createdAt: '2026-01-10T09:00:00Z',
+      changeAppointmentDetails: {
+        changeRequestedBy: 'REFERRAL_USER',
+        reasonForChange: 'Medical emergency',
+      }
+    } as AppointmentIcsResponse
+
+    test('historical appointment', () => {
+      const data = { ...historicalMeetingData, sessionMethod: { ...historicalMeetingData.sessionMethod } }
+      const presenter = new InitialContactSessionDetailsPresenter(data, caseRef, true)
+      const viewModel = presenter.buildPageContent(response)
+      expect(viewModel).toMatchSnapshot()
+
+      expect(viewModel.historical).toBeTruthy()
+      expect(viewModel.reasonForChange.rows).toHaveLength(2)
+      expect(viewModel.reasonForChange.rows[0].key.text).toEqual('Who requested the change')
+      expect(viewModel.reasonForChange.rows[0].value.text).toEqual('Alice Smith')
+      expect(viewModel.reasonForChange.rows[1].key.text).toEqual('Reason for the change')
+      expect(viewModel.reasonForChange.rows[1].value.text).toEqual('Medical emergency')
     })
   })
 })

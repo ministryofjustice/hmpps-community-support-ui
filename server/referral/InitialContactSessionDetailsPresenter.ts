@@ -16,10 +16,12 @@ export interface InitialContactSessionDetailsViewModel {
   backLink: GovukFrontendBackLink
   title: string
   heading: string
-  details: GovukFrontendSummaryList
+  icsDetails: GovukFrontendSummaryList
+  historical: boolean
+  reasonForChange: GovukFrontendSummaryList
 }
 
-interface DetailsCard {
+interface IcsDetailsCard {
   heading: string
   changeLink: string
   dateLabel: string
@@ -30,6 +32,12 @@ interface DetailsCard {
   informedLabel: string
 }
 
+interface ReasonForChangeCard {
+  heading: string
+  whoRequestedLabel: string
+  reasonLabel: string
+}
+
 interface Links {
   change: string
   back: string
@@ -38,7 +46,8 @@ interface Links {
 export interface InitialContactSessionDetailsContent {
   title: string
   heading: string
-  details: DetailsCard
+  icsDetails: IcsDetailsCard
+  reasonForChange: ReasonForChangeCard
   links: Links
 }
 
@@ -90,7 +99,9 @@ export default class InitialContactSessionDetailsPresenter extends PresenterBase
   InitialContactSessionDetailsViewModel,
   InitialContactSessionDetailsContent
 > {
-  private readonly name: string
+  private readonly firstName: string
+
+  private readonly lastName: string
 
   private readonly date: string
 
@@ -104,19 +115,26 @@ export default class InitialContactSessionDetailsPresenter extends PresenterBase
 
   private readonly sessionCommunication: string
 
+  private readonly changeRequestedBy?: string
+
+  private readonly reasonForChange?: string
+
   constructor(
     {
       referralFirstName,
+      referralLastName,
       appointmentDate,
       appointmentTime,
       sessionMethod,
       sessionCommunications,
+      changeAppointmentDetails,
     }: AppointmentIcsResponse,
     private readonly caseRef: string,
-    private readonly showChange: boolean = true,
+    private readonly historical: boolean = false,
   ) {
     super()
-    this.name = referralFirstName
+    this.firstName = referralFirstName
+    this.lastName = referralLastName
     this.date = appointmentDate
     this.time = timeFormat(appointmentTime)
     this.reason = sessionMethod.whyNotInPersonReason
@@ -131,6 +149,23 @@ export default class InitialContactSessionDetailsPresenter extends PresenterBase
       .map(field => sessionMethod[field])
       .map(str => (str ? `<p>${str}</p>` : ''))
       .join('\n')
+
+    if (changeAppointmentDetails) {
+      switch (changeAppointmentDetails.changeRequestedBy) {
+        case 'DELIVERY_PARTNER':
+          this.changeRequestedBy = 'Delivery partner'
+          break
+        case 'PROBATION_PRACTITIONER':
+          this.changeRequestedBy = 'Probation practitioner'
+          break
+        case 'REFERRAL_USER':
+          this.changeRequestedBy = `${this.firstName} ${this.lastName}`
+          break
+        default:
+          break
+      }
+      this.reasonForChange = changeAppointmentDetails.reasonForChange
+    }
   }
 
   private buildReasonRow(label: string): GovukFrontendSummaryListRow[] {
@@ -147,11 +182,11 @@ export default class InitialContactSessionDetailsPresenter extends PresenterBase
       : []
   }
 
-  private buildDetails(cardContent: DetailsCard, changeLink: string, name: string): GovukFrontendSummaryList {
+  private buildIcsDetails(cardContent: IcsDetailsCard, changeLink: string, name: string): GovukFrontendSummaryList {
     const informedLabel = nunjucks.renderString(cardContent.informedLabel, { name })
-    const actions: GovukFrontendSummaryListCardActions = this.showChange
-      ? { items: [{ href: changeLink, text: cardContent.changeLink }] }
-      : {}
+    const actions: GovukFrontendSummaryListCardActions = this.historical
+      ? {}
+      : { items: [{ href: changeLink, text: cardContent.changeLink }] }
     return {
       card: {
         title: { text: cardContent.heading },
@@ -169,12 +204,31 @@ export default class InitialContactSessionDetailsPresenter extends PresenterBase
     }
   }
 
+  private buildReasonForChange(cardContent: ReasonForChangeCard): GovukFrontendSummaryList {
+    return {
+      card: {
+        title: { text: cardContent.heading },
+        attributes: { 'data-testid': 'reasonForChange' },
+      },
+      rows: [
+        govFrontendSummaryListRow(cardContent.whoRequestedLabel, this.changeRequestedBy),
+        govFrontendSummaryListRow(cardContent.reasonLabel, this.reasonForChange),
+      ],
+    }
+  }
+
   buildPageContent(res: Response): InitialContactSessionDetailsViewModel {
     const content = this.buildStaticContent(res)
     return {
       title: content.title,
       heading: content.heading,
-      details: this.buildDetails(content.details, content.links.change.replace('{{ id }}', this.caseRef), this.name),
+      icsDetails: this.buildIcsDetails(
+        content.icsDetails,
+        content.links.change.replace('{{ id }}', this.caseRef),
+        this.firstName,
+      ),
+      historical: this.historical,
+      reasonForChange: this.buildReasonForChange(content.reasonForChange),
       backLink: { href: content.links.back.replace('{{ id }}', this.caseRef) },
     }
   }

@@ -641,7 +641,7 @@ class AppointmentController {
     const { username } = res.locals.user
     return this.appointmentService
       .getICS(caseRefId.toString(), username)
-      .then(data => new InitialContactSessionDetailsPresenter(data, caseRefId))
+      .then(data => new InitialContactSessionDetailsPresenter(data, caseRefId, false))
       .then(presenter => presenter.renderPage(res))
   }
 
@@ -651,7 +651,7 @@ class AppointmentController {
     const { username } = res.locals.user
     return this.appointmentService
       .getIcsById(caseRefId.toString(), icsId, username)
-      .then(data => new InitialContactSessionDetailsPresenter(data, caseRefId, false))
+      .then(data => new InitialContactSessionDetailsPresenter(data, caseRefId, true))
       .then(presenter => presenter.renderPage(res))
   }
 
