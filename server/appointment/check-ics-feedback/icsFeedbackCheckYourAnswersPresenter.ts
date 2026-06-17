@@ -205,9 +205,6 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
   }
 
   private replaceFirstnamePlaceholders(text: string): string {
-    return text
-      .replace(/{{\s*firstname\s*}}/gi, this.firstName)
-      .replace(/{{\s*first\s+name\s*}}/gi, this.firstName)
-      .replace(/firstname/gi, this.firstName)
+    return text.replace(/{{\s*firstname\s*}}/gi, this.firstName)
   }
 }
