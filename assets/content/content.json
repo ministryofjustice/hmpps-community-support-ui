@@ -274,13 +274,13 @@
         "summaryTitle": "Session details",
         "rows": [
           {
-            "text": "Was firstname late",
-            "hint": "If firstname was late",
+            "text": "Was {{ firstname }} late?",
+            "hint": "If {{ firstname }} was late",
             "changeHref": "/ics-feedback/caseRefId/session-details"
           },
           {
-            "text": "Why firstname was late",
-            "hint": "Why firstname was late",
+            "text": "Why {{ firstname }} was late",
+            "hint": "Why {{ firstname }} was late",
             "changeHref": "/ics-feedback/caseRefId/session-details"
           },
           {
