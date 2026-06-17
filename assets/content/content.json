@@ -279,8 +279,8 @@
             "changeHref": "/ics-feedback/caseRefId/session-details"
           },
           {
-            "text": "Why was firstname was late",
-            "hint": "Why was firstname was late",
+            "text": "Why firstname was late",
+            "hint": "Why firstname was late",
             "changeHref": "/ics-feedback/caseRefId/session-details"
           },
           {
@@ -311,6 +311,11 @@
         ]
       }
     ],
+    "didNotHappenReasonLabels": {
+      "serviceProviderIssue": "Service provider issue",
+      "referralCouldNotTakePart": "{{ firstname }} could not take part",
+      "referralDidNotComply": "{{ firstname }} did not comply"
+    },
     "submitButtonText": "Submit feedback",
     "submitHref": "/ics-feedback/caseRefId/submit",
     "didNotAttendbackLinkHref": "/ics-feedback/caseRefId/how-they-tried-to-contact-the-person",
