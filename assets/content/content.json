@@ -259,8 +259,8 @@
             "changeHref": "/ics-feedback/caseRefId/attendance"
           },
           {
-            "text": "Did firstname come to the appointment?",
-            "hint": "Did firstname come to the appointment",
+            "text": "Did {{ firstname }} come to the appointment?",
+            "hint": "Did {{ firstname }} come to the appointment",
             "changeHref": "/ics-feedback/caseRefId/attendance"
           },
           {
@@ -284,13 +284,13 @@
         "summaryTitle": "Session details",
         "rows": [
           {
-            "text": "Was firstname late",
-            "hint": "If firstname was late",
+            "text": "Was {{ firstname }} late?",
+            "hint": "If {{ firstname }} was late",
             "changeHref": "/ics-feedback/caseRefId/session-details"
           },
           {
-            "text": "Why was firstname was late",
-            "hint": "Why was firstname was late",
+            "text": "Why {{ firstname }} was late",
+            "hint": "Why {{ firstname }} was late",
             "changeHref": "/ics-feedback/caseRefId/session-details"
           },
           {
@@ -314,13 +314,18 @@
             "changeHref": "/ics-feedback/caseRefId/why-did-the-session-not-happen"
           },
           {
-            "text": "Details about how you tried to contact firstname and why they did not attend ",
+            "text": "Details about how you tried to contact {{ firstname }} and why they did not attend ",
             "hint": "details about how you tried to contact them and why they did not attend’",
             "changeHref": "/ics-feedback/caseRefId/how-they-tried-to-contact-the-person"
           }
         ]
       }
     ],
+    "didNotHappenReasonLabels": {
+      "serviceProviderIssue": "Service provider issue",
+      "referralCouldNotTakePart": "{{ firstname }} could not take part",
+      "referralDidNotComply": "{{ firstname }} did not comply"
+    },
     "submitButtonText": "Submit feedback",
     "submitHref": "/ics-feedback/caseRefId/submit",
     "didNotAttendbackLinkHref": "/ics-feedback/caseRefId/how-they-tried-to-contact-the-person",
@@ -392,7 +397,7 @@
         "name": "howTheyTriedToContactThePerson",
         "label": "How did you try to contact {{ firstname }} and what do you know about why they did not attend?",
         "hint": "Include when you tried to contact them and how many times.",
-        "error": "Enter how you tried to contact {{ first name }} and what you know about why they did not attend ",
+        "error": "Enter how you tried to contact {{ firstname }} and what you know about why they did not attend ",
         "rows": "5"
       },
       "submitButtonText": "Continue"

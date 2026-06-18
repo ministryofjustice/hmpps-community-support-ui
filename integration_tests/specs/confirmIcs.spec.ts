@@ -136,7 +136,7 @@ const mockAppointmentIcsResponse = {
 }
 
 const changeAppointmentDetails = {
-  requestedBy: 'Probation practitioner',
+  changeRequestedBy: 'PROBATION_PRACTITIONER',
   reasonForChange: 'There were technical issues',
 }
 
@@ -399,7 +399,7 @@ test.describe('Confirm ICS Page', () => {
 
   enum RequestedBy {
     DELIVERY_PARTNER,
-    REFEREE,
+    REFERRAL_USER,
     PROBATION_PRACTITIONER,
   }
 
@@ -491,7 +491,7 @@ test.describe('Confirm ICS Page', () => {
         case RequestedBy.DELIVERY_PARTNER:
           await changeIcsDetailsReasonPage.whoRequestedRadios.items[0].input.check()
           break
-        case RequestedBy.REFEREE:
+        case RequestedBy.REFERRAL_USER:
           await changeIcsDetailsReasonPage.whoRequestedRadios.items[1].input.check()
           break
         case RequestedBy.PROBATION_PRACTITIONER:
@@ -558,7 +558,7 @@ test.describe('Confirm ICS Page', () => {
         'PM',
         SessionMethod.VIDEO,
         [InformedMethod.OTHER],
-        RequestedBy.REFEREE,
+        RequestedBy.REFERRAL_USER,
         'car broke down',
         {
           notInPersonReason: 'The referral dont have a vehicle',
@@ -576,9 +576,7 @@ test.describe('Confirm ICS Page', () => {
         await expect(confirmIcsPage.sessionCommunicationRow).toContainText('Face to face')
         await expect(confirmIcsPage.changeDetailsSummary).toBeVisible()
         await expect(confirmIcsPage.requestedByRow).toBeVisible()
-        await expect(confirmIcsPage.requestedByRow).toContainText(
-          `${pastMeeting.data.referralFirstName} ${pastMeeting.data.referralLastName}`,
-        )
+        await expect(confirmIcsPage.requestedByRow).toContainText(`John Doe`)
         await expect(confirmIcsPage.reasonForChangeRow).toBeVisible()
         await expect(confirmIcsPage.reasonForChangeRow).toContainText('car broke down')
         await confirmIcsPage.submitButton.click()

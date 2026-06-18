@@ -19,11 +19,11 @@ import type {
   ProbationOffice,
   IcsFeedbackSubmission,
   IcsFeedbackSubmissionResponse,
+  ChangeAppointmentDetails,
 } from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
 import { PagedResponse } from '../@types/communitySupportApi/derived'
-import { ChangeAppointmentDetails } from '../appointment/change-ics-details-reason/ChangeAppointmentDetails'
 
 export default class CommunitySupportApiClient extends RestClient {
   constructor(authenticationClient: AuthenticationClient, apiConfig: ApiConfig = null) {
