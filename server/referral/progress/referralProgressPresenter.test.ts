@@ -1,12 +1,11 @@
 import { randomUUID } from 'crypto'
 import { Response } from 'express'
 import { ReferralProgress } from '@community-support-api'
-import { formatDate } from 'date-fns'
+import { addDays, formatDate, subDays } from 'date-fns'
 import { ReferralProgressContent } from './referralProgressViewModel'
 import ReferralProgressPresenter from './referralProgressPresenter'
 import buildReferralProgress from '../../testutils/buildReferralProgress'
 import { ReferralProgressBannerContent } from './ReferralProgressBannerContent'
-import { daysAfter, daysBefore } from '../../testutils/dateUtils'
 
 describe('ReferralProgressPresenter', () => {
   const baseDate = new Date('2026-03-25T10:00:00')
@@ -68,11 +67,11 @@ describe('ReferralProgressPresenter', () => {
 
   describe('appointment table rendering', () => {
     it('renders one row per appointmentIcsId in the appointment table and the history table', () => {
-      const scheduleDate = daysAfter(new Date(), 2)
+      const scheduleDate = addDays(new Date(), 2).toISOString()
       const referralProgressWithAppointments = buildReferralProgress([
         { appointmentIcsId: randomUUID(), event: { status: 'SCHEDULED', dateTime: scheduleDate } },
-        { appointmentIcsId: randomUUID(), event: { status: 'CHANGED', dateTime: daysBefore(baseDate, 2) } },
-        { appointmentIcsId: randomUUID(), event: { status: 'NEEDS_FEEDBACK', dateTime: daysBefore(baseDate, 3) } },
+        { appointmentIcsId: randomUUID(), event: { status: 'CHANGED', dateTime: subDays(baseDate, 2).toISOString() } },
+        { appointmentIcsId: randomUUID(), event: { status: 'NEEDS_FEEDBACK', dateTime: subDays(baseDate, 3).toISOString() } },
       ])
 
       const presenter = new ReferralProgressPresenter(referralProgressWithAppointments, caseReference)
@@ -105,7 +104,7 @@ describe('ReferralProgressPresenter', () => {
       const referralProgressWithAppointment = buildReferralProgress([
         {
           appointmentIcsId: randomUUID(),
-          event: { status: 'SCHEDULED', dateTime: daysAfter(baseDate, 1) },
+          event: { status: 'SCHEDULED', dateTime: addDays(baseDate, 1).toISOString() },
         },
       ])
 
@@ -127,7 +126,7 @@ describe('ReferralProgressPresenter', () => {
       const referralProgressWithAppointment = buildReferralProgress([
         {
           appointmentIcsId: randomUUID(),
-          event: { status: 'CHANGED', dateTime: daysAfter(baseDate, 1) },
+          event: { status: 'CHANGED', dateTime: addDays(baseDate, 1).toISOString() },
         },
       ])
 
@@ -155,15 +154,15 @@ describe('ReferralProgressPresenter', () => {
         const referralProgressWithAppointment = buildReferralProgress([
           {
             appointmentIcsId: randomUUID(),
-            event: { status: 'SCHEDULED', dateTime: daysAfter(baseDate, 1) },
+            event: { status: 'SCHEDULED', dateTime: addDays(baseDate, 1).toISOString() },
           },
           {
             appointmentIcsId: randomUUID(),
-            event: { status: 'NEEDS_FEEDBACK', dateTime: daysAfter(baseDate, 2) },
+            event: { status: 'NEEDS_FEEDBACK', dateTime: addDays(baseDate, 2).toISOString() },
           },
           {
             appointmentIcsId: randomUUID(),
-            event: { status: scenario.finalStatus, dateTime: daysAfter(baseDate, 3) },
+            event: { status: scenario.finalStatus, dateTime: addDays(baseDate, 3).toISOString() },
           },
         ])
 
@@ -187,15 +186,15 @@ describe('ReferralProgressPresenter', () => {
       const referralProgressWithAppointment = buildReferralProgress([
         {
           appointmentIcsId: randomUUID(),
-          event: { status: 'SCHEDULED', dateTime: daysAfter(baseDate, 1) },
+          event: { status: 'SCHEDULED', dateTime: addDays(baseDate, 1).toISOString() },
         },
         {
           appointmentIcsId: randomUUID(),
-          event: { status: 'NEEDS_FEEDBACK', dateTime: daysAfter(baseDate, 2) },
+          event: { status: 'NEEDS_FEEDBACK', dateTime: addDays(baseDate, 2).toISOString() },
         },
         {
           appointmentIcsId: randomUUID(),
-          event: { status: 'COMPLETED', dateTime: daysAfter(baseDate, 3) },
+          event: { status: 'COMPLETED', dateTime: addDays(baseDate, 3).toISOString() },
         },
       ])
 
@@ -234,15 +233,15 @@ describe('ReferralProgressPresenter', () => {
         const referralProgressWithAppointment = buildReferralProgress([
           {
             appointmentIcsId: randomUUID(),
-            event: { status: 'SCHEDULED', dateTime: daysAfter(baseDate, 0) },
+            event: { status: 'SCHEDULED', dateTime: addDays(baseDate, 0).toISOString() },
           },
           {
             appointmentIcsId: randomUUID(),
-            event: { status: 'NEEDS_FEEDBACK', dateTime: daysAfter(baseDate, 1) },
+            event: { status: 'NEEDS_FEEDBACK', dateTime: addDays(baseDate, 1).toISOString() },
           },
           {
             appointmentIcsId: randomUUID(),
-            event: { status: scenario.finalStatus, dateTime: daysAfter(baseDate, 2, scenario.hour) },
+            event: { status: scenario.finalStatus, dateTime: addDays(baseDate.setHours(scenario.hour), 2).toISOString() },
           },
         ])
 
@@ -260,7 +259,7 @@ describe('ReferralProgressPresenter', () => {
       const referralProgressWithAppointment = buildReferralProgress([
         {
           appointmentIcsId: randomUUID(),
-          event: { status: 'SCHEDULED', dateTime: daysAfter(baseDate, 1) },
+          event: { status: 'SCHEDULED', dateTime: addDays(baseDate, 1).toISOString() },
         },
       ])
 
@@ -285,9 +284,9 @@ describe('ReferralProgressPresenter', () => {
   describe('scheduled appointment in past', () => {
     it('renders as Needs Feedback and action links change accordingly', () => {
       const referralProgressWithAppointments = buildReferralProgress([
-        { appointmentIcsId: randomUUID(), event: { status: 'SCHEDULED', dateTime: daysBefore(baseDate, 1) } },
-        { appointmentIcsId: randomUUID(), event: { status: 'CHANGED', dateTime: daysBefore(baseDate, 2) } },
-        { appointmentIcsId: randomUUID(), event: { status: 'NEEDS_FEEDBACK', dateTime: daysBefore(baseDate, 3) } },
+        { appointmentIcsId: randomUUID(), event: { status: 'SCHEDULED', dateTime: subDays(baseDate, 1).toISOString() } },
+        { appointmentIcsId: randomUUID(), event: { status: 'CHANGED', dateTime: subDays(baseDate, 2).toISOString() } },
+        { appointmentIcsId: randomUUID(), event: { status: 'NEEDS_FEEDBACK', dateTime: subDays(baseDate, 3).toISOString() } },
       ])
 
       const presenter = new ReferralProgressPresenter(referralProgressWithAppointments, caseReference)

@@ -49,17 +49,7 @@ function parsePlaceholdersFromPath(contentPath: string): string {
   const uuidRegex = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi
   const caseReferenceRegex = /[a-z]{2}\d{4}[a-z]{2}/i
 
-  let pathToParse: string = contentPath
-
-  while (pathToParse.match(uuidRegex)) {
-    pathToParse = pathToParse.replace(uuidRegex, ':id')
-  }
-
-  while (pathToParse.match(caseReferenceRegex)) {
-    pathToParse = pathToParse.replace(caseReferenceRegex, ':id')
-  }
-
-  return pathToParse
+  return contentPath.replace(uuidRegex, ':id').replace(caseReferenceRegex, ':id')
 }
 
 export default function setUpContent(): Router {
