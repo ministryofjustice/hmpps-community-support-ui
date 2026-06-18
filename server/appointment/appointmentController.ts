@@ -24,6 +24,7 @@ import RecordSessionAttendanceFormData, {
 import { ReferralProgressBannerContent } from '../referral/progress/ReferralProgressBannerContent'
 import AppointmentValidator from './AppointmentValidator'
 import { IcsFeedbackHowSessionTookPlaceFormData } from './ics-feedback/icsFeedbackHowSessionTookPlaceViewModel'
+import { getChangeRequesterType } from './change-ics-details-reason/ChangeAppointmentDetails'
 import { SessionFeedbackFormDataSchema } from '../validation/SessionFeedbackFormData'
 import ViewChangeSessionDetailsPresenter from './view-change-session-details/ViewChangeSessionDetailsPresenter'
 import RecordSessionDetailsPresenter from './record-ics/RecordSessionDetailsPresenter'
@@ -460,6 +461,7 @@ class AppointmentController {
     const referralInformation = await this.referralService.getReferralInformation(referralId, username)
     const additionalDetails: AdditionalInformation = {
       firstName: referralInformation.firstName,
+      lastName: referralInformation.lastName,
       submitHref: `/referral/${referralId}/appointment/submit-ics`,
       scheduleIcsHref: `/referral/${referralId}/appointment/schedule-ics`,
     }
@@ -982,7 +984,7 @@ class AppointmentController {
   recordChangeIcsDetailsReason(req: Request, res: Response): void {
     const { caseRefId } = req.params as { caseRefId: string }
     req.session.ChangeAppointmentDetails = {
-      requestedBy: req.body.requestedBy,
+      changeRequestedBy: getChangeRequesterType(req.body.requestedBy),
       reasonForChange: req.body.reasonForChange,
     }
     validateRequestBodyAgainstSchema(ChangeIcsDetailsReasonSchema, req, res, () => {
@@ -1004,6 +1006,7 @@ class AppointmentController {
     const referralInformation = await this.referralService.getReferralInformation(caseRefId, username)
     const additionalDetails: AdditionalInformation = {
       firstName: referralInformation.firstName,
+      lastName: referralInformation.lastName,
       submitHref: `/referral/${caseRefId}/ics-change-details/submit-ics`,
       scheduleIcsHref: `/referral/${caseRefId}/ics-change-details`,
       changeReasonHref: `/referral/${caseRefId}/ics-change-details/reason`,
