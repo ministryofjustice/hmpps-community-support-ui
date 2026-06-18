@@ -51,7 +51,7 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
 
               return {
                 key: {
-                  text: row.text.includes('firstname') ? row.text.replace('firstname', this.firstName) : row.text,
+                  text: this.replaceFirstnamePlaceholders(row.text),
                 },
                 value: {
                   text: values[index],
@@ -62,9 +62,7 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
                     {
                       href: row.changeHref.replace('caseRefId', this.caseRefId),
                       text: 'Change',
-                      visuallyHiddenText: row.hint.includes('firstname')
-                        ? row.hint.replace('firstname', this.firstName)
-                        : row.hint,
+                      visuallyHiddenText: this.replaceFirstnamePlaceholders(row.hint),
                     },
                   ],
                 },
@@ -204,5 +202,9 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
       default:
         return null
     }
+  }
+
+  private replaceFirstnamePlaceholders(text: string): string {
+    return text.replace(/{{\s*firstname\s*}}/gi, this.firstName)
   }
 }
