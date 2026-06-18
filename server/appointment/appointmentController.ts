@@ -638,12 +638,22 @@ class AppointmentController {
     return createAppointmentRequest
   }
 
-  changeIcs(req: Request, res: Response): Promise<void> {
+  viewOrChangeIcs(req: Request, res: Response): Promise<void> {
     const caseRefId = req.params.caseRefId as string
     const { username } = res.locals.user
     return this.appointmentService
       .getICS(caseRefId.toString(), username)
-      .then(data => new InitialContactSessionDetailsPresenter(data, caseRefId))
+      .then(data => new InitialContactSessionDetailsPresenter(data, caseRefId, false))
+      .then(presenter => presenter.renderPage(res))
+  }
+
+  viewIcsDetails(req: Request, res: Response): Promise<void> {
+    const caseRefId = req.params.caseRefId as string
+    const icsId = req.params.icsId as string
+    const { username } = res.locals.user
+    return this.appointmentService
+      .getIcsById(caseRefId.toString(), icsId, username)
+      .then(data => new InitialContactSessionDetailsPresenter(data, caseRefId, true))
       .then(presenter => presenter.renderPage(res))
   }
 

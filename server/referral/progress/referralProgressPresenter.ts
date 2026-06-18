@@ -8,59 +8,70 @@ import {
 import { MojSubNavigation } from '@moj-frontend'
 import { ReferralProgress, ReferralAppointmentHistory } from '@community-support-api'
 
-import { isPast } from 'date-fns'
+import { formatDate, isPast } from 'date-fns'
 import PresenterBase from '../../presenter/presenterBase'
 import { ReferralProgressContent, ReferralProgressViewModel } from './referralProgressViewModel'
 import { ReferralProgressBannerContent } from './ReferralProgressBannerContent'
-import getLatestAppointments from './getLatestAppointments'
 
 type TabKey = 'caseDetails' | 'progress' | 'changeLog'
 type StatusKey = ReferralAppointmentHistory['status'] | 'NOT_SCHEDULED'
 type StatusConfig = { label: string; tagClass: string; actions: { label: string; href: string }[] }
 
-const getStatusConfig = (caseReference: string, rowIndex: string = ''): Record<StatusKey, StatusConfig> => ({
-  NOT_SCHEDULED: {
-    label: 'Not scheduled',
-    tagClass: 'govuk-tag--grey',
-    actions: [{ label: 'Schedule session', href: `/referral/${caseReference}/appointment/schedule-ics` }],
-  },
-  SCHEDULED: {
-    label: 'Scheduled',
-    tagClass: 'govuk-tag--blue',
-    actions: [{ label: 'View or change details', href: `/referral-details/${caseReference}/ics-view-or-change` }],
-  },
-  NEEDS_FEEDBACK: {
-    label: 'Needs feedback',
-    tagClass: 'govuk-tag--red',
-    actions: [{ label: 'Add attendance and feedback', href: `/ics-feedback/${caseReference}/attendance` }],
-  },
-  DID_NOT_HAPPEN: {
-    label: 'Did not happen',
-    tagClass: 'govuk-tag--purple',
-    actions: [
-      { label: 'Reschedule', href: `/referral/${caseReference}/appointment/schedule-ics` },
-      { label: 'View feedback', href: `/ics-feedback/${caseReference}/session/${rowIndex}` },
-    ],
-  },
-  DID_NOT_ATTEND: {
-    label: 'Did not attend',
-    tagClass: 'govuk-tag--purple',
-    actions: [
-      { label: 'Reschedule', href: `/referral/${caseReference}/appointment/schedule-ics` },
-      { label: 'View feedback', href: `/ics-feedback/${caseReference}/session/${rowIndex}` },
-    ],
-  },
-  CHANGED: {
-    label: 'Changed',
-    tagClass: 'govuk-tag--grey',
-    actions: [{ label: 'View or change details', href: `/referral-details/${caseReference}/ics-view-or-change` }],
-  },
-  COMPLETED: {
-    label: 'Completed',
-    tagClass: 'govuk-tag--green',
-    actions: [{ label: 'View feedback', href: `/ics-feedback/${caseReference}/session/${rowIndex}` }],
-  },
-})
+const getStatusConfig = (
+  caseReference: string,
+  appointmentIcsId: string = '',
+  rowIndex: string = '',
+): Record<StatusKey, StatusConfig> => {
+  const rescheduleActions =
+    rowIndex === '0'
+      ? [
+          { label: 'Reschedule', href: `/referral/${caseReference}/appointment/schedule-ics` },
+          { label: 'View feedback', href: `/ics-feedback/${caseReference}/session/${rowIndex}` },
+        ]
+      : [{ label: 'View feedback', href: `/ics-feedback/${caseReference}/session/${rowIndex}` }]
+  return {
+    NOT_SCHEDULED: {
+      label: 'Not scheduled',
+      tagClass: 'govuk-tag--grey',
+      actions: [{ label: 'Schedule session', href: `/referral/${caseReference}/appointment/schedule-ics` }],
+    },
+    SCHEDULED: {
+      label: 'Scheduled',
+      tagClass: 'govuk-tag--blue',
+      actions: [{ label: 'View or change details', href: `/referral-details/${caseReference}/ics-view-or-change` }],
+    },
+    NEEDS_FEEDBACK: {
+      label: 'Needs feedback',
+      tagClass: 'govuk-tag--red',
+      actions: [{ label: 'Add attendance and feedback', href: `/ics-feedback/${caseReference}/attendance` }],
+    },
+    DID_NOT_HAPPEN: {
+      label: 'Did not happen',
+      tagClass: 'govuk-tag--purple',
+      actions: rescheduleActions,
+    },
+    DID_NOT_ATTEND: {
+      label: 'Did not attend',
+      tagClass: 'govuk-tag--purple',
+      actions: rescheduleActions,
+    },
+    CHANGED: {
+      label: 'Changed',
+      tagClass: 'govuk-tag--red',
+      actions: [
+        {
+          label: 'View session details',
+          href: `/referral-details/${caseReference}/changed-ics-details/${appointmentIcsId}`,
+        },
+      ],
+    },
+    COMPLETED: {
+      label: 'Completed',
+      tagClass: 'govuk-tag--green',
+      actions: [{ label: 'View feedback', href: `/ics-feedback/${caseReference}/session/${rowIndex}` }],
+    },
+  }
+}
 
 type AppointmentStatus = ReferralAppointmentHistory['status']
 const getAppointmentStatus = ({ status, dateTime }: ReferralAppointmentHistory): AppointmentStatus => {
@@ -94,7 +105,7 @@ export default class ReferralProgressPresenter extends PresenterBase<
 
   buildPageContent(res: Response): ReferralProgressViewModel {
     const content = this.buildStaticContent(res)
-    const hasAppointment = getLatestAppointments(this.referralProgress.appointments).length > 0
+    const [latestAppointment] = this.getAppointments()
 
     return {
       pageHeader: `${content.pageHeader} ${this.name}`,
@@ -102,33 +113,10 @@ export default class ReferralProgressPresenter extends PresenterBase<
       actionLinkHref: '#',
       backLink: { href: '/cases-in-progress' },
       notificationBanner: this.getNotificationBanner(),
-      icsAppointmentTable: this.buildIcsAppointmentTable(content, hasAppointment),
+      icsAppointmentTable: this.buildIcsAppointmentTable(content, !!latestAppointment),
+      historySummary: content.historySummary,
+      icsAppointmentHistoryTable: this.buildIcsAppointmentHistoryTable(content),
     }
-  }
-
-  private formatAppointmentDateTime(date: string): string {
-    const [datePart, timePart] = date.split('T')
-    const [year, month, day] = datePart.split('-').map(Number)
-    const [hour, minute] = timePart.split(':').map(Number)
-
-    const parsedDate = new Date(year, month - 1, day, hour, minute)
-
-    const formattedDate = parsedDate.toLocaleDateString('en-GB', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    })
-
-    const formattedTime = parsedDate
-      .toLocaleTimeString('en-GB', {
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true,
-      })
-      .replace(' ', '')
-      .toLowerCase()
-
-    return `${formattedDate} at ${formattedTime}`
   }
 
   private buildSuccessBanner(heading: string, body: string): GovukFrontendNotificationBanner {
@@ -177,7 +165,18 @@ export default class ReferralProgressPresenter extends PresenterBase<
         'data-testid': 'referral-progress-table',
       },
       head: this.buildIcsAppointmentColumnHeaders(headers),
-      rows: hasAppointment ? this.buildInProgressTableRows() : this.buildNotScheduledRow(),
+      rows: hasAppointment ? this.buildInProgressTableRow() : this.buildNotScheduledRow(),
+    }
+  }
+
+  private buildIcsAppointmentHistoryTable(content: ReferralProgressContent): GovukFrontendTable {
+    return {
+      attributes: {
+        'data-module': 'moj-sortable-table',
+        'data-testid': 'referral-history-table',
+      },
+      head: this.buildIcsAppointmentColumnHeaders(content.progressActiveColumnHeaders),
+      rows: this.buildAppointmentHistoryTableRows(),
     }
   }
 
@@ -196,18 +195,28 @@ export default class ReferralProgressPresenter extends PresenterBase<
     ]
   }
 
-  private buildInProgressTableRows(): GovukFrontendTableRow[] {
-    const latestAppointments = getLatestAppointments(this.referralProgress.appointments)
+  private buildProgressTableRow(row: ReferralAppointmentHistory, rowIndex = '0'): GovukFrontendTableRow {
+    const configMap = getStatusConfig(this.caseReference, row.appointmentIcsId, rowIndex)
+    const appointementStatus = getAppointmentStatus(row)
+    const config = configMap[appointementStatus] ?? configMap.NOT_SCHEDULED
 
-    return latestAppointments.map((appointment, index) => {
-      const configMap = getStatusConfig(this.caseReference, index.toString())
-      const appointmentStatus = getAppointmentStatus(appointment)
-      const config = configMap[appointmentStatus] ?? configMap.NOT_SCHEDULED
-      return [
-        { text: this.formatAppointmentDateTime(appointment.dateTime) },
-        { html: `<span class="govuk-tag ${config.tagClass}">${config.label}</span>` },
-        { html: this.renderActions(config.actions) },
-      ]
+    return [
+      { text: formatDate(row.dateTime, "dd MMMM yyyy 'at' h:mmaaa") },
+      { html: `<span class="govuk-tag ${config.tagClass}">${config.label}</span>` },
+      { html: this.renderActions(config.actions) },
+    ]
+  }
+
+  private buildInProgressTableRow(): GovukFrontendTableRow[] {
+    const [current] = this.getAppointments()
+    return [this.buildProgressTableRow(current)]
+  }
+
+  private buildAppointmentHistoryTableRows(): GovukFrontendTableRow[] {
+    const [, ...history] = this.getAppointments()
+
+    return history.map((appointment, index) => {
+      return this.buildProgressTableRow(appointment, index.toString())
     })
   }
 
@@ -217,5 +226,16 @@ export default class ReferralProgressPresenter extends PresenterBase<
         ${actions.map(a => `<li><a href="${a.href}" class="govuk-link">${a.label}</a></li>`).join('')}
       </ul>
     `
+  }
+
+  private getAppointments(): ReferralAppointmentHistory[] {
+    const appointments = new Map<string, ReferralAppointmentHistory>()
+
+    for (const appt of this.referralProgress.appointments ?? []) {
+      const key = appt.appointmentIcsId ?? `unknown-${appt.dateTime}`
+      appointments.set(key, appt)
+    }
+
+    return [...appointments.values()]
   }
 }

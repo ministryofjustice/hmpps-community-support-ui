@@ -21,13 +21,16 @@ export default class ReferralProgressPage extends AbstractPage {
 
   readonly addAttendanceAndFeedbackLink: Locator
 
+  readonly historyLink: Locator
+
   static url(caseReference: string): string {
     return `/progress/${caseReference}`
   }
 
   private constructor(
     page: Page,
-    public readonly table: Table,
+    public readonly icsTable: Table,
+    public readonly historyTable: Table,
   ) {
     super(page)
     this.notificationBanner = page.locator('.govuk-notification-banner')
@@ -39,18 +42,21 @@ export default class ReferralProgressPage extends AbstractPage {
     this.scheduleSessionLink = page.getByRole('link', { name: 'Schedule session', exact: true })
     this.viewOrChangeDetailsLink = page.getByRole('link', { name: 'View details', exact: true })
     this.addAttendanceAndFeedbackLink = page.getByRole('link', { name: 'Add attendance and feedback', exact: true })
+    this.historyLink = page.locator('[data-testid="view-history-link"] .govuk-details__summary-text')
   }
 
   static async verifyOnPage(page: Page): Promise<ReferralProgressPage> {
     const icsTable = await Table.create(page.locator('[data-testid="referral-progress-table"]'))
-    const referralProgressPage = new ReferralProgressPage(page, icsTable)
+    const historyTable = await Table.create(page.locator('[data-testid="referral-history-table"]'))
+    const referralProgressPage = new ReferralProgressPage(page, icsTable, historyTable)
     await expect(referralProgressPage.header).toBeVisible()
     return referralProgressPage
   }
 
   static async verifySuccessBanner(page: Page, heading: string, message: string): Promise<ReferralProgressPage> {
     const icsTable = await Table.create(page.locator('[data-testid="referral-progress-table"]'))
-    const referralProgressPage = new ReferralProgressPage(page, icsTable)
+    const historyTable = await Table.create(page.locator('[data-testid="referral-history-table"]'))
+    const referralProgressPage = new ReferralProgressPage(page, icsTable, historyTable)
     const banner = referralProgressPage.notificationBanner
     await expect(banner).toHaveClass(/govuk-notification-banner--success/)
     await expect(banner.locator('.govuk-notification-banner__title')).toHaveText('Success')
@@ -61,7 +67,8 @@ export default class ReferralProgressPage extends AbstractPage {
 
   static async verifyNoBanner(page: Page): Promise<ReferralProgressPage> {
     const icsTable = await Table.create(page.locator('[data-testid="referral-progress-table"]'))
-    const referralProgressPage = new ReferralProgressPage(page, icsTable)
+    const historyTable = await Table.create(page.locator('[data-testid="referral-history-table"]'))
+    const referralProgressPage = new ReferralProgressPage(page, icsTable, historyTable)
     await expect(referralProgressPage.notificationBanner).not.toBeVisible()
     return referralProgressPage
   }

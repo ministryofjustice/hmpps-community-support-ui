@@ -5,6 +5,8 @@ export type ReferralProgressViewModel = {
   pageHeader: string
   navBar: MojSubNavigation
   icsAppointmentTable: GovukFrontendTable
+  historySummary: string
+  icsAppointmentHistoryTable: GovukFrontendTable
   actionLinkHref: string
   backLink: GovukFrontendBackLink
   notificationBanner?: GovukFrontendNotificationBanner
@@ -16,6 +18,7 @@ export interface ReferralProgressContent {
   subNavItems: SubNavItem[]
   progressActiveColumnHeaders: string[]
   progressInactiveColumnHeaders: string[]
+  historySummary: string
 }
 
 export type SubNavItem = {

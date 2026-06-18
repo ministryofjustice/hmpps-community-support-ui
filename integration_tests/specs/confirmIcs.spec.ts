@@ -141,9 +141,7 @@ const changeAppointmentDetails = {
 }
 
 test.describe('Confirm ICS Page', () => {
-  const referralProgressWithAppointments: ReferralProgress = buildReferralProgress([
-    { events: [{ status: 'SCHEDULED' }] },
-  ])
+  const referralProgressWithAppointments: ReferralProgress = buildReferralProgress([{ event: { status: 'SCHEDULED' } }])
 
   test.beforeEach(async ({ page }) => {
     await resetStubs()
@@ -378,8 +376,8 @@ test.describe('Confirm ICS Page', () => {
   // IPB-2216:AC15
   test('Reschedule Ics - submit updated details', async ({ page }) => {
     const referralProgressWithRescheduledAppointments: ReferralProgress = buildReferralProgress([
-      { events: [{ status: 'SCHEDULED' }] },
-      { events: [{ status: 'CHANGED' }] },
+      { event: { status: 'SCHEDULED' } },
+      { event: { status: 'CHANGED' } },
     ])
     await communitySupport.stubGetReferralProgress(referralProgressWithRescheduledAppointments, REFERRAL_ID)
     await communitySupport.stubRescheduleICS(REFERRAL_ID, mockAppointmentIcsResponse, 200)
@@ -392,7 +390,11 @@ test.describe('Confirm ICS Page', () => {
     await expect(page).toHaveURL(ReferralProgressPage.url(REFERRAL_ID))
     const progressPage = await ReferralProgressPage.verifyOnPage(page)
 
-    expect(progressPage.table.body).toHaveLength(2)
+    expect(progressPage.icsTable.body).toHaveLength(1)
+    await expect(progressPage.icsTable.body[0].elements[1]).toContainText('Needs feedback')
+    await progressPage.historyLink.click()
+    expect(progressPage.historyTable.body).toHaveLength(1)
+    await expect(progressPage.historyTable.body[0].elements[1]).toContainText('Changed')
   })
 
   enum RequestedBy {
@@ -506,8 +508,8 @@ test.describe('Confirm ICS Page', () => {
   test.describe('Reschedule ICS - Full journey happy path', () => {
     test.beforeEach(async () => {
       const referralProgressWithRescheduledAppointments: ReferralProgress = buildReferralProgress([
-        { events: [{ status: 'SCHEDULED' }] },
-        { events: [{ status: 'CHANGED' }] },
+        { event: { status: 'SCHEDULED' } },
+        { event: { status: 'CHANGED' } },
       ])
       await communitySupport.stubGetReferralProgress(referralProgressWithRescheduledAppointments, REFERRAL_ID)
       await communitySupport.stubRescheduleICS(REFERRAL_ID, mockAppointmentIcsResponse, 200)
