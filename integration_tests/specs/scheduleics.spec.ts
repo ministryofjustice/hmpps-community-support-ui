@@ -102,7 +102,7 @@ test.describe('Schedule ICS Page', () => {
     await ScheduleIcsPage.verifyFieldErrorOnPage(
       page,
       'sessionDate',
-      'The session date must be after the referral date, 01/06/2026',
+      'The session date must be after the referral date',
       false,
     )
   })
