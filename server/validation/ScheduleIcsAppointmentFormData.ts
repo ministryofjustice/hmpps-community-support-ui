@@ -245,8 +245,8 @@ const validateInformedMethod = (data: ScheduleIcsAppointmentFormData, ctx: Refin
   }
 }
 
-const validateForm = (data: ScheduleIcsAppointmentFormData, ctx: RefinementCtx) => {
-  buildDateSchema(new Date(), addMonths(new Date(), 6))(data, ctx)
+const validateForm = (referralDate: Date) => (data: ScheduleIcsAppointmentFormData, ctx: RefinementCtx) => {
+  buildDateSchema(referralDate, addMonths(new Date(), 6))(data, ctx)
   validateTime(data, ctx)
   validateSessionTakePlace(data, ctx)
   validateInformedMethod(data, ctx)
@@ -272,6 +272,9 @@ const baseSchema = z.object({
   prisonList: z.string().trim().optional(),
 })
 
-export const ScheduleIcsAppointmentSchema = baseSchema.superRefine(validateForm)
+// export const ScheduleIcsAppointmentSchema = baseSchema.superRefine(validateForm)
+
+export const buildScheduleIcsAppointmentSchema = (referralDate: Date) =>
+  baseSchema.superRefine(validateForm(referralDate))
 
 export type ScheduleIcsAppointmentFormData = z.infer<typeof baseSchema>

@@ -12,6 +12,7 @@ export default ReferralInformationFactory.define<ReferralInformation>(() => ({
   lastName: 'Doe',
   sex: 'Male',
   referralId: mockReferralId,
+  referralDate: '2026-06-01',
   personId: 'person-id-123',
   communityServiceProviderId: 'csp-id-123',
   communityServiceProviderName: 'Community Support Provider',

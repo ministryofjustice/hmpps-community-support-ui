@@ -520,6 +520,8 @@ export interface components {
       personId: string
       /** Format: uuid */
       referralId: string
+      /** Format: date */
+      referralDate: string
       firstName?: string | null
       lastName?: string | null
       sex?: string | null

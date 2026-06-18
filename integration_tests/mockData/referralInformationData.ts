@@ -4,6 +4,7 @@ import { randomUUID } from 'crypto'
 const mockReferralId = randomUUID()
 
 const referralInformationInCommunity: ReferralInformation = {
+  referralDate: '2026-06-01',
   crn: 'A123456', // crn number
   firstName: 'John',
   lastName: 'Doe',
@@ -27,6 +28,7 @@ const referralInformationInPrison: ReferralInformation = {
   communityServiceProviderName: 'Community Support Provider',
   region: 'North West',
   referenceNumber: 'AB1234CD',
+  referralDate: '2026-06-01',
   deliveryPartner: 'Delivery Partner Ltd',
 }
 
