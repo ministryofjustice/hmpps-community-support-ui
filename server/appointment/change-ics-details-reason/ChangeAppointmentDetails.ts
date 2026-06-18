@@ -4,20 +4,27 @@ export enum ChangeRequesterType {
   REFERRAL_USER = 'REFERRAL_USER',
 }
 
-export const ChangeRequesterLabels: Record<ChangeRequesterType, string> = {
+export const ChangeRequesterLabels = {
   [ChangeRequesterType.DELIVERY_PARTNER]: 'Delivery partner',
   [ChangeRequesterType.PROBATION_PRACTITIONER]: 'Probation practitioner',
-  [ChangeRequesterType.REFERRAL_USER]: 'Referral user',
 } as const
 
-export const getChangeRequesterLabel = (type?: ChangeRequesterType | string | null, referrerName?: string): string => {
+export const getChangeRequesterLabel = (type?: ChangeRequesterType | string | null, refereeName?: string): string => {
   if (!type) return 'Unknown'
 
-  if (type === ChangeRequesterType.REFERRAL_USER) {
-    return referrerName?.trim() || ''
-  }
+  switch (type) {
+    case ChangeRequesterType.REFERRAL_USER:
+      return refereeName?.trim() || 'Referral user'
 
-  return ChangeRequesterLabels[type as ChangeRequesterType] ?? String(type)
+    case ChangeRequesterType.DELIVERY_PARTNER:
+      return ChangeRequesterLabels.DELIVERY_PARTNER
+
+    case ChangeRequesterType.PROBATION_PRACTITIONER:
+      return ChangeRequesterLabels.PROBATION_PRACTITIONER
+
+    default:
+      return String(type)
+  }
 }
 
 export const getChangeRequesterType = (label?: string | null): ChangeRequesterType | null => {

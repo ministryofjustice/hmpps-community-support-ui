@@ -121,14 +121,14 @@ export default class ConfirmIcsPresenter extends PresenterBase<ConfirmIcsViewMod
   }
 
   private buildChangeReasonSummary(): GovukFrontendSummaryList {
-    const referrerName = [this.additionalInformation.firstName, this.additionalInformation.lastName]
+    const refereeName = [this.additionalInformation.firstName, this.additionalInformation.lastName]
       .filter(Boolean)
       .join(' ')
 
     const rows: GovukFrontendSummaryListRow[] = [
       {
         key: { text: 'Who requested the change' },
-        value: { text: getChangeRequesterLabel(this.changeAppointmentDetails.changeRequestedBy, referrerName) },
+        value: { text: getChangeRequesterLabel(this.changeAppointmentDetails.changeRequestedBy, refereeName) },
       },
       { key: { text: 'Reason for the change' }, value: { text: this.changeAppointmentDetails.reasonForChange } },
     ]
