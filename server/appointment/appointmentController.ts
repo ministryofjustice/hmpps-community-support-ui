@@ -30,7 +30,7 @@ import RecordSessionDetailsPresenter from './record-ics/RecordSessionDetailsPres
 import { RecordSessionDetailsFormDataSchema } from '../validation/RecordSessionDetailsFormData'
 import HowTheyTriedToContactThePersonPresenter from './howTheyTriedToContactThePerson/howTheyTriedToContactThePersonPresenter'
 import icsFeedbackHowTheyTriedToContactThePersonFormDataSchema from '../validation/icsFeedbackHowTheyTriedToContactThePersonFormDataSchema'
-import validateRequestBodyAgainstSchema, { formatDynamicErrorMessages } from '../validation/validationUtils'
+import { validateRequestBodyAgainstSchema, formatDynamicErrorMessages } from '../validation/validationUtils'
 import WhyDidSessionNotHappenPresenter from './why-did-session-not-happen/WhyDidSessionNotHappenPresenter'
 import { WhyDidSessionNotHappenFormDataSchema } from '../validation/WhyDidSessionNotHappenFormData'
 import { IcsFeedbackFormSchema } from '../validation/IcsFeedbackHowSessionTookPlaceFormData'
