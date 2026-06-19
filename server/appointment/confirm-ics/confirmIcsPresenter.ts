@@ -1,19 +1,24 @@
-import { CreateAppointmentRequest } from '@community-support-api'
-import { GovukFrontendNotificationBanner, GovukFrontendSummaryList } from '@govuk-frontend'
+import { CreateAppointmentRequest, ChangeAppointmentDetails } from '@community-support-api'
+import { GovukFrontendNotificationBanner, GovukFrontendSummaryList, GovukFrontendSummaryListRow } from '@govuk-frontend'
 import { Response } from 'express'
 import PresenterBase from '../../presenter/presenterBase'
 import { ConfirmIcsContent, ConfirmIcsViewModel } from './confirmIcsViewModel'
 import { buildIcsSummaryRows, formatAddress } from '../icsDetailsSummaryBuilder'
+import { getChangeRequesterLabel } from '../change-ics-details-reason/ChangeAppointmentDetails'
 
 export type AdditionalInformation = {
   firstName: string
+  lastName: string
+  submitHref: string
+  scheduleIcsHref: string
+  changeReasonHref?: string
 }
 
 export default class ConfirmIcsPresenter extends PresenterBase<ConfirmIcsViewModel, ConfirmIcsContent> {
   constructor(
     private readonly createAppointmentRequest: CreateAppointmentRequest,
-    private readonly referralId: string,
     private readonly additionalInformation: AdditionalInformation,
+    private readonly changeAppointmentDetails?: ChangeAppointmentDetails,
   ) {
     super()
   }
@@ -23,11 +28,15 @@ export default class ConfirmIcsPresenter extends PresenterBase<ConfirmIcsViewMod
     const content = this.buildStaticContent(res)
     viewModel.pageHeader = content.pageHeader
     viewModel.submitButtonText = content.submitButtonText
-    viewModel.submitHref = `/referral/${this.referralId}/appointment/submit-ics`
-    viewModel.backLink = { href: `/referral/${this.referralId}/appointment/schedule-ics` }
+    viewModel.submitHref = this.additionalInformation.submitHref
+    viewModel.backLink = { href: this.additionalInformation.scheduleIcsHref }
     viewModel.icsDetailsSummary = this.buildIcsDetailsSummary()
     if (this.isAppointmentInPast()) {
       viewModel.notificationBanner = this.buildPastAppointmentBanner()
+    }
+    if (this.changeAppointmentDetails) {
+      viewModel.backLink = { href: this.additionalInformation.changeReasonHref }
+      viewModel.icsChangeReasonSummary = this.buildChangeReasonSummary()
     }
     return viewModel
   }
@@ -54,8 +63,8 @@ export default class ConfirmIcsPresenter extends PresenterBase<ConfirmIcsViewMod
     const methods: Record<string, string> = {
       PHONE: 'Phone call',
       VIDEO: 'Video call',
-      PROBATION_OFFICE: 'In person',
-      OTHER_LOCATION: 'Other location',
+      IN_PERSON_PROBATION_OFFICE: 'In person',
+      IN_PERSON_OTHER_LOCATION: 'Other location',
     }
     return methods[type] ?? type
   }
@@ -73,13 +82,14 @@ export default class ConfirmIcsPresenter extends PresenterBase<ConfirmIcsViewMod
     const { date, time, sessionMethodRequest, sessionCommunication } = this.createAppointmentRequest
     const isNotInPerson = sessionMethodRequest.type === 'PHONE' || sessionMethodRequest.type === 'VIDEO'
     const isInPerson =
-      sessionMethodRequest.type === 'PROBATION_OFFICE' || sessionMethodRequest.type === 'OTHER_LOCATION'
+      sessionMethodRequest.type === 'IN_PERSON_PROBATION_OFFICE' ||
+      sessionMethodRequest.type === 'IN_PERSON_OTHER_LOCATION'
 
     let locationValue: { text: string } | { html: string } | undefined
     if (isInPerson) {
       locationValue =
-        sessionMethodRequest.type === 'PROBATION_OFFICE'
-          ? { text: 'Probation office' }
+        sessionMethodRequest.type === 'IN_PERSON_PROBATION_OFFICE'
+          ? { text: sessionMethodRequest.additionalDetails }
           : { html: formatAddress(sessionMethodRequest) }
     }
 
@@ -99,9 +109,38 @@ export default class ConfirmIcsPresenter extends PresenterBase<ConfirmIcsViewMod
         actions: {
           items: [
             {
-              href: `/referral/${this.referralId}/appointment/schedule-ics`,
+              href: this.additionalInformation.scheduleIcsHref,
               text: 'Change',
               visuallyHiddenText: 'ICS details',
+            },
+          ],
+        },
+      },
+      rows,
+    }
+  }
+
+  private buildChangeReasonSummary(): GovukFrontendSummaryList {
+    const refereeName = [this.additionalInformation.firstName, this.additionalInformation.lastName]
+      .filter(Boolean)
+      .join(' ')
+
+    const rows: GovukFrontendSummaryListRow[] = [
+      {
+        key: { text: 'Who requested the change' },
+        value: { text: getChangeRequesterLabel(this.changeAppointmentDetails.changeRequestedBy, refereeName) },
+      },
+      { key: { text: 'Reason for the change' }, value: { text: this.changeAppointmentDetails.reasonForChange } },
+    ]
+    return {
+      card: {
+        title: { text: 'Reason for change' },
+        actions: {
+          items: [
+            {
+              href: this.additionalInformation.changeReasonHref,
+              text: 'Change',
+              visuallyHiddenText: 'reason for change details',
             },
           ],
         },

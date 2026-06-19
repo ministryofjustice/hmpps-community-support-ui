@@ -7,6 +7,7 @@ import {
 } from '@community-support-api'
 import { GovukFrontendErrorSummaryErrorListElement } from '@govuk-frontend'
 import { HmppsUser } from '../../interfaces/hmppsUser'
+import { ChangeAppointmentDetails } from '../../appointment/change-ics-details-reason/ChangeAppointmentDetails'
 import { ReferralProgressBannerContent } from '../../referral/progress/ReferralProgressBannerContent'
 
 export interface HowSessionTookPlace {
@@ -24,6 +25,13 @@ export interface IcsFeedbackHowSessionTookPlaceSession {
   howSessionTookPlace?: HowSessionTookPlace
 }
 
+export interface SessionFeedbackDetails {
+  appointmentId: string
+  appointmentDateTime: string
+  icsFeedbackId?: string
+  rowIndex: number
+}
+
 export declare module 'express-session' {
   // Declare that the session will potentially contain these additional fields
   interface SessionData {
@@ -32,10 +40,12 @@ export declare module 'express-session' {
     referralCreationDetails: CreateReferralRequest
     assignmentResults: ReferralUserAssignmentResponse
     createAppointmentRequest: CreateAppointmentRequest
+    ChangeAppointmentDetails: ChangeAppointmentDetails
     referralInformation: ReferralInformationDto
     pending: Record<string, string>
     referralProgressBanner?: ReferralProgressBannerContent
     icsFeedbackSubmission: IcsFeedbackSubmission & { caseReferenceId: string }
+    icsFeedbackInfo: SessionFeedbackDetails[]
   }
 }
 

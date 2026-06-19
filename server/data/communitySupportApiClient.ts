@@ -19,6 +19,7 @@ import type {
   ProbationOffice,
   IcsFeedbackSubmission,
   IcsFeedbackSubmissionResponse,
+  ChangeAppointmentDetails,
 } from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
@@ -113,5 +114,17 @@ export default class CommunitySupportApiClient extends RestClient {
       { path: `/bff/referral/${caseRefId}/ics/${icsId}/feedback`, data: icsFeedback },
       asSystem(username),
     )
+  }
+
+  submitRescheduleICS(
+    caseRefId: string,
+    rescheduleAppointmentRequest: CreateAppointmentRequest & ChangeAppointmentDetails,
+    username: string,
+  ): Promise<AppointmentIcsResponse> {
+    return this.put({ path: `/bff/referral/${caseRefId}/ics`, data: rescheduleAppointmentRequest }, asSystem(username))
+  }
+
+  getIcsSessionFeedback(icsFeedbackId: string, username: string): Promise<IcsFeedbackSubmissionResponse> {
+    return this.get({ path: `/bff/ics-feedback/${icsFeedbackId}` }, asSystem(username))
   }
 }

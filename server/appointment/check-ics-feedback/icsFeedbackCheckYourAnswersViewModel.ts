@@ -11,9 +11,16 @@ export type IcsFeedbackCheckYourAnswersViewModel = {
 export type IcsFeedbackCheckYourAnswersContent = {
   pageHeader: string
   summaryLists: Array<IcsFeedbackSummaryListContent>
+  didNotHappenReasonLabels: {
+    serviceProviderIssue: string
+    referralCouldNotTakePart: string
+    referralDidNotComply: string
+  }
   submitButtonText: string
   submitHref: string
-  backLinkHref: string
+  didNotAttendbackLinkHref: string
+  noSessionbackLinkHref: string
+  attendedBackLinkHref: string
 }
 
 export type SummaryListWithTitle = GovukFrontendSummaryList & {

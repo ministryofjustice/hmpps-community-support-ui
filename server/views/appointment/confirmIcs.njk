@@ -15,6 +15,9 @@
     {% endif %}
 
     {{ govukSummaryList(content.icsDetailsSummary) }}
+    {% if content.icsChangeReasonSummary %}
+      {{ govukSummaryList(content.icsChangeReasonSummary) }}
+    {% endif %}
 
     <form method="post" action="{{ content.submitHref }}">
     <input type="hidden" name="_csrf" value="{{csrfToken}}">

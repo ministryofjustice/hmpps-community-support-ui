@@ -27,7 +27,7 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
       ...content,
       submitHref: content.submitHref.replace('caseRefId', this.caseRefId),
       feedbackSummarys: this.buildFeedbackSummaries(content),
-      backLink: { href: content.backLinkHref.replace('caseRefId', this.caseRefId) },
+      backLink: { href: this.getBackLinkHref(content) },
     } as IcsFeedbackCheckYourAnswersViewModel
   }
 
@@ -35,35 +35,42 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
     return 'appointment/icsFeedbackCheck'
   }
 
-  private buildSummary(content: IcsFeedbackSummaryListContent, values: Array<string>): SummaryListWithTitle {
-    return {
-      summaryTitle: content.summaryTitle,
-      rows: content.rows
-        .map((row, index) => {
-          if (!values[index]) {
-            return null
-          }
-          return {
-            key: {
-              text: row.text.includes('firstname') ? row.text.replace('firstname', this.firstName) : row.text,
-            },
-            value: {
-              text: values[index],
-              html: row.text === 'Location' ? values[index] : null,
-            },
-            actions: {
-              items: [
-                {
-                  href: row.changeHref.replace('caseRefId', this.caseRefId),
-                  text: 'Change',
+  private buildSummary(
+    content: IcsFeedbackSummaryListContent,
+    values: Array<string>,
+    shouldDisplay = true,
+  ): SummaryListWithTitle | null {
+    return shouldDisplay
+      ? {
+          summaryTitle: content.summaryTitle,
+          rows: content.rows
+            .map((row, index) => {
+              if (!values[index]) {
+                return null
+              }
+
+              return {
+                key: {
+                  text: this.replaceFirstnamePlaceholders(row.text),
                 },
-              ],
-            },
-            hint: row.hint,
-          }
-        })
-        .filter(row => row !== null) as GovukFrontendSummaryListRow[],
-    }
+                value: {
+                  text: values[index],
+                  html: row.text === 'Location' || row.text.includes('did not happen') ? values[index] : null,
+                },
+                actions: {
+                  items: [
+                    {
+                      href: row.changeHref.replace('caseRefId', this.caseRefId),
+                      text: 'Change',
+                      visuallyHiddenText: this.replaceFirstnamePlaceholders(row.hint),
+                    },
+                  ],
+                },
+              }
+            })
+            .filter(row => row !== null) as GovukFrontendSummaryListRow[],
+        }
+      : null
   }
 
   private buildFeedbackSummaries(content: IcsFeedbackCheckYourAnswersContent): Array<SummaryListWithTitle> {
@@ -71,6 +78,7 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
       // Session attendance summary
       this.buildSummary(content.summaryLists.filter(item => item.summaryTitle === 'Record session attendance')[0], [
         this.icsFeedbackSubmission.record.didSessionHappen ? 'Yes' : 'No',
+        this.getPersonAttendanceString(),
         this.getSessionMethodString(this.icsFeedbackSubmission.record.howSessionTookPlace?.type) || null,
         this.wasSessionInPerson(this.icsFeedbackSubmission.record.howSessionTookPlace?.type)
           ? this.formatAddress(this.icsFeedbackSubmission.record.howSessionTookPlace)
@@ -78,19 +86,25 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
         this.icsFeedbackSubmission.record.howSessionTookPlace?.additionalDetails || null,
       ]),
       // Session details summary
-      this.buildSummary(content.summaryLists.filter(item => item.summaryTitle === 'Session details')[0], [
-        this.icsFeedbackSubmission.sessionDetails?.wasPersonLate ? 'Yes' : 'No',
-        this.icsFeedbackSubmission.sessionDetails?.lateReason || null,
-        this.icsFeedbackSubmission.sessionDetails?.duration
-          ? this.buildSessionLength(
-              this.icsFeedbackSubmission.sessionDetails?.duration.hours,
-              this.icsFeedbackSubmission.sessionDetails?.duration.minutes,
-            )
-          : null,
-      ]),
+      this.buildSummary(
+        content.summaryLists.filter(item => item.summaryTitle === 'Session details')[0],
+        [
+          this.icsFeedbackSubmission.sessionDetails?.wasPersonLate ? 'Yes' : 'No',
+          this.icsFeedbackSubmission.sessionDetails?.lateReason || null,
+          this.icsFeedbackSubmission.sessionDetails?.duration
+            ? this.buildSessionLength(
+                this.icsFeedbackSubmission.sessionDetails?.duration.hours,
+                this.icsFeedbackSubmission.sessionDetails?.duration.minutes,
+              )
+            : null,
+        ],
+        this.icsFeedbackSubmission.record.didSessionHappen,
+      ),
       // Session feedback summary
       this.buildSummary(content.summaryLists.filter(item => item.summaryTitle === 'Session feedback')[0], [
-        this.icsFeedbackSubmission.sessionFeedback.whatHappened,
+        this.icsFeedbackSubmission.sessionFeedback?.whatHappened || null,
+        this.getDidNotHappenReason(content) || null,
+        this.getDidNotAttendReason() || null,
       ]),
     ]
     return summaries.filter(summary => summary !== null) as Array<SummaryListWithTitle>
@@ -103,6 +117,62 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
       return `${hoursString}${minutesString}`
     }
     return `${minutes} minutes`
+  }
+
+  private getPersonAttendanceString(): string | null {
+    if (!this.icsFeedbackSubmission.record.didSessionHappen) {
+      return this.icsFeedbackSubmission.record.didPersonAttend ? 'Yes' : 'No'
+    }
+    return null
+  }
+
+  private getDidNotHappenReason(content: IcsFeedbackCheckYourAnswersContent): string | null {
+    if (!this.icsFeedbackSubmission.record.didSessionHappen) {
+      if (this.icsFeedbackSubmission.record.didPersonAttend) {
+        const { sessionNotHappenReason } = this.icsFeedbackSubmission.record
+        const details = sessionNotHappenReason?.details
+        let reasonText: string
+        switch (sessionNotHappenReason?.reason) {
+          case 'REFERRAL_DID_NOT_COMPLY':
+            reasonText = content.didNotHappenReasonLabels.referralDidNotComply.replace(
+              '{{ firstname }}',
+              this.firstName,
+            )
+            break
+          case 'REFERRAL_COULD_NOT_TAKE_PART':
+            reasonText = content.didNotHappenReasonLabels.referralCouldNotTakePart.replace(
+              '{{ firstname }}',
+              this.firstName,
+            )
+            break
+          case 'SERVICE_PROVIDER_ISSUE':
+            reasonText = content.didNotHappenReasonLabels.serviceProviderIssue
+            break
+          default:
+            reasonText = sessionNotHappenReason?.reason || ''
+        }
+        return details ? `${reasonText}<br /><br /> ${details}` : reasonText
+      }
+      return null
+    }
+    return null
+  }
+
+  private getDidNotAttendReason(): string | null {
+    if (!this.icsFeedbackSubmission.record.didSessionHappen && !this.icsFeedbackSubmission.record.didPersonAttend) {
+      return this.icsFeedbackSubmission.record.noAttendanceInformation
+    }
+    return null
+  }
+
+  private getBackLinkHref(content: IcsFeedbackCheckYourAnswersContent): string {
+    if (!this.icsFeedbackSubmission.record.didSessionHappen && this.icsFeedbackSubmission.record.didPersonAttend) {
+      return content.noSessionbackLinkHref.replace('caseRefId', this.caseRefId)
+    }
+    if (!this.icsFeedbackSubmission.record.didPersonAttend && !this.icsFeedbackSubmission.record.didSessionHappen) {
+      return content.didNotAttendbackLinkHref.replace('caseRefId', this.caseRefId)
+    }
+    return content.attendedBackLinkHref.replace('caseRefId', this.caseRefId)
   }
 
   private wasSessionInPerson(type: string): boolean {
@@ -123,8 +193,6 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
     switch (type) {
       case 'IN_PERSON_OTHER_LOCATION':
         return 'Other Location'
-      case 'OTHER_LOCATION':
-        return 'Other Location'
       case 'IN_PERSON_PROBATION_OFFICE':
         return 'Probation Office'
       case 'PHONE':
@@ -134,5 +202,9 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
       default:
         return null
     }
+  }
+
+  private replaceFirstnamePlaceholders(text: string): string {
+    return text.replace(/{{\s*firstname\s*}}/gi, this.firstName)
   }
 }

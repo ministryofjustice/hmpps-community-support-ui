@@ -47,6 +47,10 @@ export default function createApp(services: Services): express.Application {
       req.session.createAppointmentRequest = req.body
       res.status(200).json({ ok: true })
     })
+    app.post('/test/setup-change-appointment-details', async (req, res) => {
+      req.session.ChangeAppointmentDetails = req.body
+      res.status(200).json({ ok: true })
+    })
     app.post('/test/setup-ics-feedback-session', (req, res) => {
       if (!req.session.icsFeedbackSubmission) {
         req.session.icsFeedbackSubmission = req.body.icsFeedbackSubmission

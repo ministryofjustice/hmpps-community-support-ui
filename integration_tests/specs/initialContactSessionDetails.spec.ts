@@ -1,7 +1,6 @@
 import { expect, test } from '@playwright/test'
 
-import { randomUUID } from 'node:crypto'
-import { login, resetStubs } from '../testUtils'
+import { login, randomCaseReferenceId, resetStubs } from '../testUtils'
 import communitySupport from '../mockApis/communitySupport'
 import initialContactSessionDetailsPageData from '../mockData/initialContactSessionDetailsPageData'
 import InitialContactSessionDetailsPage from '../pages/InitialContactSessionDetailsPage'
@@ -9,12 +8,12 @@ import ReferralProgressPage from '../pages/referralProgressPage'
 
 test.describe('Initial Contact Session Details Page', () => {
   const virtual = {
-    caseRefId: randomUUID(),
+    caseRefId: randomCaseReferenceId(),
     data: initialContactSessionDetailsPageData.virtual(),
   } as const
 
   const inPerson = {
-    caseRefId: randomUUID(),
+    caseRefId: randomCaseReferenceId(),
     data: initialContactSessionDetailsPageData.inPerson(),
   } as const
 
@@ -58,7 +57,7 @@ test.describe('Initial Contact Session Details Page', () => {
     const backlink = referralDetailsPage.backLink
     await test.step('check backlink', async () => {
       await backlink.click()
-      await expect(page).toHaveURL(ReferralProgressPage.url(virtual.data.referralId))
+      await expect(page).toHaveURL(ReferralProgressPage.url(virtual.caseRefId))
     })
   })
 
@@ -68,7 +67,7 @@ test.describe('Initial Contact Session Details Page', () => {
       await page.goto(InitialContactSessionDetailsPage.url(virtual.caseRefId))
     })
     const referralDetailsPage = await InitialContactSessionDetailsPage.verifyOnPage(page)
-    const summary = referralDetailsPage.details
+    const summary = referralDetailsPage.icsDetails
     await test.step('summary has required number of rows', () => {
       expect(summary.rows).toHaveLength(5)
     })
@@ -94,13 +93,14 @@ test.describe('Initial Contact Session Details Page', () => {
       })
     })
   })
+
   // IPB-2130:AC4
   test('View ICS details - in person', async ({ page }) => {
     await test.step('go to initial contact session details page', async () => {
       await page.goto(InitialContactSessionDetailsPage.url(inPerson.caseRefId))
     })
     const referralDetailsPage = await InitialContactSessionDetailsPage.verifyOnPage(page)
-    const summary = referralDetailsPage.details
+    const summary = referralDetailsPage.icsDetails
     await test.step('summary has required number of rows', () => {
       expect(summary.rows).toHaveLength(5)
     })

@@ -35,6 +35,13 @@ export const seedAppointmentSession = async (page: Page, appointmentRequest: obj
   })
 }
 
+export const seedChangeAppointmentDetails = async (page: Page, changeAppointmentDetails: object): Promise<void> => {
+  await page.request.post('/test/setup-change-appointment-details', {
+    data: changeAppointmentDetails,
+    headers: { 'Content-Type': 'application/json' },
+  })
+}
+
 export const seedReferralInformation = async (page: Page, referralInformation: object): Promise<void> => {
   await page.request.post('/test/setup-referral-information', {
     data: referralInformation,
@@ -51,11 +58,7 @@ export const duplicateData = (dataToDuplicate: unknown, timesToDuplicates: numbe
   return duplicatedData
 }
 
-export const seedSessionWithIcsFeedback = async (
-  page: Page,
-  caseRefId: string,
-  icsFeedbackSubmission: object,
-): Promise<void> => {
+export const seedSessionWithIcsFeedback = async (page: Page, icsFeedbackSubmission: object): Promise<void> => {
   await page.request.post('/test/setup-ics-feedback-session', {
     data: { icsFeedbackSubmission },
     headers: { 'Content-Type': 'application/json' },
@@ -69,16 +72,25 @@ export const seedSessionFeedbackSession = async (page: Page, icsFeedbackSubmissi
   })
 }
 
-export const seedFullIcsFeedbackSessionData = async (page: Page, icsFeedbackSubmission: object): Promise<void> => {
-  await page.request.post('/test/setup-ics-feedback-session', {
-    data: { icsFeedbackSubmission },
-    headers: { 'Content-Type': 'application/json' },
-  })
-}
-
 export const daysAfter = (base: Date, days: number, hour = 10): string => {
   const d = new Date(base)
   d.setDate(d.getDate() + days)
   d.setHours(hour, 0, 0, 0)
   return d.toISOString()
 }
+
+const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' as const
+const digits = '0123456789' as const
+const choice = <T>(arr: T[]) => arr[Math.floor(Math.random() * arr.length)]
+const randomLetter = () => choice(letters.split(''))
+const randomDigit = () => choice(digits.split(''))
+
+export const randomCaseReferenceId = () =>
+  randomLetter() +
+  randomLetter() +
+  randomDigit() +
+  randomDigit() +
+  randomDigit() +
+  randomDigit() +
+  randomLetter() +
+  randomLetter()

@@ -1,8 +1,9 @@
 import { Response } from 'express'
-import { CreateAppointmentRequest } from '@community-support-api'
+import { CreateAppointmentRequest, ChangeAppointmentDetails } from '@community-support-api'
 import type { ConfirmIcsContent, ConfirmIcsViewModel } from './confirmIcsViewModel'
 import ConfirmIcsPresenter, { type AdditionalInformation } from './confirmIcsPresenter'
 import ConfirmIcsContentFactory from '../../testutils/factories/ConfirmIcsContent'
+import { ChangeRequesterType } from '../change-ics-details-reason/ChangeAppointmentDetails'
 
 function addDays(days: number): Date {
   const d = new Date()
@@ -40,6 +41,17 @@ describe('ConfirmIcsPresenter', () => {
 
   const additionInformation: AdditionalInformation = {
     firstName: 'John',
+    lastName: 'Doe',
+    submitHref: `/referral/${referralId}/appointment/submit-ics`,
+    scheduleIcsHref: `/referral/${referralId}/appointment/schedule-ics`,
+  }
+
+  const rescheduleAdditionInformation: AdditionalInformation = {
+    firstName: 'John',
+    lastName: 'Doe',
+    submitHref: `/referral/${referralId}/ics-change-details/submit-ics`,
+    scheduleIcsHref: `/referral/${referralId}/ics-change-details`,
+    changeReasonHref: `/referral/${referralId}/ics-change-details/reason`,
   }
 
   beforeEach(() => {
@@ -53,13 +65,13 @@ describe('ConfirmIcsPresenter', () => {
 
   describe('renderPage', () => {
     it('should render the confirm ICS page with correct template', () => {
-      const presenter = new ConfirmIcsPresenter(baseRequest, referralId, additionInformation)
+      const presenter = new ConfirmIcsPresenter(baseRequest, additionInformation)
       presenter.renderPage(res)
       expect(res.render).toHaveBeenCalledWith('appointment/confirmIcs', expect.objectContaining({}))
     })
 
     it('should include the page header and submit button text from content', () => {
-      const presenter = new ConfirmIcsPresenter(baseRequest, referralId, additionInformation)
+      const presenter = new ConfirmIcsPresenter(baseRequest, additionInformation)
       presenter.renderPage(res)
       expect(res.render).toHaveBeenCalledWith(
         'appointment/confirmIcs',
@@ -73,7 +85,7 @@ describe('ConfirmIcsPresenter', () => {
     })
 
     it('should include the correct submit and backlink href', () => {
-      const presenter = new ConfirmIcsPresenter(baseRequest, referralId, additionInformation)
+      const presenter = new ConfirmIcsPresenter(baseRequest, additionInformation)
       presenter.renderPage(res)
       expect(res.render).toHaveBeenCalledWith(
         'appointment/confirmIcs',
@@ -87,7 +99,7 @@ describe('ConfirmIcsPresenter', () => {
     })
 
     it('should build the ICS details summary with formatted date and time', () => {
-      const presenter = new ConfirmIcsPresenter(baseRequest, referralId, additionInformation)
+      const presenter = new ConfirmIcsPresenter(baseRequest, additionInformation)
       presenter.renderPage(res)
 
       const renderCall = (res.render as jest.Mock).mock.calls[0]
@@ -99,7 +111,7 @@ describe('ConfirmIcsPresenter', () => {
     })
 
     it('should format the session method as a display string', () => {
-      const presenter = new ConfirmIcsPresenter(baseRequest, referralId, additionInformation)
+      const presenter = new ConfirmIcsPresenter(baseRequest, additionInformation)
       presenter.renderPage(res)
 
       const renderCall = (res.render as jest.Mock).mock.calls[0]
@@ -110,7 +122,7 @@ describe('ConfirmIcsPresenter', () => {
     })
 
     it('should include reason session is not in-person when method is not PROBATION_OFFICE', () => {
-      const presenter = new ConfirmIcsPresenter(baseRequest, referralId, additionInformation)
+      const presenter = new ConfirmIcsPresenter(baseRequest, additionInformation)
       presenter.renderPage(res)
 
       const renderCall = (res.render as jest.Mock).mock.calls[0]
@@ -123,12 +135,12 @@ describe('ConfirmIcsPresenter', () => {
       })
     })
 
-    it('should not include reason session is not in-person when method is PROBATION_OFFICE', () => {
+    it('should not include reason session is not in-person when method is IN_PERSON_PROBATION_OFFICE', () => {
       const inPersonRequest: CreateAppointmentRequest = {
         ...baseRequest,
-        sessionMethodRequest: { type: 'PROBATION_OFFICE' },
+        sessionMethodRequest: { type: 'IN_PERSON_PROBATION_OFFICE' },
       }
-      const presenter = new ConfirmIcsPresenter(inPersonRequest, referralId, additionInformation)
+      const presenter = new ConfirmIcsPresenter(inPersonRequest, additionInformation)
       presenter.renderPage(res)
 
       const renderCall = (res.render as jest.Mock).mock.calls[0]
@@ -140,7 +152,7 @@ describe('ConfirmIcsPresenter', () => {
     })
 
     it('should include how the person was informed about the session', () => {
-      const presenter = new ConfirmIcsPresenter(baseRequest, referralId, additionInformation)
+      const presenter = new ConfirmIcsPresenter(baseRequest, additionInformation)
       presenter.renderPage(res)
 
       const renderCall = (res.render as jest.Mock).mock.calls[0]
@@ -154,7 +166,7 @@ describe('ConfirmIcsPresenter', () => {
     })
 
     it('should include a Change action link in the ICS details card', () => {
-      const presenter = new ConfirmIcsPresenter(baseRequest, referralId, additionInformation)
+      const presenter = new ConfirmIcsPresenter(baseRequest, additionInformation)
       presenter.renderPage(res)
 
       const renderCall = (res.render as jest.Mock).mock.calls[0]
@@ -168,26 +180,29 @@ describe('ConfirmIcsPresenter', () => {
     })
 
     describe('location row for in-person sessions', () => {
-      it('should include Location row with "Probation office" when method is PROBATION_OFFICE', () => {
+      it('should include Location row with "Probation office" when method is IN_PERSON_PROBATION_OFFICE', () => {
         const inPersonRequest: CreateAppointmentRequest = {
           ...baseRequest,
-          sessionMethodRequest: { type: 'PROBATION_OFFICE' },
+          sessionMethodRequest: {
+            type: 'IN_PERSON_PROBATION_OFFICE',
+            additionalDetails: 'Location of probation office',
+          },
         }
-        const presenter = new ConfirmIcsPresenter(inPersonRequest, referralId, additionInformation)
+        const presenter = new ConfirmIcsPresenter(inPersonRequest, additionInformation)
         presenter.renderPage(res)
 
         const renderCall = (res.render as jest.Mock).mock.calls[0]
         const viewModel: ConfirmIcsViewModel = renderCall[1].content
         const locationRow = viewModel.icsDetailsSummary.rows.find(row => row.key.text === 'Location')
 
-        expect(locationRow).toEqual({ key: { text: 'Location' }, value: { text: 'Probation office' } })
+        expect(locationRow).toEqual({ key: { text: 'Location' }, value: { text: 'Location of probation office' } })
       })
 
-      it('should include Location row with formatted address when method is OTHER_LOCATION', () => {
+      it('should include Location row with formatted address when method is IN_PERSON_OTHER_LOCATION', () => {
         const otherLocationRequest: CreateAppointmentRequest = {
           ...baseRequest,
           sessionMethodRequest: {
-            type: 'OTHER_LOCATION',
+            type: 'IN_PERSON_OTHER_LOCATION',
             addressLine1: '123 Main Street',
             addressLine2: 'Flat 4',
             townOrCity: 'Leeds',
@@ -195,7 +210,7 @@ describe('ConfirmIcsPresenter', () => {
             postcode: 'LS1 1AA',
           },
         }
-        const presenter = new ConfirmIcsPresenter(otherLocationRequest, referralId, additionInformation)
+        const presenter = new ConfirmIcsPresenter(otherLocationRequest, additionInformation)
         presenter.renderPage(res)
 
         const renderCall = (res.render as jest.Mock).mock.calls[0]
@@ -208,17 +223,17 @@ describe('ConfirmIcsPresenter', () => {
         })
       })
 
-      it('should omit blank address fields in Location row for OTHER_LOCATION', () => {
+      it('should omit blank address fields in Location row for IN_PERSON_OTHER_LOCATION', () => {
         const otherLocationRequest: CreateAppointmentRequest = {
           ...baseRequest,
           sessionMethodRequest: {
-            type: 'OTHER_LOCATION',
+            type: 'IN_PERSON_OTHER_LOCATION',
             addressLine1: '123 Main Street',
             townOrCity: 'Leeds',
             postcode: 'LS1 1AA',
           },
         }
-        const presenter = new ConfirmIcsPresenter(otherLocationRequest, referralId, additionInformation)
+        const presenter = new ConfirmIcsPresenter(otherLocationRequest, additionInformation)
         presenter.renderPage(res)
 
         const renderCall = (res.render as jest.Mock).mock.calls[0]
@@ -232,7 +247,7 @@ describe('ConfirmIcsPresenter', () => {
       })
 
       it('should not include a Location row for non-in-person sessions', () => {
-        const presenter = new ConfirmIcsPresenter(baseRequest, referralId, additionInformation)
+        const presenter = new ConfirmIcsPresenter(baseRequest, additionInformation)
         presenter.renderPage(res)
 
         const renderCall = (res.render as jest.Mock).mock.calls[0]
@@ -250,7 +265,7 @@ describe('ConfirmIcsPresenter', () => {
           date: '2020-01-01',
           time: { hour: 9, minute: 0, amPm: 'am' },
         }
-        const presenter = new ConfirmIcsPresenter(pastRequest, referralId, additionInformation)
+        const presenter = new ConfirmIcsPresenter(pastRequest, additionInformation)
         presenter.renderPage(res)
 
         const renderCall = (res.render as jest.Mock).mock.calls[0]
@@ -268,13 +283,70 @@ describe('ConfirmIcsPresenter', () => {
           date: '2099-12-31',
           time: { hour: 11, minute: 59, amPm: 'pm' },
         }
-        const presenter = new ConfirmIcsPresenter(futureRequest, referralId, additionInformation)
+        const presenter = new ConfirmIcsPresenter(futureRequest, additionInformation)
         presenter.renderPage(res)
 
         const renderCall = (res.render as jest.Mock).mock.calls[0]
         const viewModel: ConfirmIcsViewModel = renderCall[1].content
 
         expect(viewModel.notificationBanner).toBeUndefined()
+      })
+    })
+
+    describe('reschedule ics chack answers page', () => {
+      const changeAppointmentDetails: ChangeAppointmentDetails = {
+        changeRequestedBy: ChangeRequesterType.PROBATION_PRACTITIONER,
+        reasonForChange: 'There were technical issues',
+      }
+      it('should include a reason for change card when the appointment is being rescheduled', () => {
+        const presenter = new ConfirmIcsPresenter(baseRequest, rescheduleAdditionInformation, changeAppointmentDetails)
+        presenter.renderPage(res)
+
+        const renderCall = (res.render as jest.Mock).mock.calls[0]
+        const viewModel: ConfirmIcsViewModel = renderCall[1].content
+        const { rows } = viewModel.icsChangeReasonSummary
+
+        expect(rows[0]).toEqual({
+          key: { text: 'Who requested the change' },
+          value: { text: 'Probation practitioner' },
+        })
+        expect(rows[1]).toEqual({
+          key: { text: 'Reason for the change' },
+          value: { text: 'There were technical issues' },
+        })
+      })
+
+      it('should include the correct submit and backlink href', () => {
+        const presenter = new ConfirmIcsPresenter(baseRequest, rescheduleAdditionInformation, changeAppointmentDetails)
+        presenter.renderPage(res)
+        expect(res.render).toHaveBeenCalledWith(
+          'appointment/confirmIcs',
+          expect.objectContaining({
+            content: expect.objectContaining<Partial<ConfirmIcsViewModel>>({
+              submitHref: `/referral/${referralId}/ics-change-details/submit-ics`,
+              backLink: { href: `/referral/${referralId}/ics-change-details/reason` },
+            }),
+          }),
+        )
+      })
+
+      it('should include a Change action link in both cards', () => {
+        const presenter = new ConfirmIcsPresenter(baseRequest, rescheduleAdditionInformation, changeAppointmentDetails)
+        presenter.renderPage(res)
+
+        const renderCall = (res.render as jest.Mock).mock.calls[0]
+        const viewModel: ConfirmIcsViewModel = renderCall[1].content
+        const { card: icsDetailsCard } = viewModel.icsDetailsSummary
+        const { card: icsChangeReasonCard } = viewModel.icsChangeReasonSummary
+
+        expect(icsDetailsCard?.actions?.items?.[0]).toMatchObject({
+          href: `/referral/${referralId}/ics-change-details`,
+          text: 'Change',
+        })
+        expect(icsChangeReasonCard?.actions?.items?.[0]).toMatchObject({
+          href: `/referral/${referralId}/ics-change-details/reason`,
+          text: 'Change',
+        })
       })
     })
   })

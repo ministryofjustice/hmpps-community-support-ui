@@ -7,6 +7,7 @@ export type ConfirmIcsViewModel = {
   backLink: GovukFrontendBackLink
   icsDetailsSummary: GovukFrontendSummaryList
   notificationBanner?: GovukFrontendNotificationBanner
+  icsChangeReasonSummary?: GovukFrontendSummaryList
 }
 
 export type ConfirmIcsContent = {

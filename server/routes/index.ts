@@ -7,6 +7,7 @@ import ReferralController from '../referral/referralController'
 import CaseListController from '../caseList/caseListController'
 import CommunityServiceProviderController from '../referral/communityServiceProviders/communityServiceProviderController'
 import AppointmentController from '../appointment/appointmentController'
+import IcsFeedbackController from '../appointment/icsFeedbackController'
 import asyncMiddleware from '../middleware/asyncMiddleware'
 
 export default function routes({
@@ -32,6 +33,7 @@ export default function routes({
   const communityServiceProviderController = new CommunityServiceProviderController(communityServiceProviderService)
   const caseListController = new CaseListController(caseListService)
   const appointmentController = new AppointmentController(referralService, appointmentService, referenceDataService)
+  const icsFeedbackController = new IcsFeedbackController(appointmentService)
 
   router.get('/', async (req, res, next) => {
     await auditService.logPageView(Page.INDEX_PAGE, { who: res.locals.user.username, correlationId: req.id })
@@ -87,11 +89,15 @@ export default function routes({
 
   get('/referral/:referralId/appointment/confirm-ics', async (req, res) => appointmentController.checkIcs(req, res))
 
-  getOrPost('/referral/:referralId/appointment/schedule-ics', async (req, res) =>
-    appointmentController.scheduleIcs(req, res),
-  )
+  get('/referral/:caseRefId/appointment/schedule-ics', (req, res) => appointmentController.showScheduleIcs(req, res))
 
-  get('/referral-details/:caseRefId/check-change-ics', (req, res) => appointmentController.changeIcs(req, res))
+  post('/referral/:referralId/appointment/schedule-ics', (req, res) => appointmentController.scheduleIcs(req, res))
+
+  get('/referral-details/:caseRefId/ics-view-or-change', (req, res) => appointmentController.viewOrChangeIcs(req, res))
+
+  get('/referral-details/:caseRefId/changed-ics-details/:icsId', (req, res) =>
+    appointmentController.viewIcsDetails(req, res),
+  )
 
   get('/ics-feedback/:caseRefId/did-session-take-place', async (req, res) =>
     appointmentController.didSessionTakePlace(req, res),
@@ -137,6 +143,11 @@ export default function routes({
   post('/ics-feedback/:caseRefId/submit', async (req, res) => {
     appointmentController.submitFeedback(req, res)
   })
+
+  get('/ics-feedback/:caseRefId/session/:rowIndex', async (req, res) => {
+    icsFeedbackController.viewFeedback(req, res)
+  })
+
   get('/ics-feedback/:caseRefId/why-did-the-session-not-happen', (req, res) =>
     appointmentController.whyDidSessionNotHappen(req, res),
   )
@@ -152,6 +163,26 @@ export default function routes({
   post('/ics-feedback/:caseRefId/how-they-tried-to-contact-the-person', (req, res) =>
     appointmentController.recordHowTheyTriedToContactThePerson(req, res),
   )
+
+  get('/referral/:caseRefId/ics-change-details/reason', (req, res) =>
+    appointmentController.changeIcsDetailsReason(req, res),
+  )
+
+  post('/referral/:caseRefId/ics-change-details/reason', (req, res) =>
+    appointmentController.recordChangeIcsDetailsReason(req, res),
+  )
+
+  get('/referral/:caseRefId/ics-change-details/check-answers', (req, res) =>
+    appointmentController.changeIcsDetailsCYA(req, res),
+  )
+
+  post('/referral/:caseRefId/ics-change-details/submit-ics', (req, res) =>
+    appointmentController.submitChangeIcsDetails(req, res),
+  )
+
+  get('/referral/:caseRefId/ics-change-details', (req, res) => appointmentController.showRescheduleIcs(req, res))
+
+  post('/referral/:caseRefId/ics-change-details', (req, res) => appointmentController.rescheduleIcs(req, res))
 
   return router
 }

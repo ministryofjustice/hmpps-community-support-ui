@@ -4,7 +4,25 @@
  */
 
 export interface paths {
-  '/referral/{referralId}/assign': {
+  '/bff/referral/{caseReference}/ics': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get all ICS appointments for a referral */
+    get: operations['getIcsAppointments']
+    /** Change an ICS appointment for a referral */
+    put: operations['changeIcsAppointment']
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/referral/{identifier}/assign': {
     parameters: {
       query?: never
       header?: never
@@ -98,23 +116,6 @@ export interface paths {
     }
     /** Get ICS feedback session details */
     get: operations['getIcsFeedbackSession']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/bff/referral/{caseReference}/ics': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get all ICS appointments for a referral */
-    get: operations['getIcsAppointments']
     put?: never
     post?: never
     delete?: never
@@ -242,7 +243,7 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/bff/referral-assignments/{referralId}': {
+  '/bff/referral-assignments/{identifier}': {
     parameters: {
       query?: never
       header?: never
@@ -293,6 +294,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/bff/ics-feedback/{icsFeedbackId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get a single ICS feedback record by its ID */
+    get: operations['getIcsFeedback']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/bff/case-list/unassigned': {
     parameters: {
       query?: never
@@ -331,6 +349,106 @@ export interface paths {
 export type webhooks = Record<string, never>
 export interface components {
   schemas: {
+    AppointmentTimeRequest: {
+      /** Format: int32 */
+      hour: number
+      /** Format: int32 */
+      minute?: number | null
+      amPm: string
+    }
+    ChangeAppointmentDetails: {
+      /** @enum {string|null} */
+      changeRequestedBy?: 'DELIVERY_PARTNER' | 'PROBATION_PRACTITIONER' | 'REFERRAL_USER' | null
+      reasonForChange?: string | null
+    }
+    CreateAppointmentRequest: {
+      /** Format: date */
+      date: string
+      time: components['schemas']['AppointmentTimeRequest']
+      sessionMethodRequest: components['schemas']['SessionMethodRequest']
+      sessionCommunication: string[]
+      changeAppointmentDetails?: components['schemas']['ChangeAppointmentDetails'] | null
+    }
+    SessionMethodRequest: {
+      /** @enum {string} */
+      type: 'PHONE' | 'VIDEO' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION'
+      additionalDetails?: string | null
+      pdu?: string | null
+      addressLine1?: string | null
+      addressLine2?: string | null
+      townOrCity?: string | null
+      county?: string | null
+      postcode?: string | null
+    }
+    AppointmentIcsResponse: {
+      /** Format: uuid */
+      appointmentIcsId: string
+      /** Format: uuid */
+      appointmentId: string
+      /** Format: uuid */
+      referralId: string
+      caseReference?: string | null
+      /** @enum {string} */
+      appointmentType: 'ICS'
+      /** Format: date */
+      appointmentDate: string
+      appointmentTime: components['schemas']['AppointmentTimeResponse']
+      /** @enum {string} */
+      appointmentStatus: 'SCHEDULED' | 'NEEDS_FEEDBACK' | 'COMPLETED' | 'CHANGED' | 'DID_NOT_ATTEND' | 'DID_NOT_HAPPEN'
+      sessionMethod: components['schemas']['SessionMethod']
+      sessionCommunications: string[]
+      referralFirstName: string
+      referralLastName: string
+      /** Format: date-time */
+      createdAt: string
+      changeAppointmentDetails?: components['schemas']['ChangeAppointmentDetails'] | null
+    }
+    AppointmentTimeResponse: {
+      /** Format: int32 */
+      hour: number
+      /** Format: int32 */
+      minute: number
+      amPm: string
+    }
+    InPersonAppointment: Omit<WithRequired<components['schemas']['SessionMethod'], 'type'>, 'appointmentCategory'> & {
+      probationOfficeName?: string | null
+      addressLine1?: string | null
+      addressLine2?: string | null
+      townOrCity?: string | null
+      county?: string | null
+      postcode?: string | null
+    } & {
+      /**
+       * @description discriminator enum property added by openapi-typescript
+       * @enum {string}
+       */
+      appointmentCategory: 'IN_PERSON'
+    } & {
+      /**
+       * @description discriminator enum property added by openapi-typescript
+       * @enum {string}
+       */
+      appointmentCategory: 'IN_PERSON'
+    }
+    SessionMethod: {
+      type: string
+      appointmentCategory: string
+    } & (components['schemas']['VirtualAppointment'] | components['schemas']['InPersonAppointment'])
+    VirtualAppointment: Omit<WithRequired<components['schemas']['SessionMethod'], 'type'>, 'appointmentCategory'> & {
+      whyNotInPersonReason?: string | null
+    } & {
+      /**
+       * @description discriminator enum property added by openapi-typescript
+       * @enum {string}
+       */
+      appointmentCategory: 'VIRTUAL'
+    } & {
+      /**
+       * @description discriminator enum property added by openapi-typescript
+       * @enum {string}
+       */
+      appointmentCategory: 'VIRTUAL'
+    }
     AssignCaseWorkersRequest: {
       emails: string[]
     }
@@ -371,17 +489,28 @@ export interface components {
       religionOrBelief?: string | null
       transgender?: string | null
       sexualOrientation?: string | null
+      genderIdentity?: string | null
+      nationalities: string[]
+      interestToImmigration?: boolean | null
       address?: string | null
+      addressType?: string | null
+      addressTypeVerified: boolean
+      /** Format: date */
+      addressStartDate?: string | null
+      addressNotes?: string | null
       phoneNumber?: string | null
+      mobileNumber?: string | null
       emailAddress?: string | null
+      disability?: boolean | null
     }
     PersonDto: {
       /** Format: uuid */
       id: string
       personIdentifier?: string | null
+      title?: string | null
       firstName: string
+      middleNames?: string | null
       lastName: string
-      /** Format: date */
       dateOfBirth: string
       sex?: string | null
       additionalDetails?: components['schemas']['PersonAdditionalDetails'] | null
@@ -440,23 +569,6 @@ export interface components {
       behaviour?: string | null
       strengthsIdentified?: string | null
     }
-    SessionMethodRequest: {
-      /** @enum {string} */
-      type:
-        | 'PHONE'
-        | 'VIDEO'
-        | 'IN_PERSON_PROBATION_OFFICE'
-        | 'IN_PERSON_OTHER_LOCATION'
-        | 'PROBATION_OFFICE'
-        | 'OTHER_LOCATION'
-      additionalDetails?: string | null
-      pdu?: string | null
-      addressLine1?: string | null
-      addressLine2?: string | null
-      townOrCity?: string | null
-      county?: string | null
-      postcode?: string | null
-    }
     SessionNotHappenReasonRequest: {
       /** @enum {string} */
       reason: 'SERVICE_PROVIDER_ISSUE' | 'REFERRAL_COULD_NOT_TAKE_PART' | 'REFERRAL_DID_NOT_COMPLY'
@@ -491,97 +603,25 @@ export interface components {
       issuesOrConcernsNotifyProbationPractitioner?: boolean | null
       nextStepsPlannedForNextSession?: string | null
       nextStepsActionsBeforeNextSession?: string | null
+      sessionFeedbackDetails?: components['schemas']['SessionFeedbackDetailsDto'] | null
       /** Format: date-time */
       createdAt: string
       /** Format: uuid */
       createdBy?: string | null
     }
-    AppointmentTimeRequest: {
-      /** Format: int32 */
-      hour: number
-      /** Format: int32 */
-      minute?: number | null
-      amPm: string
+    CaseWorkerSummaryDto: {
+      fullName?: string | null
+      emailAddress: string
     }
-    CreateAppointmentRequest: {
-      /** Format: date */
-      date: string
-      time: components['schemas']['AppointmentTimeRequest']
-      sessionMethodRequest: components['schemas']['SessionMethodRequest']
-      sessionCommunication: string[]
-    }
-    AppointmentIcsResponse: {
-      /** Format: uuid */
-      appointmentIcsId: string
-      /** Format: uuid */
-      appointmentId: string
-      /** Format: uuid */
-      referralId: string
-      /** @enum {string} */
-      appointmentType: 'ICS'
-      /** Format: date */
-      appointmentDate: string
-      appointmentTime: components['schemas']['AppointmentTimeResponse']
-      /** @enum {string} */
-      appointmentStatus:
-        | 'SCHEDULED'
-        | 'NEEDS_FEEDBACK'
-        | 'COMPLETED'
-        | 'RESCHEDULED'
-        | 'DID_NOT_ATTEND'
-        | 'DID_NOT_HAPPEN'
-      sessionMethod: components['schemas']['SessionMethod']
-      sessionCommunications: string[]
-      referralFirstName: string
-      referralLastName: string
+    SessionFeedbackDetailsDto: {
+      currentCaseworkers: components['schemas']['CaseWorkerSummaryDto'][]
+      feedbackSubmittedBy: components['schemas']['CaseWorkerSummaryDto']
       /** Format: date-time */
-      createdAt: string
-    }
-    AppointmentTimeResponse: {
-      /** Format: int32 */
-      hour: number
-      /** Format: int32 */
-      minute: number
-      amPm: string
-    }
-    InPersonAppointment: Omit<WithRequired<components['schemas']['SessionMethod'], 'type'>, 'appointmentCategory'> & {
-      probationOfficeName?: string | null
-      addressLine1?: string | null
-      addressLine2?: string | null
-      townOrCity?: string | null
-      county?: string | null
-      postcode?: string | null
-    } & {
-      /**
-       * @description discriminator enum property added by openapi-typescript
-       * @enum {string}
-       */
-      appointmentCategory: 'IN_PERSON'
-    } & {
-      /**
-       * @description discriminator enum property added by openapi-typescript
-       * @enum {string}
-       */
-      appointmentCategory: 'IN_PERSON'
-    }
-    SessionMethod: {
-      type: string
-      appointmentCategory: string
-    } & (components['schemas']['VirtualAppointment'] | components['schemas']['InPersonAppointment'])
-    VirtualAppointment: Omit<WithRequired<components['schemas']['SessionMethod'], 'type'>, 'appointmentCategory'> & {
-      whyNotInPersonReason?: string | null
-    } & {
-      /**
-       * @description discriminator enum property added by openapi-typescript
-       * @enum {string}
-       */
-      appointmentCategory: 'VIRTUAL'
-    } & {
-      /**
-       * @description discriminator enum property added by openapi-typescript
-       * @enum {string}
-       */
-      appointmentCategory: 'VIRTUAL'
+      startDateTime: string
+      /** @enum {string|null} */
+      sessionMethod?: 'PHONE_CALL' | 'VIDEO_CALL' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION' | null
+      sessionCommunications?: string[] | null
+      personFirstName: string
     }
     AppointmentDetailsDto: {
       /** @enum {string|null} */
@@ -672,13 +712,15 @@ export interface components {
     }
     ReferralAppointmentHistoryDto: {
       /** Format: uuid */
-      appointmentId: string
+      appointmentIcsId: string
       /** @enum {string} */
       type: 'ICS'
       /** Format: date-time */
       dateTime: string
       /** @enum {string} */
-      status: 'SCHEDULED' | 'NEEDS_FEEDBACK' | 'COMPLETED' | 'RESCHEDULED' | 'DID_NOT_ATTEND' | 'DID_NOT_HAPPEN'
+      status: 'SCHEDULED' | 'NEEDS_FEEDBACK' | 'COMPLETED' | 'CHANGED' | 'DID_NOT_ATTEND' | 'DID_NOT_HAPPEN'
+      /** Format: uuid */
+      icsFeedbackId?: string | null
     }
     ReferralProgressDto: {
       /** Format: uuid */
@@ -720,12 +762,96 @@ export interface components {
 }
 export type $defs = Record<string, never>
 export interface operations {
+  getIcsAppointments: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        caseReference: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description List of ICS appointments */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['AppointmentIcsResponse'][]
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  changeIcsAppointment: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        caseReference: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateAppointmentRequest']
+      }
+    }
+    responses: {
+      /** @description Appointment changed successfully */
+      201: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['AppointmentIcsResponse']
+        }
+      }
+      /** @description Invalid request body */
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+      /** @description The ICS id does not match the latest ICS record */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
   assignCaseWorkers: {
     parameters: {
       query?: never
       header?: never
       path: {
-        referralId: string
+        identifier: string
       }
       cookie?: never
     }
@@ -853,6 +979,15 @@ export interface operations {
           'application/json': unknown
         }
       }
+      /** @description ICS feedback already exists for this appointment */
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
     }
   }
   createIcsAppointment: {
@@ -920,37 +1055,6 @@ export interface operations {
         }
       }
       /** @description ICS feedback session details not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  getIcsAppointments: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        caseReference: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description List of ICS appointments */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['AppointmentIcsResponse'][]
-        }
-      }
-      /** @description Referral not found */
       404: {
         headers: {
           [name: string]: unknown
@@ -1193,7 +1297,7 @@ export interface operations {
       query?: never
       header?: never
       path: {
-        referralId: string
+        identifier: string
       }
       cookie?: never
     }
@@ -1269,6 +1373,37 @@ export interface operations {
         }
       }
       /** @description Person not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getIcsFeedback: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        icsFeedbackId: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description ICS feedback found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['AppointmentIcsFeedbackResponse']
+        }
+      }
+      /** @description ICS feedback not found */
       404: {
         headers: {
           [name: string]: unknown
