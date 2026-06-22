@@ -306,9 +306,12 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
   }
 
   buildPageContent(res: Response): ScheduleIcsViewModel {
+    console.log('--------------------showScheduleIcs--------------------')
     const content = this.buildStaticContent(res)
+    console.log('content :', JSON.stringify(content, null, 2))
     const submitHref = content.submitHref.replace('{{ caseRef }}', this.caseReference)
     const backLinkHref = content.backLink.replace('{{ caseRef }}', this.caseReference)
+    console.log('====================showScheduleIcs====================')
     return {
       pageHeader: content.pageHeader,
       submitButton: this.buildSubmit(content),

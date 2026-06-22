@@ -262,12 +262,9 @@ const getSessionMethodFromFormData = (formData: ScheduledIcsFormData): SessionMe
   return {} as SessionMethodRequest
 }
 
-const getInformedMethodsFromFormData = (formData: ScheduledIcsFormData): string[] => {
-  let informedMethods = Array.isArray(formData.informedMethods) ? [...formData.informedMethods] : []
-  if (informedMethods.includes('informedByOtherMethods') && formData.otherMethodOfContact) {
-    informedMethods = informedMethods
-      .filter(method => method !== 'informedByOtherMethod')
-      .concat(formData.otherMethodOfContact)
+const getInformedMethodsFromFormData = ({ informedMethods, otherMethodOfContact }: ScheduledIcsFormData): string[] => {
+  if (informedMethods.includes('informedByOtherMethod') && otherMethodOfContact) {
+    return informedMethods.filter(method => method !== 'informedByOtherMethod').concat(otherMethodOfContact)
   }
   return informedMethods
 }
@@ -322,7 +319,11 @@ export class ScheduledIcsFormDataResolver {
     }
     const { username } = res.locals.user
     const caseRefId = req.params.caseRefId as string
-    const ics = await this.appointmentService.getICS(caseRefId, username)
-    return ics ? loadFormFromICS(ics, this.validator) : undefined
+    try {
+      const ics = await this.appointmentService.getICS(caseRefId, username)
+      return ics ? loadFormFromICS(ics, this.validator) : undefined
+    } catch (err) {
+      return undefined
+    }
   }
 }

@@ -646,25 +646,31 @@ class AppointmentController {
   async showScheduleIcs(req: Request, res: Response): Promise<void> {
     const { username } = res.locals.user
     const caseRefId = req.params.caseRefId as string
+    console.log('--------------------showScheduleIcs--------------------')
     const [probationOffices, referralInformation] = await Promise.all([
       this.referenceDataService.getProbationOffices(),
       this.referralService.getReferralInformation(caseRefId, username),
     ])
-
+    console.log('***got backend data')
     const validationErrors: ErrorMiddlewareErrors = formatDynamicErrorMessages(
       res.locals.errors,
       '{{ firstname }}',
       referralInformation.firstName,
     )
     res.locals.errors = validationErrors
+    console.log('***getting form data')
+    const formData = await this.scheduledIcsFormDataResolver.resolve(req, res)
+    console.log('***building presenter')
     const presenter = new ScheduleIcsPresenter(
       caseRefId,
       probationOffices,
       referralInformation,
-      await this.scheduledIcsFormDataResolver.resolve(req, res),
+      formData,
       validationErrors,
     )
-    return presenter.renderPage(res)
+    console.log('***started rendering')
+    presenter.renderPage(res)
+    console.log('====================showScheduleIcs====================')
   }
 
   async showRescheduleIcs(req: Request, res: Response): Promise<void> {
@@ -695,12 +701,12 @@ class AppointmentController {
 
   async scheduleIcs(req: Request, res: Response): Promise<void> {
     const { username } = res.locals.user
-    const { referralId } = req.params as { referralId: string }
-    const referralInformation = await this.referralService.getReferralInformation(referralId, username)
+    const caseRefId = req.params.caseRefId as string
+    const referralInformation = await this.referralService.getReferralInformation(caseRefId, username)
     req.session.createAppointmentRequest = saveFormToSession(getICSFormData(req))
     req.body.referralCrn = referralInformation.crn
     return validateRequestBodyAgainstSchema(buildScheduleIcsAppointmentFormData(new Date()), req, res, () => {
-      return res.redirect(`/referral/${referralId}/appointment/confirm-ics`)
+      return res.redirect(`/referral/${caseRefId}/appointment/confirm-ics`)
     })
   }
 

@@ -64,7 +64,7 @@ export default class ChangeIcsDetailsPage extends AbstractPage {
   }
 
   static async verifyOnPage(page: Page): Promise<ChangeIcsDetailsPage> {
-    const header = page.locator('h1')
+    const header = page.locator('[data-testid="page-heading"]')
     await expect(header).toBeVisible()
     const howSessionTookPlaceRadios = await RadiosWithFieldSet.create(
       page.locator('[data-testid="sessionTakePlace-radios"]'),
