@@ -153,6 +153,7 @@ describe('AppointmentController', () => {
   describe('checkIcs', () => {
     it('should redirect to schedule-ics page when createAppointmentRequest is not in session', async () => {
       referralService.getReferralInformation.mockResolvedValue(mockReferralInformationInCommunity)
+
       await appointmentController.checkIcs(req, res)
       expect(res.redirect).toHaveBeenCalledWith(`/referral/${caseRefId}/appointment/schedule-ics`)
     })
@@ -173,6 +174,7 @@ describe('AppointmentController', () => {
       referralService.getReferralInformation.mockResolvedValue(mockReferralInformationInCommunity)
       referenceDataService.getProbationOffices.mockResolvedValue(probationOfficesData)
       referenceDataService.getPrisons.mockResolvedValue(prisonsData)
+      jest.spyOn(appointmentService, 'getICS').mockRejectedValue(new Error())
 
       await appointmentController.showScheduleIcs(scheduleIcsCommunityReq, scheduleIcsRes)
 
@@ -188,6 +190,7 @@ describe('AppointmentController', () => {
 
     test('should render schedule-ics page - custody ', async () => {
       referralService.getReferralInformation.mockResolvedValue(mockReferralInformationInPrison)
+      jest.spyOn(appointmentService, 'getICS').mockRejectedValue(new Error())
       await appointmentController.showScheduleIcs(scheduleIcsPrisonReq, scheduleIcsRes)
 
       expect(ScheduleIcsPresenter).toHaveBeenCalledWith(
@@ -203,7 +206,7 @@ describe('AppointmentController', () => {
     test('should create presenter with createAppointmentRequest from session and render page', async () => {
       referralService.getReferralInformation.mockResolvedValue(mockReferralInformationInCommunity)
       req.session.createAppointmentRequest = mockCreateAppointmentRequest
-
+      jest.spyOn(appointmentService, 'getICS').mockRejectedValue(new Error())
       await appointmentController.showScheduleIcs(scheduleIcsCommunityReq, scheduleIcsRes)
 
       expect(ScheduleIcsPresenter).toHaveBeenCalledWith(

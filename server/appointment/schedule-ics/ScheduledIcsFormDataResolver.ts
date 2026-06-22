@@ -269,19 +269,16 @@ const getInformedMethodsFromFormData = ({ informedMethods, otherMethodOfContact 
   return informedMethods
 }
 
-export const saveFormToSession = (formData: ScheduledIcsFormData): CreateAppointmentRequest => {
-  let createAppointmentRequest = {} as CreateAppointmentRequest
-
-  if (!formData) return createAppointmentRequest
-
-  if (!createAppointmentRequest) {
-    createAppointmentRequest = {
-      date: '',
-      time: { hour: 0, amPm: 'AM' },
-      sessionMethodRequest: { type: 'PHONE' },
-      sessionCommunication: [],
-    }
+export const saveFormToSession = (formData: ScheduledIcsFormData): CreateAppointmentRequest | undefined => {
+  if (!formData) {
+    return undefined
   }
+  const createAppointmentRequest = {
+    date: '',
+    time: { hour: 0, amPm: 'AM' },
+    sessionMethodRequest: { type: 'PHONE' },
+    sessionCommunication: [],
+  } as CreateAppointmentRequest
 
   if (formData.sessionDate) {
     try {
@@ -312,18 +309,16 @@ export class ScheduledIcsFormDataResolver {
     private readonly validator: AppointmentValidator,
   ) {}
 
-  async resolve(req: Request, res: Response): Promise<ScheduledIcsFormData | undefined> {
+  resolve(req: Request, res: Response): Promise<ScheduledIcsFormData | undefined> {
     const existing = req.session?.createAppointmentRequest
     if (existing) {
-      return loadFormFromSession(existing, this.validator)
+      return Promise.resolve(loadFormFromSession(existing, this.validator))
     }
     const { username } = res.locals.user
     const caseRefId = req.params.caseRefId as string
-    try {
-      const ics = await this.appointmentService.getICS(caseRefId, username)
-      return ics ? loadFormFromICS(ics, this.validator) : undefined
-    } catch (err) {
-      return undefined
-    }
+    return this.appointmentService
+      .getICS(caseRefId, username)
+      .then(ics => (ics ? loadFormFromICS(ics, this.validator) : undefined))
+      .catch(() => Promise.resolve(undefined))
   }
 }

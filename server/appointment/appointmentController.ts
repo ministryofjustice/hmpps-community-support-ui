@@ -646,21 +646,17 @@ class AppointmentController {
   async showScheduleIcs(req: Request, res: Response): Promise<void> {
     const { username } = res.locals.user
     const caseRefId = req.params.caseRefId as string
-    console.log('--------------------showScheduleIcs--------------------')
-    const [probationOffices, referralInformation] = await Promise.all([
+    const [probationOffices, referralInformation, formData] = await Promise.all([
       this.referenceDataService.getProbationOffices(),
       this.referralService.getReferralInformation(caseRefId, username),
+      this.scheduledIcsFormDataResolver.resolve(req, res),
     ])
-    console.log('***got backend data')
     const validationErrors: ErrorMiddlewareErrors = formatDynamicErrorMessages(
       res.locals.errors,
       '{{ firstname }}',
       referralInformation.firstName,
     )
     res.locals.errors = validationErrors
-    console.log('***getting form data')
-    const formData = await this.scheduledIcsFormDataResolver.resolve(req, res)
-    console.log('***building presenter')
     const presenter = new ScheduleIcsPresenter(
       caseRefId,
       probationOffices,
@@ -668,9 +664,7 @@ class AppointmentController {
       formData,
       validationErrors,
     )
-    console.log('***started rendering')
     presenter.renderPage(res)
-    console.log('====================showScheduleIcs====================')
   }
 
   async showRescheduleIcs(req: Request, res: Response): Promise<void> {
@@ -679,7 +673,7 @@ class AppointmentController {
     const [probationOffices, referralInformation, formData] = await Promise.all([
       this.referenceDataService.getProbationOffices(),
       this.referralService.getReferralInformation(caseRefId, username),
-      await this.scheduledIcsFormDataResolver.resolve(req, res),
+      this.scheduledIcsFormDataResolver.resolve(req, res),
     ])
 
     const validationErrors: ErrorMiddlewareErrors = formatDynamicErrorMessages(
