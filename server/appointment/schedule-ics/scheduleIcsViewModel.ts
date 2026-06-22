@@ -1,6 +1,5 @@
 import { GovukFrontendBackLink, GovukFrontendButton } from '@govuk-frontend'
 import { MojDatePicker } from '@moj-frontend'
-import { ErrorMiddlewareErrors } from '../../@types/express'
 import { ComponentsTimeInput } from '../../@types/components'
 import {
   GovukFrontendCheckboxesWithConditional,

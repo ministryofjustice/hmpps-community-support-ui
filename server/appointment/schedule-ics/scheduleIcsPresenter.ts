@@ -46,8 +46,6 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
     private readonly validationErrors?: ErrorMiddlewareErrors,
   ) {
     super()
-    console.log('formData,:', JSON.stringify(formData, null, 2))
-    console.log('errors,:', JSON.stringify(validationErrors, null, 2))
   }
 
   private buildAddressInput() {

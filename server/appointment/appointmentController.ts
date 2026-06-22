@@ -1,11 +1,6 @@
 import { Request, Response } from 'express'
-import {
-  AppointmentIcsResponse,
-  CreateAppointmentRequest,
-  SessionMethod,
-  SessionMethodRequest,
-} from '@community-support-api'
-import { format, parse } from 'date-fns'
+import { AppointmentIcsResponse, SessionMethod, SessionMethodRequest } from '@community-support-api'
+import { format } from 'date-fns'
 import timeFormat from '../utils/timeFormat'
 import { ErrorMiddlewareErrors, HowSessionTookPlace, IcsFeedbackHowSessionTookPlaceSession } from '../@types/express'
 import ConfirmIcsPresenter, { type AdditionalInformation } from './confirm-ics/confirmIcsPresenter'
@@ -712,10 +707,9 @@ class AppointmentController {
   async rescheduleIcs(req: Request, res: Response): Promise<void> {
     const caseRefId = req.params.caseRefId as string
     req.session.createAppointmentRequest = saveFormToSession(getICSFormData(req))
-    return validateRequestBodyAgainstSchema(buildScheduleIcsAppointmentFormData(new Date()), req, res, () => {
-      console.log(JSON.stringify(req.body))
-      return res.redirect(`/referral/${caseRefId}/ics-change-details/reason`)
-    })
+    return validateRequestBodyAgainstSchema(buildScheduleIcsAppointmentFormData(new Date()), req, res, () =>
+      res.redirect(`/referral/${caseRefId}/ics-change-details/reason`),
+    )
   }
 }
 

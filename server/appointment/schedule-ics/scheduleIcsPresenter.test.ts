@@ -679,7 +679,6 @@ describe('ScheduleIcsPresenter', () => {
           error,
         )
         const viewModel = presenter.buildPageContent(res)
-        console.log(JSON.stringify(viewModel, null, 2))
         checkContentInCommunity(viewModel, formData, error.messages)
       })
     })

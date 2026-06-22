@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { AppointmentIcsResponse } from '@community-support-api'
 import AppointmentService from '../../services/AppointmentService'
 import AppointmentValidator from '../AppointmentValidator'
-import { saveFormToSession, ScheduledIcsFormDataResolver } from './ScheduledIcsFormDataResolver'
+import { ScheduledIcsFormDataResolver } from './ScheduledIcsFormDataResolver'
 
 describe('ScheduledIcsFormDataResolver', () => {
   const getICS = jest.fn()

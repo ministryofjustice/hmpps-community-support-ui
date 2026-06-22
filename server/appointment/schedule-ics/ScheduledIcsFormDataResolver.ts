@@ -273,8 +273,6 @@ const getInformedMethodsFromFormData = (formData: ScheduledIcsFormData): string[
 }
 
 export const saveFormToSession = (formData: ScheduledIcsFormData): CreateAppointmentRequest => {
-  console.log('------------saveFormToSession------------')
-  console.log('formData :', JSON.stringify(formData, null, 2))
   let createAppointmentRequest = {} as CreateAppointmentRequest
 
   if (!formData) return createAppointmentRequest
@@ -308,10 +306,6 @@ export const saveFormToSession = (formData: ScheduledIcsFormData): CreateAppoint
   }
   createAppointmentRequest.sessionMethodRequest = getSessionMethodFromFormData(formData)
   createAppointmentRequest.sessionCommunication = getInformedMethodsFromFormData(formData)
-
-  console.log('createAppointmentRequest :', JSON.stringify(createAppointmentRequest, null, 2))
-
-  console.log('============saveFormToSession============')
   return createAppointmentRequest
 }
 
@@ -324,10 +318,7 @@ export class ScheduledIcsFormDataResolver {
   async resolve(req: Request, res: Response): Promise<ScheduledIcsFormData | undefined> {
     const existing = req.session?.createAppointmentRequest
     if (existing) {
-      console.log('existing :', JSON.stringify(existing, null, 2))
-      const resolved = loadFormFromSession(existing, this.validator)
-      console.log('resolved :', JSON.stringify(resolved, null, 2))
-      return resolved
+      return loadFormFromSession(existing, this.validator)
     }
     const { username } = res.locals.user
     const caseRefId = req.params.caseRefId as string
