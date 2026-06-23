@@ -272,8 +272,6 @@ const baseSchema = z.object({
   prisonList: z.string().trim().optional(),
 })
 
-// export const ScheduleIcsAppointmentSchema = baseSchema.superRefine(validateForm)
-
 export const buildScheduleIcsAppointmentSchema = (referralDate: Date) =>
   baseSchema.superRefine(validateForm(referralDate))
 
