@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import {
   AppointmentIcsResponse,
   CreateAppointmentRequest,
+  ReferralInformation,
   SessionMethod,
   SessionMethodRequest,
 } from '@community-support-api'
@@ -35,7 +36,7 @@ import validateRequestBodyAgainstSchema, { formatDynamicErrorMessages } from '..
 import WhyDidSessionNotHappenPresenter from './why-did-session-not-happen/WhyDidSessionNotHappenPresenter'
 import { WhyDidSessionNotHappenFormDataSchema } from '../validation/WhyDidSessionNotHappenFormData'
 import { IcsFeedbackFormSchema } from '../validation/IcsFeedbackHowSessionTookPlaceFormData'
-import { ScheduleIcsAppointmentSchema } from '../validation/ScheduleIcsAppointmentFormData'
+import { buildScheduleIcsAppointmentSchema } from '../validation/ScheduleIcsAppointmentFormData'
 import ChangeIcsDetailsReasonPresenter from './change-ics-details-reason/ChangeIcsDetailsReasonPresenter'
 import { ChangeIcsDetailsReasonSchema } from '../validation/ChangeIcsDetailsReasonFormData'
 
@@ -536,47 +537,40 @@ class AppointmentController {
 
   async scheduleIcs(req: Request, res: Response): Promise<void> {
     const { username } = res.locals.user
-    const { referralId } = req.params as { referralId: string }
-    // TODO see if we can remove this temp var
-    let createAppointmentRequest = req.session?.createAppointmentRequest
+    const { caseRefId } = req.params as { caseRefId: string }
+    const { schema, referralInformation } = await this.prepareAppointmentRequest(req, username, caseRefId)
 
-    const referralInformation = await this.referralService.getReferralInformation(referralId, username)
-
-    const informedMethodArr: string[] =
-      typeof req.body.informedMethod === 'string' ? [req.body.informedMethod] : req.body.informedMethod
-    createAppointmentRequest = this.saveFormToSession({
-      sessionDate: req.body.sessionDate,
-      'sessionTime-hour': req.body['sessionTime-hour'],
-      'sessionTime-minute': req.body['sessionTime-minute'],
-      'sessionTime-meridiem': req.body['sessionTime-meridiem']?.toLowerCase(),
-      sessionTakePlace: req.body.sessionTakePlace,
-      ByPhone: req.body.ByPhone,
-      byVideo: req.body.ByVideo,
-      probationOffice: req.body.probationOfficeList,
-      prison: req.body.prisonList,
-      addressLine1: req.body.addressLine1,
-      addressLine2: req.body.addressLine2,
-      addressTown: req.body.addressTown,
-      addressCounty: req.body.addressCounty,
-      addressPostcode: req.body.addressPostcode,
-      informedMethods: informedMethodArr,
-      otherMethodOfContact: req.body.otherMethodOfContact,
-    })
-    req.session.createAppointmentRequest = createAppointmentRequest
     req.body.referralCrn = referralInformation.crn
-    return validateRequestBodyAgainstSchema(ScheduleIcsAppointmentSchema, req, res, () => {
-      return res.redirect(`/referral/${referralId}/appointment/confirm-ics`)
-    })
+
+    return validateRequestBodyAgainstSchema(schema, req, res, () =>
+      res.redirect(`/referral/${caseRefId}/appointment/confirm-ics`),
+    )
   }
 
   async rescheduleIcs(req: Request, res: Response): Promise<void> {
-    const caseRefId = req.params.caseRefId as string
-    // TODO see if we can remove this temp var
-    let createAppointmentRequest = req.session?.createAppointmentRequest
+    const { username } = res.locals.user
+    const { caseRefId } = req.params as { caseRefId: string }
+    const { schema } = await this.prepareAppointmentRequest(req, username, caseRefId)
 
+    return validateRequestBodyAgainstSchema(schema, req, res, () =>
+      res.redirect(`/referral/${caseRefId}/ics-change-details/reason`),
+    )
+  }
+
+  private async prepareAppointmentRequest(
+    req: Request,
+    username: string,
+    caseRefId: string,
+  ): Promise<{
+    schema: ReturnType<typeof buildScheduleIcsAppointmentSchema>
+    referralInformation: ReferralInformation
+  }> {
+    const referralInformation = await this.referralService.getReferralInformation(caseRefId, username)
+    const schema = buildScheduleIcsAppointmentSchema(new Date(referralInformation.referralDate))
     const informedMethodArr: string[] =
       typeof req.body.informedMethod === 'string' ? [req.body.informedMethod] : req.body.informedMethod
-    createAppointmentRequest = this.saveFormToSession({
+
+    req.session.createAppointmentRequest = this.saveFormToSession({
       sessionDate: req.body.sessionDate,
       'sessionTime-hour': req.body['sessionTime-hour'],
       'sessionTime-minute': req.body['sessionTime-minute'],
@@ -594,10 +588,11 @@ class AppointmentController {
       informedMethods: informedMethodArr,
       otherMethodOfContact: req.body.otherMethodOfContact,
     })
-    req.session.createAppointmentRequest = createAppointmentRequest
-    return validateRequestBodyAgainstSchema(ScheduleIcsAppointmentSchema, req, res, () => {
-      return res.redirect(`/referral/${caseRefId}/ics-change-details/reason`)
-    })
+
+    return {
+      schema,
+      referralInformation,
+    }
   }
 
   private saveFormToSession(formData: ScheduledIcsFormData): CreateAppointmentRequest {

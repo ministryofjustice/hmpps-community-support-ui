@@ -86,10 +86,12 @@ test.describe('Schedule ICS Page', () => {
 
   test('AC3.2 should return error if date is before referral date', async ({ page }) => {
     await communitySupport.stubGetReferralInformation(200, CASE_REFERENCE, referralInformationInPrison)
+    const beforeReferralDate = format(addDays(new Date(referralInformationInPrison.referralDate), -1), 'd/M/yyyy')
+
     await page.goto(SCHEDULE_ICS_URL)
     const scheduleIcsPage = await ScheduleIcsPage.verifyOnPage(page, false)
     await test.step('submit', async () => {
-      await scheduleIcsPage.dateInput.fill(format(addDays(new Date(), -1), 'd/M/yyyy'))
+      await scheduleIcsPage.dateInput.fill(beforeReferralDate)
       await scheduleIcsPage.timeHourInput.fill('10')
       await scheduleIcsPage.timeMinuteInput.fill('11')
       await scheduleIcsPage.timeMeridiemInput.selectOption('PM')
