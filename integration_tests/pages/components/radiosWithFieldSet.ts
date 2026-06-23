@@ -39,4 +39,8 @@ export default class RadiosWithFieldSet {
   getItem(label: string): RadioItem | undefined {
     return this.itemsRecord[label]
   }
+
+  labels(): string[] {
+    return Object.keys(this.itemsRecord)
+  }
 }
