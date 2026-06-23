@@ -1,11 +1,115 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
+exports[`InitialContactSessionDetailsPresenter historical meeting historical appointment 1`] = `
+{
+  "backLink": {
+    "href": "/referral/ref-id/ics-change-details",
+  },
+  "heading": "View or change session details",
+  "historical": true,
+  "icsDetails": {
+    "card": {
+      "actions": {},
+      "attributes": {
+        "data-testid": "details",
+      },
+      "title": {
+        "text": "ICS details",
+      },
+    },
+    "rows": [
+      {
+        "actions": null,
+        "key": {
+          "text": "Date",
+        },
+        "value": {
+          "text": "1 February 2026",
+        },
+      },
+      {
+        "actions": null,
+        "key": {
+          "text": "Start time",
+        },
+        "value": {
+          "text": "10:00am",
+        },
+      },
+      {
+        "actions": null,
+        "key": {
+          "text": "Method",
+        },
+        "value": {
+          "text": "Phone call",
+        },
+      },
+      {
+        "actions": null,
+        "key": {
+          "text": "Reason session is not in person",
+        },
+        "value": {
+          "text": "Welfare check call",
+        },
+      },
+      {
+        "actions": null,
+        "key": {
+          "text": "How Alice was informed about the session",
+        },
+        "value": {
+          "html": "<ul class="govuk-list">
+    <li>Phone call</li>
+<li>Text message</li>
+    </ul>",
+        },
+      },
+    ],
+  },
+  "reasonForChange": {
+    "card": {
+      "attributes": {
+        "data-testid": "reasonForChange",
+      },
+      "title": {
+        "text": "Reason for change",
+      },
+    },
+    "rows": [
+      {
+        "actions": null,
+        "key": {
+          "text": "Who requested the change",
+        },
+        "value": {
+          "text": "Alice Smith",
+        },
+      },
+      {
+        "actions": null,
+        "key": {
+          "text": "Reason for the change",
+        },
+        "value": {
+          "text": "Medical emergency",
+        },
+      },
+    ],
+  },
+  "title": "View or change session details",
+}
+`;
+
 exports[`InitialContactSessionDetailsPresenter in person meeting buildPageContent the correct view model 1`] = `
 {
   "backLink": {
     "href": "/referral/ref-id/ics-change-details",
   },
-  "details": {
+  "heading": "View or change session details",
+  "historical": false,
+  "icsDetails": {
     "card": {
       "actions": {
         "items": [
@@ -73,7 +177,32 @@ exports[`InitialContactSessionDetailsPresenter in person meeting buildPageConten
       },
     ],
   },
-  "heading": "View or change session details",
+  "reasonForChange": {
+    "card": {
+      "attributes": {
+        "data-testid": "reasonForChange",
+      },
+      "title": {
+        "text": "Reason for change",
+      },
+    },
+    "rows": [
+      {
+        "actions": null,
+        "key": {
+          "text": "Who requested the change",
+        },
+        "value": undefined,
+      },
+      {
+        "actions": null,
+        "key": {
+          "text": "Reason for the change",
+        },
+        "value": undefined,
+      },
+    ],
+  },
   "title": "View or change session details",
 }
 `;
@@ -83,7 +212,9 @@ exports[`InitialContactSessionDetailsPresenter in person meeting with fullAddres
   "backLink": {
     "href": "/referral/ref-id/ics-change-details",
   },
-  "details": {
+  "heading": "View or change session details",
+  "historical": false,
+  "icsDetails": {
     "card": {
       "actions": {
         "items": [
@@ -156,7 +287,32 @@ exports[`InitialContactSessionDetailsPresenter in person meeting with fullAddres
       },
     ],
   },
-  "heading": "View or change session details",
+  "reasonForChange": {
+    "card": {
+      "attributes": {
+        "data-testid": "reasonForChange",
+      },
+      "title": {
+        "text": "Reason for change",
+      },
+    },
+    "rows": [
+      {
+        "actions": null,
+        "key": {
+          "text": "Who requested the change",
+        },
+        "value": undefined,
+      },
+      {
+        "actions": null,
+        "key": {
+          "text": "Reason for the change",
+        },
+        "value": undefined,
+      },
+    ],
+  },
   "title": "View or change session details",
 }
 `;
@@ -166,7 +322,9 @@ exports[`InitialContactSessionDetailsPresenter in person meeting with postcode 1
   "backLink": {
     "href": "/referral/ref-id/ics-change-details",
   },
-  "details": {
+  "heading": "View or change session details",
+  "historical": false,
+  "icsDetails": {
     "card": {
       "actions": {
         "items": [
@@ -235,7 +393,32 @@ exports[`InitialContactSessionDetailsPresenter in person meeting with postcode 1
       },
     ],
   },
-  "heading": "View or change session details",
+  "reasonForChange": {
+    "card": {
+      "attributes": {
+        "data-testid": "reasonForChange",
+      },
+      "title": {
+        "text": "Reason for change",
+      },
+    },
+    "rows": [
+      {
+        "actions": null,
+        "key": {
+          "text": "Who requested the change",
+        },
+        "value": undefined,
+      },
+      {
+        "actions": null,
+        "key": {
+          "text": "Reason for the change",
+        },
+        "value": undefined,
+      },
+    ],
+  },
   "title": "View or change session details",
 }
 `;
@@ -245,7 +428,9 @@ exports[`InitialContactSessionDetailsPresenter virtual meeting buildPageContent 
   "backLink": {
     "href": "/referral/ref-id/ics-change-details",
   },
-  "details": {
+  "heading": "View or change session details",
+  "historical": false,
+  "icsDetails": {
     "card": {
       "actions": {
         "items": [
@@ -313,7 +498,32 @@ exports[`InitialContactSessionDetailsPresenter virtual meeting buildPageContent 
       },
     ],
   },
-  "heading": "View or change session details",
+  "reasonForChange": {
+    "card": {
+      "attributes": {
+        "data-testid": "reasonForChange",
+      },
+      "title": {
+        "text": "Reason for change",
+      },
+    },
+    "rows": [
+      {
+        "actions": null,
+        "key": {
+          "text": "Who requested the change",
+        },
+        "value": undefined,
+      },
+      {
+        "actions": null,
+        "key": {
+          "text": "Reason for the change",
+        },
+        "value": undefined,
+      },
+    ],
+  },
   "title": "View or change session details",
 }
 `;

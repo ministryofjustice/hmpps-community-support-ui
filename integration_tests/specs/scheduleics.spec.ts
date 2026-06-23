@@ -49,7 +49,7 @@ test.describe('Schedule ICS Page', () => {
   })
 
   test('AC2: Back navigation', async ({ page }) => {
-    const referralProgressNoAppointments: ReferralProgress = buildReferralProgress([{ events: [] }], CASE_REFERENCE)
+    const referralProgressNoAppointments: ReferralProgress = buildReferralProgress([], CASE_REFERENCE)
 
     await communitySupport.stubGetReferralInformation(200, CASE_REFERENCE, referralInformationInCommunity)
     await communitySupport.stubGetReferralProgress(referralProgressNoAppointments, CASE_REFERENCE)

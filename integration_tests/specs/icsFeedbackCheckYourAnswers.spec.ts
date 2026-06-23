@@ -86,16 +86,55 @@ test.describe('Ics Feedback CYA Page', () => {
     },
     caseReferenceId: caseRefId,
   }
+  const icsFeedbackSubmissionWithLateReason = {
+    record: {
+      didSessionHappen: true,
+      howSessionTookPlace: {
+        type: 'PHONE' as const,
+      },
+    },
+    sessionDetails: {
+      wasPersonLate: true,
+      lateReason: 'Missed the bus',
+      duration: { hours: 1 },
+    },
+    sessionFeedback: {
+      whatHappened: 'Session took place.',
+    },
+    caseReferenceId: caseRefId,
+  }
+  const icsFeedbackSubmissionServiceProviderIssue = {
+    record: {
+      didSessionHappen: false,
+      didPersonAttend: true,
+      sessionNotHappenReason: {
+        reason: 'SERVICE_PROVIDER_ISSUE' as const,
+        details: 'Fire alarm went off',
+      },
+    },
+    caseReferenceId: caseRefId,
+  }
+  const icsFeedbackSubmissionCouldNotTakePart = {
+    record: {
+      didSessionHappen: false,
+      didPersonAttend: true,
+      sessionNotHappenReason: {
+        reason: 'REFERRAL_COULD_NOT_TAKE_PART' as const,
+        details: 'Person was ill',
+      },
+    },
+    caseReferenceId: caseRefId,
+  }
   const appointmentScheduled: ReferralProgress = buildReferralProgress([
     {
-      appointmentId: randomUUID(),
-      events: [{ status: 'SCHEDULED', dateTime: daysAfter(baseDate, 1) }],
+      appointmentIcsId: randomUUID(),
+      event: { status: 'SCHEDULED', dateTime: daysAfter(baseDate, 1) },
     },
   ])
   const feedbackCompleted: ReferralProgress = buildReferralProgress([
     {
-      appointmentId: randomUUID(),
-      events: [{ status: 'COMPLETED', dateTime: daysAfter(baseDate, 1) }],
+      appointmentIcsId: randomUUID(),
+      event: { status: 'COMPLETED', dateTime: daysAfter(baseDate, 1) },
     },
   ])
   const mockAppointmentIcsResponse = {
@@ -244,6 +283,33 @@ test.describe('Ics Feedback CYA Page', () => {
       'href',
       `/ics-feedback/${caseRefId}/how-they-tried-to-contact-the-person`,
     )
+  })
+
+  test('when the session happened and person was late, show why they were late label', async ({ page }) => {
+    await seedSessionWithIcsFeedback(page, icsFeedbackSubmissionWithLateReason)
+    await page.goto(`ics-feedback/${caseRefId}/check-answers`)
+    await IcsFeedbackCheckYourAnswersPage.verifyOnPage(page)
+    await expect(
+      page.locator('dt', { hasText: `Why ${mockAppointmentIcsResponse.referralFirstName} was late` }),
+    ).toBeVisible()
+  })
+
+  test('when the session did not happen due to a service provider issue, display the correct reason', async ({
+    page,
+  }) => {
+    await seedSessionWithIcsFeedback(page, icsFeedbackSubmissionServiceProviderIssue)
+    await page.goto(`ics-feedback/${caseRefId}/check-answers`)
+    await IcsFeedbackCheckYourAnswersPage.verifyOnPage(page)
+    await expect(page.getByText('Service provider issue')).toBeVisible()
+  })
+
+  test('when the session did not happen because person could not take part, display the correct reason', async ({
+    page,
+  }) => {
+    await seedSessionWithIcsFeedback(page, icsFeedbackSubmissionCouldNotTakePart)
+    await page.goto(`ics-feedback/${caseRefId}/check-answers`)
+    await IcsFeedbackCheckYourAnswersPage.verifyOnPage(page)
+    await expect(page.getByText(`${mockAppointmentIcsResponse.referralFirstName} could not take part`)).toBeVisible()
   })
 
   // AC6
