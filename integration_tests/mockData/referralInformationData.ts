@@ -41,6 +41,7 @@ const referralInformationTaskList: ReferralInformation = {
   communityServiceProviderId: 'csp-id-123',
   communityServiceProviderName: 'Community Support Provider',
   region: 'North West',
+  referralDate: '2026-06-01',
   deliveryPartner: 'Delivery Partner Ltd',
 }
 
