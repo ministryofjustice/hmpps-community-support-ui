@@ -10,7 +10,6 @@ const referralInformationInCommunity: ReferralInformation = {
   lastName: 'Doe',
   sex: 'Male',
   referralId: mockReferralId,
-  referralDate: '2024-01-01',
   personId: 'person-id-123',
   communityServiceProviderId: 'csp-id-123',
   communityServiceProviderName: 'Community Support Provider',
@@ -24,13 +23,12 @@ const referralInformationInPrison: ReferralInformation = {
   lastName: 'Joe',
   sex: 'Male',
   referralId: mockReferralId,
-  referralDate: '2024-01-01',
+  referralDate: '2026-06-01',
   personId: 'person-id-123',
   communityServiceProviderId: 'csp-id-123',
   communityServiceProviderName: 'Community Support Provider',
   region: 'North West',
   referenceNumber: 'AB1234CD',
-  referralDate: '2026-06-01',
   deliveryPartner: 'Delivery Partner Ltd',
 }
 
