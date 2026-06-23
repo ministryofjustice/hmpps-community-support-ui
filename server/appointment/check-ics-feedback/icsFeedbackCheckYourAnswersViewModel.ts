@@ -11,6 +11,11 @@ export type IcsFeedbackCheckYourAnswersViewModel = {
 export type IcsFeedbackCheckYourAnswersContent = {
   pageHeader: string
   summaryLists: Array<IcsFeedbackSummaryListContent>
+  didNotHappenReasonLabels: {
+    serviceProviderIssue: string
+    referralCouldNotTakePart: string
+    referralDidNotComply: string
+  }
   submitButtonText: string
   submitHref: string
   didNotAttendbackLinkHref: string

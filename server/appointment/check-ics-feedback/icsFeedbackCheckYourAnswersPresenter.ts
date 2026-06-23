@@ -51,7 +51,7 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
 
               return {
                 key: {
-                  text: row.text.includes('firstname') ? row.text.replace('firstname', this.firstName) : row.text,
+                  text: this.replaceFirstnamePlaceholders(row.text),
                 },
                 value: {
                   text: values[index],
@@ -62,9 +62,7 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
                     {
                       href: row.changeHref.replace('caseRefId', this.caseRefId),
                       text: 'Change',
-                      visuallyHiddenText: row.hint.includes('firstname')
-                        ? row.hint.replace('firstname', this.firstName)
-                        : row.hint,
+                      visuallyHiddenText: this.replaceFirstnamePlaceholders(row.hint),
                     },
                   ],
                 },
@@ -105,7 +103,7 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
       // Session feedback summary
       this.buildSummary(content.summaryLists.filter(item => item.summaryTitle === 'Session feedback')[0], [
         this.icsFeedbackSubmission.sessionFeedback?.whatHappened || null,
-        this.getDidNotHappenReason() || null,
+        this.getDidNotHappenReason(content) || null,
         this.getDidNotAttendReason() || null,
       ]),
     ]
@@ -128,10 +126,32 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
     return null
   }
 
-  private getDidNotHappenReason(): string | null {
+  private getDidNotHappenReason(content: IcsFeedbackCheckYourAnswersContent): string | null {
     if (!this.icsFeedbackSubmission.record.didSessionHappen) {
       if (this.icsFeedbackSubmission.record.didPersonAttend) {
-        return `${this.firstName} did not comply<br /><br /> ${this.icsFeedbackSubmission.record.sessionNotHappenReason?.details}`
+        const { sessionNotHappenReason } = this.icsFeedbackSubmission.record
+        const details = sessionNotHappenReason?.details
+        let reasonText: string
+        switch (sessionNotHappenReason?.reason) {
+          case 'REFERRAL_DID_NOT_COMPLY':
+            reasonText = content.didNotHappenReasonLabels.referralDidNotComply.replace(
+              '{{ firstname }}',
+              this.firstName,
+            )
+            break
+          case 'REFERRAL_COULD_NOT_TAKE_PART':
+            reasonText = content.didNotHappenReasonLabels.referralCouldNotTakePart.replace(
+              '{{ firstname }}',
+              this.firstName,
+            )
+            break
+          case 'SERVICE_PROVIDER_ISSUE':
+            reasonText = content.didNotHappenReasonLabels.serviceProviderIssue
+            break
+          default:
+            reasonText = sessionNotHappenReason?.reason || ''
+        }
+        return details ? `${reasonText}<br /><br /> ${details}` : reasonText
       }
       return null
     }
@@ -182,5 +202,9 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
       default:
         return null
     }
+  }
+
+  private replaceFirstnamePlaceholders(text: string): string {
+    return text.replace(/{{\s*firstname\s*}}/gi, this.firstName)
   }
 }

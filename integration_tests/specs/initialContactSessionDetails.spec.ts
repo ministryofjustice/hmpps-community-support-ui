@@ -67,7 +67,7 @@ test.describe('Initial Contact Session Details Page', () => {
       await page.goto(InitialContactSessionDetailsPage.url(virtual.caseRefId))
     })
     const referralDetailsPage = await InitialContactSessionDetailsPage.verifyOnPage(page)
-    const summary = referralDetailsPage.details
+    const summary = referralDetailsPage.icsDetails
     await test.step('summary has required number of rows', () => {
       expect(summary.rows).toHaveLength(5)
     })
@@ -93,13 +93,14 @@ test.describe('Initial Contact Session Details Page', () => {
       })
     })
   })
+
   // IPB-2130:AC4
   test('View ICS details - in person', async ({ page }) => {
     await test.step('go to initial contact session details page', async () => {
       await page.goto(InitialContactSessionDetailsPage.url(inPerson.caseRefId))
     })
     const referralDetailsPage = await InitialContactSessionDetailsPage.verifyOnPage(page)
-    const summary = referralDetailsPage.details
+    const summary = referralDetailsPage.icsDetails
     await test.step('summary has required number of rows', () => {
       expect(summary.rows).toHaveLength(5)
     })

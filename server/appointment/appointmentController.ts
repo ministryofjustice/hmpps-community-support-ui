@@ -24,6 +24,7 @@ import RecordSessionAttendanceFormData, {
 import { ReferralProgressBannerContent } from '../referral/progress/ReferralProgressBannerContent'
 import AppointmentValidator from './AppointmentValidator'
 import { IcsFeedbackHowSessionTookPlaceFormData } from './ics-feedback/icsFeedbackHowSessionTookPlaceViewModel'
+import { getChangeRequesterType } from './change-ics-details-reason/ChangeAppointmentDetails'
 import { SessionFeedbackFormDataSchema } from '../validation/SessionFeedbackFormData'
 import ViewChangeSessionDetailsPresenter from './view-change-session-details/ViewChangeSessionDetailsPresenter'
 import RecordSessionDetailsPresenter from './record-ics/RecordSessionDetailsPresenter'
@@ -195,8 +196,6 @@ const mapSessionTakePlaceToType = (takePlace: string): SessionMethodRequest['typ
       return 'VIDEO'
     case 'InProbationOffice':
       return 'IN_PERSON_PROBATION_OFFICE'
-    case 'InPrison':
-      return 'IN_PERSON_PRISON'
     case 'InSomewhereElse':
       return 'IN_PERSON_OTHER_LOCATION'
     default:
@@ -462,6 +461,7 @@ class AppointmentController {
     const referralInformation = await this.referralService.getReferralInformation(referralId, username)
     const additionalDetails: AdditionalInformation = {
       firstName: referralInformation.firstName,
+      lastName: referralInformation.lastName,
       submitHref: `/referral/${referralId}/appointment/submit-ics`,
       scheduleIcsHref: `/referral/${referralId}/appointment/schedule-ics`,
     }
@@ -638,12 +638,22 @@ class AppointmentController {
     return createAppointmentRequest
   }
 
-  changeIcs(req: Request, res: Response): Promise<void> {
+  viewOrChangeIcs(req: Request, res: Response): Promise<void> {
     const caseRefId = req.params.caseRefId as string
     const { username } = res.locals.user
     return this.appointmentService
       .getICS(caseRefId.toString(), username)
-      .then(data => new InitialContactSessionDetailsPresenter(data, caseRefId))
+      .then(data => new InitialContactSessionDetailsPresenter(data, caseRefId, false))
+      .then(presenter => presenter.renderPage(res))
+  }
+
+  viewIcsDetails(req: Request, res: Response): Promise<void> {
+    const caseRefId = req.params.caseRefId as string
+    const icsId = req.params.icsId as string
+    const { username } = res.locals.user
+    return this.appointmentService
+      .getIcsById(caseRefId.toString(), icsId, username)
+      .then(data => new InitialContactSessionDetailsPresenter(data, caseRefId, true))
       .then(presenter => presenter.renderPage(res))
   }
 
@@ -984,7 +994,7 @@ class AppointmentController {
   recordChangeIcsDetailsReason(req: Request, res: Response): void {
     const { caseRefId } = req.params as { caseRefId: string }
     req.session.ChangeAppointmentDetails = {
-      requestedBy: req.body.requestedBy,
+      changeRequestedBy: getChangeRequesterType(req.body.requestedBy),
       reasonForChange: req.body.reasonForChange,
     }
     validateRequestBodyAgainstSchema(ChangeIcsDetailsReasonSchema, req, res, () => {
@@ -1006,6 +1016,7 @@ class AppointmentController {
     const referralInformation = await this.referralService.getReferralInformation(caseRefId, username)
     const additionalDetails: AdditionalInformation = {
       firstName: referralInformation.firstName,
+      lastName: referralInformation.lastName,
       submitHref: `/referral/${caseRefId}/ics-change-details/submit-ics`,
       scheduleIcsHref: `/referral/${caseRefId}/ics-change-details`,
       changeReasonHref: `/referral/${caseRefId}/ics-change-details/reason`,

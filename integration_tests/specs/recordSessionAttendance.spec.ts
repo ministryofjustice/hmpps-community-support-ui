@@ -70,7 +70,7 @@ test.describe('RecordSessionAttendancePage', () => {
   // IPB-2208:AC3
   test('Navigating to the record attendance screen', async ({ page }) => {
     const referralProgressWithAppointments: ReferralProgress = buildReferralProgress([
-      { events: [{ status: 'NEEDS_FEEDBACK' }] },
+      { event: { status: 'NEEDS_FEEDBACK' } },
     ])
     await communitySupport.stubGetReferralProgress(referralProgressWithAppointments, pastMeeting.caseRefId)
 

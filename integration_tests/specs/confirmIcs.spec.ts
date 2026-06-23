@@ -12,7 +12,7 @@ import ConfirmIcsPage from '../pages/confirmIcsPage'
 import communitySupport from '../mockApis/communitySupport'
 import prisonApi from '../mockApis/prisonApi'
 import buildReferralProgress from '../../server/testutils/buildReferralProgress'
-import { referralInformationInCommunity, referralInformationInPrison } from '../mockData/referralInformationData'
+import { referralInformationInCommunity } from '../mockData/referralInformationData'
 import { probationOfficesData } from '../mockData/referenceData'
 import ScheduleIcsPage from '../pages/scheduleIcsPage'
 import ReferralProgressPage from '../pages/referralProgressPage'
@@ -79,16 +79,6 @@ const inPersonAppointmentRequest = {
   sessionCommunication: ['informedByPhone', 'Letter'],
 }
 
-const inPersonPrisonAppointmentRequest = {
-  date: futureDateStr,
-  time: { hour: 10, minute: 30, amPm: 'am' },
-  sessionMethodRequest: {
-    type: 'IN_PERSON_PRISON',
-    additionalDetails: 'Location of prison',
-  },
-  sessionCommunication: ['informedByPhone', 'Letter'],
-}
-
 const otherLocationAppointmentRequest = {
   date: futureDateStr,
   time: { hour: 10, minute: 30, amPm: 'am' },
@@ -146,14 +136,12 @@ const mockAppointmentIcsResponse = {
 }
 
 const changeAppointmentDetails = {
-  requestedBy: 'Probation practitioner',
+  changeRequestedBy: 'PROBATION_PRACTITIONER',
   reasonForChange: 'There were technical issues',
 }
 
 test.describe('Confirm ICS Page', () => {
-  const referralProgressWithAppointments: ReferralProgress = buildReferralProgress([
-    { events: [{ status: 'SCHEDULED' }] },
-  ])
+  const referralProgressWithAppointments: ReferralProgress = buildReferralProgress([{ event: { status: 'SCHEDULED' } }])
 
   test.beforeEach(async ({ page }) => {
     await resetStubs()
@@ -236,7 +224,9 @@ test.describe('Confirm ICS Page', () => {
     await expect(confirmIcsPage.notificationBanner).not.toBeVisible()
   })
 
-  test('should display Location row with the correct location for PROBATION_OFFICE method', async ({ page }) => {
+  test('should display Location row with the correct location for IN_PERSON_PROBATION_OFFICE method', async ({
+    page,
+  }) => {
     await seedAppointmentSession(page, inPersonAppointmentRequest)
     await page.goto(ConfirmIcsPage.url(REFERRAL_ID))
     const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
@@ -244,7 +234,7 @@ test.describe('Confirm ICS Page', () => {
     await expect(confirmIcsPage.locationRow).toContainText('Location of probation office')
   })
 
-  test('should display Location row with address lines for OTHER_LOCATION method', async ({ page }) => {
+  test('should display Location row with address lines for IN_PERSON_OTHER_LOCATION method', async ({ page }) => {
     await seedAppointmentSession(page, otherLocationAppointmentRequest)
     await page.goto(ConfirmIcsPage.url(REFERRAL_ID))
     const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
@@ -329,19 +319,6 @@ test.describe('Confirm ICS Page', () => {
     await expect(confirmIcsPage.locationRow).toContainText('Location of probation office')
   })
 
-  // IPB-2216:AC9
-  test('Reschedule Ics view location - prison', async ({ page }) => {
-    await communitySupport.stubGetReferralInformation(200, REFERRAL_ID, referralInformationInPrison)
-    await seedAppointmentSession(page, inPersonPrisonAppointmentRequest)
-    await seedChangeAppointmentDetails(page, changeAppointmentDetails)
-    await page.goto(ConfirmIcsPage.rescheduleUrl(REFERRAL_ID))
-    const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
-
-    await expect(confirmIcsPage.icsDetailsSummary).toBeVisible()
-    await expect(confirmIcsPage.locationRow).toBeVisible()
-    await expect(confirmIcsPage.locationRow).toContainText('Location of prison')
-  })
-
   // IPB-2216:AC9.2
   test('Reschedule Ics view location - other location', async ({ page }) => {
     await seedAppointmentSession(page, otherLocationAppointmentRequest)
@@ -399,8 +376,8 @@ test.describe('Confirm ICS Page', () => {
   // IPB-2216:AC15
   test('Reschedule Ics - submit updated details', async ({ page }) => {
     const referralProgressWithRescheduledAppointments: ReferralProgress = buildReferralProgress([
-      { events: [{ status: 'SCHEDULED' }] },
-      { events: [{ status: 'RESCHEDULED' }] },
+      { event: { status: 'SCHEDULED' } },
+      { event: { status: 'CHANGED' } },
     ])
     await communitySupport.stubGetReferralProgress(referralProgressWithRescheduledAppointments, REFERRAL_ID)
     await communitySupport.stubRescheduleICS(REFERRAL_ID, mockAppointmentIcsResponse, 200)
@@ -413,12 +390,16 @@ test.describe('Confirm ICS Page', () => {
     await expect(page).toHaveURL(ReferralProgressPage.url(REFERRAL_ID))
     const progressPage = await ReferralProgressPage.verifyOnPage(page)
 
-    expect(progressPage.table.body).toHaveLength(2)
+    expect(progressPage.icsTable.body).toHaveLength(1)
+    await expect(progressPage.icsTable.body[0].elements[1]).toContainText('Needs feedback')
+    await progressPage.historyLink.click()
+    expect(progressPage.historyTable.body).toHaveLength(1)
+    await expect(progressPage.historyTable.body[0].elements[1]).toContainText('Changed')
   })
 
   enum RequestedBy {
     DELIVERY_PARTNER,
-    REFEREE,
+    REFERRAL_USER,
     PROBATION_PRACTITIONER,
   }
 
@@ -433,7 +414,6 @@ test.describe('Confirm ICS Page', () => {
     PHONE,
     VIDEO,
     IN_PERSON_PROBATION_OFFICE,
-    IN_PERSON_PRISON,
     IN_PERSON_OTHER_LOCATION,
   }
 
@@ -479,10 +459,6 @@ test.describe('Confirm ICS Page', () => {
           await changeIcsDetailsPage.inProbationOfficeRadioButton.check()
           await changeIcsDetailsPage.probationOfficeSelect.selectOption(options.probationOffice ?? '')
           break
-        case SessionMethod.IN_PERSON_PRISON:
-          await changeIcsDetailsPage.inPrisonRadioButton.check()
-          await changeIcsDetailsPage.prisonListSelect.selectOption(options.prison ?? '')
-          break
         case SessionMethod.IN_PERSON_OTHER_LOCATION:
           await changeIcsDetailsPage.inSomewhereElseRadioButton.check()
           await changeIcsDetailsPage.addressLine1Input.fill(options.addressLine1 ?? '')
@@ -515,7 +491,7 @@ test.describe('Confirm ICS Page', () => {
         case RequestedBy.DELIVERY_PARTNER:
           await changeIcsDetailsReasonPage.whoRequestedRadios.items[0].input.check()
           break
-        case RequestedBy.REFEREE:
+        case RequestedBy.REFERRAL_USER:
           await changeIcsDetailsReasonPage.whoRequestedRadios.items[1].input.check()
           break
         case RequestedBy.PROBATION_PRACTITIONER:
@@ -532,8 +508,8 @@ test.describe('Confirm ICS Page', () => {
   test.describe('Reschedule ICS - Full journey happy path', () => {
     test.beforeEach(async () => {
       const referralProgressWithRescheduledAppointments: ReferralProgress = buildReferralProgress([
-        { events: [{ status: 'SCHEDULED' }] },
-        { events: [{ status: 'RESCHEDULED' }] },
+        { event: { status: 'SCHEDULED' } },
+        { event: { status: 'CHANGED' } },
       ])
       await communitySupport.stubGetReferralProgress(referralProgressWithRescheduledAppointments, REFERRAL_ID)
       await communitySupport.stubRescheduleICS(REFERRAL_ID, mockAppointmentIcsResponse, 200)
@@ -582,7 +558,7 @@ test.describe('Confirm ICS Page', () => {
         'PM',
         SessionMethod.VIDEO,
         [InformedMethod.OTHER],
-        RequestedBy.REFEREE,
+        RequestedBy.REFERRAL_USER,
         'car broke down',
         {
           notInPersonReason: 'The referral dont have a vehicle',
@@ -600,9 +576,7 @@ test.describe('Confirm ICS Page', () => {
         await expect(confirmIcsPage.sessionCommunicationRow).toContainText('Face to face')
         await expect(confirmIcsPage.changeDetailsSummary).toBeVisible()
         await expect(confirmIcsPage.requestedByRow).toBeVisible()
-        await expect(confirmIcsPage.requestedByRow).toContainText(
-          `${pastMeeting.data.referralFirstName} ${pastMeeting.data.referralLastName}`,
-        )
+        await expect(confirmIcsPage.requestedByRow).toContainText(`John Doe`)
         await expect(confirmIcsPage.reasonForChangeRow).toBeVisible()
         await expect(confirmIcsPage.reasonForChangeRow).toContainText('car broke down')
         await confirmIcsPage.submitButton.click()
@@ -636,40 +610,6 @@ test.describe('Confirm ICS Page', () => {
         await expect(confirmIcsPage.locationRow).toContainText('Derby: Derwent Centre')
         await expect(confirmIcsPage.sessionCommunicationRow).toContainText('Face to face')
         await expect(confirmIcsPage.sessionCommunicationRow).toContainText('Text message')
-        await expect(confirmIcsPage.changeDetailsSummary).toBeVisible()
-        await expect(confirmIcsPage.requestedByRow).toBeVisible()
-        await expect(confirmIcsPage.requestedByRow).toContainText('Probation practitioner')
-        await expect(confirmIcsPage.reasonForChangeRow).toBeVisible()
-        await expect(confirmIcsPage.reasonForChangeRow).toContainText('reasons')
-        await confirmIcsPage.submitButton.click()
-        await expect(page).toHaveURL(ReferralProgressPage.url(REFERRAL_ID))
-      })
-    })
-
-    test('In Person - prison', async ({ page }) => {
-      await communitySupport.stubGetReferralInformation(200, REFERRAL_ID, referralInformationInPrison)
-      await fillRescheduleForm(
-        page,
-        futureDate,
-        '1',
-        '0',
-        'PM',
-        SessionMethod.IN_PERSON_PRISON,
-        [],
-        RequestedBy.PROBATION_PRACTITIONER,
-        'reasons',
-        {
-          prison: 'Albany (HMP)',
-        },
-      )
-      await test.step('Check confirmIcs page', async () => {
-        const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
-        await expect(confirmIcsPage.icsDetailsSummary).toBeVisible()
-        await expect(confirmIcsPage.dateRow).toContainText(futureDateDisplay)
-        await expect(confirmIcsPage.startTimeRow).toContainText('1:00pm')
-        await expect(confirmIcsPage.methodRow).toContainText('In person')
-        await expect(confirmIcsPage.notInPersonReasonRow).not.toBeVisible()
-        await expect(confirmIcsPage.locationRow).toContainText('ALI')
         await expect(confirmIcsPage.changeDetailsSummary).toBeVisible()
         await expect(confirmIcsPage.requestedByRow).toBeVisible()
         await expect(confirmIcsPage.requestedByRow).toContainText('Probation practitioner')

@@ -7,6 +7,7 @@ import {
   GovukFrontendRadiosItem,
   GovukFrontendTextarea,
 } from '@govuk-frontend'
+import { ChangeAppointmentDetails } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
 import {
   ChangeIcsDetailsReasonContent,
@@ -17,7 +18,6 @@ import {
   WhoRequestedRadioItemsContent,
 } from './ChangeIcsDetailsReasonViewModel'
 import { ErrorMiddlewareErrors } from '../../@types/express'
-import { ChangeAppointmentDetails } from './ChangeAppointmentDetails'
 
 export default class ChangeIcsDetailsReasonPresenter extends PresenterBase<
   ChangeIcsDetailsReasonViewModel,
@@ -114,7 +114,7 @@ export default class ChangeIcsDetailsReasonPresenter extends PresenterBase<
     const content: ChangeIcsDetailsReasonContent = this.buildStaticContent(res)
     const formData: ChangeIcsDetailsReasonFormData = this.session
       ? {
-          requestedBy: this.session.requestedBy,
+          requestedBy: this.session.changeRequestedBy,
           reasonForChange: this.session.reasonForChange,
         }
       : {}
