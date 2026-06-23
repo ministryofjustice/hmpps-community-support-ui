@@ -1,0 +1,235 @@
+{
+  "mappings": [
+    {
+      "name": "CPR get person by CRN (probation)",
+      "request": {
+        "method": "GET",
+        "urlPathPattern": "/person/probation/.*"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "cprUUID": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+          "firstName": "Alex",
+          "middleNames": "Albert",
+          "lastName": "River",
+          "dateOfBirth": "1988-01-01",
+          "disability": false,
+          "interestToImmigration": false,
+          "title": {
+            "code": "MR",
+            "description": "Mr"
+          },
+          "sex": {
+            "code": "M",
+            "description": "Male"
+          },
+          "sexualOrientation": {
+            "code": "HET",
+            "description": "Heterosexual"
+          },
+          "religion": {
+            "code": "NONE",
+            "description": "None"
+          },
+          "ethnicity": {
+            "code": "W1",
+            "description": "White British"
+          },
+          "nationalities": [
+            { "code": "GBR", "description": "British" },
+            { "code": "IRL", "description": "Irish" }
+          ],
+          "aliases": [],
+          "addresses": [
+            {
+              "cprAddressId": "addr-probation-001",
+              "buildingNumber": "1",
+              "buildingName": null,
+              "thoroughfareName": "Test Street",
+              "dependentLocality": null,
+              "postTown": "Testville",
+              "county": null,
+              "postcode": "TE1 1ST",
+              "country": "England",
+              "startDate": "2020-03-15",
+              "endDate": null,
+              "comment": "Primary residence",
+              "noFixedAbode": false,
+              "typeVerified": true,
+              "status": {
+                "code": "M",
+                "description": "Main"
+              },
+              "usages": [
+                {
+                  "code": "HOME",
+                  "description": "Home",
+                  "isActive": true
+                }
+              ],
+              "contacts": [
+                {
+                  "type": { "code": "TELEPHONE", "description": "Telephone" },
+                  "value": "01234567890"
+                },
+                {
+                  "type": { "code": "MOBILE", "description": "Mobile" },
+                  "value": "07700900001"
+                },
+                {
+                  "type": { "code": "EMAIL", "description": "Email" },
+                  "value": "alex.river@example.com"
+                }
+              ]
+            }
+          ],
+          "identifiers": {
+            "crns": ["X320741"],
+            "prisonNumbers": [],
+            "pncs": ["2012/0052494Q"],
+            "cros": ["123456/24A"],
+            "nationalInsuranceNumbers": ["AA123456A"],
+            "driverLicenseNumbers": [],
+            "arrestSummonsNumbers": []
+          }
+        }
+      }
+    },
+    {
+      "name": "CPR get person by prison number",
+      "request": {
+        "method": "GET",
+        "urlPathPattern": "/person/prison/.*"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "cprUUID": "b2c3d4e5-f6a7-8901-bcde-f23456789012",
+          "firstName": "Alex",
+          "middleNames": "James",
+          "lastName": "River",
+          "dateOfBirth": "1988-01-01",
+          "disability": false,
+          "interestToImmigration": false,
+          "title": {
+            "code": "MR",
+            "description": "Mr"
+          },
+          "sex": {
+            "code": "M",
+            "description": "Male"
+          },
+          "sexualOrientation": {
+            "code": "HET",
+            "description": "Heterosexual"
+          },
+          "religion": {
+            "code": "CHR",
+            "description": "Christian"
+          },
+          "ethnicity": {
+            "code": "W1",
+            "description": "White British"
+          },
+          "nationalities": [{ "code": "GBR", "description": "British" }],
+          "aliases": [],
+          "addresses": [
+            {
+              "cprAddressId": "addr-prison-001",
+              "buildingNumber": "10",
+              "buildingName": null,
+              "thoroughfareName": "Prison Road",
+              "dependentLocality": null,
+              "postTown": "Leeds",
+              "county": "West Yorkshire",
+              "postcode": "LS1 1AA",
+              "country": "England",
+              "startDate": "2022-06-01",
+              "endDate": null,
+              "comment": null,
+              "noFixedAbode": false,
+              "typeVerified": true,
+              "status": {
+                "code": "M",
+                "description": "Main"
+              },
+              "usages": [
+                {
+                  "code": "HOME",
+                  "description": "Home",
+                  "isActive": true
+                }
+              ],
+              "contacts": [
+                {
+                  "type": { "code": "TELEPHONE", "description": "Telephone" },
+                  "value": "01134567890"
+                },
+                {
+                  "type": { "code": "MOBILE", "description": "Mobile" },
+                  "value": "07700900002"
+                },
+                {
+                  "type": { "code": "EMAIL", "description": "Email" },
+                  "value": "alex.river.prison@example.com"
+                }
+              ]
+            }
+          ],
+          "identifiers": {
+            "crns": [],
+            "prisonNumbers": ["A1234BC"],
+            "pncs": ["12/394773H"],
+            "cros": ["29906/12J"],
+            "nationalInsuranceNumbers": [],
+            "driverLicenseNumbers": [],
+            "arrestSummonsNumbers": []
+          }
+        }
+      }
+    },
+    {
+      "name": "CPR person not found by CRN",
+      "request": {
+        "method": "GET",
+        "urlPathPattern": "/person/probation/Z[0-9]{6}"
+      },
+      "response": {
+        "status": 404,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "status": 404,
+          "error": "Not Found",
+          "message": "Person not found in Core Person Record"
+        }
+      }
+    },
+    {
+      "name": "CPR person not found by prison number",
+      "request": {
+        "method": "GET",
+        "urlPathPattern": "/person/prison/Z[0-9]{7}[A-Z]{2}"
+      },
+      "response": {
+        "status": 404,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "status": 404,
+          "error": "Not Found",
+          "message": "Person not found in Core Person Record"
+        }
+      }
+    }
+  ]
+}

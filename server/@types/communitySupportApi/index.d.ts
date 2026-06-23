@@ -6,6 +6,7 @@ type CommunitySupportServiceProviders = components['schemas']['CommunitySupportS
 type Person = components['schemas']['PersonDto']
 type CreateReferralRequest = components['schemas']['CreateReferralRequest']
 type CreateAppointmentRequest = components['schemas']['CreateAppointmentRequest']
+type ChangeAppointmentDetails = components['schemas']['ChangeAppointmentDetails']
 type SessionMethodRequest = components['schemas']['SessionMethodRequest']
 type ReferralInformation = components['schemas']['ReferralInformationDto']
 type SubmitReferralResponse = components['schemas']['SubmitReferralResponseDto']
@@ -23,7 +24,9 @@ type ReferralAppointmentHistory = components['schemas']['ReferralAppointmentHist
 type ProbationOffice = components['schemas']['ProbationOffice']
 type IcsFeedbackSubmission = components['schemas']['CreateIcsFeedbackRequest']
 type IcsFeedbackSubmissionResponse = components['schemas']['AppointmentIcsFeedbackResponse']
+type SessionFeedbackDetails = components['schemas']['SessionFeedbackDetailsDto']
 type SessionMethod = components['schemas']['SessionMethod']
+type CaseWorkerSummary = components['schemas']['CaseWorkerSummaryDto']
 
 export type {
   Referral,
@@ -32,6 +35,7 @@ export type {
   Person,
   CreateReferralRequest,
   CreateAppointmentRequest,
+  ChangeAppointmentDetails,
   SessionMethodRequest,
   ReferralInformation,
   SubmitReferralResponse,
@@ -49,5 +53,7 @@ export type {
   ProbationOffice,
   IcsFeedbackSubmission,
   IcsFeedbackSubmissionResponse,
+  SessionFeedbackDetails,
   SessionMethod,
+  CaseWorkerSummary,
 }

@@ -1,6 +1,6 @@
 services:
   redis:
-    image: 'cimg/redis:8.6'
+    image: 'cimg/redis:8.8'
     networks:
       - hmpps
     container_name: redis
@@ -146,6 +146,7 @@ services:
       - SERVICES_NDELIUS_INTEGRATION_API_BASE_URL=http://wiremock:8080/delius
       - SERVICES_NOMIS_API_BASE_URL=http://wiremock:8080/nomis
       - SERVICES_MANAGE_USERS_API_BASE_URL=http://wiremock:8080/manage-users
+      - SERVICES_CORE_PERSON_RECORD_API_BASE_URL=http://wiremock:8080
       - SPRING_PROFILES_ACTIVE=dev,local
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresql:5432/postgres
       - SPRING_DATASOURCE_USERNAME=admin

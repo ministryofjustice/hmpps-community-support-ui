@@ -53,6 +53,7 @@ describe('AppointmentController', () => {
 
   const mockAdditionalDetails: AdditionalInformation = {
     firstName: 'John',
+    lastName: 'Doe',
     submitHref: `/referral/${caseRefId}/appointment/submit-ics`,
     scheduleIcsHref: `/referral/${caseRefId}/appointment/schedule-ics`,
   }

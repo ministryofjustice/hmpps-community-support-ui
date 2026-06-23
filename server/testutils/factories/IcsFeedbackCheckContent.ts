@@ -37,6 +37,11 @@ export default IcsFeedbackCheckContentFactory.define(({ transientParams }) => ({
       ],
     },
   ],
+  didNotHappenReasonLabels: transientParams.didNotHappenReasonLabels || {
+    serviceProviderIssue: 'Service provider issue',
+    referralCouldNotTakePart: '{{ firstname }} could not take part',
+    referralDidNotComply: '{{ firstname }} did not comply',
+  },
   submitButtonText: transientParams.submitButtonText || 'Save and continue',
   submitHref: transientParams.submitHref || '/submit',
   attendedBackLinkHref: transientParams.attendedBackLinkHref || '/back',
