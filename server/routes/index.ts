@@ -184,5 +184,7 @@ export default function routes({
 
   post('/referral/:caseRefId/ics-change-details', (req, res) => appointmentController.rescheduleIcs(req, res))
 
+  get('/referral/task-list/:id', (req, res) => referralController.showTaskList(req, res))
+
   return router
 }

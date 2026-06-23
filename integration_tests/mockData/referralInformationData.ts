@@ -31,5 +31,17 @@ const referralInformationInPrison: ReferralInformation = {
   referenceNumber: 'AB1234CD',
   deliveryPartner: 'Delivery Partner Ltd',
 }
+const referralInformationTaskList: ReferralInformation = {
+  crn: 'A123456', // crn number
+  firstName: 'John',
+  lastName: 'Doe',
+  sex: 'Male',
+  referralId: mockReferralId,
+  personId: 'A123456',
+  communityServiceProviderId: 'csp-id-123',
+  communityServiceProviderName: 'Community Support Provider',
+  region: 'North West',
+  deliveryPartner: 'Delivery Partner Ltd',
+}
 
-export { referralInformationInCommunity, referralInformationInPrison }
+export { referralInformationInCommunity, referralInformationInPrison, referralInformationTaskList }
