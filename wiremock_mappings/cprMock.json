@@ -185,7 +185,7 @@
           ],
           "identifiers": {
             "crns": [],
-            "prisonNumbers": ["A1234BC"],
+            "prisonNumbers": ["A1234BC", "B1234CD", "C1234DE"],
             "pncs": ["12/394773H"],
             "cros": ["29906/12J"],
             "nationalInsuranceNumbers": [],
