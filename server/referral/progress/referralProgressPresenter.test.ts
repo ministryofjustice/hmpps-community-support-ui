@@ -84,7 +84,7 @@ describe('ReferralProgressPresenter', () => {
       expect(viewModel.icsAppointmentHistoryTable.rows).toHaveLength(2)
 
       expect(viewModel.icsAppointmentTable.rows[0][0].text).toContain(
-        formatDate(scheduleDate, "dd MMMM yyyy 'at' hh:mmaaa"),
+        formatDate(scheduleDate, "dd MMMM yyyy 'at' h:mmaaa"),
       )
       expect(viewModel.icsAppointmentTable.rows[0][1].html).toContain('Scheduled')
       expect(viewModel.icsAppointmentTable.rows[0][1].html).toContain('govuk-tag--blue')
