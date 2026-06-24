@@ -269,19 +269,19 @@ describe('ScheduleIcsPresenter', () => {
 
   const checkInformed = (
     informed: GovukFrontendCheckboxesWithConditional,
-    formData: Pick<ScheduleFormData, 'informedMethod' | 'otherMethodOfContact'>,
+    formData: Pick<ScheduleFormData, 'informedMethods' | 'otherMethodOfContact'>,
     errorMessages: {
-      informedMethod: GovukFrontendErrorMessage | undefined
+      informedMethods: GovukFrontendErrorMessage | undefined
       otherMethodOfContact: GovukFrontendErrorMessage | undefined
     },
   ) => {
     expect(informed.fieldset.legend.text).toBe('How was John informed about the session?')
     expect(informed.hint.text).toBe('Select all that apply.')
-    if (errorMessages.informedMethod) {
-      expect(informed.errorMessage.text).toBe(errorMessages.informedMethod.text)
+    if (errorMessages.informedMethods) {
+      expect(informed.errorMessage.text).toBe(errorMessages.informedMethods.text)
     }
 
-    const checked = formData.informedMethod || []
+    const checked = formData.informedMethods || []
 
     const firstInformedItem = informed.items.at(0)!
     expect(firstInformedItem.text).toBe('Phone call')
@@ -350,7 +350,7 @@ describe('ScheduleIcsPresenter', () => {
     })
 
     checkInformed(viewModel.howWasTheyInformedAboutTheSessionInput, formData, {
-      informedMethod: errorMessages.informedMethod,
+      informedMethods: errorMessages.informedMethods,
       otherMethodOfContact: errorMessages.otherMethodOfContact,
     })
   }
@@ -378,7 +378,7 @@ describe('ScheduleIcsPresenter', () => {
           'sessionTime-meridiem': 'am',
           sessionTakePlace: 'ByPhone',
           ByPhone: 'by phone reason',
-          informedMethod: ['informedByPhone', 'informedByTextMessage', 'informedByEmail', 'some other method'],
+          informedMethods: ['informedByPhone', 'informedByTextMessage', 'informedByEmail', 'some other method'],
           otherMethodOfContact: 'some other method',
         }
         const presenter = new ScheduleIcsPresenter(
@@ -399,7 +399,7 @@ describe('ScheduleIcsPresenter', () => {
           'sessionTime-meridiem': 'am',
           sessionTakePlace: 'ByVideo',
           ByVideo: 'by video reason',
-          informedMethod: ['informedByPhone', 'informedByTextMessage', 'informedByEmail', 'some other method'],
+          informedMethods: ['informedByPhone', 'informedByTextMessage', 'informedByEmail', 'some other method'],
           otherMethodOfContact: 'some other method',
         }
         const presenter = new ScheduleIcsPresenter(
@@ -420,7 +420,7 @@ describe('ScheduleIcsPresenter', () => {
           'sessionTime-meridiem': 'am',
           sessionTakePlace: 'InProbationOffice',
           probationOffice: 'Derbyshire: Buxton Probation Office',
-          informedMethod: ['informedByPhone', 'informedByTextMessage', 'informedByEmail', 'some other method'],
+          informedMethods: ['informedByPhone', 'informedByTextMessage', 'informedByEmail', 'some other method'],
           otherMethodOfContact: 'some other method',
         }
         const presenter = new ScheduleIcsPresenter(
@@ -445,7 +445,7 @@ describe('ScheduleIcsPresenter', () => {
           addressTown: 'town',
           addressCounty: 'county',
           addressPostcode: 'postcode',
-          informedMethod: ['informedByPhone', 'informedByTextMessage', 'informedByEmail', 'some other method'],
+          informedMethods: ['informedByPhone', 'informedByTextMessage', 'informedByEmail', 'some other method'],
           otherMethodOfContact: 'some other method',
         }
         const presenter = new ScheduleIcsPresenter(
@@ -463,7 +463,7 @@ describe('ScheduleIcsPresenter', () => {
       test('correct content when the identifier is a CRN - by phone', () => {
         const formData: ScheduleFormData = {
           sessionTakePlace: 'ByPhone',
-          informedMethod: ['informedByPhone', 'informedByTextMessage', 'informedByEmail', 'some other method'],
+          informedMethods: ['informedByPhone', 'informedByTextMessage', 'informedByEmail', 'some other method'],
           otherMethodOfContact: 'some other method',
         }
         const errors = {
@@ -511,7 +511,7 @@ describe('ScheduleIcsPresenter', () => {
           'sessionTime-minute': '30',
           'sessionTime-meridiem': 'am',
           sessionTakePlace: 'ByVideo',
-          informedMethod: ['informedByPhone', 'informedByTextMessage', 'informedByEmail', 'some other method'],
+          informedMethods: ['informedByPhone', 'informedByTextMessage', 'informedByEmail', 'some other method'],
           otherMethodOfContact: 'some other method',
         }
         const errors = {
@@ -546,7 +546,7 @@ describe('ScheduleIcsPresenter', () => {
           'sessionTime-meridiem': 'am',
           sessionTakePlace: 'InProbationOffice',
           probationOffice: 'Derbyshire: Buxton Probation Office',
-          informedMethod: ['informedByPhone', 'informedByTextMessage', 'informedByEmail', 'some other method'],
+          informedMethods: ['informedByPhone', 'informedByTextMessage', 'informedByEmail', 'some other method'],
           otherMethodOfContact: 'some other method',
         }
         const errors = {
@@ -585,7 +585,7 @@ describe('ScheduleIcsPresenter', () => {
           addressTown: '',
           addressCounty: '???',
           addressPostcode: '',
-          informedMethod: ['informedByPhone', 'informedByTextMessage', 'informedByEmail', 'some other method'],
+          informedMethods: ['informedByPhone', 'informedByTextMessage', 'informedByEmail', 'some other method'],
           otherMethodOfContact: 'some other method',
         }
         const error = {
@@ -648,18 +648,18 @@ describe('ScheduleIcsPresenter', () => {
           'sessionTime-meridiem': 'am',
           sessionTakePlace: 'InProbationOffice',
           probationOffice: 'Derbyshire: Buxton Probation Office',
-          informedMethod: [],
+          informedMethods: [],
           otherMethodOfContact: '',
         }
         const error = {
           list: [
             {
-              href: '#informedMethod',
+              href: '#informedMethods',
               text: 'Select how Omar was informed about the session',
             },
           ],
           messages: {
-            informedMethod: {
+            informedMethods: {
               text: 'Select how Omar was informed about the session',
             },
           },
@@ -683,7 +683,7 @@ describe('ScheduleIcsPresenter', () => {
           'sessionTime-meridiem': 'am',
           sessionTakePlace: 'InProbationOffice',
           probationOffice: 'Derbyshire: Buxton Probation Office',
-          informedMethod: ['some other method'],
+          informedMethods: ['some other method'],
           otherMethodOfContact: '',
         }
         const error = {

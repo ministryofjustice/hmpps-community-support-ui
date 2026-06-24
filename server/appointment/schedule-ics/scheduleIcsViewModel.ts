@@ -27,7 +27,7 @@ export interface ScheduleFormData {
   addressTown?: string
   addressCounty?: string
   addressPostcode?: string
-  informedMethod?: string[]
+  informedMethods?: string[]
   otherMethodOfContact?: string
 }
 

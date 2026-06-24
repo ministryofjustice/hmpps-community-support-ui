@@ -288,7 +288,7 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
 
   private buildHowWasTheyInformedAboutTheSession(): GovukFrontendCheckboxesWithConditional | undefined {
     return {
-      name: 'informedMethod',
+      name: 'informedMethods',
       fieldset: {
         legend: {
           text: `How was ${this.referralInformation.firstName} informed about the session?`,
@@ -304,21 +304,21 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
           value: 'informedByPhone',
           text: 'Phone call',
           checked:
-            this.formData && this.formData.informedMethod && this.formData.informedMethod.includes('informedByPhone'),
+            this.formData && this.formData.informedMethods && this.formData.informedMethods.includes('informedByPhone'),
         },
         {
           value: 'informedByTextMessage',
           text: 'Text message',
           checked:
             this.formData &&
-            this.formData.informedMethod &&
-            this.formData.informedMethod.includes('informedByTextMessage'),
+            this.formData.informedMethods &&
+            this.formData.informedMethods.includes('informedByTextMessage'),
         },
         {
           value: 'informedByEmail',
           text: 'Email',
           checked:
-            this.formData && this.formData.informedMethod && this.formData.informedMethod.includes('informedByEmail'),
+            this.formData && this.formData.informedMethods && this.formData.informedMethods.includes('informedByEmail'),
         },
         {
           value: 'informedByOtherMethod',
@@ -340,8 +340,8 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
           },
         },
       ],
-      values: this.formData?.informedMethod,
-      errorMessage: this.validationErrors?.messages?.informedMethod,
+      values: this.formData?.informedMethods,
+      errorMessage: this.validationErrors?.messages?.informedMethods,
     }
   }
 

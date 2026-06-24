@@ -424,7 +424,7 @@ test.describe('Confirm ICS Page', () => {
     minute: string,
     amPm: string,
     method: SessionMethod,
-    informedMethod: InformedMethod[],
+    informedMethods: InformedMethod[],
     requestedBy: RequestedBy,
     reasonForChange: string,
     options: {
@@ -470,16 +470,16 @@ test.describe('Confirm ICS Page', () => {
         default:
           break
       }
-      if (informedMethod.includes(InformedMethod.PHONE)) {
+      if (informedMethods.includes(InformedMethod.PHONE)) {
         await changeIcsDetailsPage.informedByPhoneCheckbox.check()
       }
-      if (informedMethod.includes(InformedMethod.EMAIL)) {
+      if (informedMethods.includes(InformedMethod.EMAIL)) {
         await changeIcsDetailsPage.informedByEmailCheckbox.check()
       }
-      if (informedMethod.includes(InformedMethod.TEXT_MESSAGE)) {
+      if (informedMethods.includes(InformedMethod.TEXT_MESSAGE)) {
         await changeIcsDetailsPage.informedByTextMessageCheckbox.check()
       }
-      if (informedMethod.includes(InformedMethod.OTHER)) {
+      if (informedMethods.includes(InformedMethod.OTHER)) {
         await changeIcsDetailsPage.informedByOtherMethodCheckbox.check()
         await changeIcsDetailsPage.informedByOtherMethodInput.fill(options.informedOther ?? '')
       }

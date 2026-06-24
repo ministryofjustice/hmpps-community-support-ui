@@ -56,7 +56,7 @@ interface ScheduledIcsFormData {
   addressTown?: string
   addressCounty?: string
   addressPostcode?: string
-  informedMethod?: string[]
+  informedMethods?: string[]
   otherMethodOfContact?: string
 }
 
@@ -273,21 +273,21 @@ const loadInformedMethodsFromSession = (
   sessionCommunications: string[],
   formData: ScheduledIcsFormData,
 ): ScheduledIcsFormData => {
-  let informedMethod = [...sessionCommunications]
+  let informedMethods = [...sessionCommunications]
 
   const standardMethods = ['informedByPhone', 'informedByTextMessage', 'informedByEmail']
 
-  const otherMethod = informedMethod.find(method => !standardMethods.includes(method))
+  const otherMethod = informedMethods.find(method => !standardMethods.includes(method))
 
   if (otherMethod) {
-    informedMethod = informedMethod.filter(method => method !== otherMethod)
-    informedMethod.push('informedByOtherMethod')
+    informedMethods = informedMethods.filter(method => method !== otherMethod)
+    informedMethods.push('informedByOtherMethod')
   }
 
   return {
     ...formData,
     otherMethodOfContact: otherMethod || '',
-    informedMethod,
+    informedMethods,
   }
 }
 
@@ -324,13 +324,13 @@ const getSessionMethodFromFormData = (formData: ScheduledIcsFormData): SessionMe
 }
 
 const getInformedMethodsFromFormData = (formData: ScheduledIcsFormData): string[] => {
-  let informedMethod = Array.isArray(formData.informedMethod) ? [...formData.informedMethod] : []
-  if (informedMethod.includes('informedByOtherMethod') && formData.otherMethodOfContact) {
-    informedMethod = informedMethod
+  let informedMethods = Array.isArray(formData.informedMethods) ? [...formData.informedMethods] : []
+  if (informedMethods.includes('informedByOtherMethod') && formData.otherMethodOfContact) {
+    informedMethods = informedMethods
       .filter(method => method !== 'informedByOtherMethod')
       .concat(formData.otherMethodOfContact)
   }
-  return informedMethod
+  return informedMethods
 }
 
 const loadFormFromSession = (
@@ -393,9 +393,9 @@ const loadFormFromSession = (
   }
 
   if (Array.isArray(createAppointmentRequest.sessionCommunication)) {
-    formData.informedMethod = [...createAppointmentRequest.sessionCommunication]
+    formData.informedMethods = [...createAppointmentRequest.sessionCommunication]
   } else {
-    formData.informedMethod = []
+    formData.informedMethods = []
   }
 
   return formData
@@ -568,7 +568,7 @@ class AppointmentController {
     const referralInformation = await this.referralService.getReferralInformation(caseRefId, username)
     const schema = buildScheduleIcsAppointmentSchema(new Date(referralInformation.referralDate))
     const informedMethodArr: string[] =
-      typeof req.body.informedMethod === 'string' ? [req.body.informedMethod] : req.body.informedMethod
+      typeof req.body.informedMethods === 'string' ? [req.body.informedMethods] : req.body.informedMethods
 
     req.session.createAppointmentRequest = this.saveFormToSession({
       sessionDate: req.body.sessionDate,
@@ -585,7 +585,7 @@ class AppointmentController {
       addressTown: req.body.addressTown,
       addressCounty: req.body.addressCounty,
       addressPostcode: req.body.addressPostcode,
-      informedMethod: informedMethodArr,
+      informedMethods: informedMethodArr,
       otherMethodOfContact: req.body.otherMethodOfContact,
     })
 
