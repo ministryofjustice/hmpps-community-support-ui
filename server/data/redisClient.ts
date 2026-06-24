@@ -1,4 +1,4 @@
-import { createClient, RedisClientType } from 'redis'
+import { createClient } from 'redis'
 
 import logger from '../../logger'
 import config from '../config'
@@ -8,7 +8,7 @@ const url =
     ? `rediss://${config.redis.host}:${config.redis.port}`
     : `redis://${config.redis.host}:${config.redis.port}`
 
-const createRedisClient = (): RedisClientType => {
+const createRedisClient = () => {
   const client = createClient({
     url,
     password: config.redis.password,
