@@ -14,6 +14,7 @@ import {
 import { buildInput, buildSelect } from '../../utils/utils'
 import { ComponentsTimeInput } from '../../@types/components'
 import isIdentifierACrn from '../../utils/isIdentifierACrn'
+import { ScheduledIcsFormData } from './ScheduledIcsFormDataResolver'
 
 export interface ValidationError {
   key: string
@@ -66,7 +67,7 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
     private readonly probationOffices: ProbationOffice[],
     private readonly prisonOffices: Prison[],
     private readonly referralInformation: ReferralInformation,
-    private readonly formData?: ScheduleFormData,
+    private readonly formData?: ScheduledIcsFormData,
     private readonly validationErrors?: ErrorMiddlewareErrors,
   ) {
     super()

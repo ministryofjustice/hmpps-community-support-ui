@@ -1,12 +1,11 @@
 import { Request, Response } from 'express'
 import {
   AppointmentIcsResponse,
-  CreateAppointmentRequest,
   ReferralInformation,
   SessionMethod,
   SessionMethodRequest,
 } from '@community-support-api'
-import { format, parse } from 'date-fns'
+import { format } from 'date-fns'
 import timeFormat from '../utils/timeFormat'
 import { ErrorMiddlewareErrors, HowSessionTookPlace, IcsFeedbackHowSessionTookPlaceSession } from '../@types/express'
 import ConfirmIcsPresenter, { type AdditionalInformation } from './confirm-ics/confirmIcsPresenter'
@@ -39,26 +38,7 @@ import { IcsFeedbackFormSchema } from '../validation/IcsFeedbackHowSessionTookPl
 import { buildScheduleIcsAppointmentSchema } from '../validation/ScheduleIcsAppointmentFormData'
 import ChangeIcsDetailsReasonPresenter from './change-ics-details-reason/ChangeIcsDetailsReasonPresenter'
 import { ChangeIcsDetailsReasonSchema } from '../validation/ChangeIcsDetailsReasonFormData'
-
-interface ScheduledIcsFormData {
-  sessionDate?: string
-  'sessionTime-hour'?: string
-  'sessionTime-minute'?: string
-  'sessionTime-meridiem'?: string
-  sessionTakePlace?: string
-  ByPhone?: string
-  byVideo?: string
-  inSomewhereElse?: string
-  probationOffice?: string
-  prison?: string
-  addressLine1?: string
-  addressLine2?: string
-  addressTown?: string
-  addressCounty?: string
-  addressPostcode?: string
-  informedMethods?: string[]
-  otherMethodOfContact?: string
-}
+import { saveFormToSession, ScheduledIcsFormDataResolver } from './schedule-ics/ScheduledIcsFormDataResolver'
 
 const recordAttendanceRedirectUrl = (data: RecordSessionAttendanceFormData, caseRefId: string): string => {
   if (data.happened === 'Yes') {
@@ -178,229 +158,6 @@ const loadIcsFeedbackFromSession = (
   }
 }
 
-const getReasonFromFormData = (formData: ScheduledIcsFormData, sessionTakePlace: string): string | undefined => {
-  switch (sessionTakePlace) {
-    case 'ByPhone':
-      return formData.ByPhone
-    case 'ByVideo':
-      return formData.byVideo
-    default:
-      return undefined
-  }
-}
-
-const mapSessionTakePlaceToType = (takePlace: string): SessionMethodRequest['type'] => {
-  switch (takePlace) {
-    case 'ByPhone':
-      return 'PHONE'
-    case 'ByVideo':
-      return 'VIDEO'
-    case 'InProbationOffice':
-      return 'IN_PERSON_PROBATION_OFFICE'
-    case 'InSomewhereElse':
-      return 'IN_PERSON_OTHER_LOCATION'
-    default:
-      return 'IN_PERSON_OTHER_LOCATION'
-  }
-}
-
-const mapTypeToSessionTakePlace = (type: SessionMethodRequest['type']): string => {
-  switch (type) {
-    case 'PHONE':
-      return 'ByPhone'
-    case 'VIDEO':
-      return 'ByVideo'
-    case 'IN_PERSON_PROBATION_OFFICE':
-      return 'InProbationOffice'
-    case 'IN_PERSON_OTHER_LOCATION':
-      return 'InSomewhereElse'
-    default:
-      return 'InSomewhereElse'
-  }
-}
-
-const getReasonKey = (sessionTakePlace: string): string | null => {
-  switch (sessionTakePlace) {
-    case 'ByPhone':
-      return 'ByPhone'
-    case 'ByVideo':
-      return 'ByVideo'
-    default:
-      return null
-  }
-}
-
-const loadSessionMethodFromSession = (
-  sessionMethodRequest: SessionMethodRequest,
-  formData: ScheduledIcsFormData,
-): ScheduledIcsFormData => {
-  if (!sessionMethodRequest) {
-    return formData
-  }
-
-  const updatedFormData = { ...formData }
-  const method = sessionMethodRequest
-
-  updatedFormData.sessionTakePlace = mapTypeToSessionTakePlace(method.type)
-
-  if (method.additionalDetails) {
-    switch (getReasonKey(updatedFormData.sessionTakePlace)) {
-      case 'ByPhone':
-        updatedFormData.ByPhone = method.additionalDetails
-        break
-      case 'ByVideo':
-        updatedFormData.byVideo = method.additionalDetails
-        break
-      default:
-        break
-    }
-  }
-  if (method.type === 'IN_PERSON_PROBATION_OFFICE') {
-    updatedFormData.probationOffice = method.additionalDetails
-  }
-  if (method.type === 'IN_PERSON_OTHER_LOCATION') {
-    updatedFormData.addressLine1 = method.addressLine1 || ''
-    updatedFormData.addressLine2 = method.addressLine2 || ''
-    updatedFormData.addressTown = method.townOrCity || ''
-    updatedFormData.addressCounty = method.county || ''
-    updatedFormData.addressPostcode = method.postcode || ''
-  }
-
-  return updatedFormData
-}
-
-const loadInformedMethodsFromSession = (
-  sessionCommunications: string[],
-  formData: ScheduledIcsFormData,
-): ScheduledIcsFormData => {
-  let informedMethods = [...sessionCommunications]
-
-  const standardMethods = ['informedByPhone', 'informedByTextMessage', 'informedByEmail']
-
-  const otherMethod = informedMethods.find(method => !standardMethods.includes(method))
-
-  if (otherMethod) {
-    informedMethods = informedMethods.filter(method => method !== otherMethod)
-    informedMethods.push('informedByOtherMethod')
-  }
-
-  return {
-    ...formData,
-    otherMethodOfContact: otherMethod || '',
-    informedMethods,
-  }
-}
-
-const getSessionMethodFromFormData = (formData: ScheduledIcsFormData): SessionMethodRequest => {
-  const sessionTakePlace = formData.sessionTakePlace || ''
-
-  if (sessionTakePlace) {
-    const sessionMethod: SessionMethodRequest = { type: mapSessionTakePlaceToType(sessionTakePlace) }
-
-    if (['ByPhone', 'ByVideo'].includes(sessionTakePlace)) {
-      const reason = getReasonFromFormData(formData, sessionTakePlace)
-      if (reason) sessionMethod.additionalDetails = reason
-    }
-
-    if (sessionTakePlace === 'InProbationOffice' && formData.probationOffice) {
-      sessionMethod.additionalDetails = formData.probationOffice
-    }
-
-    if (sessionTakePlace === 'InPrison' && formData.prison) {
-      sessionMethod.additionalDetails = formData.prison
-    }
-
-    if (sessionTakePlace === 'InSomewhereElse') {
-      sessionMethod.addressLine1 = formData.addressLine1
-      sessionMethod.addressLine2 = formData.addressLine2
-      sessionMethod.townOrCity = formData.addressTown
-      sessionMethod.county = formData.addressCounty
-      sessionMethod.postcode = formData.addressPostcode
-    }
-
-    return sessionMethod
-  }
-  return {} as SessionMethodRequest
-}
-
-const getInformedMethodsFromFormData = (formData: ScheduledIcsFormData): string[] => {
-  let informedMethods = Array.isArray(formData.informedMethods) ? [...formData.informedMethods] : []
-  if (informedMethods.includes('informedByOtherMethod') && formData.otherMethodOfContact) {
-    informedMethods = informedMethods
-      .filter(method => method !== 'informedByOtherMethod')
-      .concat(formData.otherMethodOfContact)
-  }
-  return informedMethods
-}
-
-const loadFormFromSession = (
-  createAppointmentRequest: CreateAppointmentRequest,
-  validator: AppointmentValidator,
-): ScheduledIcsFormData => {
-  let formData: ScheduledIcsFormData = {}
-
-  if (!createAppointmentRequest) {
-    return formData
-  }
-  if (createAppointmentRequest.date) {
-    try {
-      formData.sessionDate = format(parse(createAppointmentRequest.date, 'yyyy-MM-dd', new Date()), 'd/M/yyyy')
-    } catch {
-      formData.sessionDate = ''
-    }
-  }
-
-  if (createAppointmentRequest.time) {
-    formData['sessionTime-hour'] =
-      createAppointmentRequest.time.hour != null ? String(createAppointmentRequest.time.hour) : ''
-    formData['sessionTime-minute'] =
-      createAppointmentRequest.time.minute != null ? String(createAppointmentRequest.time.minute) : ''
-    formData['sessionTime-meridiem'] = createAppointmentRequest.time.amPm
-      ? createAppointmentRequest.time.amPm.toLowerCase()
-      : 'am'
-  }
-
-  formData = loadSessionMethodFromSession(createAppointmentRequest.sessionMethodRequest, formData)
-  formData = loadInformedMethodsFromSession(createAppointmentRequest.sessionCommunication, formData)
-  if (createAppointmentRequest.sessionMethodRequest) {
-    const method = createAppointmentRequest.sessionMethodRequest
-
-    formData.sessionTakePlace = mapTypeToSessionTakePlace(method.type)
-
-    if (method.additionalDetails) {
-      switch (validator.getReasonKey(formData.sessionTakePlace)) {
-        case 'ByPhone':
-          formData.ByPhone = method.additionalDetails
-          break
-        case 'ByVideo':
-          formData.byVideo = method.additionalDetails
-          break
-        case 'InSomewhereElse':
-          formData.inSomewhereElse = method.additionalDetails
-          break
-        default:
-          break
-      }
-    }
-
-    if (method.type === 'IN_PERSON_OTHER_LOCATION') {
-      formData.addressLine1 = method.addressLine1 || ''
-      formData.addressLine2 = method.addressLine2 || ''
-      formData.addressTown = method.townOrCity || ''
-      formData.addressCounty = method.county || ''
-      formData.addressPostcode = method.postcode || ''
-    }
-  }
-
-  if (Array.isArray(createAppointmentRequest.sessionCommunication)) {
-    formData.informedMethods = [...createAppointmentRequest.sessionCommunication]
-  } else {
-    formData.informedMethods = []
-  }
-
-  return formData
-}
-
 const getPendingFormData = (req: Request) => {
   if (req.session.pending) {
     const formData = req.session.pending
@@ -424,33 +181,16 @@ const storePending = (req: Request) => {
   req.session.pending = req.body as Record<string, string>
 }
 
-const createMethodSessionData = (method: SessionMethod): SessionMethodRequest => ({
-  ...method,
-  additionalDetails: method.whyNotInPersonReason,
-})
-
-const createIcsSessionData = ({
-  appointmentDate,
-  appointmentTime,
-  sessionMethod,
-  sessionCommunications,
-}: AppointmentIcsResponse): CreateAppointmentRequest => {
-  return {
-    date: appointmentDate,
-    time: appointmentTime,
-    sessionMethodRequest: createMethodSessionData(sessionMethod),
-    sessionCommunication: sessionCommunications,
-  }
-}
-
 class AppointmentController {
-  private readonly validator = new AppointmentValidator()
+  private readonly resolver: ScheduledIcsFormDataResolver
 
   constructor(
     private readonly referralService: ReferralService,
     private readonly appointmentService: AppointmentService,
     private readonly referenceDataService: ReferenceDataService,
-  ) {}
+  ) {
+    this.resolver = new ScheduledIcsFormDataResolver(this.appointmentService, new AppointmentValidator())
+  }
 
   async checkIcs(req: Request, res: Response): Promise<void> {
     const { username } = res.locals.user
@@ -473,10 +213,11 @@ class AppointmentController {
   async showScheduleIcs(req: Request, res: Response): Promise<void> {
     const { username } = res.locals.user
     const caseRefId = req.params.caseRefId as string
-    const [probationOffices, prisons, referralInformation] = await Promise.all([
+    const [probationOffices, prisons, referralInformation, formData] = await Promise.all([
       this.referenceDataService.getProbationOffices(),
       this.referenceDataService.getPrisons(),
       this.referralService.getReferralInformation(caseRefId, username),
+      this.resolver.resolve(req, res),
     ])
 
     const validationErrors: ErrorMiddlewareErrors = formatDynamicErrorMessages(
@@ -485,7 +226,6 @@ class AppointmentController {
       referralInformation.firstName,
     )
     res.locals.errors = validationErrors
-    const formData = loadFormFromSession(req.session.createAppointmentRequest, this.validator)
     const presenter = new ScheduleIcsPresenter(
       caseRefId,
       probationOffices,
@@ -497,16 +237,6 @@ class AppointmentController {
     return presenter.renderPage(res)
   }
 
-  private async getExistingScheduledIcsFormData(
-    caseRefId: string,
-    username: string,
-    existingSessionData: CreateAppointmentRequest | undefined,
-  ): Promise<ScheduledIcsFormData> {
-    const sessionData =
-      existingSessionData || (await this.appointmentService.getICS(caseRefId, username).then(createIcsSessionData))
-    return loadFormFromSession(sessionData, this.validator)
-  }
-
   async showRescheduleIcs(req: Request, res: Response): Promise<void> {
     const { username } = res.locals.user
     const caseRefId = req.params.caseRefId as string
@@ -514,7 +244,7 @@ class AppointmentController {
       this.referenceDataService.getProbationOffices(),
       this.referenceDataService.getPrisons(),
       this.referralService.getReferralInformation(caseRefId, username),
-      this.getExistingScheduledIcsFormData(caseRefId, username, req.session?.createAppointmentRequest),
+      this.resolver.resolve(req, res),
     ])
 
     const validationErrors: ErrorMiddlewareErrors = formatDynamicErrorMessages(
@@ -570,14 +300,14 @@ class AppointmentController {
     const informedMethodArr: string[] =
       typeof req.body.informedMethods === 'string' ? [req.body.informedMethods] : req.body.informedMethods
 
-    req.session.createAppointmentRequest = this.saveFormToSession({
+    req.session.createAppointmentRequest = saveFormToSession({
       sessionDate: req.body.sessionDate,
       'sessionTime-hour': req.body['sessionTime-hour'],
       'sessionTime-minute': req.body['sessionTime-minute'],
       'sessionTime-meridiem': req.body['sessionTime-meridiem']?.toLowerCase(),
       sessionTakePlace: req.body.sessionTakePlace,
       ByPhone: req.body.ByPhone,
-      byVideo: req.body.ByVideo,
+      ByVideo: req.body.ByVideo,
       probationOffice: req.body.probationOfficeList,
       prison: req.body.prisonList,
       addressLine1: req.body.addressLine1,
@@ -593,44 +323,6 @@ class AppointmentController {
       schema,
       referralInformation,
     }
-  }
-
-  private saveFormToSession(formData: ScheduledIcsFormData): CreateAppointmentRequest {
-    let createAppointmentRequest = {} as CreateAppointmentRequest
-
-    if (!formData) return createAppointmentRequest
-
-    if (!createAppointmentRequest) {
-      createAppointmentRequest = {
-        date: '',
-        time: { hour: 0, amPm: 'AM' },
-        sessionMethodRequest: { type: 'PHONE' },
-        sessionCommunication: [],
-      }
-    }
-
-    if (formData.sessionDate) {
-      try {
-        createAppointmentRequest.date = format(parse(formData.sessionDate, 'd/M/yyyy', new Date()), 'yyyy-MM-dd')
-      } catch {
-        createAppointmentRequest.date = ''
-      }
-    }
-    const hour = formData['sessionTime-hour']
-    const minute = formData['sessionTime-minute']
-    const amPm = formData['sessionTime-meridiem']
-
-    if (hour !== undefined && amPm) {
-      createAppointmentRequest.time = {
-        hour: Number(hour),
-        minute: minute !== undefined && minute !== '' ? Number(minute) : undefined,
-        amPm: String(amPm).toUpperCase() as 'AM' | 'PM',
-      }
-    }
-    createAppointmentRequest.sessionMethodRequest = getSessionMethodFromFormData(formData)
-    createAppointmentRequest.sessionCommunication = getInformedMethodsFromFormData(formData)
-
-    return createAppointmentRequest
   }
 
   viewOrChangeIcs(req: Request, res: Response): Promise<void> {
