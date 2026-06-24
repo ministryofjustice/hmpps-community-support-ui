@@ -1,5 +1,5 @@
 import { RefinementCtx, z } from 'zod'
-import { addMonths } from 'date-fns'
+import { addMonths, format } from 'date-fns'
 
 const isPersonInCommunity = (id: string): boolean => {
   if (!id) return false
@@ -37,7 +37,7 @@ const buildDateSchema =
       if (!minDate.success) {
         ctx.addIssue({
           code: 'custom',
-          message: `The session date must be after the referral date, ${new Date(min).toLocaleDateString()}`,
+          message: `The session date must be after the referral date, ${format(new Date(min), 'd/M/yyyy')}`,
           path: ['sessionDate'],
         })
         return
@@ -48,7 +48,7 @@ const buildDateSchema =
       if (!maxDate.success) {
         ctx.addIssue({
           code: 'custom',
-          message: `The session date must be before ${new Date(max).toLocaleDateString()}`,
+          message: `The session date must be before ${format(new Date(max), 'd/M/yyyy')}`,
           path: ['sessionDate'],
         })
       }
