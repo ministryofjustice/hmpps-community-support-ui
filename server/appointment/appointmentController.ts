@@ -1,12 +1,11 @@
 import { Request, Response } from 'express'
 import {
   AppointmentIcsResponse,
-  CreateAppointmentRequest,
   ReferralInformation,
   SessionMethod,
   SessionMethodRequest,
 } from '@community-support-api'
-import { format, parse } from 'date-fns'
+import { format } from 'date-fns'
 import timeFormat from '../utils/timeFormat'
 import { ErrorMiddlewareErrors, HowSessionTookPlace, IcsFeedbackHowSessionTookPlaceSession } from '../@types/express'
 import ConfirmIcsPresenter, { type AdditionalInformation } from './confirm-ics/confirmIcsPresenter'
@@ -39,11 +38,7 @@ import { IcsFeedbackFormSchema } from '../validation/IcsFeedbackHowSessionTookPl
 import { buildScheduleIcsAppointmentSchema } from '../validation/ScheduleIcsAppointmentFormData'
 import ChangeIcsDetailsReasonPresenter from './change-ics-details-reason/ChangeIcsDetailsReasonPresenter'
 import { ChangeIcsDetailsReasonSchema } from '../validation/ChangeIcsDetailsReasonFormData'
-import {
-  saveFormToSession,
-  ScheduledIcsFormData,
-  ScheduledIcsFormDataResolver,
-} from './schedule-ics/ScheduledIcsFormDataResolver'
+import { saveFormToSession, ScheduledIcsFormDataResolver } from './schedule-ics/ScheduledIcsFormDataResolver'
 
 const recordAttendanceRedirectUrl = (data: RecordSessionAttendanceFormData, caseRefId: string): string => {
   if (data.happened === 'Yes') {
@@ -161,74 +156,6 @@ const loadIcsFeedbackFromSession = (
     default:
       return {}
   }
-}
-
-const getReasonFromFormData = (formData: ScheduledIcsFormData, sessionTakePlace: string): string | undefined => {
-  switch (sessionTakePlace) {
-    case 'ByPhone':
-      return formData.ByPhone
-    case 'ByVideo':
-      return formData.ByVideo
-    default:
-      return undefined
-  }
-}
-
-const mapSessionTakePlaceToType = (takePlace: string): SessionMethodRequest['type'] => {
-  switch (takePlace) {
-    case 'ByPhone':
-      return 'PHONE'
-    case 'ByVideo':
-      return 'VIDEO'
-    case 'InProbationOffice':
-      return 'IN_PERSON_PROBATION_OFFICE'
-    case 'InSomewhereElse':
-      return 'IN_PERSON_OTHER_LOCATION'
-    default:
-      return 'IN_PERSON_OTHER_LOCATION'
-  }
-}
-
-const getSessionMethodFromFormData = (formData: ScheduledIcsFormData): SessionMethodRequest => {
-  const sessionTakePlace = formData.sessionTakePlace || ''
-
-  if (sessionTakePlace) {
-    const sessionMethod: SessionMethodRequest = { type: mapSessionTakePlaceToType(sessionTakePlace) }
-
-    if (['ByPhone', 'ByVideo'].includes(sessionTakePlace)) {
-      const reason = getReasonFromFormData(formData, sessionTakePlace)
-      if (reason) sessionMethod.additionalDetails = reason
-    }
-
-    if (sessionTakePlace === 'InProbationOffice' && formData.probationOffice) {
-      sessionMethod.additionalDetails = formData.probationOffice
-    }
-
-    if (sessionTakePlace === 'InPrison' && formData.prison) {
-      sessionMethod.additionalDetails = formData.prison
-    }
-
-    if (sessionTakePlace === 'InSomewhereElse') {
-      sessionMethod.addressLine1 = formData.addressLine1
-      sessionMethod.addressLine2 = formData.addressLine2
-      sessionMethod.townOrCity = formData.addressTown
-      sessionMethod.county = formData.addressCounty
-      sessionMethod.postcode = formData.addressPostcode
-    }
-
-    return sessionMethod
-  }
-  return {} as SessionMethodRequest
-}
-
-const getInformedMethodsFromFormData = (formData: ScheduledIcsFormData): string[] => {
-  let informedMethods = Array.isArray(formData.informedMethods) ? [...formData.informedMethods] : []
-  if (informedMethods.includes('informedByOtherMethod') && formData.otherMethodOfContact) {
-    informedMethods = informedMethods
-      .filter(method => method !== 'informedByOtherMethod')
-      .concat(formData.otherMethodOfContact)
-  }
-  return informedMethods
 }
 
 const getPendingFormData = (req: Request) => {
