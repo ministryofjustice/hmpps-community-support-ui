@@ -134,12 +134,6 @@
       "back": "/progress/{{ id }}"
     }
   },
-  "/referral/:id/appointment/schedule-ics": {
-    "pageHeader": "Schedule the ICS",
-    "submitButtonText": "Save and continue",
-    "submitHref": "/referral/{{ caseRef }}/appointment/schedule-ics",
-    "backLink": "/progress/{{ caseRef }}"
-  },
   "/referral/:id/appointment/confirm-ics": {
     "pageHeader": "Check the details before scheduling the ICS",
     "submitButtonText": "Submit"
@@ -423,8 +417,30 @@
     "submitButtonText": "Save and continue",
     "backLinkHref": "/referral/{{ id }}/ics-change-details"
   },
+  "/referral/:id/appointment/schedule-ics": {
+    "pageHeader": "Schedule the ICS",
+    "date": {
+      "label": "What is the date of the session?",
+      "hint": "Enter a date, for example 10/7/2025, or select one from the calendar."
+    },
+    "time": {
+      "label": "What time does the session start?",
+      "hint": "Use the 12-hour clock, for example 11:30am or 3pm."
+    },
+    "submitButtonText": "Save and continue",
+    "submitHref": "/referral/{{ caseRef }}/appointment/schedule-ics",
+    "backLink": "/progress/{{ caseRef }}"
+  },
   "/referral/:id/ics-change-details": {
     "pageHeader": "Change session details",
+    "date": {
+      "label": "What is the date of the session?",
+      "hint": "Enter a date, for example 10/7/2025, or select one from the calendar."
+    },
+    "time": {
+      "label": "What time does the session start?",
+      "hint": "Use the 12-hour clock, for example 11:30am or 3pm."
+    },
     "submitButtonText": "Save and continue",
     "submitHref": "/referral/{{ caseRef }}/ics-change-details",
     "backLink": "/referral-details/{{ caseRef }}/ics-view-or-change"

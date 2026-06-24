@@ -214,18 +214,18 @@ const validateSessionTakePlace = (data: ScheduleIcsAppointmentFormData, ctx: Ref
 
 const validateInformedMethod = (data: ScheduleIcsAppointmentFormData, ctx: RefinementCtx) => {
   const { referralCrn, otherMethodOfContact } = data
-  let { informedMethod } = data
+  let { informedMethods } = data
   if (!isPersonInCommunity(referralCrn)) return
-  if (typeof informedMethod === 'string') {
-    informedMethod = [informedMethod]
+  if (typeof informedMethods === 'string') {
+    informedMethods = [informedMethods]
   }
-  if (!informedMethod || informedMethod.length === 0) {
+  if (!informedMethods || informedMethods.length === 0) {
     ctx.addIssue({
       code: 'custom',
       message: 'Select how {{ firstname }} was informed about the session',
-      path: ['informedMethod'],
+      path: ['informedMethods'],
     })
-  } else if (informedMethod.includes('informedByOtherMethod')) {
+  } else if (informedMethods.includes('informedByOtherMethod')) {
     if (!otherMethodOfContact) {
       ctx.addIssue({ code: 'custom', message: 'Enter the other method of contact', path: ['otherMethodOfContact'] })
     } else if (otherMethodOfContact.length > 50) {
@@ -267,7 +267,7 @@ const baseSchema = z.object({
   addressTown: z.string().trim().optional(),
   addressCounty: z.string().trim().optional(),
   addressPostcode: z.string().trim().optional(),
-  informedMethod: z.union([z.string().trim(), z.array(z.string().trim())]).optional(),
+  informedMethods: z.union([z.string().trim(), z.array(z.string().trim())]).optional(),
   otherMethodOfContact: z.string().trim().optional(),
   prisonList: z.string().trim().optional(),
 })
