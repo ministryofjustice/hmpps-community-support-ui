@@ -98,7 +98,7 @@ const loadInformedMethodsFromSession = (
   sessionCommunications: string[],
   formData: ScheduledIcsFormData,
 ): ScheduledIcsFormData => {
-  let informedMethods = [...sessionCommunications]
+  let informedMethods = sessionCommunications ? [...sessionCommunications] : []
 
   const standardMethods = ['informedByPhone', 'informedByTextMessage', 'informedByEmail']
 
@@ -263,7 +263,7 @@ const getSessionMethodFromFormData = (formData: ScheduledIcsFormData): SessionMe
 }
 
 const getInformedMethodsFromFormData = ({ informedMethods, otherMethodOfContact }: ScheduledIcsFormData): string[] => {
-  if (informedMethods.includes('informedByOtherMethod') && otherMethodOfContact) {
+  if (informedMethods && informedMethods.includes('informedByOtherMethod') && otherMethodOfContact) {
     return informedMethods.filter(method => method !== 'informedByOtherMethod').concat(otherMethodOfContact)
   }
   return informedMethods
