@@ -568,7 +568,7 @@ class AppointmentController {
     const referralInformation = await this.referralService.getReferralInformation(caseRefId, username)
     const schema = buildScheduleIcsAppointmentSchema(new Date(referralInformation.referralDate))
     const informedMethodArr: string[] =
-      typeof req.body.informedMethod === 'string' ? [req.body.informedMethod] : req.body.informedMethod
+      typeof req.body.informedMethods === 'string' ? [req.body.informedMethods] : req.body.informedMethods
 
     req.session.createAppointmentRequest = this.saveFormToSession({
       sessionDate: req.body.sessionDate,

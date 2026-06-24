@@ -1,11 +1,24 @@
+import {
+  GovukFrontendCheckboxes,
+  GovukFrontendCheckboxesItem,
+  GovukFrontendRadios,
+  GovukFrontendRadiosItem,
+} from '@govuk-frontend'
+
 export type ConditionalInput = {
   html: string
 }
 
-export type GovukFrontendRadiosItemWithConditional = GovukFrontendRadiosItem & {
+export type WithConditional<T> = T & {
   conditional?: ConditionalInput
 }
 
+export type GovukFrontendRadiosItemWithConditional = WithConditional<GovukFrontendRadiosItem>
+
 export type GovukFrontendRadiosWithConditional = Omit<GovukFrontendRadios, 'items'> & {
-  items: GovukFrontendRadiosItemWithConditional[]
+  items: WithConditional<GovukFrontendRadiosItem>[]
+}
+
+export type GovukFrontendCheckboxesWithConditional = Omit<GovukFrontendCheckboxes, 'items'> & {
+  items: WithConditional<GovukFrontendCheckboxesItem>[]
 }

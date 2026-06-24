@@ -785,7 +785,7 @@ test.describe('Schedule ICS Page', () => {
     })
     await ScheduleIcsPage.verifyFieldErrorOnPage(
       page,
-      'informedMethod',
+      'informedMethods',
       `Select how ${referralInformationInCommunity.firstName} was informed about the session`,
       true,
     )
