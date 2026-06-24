@@ -56,7 +56,7 @@ interface ScheduledIcsFormData {
   addressTown?: string
   addressCounty?: string
   addressPostcode?: string
-  informedMethods?: string[]
+  informedMethod?: string[]
   otherMethodOfContact?: string
 }
 
@@ -273,21 +273,21 @@ const loadInformedMethodsFromSession = (
   sessionCommunications: string[],
   formData: ScheduledIcsFormData,
 ): ScheduledIcsFormData => {
-  let informedMethods = [...sessionCommunications]
+  let informedMethod = [...sessionCommunications]
 
   const standardMethods = ['informedByPhone', 'informedByTextMessage', 'informedByEmail']
 
-  const otherMethod = informedMethods.find(method => !standardMethods.includes(method))
+  const otherMethod = informedMethod.find(method => !standardMethods.includes(method))
 
   if (otherMethod) {
-    informedMethods = informedMethods.filter(method => method !== otherMethod)
-    informedMethods.push('informedByOtherMethod')
+    informedMethod = informedMethod.filter(method => method !== otherMethod)
+    informedMethod.push('informedByOtherMethod')
   }
 
   return {
     ...formData,
     otherMethodOfContact: otherMethod || '',
-    informedMethods,
+    informedMethod,
   }
 }
 
@@ -324,13 +324,13 @@ const getSessionMethodFromFormData = (formData: ScheduledIcsFormData): SessionMe
 }
 
 const getInformedMethodsFromFormData = (formData: ScheduledIcsFormData): string[] => {
-  let informedMethods = Array.isArray(formData.informedMethods) ? [...formData.informedMethods] : []
-  if (informedMethods.includes('informedByOtherMethod') && formData.otherMethodOfContact) {
-    informedMethods = informedMethods
+  let informedMethod = Array.isArray(formData.informedMethod) ? [...formData.informedMethod] : []
+  if (informedMethod.includes('informedByOtherMethod') && formData.otherMethodOfContact) {
+    informedMethod = informedMethod
       .filter(method => method !== 'informedByOtherMethod')
       .concat(formData.otherMethodOfContact)
   }
-  return informedMethods
+  return informedMethod
 }
 
 const loadFormFromSession = (
@@ -393,9 +393,9 @@ const loadFormFromSession = (
   }
 
   if (Array.isArray(createAppointmentRequest.sessionCommunication)) {
-    formData.informedMethods = [...createAppointmentRequest.sessionCommunication]
+    formData.informedMethod = [...createAppointmentRequest.sessionCommunication]
   } else {
-    formData.informedMethods = []
+    formData.informedMethod = []
   }
 
   return formData
@@ -585,7 +585,7 @@ class AppointmentController {
       addressTown: req.body.addressTown,
       addressCounty: req.body.addressCounty,
       addressPostcode: req.body.addressPostcode,
-      informedMethods: informedMethodArr,
+      informedMethod: informedMethodArr,
       otherMethodOfContact: req.body.otherMethodOfContact,
     })
 

@@ -1,7 +1,12 @@
-import { GovukFrontendBackLink } from '@govuk-frontend'
-import { ErrorMiddlewareErrors } from '../../@types/express'
+import { GovukFrontendBackLink, GovukFrontendButton } from '@govuk-frontend'
+import { MojDatePicker } from '@moj-frontend'
+import { ComponentsTimeInput } from '../../@types/components'
+import {
+  GovukFrontendCheckboxesWithConditional,
+  GovukFrontendRadiosWithConditional,
+} from '../../@types/govukFrontend/derived'
 
-export type SelectItem = {
+export interface SelectItem {
   value: string | number
   text: string
 }
@@ -26,22 +31,26 @@ export interface ScheduleFormData {
   otherMethodOfContact?: string
 }
 
-export type ScheduleIcsViewModel = {
+export interface ScheduleIcsViewModel {
   pageHeader: string
-  submitButtonText: string
+  submitButton: GovukFrontendButton
   submitHref: string
   backLink: GovukFrontendBackLink
-  probationOfficesSelectItems: SelectItem[]
-  prisonsSelectItems: SelectItem[]
-  serviceName: string
-  isPersonInCommunity: boolean
-  firstName: string
-  formData: ScheduleFormData
-  errors: ErrorMiddlewareErrors
+  date: MojDatePicker
+  time: ComponentsTimeInput
+  how: GovukFrontendRadiosWithConditional
+  informed: GovukFrontendCheckboxesWithConditional | undefined
 }
 
-export type ScheduleIcsContent = {
+export interface LabelAndHint {
+  label: string
+  hint: string
+}
+
+export interface ScheduleIcsContent {
   pageHeader: string
+  date: LabelAndHint
+  time: LabelAndHint
   submitButtonText: string
   submitHref: string
   backLink: string
