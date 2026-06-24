@@ -1,14 +1,21 @@
-import { ReferralInformation } from '@community-support-api'
+import { Person, ReferralInformation } from '@community-support-api'
 import { GovukFrontendSummaryList } from '@govuk-frontend'
 import { Response } from 'express'
 import PresenterBase from '../../presenter/presenterBase'
 import { CheckReferralInformationContent, CheckReferralInformationViewModel } from './checkReferralInformationViewModel'
+import { resolveIdentifierRow } from '../personIdentifierUtils'
+
+const resolveName = (person: Person): string =>
+  [person.firstName, person.middleNames, person.lastName].filter(Boolean).join(' ')
 
 export default class CheckReferralInformationPresenter extends PresenterBase<
   CheckReferralInformationViewModel,
   CheckReferralInformationContent
 > {
-  constructor(private readonly referralInformation: ReferralInformation) {
+  constructor(
+    private readonly referralInformation: ReferralInformation,
+    private readonly personDetails: Person,
+  ) {
     super()
   }
 
@@ -19,6 +26,7 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
     viewModel.submitButtonText = content.submitButtonText
     viewModel.personalDetailsSummary = this.buildPersonalDetailsSummary()
     viewModel.referralDetailsSummary = this.buildReferralDetailsSummary()
+    viewModel.backLink = { href: '/referral/new/find-a-person' }
     viewModel.submitHref = `/referral/${this.referralInformation.referralId}/submit-referral-information`
     return viewModel
   }
@@ -28,18 +36,29 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
   }
 
   private buildPersonalDetailsSummary(): GovukFrontendSummaryList {
+    const { personDetails } = this
+    const identifierRow = resolveIdentifierRow(personDetails)
+
     const summary = [
       {
         key: { text: 'Name' },
-        value: { text: `${this.referralInformation.firstName} ${this.referralInformation.lastName}` },
+        value: { text: resolveName(personDetails) },
       },
+      ...(identifierRow
+        ? [
+            {
+              key: { text: identifierRow.label },
+              value: { text: identifierRow.value },
+            },
+          ]
+        : []),
       {
-        key: { text: 'CRN' },
-        value: { text: this.referralInformation.crn },
+        key: { text: 'Date of birth' },
+        value: { text: personDetails.dateOfBirth || '' },
       },
       {
         key: { text: 'Sex' },
-        value: { text: this.referralInformation.sex },
+        value: { text: personDetails.sex || '' },
       },
     ]
     return {
@@ -47,6 +66,7 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
         title: {
           text: 'Personal details',
         },
+        attributes: { 'data-testid': 'personal-details' },
       },
       rows: summary,
     }
@@ -72,6 +92,7 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
         title: {
           text: 'Referral details',
         },
+        attributes: { 'data-testid': 'referral-details' },
       },
       rows: summary,
     }

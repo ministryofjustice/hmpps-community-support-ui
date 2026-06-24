@@ -54,7 +54,11 @@ class ReferralController {
         return res.redirect('/referral/new/find-a-person')
       }
     }
-    return res.render('referral/findPerson', {})
+    return res.render('referral/findPerson', {
+      content: {
+        backLink: { href: '/' },
+      },
+    })
   }
 
   async viewConfirmation(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -69,7 +73,7 @@ class ReferralController {
 
   async checkReferralInformation(req: Request, res: Response): Promise<void> {
     const { username } = res.locals.user
-    const referralCreationDetails = req.session ? req.session.referralCreationDetails : null
+    const referralCreationDetails = req.session ? (req.session.referralCreationDetails as CreateReferralRequest) : null
 
     if (!referralCreationDetails || !referralCreationDetails.personDetails) {
       return res.redirect('/referral/new/find-a-person')
@@ -89,7 +93,7 @@ class ReferralController {
       req.flash('create referral', 'An unexpected error when creating a referral. Please try again.')
       return res.redirect('/referral/new/find-a-person')
     }
-    const presenter = new CheckReferralInformationPresenter(referralInformation)
+    const presenter = new CheckReferralInformationPresenter(referralInformation, referralCreationDetails.personDetails)
 
     return presenter.renderPage(res)
   }

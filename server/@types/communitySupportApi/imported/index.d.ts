@@ -513,6 +513,7 @@ export interface components {
       lastName: string
       dateOfBirth: string
       sex?: string | null
+      prisonNumbers: string[]
       additionalDetails?: components['schemas']['PersonAdditionalDetails'] | null
     }
     ReferralInformationDto: {

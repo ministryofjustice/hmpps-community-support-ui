@@ -65,7 +65,11 @@ describe('ReferralController', () => {
   describe('showFindPersonPage', () => {
     it('should render the find a person page on a GET request', async () => {
       await referralController.handleFindPersonRequest(req, res, next)
-      expect(res.render).toHaveBeenCalledWith('referral/findPerson', {})
+      expect(res.render).toHaveBeenCalledWith('referral/findPerson', {
+        content: {
+          backLink: { href: '/' },
+        },
+      })
     })
     it('should render the found person page on a successful POST request', async () => {
       req = {
@@ -136,7 +140,7 @@ describe('ReferralController', () => {
           dateOfBirth: '1/1/1990',
         } as Person,
         communityServiceProviderId: 'service123',
-      }
+      } as Request['session']['referralCreationDetails']
       req.params.id = 'service123'
       res.locals.content = CheckReferralInformationContent.build()
       const mockReferralInformation = {} as ReferralInformation
@@ -159,7 +163,13 @@ describe('ReferralController', () => {
         },
         'user1',
       )
-      expect(CheckReferralInformationPresenter).toHaveBeenCalledWith(mockReferralInformation)
+      expect(CheckReferralInformationPresenter).toHaveBeenCalledWith(mockReferralInformation, {
+        id: 'person123',
+        personIdentifier: 'CRN123',
+        firstName: 'Test',
+        lastName: 'User',
+        dateOfBirth: '1/1/1990',
+      })
       expect(CheckReferralInformationPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
     })
 
@@ -174,7 +184,7 @@ describe('ReferralController', () => {
           dateOfBirth: '1/1/1990',
         } as Person,
         communityServiceProviderId: 'service123',
-      }
+      } as Request['session']['referralCreationDetails']
       referralService.createReferral.mockRejectedValue(new Error('Referral creation failed'))
 
       await referralController.checkReferralInformation(req, res)

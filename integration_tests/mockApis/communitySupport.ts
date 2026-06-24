@@ -60,15 +60,57 @@ export default {
         status: httpStatus,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: {
-          personIdentifier: '{{request.path.[2]}}',
+          personIdentifier: '{{request.pathSegments.[3]}}',
+          crn: 'X320741',
+          prisonNumbers: ['A1234BC', 'B1234CD', 'C1234DE'],
           id: '11ea5182-09a2-4f3a-b07c-76ad5e6b765a',
-          firstName: 'Valerie',
-          lastName: 'Wyman',
-          dateOfBirth: '1984-04-20',
-          sex: 'Female',
+          firstName: 'Alex',
+          lastName: 'River',
+          dateOfBirth: '20 Feb 1975 (51 years old)',
+          sex: 'Male',
           additionalDetails: {},
         },
         transformers: ['response-template'],
+      },
+    }),
+
+  stubGetCommunitySupportServices: (httpStatus = 200): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: '/community-support/bff/referral-select-a-service',
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: {
+          personId: '11ea5182-09a2-4f3a-b07c-76ad5e6b765a',
+          communitySupportServices: [
+            {
+              id: 'service-id-123',
+              region: 'North West',
+              name: 'Accommodation support',
+              providerName: 'Community Support Provider',
+              description: 'Support for accommodation and independent living.',
+            },
+          ],
+        },
+      },
+    }),
+
+  stubCreateReferral: (
+    referralInformation: ReferralInformation = referralInformationInCommunity,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'POST',
+        urlPathPattern: '/community-support/bff/referral',
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: referralInformation,
       },
     }),
 
