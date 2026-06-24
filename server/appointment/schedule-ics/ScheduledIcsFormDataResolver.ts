@@ -16,7 +16,7 @@ export interface ScheduledIcsFormData {
   'sessionTime-meridiem'?: string
   sessionTakePlace?: string
   ByPhone?: string
-  byVideo?: string
+  ByVideo?: string
   inSomewhereElse?: string
   probationOffice?: string
   prison?: string
@@ -74,7 +74,7 @@ const loadSessionMethodFromSession = (
         updatedFormData.ByPhone = method.additionalDetails
         break
       case 'ByVideo':
-        updatedFormData.byVideo = method.additionalDetails
+        updatedFormData.ByVideo = method.additionalDetails
         break
       default:
         break
@@ -156,7 +156,7 @@ const loadFormFromSession = (
           formData.ByPhone = method.additionalDetails
           break
         case 'ByVideo':
-          formData.byVideo = method.additionalDetails
+          formData.ByVideo = method.additionalDetails
           break
         case 'InSomewhereElse':
           formData.inSomewhereElse = method.additionalDetails
@@ -209,7 +209,7 @@ const getReasonFromFormData = (formData: ScheduledIcsFormData, sessionTakePlace:
     case 'ByPhone':
       return formData.ByPhone
     case 'ByVideo':
-      return formData.byVideo
+      return formData.ByVideo
     default:
       return undefined
   }
