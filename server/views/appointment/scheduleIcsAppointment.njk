@@ -23,11 +23,11 @@
 
   <form method="post" action="{{ content.submitHref }}">
   <input type="hidden" name="_csrf" value="{{csrfToken}}">
-    {{ mojDatePicker(content.date) }}
-    {{ timeInput(content.time) }}
-    {{ govukRadios(content.how) }}
-    {% if content.informed %}
-      {{ govukCheckboxes(content.informed) }}
+    {{ mojDatePicker(content.dateInput) }}
+    {{ timeInput(content.timeInput) }}
+    {{ govukRadios(content.howWillTheSessionTakePlaceInput) }}
+    {% if content.howWasTheyInformedAboutTheSessionInput %}
+      {{ govukCheckboxes(content.howWasTheyInformedAboutTheSessionInput) }}
     {% endif %}
     {{ govukButton(content.submitButton) }}
   </form>

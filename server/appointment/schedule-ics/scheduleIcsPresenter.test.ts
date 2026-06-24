@@ -333,14 +333,14 @@ describe('ScheduleIcsPresenter', () => {
     expect(viewModel.submitHref).toBe(`/referral/${caseReference}/appointment/schedule-ics`)
     expect(viewModel.backLink).toEqual({ href: `/progress/${caseReference}` })
 
-    checkDate(viewModel.date, formData, errorMessages.sessionDate)
-    checkTime(viewModel.time, formData, errorMessages.sessionTime)
+    checkDate(viewModel.dateInput, formData, errorMessages.sessionDate)
+    checkTime(viewModel.timeInput, formData, errorMessages.sessionTime)
 
-    checkHowSessionWillTakePlaceCommon(viewModel.how, formData, {
+    checkHowSessionWillTakePlaceCommon(viewModel.howWillTheSessionTakePlaceInput, formData, {
       byPhone: errorMessages.ByPhone,
       byVideo: errorMessages.ByVideo,
     })
-    checkHowSessionWillTakePlaceCommunity(viewModel.how, formData, {
+    checkHowSessionWillTakePlaceCommunity(viewModel.howWillTheSessionTakePlaceInput, formData, {
       probationOfficeList: errorMessages.probationOfficeList,
       addressLine1: errorMessages.addressLine1,
       addressLine2: errorMessages.addressLine2,
@@ -349,7 +349,7 @@ describe('ScheduleIcsPresenter', () => {
       addressPostcode: errorMessages.addressPostcode,
     })
 
-    checkInformed(viewModel.informed, formData, {
+    checkInformed(viewModel.howWasTheyInformedAboutTheSessionInput, formData, {
       informedMethod: errorMessages.informedMethod,
       otherMethodOfContact: errorMessages.otherMethodOfContact,
     })

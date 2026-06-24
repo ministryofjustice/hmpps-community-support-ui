@@ -36,10 +36,10 @@ export interface ScheduleIcsViewModel {
   submitButton: GovukFrontendButton
   submitHref: string
   backLink: GovukFrontendBackLink
-  date: MojDatePicker
-  time: ComponentsTimeInput
-  how: GovukFrontendRadiosWithConditional
-  informed: GovukFrontendCheckboxesWithConditional | undefined
+  dateInput: MojDatePicker
+  timeInput: ComponentsTimeInput
+  howWillTheSessionTakePlaceInput: GovukFrontendRadiosWithConditional
+  howWasTheyInformedAboutTheSessionInput: GovukFrontendCheckboxesWithConditional | undefined
 }
 
 export interface LabelAndHint {

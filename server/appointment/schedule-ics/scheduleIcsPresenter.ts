@@ -358,10 +358,12 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
       submitButton: this.buildSubmit(content),
       submitHref,
       backLink: { href: backLinkHref },
-      date: this.buildDateInput(content),
-      time: this.buildTimeInput(content),
-      how: this.buildHowWillTheSessionTakePlaceRadios(),
-      informed: this.inCustody ? undefined : this.buildHowWasTheyInformedAboutTheSession(),
+      dateInput: this.buildDateInput(content),
+      timeInput: this.buildTimeInput(content),
+      howWillTheSessionTakePlaceInput: this.buildHowWillTheSessionTakePlaceRadios(),
+      howWasTheyInformedAboutTheSessionInput: this.inCustody
+        ? undefined
+        : this.buildHowWasTheyInformedAboutTheSession(),
     }
   }
 
