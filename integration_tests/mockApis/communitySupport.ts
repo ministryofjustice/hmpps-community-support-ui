@@ -447,16 +447,4 @@ export default {
         transformers: ['response-template'],
       },
     }),
-  stubCreateReferral: (mockRespData: ReferralInformation, httpStatus = 200): SuperAgentRequest =>
-    stubFor({
-      request: {
-        method: 'POST',
-        urlPathPattern: `/community-support/bff/referral`,
-      },
-      response: {
-        status: httpStatus,
-        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: mockRespData,
-      },
-    }),
 }

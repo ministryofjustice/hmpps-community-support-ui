@@ -150,7 +150,10 @@ describe('ReferralController', () => {
       await referralController.checkReferralInformation(req, res)
 
       expect(referralService.getReferralInformation).toHaveBeenCalledWith('referral123', 'user1')
-      expect(CheckReferralInformationPresenter).toHaveBeenCalledWith(mockReferralInformation)
+      expect(CheckReferralInformationPresenter).toHaveBeenCalledWith(
+        mockReferralInformation,
+        req.session.referralCreationDetails.personDetails,
+      )
       expect(CheckReferralInformationPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
     })
 

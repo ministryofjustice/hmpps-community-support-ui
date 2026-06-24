@@ -84,7 +84,11 @@ class ReferralController {
 
     try {
       const referralInformation = await this.referralService.getReferralInformation(referralId, username)
-      const presenter = new CheckReferralInformationPresenter(referralInformation)
+
+      const presenter = new CheckReferralInformationPresenter(
+        referralInformation,
+        referralCreationDetails.personDetails,
+      )
       return presenter.renderPage(res)
     } catch (error) {
       logger.error('Error retrieving referral:', error)
