@@ -8,10 +8,10 @@ import logger from '../../logger'
 import CheckReferralInformationPresenter from './check-referral-information/checkReferralInformationPresenter'
 import ReferralDetailsPresenter from './referralDetails/ReferralDetailsPresenter'
 import ReferralProgressPresenter from './progress/referralProgressPresenter'
-import TaskListHelper from './taskList/TaskListHelper'
 import TaskListPresenter from './taskList/TaskListPresenter'
 import { ErrorMiddlewareErrors } from '../@types/express'
 import getLatestAppointments from './progress/getLatestAppointments'
+import { getTaskListState, saveTaskListState } from './taskList/TaskListHelper'
 
 class ReferralController {
   constructor(
@@ -252,7 +252,7 @@ class ReferralController {
     }
 
     const { personIdentifier } = referralCreationDetails.personDetails
-    let taskListState = TaskListHelper.getTaskListState(req, personIdentifier)
+    let taskListState = getTaskListState(req, personIdentifier)
 
     if (!taskListState.referralId) {
       try {
@@ -273,7 +273,7 @@ class ReferralController {
         return res.redirect('/referral/new/find-a-person')
       }
     }
-    TaskListHelper.saveTaskListState(req, personIdentifier, taskListState)
+    saveTaskListState(req, personIdentifier, taskListState)
 
     const presenter = new TaskListPresenter(
       `${referralCreationDetails.personDetails.firstName} ${referralCreationDetails.personDetails.lastName}`,

@@ -16,7 +16,7 @@ describe('TaskListPresenter - Page Rendering', () => {
       riskInformation: { status: TaskStatus.IN_PROGRESS },
       personNeeds: { status: TaskStatus.INCOMPLETE },
       supportNeeds: { status: TaskStatus.INCOMPLETE },
-      contactDetails: { status: TaskStatus.CANNOT_START_YET },
+      contactDetails: { status: TaskStatus.INCOMPLETE },
       checkAnswers: { status: TaskStatus.CANNOT_START_YET },
     },
   }
@@ -36,21 +36,21 @@ describe('TaskListPresenter - Page Rendering', () => {
     const sections = viewModel.taskListItemsBySection
 
     expect(sections.personalDetails.title).toBe('Personal details')
-    expect(sections.personalDetails.tasks).toHaveLength(1)
+    expect(sections.personalDetails.taskList.items).toHaveLength(1)
 
-    expect(sections.referralInformation.title).toBe('Referral Information')
-    expect(sections.referralInformation.tasks).toHaveLength(3)
+    expect(sections.referralInformation.title).toBe('Referral information')
+    expect(sections.referralInformation.taskList.items).toHaveLength(3)
 
     expect(sections.contactDetails.title).toBe('Referral contact details')
     expect(sections.checkAnswers.title).toBe('Check answers and submit')
 
     // Check answers link should have mockReferralId replaced
-    const checkAnswersLink = sections.checkAnswers.tasks[0].href
+    const checkAnswersLink = sections.checkAnswers.taskList.items[0].href
     expect(checkAnswersLink).toContain(mockReferralId)
     expect(checkAnswersLink).not.toContain('{{ id }}')
 
     // Status rendering
-    expect(sections.personalDetails.tasks[0].status.text).toBe('Completed')
-    expect(sections.referralInformation.tasks[0].status.tag?.text).toBe('In progress')
+    expect(sections.personalDetails.taskList.items[0].status.text).toBe('Completed')
+    expect(sections.referralInformation.taskList.items[0].status.tag?.text).toBe('In progress')
   })
 })

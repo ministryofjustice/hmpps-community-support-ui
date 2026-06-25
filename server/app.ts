@@ -17,7 +17,7 @@ import setUpWebSecurity from './middleware/setUpWebSecurity'
 import setUpWebSession from './middleware/setUpWebSession'
 import setUpFormValidation from './middleware/setUpFormValidation'
 import setUpContent from './middleware/setUpContent'
-import TaskListHelper from './referral/taskList/TaskListHelper'
+import { updateSectionStatus } from './referral/taskList/TaskListHelper'
 
 import routes from './routes'
 import type { Services } from './services'
@@ -86,7 +86,7 @@ export default function createApp(services: Services): express.Application {
       res.sendStatus(200)
     })
     app.post('/test/setup-task-list-state', (req, res) => {
-      TaskListHelper.updateSectionStatus(req, req.body.personIdentifier, req.body.taskName, req.body.taskStatus)
+      updateSectionStatus(req, req.body.personIdentifier, req.body.taskName, req.body.taskStatus)
       res.sendStatus(200)
     })
   }

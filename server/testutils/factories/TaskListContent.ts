@@ -19,7 +19,7 @@ export default TaskListContentFactory.define(({ transientParams }) => ({
       },
     },
     referralInformation: {
-      title: 'Referral Information',
+      title: 'Referral information',
       subTasks: {
         checkRiskInformation: { text: 'Check risk information', href: '/referral/new/risk-information' },
         addPersonNeeds: { text: `Add the person's needs`, href: '/referral/new/person-needs' },

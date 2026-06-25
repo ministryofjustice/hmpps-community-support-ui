@@ -1,10 +1,20 @@
 import { Request } from 'express'
 import { randomUUID } from 'crypto'
-import TaskListHelper from './TaskListHelper'
+import {
+  newTaskListState,
+  getTaskListState,
+  saveTaskListState,
+  removeTaskListState,
+  updateSectionStatus,
+  initializeTaskList,
+  isMandatoryTasksCompleted,
+  isAllTasksCompleted,
+} from './TaskListHelper'
+
 import { TaskStatus } from './TaskStatus'
 import TaskListState from './TaskListState'
 
-describe('TaskListHelper', () => {
+describe('TaskList Helper Functions', () => {
   let req: Partial<Request>
 
   const mockReferralId = randomUUID()
@@ -18,7 +28,7 @@ describe('TaskListHelper', () => {
 
   describe('initializeTaskList', () => {
     it('should return a new TaskListState with default statuses', () => {
-      const state = TaskListHelper.initializeTaskList(req as Request)
+      const state = initializeTaskList(req as Request)
 
       expect(state.referralId).toBeUndefined()
       expect(state.sections.personalDetails.status).toBe(TaskStatus.INCOMPLETE)
@@ -31,7 +41,7 @@ describe('TaskListHelper', () => {
 
     it('should accept optional referralId', () => {
       const referralId = mockReferralId
-      const state = TaskListHelper.initializeTaskList(req as Request, referralId)
+      const state = initializeTaskList(req as Request, referralId)
 
       expect(state.referralId).toBe(referralId)
     })
@@ -41,7 +51,7 @@ describe('TaskListHelper', () => {
     it('should create and save new task list state in session', () => {
       const personIdentifier = mockPersonIdentifier
 
-      const state = TaskListHelper.newTaskListState(req as Request, personIdentifier)
+      const state = newTaskListState(req as Request, personIdentifier)
 
       expect(req.session!.taskList).toBeDefined()
       expect(req.session!.taskList![personIdentifier]).toBeDefined()
@@ -66,14 +76,14 @@ describe('TaskListHelper', () => {
 
       req.session!.taskList = { [personIdentifier]: existingState }
 
-      const state = TaskListHelper.getTaskListState(req as Request, personIdentifier)
+      const state = getTaskListState(req as Request, personIdentifier)
 
       expect(state).toEqual(existingState)
     })
 
     it('should initialize new state for personIdentifier not exists in session', () => {
       const personIdentifier = 'N123456'
-      const state = TaskListHelper.getTaskListState(req as Request, personIdentifier)
+      const state = getTaskListState(req as Request, personIdentifier)
 
       expect(state.sections.personalDetails.status).toBe(TaskStatus.INCOMPLETE)
     })
@@ -94,7 +104,7 @@ describe('TaskListHelper', () => {
         },
       }
 
-      TaskListHelper.saveTaskListState(req as Request, personIdentifier, state)
+      saveTaskListState(req as Request, personIdentifier, state)
 
       expect(req.session!.taskList).toBeDefined()
       expect(req.session!.taskList![personIdentifier]).toEqual(state)
@@ -114,7 +124,7 @@ describe('TaskListHelper', () => {
         },
       }
 
-      TaskListHelper.saveTaskListState(req as Request, personIdentifier, state)
+      saveTaskListState(req as Request, personIdentifier, state)
       expect(req.session!.taskList).toBeDefined()
       expect(req.session!.taskList![personIdentifier].sections.checkAnswers.status).toEqual(TaskStatus.COMPLETED)
     })
@@ -138,7 +148,7 @@ describe('TaskListHelper', () => {
         [personIdentifier]: mockTaskListState,
       }
 
-      TaskListHelper.removeTaskListState(req as Request, personIdentifier)
+      removeTaskListState(req as Request, personIdentifier)
 
       expect(req.session!.taskList![personIdentifier]).toBeUndefined()
     })
@@ -147,9 +157,9 @@ describe('TaskListHelper', () => {
   describe('updateSectionStatus', () => {
     it('should update the status of a specific section and save to session', () => {
       const personIdentifier = mockPersonIdentifier
-      TaskListHelper.newTaskListState(req as Request, personIdentifier)
+      newTaskListState(req as Request, personIdentifier)
 
-      TaskListHelper.updateSectionStatus(req as Request, personIdentifier, 'riskInformation', TaskStatus.COMPLETED)
+      updateSectionStatus(req as Request, personIdentifier, 'riskInformation', TaskStatus.COMPLETED)
 
       const updatedState = req.session!.taskList![personIdentifier]
 
@@ -171,8 +181,8 @@ describe('TaskListHelper', () => {
         },
       }
 
-      expect(TaskListHelper.isMandatoryTasksCompleted(state)).toBe(true)
-      expect(TaskListHelper.isAllTasksCompleted(state)).toBe(false)
+      expect(isMandatoryTasksCompleted(state)).toBe(true)
+      expect(isAllTasksCompleted(state)).toBe(false)
     })
 
     it('should return true when all tasks are completed', () => {
@@ -188,8 +198,8 @@ describe('TaskListHelper', () => {
         },
       }
 
-      expect(TaskListHelper.isMandatoryTasksCompleted(state)).toBe(true)
-      expect(TaskListHelper.isAllTasksCompleted(state)).toBe(true)
+      expect(isMandatoryTasksCompleted(state)).toBe(true)
+      expect(isAllTasksCompleted(state)).toBe(true)
     })
 
     it('should return false if any main section is not completed', () => {
@@ -205,8 +215,8 @@ describe('TaskListHelper', () => {
         },
       }
 
-      expect(TaskListHelper.isMandatoryTasksCompleted(state)).toBe(false)
-      expect(TaskListHelper.isAllTasksCompleted(state)).toBe(false)
+      expect(isMandatoryTasksCompleted(state)).toBe(false)
+      expect(isAllTasksCompleted(state)).toBe(false)
     })
   })
 })

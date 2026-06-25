@@ -32,56 +32,64 @@ export default class TaskListPresenter extends PresenterBase<TaskListViewModel, 
     return {
       personalDetails: {
         title: content.taskList.personalDetails.title,
-        tasks: [
-          {
-            title: { text: content.taskList.personalDetails.subTasks.confirmPersonalDetails.text },
-            href: content.taskList.personalDetails.subTasks.confirmPersonalDetails.href,
-            status: this.getStatusTag(this.taskListState.sections.personalDetails.status),
-          },
-        ] as GovukFrontendTaskListItem[],
+        taskList: {
+          items: [
+            {
+              title: { text: content.taskList.personalDetails.subTasks.confirmPersonalDetails.text },
+              href: content.taskList.personalDetails.subTasks.confirmPersonalDetails.href,
+              status: this.getStatusTag(this.taskListState.sections.personalDetails.status),
+            },
+          ] as GovukFrontendTaskListItem[],
+        },
       },
       referralInformation: {
         title: content.taskList.referralInformation.title,
-        tasks: [
-          {
-            title: { text: content.taskList.referralInformation.subTasks.checkRiskInformation.text },
-            href: content.taskList.referralInformation.subTasks.checkRiskInformation.href,
-            status: this.getStatusTag(this.taskListState.sections.riskInformation.status),
-          },
-          {
-            title: { text: content.taskList.referralInformation.subTasks.addPersonNeeds.text },
-            href: content.taskList.referralInformation.subTasks.addPersonNeeds.href,
-            status: this.getStatusTag(this.taskListState.sections.personNeeds.status),
-          },
-          {
-            title: { text: content.taskList.referralInformation.subTasks.addSupportNeeds.text },
-            href: content.taskList.referralInformation.subTasks.addSupportNeeds.href,
-            status: this.getStatusTag(this.taskListState.sections.supportNeeds.status),
-          },
-        ] as GovukFrontendTaskListItem[],
+        taskList: {
+          items: [
+            {
+              title: { text: content.taskList.referralInformation.subTasks.checkRiskInformation.text },
+              href: content.taskList.referralInformation.subTasks.checkRiskInformation.href,
+              status: this.getStatusTag(this.taskListState.sections.riskInformation.status),
+            },
+            {
+              title: { text: content.taskList.referralInformation.subTasks.addPersonNeeds.text },
+              href: content.taskList.referralInformation.subTasks.addPersonNeeds.href,
+              status: this.getStatusTag(this.taskListState.sections.personNeeds.status),
+            },
+            {
+              title: { text: content.taskList.referralInformation.subTasks.addSupportNeeds.text },
+              href: content.taskList.referralInformation.subTasks.addSupportNeeds.href,
+              status: this.getStatusTag(this.taskListState.sections.supportNeeds.status),
+            },
+          ] as GovukFrontendTaskListItem[],
+        },
       },
       contactDetails: {
         title: content.taskList.contactDetails.title,
-        tasks: [
-          {
-            title: { text: content.taskList.contactDetails.subTasks.addContactDetails.text },
-            href: content.taskList.contactDetails.subTasks.addContactDetails.href,
-            status: this.getStatusTag(this.taskListState.sections.contactDetails.status),
-          },
-        ] as GovukFrontendTaskListItem[],
+        taskList: {
+          items: [
+            {
+              title: { text: content.taskList.contactDetails.subTasks.addContactDetails.text },
+              href: content.taskList.contactDetails.subTasks.addContactDetails.href,
+              status: this.getStatusTag(this.taskListState.sections.contactDetails.status),
+            },
+          ] as GovukFrontendTaskListItem[],
+        },
       },
       checkAnswers: {
         title: content.taskList.checkAnswers.title,
-        tasks: [
-          {
-            title: { text: content.taskList.checkAnswers.subTasks.checkAnswersAndSubmit.text },
-            href: content.taskList.checkAnswers.subTasks.checkAnswersAndSubmit.href.replace(
-              '{{ id }}',
-              this.taskListState.referralId || '',
-            ),
-            status: this.getStatusTag(this.taskListState.sections.checkAnswers.status),
-          },
-        ] as GovukFrontendTaskListItem[],
+        taskList: {
+          items: [
+            {
+              title: { text: content.taskList.checkAnswers.subTasks.checkAnswersAndSubmit.text },
+              href: content.taskList.checkAnswers.subTasks.checkAnswersAndSubmit.href.replace(
+                '{{ id }}',
+                this.taskListState.referralId || '',
+              ),
+              status: this.getStatusTag(this.taskListState.sections.checkAnswers.status),
+            },
+          ] as GovukFrontendTaskListItem[],
+        },
       },
     }
   }

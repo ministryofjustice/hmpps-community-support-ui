@@ -1,4 +1,4 @@
-import { GovukFrontendTaskListItem, GovukFrontendBackLink } from '@govuk-frontend'
+import { GovukFrontendTaskList, GovukFrontendBackLink } from '@govuk-frontend'
 
 export interface TaskListContent {
   pageTitle: string
@@ -35,11 +35,6 @@ export interface TaskListContent {
   }
 }
 
-export interface TaskListSection {
-  title: string
-  tasks: GovukFrontendTaskListItem[]
-}
-
 export interface TaskListViewModel {
   pageTitle: string
   pageHeader: string
@@ -47,9 +42,9 @@ export interface TaskListViewModel {
   backLink: GovukFrontendBackLink
 
   taskListItemsBySection: {
-    personalDetails: TaskListSection
-    referralInformation: TaskListSection
-    contactDetails: TaskListSection
-    checkAnswers: TaskListSection
+    personalDetails: { title: string; taskList: GovukFrontendTaskList }
+    referralInformation: { title: string; taskList: GovukFrontendTaskList }
+    contactDetails: { title: string; taskList: GovukFrontendTaskList }
+    checkAnswers: { title: string; taskList: GovukFrontendTaskList }
   }
 }

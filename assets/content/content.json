@@ -499,12 +499,6 @@
           }
         }
       }
-    },
-    "status": {
-      "cannotStartYet": "Cannot start yet",
-      "inProgress": "In progress",
-      "inComplete": "incomplete",
-      "completed": "Completed"
     }
   }
 }
