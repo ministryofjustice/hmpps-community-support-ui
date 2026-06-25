@@ -31,11 +31,11 @@ import RecordSessionDetailsPresenter from './record-ics/RecordSessionDetailsPres
 import { RecordSessionDetailsFormDataSchema } from '../validation/RecordSessionDetailsFormData'
 import HowTheyTriedToContactThePersonPresenter from './howTheyTriedToContactThePerson/howTheyTriedToContactThePersonPresenter'
 import icsFeedbackHowTheyTriedToContactThePersonFormDataSchema from '../validation/icsFeedbackHowTheyTriedToContactThePersonFormDataSchema'
-import validateRequestBodyAgainstSchema, { formatDynamicErrorMessages } from '../validation/validationUtils'
+import { validateRequestBodyAgainstSchema, formatDynamicErrorMessages } from '../validation/validationUtils'
 import WhyDidSessionNotHappenPresenter from './why-did-session-not-happen/WhyDidSessionNotHappenPresenter'
 import { WhyDidSessionNotHappenFormDataSchema } from '../validation/WhyDidSessionNotHappenFormData'
 import { IcsFeedbackFormSchema } from '../validation/IcsFeedbackHowSessionTookPlaceFormData'
-import { buildScheduleIcsAppointmentSchema } from '../validation/ScheduleIcsAppointmentFormData'
+import buildScheduleIcsAppointmentFormData from '../validation/ScheduleIcsAppointmentFormData'
 import ChangeIcsDetailsReasonPresenter from './change-ics-details-reason/ChangeIcsDetailsReasonPresenter'
 import { ChangeIcsDetailsReasonSchema } from '../validation/ChangeIcsDetailsReasonFormData'
 import { saveFormToSession, ScheduledIcsFormDataResolver } from './schedule-ics/ScheduledIcsFormDataResolver'
@@ -292,11 +292,11 @@ class AppointmentController {
     username: string,
     caseRefId: string,
   ): Promise<{
-    schema: ReturnType<typeof buildScheduleIcsAppointmentSchema>
+    schema: ReturnType<typeof buildScheduleIcsAppointmentFormData>
     referralInformation: ReferralInformation
   }> {
     const referralInformation = await this.referralService.getReferralInformation(caseRefId, username)
-    const schema = buildScheduleIcsAppointmentSchema(new Date(referralInformation.referralDate))
+    const schema = buildScheduleIcsAppointmentFormData(new Date(referralInformation.referralDate))
     const informedMethodArr: string[] =
       typeof req.body.informedMethods === 'string' ? [req.body.informedMethods] : req.body.informedMethods
 

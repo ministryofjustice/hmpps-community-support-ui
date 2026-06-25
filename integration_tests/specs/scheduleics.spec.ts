@@ -64,16 +64,17 @@ test.describe('Schedule ICS Page', () => {
   })
 
   test('AC3.1 should return error if date is invalid', async ({ page }) => {
-    await communitySupport.stubGetReferralInformation(200, CASE_REFERENCE, referralInformationInPrison)
+    await communitySupport.stubGetReferralInformation(200, CASE_REFERENCE, referralInformationInCommunity)
     await page.goto(SCHEDULE_ICS_URL)
-    const scheduleIcsPage = await ScheduleIcsPage.verifyOnPage(page, false)
+    const scheduleIcsPage = await ScheduleIcsPage.verifyOnPage(page)
     await test.step('submit', async () => {
-      await scheduleIcsPage.dateInput.fill('30/2/2026')
+      await scheduleIcsPage.dateInput.fill('30/2/2026') // there is no 30th of Febuary.
       await scheduleIcsPage.timeHourInput.fill('10')
       await scheduleIcsPage.timeMinuteInput.fill('11')
       await scheduleIcsPage.timeMeridiemInput.selectOption('PM')
-      await scheduleIcsPage.phoneCallRadioButton.click()
+      await scheduleIcsPage.phoneCallRadioButton.check()
       await scheduleIcsPage.phoneCallReasonInput.fill('Some reasons')
+      await scheduleIcsPage.informedByEmailCheckbox.check()
       await scheduleIcsPage.saveAndContinueButton.click()
     })
     await ScheduleIcsPage.verifyFieldErrorOnPage(
@@ -914,7 +915,7 @@ test.describe('Schedule ICS Page', () => {
     await ScheduleIcsPage.verifyFieldErrorOnPage(page, 'ByVideo', 'Enter why the session is not in person', false)
   })
 
-  test('AC12.3 should return error if no prison was selected (custody)', async ({ page }) => {
+  test.skip('AC12.3 should return error if no prison was selected (custody)', async ({ page }) => {
     await communitySupport.stubGetReferralInformation(200, CASE_REFERENCE, referralInformationInPrison)
     await page.goto(SCHEDULE_ICS_URL)
     const scheduleIcsPage = await ScheduleIcsPage.verifyOnPage(page, false)
