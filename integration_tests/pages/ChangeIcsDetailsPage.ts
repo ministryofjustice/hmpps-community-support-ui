@@ -1,5 +1,8 @@
-import { Locator, Page } from '@playwright/test'
+import { expect, Locator, Page } from '@playwright/test'
 import AbstractPage from './abstractPage'
+import RadiosWithFieldSet from './components/radiosWithFieldSet'
+import Input from './components/input'
+import CheckBoxWithFieldSet from './components/checkBoxWithFieldSet'
 
 export default class ChangeIcsDetailsPage extends AbstractPage {
   readonly header: Locator
@@ -60,7 +63,33 @@ export default class ChangeIcsDetailsPage extends AbstractPage {
     return `/referral/${caseRefId}/ics-change-details`
   }
 
-  public constructor(page: Page) {
+  static async verifyOnPage(page: Page): Promise<ChangeIcsDetailsPage> {
+    const header = page.locator('[data-testid="page-heading"]')
+    await expect(header).toBeVisible()
+    const howSessionTookPlaceRadios = await RadiosWithFieldSet.create(
+      page.locator('[data-testid="sessionTakePlace-radios"]'),
+      page.locator('[data-testid="sessionTakePlace-fieldset"]'),
+    )
+    const whyIsSessionNotInPersonDropDown = Input.createFromTestDataId(page, 'why-is-session-not-in-person')
+    const howWasTheyInformedAboutTheSession = await CheckBoxWithFieldSet.create(
+      page.locator('[data-testid="informed-checkboxes"]'),
+      page.locator('[data-testid="informed-fieldset"]'),
+    )
+
+    return new ChangeIcsDetailsPage(
+      page,
+      howSessionTookPlaceRadios,
+      whyIsSessionNotInPersonDropDown,
+      howWasTheyInformedAboutTheSession,
+    )
+  }
+
+  private constructor(
+    page: Page,
+    readonly howSessionTookPlaceRadios: RadiosWithFieldSet,
+    readonly whyIsSessionNotInPersonDropDown: Input,
+    readonly howWasTheyInformedAboutTheSession: CheckBoxWithFieldSet, // needs to be a check list
+  ) {
     super(page)
     this.header = page.locator('h1', { hasText: 'Change session details' })
     this.errorHeader = page.locator('h2', { hasText: 'There is a problem' })
@@ -69,6 +98,7 @@ export default class ChangeIcsDetailsPage extends AbstractPage {
     this.timeHourInput = page.locator('input[type="text"][name="sessionTime-hour"]')
     this.timeMinuteInput = page.locator('input[type="text"][name="sessionTime-minute"]')
     this.timeMeridiemInput = page.locator('[name="sessionTime-meridiem"]')
+
     this.phoneCallRadioButton = page.locator('input[type="radio"][value="ByPhone"]')
     this.phoneCallReasonInput = page.locator('input[type="text"][name="ByPhone"]')
     this.videoCallRadioButton = page.locator('input[type="radio"][value="ByVideo"]')

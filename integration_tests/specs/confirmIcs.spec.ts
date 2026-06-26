@@ -441,7 +441,7 @@ test.describe('Confirm ICS Page', () => {
   ) => {
     await test.step('Fill out reschedule form', async () => {
       await page.goto(ChangeIcsDetailsPage.url(REFERRAL_ID))
-      const changeIcsDetailsPage = new ChangeIcsDetailsPage(page)
+      const changeIcsDetailsPage = await ChangeIcsDetailsPage.verifyOnPage(page)
       await changeIcsDetailsPage.dateInput.fill(format(date, 'dd/MM/yyyy'))
       await changeIcsDetailsPage.timeHourInput.fill(hour)
       await changeIcsDetailsPage.timeMinuteInput.fill(minute)
