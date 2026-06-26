@@ -58,7 +58,7 @@ test.describe('Reschedule Ics Appointment Reason Page', () => {
   test('Navigate to Reason for changing details Screen', async ({ page }) => {
     await test.step('go to reschedule appointement page and fill out form', async () => {
       await page.goto(ChangeIcsDetailsPage.url(pastMeeting.caseRefId))
-      const changeIcsDetailsPage = new ChangeIcsDetailsPage(page)
+      const changeIcsDetailsPage = await ChangeIcsDetailsPage.verifyOnPage(page)
       await changeIcsDetailsPage.dateInput.fill(formatDate(futureDate, 'dd/MM/yyyy'))
       await changeIcsDetailsPage.timeHourInput.fill('1')
       await changeIcsDetailsPage.timeMinuteInput.fill('0')
