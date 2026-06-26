@@ -460,7 +460,7 @@
         "subTasks": {
           "confirmPersonalDetails": {
             "text": "Confirm personal details",
-            "href": "/referral/new/personal-details"
+            "href": "/referral/new/confirm-personal-details"
           }
         }
       },
@@ -469,11 +469,11 @@
         "subTasks": {
           "checkRiskInformation": {
             "text": "Check risk information",
-            "href": "/referral/new/risk-information"
+            "href": "/referral/new/check-risk-information"
           },
-          "addPersonNeeds": {
-            "text": "Add the person's needs",
-            "href": "/referral/new/add-person-needs"
+          "selectPersonNeeds": {
+            "text": "Select the person's needs",
+            "href": "/referral/new/select-person-needs"
           },
           "addSupportNeeds": {
             "text": "Add details of any additional support needs",
@@ -485,7 +485,7 @@
         "title": "Referral contact details",
         "subTasks": {
           "addContactDetails": {
-            "text": "Add contact details for this referral",
+            "text": "Add details of main point of contact",
             "href": "/referral/new/add-contact-details"
           }
         }

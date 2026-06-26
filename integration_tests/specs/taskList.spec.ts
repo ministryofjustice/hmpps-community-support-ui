@@ -6,7 +6,6 @@ import { referralInformationTaskList } from '../mockData/referralInformationData
 import TaskListPage from '../pages/TaskListPage'
 import FindPersonPage from '../pages/findPersonPage'
 import CheckReferralInformationPage from '../pages/checkReferralInformationPage'
-import { TaskStatus } from '../../server/referral/taskList/TaskStatus'
 
 test.describe('Task List Page', () => {
   const mockReferralId = referralInformationTaskList.referralId
@@ -42,16 +41,15 @@ test.describe('Task List Page', () => {
     await page.goto('/')
     await login(page)
     await seedSessionCreateReferralDetails(page, { referralCreationDetails: mockReferralDetailsInCommunity })
-    await test.step('go to referral details page', async () => {
-      await page.goto(TaskListPage.url(mockReferralId))
-    })
+    await page.goto(TaskListPage.url(mockReferralId))
   })
 
   test('should display task list correctly', async ({ page }) => {
+    await page.goto(TaskListPage.url(mockReferralId))
     const taskListPage = await TaskListPage.verifyOnPage(page)
     await taskListPage.verifyTaskStatus('Personal details', 'Confirm personal details', 'Incomplete')
     await taskListPage.verifyTaskStatus('Referral information', 'Check risk information', 'Incomplete')
-    await taskListPage.verifyTaskStatus('Referral information', `Add the person's needs`, 'Incomplete')
+    await taskListPage.verifyTaskStatus('Referral information', `Select the person's needs`, 'Incomplete')
     await taskListPage.verifyTaskStatus(
       'Referral information',
       'Add details of any additional support needs',
@@ -59,7 +57,7 @@ test.describe('Task List Page', () => {
     )
     await taskListPage.verifyTaskStatus(
       'Referral contact details',
-      'Add contact details for this referral',
+      'Add details of main point of contact',
       'Incomplete',
     )
     await taskListPage.verifyTaskStatus('Check answers and submit', 'Check answers and submit', 'Cannot start yet')
@@ -67,14 +65,12 @@ test.describe('Task List Page', () => {
   })
 
   test('should display task list correctly after updated task status', async ({ page }) => {
-    await seedSessionTaskListState(page, 'A123456', 'riskInformation', TaskStatus.COMPLETED)
-    await test.step('go to referral details page', async () => {
-      await page.goto(TaskListPage.url(mockReferralId))
-    })
+    await seedSessionTaskListState(page, 'A123456', 'riskInformation', 'completed')
+    await page.goto(TaskListPage.url(mockReferralId))
     const taskListPage = await TaskListPage.verifyOnPage(page)
     await taskListPage.verifyTaskStatus('Personal details', 'Confirm personal details', 'Incomplete')
     await taskListPage.verifyTaskStatus('Referral information', 'Check risk information', 'Completed')
-    await taskListPage.verifyTaskStatus('Referral information', `Add the person's needs`, 'Incomplete')
+    await taskListPage.verifyTaskStatus('Referral information', `Select the person's needs`, 'Incomplete')
     await taskListPage.verifyTaskStatus(
       'Referral information',
       'Add details of any additional support needs',
@@ -82,7 +78,7 @@ test.describe('Task List Page', () => {
     )
     await taskListPage.verifyTaskStatus(
       'Referral contact details',
-      'Add contact details for this referral',
+      'Add details of main point of contact',
       'Incomplete',
     )
     await taskListPage.verifyTaskStatus('Check answers and submit', 'Check answers and submit', 'Cannot start yet')
@@ -90,47 +86,42 @@ test.describe('Task List Page', () => {
   })
 
   test('should display check answers status correctly after updated all task status to completed', async ({ page }) => {
-    await seedSessionTaskListState(page, 'A123456', 'personalDetails', TaskStatus.COMPLETED)
-    await seedSessionTaskListState(page, 'A123456', 'riskInformation', TaskStatus.COMPLETED)
-    await seedSessionTaskListState(page, 'A123456', 'personNeeds', TaskStatus.COMPLETED)
-    await seedSessionTaskListState(page, 'A123456', 'supportNeeds', TaskStatus.COMPLETED)
-    await seedSessionTaskListState(page, 'A123456', 'contactDetails', TaskStatus.COMPLETED)
-    await test.step('go to referral details page', async () => {
-      await page.goto(TaskListPage.url(mockReferralId))
-    })
+    await seedSessionTaskListState(page, 'A123456', 'personalDetails', 'completed')
+    await seedSessionTaskListState(page, 'A123456', 'riskInformation', 'completed')
+    await seedSessionTaskListState(page, 'A123456', 'personNeeds', 'completed')
+    await seedSessionTaskListState(page, 'A123456', 'supportNeeds', 'completed')
+    await seedSessionTaskListState(page, 'A123456', 'contactDetails', 'completed')
+    await page.goto(TaskListPage.url(mockReferralId))
     const taskListPage = await TaskListPage.verifyOnPage(page)
     await taskListPage.verifyTaskStatus('Personal details', 'Confirm personal details', 'Completed')
     await taskListPage.verifyTaskStatus('Referral information', 'Check risk information', 'Completed')
-    await taskListPage.verifyTaskStatus('Referral information', `Add the person's needs`, 'Completed')
+    await taskListPage.verifyTaskStatus('Referral information', `Select the person's needs`, 'Completed')
     await taskListPage.verifyTaskStatus(
       'Referral information',
       'Add details of any additional support needs',
       'Completed',
     )
-    await taskListPage.verifyTaskStatus(
-      'Referral contact details',
-      'Add contact details for this referral',
-      'Completed',
-    )
+    await taskListPage.verifyTaskStatus('Referral contact details', 'Add details of main point of contact', 'Completed')
     await taskListPage.verifyTaskStatus('Check answers and submit', 'Check answers and submit', 'Completed')
     await taskListPage.verifyCheckAnswersLink(referralInformationTaskList.referralId)
   })
 
   test('should navigate to sub tasks', async ({ page }) => {
+    await page.goto(TaskListPage.url(mockReferralId))
     const taskListPage = await TaskListPage.verifyOnPage(page)
     await taskListPage.clickPersonalDetailsTask()
     await expect(taskListPage.page).toHaveURL(/personal-details/)
 
     await taskListPage.page.goBack()
-    await taskListPage.clickRiskInformationTask()
+    await taskListPage.clickCheckRiskInformationTask()
     await expect(taskListPage.page).toHaveURL(/risk-information/)
   })
 
   test('should display CRN and DOB on check referral information', async ({ page }) => {
     await communitySupport.stubGetReferralInformation(200, mockReferralId, referralInformationTaskList)
 
-    await TaskListPage.verifyOnPage(page)
-    await page.getByRole('link', { name: 'Check answers and submit' }).click()
+    const taskListPage = await TaskListPage.verifyOnPage(page)
+    await taskListPage.clickCheckAnswersTask()
 
     const checkReferralInformationPage = await CheckReferralInformationPage.verifyOnPage(page)
 
@@ -153,8 +144,8 @@ test.describe('Task List Page', () => {
     await seedSessionCreateReferralDetails(page, { referralCreationDetails: mockReferralDetailsInPrison })
     await communitySupport.stubGetReferralInformation(200, mockReferralId, referralInformationTaskList)
 
-    await TaskListPage.verifyOnPage(page)
-    await page.getByRole('link', { name: 'Check answers and submit' }).click()
+    const taskListPage = await TaskListPage.verifyOnPage(page)
+    await taskListPage.clickCheckAnswersTask()
 
     const checkReferralInformationPage = await CheckReferralInformationPage.verifyOnPage(page)
 
@@ -177,8 +168,8 @@ test.describe('Task List Page', () => {
     await seedSessionCreateReferralDetails(page, { referralCreationDetails: mockReferralDetailsInCommunity })
     await communitySupport.stubGetReferralInformation(200, mockReferralId, referralInformationTaskList)
 
-    await TaskListPage.verifyOnPage(page)
-    await page.getByRole('link', { name: 'Check answers and submit' }).click()
+    const taskListPage = await TaskListPage.verifyOnPage(page)
+    await taskListPage.clickCheckAnswersTask()
 
     await CheckReferralInformationPage.verifyOnPage(page)
     await page.getByRole('link', { name: 'Back', exact: true }).click()

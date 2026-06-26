@@ -1,7 +1,6 @@
 import { Response } from 'express'
 import { randomUUID } from 'crypto'
 import TaskListPresenter from './TaskListPresenter'
-import { TaskStatus } from './TaskStatus'
 import TaskListState from './TaskListState'
 import TaskListContent from '../../testutils/factories/TaskListContent'
 
@@ -12,12 +11,12 @@ describe('TaskListPresenter - Page Rendering', () => {
   const mockTaskListState: TaskListState = {
     referralId: mockReferralId,
     sections: {
-      personalDetails: { status: TaskStatus.COMPLETED },
-      riskInformation: { status: TaskStatus.IN_PROGRESS },
-      personNeeds: { status: TaskStatus.INCOMPLETE },
-      supportNeeds: { status: TaskStatus.INCOMPLETE },
-      contactDetails: { status: TaskStatus.INCOMPLETE },
-      checkAnswers: { status: TaskStatus.CANNOT_START_YET },
+      personalDetails: { status: 'completed' },
+      riskInformation: { status: 'in-progress' },
+      personNeeds: { status: 'incomplete' },
+      supportNeeds: { status: 'incomplete' },
+      contactDetails: { status: 'incomplete' },
+      checkAnswers: { status: 'cannot-start-yet' },
     },
   }
 

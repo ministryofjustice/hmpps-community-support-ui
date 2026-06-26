@@ -35,20 +35,56 @@ export default class TaskListPage extends AbstractPage {
     return this.page.getByRole('heading', { name: 'Check answers and submit' }).locator('..')
   }
 
-  async goto(referralId: string) {
-    await this.page.goto(`/referral/${referralId}/task-list`)
+  get confirmPersonalDetailsTask() {
+    return this.personalDetailsSection.getByRole('link', { name: 'Confirm personal details' })
+  }
+
+  get checkRiskInformationTask() {
+    return this.referralInformationSection.getByRole('link', { name: 'Check risk information' })
+  }
+
+  get selectPersonNeedsTask() {
+    return this.referralInformationSection.getByRole('link', { name: `Select the person's needs` })
+  }
+
+  get addSupportNeedsTask() {
+    return this.referralInformationSection.getByRole('link', { name: 'Add details of any additional support needs' })
+  }
+
+  get addContactDetailsTask() {
+    return this.contactDetailsSection.getByRole('link', { name: 'Add details of main point of contact' })
+  }
+
+  get checkAnswersTask() {
+    return this.checkAnswersSection.getByRole('link', { name: 'Check answers and submit' })
   }
 
   async clickPersonalDetailsTask() {
-    await this.personalDetailsSection.getByRole('link', { name: 'Confirm personal details' }).click()
+    await this.confirmPersonalDetailsTask.click()
   }
 
-  async clickRiskInformationTask() {
-    await this.referralInformationSection.getByRole('link', { name: 'Check risk information' }).click()
+  async clickCheckRiskInformationTask() {
+    await this.checkRiskInformationTask.click()
   }
 
-  async clickCheckAnswers() {
-    await this.checkAnswersSection.getByRole('link', { name: 'Check answers and submit' }).click()
+  async clickSelectPersonNeedsTask() {
+    await this.selectPersonNeedsTask.click()
+  }
+
+  async clickAddSupportNeedsTask() {
+    await this.addSupportNeedsTask.click()
+  }
+
+  async clickConfirmPersonalDetailsTask() {
+    await this.confirmPersonalDetailsTask.click()
+  }
+
+  async clickCheckAnswersTask() {
+    await this.checkAnswersTask.click()
+  }
+
+  async goto(referralId: string) {
+    await this.page.goto(TaskListPage.url(referralId))
   }
 
   static async verifyOnPage(page: Page): Promise<TaskListPage> {
@@ -56,9 +92,15 @@ export default class TaskListPage extends AbstractPage {
     await expect(taskListPage.header).toBeVisible()
     await expect(taskListPage.subHeader).toBeVisible()
     await expect(taskListPage.personalDetailsSection).toBeVisible()
+    await expect(taskListPage.confirmPersonalDetailsTask).toBeVisible()
     await expect(taskListPage.referralInformationSection).toBeVisible()
+    await expect(taskListPage.checkRiskInformationTask).toBeVisible()
+    await expect(taskListPage.selectPersonNeedsTask).toBeVisible()
+    await expect(taskListPage.addSupportNeedsTask).toBeVisible()
     await expect(taskListPage.contactDetailsSection).toBeVisible()
+    await expect(taskListPage.addContactDetailsTask).toBeVisible()
     await expect(taskListPage.checkAnswersSection).toBeVisible()
+    await expect(taskListPage.checkAnswersTask).toBeVisible()
 
     return taskListPage
   }
@@ -75,7 +117,6 @@ export default class TaskListPage extends AbstractPage {
   }
 
   async verifyCheckAnswersLink(referralId: string) {
-    const link = this.checkAnswersSection.getByRole('link', { name: 'Check answers and submit' })
-    await expect(link).toHaveAttribute('href', new RegExp(referralId))
+    await expect(this.checkAnswersTask).toHaveAttribute('href', new RegExp(referralId))
   }
 }

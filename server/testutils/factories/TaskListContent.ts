@@ -21,15 +21,18 @@ export default TaskListContentFactory.define(({ transientParams }) => ({
     referralInformation: {
       title: 'Referral information',
       subTasks: {
-        checkRiskInformation: { text: 'Check risk information', href: '/referral/new/risk-information' },
-        addPersonNeeds: { text: `Add the person's needs`, href: '/referral/new/person-needs' },
-        addSupportNeeds: { text: 'Add details of any additional support needs', href: '/referral/new/support-needs' },
+        checkRiskInformation: { text: 'Check risk information', href: '/referral/new/check-risk-information' },
+        selectPersonNeeds: { text: `Select the person's needs`, href: '/referral/new/select-person-needs' },
+        addSupportNeeds: {
+          text: 'Add details of any additional support needs',
+          href: '/referral/new/add-support-needs',
+        },
       },
     },
     contactDetails: {
       title: 'Referral contact details',
       subTasks: {
-        addContactDetails: { text: 'Add contact details for this referral', href: '/referral/new/contact-details' },
+        addContactDetails: { text: 'Add details of main point of contact', href: '/referral/new/add-contact-details' },
       },
     },
     checkAnswers: {

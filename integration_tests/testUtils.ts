@@ -2,7 +2,7 @@ import { Page } from '@playwright/test'
 import tokenVerification from './mockApis/tokenVerification'
 import hmppsAuth, { type UserToken } from './mockApis/hmppsAuth'
 import { resetStubs } from './mockApis/wiremock'
-import { TaskStatus } from '../server/referral/taskList/TaskStatus'
+import { TaskStatus } from '../server/referral/taskList/TaskListViewModel'
 
 export { resetStubs }
 

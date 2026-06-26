@@ -1,4 +1,4 @@
-import { TaskStatus } from './TaskStatus'
+import { TaskStatus } from './TaskListViewModel'
 
 export default interface TaskListState {
   referralId?: string

@@ -10,8 +10,6 @@ import {
   isMandatoryTasksCompleted,
   isAllTasksCompleted,
 } from './TaskListHelper'
-
-import { TaskStatus } from './TaskStatus'
 import TaskListState from './TaskListState'
 
 describe('TaskList Helper Functions', () => {
@@ -31,12 +29,12 @@ describe('TaskList Helper Functions', () => {
       const state = initializeTaskList(req as Request)
 
       expect(state.referralId).toBeUndefined()
-      expect(state.sections.personalDetails.status).toBe(TaskStatus.INCOMPLETE)
-      expect(state.sections.riskInformation.status).toBe(TaskStatus.INCOMPLETE)
-      expect(state.sections.personNeeds.status).toBe(TaskStatus.INCOMPLETE)
-      expect(state.sections.supportNeeds.status).toBe(TaskStatus.INCOMPLETE)
-      expect(state.sections.contactDetails.status).toBe(TaskStatus.INCOMPLETE)
-      expect(state.sections.checkAnswers.status).toBe(TaskStatus.CANNOT_START_YET)
+      expect(state.sections.personalDetails.status).toBe('incomplete')
+      expect(state.sections.riskInformation.status).toBe('incomplete')
+      expect(state.sections.personNeeds.status).toBe('incomplete')
+      expect(state.sections.supportNeeds.status).toBe('incomplete')
+      expect(state.sections.contactDetails.status).toBe('incomplete')
+      expect(state.sections.checkAnswers.status).toBe('cannot-start-yet')
     })
 
     it('should accept optional referralId', () => {
@@ -55,7 +53,7 @@ describe('TaskList Helper Functions', () => {
 
       expect(req.session!.taskList).toBeDefined()
       expect(req.session!.taskList![personIdentifier]).toBeDefined()
-      expect(state.sections.personalDetails.status).toBe(TaskStatus.INCOMPLETE)
+      expect(state.sections.personalDetails.status).toBe('incomplete')
     })
   })
 
@@ -65,12 +63,12 @@ describe('TaskList Helper Functions', () => {
       const existingState: TaskListState = {
         referralId: mockReferralId,
         sections: {
-          personalDetails: { status: TaskStatus.COMPLETED },
-          riskInformation: { status: TaskStatus.INCOMPLETE },
-          personNeeds: { status: TaskStatus.COMPLETED },
-          supportNeeds: { status: TaskStatus.INCOMPLETE },
-          contactDetails: { status: TaskStatus.COMPLETED },
-          checkAnswers: { status: TaskStatus.CANNOT_START_YET },
+          personalDetails: { status: 'completed' },
+          riskInformation: { status: 'incomplete' },
+          personNeeds: { status: 'completed' },
+          supportNeeds: { status: 'incomplete' },
+          contactDetails: { status: 'completed' },
+          checkAnswers: { status: 'cannot-start-yet' },
         },
       }
 
@@ -85,7 +83,7 @@ describe('TaskList Helper Functions', () => {
       const personIdentifier = 'N123456'
       const state = getTaskListState(req as Request, personIdentifier)
 
-      expect(state.sections.personalDetails.status).toBe(TaskStatus.INCOMPLETE)
+      expect(state.sections.personalDetails.status).toBe('incomplete')
     })
   })
 
@@ -95,12 +93,12 @@ describe('TaskList Helper Functions', () => {
       const state: TaskListState = {
         referralId: mockReferralId,
         sections: {
-          personalDetails: { status: TaskStatus.COMPLETED },
-          riskInformation: { status: TaskStatus.INCOMPLETE },
-          personNeeds: { status: TaskStatus.COMPLETED },
-          supportNeeds: { status: TaskStatus.COMPLETED },
-          contactDetails: { status: TaskStatus.COMPLETED },
-          checkAnswers: { status: TaskStatus.CANNOT_START_YET },
+          personalDetails: { status: 'completed' },
+          riskInformation: { status: 'incomplete' },
+          personNeeds: { status: 'completed' },
+          supportNeeds: { status: 'completed' },
+          contactDetails: { status: 'completed' },
+          checkAnswers: { status: 'cannot-start-yet' },
         },
       }
 
@@ -115,18 +113,18 @@ describe('TaskList Helper Functions', () => {
       const state: TaskListState = {
         referralId: mockReferralId,
         sections: {
-          personalDetails: { status: TaskStatus.COMPLETED },
-          riskInformation: { status: TaskStatus.COMPLETED },
-          personNeeds: { status: TaskStatus.COMPLETED },
-          supportNeeds: { status: TaskStatus.COMPLETED },
-          contactDetails: { status: TaskStatus.COMPLETED },
-          checkAnswers: { status: TaskStatus.CANNOT_START_YET },
+          personalDetails: { status: 'completed' },
+          riskInformation: { status: 'completed' },
+          personNeeds: { status: 'completed' },
+          supportNeeds: { status: 'completed' },
+          contactDetails: { status: 'completed' },
+          checkAnswers: { status: 'cannot-start-yet' },
         },
       }
 
       saveTaskListState(req as Request, personIdentifier, state)
       expect(req.session!.taskList).toBeDefined()
-      expect(req.session!.taskList![personIdentifier].sections.checkAnswers.status).toEqual(TaskStatus.COMPLETED)
+      expect(req.session!.taskList![personIdentifier].sections.checkAnswers.status).toEqual('completed')
     })
   })
 
@@ -136,12 +134,12 @@ describe('TaskList Helper Functions', () => {
       const mockTaskListState: TaskListState = {
         referralId: mockReferralId,
         sections: {
-          personalDetails: { status: TaskStatus.INCOMPLETE },
-          riskInformation: { status: TaskStatus.INCOMPLETE },
-          personNeeds: { status: TaskStatus.INCOMPLETE },
-          supportNeeds: { status: TaskStatus.INCOMPLETE },
-          contactDetails: { status: TaskStatus.INCOMPLETE },
-          checkAnswers: { status: TaskStatus.CANNOT_START_YET },
+          personalDetails: { status: 'incomplete' },
+          riskInformation: { status: 'incomplete' },
+          personNeeds: { status: 'incomplete' },
+          supportNeeds: { status: 'incomplete' },
+          contactDetails: { status: 'incomplete' },
+          checkAnswers: { status: 'cannot-start-yet' },
         },
       }
       req.session!.taskList = {
@@ -159,11 +157,11 @@ describe('TaskList Helper Functions', () => {
       const personIdentifier = mockPersonIdentifier
       newTaskListState(req as Request, personIdentifier)
 
-      updateSectionStatus(req as Request, personIdentifier, 'riskInformation', TaskStatus.COMPLETED)
+      updateSectionStatus(req as Request, personIdentifier, 'riskInformation', 'completed')
 
       const updatedState = req.session!.taskList![personIdentifier]
 
-      expect(updatedState.sections.riskInformation.status).toBe(TaskStatus.COMPLETED)
+      expect(updatedState.sections.riskInformation.status).toBe('completed')
     })
   })
 
@@ -172,12 +170,12 @@ describe('TaskList Helper Functions', () => {
       const state: TaskListState = {
         referralId: mockReferralId,
         sections: {
-          personalDetails: { status: TaskStatus.COMPLETED },
-          riskInformation: { status: TaskStatus.COMPLETED },
-          personNeeds: { status: TaskStatus.COMPLETED },
-          supportNeeds: { status: TaskStatus.COMPLETED },
-          contactDetails: { status: TaskStatus.COMPLETED },
-          checkAnswers: { status: TaskStatus.CANNOT_START_YET },
+          personalDetails: { status: 'completed' },
+          riskInformation: { status: 'completed' },
+          personNeeds: { status: 'completed' },
+          supportNeeds: { status: 'completed' },
+          contactDetails: { status: 'completed' },
+          checkAnswers: { status: 'cannot-start-yet' },
         },
       }
 
@@ -189,12 +187,12 @@ describe('TaskList Helper Functions', () => {
       const state: TaskListState = {
         referralId: mockReferralId,
         sections: {
-          personalDetails: { status: TaskStatus.COMPLETED },
-          riskInformation: { status: TaskStatus.COMPLETED },
-          personNeeds: { status: TaskStatus.COMPLETED },
-          supportNeeds: { status: TaskStatus.COMPLETED },
-          contactDetails: { status: TaskStatus.COMPLETED },
-          checkAnswers: { status: TaskStatus.COMPLETED },
+          personalDetails: { status: 'completed' },
+          riskInformation: { status: 'completed' },
+          personNeeds: { status: 'completed' },
+          supportNeeds: { status: 'completed' },
+          contactDetails: { status: 'completed' },
+          checkAnswers: { status: 'completed' },
         },
       }
 
@@ -206,12 +204,12 @@ describe('TaskList Helper Functions', () => {
       const state: TaskListState = {
         referralId: mockReferralId,
         sections: {
-          personalDetails: { status: TaskStatus.COMPLETED },
-          riskInformation: { status: TaskStatus.INCOMPLETE },
-          personNeeds: { status: TaskStatus.COMPLETED },
-          supportNeeds: { status: TaskStatus.COMPLETED },
-          contactDetails: { status: TaskStatus.COMPLETED },
-          checkAnswers: { status: TaskStatus.CANNOT_START_YET },
+          personalDetails: { status: 'completed' },
+          riskInformation: { status: 'incomplete' },
+          personNeeds: { status: 'completed' },
+          supportNeeds: { status: 'completed' },
+          contactDetails: { status: 'completed' },
+          checkAnswers: { status: 'cannot-start-yet' },
         },
       }
 

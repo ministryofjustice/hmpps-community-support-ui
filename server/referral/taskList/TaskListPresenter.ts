@@ -1,9 +1,8 @@
 import { Response } from 'express'
-import { GovukFrontendTaskListItem, GovukFrontendTaskListItemStatus } from '@govuk-frontend'
+import { GovukFrontendTaskListItemStatus } from '@govuk-frontend'
 import PresenterBase from '../../presenter/presenterBase'
-import { TaskStatus } from './TaskStatus'
 import TaskListState from './TaskListState'
-import { TaskListViewModel, TaskListContent } from './TaskListViewModel'
+import { TaskStatus, TaskListViewModel, TaskListContent } from './TaskListViewModel'
 
 export default class TaskListPresenter extends PresenterBase<TaskListViewModel, TaskListContent> {
   constructor(
@@ -39,7 +38,7 @@ export default class TaskListPresenter extends PresenterBase<TaskListViewModel, 
               href: content.taskList.personalDetails.subTasks.confirmPersonalDetails.href,
               status: this.getStatusTag(this.taskListState.sections.personalDetails.status),
             },
-          ] as GovukFrontendTaskListItem[],
+          ],
         },
       },
       referralInformation: {
@@ -52,8 +51,8 @@ export default class TaskListPresenter extends PresenterBase<TaskListViewModel, 
               status: this.getStatusTag(this.taskListState.sections.riskInformation.status),
             },
             {
-              title: { text: content.taskList.referralInformation.subTasks.addPersonNeeds.text },
-              href: content.taskList.referralInformation.subTasks.addPersonNeeds.href,
+              title: { text: content.taskList.referralInformation.subTasks.selectPersonNeeds.text },
+              href: content.taskList.referralInformation.subTasks.selectPersonNeeds.href,
               status: this.getStatusTag(this.taskListState.sections.personNeeds.status),
             },
             {
@@ -61,7 +60,7 @@ export default class TaskListPresenter extends PresenterBase<TaskListViewModel, 
               href: content.taskList.referralInformation.subTasks.addSupportNeeds.href,
               status: this.getStatusTag(this.taskListState.sections.supportNeeds.status),
             },
-          ] as GovukFrontendTaskListItem[],
+          ],
         },
       },
       contactDetails: {
@@ -73,7 +72,7 @@ export default class TaskListPresenter extends PresenterBase<TaskListViewModel, 
               href: content.taskList.contactDetails.subTasks.addContactDetails.href,
               status: this.getStatusTag(this.taskListState.sections.contactDetails.status),
             },
-          ] as GovukFrontendTaskListItem[],
+          ],
         },
       },
       checkAnswers: {
@@ -88,7 +87,7 @@ export default class TaskListPresenter extends PresenterBase<TaskListViewModel, 
               ),
               status: this.getStatusTag(this.taskListState.sections.checkAnswers.status),
             },
-          ] as GovukFrontendTaskListItem[],
+          ],
         },
       },
     }
@@ -96,13 +95,13 @@ export default class TaskListPresenter extends PresenterBase<TaskListViewModel, 
 
   private getStatusTag(status: TaskStatus): GovukFrontendTaskListItemStatus {
     switch (status) {
-      case TaskStatus.COMPLETED:
+      case 'completed':
         return { text: 'Completed' }
-      case TaskStatus.IN_PROGRESS:
+      case 'in-progress':
         return { tag: { text: 'In progress', classes: 'govuk-tag--blue' } }
-      case TaskStatus.INCOMPLETE:
+      case 'incomplete':
         return { tag: { text: 'Incomplete', classes: 'govuk-tag--blue' } }
-      case TaskStatus.CANNOT_START_YET:
+      case 'cannot-start-yet':
       default:
         return { tag: { text: 'Cannot start yet', classes: 'govuk-tag--grey' } }
     }

@@ -1,5 +1,7 @@
 import { GovukFrontendTaskList, GovukFrontendBackLink } from '@govuk-frontend'
 
+export type TaskStatus = 'completed' | 'cannot-start-yet' | 'in-progress' | 'incomplete'
+
 export interface TaskListContent {
   pageTitle: string
   pageHeader: string
@@ -16,7 +18,7 @@ export interface TaskListContent {
       title: string
       subTasks: {
         checkRiskInformation: { text: string; href: string }
-        addPersonNeeds: { text: string; href: string }
+        selectPersonNeeds: { text: string; href: string }
         addSupportNeeds: { text: string; href: string }
       }
     }

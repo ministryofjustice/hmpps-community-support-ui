@@ -1,5 +1,5 @@
 import { Request } from 'express'
-import { TaskStatus } from './TaskStatus'
+import { TaskStatus } from './TaskListViewModel'
 import TaskListState from './TaskListState'
 
 export function newTaskListState(req: Request, personIdentifier: string): TaskListState {
@@ -23,7 +23,7 @@ export function saveTaskListState(req: Request, personIdentifier: string, state:
       ...state.sections,
       checkAnswers: {
         ...state.sections.checkAnswers,
-        status: isAllMandatoryCompleted ? TaskStatus.COMPLETED : TaskStatus.CANNOT_START_YET,
+        status: isAllMandatoryCompleted ? 'completed' : 'cannot-start-yet',
       },
     },
   }
@@ -55,9 +55,9 @@ export function updateSectionStatus(
   }
 
   if (isMandatoryTasksCompleted(updatedState)) {
-    updatedState.sections.checkAnswers.status = TaskStatus.COMPLETED
+    updatedState.sections.checkAnswers.status = 'completed'
   } else {
-    updatedState.sections.checkAnswers.status = TaskStatus.CANNOT_START_YET
+    updatedState.sections.checkAnswers.status = 'cannot-start-yet'
   }
 
   req.session.taskList[personIdentifier] = updatedState
@@ -67,21 +67,21 @@ export function initializeTaskList(req: Request, referralId?: string): TaskListS
   return {
     referralId,
     sections: {
-      personalDetails: { status: TaskStatus.INCOMPLETE },
-      riskInformation: { status: TaskStatus.INCOMPLETE },
-      personNeeds: { status: TaskStatus.INCOMPLETE },
-      supportNeeds: { status: TaskStatus.INCOMPLETE },
-      contactDetails: { status: TaskStatus.INCOMPLETE },
-      checkAnswers: { status: TaskStatus.CANNOT_START_YET },
+      personalDetails: { status: 'incomplete' },
+      riskInformation: { status: 'incomplete' },
+      personNeeds: { status: 'incomplete' },
+      supportNeeds: { status: 'incomplete' },
+      contactDetails: { status: 'incomplete' },
+      checkAnswers: { status: 'cannot-start-yet' },
     } as const,
   }
 }
 
 export function isMandatoryTasksCompleted(state: TaskListState): boolean {
   const { checkAnswers, ...otherSections } = state.sections
-  return Object.values(otherSections).every(section => section.status === TaskStatus.COMPLETED)
+  return Object.values(otherSections).every(section => section.status === 'completed')
 }
 
 export function isAllTasksCompleted(state: TaskListState): boolean {
-  return Object.values(state.sections).every(section => section.status === TaskStatus.COMPLETED)
+  return Object.values(state.sections).every(section => section.status === 'completed')
 }
