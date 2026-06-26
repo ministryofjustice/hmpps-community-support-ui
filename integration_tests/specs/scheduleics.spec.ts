@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test'
 import { ReferralProgress } from '@community-support-api'
-import { format, addDays, addMonths } from 'date-fns'
+import { format, addDays } from 'date-fns'
 import { login, resetStubs } from '../testUtils'
 import communitySupport from '../mockApis/communitySupport'
 import prisonApi from '../mockApis/prisonApi'
