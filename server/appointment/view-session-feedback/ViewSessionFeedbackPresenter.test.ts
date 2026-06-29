@@ -11,6 +11,15 @@ describe('ViewSessionFeedbackPresenter', () => {
   const caseWorker2 = { fullName: 'CaseWorker Two', emailAddress: 'two@example.com' }
   const icsFeedbackSubmissionResponse = IcsFeedbackResponseFactory.build()
 
+  const renderViewModel = (
+    response = icsFeedbackSubmissionResponse,
+    refId = caseRefId,
+  ): ViewSessionFeedbackViewModel => {
+    new ViewSessionFeedbackPresenter(response, refId).renderPage(res)
+
+    return (res.render as jest.Mock).mock.calls[0][1].content
+  }
+
   beforeEach(() => {
     res = {
       locals: { content: {} },
@@ -52,104 +61,83 @@ describe('ViewSessionFeedbackPresenter', () => {
     })
 
     describe('Appointment details', () => {
-      it('should include the appointment details card title', () => {
-        const presenter = new ViewSessionFeedbackPresenter(icsFeedbackSubmissionResponse, caseRefId)
-        presenter.renderPage(res)
-
-        const renderCall = (res.render as jest.Mock).mock.calls[0]
-        const viewModel: ViewSessionFeedbackViewModel = renderCall[1].content
+      it('includes the appointment details card title', () => {
+        const viewModel = renderViewModel()
 
         expect(viewModel.appointmentDetailsSummary.card?.title?.text).toBe('Appointment details')
       })
 
-      it('should display "Current caseworker" label when one caseworker exists', () => {
-        const presenter = new ViewSessionFeedbackPresenter(icsFeedbackSubmissionResponse, caseRefId)
-        presenter.renderPage(res)
-
-        const renderCall = (res.render as jest.Mock).mock.calls[0]
-        const viewModel: ViewSessionFeedbackViewModel = renderCall[1].content
+      it('shows the singular caseworker label when one caseworker exists', () => {
+        const viewModel = renderViewModel()
 
         expect(viewModel.appointmentDetailsSummary.rows[0]).toEqual(
           expect.objectContaining({ key: { text: 'Current caseworker' } }),
         )
       })
 
-      it('should display "Current caseworkers" label when multiple caseworkers exist', () => {
-        const presenter = new ViewSessionFeedbackPresenter(
+      it('shows the plural caseworker label when multiple caseworkers exist', () => {
+        const viewModel = renderViewModel(
           IcsFeedbackResponseFactory.build({
-            sessionFeedbackDetails: { currentCaseworkers: [caseWorker1, caseWorker2] },
+            sessionFeedbackAppointmentDetails: { currentCaseworkers: [caseWorker1, caseWorker2] },
           }),
-          caseRefId,
         )
-
-        presenter.renderPage(res)
-
-        const renderCall = (res.render as jest.Mock).mock.calls[0]
-        const viewModel: ViewSessionFeedbackViewModel = renderCall[1].content
 
         expect(viewModel.appointmentDetailsSummary.rows[0]).toEqual(
           expect.objectContaining({ key: { text: 'Current caseworkers' } }),
         )
       })
 
-      it('should display "Feedback submitted by" row', () => {
-        const presenter = new ViewSessionFeedbackPresenter(icsFeedbackSubmissionResponse, caseRefId)
-        presenter.renderPage(res)
-
-        const renderCall = (res.render as jest.Mock).mock.calls[0]
-        const viewModel: ViewSessionFeedbackViewModel = renderCall[1].content
-
+      it('shows the feedback submitted by row', () => {
+        const viewModel = renderViewModel()
         const row = viewModel.appointmentDetailsSummary.rows.find(r => r.key.text === 'Feedback submitted by')
 
         expect(row?.value).toMatchObject({ html: expect.stringContaining('mailto:') })
         expect(row?.value).toMatchObject({ html: expect.stringContaining(caseWorker2.emailAddress) })
       })
 
-      it('should display "Method" row with formatted session type', () => {
-        const presenter = new ViewSessionFeedbackPresenter(icsFeedbackSubmissionResponse, caseRefId)
-        presenter.renderPage(res)
-
-        const renderCall = (res.render as jest.Mock).mock.calls[0]
-        const viewModel: ViewSessionFeedbackViewModel = renderCall[1].content
-
+      it('shows the recorded session method', () => {
+        const viewModel = renderViewModel()
         const row = viewModel.appointmentDetailsSummary.rows.find(r => r.key.text === 'Method')
 
         expect(row?.value.text).toBe('Phone call')
       })
 
-      it('should display "Method" row when session method is not present', () => {
-        const presenter = new ViewSessionFeedbackPresenter(
+      it('falls back to the appointment delivery method when no recorded session method exists', () => {
+        const viewModel = renderViewModel(
           IcsFeedbackResponseFactory.build({
-            sessionFeedbackDetails: {
-              ...icsFeedbackSubmissionResponse.sessionFeedbackDetails,
-              sessionMethod: undefined,
+            recordSessionHowSessionTookPlace: undefined,
+          }),
+        )
+        const row = viewModel.appointmentDetailsSummary.rows.find(r => r.key.text === 'Method')
+
+        expect(row?.value.text).toBe('Phone call')
+      })
+
+      it('uses the recorded session method in preference to the appointment method', () => {
+        const viewModel = renderViewModel(
+          IcsFeedbackResponseFactory.build({
+            recordSessionHowSessionTookPlace: 'Video call',
+            sessionFeedbackAppointmentDetails: {
+              ...icsFeedbackSubmissionResponse.sessionFeedbackAppointmentDetails,
+              appointmentDeliveryDetails: {
+                method: 'PHONE_CALL',
+                methodDetails: undefined,
+              },
             },
           }),
-          caseRefId,
         )
-
-        presenter.renderPage(res)
-
-        const renderCall = (res.render as jest.Mock).mock.calls[0]
-        const viewModel: ViewSessionFeedbackViewModel = renderCall[1].content
 
         const row = viewModel.appointmentDetailsSummary.rows.find(r => r.key.text === 'Method')
 
-        expect(row?.value.text).toBeUndefined()
+        expect(row?.value.text).toBe('Video call')
       })
 
-      it('shows reason session was not in-person for remote sessions', () => {
-        const presenter = new ViewSessionFeedbackPresenter(
+      it('shows the recorded reason why the session was not in-person', () => {
+        const viewModel = renderViewModel(
           IcsFeedbackResponseFactory.build({
             recordSessionNotInPersonReason: 'Requested a phone appointment',
           }),
-          caseRefId,
         )
-
-        presenter.renderPage(res)
-
-        const renderCall = (res.render as jest.Mock).mock.calls[0]
-        const viewModel: ViewSessionFeedbackViewModel = renderCall[1].content
 
         const row = viewModel.appointmentDetailsSummary.rows.find(
           r => r.key.text === 'Reason session was not in-person',
@@ -161,46 +149,41 @@ describe('ViewSessionFeedbackPresenter', () => {
         })
       })
 
-      it('shows location for in-person sessions', () => {
-        const presenter = new ViewSessionFeedbackPresenter(
+      it('falls back to the appointment method details when no recorded reason exists', () => {
+        const viewModel = renderViewModel(
           IcsFeedbackResponseFactory.build({
-            sessionFeedbackDetails: {
-              sessionMethod: 'IN_PERSON_PROBATION_OFFICE',
+            recordSessionHowSessionTookPlace: undefined,
+            recordSessionNotInPersonReason: undefined,
+            sessionFeedbackAppointmentDetails: {
+              ...icsFeedbackSubmissionResponse.sessionFeedbackAppointmentDetails,
+              appointmentDeliveryDetails: {
+                method: 'PHONE_CALL',
+                methodDetails: 'Client requested phone appointment',
+              },
             },
-            recordSessionPdu: 'Test Area PDU',
-            recordSessionAddressLine1: '1 Test Street',
-            recordSessionTownOrCity: 'Test Town',
-            recordSessionPostcode: 'T3 3ST',
           }),
-          caseRefId,
         )
 
-        presenter.renderPage(res)
+        const row = viewModel.appointmentDetailsSummary.rows.find(
+          r => r.key.text === 'Reason session was not in-person',
+        )
 
-        const renderCall = (res.render as jest.Mock).mock.calls[0]
-        const viewModel: ViewSessionFeedbackViewModel = renderCall[1].content
-
-        expect(viewModel.appointmentDetailsSummary.rows).toContainEqual({
-          key: { text: 'Location' },
-          value: { text: 'Test Area PDU, 1 Test Street, Test Town, T3 3ST' },
-        })
+        expect(row?.value.text).toBe('Client requested phone appointment')
       })
 
-      it('does not show reason session was not in-person for in-person sessions', () => {
-        const presenter = new ViewSessionFeedbackPresenter(
+      it('hides the non-in-person reason for in-person sessions', () => {
+        const viewModel = renderViewModel(
           IcsFeedbackResponseFactory.build({
-            sessionFeedbackDetails: {
-              sessionMethod: 'IN_PERSON_PROBATION_OFFICE',
+            recordSessionHowSessionTookPlace: 'In person (probation office)',
+            sessionFeedbackAppointmentDetails: {
+              ...icsFeedbackSubmissionResponse.sessionFeedbackAppointmentDetails,
+              appointmentDeliveryDetails: {
+                method: 'IN_PERSON_PROBATION_OFFICE',
+              },
             },
             recordSessionNotInPersonReason: 'Requested a phone appointment',
           }),
-          caseRefId,
         )
-
-        presenter.renderPage(res)
-
-        const renderCall = (res.render as jest.Mock).mock.calls[0]
-        const viewModel: ViewSessionFeedbackViewModel = renderCall[1].content
 
         const row = viewModel.appointmentDetailsSummary.rows.find(
           r => r.key.text === 'Reason session was not in-person',
@@ -209,21 +192,92 @@ describe('ViewSessionFeedbackPresenter', () => {
         expect(row).toBeUndefined()
       })
 
-      it('should display "How user was informed about session" row', () => {
-        const presenter = new ViewSessionFeedbackPresenter(
+      it('shows the recorded probation office when present', () => {
+        const viewModel = renderViewModel(
           IcsFeedbackResponseFactory.build({
-            sessionFeedbackDetails: {
-              ...icsFeedbackSubmissionResponse.sessionFeedbackDetails,
-              sessionCommunications: ['PHONE', 'TEXT'],
-            },
+            recordSessionHowSessionTookPlace: 'In person (probation office)',
+            recordSessionPdu: 'Test Area PDU',
           }),
-          caseRefId,
         )
 
-        presenter.renderPage(res)
+        expect(viewModel.appointmentDetailsSummary.rows).toContainEqual({
+          key: { text: 'Location' },
+          value: { text: 'Test Area PDU' },
+        })
+      })
 
-        const renderCall = (res.render as jest.Mock).mock.calls[0]
-        const viewModel: ViewSessionFeedbackViewModel = renderCall[1].content
+      it('shows the recorded address when present', () => {
+        const viewModel = renderViewModel(
+          IcsFeedbackResponseFactory.build({
+            recordSessionHowSessionTookPlace: 'In person (other location)',
+            recordSessionAddressLine1: '1 Test Street',
+            recordSessionTownOrCity: 'Test Town',
+            recordSessionPostcode: 'T3 3ST',
+          }),
+        )
+
+        expect(viewModel.appointmentDetailsSummary.rows).toContainEqual({
+          key: { text: 'Location' },
+          value: { text: '1 Test Street, Test Town, T3 3ST' },
+        })
+      })
+
+      it('falls back to the appointment address when no recorded location exists', () => {
+        const viewModel = renderViewModel(
+          IcsFeedbackResponseFactory.build({
+            recordSessionHowSessionTookPlace: undefined,
+            recordSessionAddressLine1: undefined,
+            recordSessionTownOrCity: undefined,
+            recordSessionPostcode: undefined,
+            sessionFeedbackAppointmentDetails: {
+              ...icsFeedbackSubmissionResponse.sessionFeedbackAppointmentDetails,
+              appointmentDeliveryDetails: {
+                method: 'IN_PERSON_OTHER_LOCATION',
+                addressLine1: '2 High Street',
+                townOrCity: 'York',
+                postcode: 'YO1 1AA',
+              },
+            },
+          }),
+        )
+
+        expect(viewModel.appointmentDetailsSummary.rows).toContainEqual({
+          key: { text: 'Location' },
+          value: { text: '2 High Street, York, YO1 1AA' },
+        })
+      })
+
+      it('falls back to the appointment probation office when no recorded location exists', () => {
+        const viewModel = renderViewModel(
+          IcsFeedbackResponseFactory.build({
+            recordSessionHowSessionTookPlace: undefined,
+            recordSessionPdu: undefined,
+            sessionFeedbackAppointmentDetails: {
+              ...icsFeedbackSubmissionResponse.sessionFeedbackAppointmentDetails,
+              appointmentDeliveryDetails: {
+                method: 'IN_PERSON_PROBATION_OFFICE',
+                methodDetails: 'North Leeds PDU',
+              },
+            },
+          }),
+        )
+
+        expect(viewModel.appointmentDetailsSummary.rows).toContainEqual({
+          key: { text: 'Location' },
+          value: { text: 'North Leeds PDU' },
+        })
+      })
+
+      it('shows how the user was informed about the session', () => {
+        const viewModel = renderViewModel(
+          IcsFeedbackResponseFactory.build({
+            sessionFeedbackAppointmentDetails: {
+              ...icsFeedbackSubmissionResponse.sessionFeedbackAppointmentDetails,
+              sessionCommunications: ['informedByPhone', 'informedByTextMessage'],
+            },
+          }),
+        )
+
         const row = viewModel.appointmentDetailsSummary.rows.find(r =>
           r.key.text.includes('was informed about the session'),
         )
@@ -231,198 +285,144 @@ describe('ViewSessionFeedbackPresenter', () => {
         expect(row?.value.text).toBe('Phone call, Text message')
       })
 
-      it('should display "How user was informed about session" row when session communications are not present', () => {
-        const presenter = new ViewSessionFeedbackPresenter(
+      it('handles missing session communications', () => {
+        const viewModel = renderViewModel(
           IcsFeedbackResponseFactory.build({
-            sessionFeedbackDetails: {
-              ...icsFeedbackSubmissionResponse.sessionFeedbackDetails,
+            sessionFeedbackAppointmentDetails: {
+              ...icsFeedbackSubmissionResponse.sessionFeedbackAppointmentDetails,
               sessionCommunications: undefined,
             },
           }),
-          caseRefId,
         )
 
-        presenter.renderPage(res)
-
-        const renderCall = (res.render as jest.Mock).mock.calls[0]
-        const viewModel: ViewSessionFeedbackViewModel = renderCall[1].content
         const row = viewModel.appointmentDetailsSummary.rows.find(r =>
           r.key.text.includes('was informed about the session'),
         )
 
-        expect(row?.value.text).toBeUndefined()
+        expect(row?.value.text).toBe('')
       })
     })
 
     describe('Session details', () => {
       it('includes the session details card title', () => {
-        const presenter = new ViewSessionFeedbackPresenter(icsFeedbackSubmissionResponse, caseRefId)
-        presenter.renderPage(res)
-
-        const renderCall = (res.render as jest.Mock).mock.calls[0]
-        const viewModel: ViewSessionFeedbackViewModel = renderCall[1].content
+        const viewModel = renderViewModel()
 
         expect(viewModel.sessionDetailsSummary.card?.title?.text).toBe('Session details')
       })
 
-      it('does not include sessionDetailsSummary when the session did not happen', () => {
-        const sessionDidNotHappenFeedbackResponse = IcsFeedbackResponseFactory.build({
-          recordSessionDidSessionHappen: false,
-          recordSessionDidPersonAttend: true,
-          recordSessionNotHappenReason: 'Provider unexpectedly cancelled session due to emergency meeting ',
-        })
-
-        const presenter = new ViewSessionFeedbackPresenter(sessionDidNotHappenFeedbackResponse, caseRefId)
-
-        const viewModel = presenter.buildPageContent({} as Response)
-
-        expect(viewModel.sessionDetailsSummary).toBeUndefined()
-      })
-
-      it('includes sessionDetailsSummary when the session did happen', () => {
-        const presenter = new ViewSessionFeedbackPresenter(icsFeedbackSubmissionResponse, caseRefId)
-
-        const viewModel = presenter.buildPageContent({} as Response)
+      it('includes the session details summary when the session happened', () => {
+        const viewModel = renderViewModel()
 
         expect(viewModel.sessionDetailsSummary).toBeDefined()
       })
 
-      it('shows late reason when person was late and a reason exists', () => {
-        const presenter = new ViewSessionFeedbackPresenter(
+      it('omits the session details summary when the session did not happen', () => {
+        const viewModel = renderViewModel(
+          IcsFeedbackResponseFactory.build({
+            recordSessionDidSessionHappen: false,
+            recordSessionDidPersonAttend: true,
+            recordSessionNotHappenReason: 'Provider unexpectedly cancelled session due to emergency meeting',
+          }),
+        )
+
+        expect(viewModel.sessionDetailsSummary).toBeUndefined()
+      })
+
+      it('shows the late reason when the person was late', () => {
+        const viewModel = renderViewModel(
           IcsFeedbackResponseFactory.build({
             recordSessionDidSessionHappen: true,
             sessionDetailsWasPersonLate: true,
             sessionDetailsLateReason: 'Stuck in traffic',
           }),
-          caseRefId,
         )
 
-        presenter.renderPage(res)
-
-        const renderCall = (res.render as jest.Mock).mock.calls[0]
-        const viewModel: ViewSessionFeedbackViewModel = renderCall[1].content
-
-        expect(viewModel.sessionDetailsSummary).toBeDefined()
         expect(viewModel.sessionDetailsSummary.rows).toContainEqual({
           key: { text: 'Was Alex late?' },
           value: { text: 'Yes' },
         })
+
         expect(viewModel.sessionDetailsSummary.rows).toContainEqual({
-          key: { text: 'Why was Alex late' },
+          key: { text: 'Why Alex was late' },
           value: { text: 'Stuck in traffic' },
         })
       })
 
-      it('does not show late reason when person was not late', () => {
-        const presenter = new ViewSessionFeedbackPresenter(
+      it('does not show the late reason when the person was not late', () => {
+        const viewModel = renderViewModel(
           IcsFeedbackResponseFactory.build({
             recordSessionDidSessionHappen: true,
             sessionDetailsWasPersonLate: false,
             sessionDetailsLateReason: 'Stuck in traffic',
           }),
-          caseRefId,
         )
-
-        presenter.renderPage(res)
-
-        const renderCall = (res.render as jest.Mock).mock.calls[0]
-        const viewModel: ViewSessionFeedbackViewModel = renderCall[1].content
 
         expect(viewModel.sessionDetailsSummary.rows).toContainEqual({
           key: { text: 'Was Alex late?' },
           value: { text: 'No' },
         })
+
         expect(viewModel.sessionDetailsSummary.rows).not.toContainEqual({
-          key: { text: 'Why was Alex late' },
+          key: { text: 'Why Alex was late' },
           value: { text: 'Stuck in traffic' },
         })
       })
 
-      it('does not show late reason when reason is missing', () => {
-        const presenter = new ViewSessionFeedbackPresenter(
+      it('does not show the late reason when no reason is provided', () => {
+        const viewModel = renderViewModel(
           IcsFeedbackResponseFactory.build({
             recordSessionDidSessionHappen: true,
             sessionDetailsWasPersonLate: true,
             sessionDetailsLateReason: undefined,
           }),
-          caseRefId,
         )
-
-        presenter.renderPage(res)
-
-        const renderCall = (res.render as jest.Mock).mock.calls[0]
-        const viewModel: ViewSessionFeedbackViewModel = renderCall[1].content
 
         expect(viewModel.sessionDetailsSummary.rows).toContainEqual({
           key: { text: 'Was Alex late?' },
           value: { text: 'Yes' },
         })
 
-        expect(viewModel.sessionDetailsSummary.rows.find(r => r.key.text.includes('Why was Alex late'))).toBeUndefined()
+        expect(viewModel.sessionDetailsSummary.rows.find(r => r.key.text.includes('Why Alex was late'))).toBeUndefined()
       })
     })
 
     describe('Record session attendance', () => {
       it('includes the record session attendance card title', () => {
-        const presenter = new ViewSessionFeedbackPresenter(
-          IcsFeedbackResponseFactory.build({ recordSessionDidSessionHappen: false }),
-          caseRefId,
+        const viewModel = renderViewModel(
+          IcsFeedbackResponseFactory.build({
+            recordSessionDidSessionHappen: false,
+          }),
         )
-        presenter.renderPage(res)
-
-        const renderCall = (res.render as jest.Mock).mock.calls[0]
-        const viewModel: ViewSessionFeedbackViewModel = renderCall[1].content
 
         expect(viewModel.recordSessionAttendanceSummary.card?.title?.text).toBe('Record session attendance')
       })
 
-      it('does not include recordSessionAttendanceSummary when the session happened', () => {
-        const presenter = new ViewSessionFeedbackPresenter(icsFeedbackSubmissionResponse, caseRefId)
-
-        presenter.renderPage(res)
-
-        const renderCall = (res.render as jest.Mock).mock.calls[0]
-        const viewModel: ViewSessionFeedbackViewModel = renderCall[1].content
+      it('omits the record session attendance summary when the session happened', () => {
+        const viewModel = renderViewModel()
 
         expect(viewModel.recordSessionAttendanceSummary).toBeUndefined()
       })
 
-      it('shows person attendance status when the session did not happen', () => {
-        const presenter = new ViewSessionFeedbackPresenter(
+      it('shows the attendance status when the person did not attend', () => {
+        const viewModel = renderViewModel(
           IcsFeedbackResponseFactory.build({
-            sessionFeedbackDetails: {
-              ...icsFeedbackSubmissionResponse.sessionFeedbackDetails,
-            },
             recordSessionDidSessionHappen: false,
             recordSessionDidPersonAttend: false,
           }),
-          caseRefId,
         )
-        presenter.renderPage(res)
 
-        const renderCall = (res.render as jest.Mock).mock.calls[0]
-        const viewModel: ViewSessionFeedbackViewModel = renderCall[1].content
         const row = viewModel.recordSessionAttendanceSummary.rows.find(r => r.key.text.includes('Alex'))
 
-        expect(row).toEqual({
-          key: { text: 'Did Alex come to the appointment?' },
-          value: { text: 'No' },
-        })
+        expect(row).toEqual({ key: { text: 'Did Alex come to the appointment?' }, value: { text: 'No' } })
       })
 
-      it('does not show attendance row when attendance is unknown', () => {
-        const presenter = new ViewSessionFeedbackPresenter(
+      it('omits the attendance row when attendance is unknown', () => {
+        const viewModel = renderViewModel(
           IcsFeedbackResponseFactory.build({
             recordSessionDidSessionHappen: false,
             recordSessionDidPersonAttend: null,
           }),
-          caseRefId,
         )
-
-        presenter.renderPage(res)
-
-        const renderCall = (res.render as jest.Mock).mock.calls[0]
-        const viewModel: ViewSessionFeedbackViewModel = renderCall[1].content
 
         expect(viewModel.recordSessionAttendanceSummary.rows).toHaveLength(1)
         expect(viewModel.recordSessionAttendanceSummary.rows[0]).toEqual({
@@ -433,46 +433,30 @@ describe('ViewSessionFeedbackPresenter', () => {
     })
 
     describe('Session feedback', () => {
-      it('should include the session feedback card title', () => {
-        const presenter = new ViewSessionFeedbackPresenter(icsFeedbackSubmissionResponse, caseRefId)
-        presenter.renderPage(res)
-
-        const renderCall = (res.render as jest.Mock).mock.calls[0]
-        const viewModel: ViewSessionFeedbackViewModel = renderCall[1].content
+      it('includes the session feedback card title', () => {
+        const viewModel = renderViewModel()
 
         expect(viewModel.sessionFeedbackSummary.card?.title?.text).toBe('Session feedback')
       })
 
-      it('does not create session feedback summary when no feedback information exists', () => {
-        const presenter = new ViewSessionFeedbackPresenter(
+      it('omits the session feedback summary when no feedback information exists', () => {
+        const viewModel = renderViewModel(
           IcsFeedbackResponseFactory.build({
             recordSessionDidSessionHappen: true,
             sessionFeedbackWhatHappened: undefined,
           }),
-          caseRefId,
         )
-
-        presenter.renderPage(res)
-
-        const renderCall = (res.render as jest.Mock).mock.calls[0]
-        const viewModel: ViewSessionFeedbackViewModel = renderCall[1].content
 
         expect(viewModel.sessionFeedbackSummary).toBeUndefined()
       })
 
       it('shows what happened in the session when the session happened', () => {
-        const presenter = new ViewSessionFeedbackPresenter(
+        const viewModel = renderViewModel(
           IcsFeedbackResponseFactory.build({
             recordSessionDidSessionHappen: true,
             sessionFeedbackWhatHappened: 'Alex discussed his current situation and was open to new possibilities',
           }),
-          caseRefId,
         )
-
-        presenter.renderPage(res)
-
-        const renderCall = (res.render as jest.Mock).mock.calls[0]
-        const viewModel: ViewSessionFeedbackViewModel = renderCall[1].content
 
         expect(viewModel.sessionFeedbackSummary.rows).toContainEqual({
           key: { text: 'What happened in the session' },
@@ -481,42 +465,32 @@ describe('ViewSessionFeedbackPresenter', () => {
       })
 
       it('shows why the session did not happen when a reason is provided', () => {
-        const presenter = new ViewSessionFeedbackPresenter(
+        const viewModel = renderViewModel(
           IcsFeedbackResponseFactory.build({
             recordSessionDidSessionHappen: false,
             recordSessionDidPersonAttend: true,
-            recordSessionNotHappenReason: 'Participant cancelled',
+            recordSessionNotHappenReason: 'SERVICE_PROVIDER_ISSUE',
+            recordSessionNotHappenReasonDetails: 'Room booking was cancelled due to a fire alarm.',
           }),
-          caseRefId,
         )
-        presenter.renderPage(res)
-
-        const renderCall = (res.render as jest.Mock).mock.calls[0]
-        const viewModel: ViewSessionFeedbackViewModel = renderCall[1].content
 
         expect(viewModel.sessionFeedbackSummary.rows[0]).toEqual({
           key: { text: 'Why the session did not happen' },
-          value: { text: 'Participant cancelled' },
+          value: { text: 'Room booking was cancelled due to a fire alarm.' },
         })
       })
 
       it('shows contact attempt details when the person did not attend', () => {
-        const presenter = new ViewSessionFeedbackPresenter(
+        const viewModel = renderViewModel(
           IcsFeedbackResponseFactory.build({
             recordSessionDidSessionHappen: false,
             recordSessionDidPersonAttend: false,
-            recordSessionNotHappenReason: undefined,
+            recordSessionNotHappenReason: 'REFERRAL_DID_NOT_COMPLY',
             recordSessionNoAttendanceInformation: 'Called and left voicemail',
           }),
-          caseRefId,
         )
-        presenter.renderPage(res)
 
-        const renderCall = (res.render as jest.Mock).mock.calls[0]
-        const viewModel: ViewSessionFeedbackViewModel = renderCall[1].content
-        const row = viewModel.sessionFeedbackSummary.rows[0]
-
-        expect(row).toEqual({
+        expect(viewModel.sessionFeedbackSummary.rows[0]).toEqual({
           key: { text: 'Details about how you tried to contact Alex and why they did not attend' },
           value: { text: 'Called and left voicemail' },
         })

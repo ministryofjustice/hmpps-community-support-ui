@@ -42,11 +42,15 @@ export default IcsFeedbackResponseFactory.define<IcsFeedbackSubmissionResponse>(
   issuesOrConcernsNotifyProbationPractitioner: false,
   nextStepsPlannedForNextSession: 'Continue with action plan',
   nextStepsActionsBeforeNextSession: 'Complete CV template',
-  sessionFeedbackDetails: {
+  sessionFeedbackAppointmentDetails: {
     currentCaseworkers: caseworkers,
     feedbackSubmittedBy: caseWorkerTwo,
     startDateTime: '2026-04-09T10:00:00',
-    sessionMethod: 'PHONE_CALL',
+    appointmentDeliveryDetails: {
+      id: randomUUID(),
+      method: 'PHONE_CALL',
+      methodDetails: 'Not feeling well enough to attend in person',
+    },
     sessionCommunications: ['Phone call'],
     personFirstName: 'Alex',
   },
