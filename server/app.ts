@@ -17,6 +17,7 @@ import setUpWebSecurity from './middleware/setUpWebSecurity'
 import setUpWebSession from './middleware/setUpWebSession'
 import setUpFormValidation from './middleware/setUpFormValidation'
 import setUpContent from './middleware/setUpContent'
+import { updateSectionStatus } from './referral/taskList/TaskListHelper'
 
 import routes from './routes'
 import type { Services } from './services'
@@ -78,6 +79,14 @@ export default function createApp(services: Services): express.Application {
     })
     app.post('/test/setup-referral-progress-session', (req, res) => {
       req.session.referralProgressBanner = req.body.referralProgressBanner
+      res.sendStatus(200)
+    })
+    app.post('/test/setup-create-referral-details', (req, res) => {
+      req.session.referralCreationDetails = req.body.referralCreationDetails
+      res.sendStatus(200)
+    })
+    app.post('/test/setup-task-list-state', (req, res) => {
+      updateSectionStatus(req, req.body.personIdentifier, req.body.taskName, req.body.taskStatus)
       res.sendStatus(200)
     })
   }

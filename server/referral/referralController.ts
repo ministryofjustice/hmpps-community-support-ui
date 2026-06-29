@@ -8,8 +8,10 @@ import logger from '../../logger'
 import CheckReferralInformationPresenter from './check-referral-information/checkReferralInformationPresenter'
 import ReferralDetailsPresenter from './referralDetails/ReferralDetailsPresenter'
 import ReferralProgressPresenter from './progress/referralProgressPresenter'
+import TaskListPresenter from './taskList/TaskListPresenter'
 import { ErrorMiddlewareErrors } from '../@types/express'
 import getLatestAppointments from './progress/getLatestAppointments'
+import { getTaskListState, saveTaskListState } from './taskList/TaskListHelper'
 
 class ReferralController {
   constructor(
@@ -73,29 +75,26 @@ class ReferralController {
 
   async checkReferralInformation(req: Request, res: Response): Promise<void> {
     const { username } = res.locals.user
+    const referralId = req.params.id as string
     const referralCreationDetails = req.session ? (req.session.referralCreationDetails as CreateReferralRequest) : null
 
     if (!referralCreationDetails || !referralCreationDetails.personDetails) {
       return res.redirect('/referral/new/find-a-person')
     }
 
-    const createReferralRequest = {
-      personDetails: referralCreationDetails.personDetails,
-      communityServiceProviderId: req.params.id as string,
-      crn: referralCreationDetails.personDetails.personIdentifier,
-      urgency: false,
-    } as CreateReferralRequest
-    let referralInformation
     try {
-      referralInformation = await this.referralService.createReferral(createReferralRequest, username)
+      const referralInformation = await this.referralService.getReferralInformation(referralId, username)
+
+      const presenter = new CheckReferralInformationPresenter(
+        referralInformation,
+        referralCreationDetails.personDetails,
+      )
+      return presenter.renderPage(res)
     } catch (error) {
-      logger.error('Error creating referral:', error)
-      req.flash('create referral', 'An unexpected error when creating a referral. Please try again.')
+      logger.error('Error retrieving referral:', error)
+      req.flash('Retrieving referral', 'An unexpected error when retrieving a referral. Please try again.')
       return res.redirect('/referral/new/find-a-person')
     }
-    const presenter = new CheckReferralInformationPresenter(referralInformation, referralCreationDetails.personDetails)
-
-    return presenter.renderPage(res)
   }
 
   async submitReferralInformation(req: Request, res: Response): Promise<void> {
@@ -240,6 +239,46 @@ class ReferralController {
     }))
 
     const presenter = new ReferralProgressPresenter(referralProgress, caseReference, bannerContent)
+
+    return presenter.renderPage(res)
+  }
+
+  async showTaskList(req: Request, res: Response) {
+    const { username } = res.locals.user
+    const referralCreationDetails = req.session ? req.session.referralCreationDetails : null
+
+    if (!referralCreationDetails || !referralCreationDetails.personDetails) {
+      return res.redirect('/referral/new/find-a-person')
+    }
+
+    const { personIdentifier } = referralCreationDetails.personDetails
+    let taskListState = getTaskListState(req, personIdentifier)
+
+    if (!taskListState.referralId) {
+      try {
+        const createReferralRequest = {
+          personDetails: referralCreationDetails.personDetails,
+          communityServiceProviderId: req.params.id as string,
+          crn: referralCreationDetails.personDetails.personIdentifier,
+          urgency: false,
+        } as CreateReferralRequest
+
+        const referralInformation = await this.referralService.createReferral(createReferralRequest, username)
+
+        req.session.referralCreationDetails = createReferralRequest
+        taskListState = { ...taskListState, referralId: referralInformation.referralId }
+      } catch (error) {
+        logger.error('Error creating referral:', error)
+        req.flash('create referral', 'An unexpected error when creating a referral. Please try again.')
+        return res.redirect('/referral/new/find-a-person')
+      }
+    }
+    saveTaskListState(req, personIdentifier, taskListState)
+
+    const presenter = new TaskListPresenter(
+      `${referralCreationDetails.personDetails.firstName} ${referralCreationDetails.personDetails.lastName}`,
+      taskListState,
+    )
 
     return presenter.renderPage(res)
   }

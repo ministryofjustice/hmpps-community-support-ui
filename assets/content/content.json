@@ -448,5 +448,57 @@
   "/referral/:id/ics-change-details/check-answers": {
     "pageHeader": "Check the details before scheduling the ICS",
     "submitButtonText": "Submit"
+  },
+  "/referral/task-list": {
+    "pageTitle": "Make a referral - [service name]",
+    "pageHeader": "{{ fullName }}",
+    "pageSubHeader": "Make a referral",
+    "backLink": "/referral/new/select-a-service",
+    "taskList": {
+      "personalDetails": {
+        "title": "Personal details",
+        "subTasks": {
+          "confirmPersonalDetails": {
+            "text": "Confirm personal details",
+            "href": "/referral/new/confirm-personal-details"
+          }
+        }
+      },
+      "referralInformation": {
+        "title": "Referral information",
+        "subTasks": {
+          "checkRiskInformation": {
+            "text": "Check risk information",
+            "href": "/referral/new/check-risk-information"
+          },
+          "selectPersonNeeds": {
+            "text": "Select the person's needs",
+            "href": "/referral/new/select-person-needs"
+          },
+          "addSupportNeeds": {
+            "text": "Add details of any additional support needs",
+            "href": "/referral/new/add-support-needs"
+          }
+        }
+      },
+      "contactDetails": {
+        "title": "Referral contact details",
+        "subTasks": {
+          "addContactDetails": {
+            "text": "Add details of main point of contact",
+            "href": "/referral/new/add-contact-details"
+          }
+        }
+      },
+      "checkAnswers": {
+        "title": "Check answers and submit",
+        "subTasks": {
+          "checkAnswersAndSubmit": {
+            "text": "Check answers and submit",
+            "href": "/referral/check-referral-information/{{ id }}"
+          }
+        }
+      }
+    }
   }
 }

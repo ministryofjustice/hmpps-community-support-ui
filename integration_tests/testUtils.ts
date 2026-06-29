@@ -2,6 +2,7 @@ import { Page } from '@playwright/test'
 import tokenVerification from './mockApis/tokenVerification'
 import hmppsAuth, { type UserToken } from './mockApis/hmppsAuth'
 import { resetStubs } from './mockApis/wiremock'
+import { TaskStatus } from '../server/referral/taskList/TaskListViewModel'
 
 export { resetStubs }
 
@@ -68,6 +69,36 @@ export const seedSessionWithIcsFeedback = async (page: Page, icsFeedbackSubmissi
 export const seedSessionFeedbackSession = async (page: Page, icsFeedbackSubmission: object): Promise<void> => {
   await page.request.post('/test/setup-session-feedback-session', {
     data: { icsFeedbackSubmission },
+    headers: { 'Content-Type': 'application/json' },
+  })
+}
+
+export const seedSessionCreate = async (page: Page, referralInformation: object): Promise<void> => {
+  await page.request.post('/test/setup-referral-information', {
+    data: referralInformation,
+    headers: { 'Content-Type': 'application/json' },
+  })
+}
+
+export const seedSessionCreateReferralDetails = async (page: Page, referralCreationDetails: object): Promise<void> => {
+  await page.request.post('/test/setup-create-referral-details', {
+    data: referralCreationDetails,
+    headers: { 'Content-Type': 'application/json' },
+  })
+}
+
+export const seedSessionTaskListState = async (
+  page: Page,
+  personIdentifier: string,
+  taskName: string,
+  taskStatus: TaskStatus,
+): Promise<void> => {
+  await page.request.post('/test/setup-task-list-state', {
+    data: {
+      personIdentifier,
+      taskName,
+      taskStatus,
+    },
     headers: { 'Content-Type': 'application/json' },
   })
 }

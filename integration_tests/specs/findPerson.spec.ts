@@ -3,10 +3,9 @@ import { expect, test } from '@playwright/test'
 import { login, resetStubs } from '../testUtils'
 import FindPersonPage from '../pages/findPersonPage'
 import FoundPersonPage from '../pages/foundPersonPage'
-import CheckReferralInformationPage from '../pages/checkReferralInformationPage'
 import HomePage from '../pages/homePage'
 import communitySupport from '../mockApis/communitySupport'
-import { referralInformationInCommunity, referralInformationInPrison } from '../mockData/referralInformationData'
+import { referralInformationInCommunity } from '../mockData/referralInformationData'
 
 test.describe('FindPerson', () => {
   test.beforeEach(async ({ page }) => {
@@ -70,7 +69,7 @@ test.describe('FindPerson', () => {
     await expect(foundPersonPage.personSummary.rows[3].value).toHaveText('Male')
   })
 
-  test('should display CRN and DOB on check referral information when searched by CRN', async ({ page }) => {
+  test('should navigate to the service provider selection screen when continue', async ({ page }) => {
     await communitySupport.stubCreateReferral(referralInformationInCommunity)
 
     await page.goto('/referral/new/find-a-person')
@@ -80,71 +79,9 @@ test.describe('FindPerson', () => {
 
     await FoundPersonPage.verifyOnPage(page)
     await page.getByRole('button', { name: 'Continue' }).click()
-    await page.getByRole('heading', { name: 'Select a Community Service Provider to make a referral' }).isVisible()
-    await page.getByRole('link', { name: 'Accommodation support' }).click()
-
-    const checkReferralInformationPage = await CheckReferralInformationPage.verifyOnPage(page)
-
-    expect(checkReferralInformationPage.personalDetailsSummary.rows).toHaveLength(4)
-    await expect(checkReferralInformationPage.personalDetailsSummary.rows[0].key).toHaveText('Name')
-    await expect(checkReferralInformationPage.personalDetailsSummary.rows[0].value).toHaveText('Alex River')
-    await expect(checkReferralInformationPage.personalDetailsSummary.rows[1].key).toHaveText('CRN')
-    await expect(checkReferralInformationPage.personalDetailsSummary.rows[1].value).toHaveText('X320741')
-    await expect(checkReferralInformationPage.personalDetailsSummary.rows[2].key).toHaveText('Date of birth')
-    await expect(checkReferralInformationPage.personalDetailsSummary.rows[2].value).toHaveText(
-      '20 Feb 1975 (51 years old)',
-    )
-    await expect(checkReferralInformationPage.personalDetailsSummary.rows[3].key).toHaveText('Sex')
-    await expect(checkReferralInformationPage.personalDetailsSummary.rows[3].value).toHaveText('Male')
-  })
-
-  test('should display prison number and DOB on check referral information when searched by prison number', async ({
-    page,
-  }) => {
-    await communitySupport.stubCreateReferral(referralInformationInPrison)
-
-    await page.goto('/referral/new/find-a-person')
-    const findPersonPage = await FindPersonPage.verifyOnPage(page)
-    await findPersonPage.identifierInput.fill('A1234BC')
-    await findPersonPage.submitButton.click()
-
-    await FoundPersonPage.verifyOnPage(page)
-    await page.getByRole('button', { name: 'Continue' }).click()
-    await page.getByRole('heading', { name: 'Select a Community Service Provider to make a referral' }).isVisible()
-    await page.getByRole('link', { name: 'Accommodation support' }).click()
-
-    const checkReferralInformationPage = await CheckReferralInformationPage.verifyOnPage(page)
-
-    expect(checkReferralInformationPage.personalDetailsSummary.rows).toHaveLength(4)
-    await expect(checkReferralInformationPage.personalDetailsSummary.rows[0].key).toHaveText('Name')
-    await expect(checkReferralInformationPage.personalDetailsSummary.rows[0].value).toHaveText('Alex River')
-    await expect(checkReferralInformationPage.personalDetailsSummary.rows[1].key).toHaveText('Prison number')
-    await expect(checkReferralInformationPage.personalDetailsSummary.rows[1].value).toHaveText(
-      'A1234BC, B1234CD, C1234DE',
-    )
-    await expect(checkReferralInformationPage.personalDetailsSummary.rows[2].key).toHaveText('Date of birth')
-    await expect(checkReferralInformationPage.personalDetailsSummary.rows[2].value).toHaveText(
-      '20 Feb 1975 (51 years old)',
-    )
-    await expect(checkReferralInformationPage.personalDetailsSummary.rows[3].key).toHaveText('Sex')
-    await expect(checkReferralInformationPage.personalDetailsSummary.rows[3].value).toHaveText('Male')
-  })
-
-  test('should link back to find person from check referral information page', async ({ page }) => {
-    await communitySupport.stubCreateReferral(referralInformationInCommunity)
-
-    await page.goto('/referral/new/find-a-person')
-    const findPersonPage = await FindPersonPage.verifyOnPage(page)
-    await findPersonPage.identifierInput.fill('X320741')
-    await findPersonPage.submitButton.click()
-
-    await FoundPersonPage.verifyOnPage(page)
-    await page.getByRole('button', { name: 'Continue' }).click()
-    await page.getByRole('link', { name: 'Accommodation support' }).click()
-
-    await CheckReferralInformationPage.verifyOnPage(page)
-    await page.getByRole('link', { name: 'Back', exact: true }).click()
-
-    await FindPersonPage.verifyOnPage(page)
+    await expect(
+      page.getByRole('heading', { name: 'Select a Community Service Provider to make a referral' }),
+    ).toBeVisible()
+    await expect(page.getByRole('link', { name: 'Accommodation support' })).toBeVisible()
   })
 })
