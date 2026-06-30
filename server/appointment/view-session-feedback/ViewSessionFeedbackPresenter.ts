@@ -100,28 +100,26 @@ export default class ViewSessionFeedbackPresenter extends PresenterBase<ViewSess
     recordedSessionMethod?: string,
     appointmentDelivery?: AppointmentDeliveryDetails,
   ): string | undefined {
-    if (
-      recordedSessionMethod === 'In person (probation office)' &&
-      this.icsFeedbackSubmissionResponse.recordSessionPdu
-    ) {
-      return this.icsFeedbackSubmissionResponse.recordSessionPdu
-    }
+    return (
+      this.getRecordedSessionLocation(recordedSessionMethod) ?? this.getAppointmentDeliveryLocation(appointmentDelivery)
+    )
+  }
 
-    const recordedLocation = this.formatLocation([
+  private getRecordedSessionLocation(recordedSessionMethod?: string): string | undefined {
+    if (recordedSessionMethod === 'In person (probation office)' && this.icsFeedbackSubmissionResponse.recordSessionPdu)
+      return this.icsFeedbackSubmissionResponse.recordSessionPdu
+
+    return this.formatLocation([
       this.icsFeedbackSubmissionResponse.recordSessionAddressLine1,
       this.icsFeedbackSubmissionResponse.recordSessionAddressLine2,
       this.icsFeedbackSubmissionResponse.recordSessionTownOrCity,
       this.icsFeedbackSubmissionResponse.recordSessionCounty,
       this.icsFeedbackSubmissionResponse.recordSessionPostcode,
     ])
+  }
 
-    if (recordedLocation) {
-      return recordedLocation
-    }
-
-    if (appointmentDelivery?.method === 'IN_PERSON_PROBATION_OFFICE') {
-      return appointmentDelivery.methodDetails
-    }
+  private getAppointmentDeliveryLocation(appointmentDelivery?: AppointmentDeliveryDetails): string | undefined {
+    if (appointmentDelivery?.method === 'IN_PERSON_PROBATION_OFFICE') return appointmentDelivery.methodDetails
 
     if (appointmentDelivery?.method === 'IN_PERSON_OTHER_LOCATION') {
       return this.formatLocation([
