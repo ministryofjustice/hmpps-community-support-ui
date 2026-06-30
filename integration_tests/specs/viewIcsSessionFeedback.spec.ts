@@ -71,13 +71,14 @@ test.describe('View ICS Session Feedback', () => {
   const sessionDidNotHappenFeedback = IcsFeedbackResponseFactory.build({
     recordSessionDidSessionHappen: false,
     recordSessionDidPersonAttend: true,
-    recordSessionNotHappenReason: 'Provider unexpectedly cancelled session',
+    recordSessionNotHappenReason: 'SERVICE_PROVIDER_ISSUE',
+    recordSessionNotHappenReasonDetails: 'Room booking was cancelled due to a fire alarm.',
   })
 
   const sessionDidNotAttendFeedback = IcsFeedbackResponseFactory.build({
     recordSessionDidSessionHappen: false,
     recordSessionDidPersonAttend: false,
-    recordSessionNotHappenReason: undefined,
+    recordSessionNotHappenReason: 'REFERRAL_COULD_NOT_TAKE_PART',
     recordSessionNoAttendanceInformation: 'Called Alex twice but no answer, left voicemail',
   })
 
@@ -102,7 +103,7 @@ test.describe('View ICS Session Feedback', () => {
 
   test('shows plural current caseworkers label and names when multiple caseworkers exist', async ({ page }) => {
     const multipleCaseWorkersFeedback = IcsFeedbackResponseFactory.build({
-      sessionFeedbackDetails: {
+      sessionFeedbackAppointmentDetails: {
         currentCaseworkers: [caseWorkerOne, caseWorkerTwo],
       },
     })
@@ -127,15 +128,10 @@ test.describe('View ICS Session Feedback', () => {
 
   test('shows location for in-person sessions', async ({ page }) => {
     const inPersonSessionFeedback = IcsFeedbackResponseFactory.build({
+      recordSessionHowSessionTookPlace: 'In person (probation office)',
       sessionDetailsWasPersonLate: true,
       sessionDetailsLateReason: 'Missed the bus',
-      sessionFeedbackDetails: {
-        sessionMethod: 'IN_PERSON_PROBATION_OFFICE',
-      },
       recordSessionPdu: 'Test Area PDU',
-      recordSessionAddressLine1: '1 Test Street',
-      recordSessionTownOrCity: 'Test Town',
-      recordSessionPostcode: 'T3 3ST',
     })
 
     await communitySupport.stubGetReferralProgress(completedReferralProgress, caseRefId)
@@ -148,12 +144,9 @@ test.describe('View ICS Session Feedback', () => {
 
     await expect(appointmentDetailsCard).toBeVisible()
     await expect(appointmentDetailsCard).toContainText('Method')
-    await expect(appointmentDetailsCard).toContainText('In person')
+    await expect(appointmentDetailsCard).toContainText('In person (probation office)')
     await expect(appointmentDetailsCard).toContainText('Location')
     await expect(appointmentDetailsCard).toContainText('Test Area PDU')
-    await expect(appointmentDetailsCard).toContainText('1 Test Street')
-    await expect(appointmentDetailsCard).toContainText('Test Town')
-    await expect(appointmentDetailsCard).toContainText('T3 3ST')
     await expect(appointmentDetailsCard).not.toContainText('Reason session was not in-person')
   })
 
@@ -193,7 +186,7 @@ test.describe('View ICS Session Feedback', () => {
     const sessionFeedbackCard = page.locator('.govuk-summary-card', { hasText: 'Session feedback' })
 
     await expect(sessionFeedbackCard).toContainText('Why the session did not happen')
-    await expect(sessionFeedbackCard).toContainText('Provider unexpectedly cancelled session')
+    await expect(sessionFeedbackCard).toContainText('Room booking was cancelled due to a fire alarm.')
   })
 
   test('shows session feedback when the user did not attend', async ({ page }) => {

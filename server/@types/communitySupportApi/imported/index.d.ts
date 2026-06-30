@@ -577,6 +577,18 @@ export interface components {
       reason: 'SERVICE_PROVIDER_ISSUE' | 'REFERRAL_COULD_NOT_TAKE_PART' | 'REFERRAL_DID_NOT_COMPLY'
       details?: string | null
     }
+    AppointmentDelivery: {
+      /** Format: uuid */
+      id: string
+      /** @enum {string} */
+      method: 'PHONE_CALL' | 'VIDEO_CALL' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION'
+      methodDetails?: string | null
+      addressLine1?: string | null
+      addressLine2?: string | null
+      townOrCity?: string | null
+      county?: string | null
+      postcode?: string | null
+    }
     /** @description ICS appointment session feedback */
     AppointmentIcsFeedbackResponse: {
       /** Format: uuid */
@@ -606,7 +618,7 @@ export interface components {
       issuesOrConcernsNotifyProbationPractitioner?: boolean | null
       nextStepsPlannedForNextSession?: string | null
       nextStepsActionsBeforeNextSession?: string | null
-      sessionFeedbackDetails?: components['schemas']['SessionFeedbackDetailsDto'] | null
+      sessionFeedbackAppointmentDetails?: components['schemas']['SessionFeedbackAppointmentDetailsDto'] | null
       /** Format: date-time */
       createdAt: string
       /** Format: uuid */
@@ -616,13 +628,12 @@ export interface components {
       fullName?: string | null
       emailAddress: string
     }
-    SessionFeedbackDetailsDto: {
+    SessionFeedbackAppointmentDetailsDto: {
       currentCaseworkers: components['schemas']['CaseWorkerSummaryDto'][]
       feedbackSubmittedBy: components['schemas']['CaseWorkerSummaryDto']
       /** Format: date-time */
       startDateTime: string
-      /** @enum {string|null} */
-      sessionMethod?: 'PHONE_CALL' | 'VIDEO_CALL' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION' | null
+      appointmentDeliveryDetails?: components['schemas']['AppointmentDelivery'] | null
       sessionCommunications?: string[] | null
       personFirstName: string
     }

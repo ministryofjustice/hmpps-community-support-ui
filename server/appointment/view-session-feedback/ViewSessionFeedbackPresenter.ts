@@ -1,5 +1,9 @@
 import { Response } from 'express'
-import { AppointmentIcsResponse, IcsFeedbackSubmissionResponse, CaseWorkerSummary } from '@community-support-api'
+import {
+  IcsFeedbackSubmissionResponse,
+  CaseWorkerSummary,
+  SessionFeedbackAppointmentDetails,
+} from '@community-support-api'
 import { GovukFrontendSummaryList } from '@govuk-frontend'
 import PresenterBase from '../../presenter/presenterBase'
 import { ViewSessionFeedbackViewModel } from './ViewSessionFeedbackViewModel'
@@ -7,8 +11,7 @@ import { isoToFormattedDate } from '../../utils/dateFormat'
 import { isoToFormattedTime } from '../../utils/timeFormat'
 import { createMailtoLink } from '../../utils/viewUtils'
 
-type SessionMethodType = AppointmentIcsResponse['sessionMethod']['type']
-type SessionMethod = NonNullable<SessionMethodType>
+type AppointmentDeliveryDetails = SessionFeedbackAppointmentDetails['appointmentDeliveryDetails']
 
 export interface AppointmentDetailsSummaryRowInput {
   currentCaseworkers: CaseWorkerSummary[]
@@ -44,20 +47,19 @@ export interface SessionFeedbackSummaryRowInput {
   personFirstName: string
 }
 
-const REMOTE_SESSION_METHODS = new Set<SessionMethod>(['PHONE_CALL', 'VIDEO_CALL'])
+const REMOTE_SESSION_METHODS = new Set(['Phone call', 'Video call'])
 
-const SESSION_METHOD_DISPLAY: Record<SessionMethod, string> = {
+const APPOINTMENT_DELIVERY_METHOD_DISPLAY = {
   PHONE_CALL: 'Phone call',
   VIDEO_CALL: 'Video call',
-  IN_PERSON_PROBATION_OFFICE: 'In person',
-  IN_PERSON_OTHER_LOCATION: 'Other location',
-  IN_PERSON_PRISON_ESTABLISHMENT: 'In person',
-}
+  IN_PERSON_PROBATION_OFFICE: 'In person (probation office)',
+  IN_PERSON_OTHER_LOCATION: 'In person (other location)',
+} as const
 
 const SESSION_COMMUNICATION_DISPLAY: Record<string, string> = {
-  PHONE: 'Phone call',
-  TEXT: 'Text message',
-  EMAIL: 'Email',
+  informedByPhone: 'Phone call',
+  informedByTextMessage: 'Text message',
+  informedByEmail: 'Email',
 }
 
 export default class ViewSessionFeedbackPresenter extends PresenterBase<ViewSessionFeedbackViewModel, object> {
@@ -89,17 +91,47 @@ export default class ViewSessionFeedbackPresenter extends PresenterBase<ViewSess
     return SESSION_COMMUNICATION_DISPLAY[input] ?? input
   }
 
-  private buildLocation(): string | undefined {
-    const parts = [
-      this.icsFeedbackSubmissionResponse.recordSessionPdu,
+  private formatLocation(parts: (string | null | undefined)[]): string | undefined {
+    const location = parts.filter(Boolean).join(', ')
+    return location || undefined
+  }
+
+  private buildLocation(
+    recordedSessionMethod?: string,
+    appointmentDelivery?: AppointmentDeliveryDetails,
+  ): string | undefined {
+    return (
+      this.getRecordedSessionLocation(recordedSessionMethod) ?? this.getAppointmentDeliveryLocation(appointmentDelivery)
+    )
+  }
+
+  private getRecordedSessionLocation(recordedSessionMethod?: string): string | undefined {
+    if (recordedSessionMethod === 'In person (probation office)' && this.icsFeedbackSubmissionResponse.recordSessionPdu)
+      return this.icsFeedbackSubmissionResponse.recordSessionPdu
+
+    return this.formatLocation([
       this.icsFeedbackSubmissionResponse.recordSessionAddressLine1,
       this.icsFeedbackSubmissionResponse.recordSessionAddressLine2,
       this.icsFeedbackSubmissionResponse.recordSessionTownOrCity,
       this.icsFeedbackSubmissionResponse.recordSessionCounty,
       this.icsFeedbackSubmissionResponse.recordSessionPostcode,
-    ].filter(Boolean)
+    ])
+  }
 
-    return parts.length ? parts.join(', ') : undefined
+  private getAppointmentDeliveryLocation(appointmentDelivery?: AppointmentDeliveryDetails): string | undefined {
+    if (appointmentDelivery?.method === 'IN_PERSON_PROBATION_OFFICE') return appointmentDelivery.methodDetails
+
+    if (appointmentDelivery?.method === 'IN_PERSON_OTHER_LOCATION') {
+      return this.formatLocation([
+        appointmentDelivery.addressLine1,
+        appointmentDelivery.addressLine2,
+        appointmentDelivery.townOrCity,
+        appointmentDelivery.county,
+        appointmentDelivery.postcode,
+      ])
+    }
+
+    return undefined
   }
 
   private buildAppointmentDetailsSummary(): GovukFrontendSummaryList {
@@ -107,26 +139,27 @@ export default class ViewSessionFeedbackPresenter extends PresenterBase<ViewSess
       currentCaseworkers,
       feedbackSubmittedBy,
       startDateTime,
-      sessionMethod,
+      appointmentDeliveryDetails,
       sessionCommunications,
       personFirstName,
-    } = this.icsFeedbackSubmissionResponse.sessionFeedbackDetails
-
-    const isRemoteSession = REMOTE_SESSION_METHODS.has(sessionMethod)
+    } = this.icsFeedbackSubmissionResponse.sessionFeedbackAppointmentDetails
 
     const rows = buildAppointmentDetailsRows({
       currentCaseworkers,
       feedbackSubmittedBy,
       date: isoToFormattedDate(startDateTime),
       startTime: isoToFormattedTime(startDateTime),
-      sessionMethod,
-      reasonForSessionNotInPerson: isRemoteSession
-        ? this.icsFeedbackSubmissionResponse.recordSessionNotInPersonReason
-        : undefined,
-      location: !isRemoteSession ? this.buildLocation() : undefined,
-      howWasUserInformedAboutSession: sessionCommunications?.length
-        ? sessionCommunications.map(c => this.formatSessionCommunication(c)).join(', ')
-        : undefined,
+      sessionMethod:
+        this.icsFeedbackSubmissionResponse.recordSessionHowSessionTookPlace ??
+        APPOINTMENT_DELIVERY_METHOD_DISPLAY[appointmentDeliveryDetails?.method],
+      reasonForSessionNotInPerson:
+        this.icsFeedbackSubmissionResponse.recordSessionNotInPersonReason ?? appointmentDeliveryDetails?.methodDetails,
+      location: this.buildLocation(
+        this.icsFeedbackSubmissionResponse.recordSessionHowSessionTookPlace,
+        appointmentDeliveryDetails,
+      ),
+      howWasUserInformedAboutSession:
+        sessionCommunications?.map(c => this.formatSessionCommunication(c)).join(', ') ?? '',
       personFirstName,
     })
 
@@ -141,7 +174,7 @@ export default class ViewSessionFeedbackPresenter extends PresenterBase<ViewSess
       isLate: this.icsFeedbackSubmissionResponse.sessionDetailsWasPersonLate,
       whyWereTheyLate: this.icsFeedbackSubmissionResponse.sessionDetailsLateReason,
       sessionDuration: this.icsFeedbackSubmissionResponse.sessionDetailsDuration,
-      personFirstName: this.icsFeedbackSubmissionResponse.sessionFeedbackDetails.personFirstName,
+      personFirstName: this.icsFeedbackSubmissionResponse.sessionFeedbackAppointmentDetails.personFirstName,
     })
 
     return {
@@ -154,7 +187,7 @@ export default class ViewSessionFeedbackPresenter extends PresenterBase<ViewSess
     const rows = buildRecordSessionAttendanceRows({
       didSessionHappen: this.icsFeedbackSubmissionResponse.recordSessionDidSessionHappen,
       attendedAppointment: this.icsFeedbackSubmissionResponse.recordSessionDidPersonAttend,
-      personFirstName: this.icsFeedbackSubmissionResponse.sessionFeedbackDetails.personFirstName,
+      personFirstName: this.icsFeedbackSubmissionResponse.sessionFeedbackAppointmentDetails.personFirstName,
     })
 
     return {
@@ -168,9 +201,9 @@ export default class ViewSessionFeedbackPresenter extends PresenterBase<ViewSess
       didSessionHappen: this.icsFeedbackSubmissionResponse.recordSessionDidSessionHappen,
       didPersonAttend: this.icsFeedbackSubmissionResponse.recordSessionDidPersonAttend,
       whatHappenedInSession: this.icsFeedbackSubmissionResponse.sessionFeedbackWhatHappened,
-      whySessionDidNotHappen: this.icsFeedbackSubmissionResponse.recordSessionNotHappenReason,
+      whySessionDidNotHappen: this.icsFeedbackSubmissionResponse.recordSessionNotHappenReasonDetails,
       triedToContactDidNotAttend: this.icsFeedbackSubmissionResponse.recordSessionNoAttendanceInformation,
-      personFirstName: this.icsFeedbackSubmissionResponse.sessionFeedbackDetails.personFirstName,
+      personFirstName: this.icsFeedbackSubmissionResponse.sessionFeedbackAppointmentDetails.personFirstName,
     })
 
     if (rows.length === 0) return undefined
@@ -210,7 +243,7 @@ export function buildAppointmentDetailsRows(
     { key: { text: 'Feedback submitted by' }, value: { html: feedbackSubmittedByHtml } },
     { key: { text: 'Date' }, value: { text: date } },
     { key: { text: 'Start time' }, value: { text: startTime } },
-    { key: { text: 'Method' }, value: { text: SESSION_METHOD_DISPLAY[sessionMethod] } },
+    { key: { text: 'Method' }, value: { text: sessionMethod } },
     ...(isRemoteSession
       ? [{ key: { text: 'Reason session was not in-person' }, value: { text: reasonForSessionNotInPerson } }]
       : [{ key: { text: 'Location' }, value: { text: location } }]),
@@ -227,7 +260,7 @@ export function buildSessionDetailsRows(input: SessionDetailsSummaryRowInput): G
   return [
     { key: { text: `Was ${personFirstName} late?` }, value: { text: isLate ? 'Yes' : 'No' } },
     ...(isLate && whyWereTheyLate
-      ? [{ key: { text: `Why was ${personFirstName} late` }, value: { text: whyWereTheyLate } }]
+      ? [{ key: { text: `Why ${personFirstName} was late` }, value: { text: whyWereTheyLate } }]
       : []),
 
     ...(sessionDuration ? [{ key: { text: 'Session duration' }, value: { text: sessionDuration } }] : []),
