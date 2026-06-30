@@ -91,7 +91,7 @@ describe('CommunitySupportApiClient tests', () => {
       nock('http://localhost:8080', {
         reqheaders: { authorization: 'Bearer dummy-token' },
       })
-        .post('/bff/referral', referralRequestData)
+        .post('/referral', referralRequestData)
         .reply(200, referralInformationDto)
 
       const result = communitySupportApiClient.createReferral(referralRequestData, 'user1')
@@ -108,7 +108,7 @@ describe('CommunitySupportApiClient tests', () => {
       nock('http://localhost:8080', {
         reqheaders: { authorization: 'Bearer dummy-token' },
       })
-        .post('/bff/referral-id-123/submit-a-referral')
+        .post('/referral-id-123/submit-a-referral')
         .reply(200, submitReferralResponseDto)
 
       const result = communitySupportApiClient.submitReferralById('referral-id-123', 'user1')

@@ -50,11 +50,11 @@ export default class CommunitySupportApiClient extends RestClient {
   }
 
   async createReferral(referralData: CreateReferralRequest, username: string): Promise<ReferralInformation> {
-    return this.post({ path: '/bff/referral', data: referralData }, asSystem(username))
+    return this.post({ path: '/referral', data: referralData }, asSystem(username))
   }
 
   async submitReferralById(referralId: string, username: string): Promise<SubmitReferralResponse> {
-    return this.post({ path: `/bff/${referralId}/submit-a-referral` }, asSystem(username))
+    return this.post({ path: `/${referralId}/submit-a-referral` }, asSystem(username))
   }
 
   async getCaseList(username: string, page: PagedRequest, assigned: boolean = false): Promise<PagedResponse<CaseList>> {
@@ -89,7 +89,7 @@ export default class CommunitySupportApiClient extends RestClient {
     createAppointmentRequest: CreateAppointmentRequest,
     username: string,
   ): Promise<AppointmentIcsResponse> {
-    return this.post({ path: `/bff/referral/${caseRefId}/ics`, data: createAppointmentRequest }, asSystem(username))
+    return this.post({ path: `/referral/${caseRefId}/ics`, data: createAppointmentRequest }, asSystem(username))
   }
 
   getReferralProgress(caseReference: string, username: string): Promise<ReferralProgress> {
@@ -110,10 +110,7 @@ export default class CommunitySupportApiClient extends RestClient {
     icsFeedback: IcsFeedbackSubmission,
     username: string,
   ): Promise<IcsFeedbackSubmissionResponse> {
-    return this.post(
-      { path: `/bff/referral/${caseRefId}/ics/${icsId}/feedback`, data: icsFeedback },
-      asSystem(username),
-    )
+    return this.post({ path: `/referral/${caseRefId}/ics/${icsId}/feedback`, data: icsFeedback }, asSystem(username))
   }
 
   submitRescheduleICS(
@@ -121,7 +118,7 @@ export default class CommunitySupportApiClient extends RestClient {
     rescheduleAppointmentRequest: CreateAppointmentRequest & ChangeAppointmentDetails,
     username: string,
   ): Promise<AppointmentIcsResponse> {
-    return this.put({ path: `/bff/referral/${caseRefId}/ics`, data: rescheduleAppointmentRequest }, asSystem(username))
+    return this.put({ path: `/referral/${caseRefId}/ics`, data: rescheduleAppointmentRequest }, asSystem(username))
   }
 
   getIcsSessionFeedback(icsFeedbackId: string, username: string): Promise<IcsFeedbackSubmissionResponse> {
