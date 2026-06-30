@@ -105,7 +105,7 @@ export default {
     stubFor({
       request: {
         method: 'POST',
-        urlPathPattern: '/community-support/bff/referral',
+        urlPathPattern: '/community-support/referral',
       },
       response: {
         status: httpStatus,
@@ -341,7 +341,7 @@ export default {
     stubFor({
       request: {
         method: 'POST',
-        urlPathPattern: `/community-support/bff/referral/${caseRefId}/ics`,
+        urlPathPattern: `/community-support/referral/${caseRefId}/ics`,
       },
       response: {
         status: httpStatus,
@@ -353,7 +353,7 @@ export default {
     stubFor({
       request: {
         method: 'PUT',
-        urlPathPattern: `/community-support/bff/referral/${caseRefId}/ics`,
+        urlPathPattern: `/community-support/referral/${caseRefId}/ics`,
       },
       response: {
         status: httpStatus,
@@ -404,7 +404,7 @@ export default {
     stubFor({
       request: {
         method: 'POST',
-        urlPathPattern: `/community-support/bff/referral/${caseRefId}/ics/${icsId}/feedback`,
+        urlPathPattern: `/community-support/referral/${caseRefId}/ics/${icsId}/feedback`,
       },
       response: {
         status: httpStatus,

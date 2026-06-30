@@ -37,7 +37,7 @@
     "@ministryofjustice/hmpps-auth-clients": "^3.0.0",
     "@ministryofjustice/hmpps-monitoring": "^2.1.0",
     "@ministryofjustice/hmpps-rest-client": "^2.1.0",
-    "@playwright/test": "^1.61.0",
+    "@playwright/test": "^1.61.1",
     "applicationinsights": "^2.9.8",
     "body-parser": "^2.3.0",
     "bunyan": "^1.8.15",

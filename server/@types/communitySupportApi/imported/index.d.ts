@@ -13,6 +13,22 @@ export interface paths {
     }
     /** Get all ICS appointments for a referral */
     get: operations['getIcsAppointments']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/referral/{caseReference}/ics': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
     /** Change an ICS appointment for a referral */
     put: operations['changeIcsAppointment']
     post?: never
@@ -39,7 +55,7 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/bff/{referralId}/submit-a-referral': {
+  '/{referralId}/submit-a-referral': {
     parameters: {
       query?: never
       header?: never
@@ -56,7 +72,7 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/bff/referral': {
+  '/referral': {
     parameters: {
       query?: never
       header?: never
@@ -73,7 +89,7 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/bff/referral/{caseReference}/ics/{icsId}/feedback': {
+  '/referral/{caseReference}/ics/{icsId}/feedback': {
     parameters: {
       query?: never
       header?: never
@@ -90,7 +106,7 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/bff/referral/{caseIdentifier}/ics': {
+  '/referral/{caseIdentifier}/ics': {
     parameters: {
       query?: never
       header?: never
@@ -636,6 +652,18 @@ export interface components {
       appointmentDeliveryDetails?: components['schemas']['AppointmentDelivery'] | null
       sessionCommunications?: string[] | null
       personFirstName: string
+    }
+    AppointmentDelivery: {
+      /** Format: uuid */
+      id: string
+      /** @enum {string} */
+      method: 'PHONE_CALL' | 'VIDEO_CALL' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION'
+      methodDetails?: string | null
+      addressLine1?: string | null
+      addressLine2?: string | null
+      townOrCity?: string | null
+      county?: string | null
+      postcode?: string | null
     }
     AppointmentDetailsDto: {
       /** @enum {string|null} */
