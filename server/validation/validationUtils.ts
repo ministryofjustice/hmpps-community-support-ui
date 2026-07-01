@@ -28,7 +28,7 @@ export const formatDynamicErrorMessages = (
   return formattedErrors
 }
 
-const validateRequestBodyAgainstSchema = <Schema extends ZodType>(
+export const validateRequestBodyAgainstSchema = <Schema extends ZodType>(
   schema: Schema,
   req: Request,
   res: Response,
@@ -48,4 +48,3 @@ const validateRequestBodyAgainstSchema = <Schema extends ZodType>(
       })
       return res.redirect(req.url)
     })
-export default validateRequestBodyAgainstSchema

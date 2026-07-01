@@ -91,7 +91,7 @@ export default function routes({
 
   get('/referral/:caseRefId/appointment/schedule-ics', (req, res) => appointmentController.showScheduleIcs(req, res))
 
-  post('/referral/:referralId/appointment/schedule-ics', (req, res) => appointmentController.scheduleIcs(req, res))
+  post('/referral/:caseRefId/appointment/schedule-ics', (req, res) => appointmentController.scheduleIcs(req, res))
 
   get('/referral-details/:caseRefId/ics-view-or-change', (req, res) => appointmentController.viewOrChangeIcs(req, res))
 
@@ -183,6 +183,8 @@ export default function routes({
   get('/referral/:caseRefId/ics-change-details', (req, res) => appointmentController.showRescheduleIcs(req, res))
 
   post('/referral/:caseRefId/ics-change-details', (req, res) => appointmentController.rescheduleIcs(req, res))
+
+  get('/referral/task-list/:id', (req, res) => referralController.showTaskList(req, res))
 
   return router
 }

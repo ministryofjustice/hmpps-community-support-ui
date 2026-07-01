@@ -1,21 +1,23 @@
 import { expect, type Locator, type Page } from '@playwright/test'
 import AbstractPage from './abstractPage'
+import SummaryList from './components/summaryList'
 
 export default class FoundPersonPage extends AbstractPage {
   readonly header: Locator
 
-  readonly personDetails: Locator
+  readonly personSummary: SummaryList
 
-  private constructor(page: Page) {
+  private constructor(page: Page, personSummary: SummaryList) {
     super(page)
     this.header = page.locator('h1', { hasText: 'Confirm this is the correct person for referral' })
-    this.personDetails = page.locator('[data-testid="personsummary"]')
+    this.personSummary = personSummary
   }
 
   static async verifyOnPage(page: Page): Promise<FoundPersonPage> {
-    const foundPersonPage = new FoundPersonPage(page)
+    const personSummary = await SummaryList.create(page.locator('[data-testid="personsummary"]'))
+    const foundPersonPage = new FoundPersonPage(page, personSummary)
     await expect(foundPersonPage.header).toBeVisible()
-    await expect(foundPersonPage.personDetails).toBeVisible()
+    await expect(foundPersonPage.personSummary.summaryLocator).toBeVisible()
     return foundPersonPage
   }
 }

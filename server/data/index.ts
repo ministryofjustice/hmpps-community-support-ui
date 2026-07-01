@@ -11,7 +11,7 @@ const applicationInfo = applicationInfoSupplier()
 initialiseAppInsights()
 buildAppInsightsClient(applicationInfo)
 
-import { createRedisClient } from './redisClient'
+import createRedisClient from './redisClient'
 import config from '../config'
 import HmppsAuditClient from './hmppsAuditClient'
 import CommunitySupportApiClient from './communitySupportApiClient'

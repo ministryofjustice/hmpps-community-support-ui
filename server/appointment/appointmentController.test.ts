@@ -169,9 +169,9 @@ describe('AppointmentController', () => {
   describe('scheduleIcs', () => {
     it('should render schedule-ics page - community ', async () => {
       referralService.getReferralInformation.mockResolvedValue(mockReferralInformationInCommunity)
-      await appointmentController.showScheduleIcs(scheduleIcsCommunityReq, scheduleIcsRes)
       referenceDataService.getProbationOffices.mockResolvedValue(probationOfficesData)
       referenceDataService.getPrisons.mockResolvedValue(prisonsData)
+      jest.spyOn(appointmentService, 'getICS').mockRejectedValue(new Error())
 
       await appointmentController.showScheduleIcs(scheduleIcsCommunityReq, scheduleIcsRes)
 
@@ -180,7 +180,7 @@ describe('AppointmentController', () => {
         probationOfficesData,
         prisonsData,
         mockReferralInformationInCommunity,
-        expect.any(Object),
+        undefined,
         expect.any(Object),
       )
       expect(ScheduleIcsPresenter.prototype.renderPage).toHaveBeenCalledWith(scheduleIcsRes)
@@ -188,6 +188,8 @@ describe('AppointmentController', () => {
 
     it('should render schedule-ics page - custody ', async () => {
       referralService.getReferralInformation.mockResolvedValue(mockReferralInformationInPrison)
+      jest.spyOn(appointmentService, 'getICS').mockRejectedValue(new Error())
+
       await appointmentController.showScheduleIcs(scheduleIcsPrisonReq, scheduleIcsRes)
 
       expect(ScheduleIcsPresenter).toHaveBeenCalledWith(
@@ -195,7 +197,7 @@ describe('AppointmentController', () => {
         probationOfficesData,
         prisonsData,
         mockReferralInformationInPrison,
-        expect.any(Object),
+        undefined,
         expect.any(Object),
       )
       expect(ScheduleIcsPresenter.prototype.renderPage).toHaveBeenCalledWith(scheduleIcsRes)
@@ -204,6 +206,7 @@ describe('AppointmentController', () => {
     it('should create presenter with createAppointmentRequest from session and render page', async () => {
       referralService.getReferralInformation.mockResolvedValue(mockReferralInformationInCommunity)
       req.session.createAppointmentRequest = mockCreateAppointmentRequest
+      jest.spyOn(appointmentService, 'getICS').mockRejectedValue(new Error())
 
       await appointmentController.showScheduleIcs(scheduleIcsCommunityReq, scheduleIcsRes)
 
@@ -212,7 +215,7 @@ describe('AppointmentController', () => {
         probationOfficesData,
         prisonsData,
         mockReferralInformationInCommunity,
-        expect.any(Object),
+        undefined,
         expect.any(Object),
       )
       expect(ScheduleIcsPresenter.prototype.renderPage).toHaveBeenCalledWith(scheduleIcsRes)

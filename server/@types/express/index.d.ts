@@ -9,6 +9,7 @@ import { GovukFrontendErrorSummaryErrorListElement } from '@govuk-frontend'
 import { HmppsUser } from '../../interfaces/hmppsUser'
 import { ChangeAppointmentDetails } from '../../appointment/change-ics-details-reason/ChangeAppointmentDetails'
 import { ReferralProgressBannerContent } from '../../referral/progress/ReferralProgressBannerContent'
+import { TaskListState } from '../../referral/taskList/TaskListState'
 
 export interface HowSessionTookPlace {
   type: 'PHONE' | 'VIDEO' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION'
@@ -46,6 +47,7 @@ export declare module 'express-session' {
     referralProgressBanner?: ReferralProgressBannerContent
     icsFeedbackSubmission: IcsFeedbackSubmission & { caseReferenceId: string }
     icsFeedbackInfo: SessionFeedbackDetails[]
+    taskList: Record<string, TaskListState>
   }
 }
 

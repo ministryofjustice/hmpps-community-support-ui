@@ -1,8 +1,9 @@
-import { GovukFrontendSummaryList } from '@govuk-frontend'
+import { GovukFrontendBackLink, GovukFrontendSummaryList } from '@govuk-frontend'
 
 export type CheckReferralInformationViewModel = {
   pageHeader: string
   submitButtonText: string
+  backLink: GovukFrontendBackLink
   submitHref: string
   personalDetailsSummary: GovukFrontendSummaryList
   referralDetailsSummary: GovukFrontendSummaryList

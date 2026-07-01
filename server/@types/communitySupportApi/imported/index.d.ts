@@ -13,6 +13,22 @@ export interface paths {
     }
     /** Get all ICS appointments for a referral */
     get: operations['getIcsAppointments']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/referral/{caseReference}/ics': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
     /** Change an ICS appointment for a referral */
     put: operations['changeIcsAppointment']
     post?: never
@@ -39,7 +55,7 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/bff/{referralId}/submit-a-referral': {
+  '/{referralId}/submit-a-referral': {
     parameters: {
       query?: never
       header?: never
@@ -56,7 +72,7 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/bff/referral': {
+  '/referral': {
     parameters: {
       query?: never
       header?: never
@@ -73,7 +89,7 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/bff/referral/{caseReference}/ics/{icsId}/feedback': {
+  '/referral/{caseReference}/ics/{icsId}/feedback': {
     parameters: {
       query?: never
       header?: never
@@ -90,7 +106,7 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/bff/referral/{caseIdentifier}/ics': {
+  '/referral/{caseIdentifier}/ics': {
     parameters: {
       query?: never
       header?: never
@@ -513,6 +529,7 @@ export interface components {
       lastName: string
       dateOfBirth: string
       sex?: string | null
+      prisonNumbers: string[]
       additionalDetails?: components['schemas']['PersonAdditionalDetails'] | null
     }
     ReferralInformationDto: {
@@ -520,6 +537,8 @@ export interface components {
       personId: string
       /** Format: uuid */
       referralId: string
+      /** Format: date */
+      referralDate: string
       firstName?: string | null
       lastName?: string | null
       sex?: string | null
@@ -574,6 +593,18 @@ export interface components {
       reason: 'SERVICE_PROVIDER_ISSUE' | 'REFERRAL_COULD_NOT_TAKE_PART' | 'REFERRAL_DID_NOT_COMPLY'
       details?: string | null
     }
+    AppointmentDelivery: {
+      /** Format: uuid */
+      id: string
+      /** @enum {string} */
+      method: 'PHONE_CALL' | 'VIDEO_CALL' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION'
+      methodDetails?: string | null
+      addressLine1?: string | null
+      addressLine2?: string | null
+      townOrCity?: string | null
+      county?: string | null
+      postcode?: string | null
+    }
     /** @description ICS appointment session feedback */
     AppointmentIcsFeedbackResponse: {
       /** Format: uuid */
@@ -603,7 +634,7 @@ export interface components {
       issuesOrConcernsNotifyProbationPractitioner?: boolean | null
       nextStepsPlannedForNextSession?: string | null
       nextStepsActionsBeforeNextSession?: string | null
-      sessionFeedbackDetails?: components['schemas']['SessionFeedbackDetailsDto'] | null
+      sessionFeedbackAppointmentDetails?: components['schemas']['SessionFeedbackAppointmentDetailsDto'] | null
       /** Format: date-time */
       createdAt: string
       /** Format: uuid */
@@ -613,15 +644,26 @@ export interface components {
       fullName?: string | null
       emailAddress: string
     }
-    SessionFeedbackDetailsDto: {
+    SessionFeedbackAppointmentDetailsDto: {
       currentCaseworkers: components['schemas']['CaseWorkerSummaryDto'][]
       feedbackSubmittedBy: components['schemas']['CaseWorkerSummaryDto']
       /** Format: date-time */
       startDateTime: string
-      /** @enum {string|null} */
-      sessionMethod?: 'PHONE_CALL' | 'VIDEO_CALL' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION' | null
+      appointmentDeliveryDetails?: components['schemas']['AppointmentDelivery'] | null
       sessionCommunications?: string[] | null
       personFirstName: string
+    }
+    AppointmentDelivery: {
+      /** Format: uuid */
+      id: string
+      /** @enum {string} */
+      method: 'PHONE_CALL' | 'VIDEO_CALL' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION'
+      methodDetails?: string | null
+      addressLine1?: string | null
+      addressLine2?: string | null
+      townOrCity?: string | null
+      county?: string | null
+      postcode?: string | null
     }
     AppointmentDetailsDto: {
       /** @enum {string|null} */

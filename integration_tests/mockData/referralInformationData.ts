@@ -4,6 +4,7 @@ import { randomUUID } from 'crypto'
 const mockReferralId = randomUUID()
 
 const referralInformationInCommunity: ReferralInformation = {
+  referralDate: '2026-06-01',
   crn: 'A123456', // crn number
   firstName: 'John',
   lastName: 'Doe',
@@ -22,6 +23,7 @@ const referralInformationInPrison: ReferralInformation = {
   lastName: 'Joe',
   sex: 'Male',
   referralId: mockReferralId,
+  referralDate: '2026-06-01',
   personId: 'person-id-123',
   communityServiceProviderId: 'csp-id-123',
   communityServiceProviderName: 'Community Support Provider',
@@ -29,5 +31,18 @@ const referralInformationInPrison: ReferralInformation = {
   referenceNumber: 'AB1234CD',
   deliveryPartner: 'Delivery Partner Ltd',
 }
+const referralInformationTaskList: ReferralInformation = {
+  crn: 'A123456', // crn number
+  firstName: 'John',
+  lastName: 'Doe',
+  sex: 'Male',
+  referralId: mockReferralId,
+  personId: 'A123456',
+  communityServiceProviderId: 'csp-id-123',
+  communityServiceProviderName: 'Community Support Provider',
+  region: 'North West',
+  referralDate: '2026-06-01',
+  deliveryPartner: 'Delivery Partner Ltd',
+}
 
-export { referralInformationInCommunity, referralInformationInPrison }
+export { referralInformationInCommunity, referralInformationInPrison, referralInformationTaskList }
