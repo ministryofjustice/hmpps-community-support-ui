@@ -234,5 +234,10 @@ export default function routes({
     return presenter.renderPage(res)
   })
 
+  post('/hannah', (req, res) => {
+    // Do stuff here
+    res.redirect('/referral/task-list')
+  })
+
   return router
 }
