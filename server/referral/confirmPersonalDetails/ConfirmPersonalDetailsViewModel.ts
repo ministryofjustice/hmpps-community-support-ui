@@ -1,4 +1,9 @@
-import { GovukFrontendBackLink, GovukFrontendSummaryList, GovukFrontendWarningText } from '@govuk-frontend'
+import {
+  GovukFrontendBackLink,
+  GovukFrontendButton,
+  GovukFrontendSummaryList,
+  GovukFrontendWarningText,
+} from '@govuk-frontend'
 
 export interface PersonalDetailsCard {
   heading: string
@@ -39,6 +44,8 @@ export interface ConfirmPersonalDetailsContent {
   equalityMonitoringCard: EqualityMonitoringCard
   contactDetailsCard: ContactDetailsCard
   warningText: string
+  buttonText: string
+  buttonLink: string
 }
 
 export interface ConfirmPersonalDetailsViewModel {
@@ -48,6 +55,7 @@ export interface ConfirmPersonalDetailsViewModel {
   equality: GovukFrontendSummaryList
   contact: GovukFrontendSummaryList
   warning: GovukFrontendWarningText
+  button: GovukFrontendButton
 }
 
 export type WithUpdated<T> = {

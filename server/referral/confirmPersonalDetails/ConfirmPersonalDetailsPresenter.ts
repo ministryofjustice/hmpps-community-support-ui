@@ -160,7 +160,7 @@ export default class ConfirmPersonalDetailsPresenter extends PresenterBase<
 
   private getFullName(): string {
     const { firstName, lastName, middleNames } = this.data.personalDetails
-    return firstName + (middleNames || '') + lastName
+    return `${firstName} ${middleNames || ''} ${lastName}`
   }
 
   buildPageContent(res: Response): ConfirmPersonalDetailsViewModel {
@@ -172,6 +172,7 @@ export default class ConfirmPersonalDetailsPresenter extends PresenterBase<
       contact: this.buildContactDetails(content.contactDetailsCard, content.defaultFieldValue),
       backLink: { href: '/unassigned-cases' },
       warning: { text: content.warningText, iconFallbackText: content.warningText },
+      button: { text: content.buttonText, href: content.buttonLink },
     }
   }
 

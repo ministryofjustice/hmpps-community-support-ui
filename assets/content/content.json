@@ -558,6 +558,8 @@
       "emailAddressLabel": "Email address",
       "mainAddressLabel": "Main address"
     },
-    "warningText": "If this information is out of date or incorrect, you must update the information in NOMIS"
+    "warningText": "If this information is out of date or incorrect, you must update the information in NOMIS",
+    "buttonText": "Save and continue",
+    "buttonLink": "#"
   }
 }
