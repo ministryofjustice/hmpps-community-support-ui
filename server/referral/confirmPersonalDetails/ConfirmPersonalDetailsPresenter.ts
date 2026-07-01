@@ -1,18 +1,18 @@
 import { Response } from 'express'
-import { GovukFrontendBackLink, GovukFrontendSummaryList } from '@govuk-frontend'
-import { ReferralDetailsResponseDto, ReferralUserAssignmentsResponse } from '@community-support-api'
+import { GovukFrontendSummaryList, GovukFrontendSummaryListRow } from '@govuk-frontend'
 import { differenceInYears } from 'date-fns'
-import { MojSubNavigation, MojSubNavigationItem } from '@moj-frontend'
 import PresenterBase from '../../presenter/presenterBase'
 import dateFormat from '../../utils/dateFormat'
 import {
+  Address,
   ConfirmPersonalDetailsContent,
+  ConfirmPersonalDetailsDTO,
   ConfirmPersonalDetailsViewModel,
   ContactDetailsCard,
   EqualityMonitoringCard,
   PersonalDetailsCard,
 } from './ConfirmPersonalDetailsViewModel'
-import { govFrontendSummaryListRow, createMailtoLink } from '../../utils/viewUtils'
+import { govFrontendSummaryListRow } from '../../utils/viewUtils'
 
 const nonEmptyStringOrDefault = (str: string | undefined | null, defaultValue: string): string =>
   (str ?? '').trim() || defaultValue
@@ -21,36 +21,51 @@ export default class ConfirmPersonalDetailsPresenter extends PresenterBase<
   ConfirmPersonalDetailsViewModel,
   ConfirmPersonalDetailsContent
 > {
-  private readonly age: number
-
-  constructor(private readonly referralDetails: ReferralDetailsResponseDto) {
+  constructor(private readonly data: ConfirmPersonalDetailsDTO) {
     super()
-    this.age = differenceInYears(new Date(), new Date(referralDetails.personDetailsTableData.dateOfBirth))
   }
 
   private buildPersonalDetails(cardContent: PersonalDetailsCard, defaultFieldValue: string): GovukFrontendSummaryList {
-    const { personDetailsTableData } = this.referralDetails
-    const { name, crn, dateOfBirth, preferredLanguage, disabilities } = personDetailsTableData
+    const { crn, dateOfBirth, preferredLanguage, currentCircumstances, disabilities } = this.data.personalDetails
+    const dobDate = new Date(dateOfBirth)
+    const age = differenceInYears(new Date(), dobDate)
     return {
       card: {
         title: { text: cardContent.heading },
         attributes: { 'data-testid': 'personal-details' },
       },
       rows: [
-        govFrontendSummaryListRow(cardContent.nameLabel, nonEmptyStringOrDefault(name, defaultFieldValue)),
+        govFrontendSummaryListRow(
+          cardContent.nameLabel,
+          nonEmptyStringOrDefault(this.getFullName(), defaultFieldValue),
+        ),
         govFrontendSummaryListRow(cardContent.crnLabel, nonEmptyStringOrDefault(crn, defaultFieldValue)),
         govFrontendSummaryListRow(
           cardContent.dobLabel,
-          nonEmptyStringOrDefault(`${dateFormat(new Date(dateOfBirth))} (${this.age} years old)`, defaultFieldValue),
+          nonEmptyStringOrDefault(`${dateFormat(dobDate)} (${age} years old)`, defaultFieldValue),
         ),
         govFrontendSummaryListRow(
-          cardContent.currentCircumstances,
+          cardContent.languageLabel,
           nonEmptyStringOrDefault(preferredLanguage, defaultFieldValue),
         ),
-        govFrontendSummaryListRow(
-          cardContent.disabilitiesLabel,
-          nonEmptyStringOrDefault(disabilities, defaultFieldValue),
-        ),
+        {
+          key: {
+            html: `${cardContent.circumstancesLabel}<br>
+        <span class="govuk-body-s secondary-text govuk-!-font-weight-regular" style="color: #505a5f;">
+                Last updated ${dateFormat(new Date(currentCircumstances.updated))}
+              </span>`,
+          },
+          value: { text: currentCircumstances.value },
+        },
+        {
+          key: {
+            html: `${cardContent.disabilitiesLabel}<br>
+        <span class="govuk-body-s secondary-text govuk-!-font-weight-regular" style="color: #505a5f;">
+                Last updated ${dateFormat(new Date(disabilities.updated))}
+              </span>`,
+          },
+          value: { text: disabilities.value.join(', ') },
+        },
       ],
     }
   }
@@ -59,15 +74,18 @@ export default class ConfirmPersonalDetailsPresenter extends PresenterBase<
     cardContent: EqualityMonitoringCard,
     defaultFieldValue: string,
   ): GovukFrontendSummaryList {
-    const { equalityDetailsTableData } = this.referralDetails
-    const { ethnicity, religionOrBelief, sex, genderIdentity, sexualOrientation, transgender } =
-      equalityDetailsTableData
+    const { nationalities, ethnicity, religionOrBelief, sex, genderIdentity, sexualOrientation, transgender } =
+      this.data.equalityMonitoring
     return {
       card: {
         title: { text: cardContent.heading },
         attributes: { 'data-testid': 'equality-details' },
       },
       rows: [
+        govFrontendSummaryListRow(
+          cardContent.nationalityLabel,
+          nonEmptyStringOrDefault(nationalities.join(', '), defaultFieldValue),
+        ),
         govFrontendSummaryListRow(cardContent.ethnicityLabel, nonEmptyStringOrDefault(ethnicity, defaultFieldValue)),
         govFrontendSummaryListRow(
           cardContent.religionLabel,
@@ -87,13 +105,34 @@ export default class ConfirmPersonalDetailsPresenter extends PresenterBase<
     }
   }
 
+  private buildAddressRow(address: Address, cardContent: ContactDetailsCard): GovukFrontendSummaryListRow {
+    return {
+      key: {
+        html: `${cardContent.mainAddressLabel}<br>
+        <span class="govuk-body-s secondary-text govuk-!-font-weight-regular" style="color: #505a5f;">
+                Last updated ${dateFormat(new Date(address.updated))}
+              </span>`,
+      },
+      value: {
+        html: `${address.value}<br>
+              <p class="govuk-!-margin-top-2 govuk-!-margin-bottom-0">
+                <span class="govuk-summary-list__key govuk-!-padding-bottom-0">Type of address</span>
+                <span>${address.type}</span>
+              </p>
+              <p class="govuk-!-margin-top-2 govuk-!-margin-bottom-0">
+                <span class="govuk-summary-list__key govuk-!-padding-bottom-0">Start date</span>
+                <span>${dateFormat(new Date(address.start))}</span>
+              </p>
+              <p class="govuk-!-margin-top-2 govuk-!-margin-bottom-0">
+                <span class="govuk-summary-list__key govuk-!-padding-bottom-0">Notes</span>
+                <span>${nonEmptyStringOrDefault(address.notes, 'No notes')}</span>
+              </p>`,
+      },
+    }
+  }
+
   private buildContactDetails(cardContent: ContactDetailsCard, defaultFieldValue: string): GovukFrontendSummaryList {
-    const { contactDetailsTableData } = this.referralDetails
-    const { address, phoneNumber, mobileNumber, email } = contactDetailsTableData
-    const phoneNumberValue = nonEmptyStringOrDefault(phoneNumber, defaultFieldValue)
-    const mobileNumberValue = nonEmptyStringOrDefault(mobileNumber, defaultFieldValue)
-    const emailValue = nonEmptyStringOrDefault(email, defaultFieldValue)
-    const addressValue = nonEmptyStringOrDefault(address, defaultFieldValue)
+    const { phoneNumber, mobileNumber, emailAddress, address } = this.data.contactDetails
     return {
       card: {
         title: {
@@ -102,26 +141,41 @@ export default class ConfirmPersonalDetailsPresenter extends PresenterBase<
         attributes: { 'data-testid': 'contact-details' },
       },
       rows: [
-        govFrontendSummaryListRow(cardContent.phoneNumberLabel, phoneNumberValue),
-        govFrontendSummaryListRow(cardContent.mobileNumberLabel, mobileNumberValue),
-        govFrontendSummaryListRow(cardContent.emailAddressLabel, emailValue),
-        govFrontendSummaryListRow(cardContent.mainAddressLabel, addressValue),
+        govFrontendSummaryListRow(
+          cardContent.phoneNumberLabel,
+          nonEmptyStringOrDefault(phoneNumber, defaultFieldValue),
+        ),
+        govFrontendSummaryListRow(
+          cardContent.mobileNumberLabel,
+          nonEmptyStringOrDefault(mobileNumber, defaultFieldValue),
+        ),
+        govFrontendSummaryListRow(
+          cardContent.emailAddressLabel,
+          nonEmptyStringOrDefault(emailAddress, defaultFieldValue),
+        ),
+        this.buildAddressRow(address, cardContent),
       ],
     }
+  }
+
+  private getFullName(): string {
+    const { firstName, lastName, middleNames } = this.data.personalDetails
+    return firstName + (middleNames || '') + lastName
   }
 
   buildPageContent(res: Response): ConfirmPersonalDetailsViewModel {
     const content = this.buildStaticContent(res)
     return {
-      name: this.referralDetails.personDetailsTableData.name,
+      name: this.getFullName(),
       personal: this.buildPersonalDetails(content.personalDetailsCard, content.defaultFieldValue),
       equality: this.buildEqualityDetails(content.equalityMonitoringCard, content.defaultFieldValue),
       contact: this.buildContactDetails(content.contactDetailsCard, content.defaultFieldValue),
       backLink: { href: '/unassigned-cases' },
+      warning: { text: content.warningText, iconFallbackText: content.warningText },
     }
   }
 
   getTemplatePath(): string {
-    return 'referral/referralDetails'
+    return 'referral/confirmPersonalDetails'
   }
 }

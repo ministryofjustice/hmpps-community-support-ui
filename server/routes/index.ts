@@ -1,5 +1,6 @@
 import { type RequestHandler, Router } from 'express'
 
+import { ReferralDetailsResponseDto } from '@community-support-api'
 import type { Services } from '../services'
 import { Page } from '../services/auditService'
 
@@ -9,6 +10,8 @@ import CommunityServiceProviderController from '../referral/communityServiceProv
 import AppointmentController from '../appointment/appointmentController'
 import IcsFeedbackController from '../appointment/icsFeedbackController'
 import asyncMiddleware from '../middleware/asyncMiddleware'
+import ConfirmPersonalDetailsPresenter from '../referral/confirmPersonalDetails/ConfirmPersonalDetailsPresenter'
+import { ConfirmPersonalDetailsDTO } from '../referral/confirmPersonalDetails/ConfirmPersonalDetailsViewModel'
 
 export default function routes({
   auditService,
@@ -185,6 +188,51 @@ export default function routes({
   post('/referral/:caseRefId/ics-change-details', (req, res) => appointmentController.rescheduleIcs(req, res))
 
   get('/referral/task-list/:id', (req, res) => referralController.showTaskList(req, res))
+
+  get('/hannah', (req, res) => {
+    const dto: ConfirmPersonalDetailsDTO = {
+      personalDetails: {
+        firstName: 'Charlie',
+        middleNames: 'Robert',
+        lastName: 'Smith',
+        crn: 'A1234CD',
+        prisonNumber: ['123456', '2468'],
+        dateOfBirth: '1945-02-04',
+        preferredLanguage: 'English',
+        currentCircumstances: {
+          updated: '2026-02-04',
+          value: 'current circumstances',
+        },
+        disabilities: {
+          updated: '2026-02-03',
+          value: ['Dyslexia', 'Something else'],
+        },
+      },
+      equalityMonitoring: {
+        nationalities: ['British', 'French'],
+        ethnicity: 'White European',
+        religionOrBelief: 'Christian',
+        sex: 'Male',
+        genderIdentity: 'Male',
+        sexualOrientation: 'Hetrosexual',
+        transgender: 'No',
+      },
+      contactDetails: {
+        phoneNumber: '0123456789',
+        mobileNumber: '',
+        emailAddress: '',
+        address: {
+          updated: '2026-02-02',
+          value: '1 Main Street, ATown, A11 11A',
+          type: 'Family',
+          start: '2026-01-01',
+          notes: 'stuff and things',
+        },
+      },
+    }
+    const presenter = new ConfirmPersonalDetailsPresenter(dto)
+    return presenter.renderPage(res)
+  })
 
   return router
 }
