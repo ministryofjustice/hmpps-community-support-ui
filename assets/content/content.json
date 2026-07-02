@@ -504,7 +504,7 @@
   "/referral/task-list/:id/confirm-personal-details": {
     "pageHeader": "{{ name }}",
     "pageSubHeader": "Confirm personal details",
-    "backLink": "/referral/task-list/{{ id }}",
+    "backLink": "/referral/task-list/{{ id }}/confirm-personal-details",
     "defaultFieldValue": "Not available",
     "personalDetailsCard": {
       "heading": "Personal details",
@@ -535,6 +535,6 @@
     },
     "warningText": "If this information is out of date or incorrect, you must update the information in NOMIS",
     "buttonText": "Save and continue",
-    "buttonLink": "/confirm-personal-details/{{ id }}"
+    "buttonLink": "/referral/task-list/{{ id }}/confirm-personal-details"
   }
 }

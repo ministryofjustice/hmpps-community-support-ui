@@ -171,9 +171,14 @@ export default class ConfirmPersonalDetailsPresenter extends PresenterBase<
       personal: this.buildPersonalDetails(content.personalDetailsCard, content.defaultFieldValue),
       equality: this.buildEqualityDetails(content.equalityMonitoringCard, content.defaultFieldValue),
       contact: this.buildContactDetails(content.contactDetailsCard, content.defaultFieldValue),
-      backLink: { href: '/unassigned-cases' },
+      backLink: { href: content.backLink.replace('{{ id }}', this.data.personalDetails.crn) },
       warning: { text: content.warningText, iconFallbackText: content.warningText },
-      button: { text: content.buttonText, href: content.buttonLink },
+      button: {
+        text: content.buttonText,
+        href: content.buttonLink.replace('{{ id }}', this.data.personalDetails.crn),
+        preventDoubleClick: true,
+        type: 'submit',
+      },
     }
   }
 
