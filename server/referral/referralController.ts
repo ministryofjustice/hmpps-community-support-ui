@@ -252,6 +252,7 @@ class ReferralController {
     if (!referralCreationDetails || !referralCreationDetails.personDetails) {
       return res.redirect('/referral/new/find-a-person')
     }
+    console.log('session :', JSON.stringify(req.session, null, 2))
 
     const { personIdentifier } = referralCreationDetails.personDetails
     let taskListState = getTaskListState(req, personIdentifier)
@@ -260,8 +261,8 @@ class ReferralController {
       try {
         const createReferralRequest = {
           personDetails: referralCreationDetails.personDetails,
-          communityServiceProviderId: req.params.id as string,
-          crn: referralCreationDetails.personDetails.personIdentifier,
+          communityServiceProviderId: req.params.id as string, // referralCreationDetails.communityServiceProviderId,
+          crn: personIdentifier,
           urgency: false,
         } as CreateReferralRequest
 
