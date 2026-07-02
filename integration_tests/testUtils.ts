@@ -29,6 +29,20 @@ export const login = async (
   await attemptHmppsAuthLogin(page)
 }
 
+export const loginDeliusUser = async (
+  page: Page,
+  { name, roles = DEFAULT_ROLES, active = true, authSource = 'delius' }: UserToken & { active?: boolean } = {},
+) => {
+  await Promise.all([
+    hmppsAuth.favicon(),
+    hmppsAuth.stubSignInPage(),
+    hmppsAuth.stubSignOutPage(),
+    hmppsAuth.token({ name, roles, authSource }),
+    tokenVerification.stubVerifyToken(active),
+  ])
+  await attemptHmppsAuthLogin(page)
+}
+
 export const seedAppointmentSession = async (page: Page, appointmentRequest: object): Promise<void> => {
   await page.request.post('/test/setup-appointment-session', {
     data: appointmentRequest,

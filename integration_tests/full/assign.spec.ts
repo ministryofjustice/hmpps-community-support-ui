@@ -161,7 +161,24 @@ test.describe('AssignPage', () => {
       await ReferralDetailsPage.verifyAssignmentOnPage(page, 'multipe')
     })
   })
+  // IPB-2010:AC6 - !!! integration needed !!!
+  test.skip('AC6: View assigned caseworkers', async () => {
+    /*
+      Given I’ve assigned the referral to caseworker(s)
+      When I view who the referral is Assigned to
+      Then I can see each assigned caseworker displayed with:
 
+      Caseworker first name and last name
+
+      Caseworker email address in brackets
+
+      for example:
+      Alex Johnson
+      (alex.johnson@example.com)
+      Michaela Boronsky
+      (michaela.b@example.com)
+    */
+  })
   // IPB-2010:AC7
   test('AC7: Removing multiple Caseworkers', async ({ page }) => {
     const assignPage = await AssignPage.verifyOnPage(page)
