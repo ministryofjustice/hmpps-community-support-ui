@@ -189,10 +189,6 @@ export default function routes({
 
   get('/referral/task-list/:id', (req, res) => referralController.showTaskList(req, res))
 
-  get('/hannah', (req, res) => referralController.showConfirmPersionalDetails(req, res))
-
-  post('/hannah', (req, res) => referralController.confirmPersionalDetails(req, res))
-
   get('/referral/task-list/:id/confirm-personal-details', (req, res) =>
     referralController.showConfirmPersionalDetails(req, res),
   )
