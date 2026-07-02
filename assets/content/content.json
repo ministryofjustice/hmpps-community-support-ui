@@ -460,7 +460,7 @@
         "subTasks": {
           "confirmPersonalDetails": {
             "text": "Confirm personal details",
-            "href": "/referral/new/confirm-personal-details"
+            "href": "/referral/task-list/confirm-personal-details"
           }
         }
       },

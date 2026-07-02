@@ -252,7 +252,6 @@ class ReferralController {
     if (!referralCreationDetails || !referralCreationDetails.personDetails) {
       return res.redirect('/referral/new/find-a-person')
     }
-    console.log('session :', JSON.stringify(req.session, null, 2))
 
     const { personIdentifier } = referralCreationDetails.personDetails
     let taskListState = getTaskListState(req, personIdentifier)
@@ -302,11 +301,8 @@ class ReferralController {
 
   async confirmPersionalDetails(req: Request, res: Response): Promise<void> {
     const id = req.params.id as string
-    console.log('-------------------post-------------------')
-    console.log('id :', id)
-    console.log('===================post===================')
     // do stuff here to save confirmation
-    res.redirect(`/referral/task-list`)
+    res.redirect(`/referral/task-list/${id}`)
   }
 }
 
