@@ -19,6 +19,50 @@ test.describe('Case List Pages with no cases', () => {
   })
 })
 
+test.describe('Pagination navigation tests', () => {
+  test.beforeEach(async ({ page }) => {
+    await resetStubs()
+    await page.goto('/')
+    await login(page)
+    await communitySupport.stubGetInProgressFiftyCases()
+  })
+
+  test('should display no pagination when no cases are present', async ({ page }) => {
+    await resetStubs
+    await communitySupport.stubGetUnassignedNoCases()
+    await page.goto(CaseListPage.url('unassigned'))
+    const caseListPage = await CaseListPage.verifyOnPage(page)
+    expect(caseListPage.pagination).not.toBeVisible()
+  })
+
+  test('should navigate to the next page of cases when clicking the next button', async ({ page }) => {
+    await page.goto(CaseListPage.url('in-progress'))
+    const nextButton = page.locator('.govuk-pagination__next')
+    await nextButton.click()
+    const caseListPage = await CaseListPage.verifyOnPage(page)
+    expect(page.url()).toContain('page=4')
+    expect(caseListPage.pagination).toBeVisible()
+  })
+
+  test('should navigate to the previous page of cases when clicking the previous button', async ({ page }) => {
+    await page.goto(CaseListPage.url('in-progress'))
+    const previousButton = page.locator('.govuk-pagination__prev')
+    await previousButton.click()
+    const caseListPage = await CaseListPage.verifyOnPage(page)
+    expect(page.url()).toContain('page=2')
+    expect(caseListPage.pagination).toBeVisible()
+  })
+
+  test('should navigate to the correct page of cases when clicking a page number', async ({ page }) => {
+    await page.goto(CaseListPage.url('in-progress'))
+    const pageNumberButton = page.locator('.govuk-pagination__item').nth(2)
+    await pageNumberButton.click()
+    const caseListPage = await CaseListPage.verifyOnPage(page)
+    expect(page.url()).toContain('page=4')
+    expect(caseListPage.pagination).toBeVisible()
+  })
+})
+
 test.describe('Unassigned Case List Pages', () => {
   test.beforeEach(async ({ page }) => {
     await resetStubs()
