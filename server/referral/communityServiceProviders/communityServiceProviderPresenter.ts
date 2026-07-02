@@ -31,7 +31,7 @@ export default class CommunityServiceProviderPresenter extends PresenterBase<
     })
     viewModel.serviceProviderItems = providerSummaryRows.map((rows, index) => {
       return {
-        url: `/referral/task-list}`,
+        url: `/referral/task-list/${this.communitySupportServiceProviders[index].id}`,
         title: this.communitySupportServiceProviders[index].name,
         truncatedDescription: this.truncateDescription(this.communitySupportServiceProviders[index].description),
         summary: ViewUtils.summaryList(
