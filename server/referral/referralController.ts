@@ -12,6 +12,8 @@ import TaskListPresenter from './taskList/TaskListPresenter'
 import { ErrorMiddlewareErrors } from '../@types/express'
 import getLatestAppointments from './progress/getLatestAppointments'
 import { getTaskListState, saveTaskListState } from './taskList/TaskListHelper'
+import ConfirmPersonalDetailsPresenter from './confirmPersonalDetails/ConfirmPersonalDetailsPresenter'
+import { ConfirmPersonalDetailsDTO } from './confirmPersonalDetails/ConfirmPersonalDetailsViewModel'
 
 class ReferralController {
   constructor(
@@ -281,6 +283,58 @@ class ReferralController {
     )
 
     return presenter.renderPage(res)
+  }
+
+  async showConfirmPersionalDetails(req: Request, res: Response) {
+    const { username } = res.locals.user
+    const caseReference = ''
+    const dto: ConfirmPersonalDetailsDTO = {
+      personalDetails: {
+        firstName: 'Charlie',
+        middleNames: 'Robert',
+        lastName: 'Smith',
+        crn: 'A1234CD',
+        prisonNumber: ['123456', '2468'],
+        dateOfBirth: '1945-02-04',
+        preferredLanguage: 'English',
+        currentCircumstances: {
+          updated: '2026-02-04',
+          value: 'current circumstances',
+        },
+        disabilities: {
+          updated: '2026-02-03',
+          value: ['Dyslexia', 'Something else'],
+        },
+      },
+      equalityMonitoring: {
+        nationalities: ['British', 'French'],
+        ethnicity: 'White European',
+        religionOrBelief: 'Christian',
+        sex: 'Male',
+        genderIdentity: 'Male',
+        sexualOrientation: 'Hetrosexual',
+        transgender: 'No',
+      },
+      contactDetails: {
+        phoneNumber: '0123456789',
+        mobileNumber: '',
+        emailAddress: '',
+        address: {
+          updated: '2026-02-02',
+          value: '1 Main Street, ATown, A11 11A',
+          type: 'Family',
+          start: '2026-01-01',
+          notes: 'stuff and things',
+        },
+      },
+    }
+    const presenter = new ConfirmPersonalDetailsPresenter(dto)
+    return presenter.renderPage(res)
+  }
+
+  async confirmPersionalDetails(req: Request, res: Response): Promise<void> {
+    // do stuff here to save confirmation
+    res.redirect('/referral/task-list')
   }
 }
 

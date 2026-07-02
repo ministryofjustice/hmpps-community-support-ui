@@ -50,7 +50,8 @@ export interface ConfirmPersonalDetailsContent {
 
 export interface ConfirmPersonalDetailsViewModel {
   backLink: GovukFrontendBackLink
-  name: string
+  heading: string
+  subheading: string
   personal: GovukFrontendSummaryList
   equality: GovukFrontendSummaryList
   contact: GovukFrontendSummaryList

@@ -166,7 +166,8 @@ export default class ConfirmPersonalDetailsPresenter extends PresenterBase<
   buildPageContent(res: Response): ConfirmPersonalDetailsViewModel {
     const content = this.buildStaticContent(res)
     return {
-      name: this.getFullName(),
+      heading: content.pageHeader.replace('{{ name }}', this.getFullName()),
+      subheading: content.pageSubHeader,
       personal: this.buildPersonalDetails(content.personalDetailsCard, content.defaultFieldValue),
       equality: this.buildEqualityDetails(content.equalityMonitoringCard, content.defaultFieldValue),
       contact: this.buildContactDetails(content.contactDetailsCard, content.defaultFieldValue),

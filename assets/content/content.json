@@ -34,17 +34,8 @@
         "href": "/cases-in-progress"
       }
     ],
-    "unassignedColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Date received"
-    ],
-    "inProgressColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Assigned to",
-      "Date received"
-    ],
+    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
+    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
     "noCasesMessage": "There are no {0} cases to view."
   },
   "/cases-in-progress": {
@@ -63,17 +54,8 @@
         "href": "/cases-in-progress"
       }
     ],
-    "unassignedColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Date received"
-    ],
-    "inProgressColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Assigned to",
-      "Date received"
-    ],
+    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
+    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
     "noCasesMessage": "There are no {0} cases to view."
   },
   "/referral-details/:id": {
@@ -176,15 +158,8 @@
         "href": "/change-log"
       }
     ],
-    "progressActiveColumnHeaders": [
-      "Date and time",
-      "Status",
-      "Action"
-    ],
-    "progressInactiveColumnHeaders": [
-      "Status",
-      "Action"
-    ],
+    "progressActiveColumnHeaders": ["Date and time", "Status", "Action"],
+    "progressInactiveColumnHeaders": ["Status", "Action"],
     "historySummary": "View ICS history"
   },
   "/ics-feedback/:id/did-session-take-place": {
@@ -561,5 +536,41 @@
     "warningText": "If this information is out of date or incorrect, you must update the information in NOMIS",
     "buttonText": "Save and continue",
     "buttonLink": "#"
+  },
+  "/referral/task-list/:id/confirm-personal-details": {
+    "pageHeader": "{{ name }}",
+    "pageSubHeader": "Confirm personal details",
+    "backLink": "/referral/task-list/{{ id }}",
+    "defaultFieldValue": "Not available",
+    "personalDetailsCard": {
+      "heading": "Personal details",
+      "nameLabel": "Name",
+      "crnLabel": "CRN",
+      "prisonLabel": "Prison number",
+      "dobLabel": "Date of birth",
+      "languageLabel": "Preferred language",
+      "circumstancesLabel": "Current circumstances",
+      "disabilitiesLabel": "Disabilities"
+    },
+    "equalityMonitoringCard": {
+      "heading": "Equality monitoring",
+      "nationalityLabel": "Nationality",
+      "ethnicityLabel": "Ethnicity",
+      "religionLabel": "Religion or belief",
+      "sexLabel": "Sex",
+      "genderLabel": "Gender identity",
+      "sexualOrientationLabel": "Sexual orientation",
+      "transgenderLabel": "Transgender"
+    },
+    "contactDetailsCard": {
+      "heading": "Contact details",
+      "phoneNumberLabel": "Phone number",
+      "mobileNumberLabel": "Mobile number",
+      "emailAddressLabel": "Email address",
+      "mainAddressLabel": "Main address"
+    },
+    "warningText": "If this information is out of date or incorrect, you must update the information in NOMIS",
+    "buttonText": "Save and continue",
+    "buttonLink": "/confirm-personal-details/{{ id }}"
   }
 }
