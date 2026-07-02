@@ -57,6 +57,7 @@ export interface ConfirmPersonalDetailsViewModel {
   contact: GovukFrontendSummaryList
   warning: GovukFrontendWarningText
   button: GovukFrontendButton
+  postHref: string
 }
 
 export type WithUpdated<T> = {

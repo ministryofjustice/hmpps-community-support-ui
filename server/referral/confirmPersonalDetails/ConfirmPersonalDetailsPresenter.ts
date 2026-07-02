@@ -175,10 +175,10 @@ export default class ConfirmPersonalDetailsPresenter extends PresenterBase<
       warning: { text: content.warningText, iconFallbackText: content.warningText },
       button: {
         text: content.buttonText,
-        href: content.buttonLink.replace('{{ id }}', this.data.personalDetails.crn),
         preventDoubleClick: true,
         type: 'submit',
       },
+      postHref: content.buttonLink.replace('{{ id }}', this.data.personalDetails.crn),
     }
   }
 

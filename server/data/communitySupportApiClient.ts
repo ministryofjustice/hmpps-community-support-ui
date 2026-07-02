@@ -124,4 +124,11 @@ export default class CommunitySupportApiClient extends RestClient {
   getIcsSessionFeedback(icsFeedbackId: string, username: string): Promise<IcsFeedbackSubmissionResponse> {
     return this.get({ path: `/bff/ics-feedback/${icsFeedbackId}` }, asSystem(username))
   }
+
+  getPersionalDetails(
+    id: string,
+    username: string,
+  ): Promise<import('../referral/confirmPersonalDetails/ConfirmPersonalDetailsViewModel').ConfirmPersonalDetailsDTO> {
+    return this.get({ path: `/bff/find-person-details/${id}` }, asSystem(username))
+  }
 }
