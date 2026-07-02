@@ -504,7 +504,7 @@
   "/referral/task-list/:id/confirm-personal-details": {
     "pageHeader": "{{ name }}",
     "pageSubHeader": "Confirm personal details",
-    "backLink": "/referral/task-list/{{ id }}/confirm-personal-details",
+    "backLink": "/referral/task-list",
     "defaultFieldValue": "Not available",
     "personalDetailsCard": {
       "heading": "Personal details",

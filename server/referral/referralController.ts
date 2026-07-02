@@ -305,7 +305,7 @@ class ReferralController {
     console.log('id :', id)
     console.log('===================post===================')
     // do stuff here to save confirmation
-    res.redirect(`/referral/task-list/${id}`)
+    res.redirect(`/referral/task-list`)
   }
 }
 
