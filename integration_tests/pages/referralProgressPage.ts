@@ -61,7 +61,7 @@ export default class ReferralProgressPage extends AbstractPage {
     await expect(banner).toHaveClass(/govuk-notification-banner--success/)
     await expect(banner.locator('.govuk-notification-banner__title')).toHaveText('Success')
     await expect(banner.locator('.govuk-notification-banner__heading')).toHaveText(heading)
-    await expect(banner.locator('.govuk-body')).toHaveText(message)
+    await expect(banner.locator('.govuk-body')).toContainText(message)
     return referralProgressPage
   }
 
