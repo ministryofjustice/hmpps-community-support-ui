@@ -45,7 +45,7 @@ export interface ConfirmPersonalDetailsContent {
   contactDetailsCard: ContactDetailsCard
   warningText: string
   buttonText: string
-  buttonLink: string
+  postHref: string
 }
 
 export interface ConfirmPersonalDetailsViewModel {

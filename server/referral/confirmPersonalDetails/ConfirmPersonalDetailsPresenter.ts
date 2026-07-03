@@ -26,7 +26,8 @@ export default class ConfirmPersonalDetailsPresenter extends PresenterBase<
   }
 
   private buildPersonalDetails(cardContent: PersonalDetailsCard, defaultFieldValue: string): GovukFrontendSummaryList {
-    const { crn, dateOfBirth, preferredLanguage, currentCircumstances, disabilities } = this.data.personalDetails
+    const { crn, prisonNumber, dateOfBirth, preferredLanguage, currentCircumstances, disabilities } =
+      this.data.personalDetails
     const dobDate = new Date(dateOfBirth)
     const age = differenceInYears(new Date(), dobDate)
     return {
@@ -41,6 +42,10 @@ export default class ConfirmPersonalDetailsPresenter extends PresenterBase<
         ),
         govFrontendSummaryListRow(cardContent.crnLabel, nonEmptyStringOrDefault(crn, defaultFieldValue)),
         govFrontendSummaryListRow(
+          cardContent.prisonLabel,
+          nonEmptyStringOrDefault(prisonNumber.join(', '), defaultFieldValue),
+        ),
+        govFrontendSummaryListRow(
           cardContent.dobLabel,
           nonEmptyStringOrDefault(`${dateFormat(dobDate)} (${age} years old)`, defaultFieldValue),
         ),
@@ -51,18 +56,18 @@ export default class ConfirmPersonalDetailsPresenter extends PresenterBase<
         {
           key: {
             html: `${cardContent.circumstancesLabel}<br>
-        <span class="govuk-body-s secondary-text govuk-!-font-weight-regular" style="color: #505a5f;">
-                Last updated ${dateFormat(new Date(currentCircumstances.updated))}
-              </span>`,
+            <span class="govuk-body-s secondary-text govuk-!-font-weight-regular" style="color: #505a5f;">
+              Last updated ${dateFormat(new Date(currentCircumstances.updated))}
+            </span>`,
           },
           value: { text: currentCircumstances.value },
         },
         {
           key: {
             html: `${cardContent.disabilitiesLabel}<br>
-        <span class="govuk-body-s secondary-text govuk-!-font-weight-regular" style="color: #505a5f;">
-                Last updated ${dateFormat(new Date(disabilities.updated))}
-              </span>`,
+            <span class="govuk-body-s secondary-text govuk-!-font-weight-regular" style="color: #505a5f;">
+              Last updated ${dateFormat(new Date(disabilities.updated))}
+            </span>`,
           },
           value: { text: disabilities.value.join(', ') },
         },
@@ -178,7 +183,7 @@ export default class ConfirmPersonalDetailsPresenter extends PresenterBase<
         preventDoubleClick: true,
         type: 'submit',
       },
-      postHref: content.buttonLink.replace('{{ id }}', this.data.personalDetails.crn),
+      postHref: content.postHref,
     }
   }
 
