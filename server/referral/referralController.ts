@@ -13,7 +13,6 @@ import { ErrorMiddlewareErrors } from '../@types/express'
 import getLatestAppointments from './progress/getLatestAppointments'
 import { getTaskListState, saveTaskListState } from './taskList/TaskListHelper'
 import ConfirmPersonalDetailsPresenter from './confirmPersonalDetails/ConfirmPersonalDetailsPresenter'
-import { ConfirmPersonalDetailsDTO } from './confirmPersonalDetails/ConfirmPersonalDetailsViewModel'
 
 class ReferralController {
   constructor(

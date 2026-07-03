@@ -1,6 +1,5 @@
 import { type RequestHandler, Router } from 'express'
 
-import { ReferralDetailsResponseDto } from '@community-support-api'
 import type { Services } from '../services'
 import { Page } from '../services/auditService'
 
@@ -10,8 +9,6 @@ import CommunityServiceProviderController from '../referral/communityServiceProv
 import AppointmentController from '../appointment/appointmentController'
 import IcsFeedbackController from '../appointment/icsFeedbackController'
 import asyncMiddleware from '../middleware/asyncMiddleware'
-import ConfirmPersonalDetailsPresenter from '../referral/confirmPersonalDetails/ConfirmPersonalDetailsPresenter'
-import { ConfirmPersonalDetailsDTO } from '../referral/confirmPersonalDetails/ConfirmPersonalDetailsViewModel'
 
 export default function routes({
   auditService,
