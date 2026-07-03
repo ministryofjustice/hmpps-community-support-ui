@@ -24,6 +24,7 @@ import type {
 import config from '../config'
 import logger from '../../logger'
 import { PagedResponse } from '../@types/communitySupportApi/derived'
+import { ConfirmPersonalDetailsDTO } from '../referral/confirmPersonalDetails/ConfirmPersonalDetailsViewModel'
 
 export default class CommunitySupportApiClient extends RestClient {
   constructor(authenticationClient: AuthenticationClient, apiConfig: ApiConfig = null) {
@@ -123,5 +124,9 @@ export default class CommunitySupportApiClient extends RestClient {
 
   getIcsSessionFeedback(icsFeedbackId: string, username: string): Promise<IcsFeedbackSubmissionResponse> {
     return this.get({ path: `/bff/ics-feedback/${icsFeedbackId}` }, asSystem(username))
+  }
+
+  getPersionalDetails(id: string, username: string): Promise<ConfirmPersonalDetailsDTO> {
+    return this.get({ path: `/bff/find-person-details/${id}` }, asSystem(username))
   }
 }

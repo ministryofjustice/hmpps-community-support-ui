@@ -6,6 +6,7 @@ import {
   ReferralProgress,
 } from '@community-support-api'
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
+import { ConfirmPersonalDetailsDTO } from '../referral/confirmPersonalDetails/ConfirmPersonalDetailsViewModel'
 
 export default class ReferralService {
   constructor(private readonly communitySupportApiClient: CommunitySupportApiClient) {}
@@ -44,5 +45,9 @@ export default class ReferralService {
 
   getReferralInformation(caseIdentifier: string, username: string): Promise<ReferralInformation> {
     return this.communitySupportApiClient.getReferralInformation(caseIdentifier, username)
+  }
+
+  getPersionalDetails(id: string, username: string): Promise<ConfirmPersonalDetailsDTO> {
+    return this.communitySupportApiClient.getPersionalDetails(id, username)
   }
 }

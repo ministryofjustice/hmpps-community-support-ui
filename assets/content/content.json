@@ -460,7 +460,7 @@
         "subTasks": {
           "confirmPersonalDetails": {
             "text": "Confirm personal details",
-            "href": "/referral/new/confirm-personal-details"
+            "href": "/referral/task-list/confirm-personal-details"
           }
         }
       },
@@ -500,5 +500,41 @@
         }
       }
     }
+  },
+  "/referral/task-list/:id/confirm-personal-details": {
+    "pageHeader": "{{ name }}",
+    "pageSubHeader": "Confirm personal details",
+    "backLink": "/referral/task-list/{{ id }}",
+    "defaultFieldValue": "Not available",
+    "personalDetailsCard": {
+      "heading": "Personal details",
+      "nameLabel": "Name",
+      "crnLabel": "CRN",
+      "prisonLabel": "Prison number",
+      "dobLabel": "Date of birth",
+      "languageLabel": "Preferred language",
+      "circumstancesLabel": "Current circumstances",
+      "disabilitiesLabel": "Disabilities"
+    },
+    "equalityMonitoringCard": {
+      "heading": "Equality monitoring",
+      "nationalityLabel": "Nationality",
+      "ethnicityLabel": "Ethnicity",
+      "religionLabel": "Religion or belief",
+      "sexLabel": "Sex",
+      "genderLabel": "Gender identity",
+      "sexualOrientationLabel": "Sexual orientation",
+      "transgenderLabel": "Transgender"
+    },
+    "contactDetailsCard": {
+      "heading": "Contact details",
+      "phoneNumberLabel": "Phone number",
+      "mobileNumberLabel": "Mobile number",
+      "emailAddressLabel": "Email address",
+      "mainAddressLabel": "Main address"
+    },
+    "warningText": "If this information is out of date or incorrect, you must update the information in NOMIS",
+    "buttonText": "Save and continue",
+    "postHref": "/referral/task-list/confirm-personal-details"
   }
 }
