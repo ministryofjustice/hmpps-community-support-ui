@@ -361,6 +361,40 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/referral/{referralId}/additional-information': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    /** Update a referral */
+    patch: operations['updateReferral']
+    trace?: never
+  }
+  '/find-person-details/{personIdentifier}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get person details for referral */
+    get: operations['getReferralPersonDetails']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
 }
 export type webhooks = Record<string, never>
 export interface components {
@@ -426,45 +460,10 @@ export interface components {
       minute: number
       amPm: string
     }
-    InPersonAppointment: Omit<WithRequired<components['schemas']['SessionMethod'], 'type'>, 'appointmentCategory'> & {
-      probationOfficeName?: string | null
-      addressLine1?: string | null
-      addressLine2?: string | null
-      townOrCity?: string | null
-      county?: string | null
-      postcode?: string | null
-    } & {
-      /**
-       * @description discriminator enum property added by openapi-typescript
-       * @enum {string}
-       */
-      appointmentCategory: 'IN_PERSON'
-    } & {
-      /**
-       * @description discriminator enum property added by openapi-typescript
-       * @enum {string}
-       */
-      appointmentCategory: 'IN_PERSON'
-    }
     SessionMethod: {
       type: string
       appointmentCategory: string
     } & (components['schemas']['VirtualAppointment'] | components['schemas']['InPersonAppointment'])
-    VirtualAppointment: Omit<WithRequired<components['schemas']['SessionMethod'], 'type'>, 'appointmentCategory'> & {
-      whyNotInPersonReason?: string | null
-    } & {
-      /**
-       * @description discriminator enum property added by openapi-typescript
-       * @enum {string}
-       */
-      appointmentCategory: 'VIRTUAL'
-    } & {
-      /**
-       * @description discriminator enum property added by openapi-typescript
-       * @enum {string}
-       */
-      appointmentCategory: 'VIRTUAL'
-    }
     AssignCaseWorkersRequest: {
       emails: string[]
     }
@@ -605,7 +604,6 @@ export interface components {
       county?: string | null
       postcode?: string | null
     }
-    /** @description ICS appointment session feedback */
     AppointmentIcsFeedbackResponse: {
       /** Format: uuid */
       id: string
@@ -795,6 +793,86 @@ export interface components {
       date: string
       caseWorkers: string[]
     }
+    PersonAdditionalSupportNeedsDto: {
+      /** Format: uuid */
+      id?: string | null
+      /** Format: uuid */
+      referralId: string
+      /** Format: uuid */
+      personId: string
+      physicalHealthDetails?: string | null
+      mentalEmotionalHealthDetails?: string | null
+      neurodiversityDetails?: string | null
+      locationTravelDetails?: string | null
+      caringResponsibilitiesDetails?: string | null
+      employmentResponsibilitiesDetails?: string | null
+      diversityDetails?: string | null
+      anythingElseDetails?: string | null
+      noAdditionalSupportNeeded: boolean
+      interpreterLanguage?: string | null
+    }
+    ReferralAdditionalDetails: {
+      supportNeeds?: components['schemas']['PersonAdditionalSupportNeedsDto'] | null
+    }
+    SubmitReferralRequest: {
+      additionalInformation?: components['schemas']['ReferralAdditionalDetails'] | null
+    }
+    Address: {
+      address?: string | null
+      addressType?: string | null
+      addressTypeVerified?: boolean | null
+      /** Format: date */
+      addressStartDate?: string | null
+      addressNotes?: string | null
+    }
+    ContactDetails: {
+      phoneNumber?: string | null
+      mobileNumber?: string | null
+      emailAddress?: string | null
+      address: components['schemas']['Address']
+    }
+    EqualityMonitoring: {
+      sex?: string | null
+      ethnicity?: string | null
+      neurodiverseConditions?: string | null
+      religionOrBelief?: string | null
+      transgender?: string | null
+      sexualOrientation?: string | null
+      genderIdentity?: string | null
+      nationalities?: string[] | null
+      interestToImmigration?: boolean | null
+      disability?: boolean | null
+    }
+    PersonDetailsDto: {
+      /** Format: uuid */
+      id: string
+      personalDetails: components['schemas']['PersonalDetails']
+      equalityMonitoring: components['schemas']['EqualityMonitoring']
+      contactDetails: components['schemas']['ContactDetails']
+    }
+    PersonalDetails: {
+      personIdentifier?: string | null
+      title?: string | null
+      firstName: string
+      middleNames?: string | null
+      lastName: string
+      /** Format: date */
+      dateOfBirth: string
+      prisonNumbers: string[]
+      preferredLanguage?: string | null
+      currentCircumstances?: components['schemas']['WithUpdatedString'] | null
+      disabilities?: components['schemas']['WithUpdatedListString'] | null
+    }
+    WithUpdatedListString: {
+      value: string[]
+      /** Format: date */
+      updated: string
+    }
+    WithUpdatedString: {
+      value: string
+      /** Format: date */
+      updated: string
+    }
   }
   responses: never
   parameters: never
@@ -941,15 +1019,28 @@ export interface operations {
       }
       cookie?: never
     }
-    requestBody?: never
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['SubmitReferralRequest']
+      }
+    }
     responses: {
-      /** @description Referral created */
+      /** @description Referral submitted */
       200: {
         headers: {
           [name: string]: unknown
         }
         content: {
           'application/json': components['schemas']['SubmitReferralResponseDto']
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
         }
       }
     }
@@ -1532,6 +1623,72 @@ export interface operations {
         }
         content: {
           '*/*': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  updateReferral: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+      }
+      cookie?: never
+    }
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['SubmitReferralRequest']
+      }
+    }
+    responses: {
+      /** @description Referral updated */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['SubmitReferralResponseDto']
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getReferralPersonDetails: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        personIdentifier: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Person details found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+      /** @description Person details not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['PersonDetailsDto']
         }
       }
     }
