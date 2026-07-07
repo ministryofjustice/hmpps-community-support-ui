@@ -65,7 +65,7 @@ describe('ReferralController', () => {
   })
   describe('showFindPersonPage', () => {
     it('should render the find a person page on a GET request', async () => {
-      await referralController.handleFindPersonRequest(req, res, next)
+      await referralController.handleGetFindPersonRequest(req, res, next)
       expect(res.render).toHaveBeenCalledWith('referral/findPerson', {
         content: {
           backLink: { href: '/' },
@@ -75,21 +75,21 @@ describe('ReferralController', () => {
     it('should render the found person page on a successful POST request', async () => {
       req = {
         method: 'POST',
-        body: { personIdentifier: 'person123' },
+        body: { personIdentifier: 'X718253' },
         flash: jest.fn(),
         session: {},
       } as unknown as Request
       const mockPersonData = {
-        personIdentifier: 'person123',
+        personIdentifier: 'X718253',
         firstName: 'John',
         lastName: 'Doe',
         sex: 'Male',
       } as Person
       personService.getPersonByIdentifier.mockResolvedValue(mockPersonData)
 
-      await referralController.handleFindPersonRequest(req, res, next)
+      await referralController.handlePostFindPersonRequest(req, res, next)
 
-      expect(personService.getPersonByIdentifier).toHaveBeenCalledWith('person123', 'user1')
+      expect(personService.getPersonByIdentifier).toHaveBeenCalledWith('X718253', 'user1')
       expect(req.flash).not.toHaveBeenCalled()
       expect(FoundPersonPresenter).toHaveBeenCalledWith(mockPersonData)
       expect(FoundPersonPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
@@ -97,16 +97,17 @@ describe('ReferralController', () => {
     it('should flash not found error redirect when no person is found', async () => {
       req = {
         method: 'POST',
-        body: { personIdentifier: 'person123' },
+        body: { personIdentifier: 'X718253' },
         flash: jest.fn(),
       } as unknown as Request
       const mockErrorData = { responseStatus: 404 }
       personService.getPersonByIdentifier.mockRejectedValue(mockErrorData)
 
-      await referralController.handleFindPersonRequest(req, res, next)
+      await referralController.handlePostFindPersonRequest(req, res, next)
 
-      expect(personService.getPersonByIdentifier).toHaveBeenCalledWith('person123', 'user1')
+      expect(personService.getPersonByIdentifier).toHaveBeenCalledWith('X718253', 'user1')
       expect(req.flash).toHaveBeenCalledWith('personIdentifierError', 'No person with that CRN or prison number found')
+      expect(res.redirect).toHaveBeenCalledWith('/referral/new/find-a-person')
     })
 
     it('should flash blank identifier error redirect when no identifier is entered', async () => {
@@ -116,7 +117,7 @@ describe('ReferralController', () => {
         flash: jest.fn(),
       } as unknown as Request
 
-      await referralController.handleFindPersonRequest(req, res, next)
+      await referralController.handlePostFindPersonRequest(req, res, next)
 
       expect(personService.getPersonByIdentifier).not.toHaveBeenCalled()
       expect(req.flash).toHaveBeenCalledWith('personIdentifierError', 'Enter a CRN or prison number')
@@ -130,7 +131,7 @@ describe('ReferralController', () => {
         flash: jest.fn(),
       } as unknown as Request
 
-      await referralController.handleFindPersonRequest(req, res, next)
+      await referralController.handlePostFindPersonRequest(req, res, next)
 
       expect(personService.getPersonByIdentifier).not.toHaveBeenCalled()
       expect(req.flash).toHaveBeenCalledWith(
@@ -143,15 +144,15 @@ describe('ReferralController', () => {
     it('should flash unexpected error redirect when internal server error occurs', async () => {
       req = {
         method: 'POST',
-        body: { personIdentifier: 'person123' },
+        body: { personIdentifier: 'X718253' },
         flash: jest.fn(),
       } as unknown as Request
       const mockErrorData = { responseStatus: 500 }
       personService.getPersonByIdentifier.mockRejectedValue(mockErrorData)
 
-      await referralController.handleFindPersonRequest(req, res, next)
+      await referralController.handlePostFindPersonRequest(req, res, next)
 
-      expect(personService.getPersonByIdentifier).toHaveBeenCalledWith('person123', 'user1')
+      expect(personService.getPersonByIdentifier).toHaveBeenCalledWith('X718253', 'user1')
       expect(req.flash).toHaveBeenCalledWith('personIdentifierError', 'An unexpected error occurred. Please try again.')
       expect(res.redirect).toHaveBeenCalledWith('/referral/new/find-a-person')
     })

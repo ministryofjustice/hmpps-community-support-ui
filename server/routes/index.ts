@@ -45,8 +45,12 @@ export default function routes({
 
   get('/referral-details/:id', async (req, res) => referralController.showReferralDetailsPage(req, res))
 
-  getOrPost('/referral/new/find-a-person', async (req, res, next) => {
-    await referralController.handleFindPersonRequest(req, res, next)
+  get('/referral/new/find-a-person', async (req, res, next) => {
+    await referralController.handleGetFindPersonRequest(req, res, next)
+  })
+
+  post('/referral/new/find-a-person', async (req, res, next) => {
+    await referralController.handlePostFindPersonRequest(req, res, next)
   })
 
   get('/referral/new/select-a-service', async (req, res, next) => {
