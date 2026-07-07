@@ -26,9 +26,6 @@ export default function routes({
 
   const post = (path: string, handler: RequestHandler): Router => router.post(path, asyncMiddleware(handler))
 
-  const getOrPost = (path: string, handler: RequestHandler) =>
-    router.route(path).get(asyncMiddleware(handler)).post(asyncMiddleware(handler))
-
   const referralController = new ReferralController(referralService, personService)
   const communityServiceProviderController = new CommunityServiceProviderController(communityServiceProviderService)
   const caseListController = new CaseListController(caseListService)
