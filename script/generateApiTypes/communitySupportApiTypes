@@ -3,4 +3,14 @@
 # Generates Types from the Backend API OpenAPI spec
 #
 
-npx openapi-typescript https://community-support-api-dev.hmpps.service.justice.gov.uk/v3/api-docs --output ./server/@types/communitySupportApi/imported/index.d.ts
+API_SPEC_URL='https://community-support-api-dev.hmpps.service.justice.gov.uk/v3/api-docs'
+
+# Only use localhost if the script is run with the --local flag.
+for arg in "$@"; do
+	if [[ "$arg" == '--local' ]]; then
+		API_SPEC_URL='http://localhost:8080/v3/api-docs'
+		break
+	fi
+done
+
+npx openapi-typescript "$API_SPEC_URL" --output ./server/@types/communitySupportApi/imported/index.d.ts
