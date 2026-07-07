@@ -5,6 +5,8 @@ import SummaryList from './components/summaryList'
 export default class CheckReferralInformationPage extends AbstractPage {
   readonly header: Locator
 
+  readonly backLink: Locator
+
   readonly personalDetailsSummary: SummaryList
 
   readonly referralDetailsSummary: SummaryList
@@ -12,6 +14,7 @@ export default class CheckReferralInformationPage extends AbstractPage {
   private constructor(page: Page, personalDetailsSummary: SummaryList, referralDetailsSummary: SummaryList) {
     super(page)
     this.header = page.locator('h1').first()
+    this.backLink = page.getByRole('link', { name: 'Back', exact: true })
     this.personalDetailsSummary = personalDetailsSummary
     this.referralDetailsSummary = referralDetailsSummary
   }

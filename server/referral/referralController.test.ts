@@ -106,7 +106,38 @@ describe('ReferralController', () => {
       await referralController.handleFindPersonRequest(req, res, next)
 
       expect(personService.getPersonByIdentifier).toHaveBeenCalledWith('person123', 'user1')
-      expect(req.flash).toHaveBeenCalledWith('personIdentifierError', "No person with identifier 'person123' found")
+      expect(req.flash).toHaveBeenCalledWith('personIdentifierError', 'No person with that CRN or prison number found')
+    })
+
+    it('should flash blank identifier error redirect when no identifier is entered', async () => {
+      req = {
+        method: 'POST',
+        body: { personIdentifier: '' },
+        flash: jest.fn(),
+      } as unknown as Request
+
+      await referralController.handleFindPersonRequest(req, res, next)
+
+      expect(personService.getPersonByIdentifier).not.toHaveBeenCalled()
+      expect(req.flash).toHaveBeenCalledWith('personIdentifierError', 'Enter a CRN or prison number')
+      expect(res.redirect).toHaveBeenCalledWith('/referral/new/find-a-person')
+    })
+
+    it('should flash invalid format error redirect when identifier format is invalid', async () => {
+      req = {
+        method: 'POST',
+        body: { personIdentifier: '123' },
+        flash: jest.fn(),
+      } as unknown as Request
+
+      await referralController.handleFindPersonRequest(req, res, next)
+
+      expect(personService.getPersonByIdentifier).not.toHaveBeenCalled()
+      expect(req.flash).toHaveBeenCalledWith(
+        'personIdentifierError',
+        'Enter a CRN or prison number in the correct format, like X123456 for a CRN or D0168GH for a prison number',
+      )
+      expect(res.redirect).toHaveBeenCalledWith('/referral/new/find-a-person')
     })
 
     it('should flash unexpected error redirect when internal server error occurs', async () => {

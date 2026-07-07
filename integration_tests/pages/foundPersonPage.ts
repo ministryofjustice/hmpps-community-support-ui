@@ -5,11 +5,14 @@ import SummaryList from './components/summaryList'
 export default class FoundPersonPage extends AbstractPage {
   readonly header: Locator
 
+  readonly continueButton: Locator
+
   readonly personSummary: SummaryList
 
   private constructor(page: Page, personSummary: SummaryList) {
     super(page)
     this.header = page.locator('h1', { hasText: 'Confirm this is the correct person for referral' })
+    this.continueButton = page.getByRole('button', { name: 'Continue' })
     this.personSummary = personSummary
   }
 
