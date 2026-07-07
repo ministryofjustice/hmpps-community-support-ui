@@ -19,6 +19,7 @@ export default class FoundPersonPresenter extends PresenterBase<FoundPersonViewM
 
     const viewModel = {} as FoundPersonViewModel
     viewModel.staticContent = this.buildStaticContent(res)
+    viewModel.backLink = { href: viewModel.staticContent.backLink }
     const personSummaryItems = [
       ViewUtils.summaryListRow('Name', resolveName(foundPerson)),
       ...(identifierRow ? [ViewUtils.summaryListRow(identifierRow.label, identifierRow.value)] : []),

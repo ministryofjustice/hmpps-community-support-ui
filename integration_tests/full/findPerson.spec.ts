@@ -50,6 +50,32 @@ test.describe('FindPerson', () => {
     await expect(foundPersonPage.personSummary.rows[3].value).toHaveText('Male')
   })
 
+  test('should navigate to the find person page when clicking back on found person page', async ({ page }) => {
+    await page.goto('/referral/new/find-a-person')
+    const findPersonPage = await FindPersonPage.verifyOnPage(page)
+    await findPersonPage.identifierInput.fill('X320741')
+    await findPersonPage.submitButton.click()
+
+    const foundPersonPage = await FoundPersonPage.verifyOnPage(page)
+    await foundPersonPage.backLink.click()
+
+    await FindPersonPage.verifyOnPage(page)
+  })
+
+  test('should navigate to the find person page when clicking enter a different CRN or prison number', async ({
+    page,
+  }) => {
+    await page.goto('/referral/new/find-a-person')
+    const findPersonPage = await FindPersonPage.verifyOnPage(page)
+    await findPersonPage.identifierInput.fill('X320741')
+    await findPersonPage.submitButton.click()
+
+    const foundPersonPage = await FoundPersonPage.verifyOnPage(page)
+    await foundPersonPage.enterDifferentIdentifierLink.click()
+
+    await FindPersonPage.verifyOnPage(page)
+  })
+
   test('should display the found details page when a person is found by prison number', async ({ page }) => {
     await page.goto('/referral/new/find-a-person')
     const findPersonPage = await FindPersonPage.verifyOnPage(page)
