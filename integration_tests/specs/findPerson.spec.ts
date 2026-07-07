@@ -3,7 +3,6 @@ import { login, resetStubs } from '../testUtils'
 import FindPersonPage from '../pages/findPersonPage'
 import FoundPersonPage from '../pages/foundPersonPage'
 import HomePage from '../pages/homePage'
-import CommunityServiceProvidersPage from '../pages/communityServiceProvidersPage'
 import communitySupport from '../mockApis/communitySupport'
 import { referralInformationInCommunity } from '../mockData/referralInformationData'
 
