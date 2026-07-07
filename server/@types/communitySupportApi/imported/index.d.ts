@@ -351,7 +351,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get person details for referral */
+        /** Get the details necessary to Confirm a Person's Detail in the Referral flow */
         get: operations["getReferralPersonDetails"];
         put?: never;
         post?: never;
@@ -825,61 +825,54 @@ export interface components {
             govUkUrl?: string | null;
             deliusCRSLocationId?: string | null;
         };
-        Address: {
-            address?: string | null;
-            addressType?: string | null;
-            addressTypeVerified?: boolean | null;
-            /** Format: date */
-            addressStartDate?: string | null;
-            addressNotes?: string | null;
-        };
-        ContactDetails: {
-            phoneNumber?: string | null;
-            mobileNumber?: string | null;
-            emailAddress?: string | null;
-            address: components["schemas"]["Address"];
-        };
-        EqualityMonitoring: {
-            sex?: string | null;
-            ethnicity?: string | null;
-            neurodiverseConditions?: string | null;
-            religionOrBelief?: string | null;
-            transgender?: string | null;
-            sexualOrientation?: string | null;
-            genderIdentity?: string | null;
-            nationalities?: string[] | null;
-            interestToImmigration?: boolean | null;
-            disability?: boolean | null;
-        };
-        PersonDetailsDto: {
+        ConfirmPersonDetailsBffDto: {
             /** Format: uuid */
             id: string;
-            personalDetails: components["schemas"]["PersonalDetails"];
-            equalityMonitoring: components["schemas"]["EqualityMonitoring"];
-            contactDetails: components["schemas"]["ContactDetails"];
+            personalDetails: components["schemas"]["ConfirmPersonalPersonalDetails"];
+            equalityMonitoring: components["schemas"]["ConfirmPersonalDetailsEqualityMonitoring"];
+            contactDetails: components["schemas"]["ConfirmPersonalDetailsContact"];
         };
-        PersonalDetails: {
-            personIdentifier?: string | null;
-            title?: string | null;
+        ConfirmPersonDetailsContactAddress: {
+            updatedAt: string;
+            value: string;
+            type: string;
+            startAt: string;
+            notes: string;
+        };
+        ConfirmPersonalDetailsContact: {
+            phoneNumber: string;
+            mobileNumber: string;
+            emailAddress: string;
+            address: components["schemas"]["ConfirmPersonDetailsContactAddress"];
+        };
+        ConfirmPersonalDetailsCurrentCircumstances: {
+            updatedAt: string;
+            value: string;
+        };
+        ConfirmPersonalDetailsDisabilities: {
+            updatedAt: string;
+            allDisabilities: string;
+        };
+        ConfirmPersonalDetailsEqualityMonitoring: {
+            ethnicity: string;
+            genderIdentity: string;
+            nationalities: string[];
+            religionOrBelief: string;
+            sex: string;
+            sexualOrientation: string;
+            transgender: string;
+        };
+        ConfirmPersonalPersonalDetails: {
             firstName: string;
-            middleNames?: string | null;
+            middleNames: string;
             lastName: string;
+            crn: string;
+            prisonNumbers: string[];
             /** Format: date */
             dateOfBirth: string;
-            prisonNumbers: string[];
-            preferredLanguage?: string | null;
-            currentCircumstances?: components["schemas"]["WithUpdatedString"] | null;
-            disabilities?: components["schemas"]["WithUpdatedListString"] | null;
-        };
-        WithUpdatedListString: {
-            value: string[];
-            /** Format: date */
-            updated: string;
-        };
-        WithUpdatedString: {
-            value: string;
-            /** Format: date */
-            updated: string;
+            preferredLanguage: string;
+            currentCircumstances: components["schemas"]["ConfirmPersonalDetailsCurrentCircumstances"];
+            disabilities: components["schemas"]["ConfirmPersonalDetailsDisabilities"];
         };
         Pageable: {
             /** Format: int32 */
@@ -1632,7 +1625,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PersonDetailsDto"];
+                    "application/json": components["schemas"]["ConfirmPersonDetailsBffDto"];
                 };
             };
         };
