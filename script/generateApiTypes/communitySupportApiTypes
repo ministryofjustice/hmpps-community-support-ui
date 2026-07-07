@@ -1,6 +1,7 @@
 #!/usr/bin/env bash -e
 
 # Generates Types from the Backend API OpenAPI spec
+# Use the --local flag to generate types from a local instance of the API, otherwise it will use the (deployed) dev environment.
 #
 
 API_SPEC_URL='https://community-support-api-dev.hmpps.service.justice.gov.uk/v3/api-docs'
