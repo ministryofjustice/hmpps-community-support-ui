@@ -123,23 +123,6 @@ export interface paths {
     patch: operations['updateReferral']
     trace?: never
   }
-  '/find-person-details/{personIdentifier}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get person details for referral */
-    get: operations['getReferralPersonDetails']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
   '/bff/referral/{caseReference}/ics_appointment_feedback_details': {
     parameters: {
       query?: never
@@ -353,6 +336,23 @@ export interface paths {
     }
     /** Get a single ICS feedback record by its ID */
     get: operations['getIcsFeedback']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/confirm-person-details/{personIdentifier}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get the details necessary to Confirm a Person's Detail in the Referral flow */
+    get: operations['getReferralPersonDetails']
     put?: never
     post?: never
     delete?: never
@@ -711,62 +711,6 @@ export interface components {
       sessionCommunications?: string[] | null
       personFirstName: string
     }
-    Address: {
-      address?: string | null
-      addressType?: string | null
-      addressTypeVerified?: boolean | null
-      /** Format: date */
-      addressStartDate?: string | null
-      addressNotes?: string | null
-    }
-    ContactDetails: {
-      phoneNumber?: string | null
-      mobileNumber?: string | null
-      emailAddress?: string | null
-      address: components['schemas']['Address']
-    }
-    EqualityMonitoring: {
-      sex?: string | null
-      ethnicity?: string | null
-      neurodiverseConditions?: string | null
-      religionOrBelief?: string | null
-      transgender?: string | null
-      sexualOrientation?: string | null
-      genderIdentity?: string | null
-      nationalities?: string[] | null
-      interestToImmigration?: boolean | null
-      disability?: boolean | null
-    }
-    PersonDetailsDto: {
-      /** Format: uuid */
-      id: string
-      personalDetails: components['schemas']['PersonalDetails']
-      equalityMonitoring: components['schemas']['EqualityMonitoring']
-      contactDetails: components['schemas']['ContactDetails']
-    }
-    PersonalDetails: {
-      personIdentifier?: string | null
-      title?: string | null
-      firstName: string
-      middleNames?: string | null
-      lastName: string
-      /** Format: date */
-      dateOfBirth: string
-      prisonNumbers: string[]
-      preferredLanguage?: string | null
-      currentCircumstances?: components['schemas']['WithUpdatedString'] | null
-      disabilities?: components['schemas']['WithUpdatedListString'] | null
-    }
-    WithUpdatedListString: {
-      value: string[]
-      /** Format: date */
-      updated: string
-    }
-    WithUpdatedString: {
-      value: string
-      /** Format: date */
-      updated: string
-    }
     AppointmentDetailsDto: {
       /** @enum {string|null} */
       method?: 'PHONE_CALL' | 'VIDEO_CALL' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION' | null
@@ -880,6 +824,55 @@ export interface components {
       probationRegionId: string
       govUkUrl?: string | null
       deliusCRSLocationId?: string | null
+    }
+    ConfirmPersonDetailsBffDto: {
+      /** Format: uuid */
+      id: string
+      personalDetails: components['schemas']['ConfirmPersonalPersonalDetails']
+      equalityMonitoring: components['schemas']['ConfirmPersonalDetailsEqualityMonitoring']
+      contactDetails: components['schemas']['ConfirmPersonalDetailsContact']
+    }
+    ConfirmPersonDetailsContactAddress: {
+      updatedAt: string
+      value: string
+      type: string
+      startAt: string
+      notes: string
+    }
+    ConfirmPersonalDetailsContact: {
+      phoneNumber: string
+      mobileNumber: string
+      emailAddress: string
+      address: components['schemas']['ConfirmPersonDetailsContactAddress']
+    }
+    ConfirmPersonalDetailsCurrentCircumstances: {
+      updatedAt: string
+      value: string
+    }
+    ConfirmPersonalDetailsDisabilities: {
+      updatedAt: string
+      allDisabilities: string
+    }
+    ConfirmPersonalDetailsEqualityMonitoring: {
+      ethnicity: string
+      genderIdentity: string
+      nationalities: string[]
+      religionOrBelief: string
+      sex: string
+      sexualOrientation: string
+      transgender: string
+    }
+    ConfirmPersonalPersonalDetails: {
+      firstName: string
+      middleNames: string
+      lastName: string
+      crn: string
+      prisonNumbers: string[]
+      /** Format: date */
+      dateOfBirth: string
+      preferredLanguage: string
+      currentCircumstances: components['schemas']['ConfirmPersonalDetailsCurrentCircumstances']
+      disabilities: components['schemas']['ConfirmPersonalDetailsDisabilities']
     }
     Pageable: {
       /** Format: int32 */
@@ -1191,37 +1184,6 @@ export interface operations {
         }
         content: {
           'application/json': unknown
-        }
-      }
-    }
-  }
-  getReferralPersonDetails: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        personIdentifier: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Person details found */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-      /** @description Person details not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['PersonDetailsDto']
         }
       }
     }
@@ -1633,6 +1595,37 @@ export interface operations {
         }
         content: {
           'application/json': unknown
+        }
+      }
+    }
+  }
+  getReferralPersonDetails: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        personIdentifier: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Person details found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+      /** @description Person details not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ConfirmPersonDetailsBffDto']
         }
       }
     }
