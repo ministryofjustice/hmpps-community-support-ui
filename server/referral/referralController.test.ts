@@ -132,7 +132,6 @@ describe('ReferralController', () => {
       } as unknown as Request
 
       await referralController.handlePostFindPersonRequest(req, res, next)
-
       expect(personService.getPersonByIdentifier).not.toHaveBeenCalled()
       expect(req.flash).toHaveBeenCalledWith(
         'personIdentifierError',
