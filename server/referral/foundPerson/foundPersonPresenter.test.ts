@@ -48,6 +48,11 @@ describe('FoundPersonPresenter', () => {
         value: { text: '20 Feb 1975 (51 years old)' },
       })
       expect(renderData.content.personSummary.rows[3]).toMatchObject({ key: { text: 'Sex' }, value: { text: 'Male' } })
+      expect(renderData.content.backLink).toEqual({ href: '/referral/new/find-a-person' })
+      expect(renderData.content.staticContent.enterDifferentIdentifierLinkText).toBe(
+        'Enter a different CRN or prison number',
+      )
+      expect(renderData.content.staticContent.enterDifferentIdentifierLinkHref).toBe('/referral/new/find-a-person')
 
       expect(res.render).toHaveBeenCalledWith(
         'referral/foundPerson',

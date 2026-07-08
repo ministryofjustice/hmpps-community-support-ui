@@ -12,6 +12,7 @@ import TaskListPresenter from './taskList/TaskListPresenter'
 import { ErrorMiddlewareErrors } from '../@types/express'
 import getLatestAppointments from './progress/getLatestAppointments'
 import { getTaskListState, saveTaskListState } from './taskList/TaskListHelper'
+import ConfirmPersonalDetailsPresenter from './confirmPersonalDetails/ConfirmPersonalDetailsPresenter'
 
 class ReferralController {
   constructor(
@@ -258,8 +259,8 @@ class ReferralController {
       try {
         const createReferralRequest = {
           personDetails: referralCreationDetails.personDetails,
-          communityServiceProviderId: req.params.id as string,
-          crn: referralCreationDetails.personDetails.personIdentifier,
+          communityServiceProviderId: req.params.id as string, // referralCreationDetails.communityServiceProviderId,
+          crn: personIdentifier,
           urgency: false,
         } as CreateReferralRequest
 
@@ -281,6 +282,26 @@ class ReferralController {
     )
 
     return presenter.renderPage(res)
+  }
+
+  async showConfirmPersionalDetails(req: Request, res: Response) {
+    const { username } = res.locals.user
+    const referralCreationDetails = req.session ? req.session.referralCreationDetails : null
+
+    if (!referralCreationDetails || !referralCreationDetails.personDetails) {
+      return res.redirect('/referral/new/find-a-person')
+    }
+
+    const { personIdentifier } = referralCreationDetails.personDetails
+    const data = await this.referralService.getPersionalDetails(personIdentifier, username)
+    const presenter = new ConfirmPersonalDetailsPresenter(data)
+    return presenter.renderPage(res)
+  }
+
+  async confirmPersionalDetails(req: Request, res: Response): Promise<void> {
+    const id = req.params.id as string
+    // do stuff here to save confirmation
+    res.redirect(`/referral/task-list/${id}`)
   }
 }
 

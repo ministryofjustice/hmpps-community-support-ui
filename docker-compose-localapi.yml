@@ -1,0 +1,162 @@
+# Local API mode: run hmpps-community-support-api on the host (e.g. IntelliJ),
+# and run its dependencies in Docker.
+#
+# application-local.yml expects:
+# - jdbc:postgresql://localhost:5432/postgres
+# - http://localhost:9091 (WireMock)
+# - http://hmpps-auth:8090/auth
+#
+# Compose can expose ports to localhost, but it cannot create host OS DNS aliases.
+# To keep hmpps-auth as the source-of-truth hostname in application-local.yml,
+# add this host alias on your Mac:
+#   127.0.0.1 hmpps-auth
+services:
+  redis:
+    image: 'cimg/redis:8.8'
+    networks:
+      - hmpps
+    container_name: redis-community-support-ui-local
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - '6379:6379'
+
+  hmpps-auth:
+    image: ghcr.io/ministryofjustice/hmpps-auth:latest
+    networks:
+      - hmpps
+    container_name: hmpps-auth-community-support-ui-local
+    depends_on:
+        - auth-db
+    ports:
+      - '8090:8090'
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:8090/auth/health']
+    environment:
+      - SERVER_PORT=8090
+      - SPRING_PROFILES_ACTIVE=dev,delius,local-postgres
+      - DELIUS_ENDPOINT_URL=http://wiremock:8080/delius
+      - APPLICATION_AUTHENTICATION_UI_ALLOWLIST=0.0.0.0/0
+      - DELIUS_ENABLED=true
+      - MANAGE_USERS_API_ENABLED=true
+      - MANAGE_USERS_API_ENDPOINT_URL=http://hmpps-manage-users:8096
+      # gitleaks:allow (jdbc postgres URL; not a secret)
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://auth-db:5432/auth-db
+
+  hmpps-manage-users:
+    image: ghcr.io/ministryofjustice/hmpps-manage-users-api:latest
+    networks:
+      - hmpps
+    container_name: hmpps-manage-users-community-support-ui-local
+    depends_on:
+      - hmpps-auth
+      - nomis-user-roles-api
+      - hmpps-external-users-api
+    ports:
+      - "8096:8096"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8096/health" ]
+    environment:
+      - SERVER_PORT=8096
+      - HMPPS_AUTH_ENDPOINT_URL=http://hmpps-auth:8090/auth
+      - API_BASE_URL_OAUTH=http://hmpps-auth:8090/auth
+      - SPRING_PROFILES_ACTIVE=dev
+      - EXTERNAL_USERS_ENDPOINT_URL=http://hmpps-external-users-api:8098
+      - NOMIS_ENDPOINT_URL=http://nomis-user-roles-api:8097
+      - DELIUS_ENDPOINT_URL=http://wiremock:8080/delius
+      - AUTHORIZATION_SERVER_TOKEN_ENDPOINT_URL=http://hmpps-auth:8090/auth/oauth/token
+
+  nomis-user-roles-api:
+    image: ghcr.io/ministryofjustice/nomis-user-roles-api:latest
+    networks:
+      - hmpps
+    container_name: nomis-user-roles-api-community-support-ui-local
+    depends_on:
+      - hmpps-auth
+    ports:
+      - "8097:8097"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8097/health" ]
+    environment:
+      - SERVER_PORT=8097
+      - SPRING_PROFILES_ACTIVE=dev
+      - API_BASE_URL_OAUTH=http://hmpps-auth:8090/auth
+
+  hmpps-external-users-api:
+      image: ghcr.io/ministryofjustice/hmpps-external-users-api:latest
+      networks:
+        - hmpps
+      container_name: hmpps-external-users-api-community-support-ui-local
+      depends_on:
+        - auth-db
+        - hmpps-auth
+      ports:
+        - "8098:8098"
+      healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:8098/health/ping"]
+      environment:
+        - SERVER_PORT=8098
+        - SPRING_PROFILES_ACTIVE=dev
+        - API_BASE_URL_OAUTH=http://hmpps-auth:8090/auth
+        - SPRING_R2DBC_URL=r2dbc:postgresql://auth-db:5432/auth-db?sslmode=prefer
+        - SPRING_FLYWAY_URL=jdbc:postgresql://auth-db:5432/auth-db?sslmode=prefer
+        - SPRING_R2DBC_USERNAME=admin
+        - SPRING_R2DBC_PASSWORD=admin_password
+        - HMPPS_SQS_PROVIDER=localstack
+        - HMPPS_SQS_LOCALSTACKURL=http://localstack:4566
+
+  auth-db:
+    container_name: auth-db-community-support-ui-local
+    environment:
+      - POSTGRES_PASSWORD=admin_password
+      - POSTGRES_USER=admin
+      - POSTGRES_DB=auth-db
+    healthcheck:
+      test: ['CMD', 'pg_isready', '--username=admin', '--dbname=auth-db']
+    image: postgres:18
+    networks:
+      - hmpps
+    ports:
+      - '5434:5432'
+    restart: always
+
+  postgresql:
+    image: postgres:18.4
+    container_name: postgres-community-support-ui-local
+    networks:
+      - hmpps
+    restart: always
+    ports:
+      - '5432:5432'
+    healthcheck:
+      test: [ "CMD", "pg_isready", "--username=admin", "--dbname=postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin_password
+
+  wiremock:
+    container_name: wiremock-community-support-ui-local
+    image: wiremock/wiremock
+    networks:
+      - hmpps
+    restart: always
+    ports:
+      - "9091:8080"
+    volumes:
+      - ./wiremock_mappings:/home/wiremock/mappings
+    command: '--verbose'
+  localstack:
+      image: localstack/localstack:4
+      networks:
+        - hmpps
+      container_name: localstack
+      ports:
+        - "4566:4566"
+      environment:
+        - SERVICES=sqs
+
+networks:
+  hmpps:
