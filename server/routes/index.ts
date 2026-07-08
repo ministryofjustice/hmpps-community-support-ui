@@ -198,5 +198,7 @@ export default function routes({
     referralController.confirmPersonalDetails(req, res),
   )
 
+  get('/referral/task-list/:id', (req, res) => referralController.showTaskList(req, res))
+
   return router
 }
