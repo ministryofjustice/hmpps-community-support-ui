@@ -185,7 +185,7 @@ export default function routes({
   post('/referral/:caseRefId/ics-change-details', (req, res) => appointmentController.rescheduleIcs(req, res))
 
   get('/referral/task-list/confirm-personal-details', (req, res) =>
-    referralController.showConfirmPersionalDetails(req, res),
+    referralController.showConfirmPersonalDetails(req, res),
   )
 
   get('/referral/task-list/additional-support-needs', (req, res) =>
@@ -195,7 +195,7 @@ export default function routes({
   get('/referral/task-list/:id', (req, res) => referralController.showTaskList(req, res))
 
   post('/referral/task-list/confirm-personal-details', (req, res) =>
-    referralController.confirmPersionalDetails(req, res),
+    referralController.confirmPersonalDetails(req, res),
   )
 
   return router

@@ -1,4 +1,5 @@
 import { Request } from 'express'
+import type { Session } from 'express-session'
 import { randomUUID } from 'crypto'
 import {
   newTaskListState,
@@ -20,8 +21,9 @@ describe('TaskList Helper Functions', () => {
 
   beforeEach(() => {
     req = {
-      session: {},
-    } as Partial<Request>
+      params: { referralId: mockReferralId },
+      session: {} as Partial<Session>,
+    } as unknown as Partial<Request>
   })
 
   describe('initializeTaskList', () => {
@@ -53,7 +55,6 @@ describe('TaskList Helper Functions', () => {
       const state = newTaskListState(req as Request, personIdentifier)
 
       expect(req.session!.taskList).toBeDefined()
-      expect(req.session!.taskList).toBeDefined()
       expect(state.sections.personalDetails.status).toBe('incomplete')
     })
   })
@@ -73,15 +74,14 @@ describe('TaskList Helper Functions', () => {
       }
 
       req.session!.taskList = existingState
-      const state = getTaskListState(req as Request, 'anything')
+      const state = getTaskListState(req as Request, mockReferralId)
       expect(state).toEqual(existingState)
     })
 
-    it.skip('should not initialise new state if not existing in session', () => {
-      // needed to do this for sticky plaster fix
-      const state = getTaskListState(req as Request, '')
+    it('should initialise new state if not existing in session', () => {
+      const state = getTaskListState(req as Request, mockReferralId)
 
-      expect(state).toBeUndefined()
+      expect(state).toBeDefined()
     })
   })
 

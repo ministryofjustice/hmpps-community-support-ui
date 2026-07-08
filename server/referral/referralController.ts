@@ -16,6 +16,7 @@ import {
   getTaskListState,
   saveTaskListState,
   updateSectionStatus,
+  removeTaskListState,
 } from './taskList/TaskListHelper'
 import ConfirmPersonalDetailsPresenter from './confirmPersonalDetails/ConfirmPersonalDetailsPresenter'
 import AdditionalSuportNeedsPresenter from './additionalSupportNeeds/AdditionalSupportNeedsPresenter'
@@ -108,9 +109,21 @@ export default class ReferralController {
     const { username } = res.locals.user
     const { referralId } = req.params as { referralId: string }
 
-    const submitReferralResponse = await this.referralService.submitReferralById(referralId, username)
+    try {
+      const submitReferralResponse = await this.referralService.submitReferralById(referralId, username)
 
-    return res.redirect(`/referral/${submitReferralResponse.referralId}/confirmation`)
+      removeTaskListState(req)
+
+      return res.redirect(`/referral/${submitReferralResponse.referralId}/confirmation`)
+    } catch (error) {
+      if (error.responseStatus === 409) {
+        logger.info('Referral already submitted')
+        return res.redirect(`/referral/${referralId}/confirmation`)
+      }
+      // no special error handling at this moment
+      logger.error('Error in submitting a referral:', error)
+      throw error
+    }
   }
 
   async showAssignCaseWorkersPage(req: Request, res: Response, next: NextFunction) {
@@ -289,7 +302,7 @@ export default class ReferralController {
     }
   }
 
-  async showConfirmPersionalDetails(req: Request, res: Response) {
+  async showConfirmPersonalDetails(req: Request, res: Response) {
     const { username } = res.locals.user
     const draftReferralKey = getCurrentDraftReferralKey(req)
 
@@ -297,12 +310,12 @@ export default class ReferralController {
       return res.redirect('/referral/new/find-a-person')
     }
 
-    const data = await this.referralService.getPersionalDetails(draftReferralKey, username)
+    const data = await this.referralService.getPersonalDetails(draftReferralKey, username)
     const presenter = new ConfirmPersonalDetailsPresenter(data)
     return presenter.renderPage(res)
   }
 
-  async confirmPersionalDetails(req: Request, res: Response): Promise<void> {
+  async confirmPersonalDetails(req: Request, res: Response): Promise<void> {
     const draftReferralKey = getCurrentDraftReferralKey(req)
     if (!draftReferralKey) {
       return res.redirect('/referral/new/find-a-person')
