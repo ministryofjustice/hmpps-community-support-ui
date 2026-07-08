@@ -269,7 +269,11 @@ test.describe('Confirm ICS Page', () => {
     await confirmIcsPage.submitButton.click()
     await test.step('should navigate to the progress screen', async () => {
       await expect(page).toHaveURL(REFERRAL_PROGRESS_URL)
-      await ReferralProgressPage.verifySuccessBanner(page, 'ICS scheduled', 'The ICS has been scheduled for')
+      await ReferralProgressPage.verifySuccessBanner(
+        page,
+        'ICS scheduled',
+        `The ICS has been scheduled for ${toDisplayDate(futureDate)} at 2:30PM`,
+      )
     })
     await test.step('should navigate to the progress screen again and the banner gone', async () => {
       await page.goto(ReferralProgressPage.url(CASE_REF_ID))

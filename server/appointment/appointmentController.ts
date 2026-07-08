@@ -562,7 +562,7 @@ class AppointmentController {
   }
 
   private setIcsSuccessfullyScheduledBanner(req: Request, response: AppointmentIcsResponse, id: string): void {
-    const date = format(response.appointmentDate, 'dd MMM yyyy')
+    const date = format(response.appointmentDate, 'dd MMMM yyyy')
     const time = timeFormat(response.appointmentTime)
 
     this.setReferralProgressBanner(req, id, 'ICS scheduled', `The ICS has been scheduled for ${date} at ${time}`)
