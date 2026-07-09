@@ -1,4 +1,5 @@
 import { Response } from 'express'
+import { ConfirmPersonDetailsBffDto } from '@community-support-api'
 import ConfirmPersonalDetailsPresenter from './ConfirmPersonalDetailsPresenter'
 
 jest.useFakeTimers().setSystemTime(new Date('2026-07-03'))
@@ -7,22 +8,23 @@ const singleLineHtml = (str: string) => str.replaceAll(/>\s+/g, '>').replaceAll(
 
 describe('ConfirmPersonalDetailsPresenter', () => {
   test('builds correct view model', () => {
-    const data = {
+    const data: ConfirmPersonDetailsBffDto = {
+      id: 'do not care, never used',
       personalDetails: {
         firstName: 'Charlie',
         middleNames: 'Robert',
         lastName: 'Smith',
         crn: 'A1234CD',
-        prisonNumber: ['123456', '2468'],
+        prisonNumbers: ['123456', '2468'],
         dateOfBirth: '1945-02-04',
         preferredLanguage: 'English',
         currentCircumstances: {
-          updated: '2026-02-04',
+          updatedAt: '2026-02-04',
           value: 'current circumstances',
         },
         disabilities: {
-          updated: '2026-02-03',
-          value: ['Dyslexia', 'Something else'],
+          updatedAt: '2026-02-03',
+          allDisabilities: 'Dyslexia, Something else',
         },
       },
       equalityMonitoring: {
@@ -39,10 +41,10 @@ describe('ConfirmPersonalDetailsPresenter', () => {
         mobileNumber: '',
         emailAddress: '',
         address: {
-          updated: '2026-02-02',
+          updatedAt: '2026-02-02',
           value: '1 Main Street, ATown, A11 11A',
           type: 'Family',
-          start: '2026-01-01',
+          startAt: '2026-01-01',
           notes: 'stuff and things',
         },
       },
