@@ -6,7 +6,7 @@ import {
   saveTaskListState,
   removeTaskListState,
   updateSectionStatus,
-  initializeTaskList,
+  initialiseTaskList,
   isMandatoryTasksCompleted,
   isAllTasksCompleted,
 } from './TaskListHelper'
@@ -26,9 +26,10 @@ describe('TaskList Helper Functions', () => {
 
   describe('initializeTaskList', () => {
     it('should return a new TaskListState with default statuses', () => {
-      const state = initializeTaskList(req as Request)
+      const draftReferralKey = 'my-draft-referral-key'
+      const state = initialiseTaskList(draftReferralKey)
 
-      expect(state.referralId).toBeUndefined()
+      expect(state.referralId).toBe(draftReferralKey)
       expect(state.sections.personalDetails.status).toBe('incomplete')
       expect(state.sections.riskInformation.status).toBe('incomplete')
       expect(state.sections.personNeeds.status).toBe('incomplete')
@@ -39,7 +40,7 @@ describe('TaskList Helper Functions', () => {
 
     it('should accept optional referralId', () => {
       const referralId = mockReferralId
-      const state = initializeTaskList(req as Request, referralId)
+      const state = initialiseTaskList(referralId)
 
       expect(state.referralId).toBe(referralId)
     })
@@ -52,14 +53,13 @@ describe('TaskList Helper Functions', () => {
       const state = newTaskListState(req as Request, personIdentifier)
 
       expect(req.session!.taskList).toBeDefined()
-      expect(req.session!.taskList![personIdentifier]).toBeDefined()
+      expect(req.session!.taskList).toBeDefined()
       expect(state.sections.personalDetails.status).toBe('incomplete')
     })
   })
 
   describe('getTaskListState', () => {
     it('should return existing state from session if available', () => {
-      const personIdentifier = mockPersonIdentifier
       const existingState: TaskListState = {
         referralId: mockReferralId,
         sections: {
@@ -72,24 +72,20 @@ describe('TaskList Helper Functions', () => {
         },
       }
 
-      req.session!.taskList = { [personIdentifier]: existingState }
-
-      const state = getTaskListState(req as Request, personIdentifier)
-
+      req.session!.taskList = existingState
+      const state = getTaskListState(req as Request)
       expect(state).toEqual(existingState)
     })
 
-    it('should initialize new state for personIdentifier not exists in session', () => {
-      const personIdentifier = 'N123456'
-      const state = getTaskListState(req as Request, personIdentifier)
+    it('should not initialise new state if not existing in session', () => {
+      const state = getTaskListState(req as Request)
 
-      expect(state.sections.personalDetails.status).toBe('incomplete')
+      expect(state).toBeUndefined()
     })
   })
 
   describe('saveTaskListState', () => {
     it('should save state to session', () => {
-      const personIdentifier = mockPersonIdentifier
       const state: TaskListState = {
         referralId: mockReferralId,
         sections: {
@@ -102,14 +98,13 @@ describe('TaskList Helper Functions', () => {
         },
       }
 
-      saveTaskListState(req as Request, personIdentifier, state)
+      saveTaskListState(req as Request, state)
 
       expect(req.session!.taskList).toBeDefined()
-      expect(req.session!.taskList![personIdentifier]).toEqual(state)
+      expect(req.session!.taskList).toEqual(state)
     })
 
     it('should save state to session and update checkAnswer state to complete when all other section states are completed', () => {
-      const personIdentifier = mockPersonIdentifier
       const state: TaskListState = {
         referralId: mockReferralId,
         sections: {
@@ -122,15 +117,14 @@ describe('TaskList Helper Functions', () => {
         },
       }
 
-      saveTaskListState(req as Request, personIdentifier, state)
+      saveTaskListState(req as Request, state)
       expect(req.session!.taskList).toBeDefined()
-      expect(req.session!.taskList![personIdentifier].sections.checkAnswers.status).toEqual('completed')
+      expect(req.session!.taskList?.sections.checkAnswers.status).toEqual('completed')
     })
   })
 
   describe('removeTaskListState', () => {
     it('should remove state from session', () => {
-      const personIdentifier = mockPersonIdentifier
       const mockTaskListState: TaskListState = {
         referralId: mockReferralId,
         sections: {
@@ -142,13 +136,11 @@ describe('TaskList Helper Functions', () => {
           checkAnswers: { status: 'cannot-start-yet' },
         },
       }
-      req.session!.taskList = {
-        [personIdentifier]: mockTaskListState,
-      }
+      req.session!.taskList = mockTaskListState
 
-      removeTaskListState(req as Request, personIdentifier)
+      removeTaskListState(req as Request)
 
-      expect(req.session!.taskList![personIdentifier]).toBeUndefined()
+      expect(req.session!.taskList).toBeUndefined()
     })
   })
 
