@@ -35,7 +35,6 @@ export default defineConfig({
   use: {
     actionTimeout: 30 /* seconds */ * 1000,
     timezoneId: 'Europe/London',
-    launchOptions: { slowMo: 150 },
     screenshot: 'only-on-failure',
     trace: process.env.CI ? 'off' : 'on',
     ...devices['Desktop Chrome'],
