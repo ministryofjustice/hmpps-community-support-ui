@@ -146,14 +146,18 @@ export default class ReferralDetailsPresenter extends PresenterBase<ReferralDeta
           cardContent.referralDateLabel,
           nonEmptyStringOrDefault(dateFormat(new Date(referralDate)), defaultFieldValue),
         ),
-        govFrontendSummaryListRow(cardContent.assignedToLabel, assignedToValue, [
+        govFrontendSummaryListRow(
+          cardContent.assignedToLabel,
+          assignedToValue,
           this.authSource === 'delius'
             ? null
-            : {
-                text: assignedToListIsPopulated ? cardContent.linkChange : cardContent.link,
-                href: this.assignReferalHref,
-              },
-        ]),
+            : [
+                {
+                  text: assignedToListIsPopulated ? cardContent.linkChange : cardContent.link,
+                  href: this.assignReferalHref,
+                },
+              ],
+        ),
       ],
     }
   }

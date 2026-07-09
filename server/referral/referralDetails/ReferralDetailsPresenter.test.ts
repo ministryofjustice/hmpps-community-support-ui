@@ -7,7 +7,7 @@ describe('ReferralDetailsPresenter', () => {
   let dto: ReferralDetailsResponseDto | null = null
   let expected: ReferralDetailsViewModel | null = null
   const today = new Date('2026-02-09T11:23:00.780Z')
-  const authSource = 'auth'
+  const authSource = 'nomis'
   jest.useFakeTimers().setSystemTime(today)
   beforeEach(() => {
     dto = {
@@ -327,7 +327,7 @@ describe('ReferralDetailsPresenter', () => {
     expected.contact.rows[1].value.text = 'Not available'
     expected.contact.rows[2].value.text = 'Not available'
     expected.contact.rows[3].value.text = 'Not available'
-    expected.referral.rows[1].actions.items = [null]
+    expected.referral.rows[1].actions = null
     expect(pageContent).toStrictEqual(expected)
   })
 })

@@ -223,9 +223,8 @@ test.describe('Referral Details Page as a Delius User', () => {
   test('Assign caseworker navigation should not be visible', async ({ page }) => {
     const referralDetailsPage = await ReferralDetailsPage.verifyOnPage(page)
     const row = referralDetailsPage.referralDetailsSummary.rows[1]
-    const action = row.actions[0]
     await test.step('check link has correct text', () => {
-      expect(action).toBeEmpty()
+      expect(row.actions).toBeNull()
     })
   })
 })
