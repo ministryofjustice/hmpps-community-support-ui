@@ -6,7 +6,6 @@ import { loginDeliusUser, resetStubs } from '../testUtils'
 import communitySupport from '../mockApis/communitySupport'
 import ReferralDetailsPage from '../pages/referralDetailsPage'
 import referralDetailsPageData from '../mockData/referralDetailsPageData'
-import AssignPage from '../pages/AssignPage'
 import CaseListPage from '../pages/caseListPage'
 
 test.describe('Referral Details Page as a Delius User', () => {
