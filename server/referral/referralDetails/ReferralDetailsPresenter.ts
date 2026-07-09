@@ -39,6 +39,7 @@ export default class ReferralDetailsPresenter extends PresenterBase<ReferralDeta
   constructor(
     private readonly referralDetails: ReferralDetailsResponseDto,
     private readonly assignResult: ReferralUserAssignmentsResponse | null,
+    private readonly authSource: string,
   ) {
     super()
     this.assignReferalHref = `/referral/${referralDetails.id}/assign`
@@ -146,10 +147,12 @@ export default class ReferralDetailsPresenter extends PresenterBase<ReferralDeta
           nonEmptyStringOrDefault(dateFormat(new Date(referralDate)), defaultFieldValue),
         ),
         govFrontendSummaryListRow(cardContent.assignedToLabel, assignedToValue, [
-          {
-            text: assignedToListIsPopulated ? cardContent.linkChange : cardContent.link,
-            href: this.assignReferalHref,
-          },
+          this.authSource === 'delius'
+            ? null
+            : {
+                text: assignedToListIsPopulated ? cardContent.linkChange : cardContent.link,
+                href: this.assignReferalHref,
+              },
         ]),
       ],
     }

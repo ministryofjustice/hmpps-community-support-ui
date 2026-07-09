@@ -220,17 +220,13 @@ test.describe('Referral Details Page as a Delius User', () => {
     Notes (from nDelius)
     */
   })
-  // IPB-1940:AC8
-  test('Assign caseworker navigation', async ({ page }) => {
+
+  test('Assign caseworker navigation should not be visible', async ({ page }) => {
     const referralDetailsPage = await ReferralDetailsPage.verifyOnPage(page)
     const row = referralDetailsPage.referralDetailsSummary.rows[1]
     const action = row.actions[0]
     await test.step('check link has correct text', () => {
-      expect(action).toContainText('Assign to caseworker')
-    })
-    await test.step('check navigation on click', async () => {
-      await action.click()
-      await expect(page).toHaveURL(AssignPage.url(id))
+      expect(action).toBeEmpty()
     })
   })
 })
