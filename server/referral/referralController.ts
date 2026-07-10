@@ -31,10 +31,10 @@ class ReferralController {
     const referralId = req.params.id as string
     const results = req.session.assignmentResults ? { ...req.session.assignmentResults } : null
     delete req.session.assignmentResults
-    const { username } = res.locals.user
+    const { username, authSource } = res.locals.user
     return this.referralService
       .getCaseDetailsByCaseIdentifier(referralId, username)
-      .then(dto => new ReferralDetailsPresenter(dto, results))
+      .then(dto => new ReferralDetailsPresenter(dto, results, authSource))
       .then(presenter => presenter.renderPage(res))
   }
 
