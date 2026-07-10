@@ -1,7 +1,7 @@
 import { test, expect, Page } from '@playwright/test'
 import { randomUUID } from 'crypto'
 import { ReferralProgress } from '@community-support-api'
-import { daysAfter, login, resetStubs } from '../testUtils'
+import { daysAfter, login, loginDeliusUser, resetStubs } from '../testUtils'
 import communitySupport from '../mockApis/communitySupport'
 import buildReferralProgress from '../../server/testutils/buildReferralProgress'
 import ReferralProgressPage from '../pages/referralProgressPage'
@@ -364,5 +364,120 @@ test.describe('Referral Progress Page', () => {
       await expect(referralProgressPage.icsTable.locator).toBeVisible()
       await expect(referralProgressPage.historyTable.locator).not.toBeVisible()
     })
+  })
+})
+
+test.describe('Referral Progress Page as a Delius user', () => {
+  const caseReference = 'AB1234CD'
+  const now = new Date()
+
+  const noAppointments: ReferralProgress = buildReferralProgress([])
+
+  const scheduledFuture: ReferralProgress = buildReferralProgress([
+    {
+      appointmentIcsId: randomUUID(),
+      event: { status: 'SCHEDULED', dateTime: daysAfter(now, 1) },
+    },
+  ])
+
+  const awaitingFeedback: ReferralProgress = buildReferralProgress([
+    {
+      appointmentIcsId: randomUUID(),
+      event: { status: 'SCHEDULED', dateTime: daysAfter(now, -1) },
+    },
+  ])
+
+  const completed: ReferralProgress = buildReferralProgress([
+    {
+      appointmentIcsId: randomUUID(),
+      event: { status: 'COMPLETED', dateTime: daysAfter(now, 1) },
+    },
+  ])
+
+  const didNotHappen: ReferralProgress = buildReferralProgress([
+    {
+      appointmentIcsId: randomUUID(),
+      event: { status: 'DID_NOT_HAPPEN', dateTime: daysAfter(now, 1) },
+    },
+  ])
+
+  const didNotAttend: ReferralProgress = buildReferralProgress([
+    {
+      appointmentIcsId: randomUUID(),
+      event: { status: 'DID_NOT_ATTEND', dateTime: daysAfter(now, 1, 13) },
+    },
+  ])
+
+  test.beforeEach(async ({ page }) => {
+    await resetStubs()
+    await page.goto('/')
+    await loginDeliusUser(page)
+  })
+
+  test('AC1: does not show schedule session when ICS is not scheduled', async ({ page }) => {
+    await communitySupport.stubGetReferralProgress(noAppointments, caseReference)
+    await page.goto(ReferralProgressPage.url(caseReference))
+
+    const referralProgressPage = await ReferralProgressPage.verifyOnPage(page)
+
+    expect(referralProgressPage.icsTable.header[0].elements).toHaveLength(1)
+    await expect(referralProgressPage.icsTable.body[0].elements[0]).toHaveText('Not scheduled')
+    expect(referralProgressPage.icsTable.body[0].elements).toHaveLength(1)
+    await expect(referralProgressPage.scheduleSessionLink).not.toBeVisible()
+  })
+
+  test('AC2: does not show view or change details when session is scheduled in future', async ({ page }) => {
+    await communitySupport.stubGetReferralProgress(scheduledFuture, caseReference)
+    await page.goto(ReferralProgressPage.url(caseReference))
+
+    const referralProgressPage = await ReferralProgressPage.verifyOnPage(page)
+
+    expect(referralProgressPage.icsTable.header[0].elements).toHaveLength(2)
+    await expect(referralProgressPage.icsTable.body[0].elements[1]).toHaveText('Scheduled')
+    expect(referralProgressPage.icsTable.body[0].elements).toHaveLength(2)
+  })
+
+  test('AC3: does not show add attendance and feedback while awaiting feedback', async ({ page }) => {
+    await communitySupport.stubGetReferralProgress(awaitingFeedback, caseReference)
+    await page.goto(ReferralProgressPage.url(caseReference))
+
+    const referralProgressPage = await ReferralProgressPage.verifyOnPage(page)
+
+    expect(referralProgressPage.icsTable.header[0].elements).toHaveLength(2)
+    await expect(referralProgressPage.icsTable.body[0].elements[1]).toHaveText('Needs feedback')
+    expect(referralProgressPage.icsTable.body[0].elements).toHaveLength(2)
+    await expect(referralProgressPage.addAttendanceAndFeedbackLink).not.toBeVisible()
+  })
+
+  test('AC4: shows view feedback when attended with feedback', async ({ page }) => {
+    await communitySupport.stubGetReferralProgress(completed, caseReference)
+    await page.goto(ReferralProgressPage.url(caseReference))
+
+    const referralProgressPage = await ReferralProgressPage.verifyOnPage(page)
+
+    await expect(referralProgressPage.icsTable.body[0].elements[1]).toHaveText('Completed')
+    await expect(referralProgressPage.icsTable.body[0].elements[2]).toContainText('View feedback')
+  })
+
+  test('AC5: does not show reschedule but shows view feedback for did not happen', async ({ page }) => {
+    await communitySupport.stubGetReferralProgress(didNotHappen, caseReference)
+    await page.goto(ReferralProgressPage.url(caseReference))
+
+    const referralProgressPage = await ReferralProgressPage.verifyOnPage(page)
+
+    await expect(referralProgressPage.icsTable.body[0].elements[1]).toHaveText('Did not happen')
+    await expect(referralProgressPage.icsTable.body[0].elements[2]).toContainText('View feedback')
+    await expect(referralProgressPage.icsTable.body[0].elements[2]).not.toContainText('Reschedule')
+  })
+
+  test('AC5: does not show reschedule but shows view feedback for did not attend', async ({ page }) => {
+    await communitySupport.stubGetReferralProgress(didNotAttend, caseReference)
+    await page.goto(ReferralProgressPage.url(caseReference))
+
+    const referralProgressPage = await ReferralProgressPage.verifyOnPage(page)
+
+    await expect(referralProgressPage.icsTable.body[0].elements[1]).toHaveText('Did not attend')
+    await expect(referralProgressPage.icsTable.body[0].elements[2]).toContainText('View feedback')
+    await expect(referralProgressPage.icsTable.body[0].elements[2]).not.toContainText('Reschedule')
   })
 })
