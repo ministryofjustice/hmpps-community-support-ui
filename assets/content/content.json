@@ -1,7 +1,6 @@
 {
   "/referral/new/find-a-person": {
-    "pageTitle": "Enter a CRN or prison number - Make a referral - [service name]",
-    "pageHeader": "Enter a CRN or prison number",
+    "pageHeader": "Confirm this is the correct person for referral",
     "continueButtonText": "Continue",
     "continueButtonLink": "/referral/new/select-a-service",
     "backLink": "/referral/new/find-a-person",
