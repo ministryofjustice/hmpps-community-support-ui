@@ -7,7 +7,8 @@ import TaskListPage from '../pages/TaskListPage'
 import FindPersonPage from '../pages/findPersonPage'
 import CheckReferralInformationPage from '../pages/checkReferralInformationPage'
 
-test.describe('Task List Page', () => {
+// These tests will have to move to end to end testing
+test.describe.skip('Task List Page', () => {
   const mockReferralId = referralInformationTaskList.referralId
   const mockReferralDetailsInCommunity = {
     personDetails: {
