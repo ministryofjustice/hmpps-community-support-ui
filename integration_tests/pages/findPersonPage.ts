@@ -1,6 +1,26 @@
 import { expect, type Locator, type Page } from '@playwright/test'
 import AbstractPage from './abstractPage'
 
+interface FindPersonContent {
+  pageTitle: string
+  pageHeader: string
+  errorMessages: {
+    nothingEntered: string
+    incorrectFormat: string
+    noRecord: string
+  }
+}
+
+const pageContent: FindPersonContent = {
+  pageTitle: 'my page title',
+  pageHeader: 'find person page header',
+  errorMessages: {
+    nothingEntered: 'nothing entered errror',
+    incorrectFormat: 'incorrect format error',
+    noRecord: 'no record ',
+  },
+} as const
+
 export default class FindPersonPage extends AbstractPage {
   readonly header: Locator
 
@@ -25,5 +45,10 @@ export default class FindPersonPage extends AbstractPage {
     await expect(findPersonPage.identifierInput).toBeVisible()
     await expect(findPersonPage.submitButton).toBeVisible()
     return findPersonPage
+  }
+
+  // example usage findPersonPage.content().pageTitle
+  static content(): FindPersonContent {
+    return pageContent
   }
 }
