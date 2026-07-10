@@ -13,8 +13,9 @@ import { ErrorMiddlewareErrors } from '../@types/express'
 import getLatestAppointments from './progress/getLatestAppointments'
 import { getTaskListState, saveTaskListState } from './taskList/TaskListHelper'
 import ConfirmPersonalDetailsPresenter from './confirmPersonalDetails/ConfirmPersonalDetailsPresenter'
+import AdditionalSuportNeedsPresenter from './additionalSupporNeeds/AdditionalSupportNeedsPresenter'
 
-class ReferralController {
+export default class ReferralController {
   constructor(
     private readonly referralService: ReferralService,
     private readonly personService: PersonService,
@@ -303,6 +304,15 @@ class ReferralController {
     // do stuff here to save confirmation
     res.redirect(`/referral/task-list/${id}`)
   }
-}
 
-export default ReferralController
+  showAdditionalSupportNeeds(req: Request, res: Response) {
+    const referralCreationDetails = req.session ? req.session.referralCreationDetails : null
+    if (!referralCreationDetails || !referralCreationDetails.personDetails) {
+      return res.redirect('/referral/new/find-a-person')
+    }
+
+    const { personDetails } = referralCreationDetails
+    const presenter = new AdditionalSuportNeedsPresenter(personDetails)
+    return presenter.renderPage(res)
+  }
+}
