@@ -1,14 +1,11 @@
 {
   "/referral/new/find-a-person": {
-    "pageTitle": "Enter a CRN or prison number - Make a referral - [service name]",
-    "pageHeader": "Enter a CRN or prison number",
+    "pageHeader": "Confirm this is the correct person for referral",
     "continueButtonText": "Continue",
     "continueButtonLink": "/referral/new/select-a-service",
-    "errorMessages": {
-      "nothingEntered": "Enter a CRN or prison number",
-      "incorrectFormat": "Enter a CRN or prison number in the correct format, like X123456 for a CRN or D0168GH for a prison number",
-      "noRecord": "No person with that CRN or prison number found"
-    }
+    "backLink": "/referral/new/find-a-person",
+    "enterDifferentIdentifierLinkText": "Enter a different CRN or prison number",
+    "enterDifferentIdentifierLinkHref": "/referral/new/find-a-person"
   },
   "/referral/new/select-a-service": {
     "pageHeader": "Select the Community Support service to make a referral",

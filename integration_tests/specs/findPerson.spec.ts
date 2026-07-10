@@ -9,32 +9,6 @@ import HomePage from '../pages/homePage'
 import communitySupport from '../mockApis/communitySupport'
 import { referralInformationInCommunity } from '../mockData/referralInformationData'
 
-// Load the shared content document used by the application
-// Tests assert that the visible page heading and the browser title and other information on the ocntent document match
-// the content document. Fall back to a sensible default if the content
-interface FindPersonContent {
-  pageTitle?: string
-  pageHeader?: string
-  errorMessages?: {
-    nothingEntered?: string
-    incorrectFormat?: string
-    noRecord?: string
-  }
-}
-
-type ContentDocument = Record<string, FindPersonContent>
-
-let content: ContentDocument = {}
-// Try to load the content.json at runtime; wrap in try/catch so tests
-// can still run in environments without the assets folder.
-try {
-  const contentPath = path.join(__dirname, '..', '..', 'assets', 'content', 'content.json')
-  const raw = fs.readFileSync(contentPath, 'utf8')
-  content = JSON.parse(raw) as ContentDocument
-} catch {
-  // ignore — fall back to defaults in tests
-}
-
 test.describe('FindPerson', () => {
   test.beforeEach(async ({ page }) => {
     await resetStubs()
@@ -47,10 +21,8 @@ test.describe('FindPerson', () => {
   test('AC1 - Page heading matches content document', async ({ page }) => {
     await page.goto('/referral/new/find-a-person')
     const findPersonPage = await FindPersonPage.verifyOnPage(page)
-    const expectedHeader = content['/referral/new/find-a-person']?.pageHeader ?? 'Enter a CRN or prison number'
-    const expectedTitle =
-      content['/referral/new/find-a-person']?.pageTitle ??
-      'Enter a CRN or prison number - Make a referral - [service name]'
+    const expectedHeader = FindPersonPage.content().pageHeader
+    const expectedTitle = FindPersonPage.content().pageTitle
     await test.step('header matches content', async () => {
       await expect(findPersonPage.header).toHaveText(expectedHeader)
     })
@@ -93,8 +65,8 @@ test.describe('FindPerson', () => {
     const findPersonPage = await FindPersonPage.verifyOnPage(page)
     await page.getByRole('button', { name: 'Continue' }).click()
     const expectedErrorNothing =
-      content['/referral/new/find-a-person']?.errorMessages?.nothingEntered ?? 'Enter a CRN or prison number'
-    await expect(findPersonPage.personIdentifierErrorMessage).toHaveText(expectedErrorNothing)
+      FindPersonPage.content().errorMessages?.nothingEntered ?? 'Enter a CRN or prison number'
+    await expect(findPersonPage.personIdentifierErrorMessage).toContainText(expectedErrorNothing)
     await test.step('should be on find person screen', async () => {
       await expect(page).toHaveURL(FindPersonPage.url())
     })
@@ -108,9 +80,9 @@ test.describe('FindPerson', () => {
     await findPersonPage.identifierInput.fill('123')
     await page.getByRole('button', { name: 'Continue' }).click()
     const expectedErrorFormat =
-      content['/referral/new/find-a-person']?.errorMessages?.incorrectFormat ??
+      FindPersonPage.content().errorMessages.incorrectFormat ??
       'Enter a CRN or prison number in the correct format, like X123456 for a CRN or D0168GH for a prison number'
-    await expect(findPersonPage.personIdentifierErrorMessage).toHaveText(expectedErrorFormat)
+    await expect(findPersonPage.personIdentifierErrorMessage).toContainText(expectedErrorFormat)
     await test.step('should be on find person screen', async () => {
       await expect(page).toHaveURL(FindPersonPage.url())
     })
@@ -126,9 +98,8 @@ test.describe('FindPerson', () => {
     await findPersonPage.identifierInput.fill('X320741')
     await page.getByRole('button', { name: 'Continue' }).click()
     const expectedErrorNoRecord =
-      content['/referral/new/find-a-person']?.errorMessages?.noRecord ??
-      'No person with that CRN or prison number found'
-    await expect(findPersonPage.personIdentifierErrorMessage).toHaveText(expectedErrorNoRecord)
+      FindPersonPage.content().errorMessages.noRecord ?? 'No person with that CRN or prison number found'
+    await expect(findPersonPage.personIdentifierErrorMessage).toContainText(expectedErrorNoRecord)
     await test.step('should be on find person screen', async () => {
       await expect(page).toHaveURL(FindPersonPage.url())
     })

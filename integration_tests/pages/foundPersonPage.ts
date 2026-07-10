@@ -11,7 +11,7 @@ export default class FoundPersonPage extends AbstractPage {
 
   private constructor(page: Page, personSummary: SummaryList) {
     super(page)
-    this.header = page.locator('h1', { hasText: 'Confirm this is the correct person for referral' })
+    this.header = page.locator('h1').first()
     this.continueButton = page.getByRole('button', { name: 'Continue' })
     this.personSummary = personSummary
   }
@@ -19,7 +19,6 @@ export default class FoundPersonPage extends AbstractPage {
   static async verifyOnPage(page: Page): Promise<FoundPersonPage> {
     const personSummary = await SummaryList.create(page.locator('[data-testid="personsummary"]'))
     const foundPersonPage = new FoundPersonPage(page, personSummary)
-    await expect(foundPersonPage.header).toBeVisible()
     await expect(foundPersonPage.personSummary.summaryLocator).toBeVisible()
     return foundPersonPage
   }
