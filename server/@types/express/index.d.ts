@@ -47,7 +47,7 @@ export declare module 'express-session' {
     referralProgressBanner?: ReferralProgressBannerContent
     icsFeedbackSubmission: IcsFeedbackSubmission & { caseReferenceId: string }
     icsFeedbackInfo: SessionFeedbackDetails[]
-    taskList: Record<string, TaskListState>
+    taskList?: TaskListState
   }
 }
 
