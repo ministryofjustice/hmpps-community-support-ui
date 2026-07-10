@@ -318,4 +318,9 @@ export default class ReferralController {
     const presenter = new AdditionalSuportNeedsPresenter(personDetails)
     return presenter.renderPage(res)
   }
+
+  additionalSupportNeeds(req: Request, res: Response) {
+    // do stuff here
+    res.redirect(`/referral/task-list`)
+  }
 }
