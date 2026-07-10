@@ -230,7 +230,7 @@ export default class ReferralController {
 
   async showReferralProgressDetails(req: Request, res: Response) {
     const { caseReference } = req.params as { caseReference: string }
-    const { username } = res.locals.user
+    const { username, authSource } = res.locals.user
     const sessionBanner = req.session.referralProgressBanner
     const bannerContent = sessionBanner?.caseReference === caseReference ? sessionBanner : undefined
 
@@ -245,7 +245,7 @@ export default class ReferralController {
       rowIndex: index,
     }))
 
-    const presenter = new ReferralProgressPresenter(referralProgress, caseReference, bannerContent)
+    const presenter = new ReferralProgressPresenter(referralProgress, caseReference, bannerContent, authSource)
 
     return presenter.renderPage(res)
   }

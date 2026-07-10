@@ -309,4 +309,103 @@ describe('ReferralProgressPresenter', () => {
       expect(viewModel.icsAppointmentTable.rows[0][2].html).toContain('Add attendance and feedback')
     })
   })
+
+  describe('probation practitioner action visibility', () => {
+    it('does not show schedule session when no appointments exist', () => {
+      const referralProgressNoAppointment: ReferralProgress = buildReferralProgress([])
+
+      const presenter = new ReferralProgressPresenter(referralProgressNoAppointment, caseReference, undefined, 'delius')
+      const viewModel = presenter.buildPageContent(mockResponse)
+
+      expect(viewModel.icsAppointmentTable.head).toEqual([{ text: 'Status' }])
+      expect(viewModel.icsAppointmentTable.rows[0][0].html).toContain('Not scheduled')
+      expect(viewModel.icsAppointmentTable.rows[0]).toHaveLength(1)
+    })
+
+    it('does not show view or change details for a future scheduled appointment', () => {
+      const referralProgressWithAppointments = buildReferralProgress([
+        {
+          appointmentIcsId: randomUUID(),
+          event: { status: 'SCHEDULED', dateTime: addDays(new Date(), 1).toISOString() },
+        },
+      ])
+
+      const presenter = new ReferralProgressPresenter(
+        referralProgressWithAppointments,
+        caseReference,
+        undefined,
+        'delius',
+      )
+      const viewModel = presenter.buildPageContent(mockResponse)
+
+      expect(viewModel.icsAppointmentTable.head).toEqual([{ text: 'Date and time' }, { text: 'Status' }])
+      expect(viewModel.icsAppointmentTable.rows[0][1].html).toContain('Scheduled')
+      expect(viewModel.icsAppointmentTable.rows[0]).toHaveLength(2)
+    })
+
+    it('does not show add attendance and feedback when awaiting feedback', () => {
+      const referralProgressWithAppointments = buildReferralProgress([
+        {
+          appointmentIcsId: randomUUID(),
+          event: { status: 'SCHEDULED', dateTime: subDays(baseDate, 1).toISOString() },
+        },
+      ])
+
+      const presenter = new ReferralProgressPresenter(
+        referralProgressWithAppointments,
+        caseReference,
+        undefined,
+        'delius',
+      )
+      const viewModel = presenter.buildPageContent(mockResponse)
+
+      expect(viewModel.icsAppointmentTable.head).toEqual([{ text: 'Date and time' }, { text: 'Status' }])
+      expect(viewModel.icsAppointmentTable.rows[0][1].html).toContain('Needs feedback')
+      expect(viewModel.icsAppointmentTable.rows[0]).toHaveLength(2)
+    })
+
+    it('shows view feedback when completed', () => {
+      const referralProgressWithAppointments = buildReferralProgress([
+        {
+          appointmentIcsId: randomUUID(),
+          event: { status: 'COMPLETED', dateTime: addDays(baseDate, 1).toISOString() },
+        },
+      ])
+
+      const presenter = new ReferralProgressPresenter(
+        referralProgressWithAppointments,
+        caseReference,
+        undefined,
+        'delius',
+      )
+      const viewModel = presenter.buildPageContent(mockResponse)
+
+      expect(viewModel.icsAppointmentTable.rows[0][1].html).toContain('Completed')
+      expect(viewModel.icsAppointmentTable.rows[0][2].html).toContain('View feedback')
+    })
+
+    it.each([
+      ['DID_NOT_HAPPEN' as const, 'Did not happen'],
+      ['DID_NOT_ATTEND' as const, 'Did not attend'],
+    ])('shows only view feedback for %s status', (status, expectedLabel) => {
+      const referralProgressWithAppointments = buildReferralProgress([
+        {
+          appointmentIcsId: randomUUID(),
+          event: { status, dateTime: addDays(baseDate, 1).toISOString() },
+        },
+      ])
+
+      const presenter = new ReferralProgressPresenter(
+        referralProgressWithAppointments,
+        caseReference,
+        undefined,
+        'delius',
+      )
+      const viewModel = presenter.buildPageContent(mockResponse)
+
+      expect(viewModel.icsAppointmentTable.rows[0][1].html).toContain(expectedLabel)
+      expect(viewModel.icsAppointmentTable.rows[0][2].html).toContain('View feedback')
+      expect(viewModel.icsAppointmentTable.rows[0][2].html).not.toContain('Reschedule')
+    })
+  })
 })
