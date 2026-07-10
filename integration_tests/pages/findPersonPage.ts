@@ -18,7 +18,7 @@ export default class FindPersonPage extends AbstractPage {
 
   private constructor(page: Page) {
     super(page)
-    this.header = page.locator('h1', { hasText: 'Find a Person' })
+    this.header = page.getByRole('heading', { name: 'Find a Person' })
     this.backLink = page.getByRole('link', { name: 'Back', exact: true })
     this.identifierLabel = page.locator('label[for="personIdentifier"]')
     this.identifierInput = page.locator('#personIdentifier')
@@ -35,5 +35,9 @@ export default class FindPersonPage extends AbstractPage {
     await expect(findPersonPage.identifierInput).toBeVisible()
     await expect(findPersonPage.continueButton).toBeVisible()
     return findPersonPage
+  }
+
+  static url(): string {
+    return '/referral/new/find-a-person'
   }
 }
