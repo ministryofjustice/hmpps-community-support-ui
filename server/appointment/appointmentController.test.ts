@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { AppointmentIcsResponse, CreateAppointmentRequest } from '@community-support-api'
+import { AppointmentIcsResponse, ChangeAppointmentDetails, CreateAppointmentRequest } from '@community-support-api'
 import { randomUUID } from 'crypto'
 import AppointmentController from './appointmentController'
 import ConfirmIcsPresenter, { type AdditionalInformation } from './confirm-ics/confirmIcsPresenter'
@@ -21,6 +21,7 @@ import {
 import ViewChangeSessionDetailsPresenter from './view-change-session-details/ViewChangeSessionDetailsPresenter'
 import IcsFeedbackCheckYourAnswersPresenter from './check-ics-feedback/icsFeedbackCheckYourAnswersPresenter'
 import { ReferralProgressBannerContent } from '../referral/progress/ReferralProgressBannerContent'
+import { ChangeRequesterType } from './change-ics-details-reason/ChangeAppointmentDetails'
 
 jest.mock('./confirm-ics/confirmIcsPresenter')
 jest.mock('../services/AppointmentService')
@@ -42,13 +43,20 @@ describe('AppointmentController', () => {
   let referralService: jest.Mocked<ReferralService>
   let referenceDataService: jest.Mocked<ReferenceDataService>
 
-  const caseRefId = crypto.randomUUID()
+  const mockIcsId = randomUUID()
+  const referralId = randomUUID()
+  const caseRefId = 'AB1234CD'
 
   const mockCreateAppointmentRequest: CreateAppointmentRequest = {
     date: '2026-03-27',
     time: { hour: 1, minute: 0, amPm: 'pm' },
     sessionMethodRequest: { type: 'PHONE', additionalDetails: 'Lorem ipsum dolor sit amet.' },
     sessionCommunication: ['Phone call'],
+  }
+
+  const mockChangeAppointmentDetails: ChangeAppointmentDetails = {
+    changeRequestedBy: ChangeRequesterType.DELIVERY_PARTNER,
+    reasonForChange: 'There were technical issues',
   }
 
   const mockAdditionalDetails: AdditionalInformation = {
@@ -58,12 +66,11 @@ describe('AppointmentController', () => {
     scheduleIcsHref: `/referral/${caseRefId}/appointment/schedule-ics`,
   }
 
-  const mockIcsId = randomUUID()
-
   const mockAppointmentIcsResponse: AppointmentIcsResponse = {
     appointmentIcsId: mockIcsId,
     appointmentId: randomUUID(),
-    referralId: caseRefId,
+    referralId,
+    caseReference: caseRefId,
     appointmentType: 'ICS',
     appointmentDate: '2026-03-27',
     appointmentTime: { hour: 1, minute: 0, amPm: 'pm' },
@@ -104,7 +111,7 @@ describe('AppointmentController', () => {
     ViewChangeSessionDetailsPresenter.prototype.renderPage = jest.fn()
 
     req = {
-      params: { referralId: caseRefId },
+      params: { caseRefId },
       session: { createAppointmentRequest: null, icsFeedbackSubmission: null },
       flash: jest.fn(),
     } as unknown as Request
@@ -163,6 +170,92 @@ describe('AppointmentController', () => {
 
       expect(ConfirmIcsPresenter).toHaveBeenCalledWith(mockCreateAppointmentRequest, mockAdditionalDetails)
       expect(ConfirmIcsPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+    })
+  })
+
+  describe('submitIcs', () => {
+    const mockRetrospectiveAppointmentIcsResponse = { ...mockAppointmentIcsResponse, appointmentDate: '2025-01-01' }
+    const mockFutureAppointmentIcsResponse = { ...mockAppointmentIcsResponse, appointmentDate: '2099-01-01' }
+
+    it('should redirect to schedule-ics page when createAppointmentRequest is not in session', async () => {
+      await appointmentController.submitIcs(req, res)
+
+      expect(appointmentService.submitICS).not.toHaveBeenCalled()
+      expect(res.redirect).toHaveBeenCalledWith(`/referral/${caseRefId}/appointment/schedule-ics`)
+    })
+
+    it('should redirect to record session attendance when appointment is retrospective', async () => {
+      jest.spyOn(appointmentService, 'submitICS').mockResolvedValue(mockRetrospectiveAppointmentIcsResponse)
+      req.session.createAppointmentRequest = mockCreateAppointmentRequest
+
+      await appointmentController.submitIcs(req, res)
+
+      expect(req.session.createAppointmentRequest).toBeUndefined()
+      expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseRefId}/attendance`)
+    })
+
+    it('should redirect to referral progress when appointment is not retrospective', async () => {
+      jest.spyOn(appointmentService, 'submitICS').mockResolvedValue(mockFutureAppointmentIcsResponse)
+
+      req.session.createAppointmentRequest = mockCreateAppointmentRequest
+
+      await appointmentController.submitIcs(req, res)
+
+      expect(req.session.createAppointmentRequest).toBeUndefined()
+      expect(res.redirect).toHaveBeenCalledWith(`/progress/${caseRefId}`)
+    })
+  })
+
+  describe('submitChangeIcsDetails', () => {
+    const retrospectiveResponse = { ...mockAppointmentIcsResponse, appointmentDate: '2025-01-01' }
+    const futureResponse = { ...mockAppointmentIcsResponse, appointmentDate: '2099-01-01' }
+
+    it('should redirect to change details page when appointment details are missing from the session', async () => {
+      await appointmentController.submitChangeIcsDetails(req, res)
+
+      expect(appointmentService.submitRescheduleICS).not.toHaveBeenCalled()
+      expect(res.redirect).toHaveBeenCalledWith(`/referral/${caseRefId}/ics-change-details`)
+    })
+
+    it('should redirect to change details page when change reason is missing from the session', async () => {
+      req.session.createAppointmentRequest = mockCreateAppointmentRequest
+
+      await appointmentController.submitChangeIcsDetails(req, res)
+
+      expect(appointmentService.submitRescheduleICS).not.toHaveBeenCalled()
+      expect(res.redirect).toHaveBeenCalledWith(`/referral/${caseRefId}/ics-change-details`)
+    })
+
+    it('should redirect to record session attendance page when the appointment is retrospective', async () => {
+      jest.spyOn(appointmentService, 'submitRescheduleICS').mockResolvedValue(retrospectiveResponse)
+
+      req.session.createAppointmentRequest = mockCreateAppointmentRequest
+      req.session.ChangeAppointmentDetails = mockChangeAppointmentDetails
+
+      await appointmentController.submitChangeIcsDetails(req, res)
+
+      expect(appointmentService.submitRescheduleICS).toHaveBeenCalledWith(
+        caseRefId,
+        mockCreateAppointmentRequest,
+        mockChangeAppointmentDetails,
+        'user1',
+      )
+      expect(req.session.createAppointmentRequest).toBeUndefined()
+      expect(req.session.ChangeAppointmentDetails).toBeUndefined()
+      expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseRefId}/attendance`)
+    })
+
+    it('should redirect to referral progress when the appointment is not retrospective', async () => {
+      jest.spyOn(appointmentService, 'submitRescheduleICS').mockResolvedValue(futureResponse)
+
+      req.session.createAppointmentRequest = mockCreateAppointmentRequest
+      req.session.ChangeAppointmentDetails = mockChangeAppointmentDetails
+
+      await appointmentController.submitChangeIcsDetails(req, res)
+
+      expect(req.session.createAppointmentRequest).toBeUndefined()
+      expect(req.session.ChangeAppointmentDetails).toBeUndefined()
+      expect(res.redirect).toHaveBeenCalledWith(`/progress/${caseRefId}`)
     })
   })
 
@@ -730,6 +823,7 @@ describe('AppointmentController', () => {
       expect(ViewChangeSessionDetailsPresenter.prototype.renderPage).toHaveBeenCalledWith(viewChangeRes)
     })
   })
+
   describe('How they tried to contact the person', () => {
     let caseReferenceId = ''
     const username = 'username'

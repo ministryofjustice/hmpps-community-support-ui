@@ -4,8 +4,9 @@ import {
   ReferralInformation,
   SessionMethod,
   SessionMethodRequest,
+  AppointmentTimeResponse,
 } from '@community-support-api'
-import { format } from 'date-fns'
+import { format, isBefore, parse } from 'date-fns'
 import timeFormat from '../utils/timeFormat'
 import { ErrorMiddlewareErrors, HowSessionTookPlace, IcsFeedbackHowSessionTookPlaceSession } from '../@types/express'
 import ConfirmIcsPresenter, { type AdditionalInformation } from './confirm-ics/confirmIcsPresenter'
@@ -194,17 +195,17 @@ class AppointmentController {
 
   async checkIcs(req: Request, res: Response): Promise<void> {
     const { username } = res.locals.user
-    const { referralId } = req.params as { referralId: string }
+    const { caseRefId } = req.params as { caseRefId: string }
     const createAppointmentRequest = req.session?.createAppointmentRequest
     if (!createAppointmentRequest) {
-      return res.redirect(`/referral/${referralId}/appointment/schedule-ics`)
+      return res.redirect(`/referral/${caseRefId}/appointment/schedule-ics`)
     }
-    const referralInformation = await this.referralService.getReferralInformation(referralId, username)
+    const referralInformation = await this.referralService.getReferralInformation(caseRefId, username)
     const additionalDetails: AdditionalInformation = {
       firstName: referralInformation.firstName,
       lastName: referralInformation.lastName,
-      submitHref: `/referral/${referralId}/appointment/submit-ics`,
-      scheduleIcsHref: `/referral/${referralId}/appointment/schedule-ics`,
+      submitHref: `/referral/${caseRefId}/appointment/submit-ics`,
+      scheduleIcsHref: `/referral/${caseRefId}/appointment/schedule-ics`,
     }
     const presenter = new ConfirmIcsPresenter(createAppointmentRequest, additionalDetails)
     return presenter.renderPage(res)
@@ -402,19 +403,37 @@ class AppointmentController {
   }
 
   async submitIcs(req: Request, res: Response): Promise<void> {
-    const { referralId } = req.params as { referralId: string }
+    const { caseRefId } = req.params as { caseRefId: string }
     const { username } = res.locals.user
     const createAppointmentRequest = req.session?.createAppointmentRequest
-    if (createAppointmentRequest) {
-      const response = await this.appointmentService.submitICS(referralId, createAppointmentRequest, username)
-      if (response) {
-        delete req.session.createAppointmentRequest
-        this.setIcsSuccessfullyScheduledBanner(req, response, referralId)
-      }
 
-      return res.redirect(`/progress/${referralId}`)
+    if (!createAppointmentRequest) {
+      return res.redirect(`/referral/${caseRefId}/appointment/schedule-ics`)
     }
-    return res.redirect(`/referral/${referralId}/appointment/schedule-ics`)
+
+    const response = await this.appointmentService.submitICS(caseRefId, createAppointmentRequest, username)
+
+    delete req.session.createAppointmentRequest
+
+    if (this.isRetrospectiveAppointment(response.appointmentDate, response.appointmentTime)) {
+      return res.redirect(`/ics-feedback/${caseRefId}/attendance`)
+    }
+
+    this.setIcsSuccessfullyScheduledBanner(req, response, caseRefId)
+
+    return res.redirect(`/progress/${caseRefId}`)
+  }
+
+  private isRetrospectiveAppointment(appointmentDate: string, appointmentTime: AppointmentTimeResponse): boolean {
+    const minutes = appointmentTime.minute.toString().padStart(2, '0')
+
+    const appointmentDateTime = parse(
+      `${appointmentDate} ${appointmentTime.hour}:${minutes} ${appointmentTime.amPm.toUpperCase()}`,
+      'yyyy-MM-dd h:mm a',
+      new Date(),
+    )
+
+    return isBefore(appointmentDateTime, new Date())
   }
 
   async submitFeedback(req: Request, res: Response): Promise<void> {
@@ -543,7 +562,7 @@ class AppointmentController {
   }
 
   private setIcsSuccessfullyScheduledBanner(req: Request, response: AppointmentIcsResponse, id: string): void {
-    const date = format(response.appointmentDate, 'dd MMM yyyy')
+    const date = format(response.appointmentDate, 'dd MMMM yyyy')
     const time = timeFormat(response.appointmentTime)
 
     this.setReferralProgressBanner(req, id, 'ICS scheduled', `The ICS has been scheduled for ${date} at ${time}`)
@@ -694,12 +713,14 @@ class AppointmentController {
     const { caseRefId } = req.params as { caseRefId: string }
     const createAppointmentRequest = req.session?.createAppointmentRequest
     const ChangeAppointmentDetails = req.session?.ChangeAppointmentDetails
+
     if (!createAppointmentRequest) {
       return res.redirect(`/referral/${caseRefId}/ics-change-details`)
     }
     if (!ChangeAppointmentDetails) {
       return res.redirect(`/referral/${caseRefId}/ics-change-details/reason`)
     }
+
     const referralInformation = await this.referralService.getReferralInformation(caseRefId, username)
     const additionalDetails: AdditionalInformation = {
       firstName: referralInformation.firstName,
@@ -716,20 +737,26 @@ class AppointmentController {
     const { caseRefId } = req.params as { caseRefId: string }
     const { username } = res.locals.user
     const { createAppointmentRequest, ChangeAppointmentDetails } = req.session
+
     if (!createAppointmentRequest || !ChangeAppointmentDetails) {
-      res.redirect(`/referral/${caseRefId}/ics-change-details`)
+      return res.redirect(`/referral/${caseRefId}/ics-change-details`)
     }
+
     const response = await this.appointmentService.submitRescheduleICS(
       caseRefId,
       createAppointmentRequest,
       ChangeAppointmentDetails,
       username,
     )
-    if (response) {
-      delete req.session.createAppointmentRequest
-      delete req.session.ChangeAppointmentDetails
-      this.setReferralProgressBanner(req, caseRefId, 'The ICS details have been changed')
+
+    delete req.session.createAppointmentRequest
+    delete req.session.ChangeAppointmentDetails
+
+    if (this.isRetrospectiveAppointment(response.appointmentDate, response.appointmentTime)) {
+      return res.redirect(`/ics-feedback/${caseRefId}/attendance`)
     }
+
+    this.setReferralProgressBanner(req, caseRefId, 'The ICS details have been changed')
 
     return res.redirect(`/progress/${caseRefId}`)
   }
