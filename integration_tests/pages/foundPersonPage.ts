@@ -12,8 +12,6 @@ interface FindPersonContent {
   }
 }
 
-
-
 const pageContent: FindPersonContent = {
   pageTitle: 'Community Support - Find a Person',
   pageHeader: 'Find a Person',
@@ -27,6 +25,7 @@ const pageContent: FindPersonContent = {
 
 export default class FindPersonPage extends AbstractPage {
   readonly header: Locator
+
   readonly backLink: Locator
 
   readonly continueButton: Locator
