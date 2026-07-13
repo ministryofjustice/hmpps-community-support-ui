@@ -1,7 +1,7 @@
 import { TaskStatus } from './TaskListViewModel'
 
 export default interface TaskListState {
-  referralId?: string
+  referralId: string
   sections: {
     personalDetails: { status: TaskStatus }
     riskInformation: { status: TaskStatus }

@@ -19,6 +19,7 @@ type ReferralUserAssignmentsResponse = components['schemas']['ReferralUserAssign
 type ReferralUserAssignmentsDto = components['schemas']['ReferralUserAssignmentsDto']
 type ReferralDetailsResponseDto = components['schemas']['ReferralDetailsBffResponseDto']
 type AppointmentIcsResponse = components['schemas']['AppointmentIcsResponse']
+type AppointmentTimeResponse = components['schemas']['AppointmentIcsResponse']['appointmentTime']
 type ReferralProgress = components['schemas']['ReferralProgressDto']
 type ReferralAppointmentHistory = components['schemas']['ReferralAppointmentHistoryDto']
 type ProbationOffice = components['schemas']['ProbationOffice']
@@ -28,6 +29,7 @@ type SessionFeedbackAppointmentDetails = components['schemas']['SessionFeedbackA
 type SessionMethod = components['schemas']['SessionMethod']
 type AppointmentDeliveryDetails = components['schemas']['AppointmentDelivery']
 type CaseWorkerSummary = components['schemas']['CaseWorkerSummaryDto']
+type ConfirmPersonDetailsBffDto = components['schemas']['ConfirmPersonDetailsBffDto']
 
 export type {
   Referral,
@@ -49,6 +51,7 @@ export type {
   CaseWorkerDto,
   ReferralDetailsResponseDto,
   AppointmentIcsResponse,
+  AppointmentTimeResponse,
   ReferralProgress,
   ReferralAppointmentHistory,
   ProbationOffice,
@@ -58,4 +61,5 @@ export type {
   AppointmentDeliveryDetails,
   SessionMethod,
   CaseWorkerSummary,
+  ConfirmPersonDetailsBffDto,
 }

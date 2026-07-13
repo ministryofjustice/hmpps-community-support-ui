@@ -7,6 +7,7 @@ describe('ReferralDetailsPresenter', () => {
   let dto: ReferralDetailsResponseDto | null = null
   let expected: ReferralDetailsViewModel | null = null
   const today = new Date('2026-02-09T11:23:00.780Z')
+  const authSource = 'nomis'
   jest.useFakeTimers().setSystemTime(today)
   beforeEach(() => {
     dto = {
@@ -258,7 +259,7 @@ describe('ReferralDetailsPresenter', () => {
     }
   })
   test('rendering', () => {
-    const presenter = new ReferralDetailsPresenter(dto, null)
+    const presenter = new ReferralDetailsPresenter(dto, null, authSource)
     const content = ReferralDetailsContent.build()
     const response = { locals: { content } } as unknown as Response
     const pageContent = presenter.buildPageContent(response)
@@ -273,7 +274,7 @@ describe('ReferralDetailsPresenter', () => {
     dto.contactDetailsTableData.address = undefined
     dto.referralDetailsTableData.assignedTo = []
 
-    const presenter = new ReferralDetailsPresenter(dto, null)
+    const presenter = new ReferralDetailsPresenter(dto, null, authSource)
     const content = ReferralDetailsContent.build()
     const response = { locals: { content } } as unknown as Response
     const pageContent = presenter.buildPageContent(response)
@@ -294,7 +295,7 @@ describe('ReferralDetailsPresenter', () => {
     dto.contactDetailsTableData.address = undefined
     dto.referralDetailsTableData.assignedTo = null
 
-    const presenter = new ReferralDetailsPresenter(dto, null)
+    const presenter = new ReferralDetailsPresenter(dto, null, authSource)
     const content = ReferralDetailsContent.build()
     const response = { locals: { content } } as unknown as Response
     const pageContent = presenter.buildPageContent(response)
@@ -306,6 +307,27 @@ describe('ReferralDetailsPresenter', () => {
     expected.contact.rows[2].value.text = 'Not available'
     expected.contact.rows[3].value.text = 'Not available'
     expected.referral.rows[1].actions.items[0].text = 'Assign to caseworker'
+    expect(pageContent).toStrictEqual(expected)
+  })
+  test('assign not present for delius user', () => {
+    dto.contactDetailsTableData.phoneNumber = ''
+    dto.contactDetailsTableData.mobileNumber = ' '
+    dto.contactDetailsTableData.email = null
+    dto.contactDetailsTableData.address = undefined
+    dto.referralDetailsTableData.assignedTo = null
+
+    const presenter = new ReferralDetailsPresenter(dto, null, 'delius')
+    const content = ReferralDetailsContent.build()
+    const response = { locals: { content } } as unknown as Response
+    const pageContent = presenter.buildPageContent(response)
+
+    delete expected.referral.rows[1].value.html
+    expected.referral.rows[1].value.text = 'Unassigned'
+    expected.contact.rows[0].value.text = 'Not available'
+    expected.contact.rows[1].value.text = 'Not available'
+    expected.contact.rows[2].value.text = 'Not available'
+    expected.contact.rows[3].value.text = 'Not available'
+    expected.referral.rows[1].actions = null
     expect(pageContent).toStrictEqual(expected)
   })
 })

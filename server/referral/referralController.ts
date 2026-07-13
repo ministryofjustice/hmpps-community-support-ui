@@ -11,8 +11,14 @@ import ReferralProgressPresenter from './progress/referralProgressPresenter'
 import TaskListPresenter from './taskList/TaskListPresenter'
 import { ErrorMiddlewareErrors } from '../@types/express'
 import getLatestAppointments from './progress/getLatestAppointments'
-import { getTaskListState, saveTaskListState } from './taskList/TaskListHelper'
+import {
+  getCurrentDraftReferralKey,
+  getTaskListState,
+  saveTaskListState,
+  updateSectionStatus,
+} from './taskList/TaskListHelper'
 import ConfirmPersonalDetailsPresenter from './confirmPersonalDetails/ConfirmPersonalDetailsPresenter'
+import AdditionalSuportNeedsPresenter from './additionalSupporNeeds/AdditionalSupportNeedsPresenter'
 
 class ReferralController {
   private static readonly CRN_REGEX = /^[A-Za-z]\d{6}$/
@@ -40,10 +46,10 @@ class ReferralController {
     const referralId = req.params.id as string
     const results = req.session.assignmentResults ? { ...req.session.assignmentResults } : null
     delete req.session.assignmentResults
-    const { username } = res.locals.user
+    const { username, authSource } = res.locals.user
     return this.referralService
       .getCaseDetailsByCaseIdentifier(referralId, username)
-      .then(dto => new ReferralDetailsPresenter(dto, results))
+      .then(dto => new ReferralDetailsPresenter(dto, results, authSource))
       .then(presenter => presenter.renderPage(res))
   }
 
@@ -250,7 +256,7 @@ class ReferralController {
 
   async showReferralProgressDetails(req: Request, res: Response) {
     const { caseReference } = req.params as { caseReference: string }
-    const { username } = res.locals.user
+    const { username, authSource } = res.locals.user
     const sessionBanner = req.session.referralProgressBanner
     const bannerContent = sessionBanner?.caseReference === caseReference ? sessionBanner : undefined
 
@@ -265,7 +271,7 @@ class ReferralController {
       rowIndex: index,
     }))
 
-    const presenter = new ReferralProgressPresenter(referralProgress, caseReference, bannerContent)
+    const presenter = new ReferralProgressPresenter(referralProgress, caseReference, bannerContent, authSource)
 
     return presenter.renderPage(res)
   }
@@ -279,56 +285,63 @@ class ReferralController {
     }
 
     const { personIdentifier } = referralCreationDetails.personDetails
-    let taskListState = getTaskListState(req, personIdentifier)
 
-    if (!taskListState.referralId) {
-      try {
-        const createReferralRequest = {
-          personDetails: referralCreationDetails.personDetails,
-          communityServiceProviderId: req.params.id as string, // referralCreationDetails.communityServiceProviderId,
-          crn: personIdentifier,
-          urgency: false,
-        } as CreateReferralRequest
-
-        const referralInformation = await this.referralService.createReferral(createReferralRequest, username)
-
-        req.session.referralCreationDetails = createReferralRequest
-        taskListState = { ...taskListState, referralId: referralInformation.referralId }
-      } catch (error) {
-        logger.error('Error creating referral:', error)
-        req.flash('create referral', 'An unexpected error when creating a referral. Please try again.')
-        return res.redirect('/referral/new/find-a-person')
+    try {
+      const createReferralRequest = {
+        personDetails: referralCreationDetails.personDetails,
+        communityServiceProviderId: req.params.id as string, // referralCreationDetails.communityServiceProviderId,
+        crn: personIdentifier,
+        urgency: false,
       }
+
+      const referralInformation = await this.referralService.createReferral(createReferralRequest, username)
+
+      req.session.referralCreationDetails = createReferralRequest
+      const taskListState = { ...getTaskListState(req), referralId: referralInformation.referralId }
+      saveTaskListState(req, taskListState)
+
+      const presenter = new TaskListPresenter(
+        `${referralCreationDetails.personDetails.firstName} ${referralCreationDetails.personDetails.lastName}`,
+        taskListState,
+      )
+      return presenter.renderPage(res)
+    } catch (error) {
+      logger.error('Error creating referral:', error)
+      req.flash('create referral', 'An unexpected error when creating a referral. Please try again.')
+      return res.redirect('/referral/new/find-a-person')
     }
-    saveTaskListState(req, personIdentifier, taskListState)
-
-    const presenter = new TaskListPresenter(
-      `${referralCreationDetails.personDetails.firstName} ${referralCreationDetails.personDetails.lastName}`,
-      taskListState,
-    )
-
-    return presenter.renderPage(res)
   }
 
   async showConfirmPersionalDetails(req: Request, res: Response) {
     const { username } = res.locals.user
-    const referralCreationDetails = req.session ? req.session.referralCreationDetails : null
+    const draftReferralKey = getCurrentDraftReferralKey(req)
 
-    if (!referralCreationDetails || !referralCreationDetails.personDetails) {
+    if (!draftReferralKey) {
       return res.redirect('/referral/new/find-a-person')
     }
 
-    const { personIdentifier } = referralCreationDetails.personDetails
-    const data = await this.referralService.getPersionalDetails(personIdentifier, username)
+    const data = await this.referralService.getPersionalDetails(draftReferralKey, username)
     const presenter = new ConfirmPersonalDetailsPresenter(data)
     return presenter.renderPage(res)
   }
 
   async confirmPersionalDetails(req: Request, res: Response): Promise<void> {
-    const id = req.params.id as string
-    // do stuff here to save confirmation
-    res.redirect(`/referral/task-list/${id}`)
+    const draftReferralKey = getCurrentDraftReferralKey(req)
+    if (!draftReferralKey) {
+      return res.redirect('/referral/new/find-a-person')
+    }
+    updateSectionStatus(req, draftReferralKey, 'personalDetails', 'completed')
+    return res.redirect(`/referral/task-list/${draftReferralKey}`)
+  }
+
+  showAdditionalSupportNeeds(req: Request, res: Response) {
+    const referralCreationDetails = req.session ? req.session.referralCreationDetails : null
+    if (!referralCreationDetails || !referralCreationDetails.personDetails) {
+      return res.redirect('/referral/new/find-a-person')
+    }
+
+    const { personDetails } = referralCreationDetails
+    const presenter = new AdditionalSuportNeedsPresenter(personDetails)
+    return presenter.renderPage(res)
   }
 }
-
-export default ReferralController

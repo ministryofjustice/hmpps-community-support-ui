@@ -2,46 +2,54 @@ import { Request } from 'express'
 import { TaskStatus } from './TaskListViewModel'
 import TaskListState from './TaskListState'
 
-export function newTaskListState(req: Request, personIdentifier: string): TaskListState {
-  req.session.taskList ??= {}
-  req.session.taskList[personIdentifier] = initializeTaskList(req)
-  return req.session.taskList[personIdentifier]
+export const getCurrentDraftReferralKey = (req: Request): string | undefined => {
+  return req.session?.referralCreationDetails?.personDetails?.id
 }
 
-export function getTaskListState(req: Request, personIdentifier: string): TaskListState {
-  return req.session.taskList?.[personIdentifier] || initializeTaskList(req)
+export const initialiseTaskList = (referralId: string): TaskListState => ({
+  referralId,
+  sections: {
+    personalDetails: { status: 'incomplete' },
+    riskInformation: { status: 'incomplete' },
+    personNeeds: { status: 'incomplete' },
+    supportNeeds: { status: 'incomplete' },
+    contactDetails: { status: 'incomplete' },
+    checkAnswers: { status: 'cannot-start-yet' },
+  },
+})
+
+export const newTaskListState = (req: Request, draftReferralId: string): TaskListState => {
+  req.session.taskList = initialiseTaskList(draftReferralId)
+  return req.session.taskList
 }
 
-export function saveTaskListState(req: Request, personIdentifier: string, state: TaskListState): void {
-  req.session.taskList ??= {}
+export const getTaskListState = (req: Request): TaskListState | undefined => req.session.taskList
 
-  const isAllMandatoryCompleted = isMandatoryTasksCompleted(state)
+export const removeTaskListState = (req: Request): void => {
+  delete req.session.taskList
+}
 
-  const updatedState: TaskListState = {
+export const saveTaskListState = (req: Request, state: TaskListState): void => {
+  removeTaskListState(req)
+  req.session.taskList = {
     ...state,
     sections: {
       ...state.sections,
       checkAnswers: {
         ...state.sections.checkAnswers,
-        status: isAllMandatoryCompleted ? 'completed' : 'cannot-start-yet',
+        status: isMandatoryTasksCompleted(state) ? 'completed' : ('cannot-start-yet' as TaskStatus),
       },
     },
   }
-
-  req.session.taskList[personIdentifier] = updatedState
 }
 
-export function removeTaskListState(req: Request, personIdentifier: string): void {
-  delete req.session.taskList?.[personIdentifier]
-}
-
-export function updateSectionStatus(
+export const updateSectionStatus = (
   req: Request,
-  personIdentifier: string,
+  draftReferralId: string,
   section: keyof TaskListState['sections'],
   newStatus: TaskStatus,
-): void {
-  const state = getTaskListState(req, personIdentifier)
+): void => {
+  const state = getTaskListState(req)
 
   const updatedState: TaskListState = {
     ...state,
@@ -53,35 +61,17 @@ export function updateSectionStatus(
       },
     },
   }
-
-  if (isMandatoryTasksCompleted(updatedState)) {
-    updatedState.sections.checkAnswers.status = 'completed'
-  } else {
-    updatedState.sections.checkAnswers.status = 'cannot-start-yet'
-  }
-
-  req.session.taskList[personIdentifier] = updatedState
+  updatedState.sections.checkAnswers.status = isMandatoryTasksCompleted(updatedState)
+    ? 'completed'
+    : ('cannot-start-yet' as TaskStatus)
+  req.session.taskList[draftReferralId] = updatedState
 }
 
-export function initializeTaskList(req: Request, referralId?: string): TaskListState {
-  return {
-    referralId,
-    sections: {
-      personalDetails: { status: 'incomplete' },
-      riskInformation: { status: 'incomplete' },
-      personNeeds: { status: 'incomplete' },
-      supportNeeds: { status: 'incomplete' },
-      contactDetails: { status: 'incomplete' },
-      checkAnswers: { status: 'cannot-start-yet' },
-    } as const,
-  }
-}
-
-export function isMandatoryTasksCompleted(state: TaskListState): boolean {
+export const isMandatoryTasksCompleted = (state: TaskListState): boolean => {
   const { checkAnswers, ...otherSections } = state.sections
   return Object.values(otherSections).every(section => section.status === 'completed')
 }
 
-export function isAllTasksCompleted(state: TaskListState): boolean {
+export const isAllTasksCompleted = (state: TaskListState): boolean => {
   return Object.values(state.sections).every(section => section.status === 'completed')
 }

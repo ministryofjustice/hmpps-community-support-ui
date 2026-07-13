@@ -1,12 +1,11 @@
 import { Response } from 'express'
 import { GovukFrontendSummaryList, GovukFrontendSummaryListRow } from '@govuk-frontend'
 import { differenceInYears } from 'date-fns'
+import { ConfirmPersonDetailsBffDto } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
 import dateFormat from '../../utils/dateFormat'
 import {
-  Address,
   ConfirmPersonalDetailsContent,
-  ConfirmPersonalDetailsDTO,
   ConfirmPersonalDetailsViewModel,
   ContactDetailsCard,
   EqualityMonitoringCard,
@@ -17,16 +16,18 @@ import { govFrontendSummaryListRow } from '../../utils/viewUtils'
 const nonEmptyStringOrDefault = (str: string | undefined | null, defaultValue: string): string =>
   (str ?? '').trim() || defaultValue
 
+type ContactAddress = ConfirmPersonDetailsBffDto['contactDetails']['address']
+
 export default class ConfirmPersonalDetailsPresenter extends PresenterBase<
   ConfirmPersonalDetailsViewModel,
   ConfirmPersonalDetailsContent
 > {
-  constructor(private readonly data: ConfirmPersonalDetailsDTO) {
+  constructor(private readonly data: ConfirmPersonDetailsBffDto) {
     super()
   }
 
   private buildPersonalDetails(cardContent: PersonalDetailsCard, defaultFieldValue: string): GovukFrontendSummaryList {
-    const { crn, prisonNumber, dateOfBirth, preferredLanguage, currentCircumstances, disabilities } =
+    const { crn, prisonNumbers, dateOfBirth, preferredLanguage, currentCircumstances, disabilities } =
       this.data.personalDetails
     const dobDate = new Date(dateOfBirth)
     const age = differenceInYears(new Date(), dobDate)
@@ -43,7 +44,7 @@ export default class ConfirmPersonalDetailsPresenter extends PresenterBase<
         govFrontendSummaryListRow(cardContent.crnLabel, nonEmptyStringOrDefault(crn, defaultFieldValue)),
         govFrontendSummaryListRow(
           cardContent.prisonLabel,
-          nonEmptyStringOrDefault(prisonNumber.join(', '), defaultFieldValue),
+          nonEmptyStringOrDefault(prisonNumbers.join(', '), defaultFieldValue),
         ),
         govFrontendSummaryListRow(
           cardContent.dobLabel,
@@ -57,7 +58,7 @@ export default class ConfirmPersonalDetailsPresenter extends PresenterBase<
           key: {
             html: `${cardContent.circumstancesLabel}<br>
             <span class="govuk-body-s secondary-text govuk-!-font-weight-regular" style="color: #505a5f;">
-              Last updated ${dateFormat(new Date(currentCircumstances.updated))}
+              Last updated ${dateFormat(new Date(currentCircumstances.updatedAt))}
             </span>`,
           },
           value: { text: currentCircumstances.value },
@@ -66,10 +67,10 @@ export default class ConfirmPersonalDetailsPresenter extends PresenterBase<
           key: {
             html: `${cardContent.disabilitiesLabel}<br>
             <span class="govuk-body-s secondary-text govuk-!-font-weight-regular" style="color: #505a5f;">
-              Last updated ${dateFormat(new Date(disabilities.updated))}
+              Last updated ${dateFormat(new Date(disabilities.updatedAt))}
             </span>`,
           },
-          value: { text: disabilities.value.join(', ') },
+          value: { text: disabilities.allDisabilities },
         },
       ],
     }
@@ -110,23 +111,26 @@ export default class ConfirmPersonalDetailsPresenter extends PresenterBase<
     }
   }
 
-  private buildAddressRow(address: Address, cardContent: ContactDetailsCard): GovukFrontendSummaryListRow {
+  private buildAddressRow(address: ContactAddress, cardContent: ContactDetailsCard): GovukFrontendSummaryListRow {
+    const hasNoFixedAbode = address.value.includes('NF1 1NF')
     return {
       key: {
         html: `${cardContent.mainAddressLabel}<br>
         <span class="govuk-body-s secondary-text govuk-!-font-weight-regular" style="color: #505a5f;">
-                Last updated ${dateFormat(new Date(address.updated))}
+                Last updated ${dateFormat(new Date(address.updatedAt))}
               </span>`,
       },
       value: {
-        html: `${address.value}<br>
+        html: hasNoFixedAbode
+          ? 'No fixed abode'
+          : `${address.value}<br>
               <p class="govuk-!-margin-top-2 govuk-!-margin-bottom-0">
                 <span class="govuk-summary-list__key govuk-!-padding-bottom-0">Type of address</span>
                 <span>${address.type}</span>
               </p>
               <p class="govuk-!-margin-top-2 govuk-!-margin-bottom-0">
                 <span class="govuk-summary-list__key govuk-!-padding-bottom-0">Start date</span>
-                <span>${dateFormat(new Date(address.start))}</span>
+                <span>${dateFormat(new Date(address.startAt))}</span>
               </p>
               <p class="govuk-!-margin-top-2 govuk-!-margin-bottom-0">
                 <span class="govuk-summary-list__key govuk-!-padding-bottom-0">Notes</span>

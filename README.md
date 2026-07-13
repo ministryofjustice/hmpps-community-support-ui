@@ -34,6 +34,20 @@ And then, to build the assets and start the app with esbuild:
 
 `npm run start:dev`
 
+### Running alongside a local version of the API
+
+Sometimes you need to run a local version of the API, and test it against a local version of the UI.  E.g. if you wish to test th eimpact of API contract changes on the ability of the UI to build, or render.  
+
+We can do this with Docker to manage shared dependencies as it would as if we were using the version of the API on `main`
+
+Start the API from IntelliJ using the `local` Spring profile, then start the UI dependencies with the local API compose file.
+
+```bash
+docker compose -f docker-compose-localapi.yml up
+```
+
+The API local profile uses `http://hmpps-auth:8090/auth`, so ensure `hmpps-auth` resolves to `127.0.0.1` on your machine (for example via `/etc/hosts`).
+
 ### Logging in with a test user
 
 Once the application is running you should then be able to login with:

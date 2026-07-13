@@ -88,7 +88,7 @@ export default function routes({
     await referralController.showAssignCaseWorkersPage(req, res, next)
   })
 
-  get('/referral/:referralId/appointment/confirm-ics', async (req, res) => appointmentController.checkIcs(req, res))
+  get('/referral/:caseRefId/appointment/confirm-ics', async (req, res) => appointmentController.checkIcs(req, res))
 
   get('/referral/:caseRefId/appointment/schedule-ics', (req, res) => appointmentController.showScheduleIcs(req, res))
 
@@ -116,7 +116,7 @@ export default function routes({
     appointmentController.viewChangeSessionDetails(req, res),
   )
 
-  post('/referral/:referralId/appointment/submit-ics', async (req, res) => appointmentController.submitIcs(req, res))
+  post('/referral/:caseRefId/appointment/submit-ics', async (req, res) => appointmentController.submitIcs(req, res))
 
   get('/progress/:caseReference', async (req, res) => {
     await referralController.showReferralProgressDetails(req, res)
@@ -185,11 +185,15 @@ export default function routes({
 
   post('/referral/:caseRefId/ics-change-details', (req, res) => appointmentController.rescheduleIcs(req, res))
 
-  get('/referral/task-list/:id', (req, res) => referralController.showTaskList(req, res))
-
   get('/referral/task-list/confirm-personal-details', (req, res) =>
     referralController.showConfirmPersionalDetails(req, res),
   )
+
+  get('/referral/task-list/additional-support-needs', (req, res) =>
+    referralController.showAdditionalSupportNeeds(req, res),
+  )
+
+  get('/referral/task-list/:id', (req, res) => referralController.showTaskList(req, res))
 
   post('/referral/task-list/confirm-personal-details', (req, res) =>
     referralController.confirmPersionalDetails(req, res),
