@@ -271,7 +271,7 @@ class AppointmentController {
     const { caseRefId } = req.params as { caseRefId: string }
     const { schema, referralInformation } = await this.prepareAppointmentRequest(req, username, caseRefId)
 
-    req.body.referralCrn = referralInformation.crn
+    req.body.referralCrn = referralInformation.personIdentifier
 
     return validateRequestBodyAgainstSchema(schema, req, res, () =>
       res.redirect(`/referral/${caseRefId}/appointment/confirm-ics`),

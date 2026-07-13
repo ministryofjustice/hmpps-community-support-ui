@@ -7,7 +7,7 @@ class ReferralInformationFactory extends Factory<ReferralInformation> {}
 const mockReferralId = randomUUID()
 
 export default ReferralInformationFactory.define<ReferralInformation>(() => ({
-  crn: 'A123456',
+  personIdentifier: 'A123456',
   firstName: 'John',
   lastName: 'Doe',
   sex: 'Male',
