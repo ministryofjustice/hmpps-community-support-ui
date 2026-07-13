@@ -123,6 +123,23 @@ export interface paths {
     patch: operations['updateReferral']
     trace?: never
   }
+  '/bff/risk/rosh/{crn}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get ROSH risks for a person by CRN */
+    get: operations['getRoshRisksByCrn']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/bff/referral/{caseReference}/ics_appointment_feedback_details': {
     parameters: {
       query?: never
@@ -526,13 +543,15 @@ export interface components {
     SubmitReferralResponseDto: {
       /** Format: uuid */
       referralId: string
+      /** Format: uuid */
+      personId: string
       referenceNumber?: string | null
     }
     CreateReferralRequest: {
       personDetails: components['schemas']['PersonDto']
       /** Format: uuid */
       communityServiceProviderId: string
-      crn: string
+      personIdentifier: string
       urgency?: boolean | null
     }
     PersonAdditionalDetails: {
@@ -579,7 +598,7 @@ export interface components {
       firstName?: string | null
       lastName?: string | null
       sex?: string | null
-      crn: string
+      personIdentifier: string
       /** Format: uuid */
       communityServiceProviderId: string
       communityServiceProviderName: string
@@ -710,6 +729,41 @@ export interface components {
       appointmentDeliveryDetails?: components['schemas']['AppointmentDelivery'] | null
       sessionCommunications?: string[] | null
       personFirstName: string
+    }
+    ArnsRiskConcernsToSelfDto: {
+      suicide?: components['schemas']['ArnsRiskDto'] | null
+      selfHarm?: components['schemas']['ArnsRiskDto'] | null
+      custody?: components['schemas']['ArnsRiskDto'] | null
+      hostelSetting?: components['schemas']['ArnsRiskDto'] | null
+      vulnerability?: components['schemas']['ArnsRiskDto'] | null
+    }
+    ArnsRiskDto: {
+      risk?: string
+      previous?: string
+      previousConcernsText?: string
+      current?: string
+      currentConcernsText?: string
+    }
+    ArnsRiskRoshSummaryDto: {
+      whoIsAtRisk?: string | null
+      natureOfRisk?: string | null
+      riskImminence?: string | null
+      riskIncreaseFactors?: string | null
+      riskMitigationFactors?: string | null
+      analysisOfRiskFactors?: string | null
+      riskInCommunity: {
+        [key: string]: string[]
+      }
+      riskInCustody: {
+        [key: string]: string[]
+      }
+      overallRiskLevel?: string | null
+    }
+    CommunitySupportRiskDto: {
+      assessmentWithin12Months: boolean
+      assessedOn?: string | null
+      riskToSelf?: components['schemas']['ArnsRiskConcernsToSelfDto'] | null
+      summary?: components['schemas']['ArnsRiskRoshSummaryDto'] | null
     }
     AppointmentDetailsDto: {
       /** @enum {string|null} */
@@ -1178,6 +1232,37 @@ export interface operations {
         }
       }
       /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getRoshRisksByCrn: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        crn: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description ROSH risks found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['CommunitySupportRiskDto']
+        }
+      }
+      /** @description ROSH risks not found for the given CRN */
       404: {
         headers: {
           [name: string]: unknown

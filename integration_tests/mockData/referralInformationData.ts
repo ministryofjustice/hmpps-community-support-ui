@@ -5,7 +5,7 @@ const mockReferralId = randomUUID()
 
 const referralInformationInCommunity: ReferralInformation = {
   referralDate: '2026-06-01',
-  crn: 'A123456', // crn number
+  personIdentifier: 'A123456', // crn number
   firstName: 'John',
   lastName: 'Doe',
   sex: 'Male',
@@ -18,7 +18,7 @@ const referralInformationInCommunity: ReferralInformation = {
   deliveryPartner: 'Delivery Partner Ltd',
 }
 const referralInformationInPrison: ReferralInformation = {
-  crn: 'A1234AA', // prison number
+  personIdentifier: 'A1234AA', // prison number
   firstName: 'Alex',
   lastName: 'Joe',
   sex: 'Male',
@@ -32,7 +32,7 @@ const referralInformationInPrison: ReferralInformation = {
   deliveryPartner: 'Delivery Partner Ltd',
 }
 const referralInformationTaskList: ReferralInformation = {
-  crn: 'A123456', // crn number
+  personIdentifier: 'A123456', // crn number
   firstName: 'John',
   lastName: 'Doe',
   sex: 'Male',

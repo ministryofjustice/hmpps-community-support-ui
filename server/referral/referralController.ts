@@ -264,7 +264,7 @@ export default class ReferralController {
       const createReferralRequest = {
         personDetails: referralCreationDetails.personDetails,
         communityServiceProviderId: req.params.id as string, // referralCreationDetails.communityServiceProviderId,
-        crn: personIdentifier,
+        personIdentifier,
         urgency: false,
       }
 

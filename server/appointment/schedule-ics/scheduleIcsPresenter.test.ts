@@ -62,7 +62,7 @@ describe('ScheduleIcsPresenter', () => {
   const content = ScheduleIcsContentFactory.build()
 
   const caseReference = 'AB1234CD'
-  const referralInformation = ReferralInformationFactory.build({ crn: 'A123456' })
+  const referralInformation = ReferralInformationFactory.build({ personIdentifier: 'A123456' })
   let res: Response
   beforeEach(() => {
     res = {

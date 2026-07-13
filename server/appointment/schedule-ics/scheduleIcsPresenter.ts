@@ -71,7 +71,7 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
     private readonly validationErrors?: ErrorMiddlewareErrors,
   ) {
     super()
-    this.inCustody = !isIdentifierACrn(this.referralInformation.crn)
+    this.inCustody = !isIdentifierACrn(this.referralInformation.personIdentifier)
   }
 
   private buildAddressInput() {
