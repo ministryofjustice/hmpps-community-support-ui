@@ -20,7 +20,7 @@ import {
 import ConfirmPersonalDetailsPresenter from './confirmPersonalDetails/ConfirmPersonalDetailsPresenter'
 import AdditionalSuportNeedsPresenter from './additionalSupporNeeds/AdditionalSupportNeedsPresenter'
 
-class ReferralController {
+export default class ReferralController {
   private static readonly CRN_REGEX = /^[A-Za-z]\d{6}$/
 
   private static readonly PRISON_NUMBER_REGEX = /^[A-Z]\d{4}[A-Z]{2}$/

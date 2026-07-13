@@ -1,32 +1,69 @@
 import { expect, type Locator, type Page } from '@playwright/test'
 import AbstractPage from './abstractPage'
-import SummaryList from './components/summaryList'
 
-export default class FoundPersonPage extends AbstractPage {
+interface FindPersonContent {
+  pageTitle: string
+  pageHeader: string
+  errorMessages: {
+    nothingEntered: string
+    incorrectFormat: string
+    noRecord: string
+  }
+}
+
+const pageContent: FindPersonContent = {
+  pageTitle: 'Community Support - Find a Person',
+  pageHeader: 'Find a Person',
+  errorMessages: {
+    nothingEntered: 'Enter a CRN or prison number',
+    incorrectFormat:
+      'Enter a CRN or prison number in the correct format, like X123456 for a CRN or D0168GH for a prison number',
+    noRecord: 'No person with that CRN or prison number found',
+  },
+} as const
+
+export default class FindPersonPage extends AbstractPage {
   readonly header: Locator
+
+  readonly backLink: Locator
+
+  readonly identifierLabel: Locator
+
+  readonly identifierInput: Locator
 
   readonly continueButton: Locator
 
-  readonly personSummary: SummaryList
+  readonly submitButton: Locator
 
-  readonly enterDifferentIdentifierLink: Locator
+  readonly personIdentifierErrorMessage: Locator
 
-  private constructor(page: Page, personSummary: SummaryList) {
+  private constructor(page: Page) {
     super(page)
-    this.header = page.locator('h1').first()
+    this.header = page.getByRole('heading', { name: 'Find a Person' })
+    this.backLink = page.getByRole('link', { name: 'Back', exact: true })
+    this.identifierLabel = page.locator('label[for="personIdentifier"]')
+    this.identifierInput = page.locator('#personIdentifier')
     this.continueButton = page.getByRole('button', { name: 'Continue' })
-    this.personSummary = personSummary
-    this.enterDifferentIdentifierLink = page.getByRole('link', {
-      name: 'Enter a different CRN or prison number',
-      exact: true,
-    })
+    this.submitButton = page.locator('button[type="submit"]')
+    this.personIdentifierErrorMessage = page.locator('#personIdentifier-error')
   }
 
-  static async verifyOnPage(page: Page): Promise<FoundPersonPage> {
-    const personSummary = await SummaryList.create(page.locator('[data-testid="personsummary"]'))
-    const foundPersonPage = new FoundPersonPage(page, personSummary)
-    await expect(foundPersonPage.personSummary.summaryLocator).toBeVisible()
-    await expect(foundPersonPage.enterDifferentIdentifierLink).toBeVisible()
-    return foundPersonPage
+  static async verifyOnPage(page: Page): Promise<FindPersonPage> {
+    const findPersonPage = new FindPersonPage(page)
+    await expect(findPersonPage.header).toBeVisible()
+    await expect(findPersonPage.backLink).toBeVisible()
+    await expect(findPersonPage.identifierLabel).toBeVisible()
+    await expect(findPersonPage.identifierInput).toBeVisible()
+    await expect(findPersonPage.continueButton).toBeVisible()
+    return findPersonPage
+  }
+
+  static url(): string {
+    return '/referral/new/find-a-person'
+  }
+
+  // example usage findPersonPage.content().pageTitle
+  static content(): FindPersonContent {
+    return pageContent
   }
 }
