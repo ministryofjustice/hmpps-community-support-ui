@@ -1,0 +1,21 @@
+{% extends "../partials/layout.njk" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = "Do they need an interpreter? - [Service name]" %}
+{% set mainClasses = "govuk-body" %}
+
+{% block contentBody %}
+
+<div class="govuk-grid-row">
+  <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">
+    {{ content.heading }}
+  </h1>
+  <form method="post" action="{{content.postHref}}" >
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    {{ govukRadios(content.radios) }}
+    {{ govukButton(content.button) }}
+  </form>
+</div>
+{% endblock %}

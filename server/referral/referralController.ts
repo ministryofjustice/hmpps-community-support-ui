@@ -13,6 +13,7 @@ import AdditionalSuportNeedsPresenter from './additionalSupportNeeds/AdditionalS
 import ReferralCreationDetails from './referralDetails/ReferralCreationDetails'
 import TaskListPresenter from './taskList/TaskListPresenter'
 import CheckReferralInformationPresenter from './check-referral-information/checkReferralInformationPresenter'
+import NeedsAnInterpreterPresenter from './needsAnInterpreter/NeedsAnInterpreterPresenter'
 
 export default class ReferralController {
   private static readonly CRN_REGEX = /^[A-Za-z]\d{6}$/
@@ -22,7 +23,7 @@ export default class ReferralController {
   constructor(
     private readonly referralService: ReferralService,
     private readonly personService: PersonService,
-  ) {}
+  ) { }
 
   private static isValidPersonIdentifier(personIdentifier: string): boolean {
     const normalized = personIdentifier.trim().toUpperCase()
@@ -336,5 +337,17 @@ export default class ReferralController {
       logger.error(e)
       res.redirect('/referral/new/find-person')
     }
+  }
+
+  showNeedsAnInterpreter(req: Request, res: Response): unknown {
+    /* const referralCreationDetails = req.session ? req.session.referralCreationDetails : null
+    if (!referralCreationDetails || !referralCreationDetails.personDetails) {
+      return res.redirect('/referral/new/find-a-person')
+    } */
+
+    // const { personDetails } = referralCreationDetails
+    const personDetails = { firstName: 'Joe', lastName: 'Bloggs' }
+    const presenter = new NeedsAnInterpreterPresenter(personDetails)
+    return presenter.renderPage(res)
   }
 }

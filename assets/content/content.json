@@ -54,17 +54,8 @@
         "href": "/cases-in-progress"
       }
     ],
-    "unassignedColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Date received"
-    ],
-    "inProgressColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Assigned to",
-      "Date received"
-    ],
+    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
+    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
     "noCasesMessage": "There are no {0} cases to view."
   },
   "/cases-in-progress": {
@@ -83,17 +74,8 @@
         "href": "/cases-in-progress"
       }
     ],
-    "unassignedColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Date received"
-    ],
-    "inProgressColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Assigned to",
-      "Date received"
-    ],
+    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
+    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
     "noCasesMessage": "There are no {0} cases to view."
   },
   "/referral-details/:id": {
@@ -196,15 +178,8 @@
         "href": "/change-log"
       }
     ],
-    "progressActiveColumnHeaders": [
-      "Date and time",
-      "Status",
-      "Action"
-    ],
-    "progressInactiveColumnHeaders": [
-      "Status",
-      "Action"
-    ],
+    "progressActiveColumnHeaders": ["Date and time", "Status", "Action"],
+    "progressInactiveColumnHeaders": ["Status", "Action"],
     "historySummary": "View ICS history"
   },
   "/ics-feedback/:id/did-session-take-place": {
@@ -628,5 +603,15 @@
       }
     ],
     "defaultItemLabel": "{{ firstName }} does not need any additional support"
+  },
+  "/referral/task-list/needs-an-interpreter": {
+    "pageHeader": "Dose {{ name }} need an interpreter?",
+    "radioHeader": "What language does {{ name }} need ",
+    "yesOptionLabel": "Yes",
+    "yesCoditional": "What language does {{ name }} need an interpreter for?",
+    "noOptionLabel": "No",
+    "button": "Save and Continue",
+    "backlink": "/referral/task-list/additional-support-needs",
+    "url": "/referral/task-list/needs-an-interpreter"
   }
 }
