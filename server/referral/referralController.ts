@@ -18,7 +18,7 @@ import {
   updateSectionStatus,
 } from './taskList/TaskListHelper'
 import ConfirmPersonalDetailsPresenter from './confirmPersonalDetails/ConfirmPersonalDetailsPresenter'
-import AdditionalSuportNeedsPresenter from './additionalSupporNeeds/AdditionalSupportNeedsPresenter'
+import AdditionalSuportNeedsPresenter from './additionalSupportNeeds/AdditionalSupportNeedsPresenter'
 
 export default class ReferralController {
   private static readonly CRN_REGEX = /^[A-Za-z]\d{6}$/
