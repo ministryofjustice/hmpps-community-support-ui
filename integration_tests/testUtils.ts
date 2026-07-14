@@ -103,13 +103,13 @@ export const seedSessionCreateReferralDetails = async (page: Page, referralCreat
 
 export const seedSessionTaskListState = async (
   page: Page,
-  personIdentifier: string,
+  personId: string,
   taskName: string,
   taskStatus: TaskStatus,
 ): Promise<void> => {
   await page.request.post('/test/setup-task-list-state', {
     data: {
-      personIdentifier,
+      personId,
       taskName,
       taskStatus,
     },

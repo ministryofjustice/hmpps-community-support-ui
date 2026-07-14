@@ -47,7 +47,7 @@ export default class ReferralService {
     return this.communitySupportApiClient.getReferralInformation(caseIdentifier, username)
   }
 
-  getPersionalDetails(id: string, username: string): Promise<ConfirmPersonDetailsBffDto> {
-    return this.communitySupportApiClient.getPersionalDetails(id, username)
+  getPersonalDetails(id: string, username: string): Promise<ConfirmPersonDetailsBffDto> {
+    return this.communitySupportApiClient.getPersonalDetails(id, username)
   }
 }

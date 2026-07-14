@@ -3,7 +3,7 @@ import { TaskStatus } from './TaskListViewModel'
 import TaskListState from './TaskListState'
 
 export const getCurrentDraftReferralKey = (req: Request): string | undefined => {
-  return req.session?.referralCreationDetails?.personDetails?.id
+  return req.session?.taskList?.referralId
 }
 
 export const initialiseTaskList = (referralId: string): TaskListState => ({
@@ -24,14 +24,18 @@ export const newTaskListState = (req: Request, draftReferralId: string): TaskLis
 }
 
 export const getTaskListState = (req: Request, draftReferralId: string): TaskListState => {
-  if (req.session.taskList) {
+  if (req.session.taskList?.referralId === draftReferralId) {
     return req.session.taskList
   }
   return newTaskListState(req, draftReferralId)
 }
 
 export const removeTaskListState = (req: Request): void => {
-  delete req.session.taskList
+  const { referralId } = req.params as { referralId: string }
+
+  if (req.session.taskList?.referralId === referralId) {
+    delete req.session.taskList
+  }
 }
 
 export const saveTaskListState = (req: Request, state: TaskListState): void => {

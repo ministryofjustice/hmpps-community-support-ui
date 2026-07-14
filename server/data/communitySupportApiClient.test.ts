@@ -103,6 +103,7 @@ describe('CommunitySupportApiClient tests', () => {
     it('should submit a referral on a 200 response', () => {
       const submitReferralResponseDto = {
         referralId: 'referral-id-123',
+        personId: 'person-id-123',
         referenceNumber: 'REF123456',
       }
       nock('http://localhost:8080', {
