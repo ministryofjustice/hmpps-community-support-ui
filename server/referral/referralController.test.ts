@@ -132,7 +132,7 @@ describe('ReferralController', () => {
     })
     it('should create referral and render check referral information page', async () => {
       req.session.referralCreationDetails = {
-        personIdentifier: 'CRN123',
+        crn: 'CRN123',
         personDetails: {
           id: 'person123',
           personIdentifier: 'CRN123',
@@ -159,7 +159,7 @@ describe('ReferralController', () => {
 
     it('should flash error and redirect to find a person page if referral information not exist', async () => {
       req.session.referralCreationDetails = {
-        personIdentifier: 'CRN123',
+        crn: 'CRN123',
         personDetails: {
           id: 'person123',
           personIdentifier: 'CRN123',
