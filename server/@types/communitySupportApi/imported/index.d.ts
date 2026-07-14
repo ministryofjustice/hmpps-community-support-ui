@@ -568,7 +568,7 @@ export interface components {
       personDetails: components['schemas']['PersonDto']
       /** Format: uuid */
       communityServiceProviderId: string
-      personIdentifier: string
+      crn: string
       urgency?: boolean | null
     }
     PersonAdditionalDetails: {

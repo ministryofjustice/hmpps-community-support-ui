@@ -5,6 +5,7 @@ import {
   IcsFeedbackSubmissionResponse,
   ProbationOffice,
   ReferralInformation,
+  SubmitReferralResponse,
 } from '@community-support-api'
 import { stubFor } from './wiremock'
 import { duplicateData } from '../testUtils'
@@ -111,6 +112,23 @@ export default {
         status: httpStatus,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: referralInformation,
+      },
+    }),
+
+  stubSubmitReferral: (
+    referralId: string,
+    submitReferralResponse: SubmitReferralResponse = referralInformationInCommunity,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'POST',
+        urlPathPattern: `/community-support/${referralId}/submit-a-referral`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: submitReferralResponse,
       },
     }),
 
