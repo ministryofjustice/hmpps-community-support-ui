@@ -1,7 +1,4 @@
 import { expect, test } from '@playwright/test'
-import fs from 'fs'
-import path from 'path'
-
 import { login, resetStubs } from '../testUtils'
 import FindPersonPage from '../pages/findPersonPage'
 import FoundPersonPage from '../pages/foundPersonPage'
