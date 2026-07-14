@@ -123,6 +123,23 @@ export interface paths {
     patch: operations['updateReferral']
     trace?: never
   }
+  '/bff/task-list-status/{referralId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get task list status */
+    get: operations['getTaskListStatus']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/bff/risk/rosh/{crn}': {
     parameters: {
       query?: never
@@ -730,6 +747,14 @@ export interface components {
       sessionCommunications?: string[] | null
       personFirstName: string
     }
+    TaskListStatusResponseDto: {
+      confirmPersionalDetails: boolean
+      checkRiskInformation: boolean
+      selectThePersonsNeeds: boolean
+      addDetailsOfAnyAdditionalSupportNeeds: boolean
+      addDetailsOfMainPointOfContact: boolean
+      checkAnswers: boolean
+    }
     ArnsRiskConcernsToSelfDto: {
       suicide?: components['schemas']['ArnsRiskDto'] | null
       selfHarm?: components['schemas']['ArnsRiskDto'] | null
@@ -1238,6 +1263,28 @@ export interface operations {
         }
         content: {
           'application/json': unknown
+        }
+      }
+    }
+  }
+  getTaskListStatus: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Task list status found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['TaskListStatusResponseDto']
         }
       }
     }
