@@ -23,7 +23,12 @@ export const newTaskListState = (req: Request, draftReferralId: string): TaskLis
   return req.session.taskList
 }
 
-export const getTaskListState = (req: Request): TaskListState | undefined => req.session.taskList
+export const getTaskListState = (req: Request, draftReferralId: string): TaskListState => {
+  if (req.session.taskList) {
+    return req.session.taskList
+  }
+  return newTaskListState(req, draftReferralId)
+}
 
 export const removeTaskListState = (req: Request): void => {
   delete req.session.taskList
@@ -49,7 +54,7 @@ export const updateSectionStatus = (
   section: keyof TaskListState['sections'],
   newStatus: TaskStatus,
 ): void => {
-  const state = getTaskListState(req)
+  const state = getTaskListState(req, draftReferralId)
 
   const updatedState: TaskListState = {
     ...state,

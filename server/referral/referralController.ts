@@ -297,7 +297,10 @@ export default class ReferralController {
       const referralInformation = await this.referralService.createReferral(createReferralRequest, username)
 
       req.session.referralCreationDetails = createReferralRequest
-      const taskListState = { ...getTaskListState(req), referralId: referralInformation.referralId }
+      const taskListState = {
+        ...getTaskListState(req, referralInformation.referralId),
+        referralId: referralInformation.referralId,
+      }
       saveTaskListState(req, taskListState)
 
       const presenter = new TaskListPresenter(
