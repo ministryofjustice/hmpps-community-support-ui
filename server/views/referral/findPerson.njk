@@ -12,7 +12,7 @@
     <input type="hidden" name="_csrf" value="{{csrfToken}}">
     {{ govukInput({
         label: {
-          text: "Please enter the person's unique identifier",
+          text: "Enter a CRN or prison number",
           classes: "govuk-label--m",
           isPageHeading: true
         },
@@ -23,8 +23,7 @@
     }) }}
 
     <div class="govuk-button-group">
-        {{ govukButton({ text: "Search", preventDoubleClick: true }) }}
-        <a class="govuk-link" href="/">Cancel</a>
+        {{ govukButton({ text: "Continue", preventDoubleClick: true }) }}
     </div>
 
   </form>
