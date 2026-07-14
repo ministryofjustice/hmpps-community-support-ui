@@ -21,10 +21,19 @@ import ConfirmPersonalDetailsPresenter from './confirmPersonalDetails/ConfirmPer
 import AdditionalSuportNeedsPresenter from './additionalSupportNeeds/AdditionalSupportNeedsPresenter'
 
 export default class ReferralController {
+  private static readonly CRN_REGEX = /^[A-Za-z]\d{6}$/
+
+  private static readonly PRISON_NUMBER_REGEX = /^[A-Z]\d{4}[A-Z]{2}$/
+
   constructor(
     private readonly referralService: ReferralService,
     private readonly personService: PersonService,
   ) {}
+
+  private static isValidPersonIdentifier(personIdentifier: string): boolean {
+    const normalized = personIdentifier.trim().toUpperCase()
+    return ReferralController.CRN_REGEX.test(normalized) || ReferralController.PRISON_NUMBER_REGEX.test(normalized)
+  }
 
   async showReferralPage(req: Request, res: Response, next: NextFunction) {
     const referralId = req.params.id as string
@@ -44,25 +53,42 @@ export default class ReferralController {
       .then(presenter => presenter.renderPage(res))
   }
 
-  async handleFindPersonRequest(req: Request, res: Response, next: NextFunction) {
-    if (req.method === 'POST') {
-      const { personIdentifier } = req.body
-      const { username } = res.locals.user
-      try {
-        const foundPerson = await this.personService.getPersonByIdentifier(personIdentifier, username)
-        const presenter = new FoundPersonPresenter(foundPerson)
-        req.session.referralCreationDetails = { personDetails: foundPerson } as CreateReferralRequest
-        return presenter.renderPage(res)
-      } catch (error) {
-        if (error.responseStatus === 404) {
-          req.flash('personIdentifierError', `No person with identifier '${personIdentifier}' found`)
-        } else {
-          logger.error('Error finding person by identifier:', error)
-          req.flash('personIdentifierError', 'An unexpected error occurred. Please try again.')
-        }
-        return res.redirect('/referral/new/find-a-person')
-      }
+  async handlePostFindPersonRequest(req: Request, res: Response, next: NextFunction) {
+    const personIdentifier = (req.body.personIdentifier as string | undefined) ?? ''
+    const { username } = res.locals.user
+    const trimmedIdentifier = personIdentifier.trim()
+
+    if (!trimmedIdentifier) {
+      req.flash('personIdentifierError', 'Enter a CRN or prison number')
+      return res.redirect('/referral/new/find-a-person')
     }
+
+    if (!ReferralController.isValidPersonIdentifier(trimmedIdentifier)) {
+      req.flash(
+        'personIdentifierError',
+        'Enter a CRN or prison number in the correct format, like X123456 for a CRN or D0168GH for a prison number',
+      )
+      return res.redirect('/referral/new/find-a-person')
+    }
+
+    try {
+      const normalizedIdentifier = trimmedIdentifier.toUpperCase()
+      const foundPerson = await this.personService.getPersonByIdentifier(normalizedIdentifier, username)
+      const presenter = new FoundPersonPresenter(foundPerson)
+      req.session.referralCreationDetails = { personDetails: foundPerson } as CreateReferralRequest
+      return presenter.renderPage(res)
+    } catch (error) {
+      if (error.responseStatus === 404) {
+        req.flash('personIdentifierError', `No person with that CRN or prison number found`)
+      } else {
+        logger.error('Error finding person by identifier:', error)
+        req.flash('personIdentifierError', 'An unexpected error occurred. Please try again.')
+      }
+      return res.redirect('/referral/new/find-a-person')
+    }
+  }
+
+  async handleGetFindPersonRequest(req: Request, res: Response, next: NextFunction) {
     return res.render('referral/findPerson', {
       content: {
         backLink: { href: '/' },
