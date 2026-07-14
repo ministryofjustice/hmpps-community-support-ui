@@ -6,8 +6,6 @@
 {% set mainClasses = "govuk-body" %}
 
 {% block contentBody %}
-  <h1 class="govuk-heading-l">Find a Person</h1>
-
   <form method="post" novalidate action="/referral/new/find-a-person">
     <input type="hidden" name="_csrf" value="{{csrfToken}}">
     {{ govukInput({

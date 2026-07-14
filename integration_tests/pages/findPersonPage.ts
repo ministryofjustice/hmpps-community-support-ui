@@ -13,7 +13,7 @@ interface FindPersonContent {
 
 const pageContent: FindPersonContent = {
   pageTitle: 'Community Support - Find a Person',
-  pageHeader: 'Find a Person',
+  pageHeader: 'Enter a CRN or prison number',
   errorMessages: {
     nothingEntered: 'Enter a CRN or prison number',
     incorrectFormat:
@@ -39,7 +39,7 @@ export default class FindPersonPage extends AbstractPage {
 
   private constructor(page: Page) {
     super(page)
-    this.header = page.getByRole('heading', { name: 'Find a Person' })
+    this.header = page.getByRole('heading', { name: FindPersonPage.content().pageHeader })
     this.backLink = page.getByRole('link', { name: 'Back', exact: true })
     this.identifierLabel = page.locator('label[for="personIdentifier"]')
     this.identifierInput = page.locator('#personIdentifier')
