@@ -5,13 +5,22 @@
 #
 
 API_SPEC_URL='https://community-support-api-dev.hmpps.service.justice.gov.uk/v3/api-docs'
+LOCATION_DESCRIPTION='dev environment'
 
 # Only use localhost if the script is run with the --local flag.
 for arg in "$@"; do
 	if [[ "$arg" == '--local' ]]; then
 		API_SPEC_URL='http://localhost:8080/v3/api-docs'
+		LOCATION_DESCRIPTION='local environment'
 		break
 	fi
 done
 
+echo "Generating types from the Community Support API OpenAPI spec at $API_SPEC_URL ($LOCATION_DESCRIPTION)..."
 npx openapi-typescript "$API_SPEC_URL" --output ./server/@types/communitySupportApi/imported/index.d.ts
+echo "Types generated successfully."
+
+# Now run the
+echo "Running lint fix..." 
+npm run lint-fix
+echo "...Lint fix completed successfully."

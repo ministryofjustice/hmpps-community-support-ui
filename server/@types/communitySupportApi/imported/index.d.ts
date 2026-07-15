@@ -136,7 +136,7 @@ export interface paths {
     delete?: never
     options?: never
     head?: never
-    /** Update additional support needs information of a draft referral */
+    /** Update the Additional Support Needs information for a Draft Referral */
     patch: operations['updateAdditionalSupportNeeds']
     trace?: never
   }
@@ -782,6 +782,27 @@ export interface components {
       anythingElse?: string | null
       needsAdditionalSupport: boolean
     }
+    AdditionalSupportNeedsBffResponseDto: {
+      refereeName: components['schemas']['RefereeName']
+      physicalHealth?: components['schemas']['Selection'] | null
+      mentalEmotionalHealth?: components['schemas']['Selection'] | null
+      neurodiversity?: components['schemas']['Selection'] | null
+      locationTravel?: components['schemas']['Selection'] | null
+      caringResponsibilities?: components['schemas']['Selection'] | null
+      employmentResponsibilities?: components['schemas']['Selection'] | null
+      diversity?: components['schemas']['Selection'] | null
+      anythingElse?: components['schemas']['Selection'] | null
+      needsAdditionalSupport: boolean
+    }
+    RefereeName: {
+      firstName: string
+      middleName?: string | null
+      lastName: string
+    }
+    Selection: {
+      selected: boolean
+      value?: string | null
+    }
     TaskListStatusResponseDto: {
       confirmPersonalDetails: boolean
       checkRiskInformation: boolean
@@ -938,27 +959,6 @@ export interface components {
       probationRegionId: string
       govUkUrl?: string | null
       deliusCRSLocationId?: string | null
-    }
-    AdditionalSupportNeedsBffResponseDto: {
-      refereeName: components['schemas']['RefereeName']
-      physicalHealth?: components['schemas']['Selection'] | null
-      mentalEmotionalHealth?: components['schemas']['Selection'] | null
-      neurodiversity?: components['schemas']['Selection'] | null
-      locationTravel?: components['schemas']['Selection'] | null
-      caringResponsibilities?: components['schemas']['Selection'] | null
-      employmentResponsibilities?: components['schemas']['Selection'] | null
-      diversity?: components['schemas']['Selection'] | null
-      anythingElse?: components['schemas']['Selection'] | null
-      needsAdditionalSupport: boolean
-    }
-    RefereeName: {
-      firstName: string
-      middleName?: string | null
-      lastName: string
-    }
-    Selection: {
-      selected: boolean
-      value?: string | null
     }
     ConfirmPersonDetailsBffDto: {
       /** Format: uuid */
@@ -1340,7 +1340,7 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          'application/json': components['schemas']['SubmitReferralResponseDto']
+          'application/json': components['schemas']['AdditionalSupportNeedsBffResponseDto']
         }
       }
       /** @description Referral not found */
@@ -1838,7 +1838,7 @@ export interface operations {
           'application/json': components['schemas']['AdditionalSupportNeedsBffResponseDto']
         }
       }
-      /** @description Referral not found */
+      /** @description Referral, or the Referral's Person, not found */
       404: {
         headers: {
           [name: string]: unknown
