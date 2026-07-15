@@ -4,6 +4,23 @@
  */
 
 export interface paths {
+  '/risk-information/{referralId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    /** Save draft OASys risk information for a referral */
+    put: operations['saveRiskInformation']
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/referral/{caseReference}/ics': {
     parameters: {
       query?: never
@@ -106,7 +123,7 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/referral/{referralId}/additional-information': {
+  '/draft-referral/additional-support-needs/{referralId}': {
     parameters: {
       query?: never
       header?: never
@@ -119,8 +136,8 @@ export interface paths {
     delete?: never
     options?: never
     head?: never
-    /** Update a referral */
-    patch: operations['updateReferral']
+    /** Update additional support needs information of a draft referral */
+    patch: operations['updateAdditionalSupportNeeds']
     trace?: never
   }
   '/bff/task-list-status/{referralId}': {
@@ -378,6 +395,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/bff/draft-referral/additional-support-needs/{referralId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get additional support needs page data */
+    get: operations['getAdditionalSupportNeedsPage']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/bff/confirm-person-details/{personIdentifier}': {
     parameters: {
       query?: never
@@ -433,6 +467,20 @@ export interface paths {
 export type webhooks = Record<string, never>
 export interface components {
   schemas: {
+    CommunitySupportRiskInformationDto: {
+      /** Format: uuid */
+      id: string
+      /** Format: uuid */
+      referralId: string
+      riskSummaryWhoIsAtRisk?: string | null
+      riskSummaryNatureOfRisk?: string | null
+      riskSummaryRiskImminence?: string | null
+      riskToSelfSuicide?: string | null
+      riskToSelfSelfHarm?: string | null
+      riskToSelfHostelSetting?: string | null
+      riskToSelfVulnerability?: string | null
+      additionalInformation?: string | null
+    }
     AppointmentTimeRequest: {
       /** Format: int32 */
       hour: number
@@ -533,30 +581,6 @@ export interface components {
        */
       appointmentCategory: 'VIRTUAL'
     }
-    PersonAdditionalSupportNeedsDto: {
-      /** Format: uuid */
-      id?: string | null
-      /** Format: uuid */
-      referralId: string
-      /** Format: uuid */
-      personId: string
-      physicalHealthDetails?: string | null
-      mentalEmotionalHealthDetails?: string | null
-      neurodiversityDetails?: string | null
-      locationTravelDetails?: string | null
-      caringResponsibilitiesDetails?: string | null
-      employmentResponsibilitiesDetails?: string | null
-      diversityDetails?: string | null
-      anythingElseDetails?: string | null
-      noAdditionalSupportNeeded: boolean
-      interpreterLanguage?: string | null
-    }
-    ReferralAdditionalDetails: {
-      supportNeeds?: components['schemas']['PersonAdditionalSupportNeedsDto'] | null
-    }
-    SubmitReferralRequest: {
-      additionalInformation?: components['schemas']['ReferralAdditionalDetails'] | null
-    }
     SubmitReferralResponseDto: {
       /** Format: uuid */
       referralId: string
@@ -568,7 +592,7 @@ export interface components {
       personDetails: components['schemas']['PersonDto']
       /** Format: uuid */
       communityServiceProviderId: string
-      crn: string
+      personIdentifier: string
       urgency?: boolean | null
     }
     PersonAdditionalDetails: {
@@ -747,8 +771,19 @@ export interface components {
       sessionCommunications?: string[] | null
       personFirstName: string
     }
+    AdditionalSupportNeedsRequest: {
+      physicalHealth?: string | null
+      mentalEmotionalHealth?: string | null
+      neurodiversity?: string | null
+      locationTravel?: string | null
+      caringResponsibilities?: string | null
+      employmentResponsibilities?: string | null
+      diversity?: string | null
+      anythingElse?: string | null
+      needsAdditionalSupport: boolean
+    }
     TaskListStatusResponseDto: {
-      confirmPersionalDetails: boolean
+      confirmPersonalDetails: boolean
       checkRiskInformation: boolean
       selectThePersonsNeeds: boolean
       addDetailsOfAnyAdditionalSupportNeeds: boolean
@@ -904,6 +939,27 @@ export interface components {
       govUkUrl?: string | null
       deliusCRSLocationId?: string | null
     }
+    AdditionalSupportNeedsBffResponseDto: {
+      refereeName: components['schemas']['RefereeName']
+      physicalHealth?: components['schemas']['Selection'] | null
+      mentalEmotionalHealth?: components['schemas']['Selection'] | null
+      neurodiversity?: components['schemas']['Selection'] | null
+      locationTravel?: components['schemas']['Selection'] | null
+      caringResponsibilities?: components['schemas']['Selection'] | null
+      employmentResponsibilities?: components['schemas']['Selection'] | null
+      diversity?: components['schemas']['Selection'] | null
+      anythingElse?: components['schemas']['Selection'] | null
+      needsAdditionalSupport: boolean
+    }
+    RefereeName: {
+      firstName: string
+      middleName?: string | null
+      lastName: string
+    }
+    Selection: {
+      selected: boolean
+      value?: string | null
+    }
     ConfirmPersonDetailsBffDto: {
       /** Format: uuid */
       id: string
@@ -978,6 +1034,41 @@ export interface components {
 }
 export type $defs = Record<string, never>
 export interface operations {
+  saveRiskInformation: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CommunitySupportRiskInformationDto']
+      }
+    }
+    responses: {
+      /** @description Save Risk information */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['CommunitySupportRiskInformationDto']
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
   changeIcsAppointment: {
     parameters: {
       query?: never
@@ -1040,11 +1131,7 @@ export interface operations {
       }
       cookie?: never
     }
-    requestBody?: {
-      content: {
-        'application/json': components['schemas']['SubmitReferralRequest']
-      }
-    }
+    requestBody?: never
     responses: {
       /** @description Referral submitted */
       200: {
@@ -1232,7 +1319,7 @@ export interface operations {
       }
     }
   }
-  updateReferral: {
+  updateAdditionalSupportNeeds: {
     parameters: {
       query?: never
       header?: never
@@ -1241,13 +1328,13 @@ export interface operations {
       }
       cookie?: never
     }
-    requestBody?: {
+    requestBody: {
       content: {
-        'application/json': components['schemas']['SubmitReferralRequest']
+        'application/json': components['schemas']['AdditionalSupportNeedsRequest']
       }
     }
     responses: {
-      /** @description Referral updated */
+      /** @description Additional support needs information updated */
       200: {
         headers: {
           [name: string]: unknown
@@ -1721,6 +1808,37 @@ export interface operations {
         }
       }
       /** @description ICS feedback not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getAdditionalSupportNeedsPage: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Additional support needs data found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['AdditionalSupportNeedsBffResponseDto']
+        }
+      }
+      /** @description Referral not found */
       404: {
         headers: {
           [name: string]: unknown
