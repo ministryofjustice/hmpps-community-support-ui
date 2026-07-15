@@ -129,4 +129,8 @@ export default class CommunitySupportApiClient extends RestClient {
   getPersonalDetails(personIdentifier: string, username: string): Promise<ConfirmPersonDetailsBffDto> {
     return this.get({ path: `/bff/confirm-person-details/${personIdentifier}` }, asSystem(username))
   }
+
+  getTaskListStatus(draftReferralId: string, username: string) {
+    return this.get({ path: `/bff/task-list-status/${draftReferralId}` }, asSystem(username))
+  }
 }

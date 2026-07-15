@@ -48,6 +48,7 @@ export declare module 'express-session' {
     icsFeedbackSubmission: IcsFeedbackSubmission & { caseReferenceId: string }
     icsFeedbackInfo: SessionFeedbackDetails[]
     taskList?: TaskListState
+    draftReferralId?: string
   }
 }
 

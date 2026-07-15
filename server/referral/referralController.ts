@@ -8,16 +8,9 @@ import logger from '../../logger'
 import CheckReferralInformationPresenter from './check-referral-information/checkReferralInformationPresenter'
 import ReferralDetailsPresenter from './referralDetails/ReferralDetailsPresenter'
 import ReferralProgressPresenter from './progress/referralProgressPresenter'
-import TaskListPresenter from './taskList/TaskListPresenter'
 import { ErrorMiddlewareErrors } from '../@types/express'
 import getLatestAppointments from './progress/getLatestAppointments'
-import {
-  getCurrentDraftReferralKey,
-  getTaskListState,
-  saveTaskListState,
-  updateSectionStatus,
-  removeTaskListState,
-} from './taskList/TaskListHelper'
+import { getCurrentDraftReferralKey, updateSectionStatus, removeTaskListState } from './taskList/TaskListHelper'
 import ConfirmPersonalDetailsPresenter from './confirmPersonalDetails/ConfirmPersonalDetailsPresenter'
 import AdditionalSuportNeedsPresenter from './additionalSupportNeeds/AdditionalSupportNeedsPresenter'
 
@@ -29,7 +22,7 @@ export default class ReferralController {
   constructor(
     private readonly referralService: ReferralService,
     private readonly personService: PersonService,
-  ) {}
+  ) { }
 
   private static isValidPersonIdentifier(personIdentifier: string): boolean {
     const normalized = personIdentifier.trim().toUpperCase()

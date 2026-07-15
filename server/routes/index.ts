@@ -9,6 +9,7 @@ import CommunityServiceProviderController from '../referral/communityServiceProv
 import AppointmentController from '../appointment/appointmentController'
 import IcsFeedbackController from '../appointment/icsFeedbackController'
 import asyncMiddleware from '../middleware/asyncMiddleware'
+import DraftReferralController from '../referral/draftReferralController'
 
 export default function routes({
   auditService,
@@ -27,6 +28,7 @@ export default function routes({
   const post = (path: string, handler: RequestHandler): Router => router.post(path, asyncMiddleware(handler))
 
   const referralController = new ReferralController(referralService, personService)
+  const draftReferralController = new DraftReferralController(referralService)
   const communityServiceProviderController = new CommunityServiceProviderController(communityServiceProviderService)
   const caseListController = new CaseListController(caseListService)
   const appointmentController = new AppointmentController(referralService, appointmentService, referenceDataService)
@@ -193,13 +195,11 @@ export default function routes({
     referralController.showAdditionalSupportNeeds(req, res),
   )
 
-  get('/referral/task-list/:id', (req, res) => referralController.showTaskList(req, res))
+  get('/referral/task-list/:id', (req, res) => draftReferralController.showTaskList(req, res))
 
   post('/referral/task-list/confirm-personal-details', (req, res) =>
     referralController.confirmPersonalDetails(req, res),
   )
-
-  get('/referral/task-list/:id', (req, res) => referralController.showTaskList(req, res))
 
   return router
 }

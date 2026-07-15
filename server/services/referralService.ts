@@ -50,4 +50,8 @@ export default class ReferralService {
   getPersonalDetails(id: string, username: string): Promise<ConfirmPersonDetailsBffDto> {
     return this.communitySupportApiClient.getPersonalDetails(id, username)
   }
+
+  getTaskListStatus(draftReferralId: string, username: string) {
+    return this.communitySupportApiClient.getTaskListStatus(draftReferralId, username)
+  }
 }
