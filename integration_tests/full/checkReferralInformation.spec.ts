@@ -115,9 +115,9 @@ test.describe('Check Referral Information Page', () => {
 
     await page.goto(CheckReferralInformationPage.url(mockReferralId))
 
-    const checkReferralInformationPage = await CheckReferralInformationPage.verifyOnPage(page)
+    await CheckReferralInformationPage.verifyOnPage(page)
 
-    await checkReferralInformationPage.submitButton.click()
+    await page.getByRole('button', { name: 'Submit' }).click()
 
     const referralConfirmationPage = await ReferralConfirmationPage.verifyOnPage(page)
     expect(referralConfirmationPage.header).toBeVisible()
@@ -130,9 +130,9 @@ test.describe('Check Referral Information Page', () => {
 
     await page.goto(CheckReferralInformationPage.url(mockReferralId))
 
-    const checkReferralInformationPage = await CheckReferralInformationPage.verifyOnPage(page)
+    await CheckReferralInformationPage.verifyOnPage(page)
 
-    await checkReferralInformationPage.submitButton.click()
+    await page.getByRole('button', { name: 'Submit' }).click()
 
     const referralConfirmationPage = await ReferralConfirmationPage.verifyOnPage(page)
     expect(referralConfirmationPage.header).toBeVisible()
