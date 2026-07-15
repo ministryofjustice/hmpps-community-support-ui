@@ -6,6 +6,7 @@ export type CommunityServiceProviderViewModel = {
 }
 
 export type serviceProviderItem = {
+  serviceProviderId: string
   url: string
   title: string
   truncatedDescription: string

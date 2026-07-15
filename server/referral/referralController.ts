@@ -289,8 +289,9 @@ export default class ReferralController {
     return presenter.renderPage(res)
   }
 
-  async showTaskList(req: Request, res: Response) {
+  async createReferral(req: Request, res: Response) {
     const { username } = res.locals.user
+    const { serviceProviderId } = req.body
     const referralCreationDetails = req.session ? req.session.referralCreationDetails : null
 
     if (!referralCreationDetails || !referralCreationDetails.personDetails) {
@@ -298,34 +299,51 @@ export default class ReferralController {
     }
 
     const { personIdentifier } = referralCreationDetails.personDetails
+    const taskListState = getTaskListState(req, getCurrentDraftReferralKey(req))
 
-    try {
-      const createReferralRequest = {
-        personDetails: referralCreationDetails.personDetails,
-        communityServiceProviderId: req.params.id as string, // referralCreationDetails.communityServiceProviderId,
-        crn: personIdentifier,
-        urgency: false,
+    if (!taskListState?.referralId) {
+      try {
+        const createReferralRequest: CreateReferralRequest = {
+          personDetails: referralCreationDetails.personDetails,
+          communityServiceProviderId: serviceProviderId,
+          crn: personIdentifier,
+          urgency: false,
+        }
+
+        const referralInformation = await this.referralService.createReferral(createReferralRequest, username)
+
+        req.session.referralCreationDetails = createReferralRequest
+
+        saveTaskListState(req, getTaskListState(req, referralInformation.referralId))
+      } catch (error) {
+        logger.error('Error creating referral:', error)
+        req.flash('create referral', 'An unexpected error when creating a referral. Please try again.')
+        return res.redirect('/referral/new/find-a-person')
       }
+    }
+    saveTaskListState(req, taskListState)
 
-      const referralInformation = await this.referralService.createReferral(createReferralRequest, username)
+    return res.redirect('/referral/task-list')
+  }
 
-      req.session.referralCreationDetails = createReferralRequest
-      const taskListState = {
-        ...getTaskListState(req, referralInformation.referralId),
-        referralId: referralInformation.referralId,
-      }
-      saveTaskListState(req, taskListState)
+  async showTaskList(req: Request, res: Response) {
+    const referralCreationDetails = req.session ? req.session.referralCreationDetails : null
 
-      const presenter = new TaskListPresenter(
-        `${referralCreationDetails.personDetails.firstName} ${referralCreationDetails.personDetails.lastName}`,
-        taskListState,
-      )
-      return presenter.renderPage(res)
-    } catch (error) {
-      logger.error('Error creating referral:', error)
-      req.flash('create referral', 'An unexpected error when creating a referral. Please try again.')
+    if (!referralCreationDetails || !referralCreationDetails.personDetails) {
       return res.redirect('/referral/new/find-a-person')
     }
+
+    const taskListState = getTaskListState(req, getCurrentDraftReferralKey(req))
+
+    if (!taskListState.referralId) {
+      return res.redirect('/referral/new/find-a-person')
+    }
+    const presenter = new TaskListPresenter(
+      `${referralCreationDetails.personDetails.firstName} ${referralCreationDetails.personDetails.lastName}`,
+      taskListState,
+    )
+
+    return presenter.renderPage(res)
   }
 
   async showConfirmPersonalDetails(req: Request, res: Response) {

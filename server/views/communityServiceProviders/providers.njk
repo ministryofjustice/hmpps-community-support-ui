@@ -1,19 +1,61 @@
 {% extends "../partials/layout.njk" %}
 
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% set pageTitle = applicationName + " - Referral" %}
 {% set mainClasses = "govuk-body" %}
+
+{% block head %}
+  {{ super() }}
+
+  <style>
+    button.create-referral-link-plain,
+    button.create-referral-link-plain:hover,
+    button.create-referral-link-plain:focus,
+    button.create-referral-link-plain:active {
+      background: none !important;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      color: #1d70b8 !important;
+      text-decoration: underline !important;
+      cursor: pointer !important;
+      font-size: inherit !important;
+      line-height: inherit !important;
+      font-weight: normal !important;
+      outline: none !important;
+      all: unset !important;
+    }
+  </style>  </style>
+{% endblock %}
 
 {% block content %}
 
 <h1 class="govuk-heading-xl">Select a Community Service Provider to make a referral</h1>
 
   {% for summary in content.serviceProviderItems %}
-    <h2 class="govuk-heading-l">
-      <a class="govuk-link" href="{{summary.url}}">{{ summary.title }}</a>
-    </h2>
+    <form method="post" action="/referral/create-referral" style="display inline-block">
+      <input type="hidden" name="_csrf" value="{{csrfToken}}">
+      <input type="hidden" style="background:none !important; border: 0 !important;" name="serviceProviderId" value="{{ summary.serviceProviderId }}" />
 
+      {% set linkText %}
+        <h2 class="govuk-heading-l">
+          <a href="#" onclick="return false;">
+            {{ summary.title }}
+          </a>
+        </h2>
+      {% endset %}
+      {{ govukButton({
+        classes: "govuk-button govuk-button--inverse create-referral-link",
+        html: linkText,
+        attributes: {
+          "style" : "box-shadow: 0 0 0 0 !important;"
+        },
+        preventDoubleClick: true
+      }) }}
+    </form>
     <p class="govuk-body">{{ summary.truncatedDescription | striptags(true) | escape | nl2br }}</p>
 
     {{ govukSummaryList(summary.summary) }}

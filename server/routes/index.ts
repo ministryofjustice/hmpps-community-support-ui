@@ -42,6 +42,10 @@ export default function routes({
 
   get('/referral-details/:id', async (req, res) => referralController.showReferralDetailsPage(req, res))
 
+  post('/referral/create-referral', async (req, res) => referralController.createReferral(req, res))
+
+  get('/referral/task-list', (req, res) => referralController.showTaskList(req, res))
+
   get('/referral/new/find-a-person', async (req, res, next) => {
     await referralController.handleGetFindPersonRequest(req, res, next)
   })
