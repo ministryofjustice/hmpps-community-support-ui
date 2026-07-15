@@ -37,17 +37,8 @@
         "href": "/cases-in-progress"
       }
     ],
-    "unassignedColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Date received"
-    ],
-    "inProgressColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Assigned to",
-      "Date received"
-    ],
+    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
+    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
     "noCasesMessage": "There are no {0} cases to view."
   },
   "/cases-in-progress": {
@@ -66,17 +57,8 @@
         "href": "/cases-in-progress"
       }
     ],
-    "unassignedColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Date received"
-    ],
-    "inProgressColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Assigned to",
-      "Date received"
-    ],
+    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
+    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
     "noCasesMessage": "There are no {0} cases to view."
   },
   "/referral-details/:id": {
@@ -179,15 +161,8 @@
         "href": "/change-log"
       }
     ],
-    "progressActiveColumnHeaders": [
-      "Date and time",
-      "Status",
-      "Action"
-    ],
-    "progressInactiveColumnHeaders": [
-      "Status",
-      "Action"
-    ],
+    "progressActiveColumnHeaders": ["Date and time", "Status", "Action"],
+    "progressInactiveColumnHeaders": ["Status", "Action"],
     "historySummary": "View ICS history"
   },
   "/ics-feedback/:id/did-session-take-place": {
@@ -497,15 +472,15 @@
         "subTasks": {
           "checkRiskInformation": {
             "text": "Check risk information",
-            "href": "/referral/new/check-risk-information"
+            "href": "/referral/task-list/check-risk-information"
           },
           "selectPersonNeeds": {
             "text": "Select the person's needs",
-            "href": "/referral/new/select-person-needs"
+            "href": "/referral/task-list/select-person-needs"
           },
           "addSupportNeeds": {
             "text": "Add details of any additional support needs",
-            "href": "/referral/new/add-support-needs"
+            "href": "/referral/task-list/add-support-needs"
           }
         }
       },
@@ -523,7 +498,7 @@
         "subTasks": {
           "checkAnswersAndSubmit": {
             "text": "Check answers and submit",
-            "href": "/referral/check-referral-information/{{ id }}"
+            "href": "/referral/check-referral-information"
           }
         }
       }

@@ -30,6 +30,7 @@ type SessionMethod = components['schemas']['SessionMethod']
 type AppointmentDeliveryDetails = components['schemas']['AppointmentDelivery']
 type CaseWorkerSummary = components['schemas']['CaseWorkerSummaryDto']
 type ConfirmPersonDetailsBffDto = components['schemas']['ConfirmPersonDetailsBffDto']
+type TaskListStatusResponseDto = components['schemas']['TaskListStatusResponseDto']
 
 export type {
   Referral,
@@ -62,4 +63,5 @@ export type {
   SessionMethod,
   CaseWorkerSummary,
   ConfirmPersonDetailsBffDto,
+  TaskListStatusResponseDto,
 }

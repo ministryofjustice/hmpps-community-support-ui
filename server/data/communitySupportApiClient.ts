@@ -21,6 +21,7 @@ import type {
   IcsFeedbackSubmissionResponse,
   ChangeAppointmentDetails,
   ConfirmPersonDetailsBffDto,
+  TaskListStatusResponseDto,
 } from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
@@ -130,7 +131,7 @@ export default class CommunitySupportApiClient extends RestClient {
     return this.get({ path: `/bff/confirm-person-details/${personIdentifier}` }, asSystem(username))
   }
 
-  getTaskListStatus(draftReferralId: string, username: string) {
+  getTaskListStatus(draftReferralId: string, username: string): Promise<TaskListStatusResponseDto> {
     return this.get({ path: `/bff/task-list-status/${draftReferralId}` }, asSystem(username))
   }
 }

@@ -5,6 +5,7 @@ import {
   ReferralInformation,
   ReferralProgress,
   ConfirmPersonDetailsBffDto,
+  TaskListStatusResponseDto,
 } from '@community-support-api'
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
 
@@ -51,7 +52,11 @@ export default class ReferralService {
     return this.communitySupportApiClient.getPersonalDetails(id, username)
   }
 
-  getTaskListStatus(draftReferralId: string, username: string) {
+  getTaskListStatus(draftReferralId: string, username: string): Promise<TaskListStatusResponseDto> {
     return this.communitySupportApiClient.getTaskListStatus(draftReferralId, username)
+  }
+
+  getAdditionalSupportNeeds(_draftReferralId: string, _username: string) {
+    throw new Error('Method not implemented.')
   }
 }
