@@ -10,7 +10,6 @@ import ReferralDetailsPresenter from './referralDetails/ReferralDetailsPresenter
 import ReferralProgressPresenter from './progress/referralProgressPresenter'
 import TaskListPresenter from './taskList/TaskListPresenter'
 import { ErrorMiddlewareErrors } from '../@types/express'
-import getLatestAppointments from './progress/getLatestAppointments'
 import {
   getCurrentDraftReferralKey,
   getTaskListState,
@@ -276,13 +275,6 @@ export default class ReferralController {
     delete req.session.referralProgressBanner
 
     const referralProgress = await this.referralService.getReferralProgress(caseReference, username)
-
-    req.session.icsFeedbackInfo = getLatestAppointments(referralProgress.appointments).map((appointment, index) => ({
-      appointmentId: appointment.appointmentIcsId,
-      icsFeedbackId: appointment.icsFeedbackId,
-      appointmentDateTime: appointment.dateTime,
-      rowIndex: index,
-    }))
 
     const presenter = new ReferralProgressPresenter(referralProgress, caseReference, bannerContent, authSource)
 

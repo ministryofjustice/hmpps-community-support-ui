@@ -6,16 +6,8 @@ class IcsFeedbackController {
   constructor(private readonly appointmentService: AppointmentService) {}
 
   async viewFeedback(req: Request, res: Response): Promise<void> {
-    const { caseRefId, rowIndex } = req.params as { caseRefId: string; rowIndex: string }
+    const { caseRefId, icsFeedbackId } = req.params as { caseRefId: string; icsFeedbackId: string }
     const { username } = res.locals.user
-
-    const index = Number(rowIndex)
-    if (Number.isNaN(index)) {
-      throw new Error('Invalid feedback reference')
-    }
-
-    const match = req.session.icsFeedbackInfo?.find(item => item.rowIndex === index)
-    const icsFeedbackId = match?.icsFeedbackId
 
     if (!icsFeedbackId) {
       throw new Error('No feedback exists for this appointment')

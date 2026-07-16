@@ -26,13 +26,6 @@ export interface IcsFeedbackHowSessionTookPlaceSession {
   howSessionTookPlace?: HowSessionTookPlace
 }
 
-export interface SessionFeedbackDetails {
-  appointmentId: string
-  appointmentDateTime: string
-  icsFeedbackId?: string
-  rowIndex: number
-}
-
 export declare module 'express-session' {
   // Declare that the session will potentially contain these additional fields
   interface SessionData {
@@ -46,7 +39,6 @@ export declare module 'express-session' {
     pending: Record<string, string>
     referralProgressBanner?: ReferralProgressBannerContent
     icsFeedbackSubmission: IcsFeedbackSubmission & { caseReferenceId: string }
-    icsFeedbackInfo: SessionFeedbackDetails[]
     taskList?: TaskListState
   }
 }
