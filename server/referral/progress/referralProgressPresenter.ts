@@ -298,16 +298,16 @@ export default class ReferralProgressPresenter extends PresenterBase<
   }
 
   private getAppointments(): ReferralAppointmentHistory[] {
-    const latest = new Map<string, ReferralAppointmentHistory>()
+    const appointments = new Map<string, ReferralAppointmentHistory>()
 
     for (const appt of this.referralProgress.appointments ?? []) {
       const key = appt.appointmentIcsId ?? `unknown-${appt.dateTime}`
-      const existing = latest.get(key)
+      const existing = appointments.get(key)
       if (!existing || appt.dateTime > existing.dateTime) {
-        latest.set(key, appt)
+        appointments.set(key, appt)
       }
     }
 
-    return [...latest.values()]
+    return [...appointments.values()]
   }
 }
