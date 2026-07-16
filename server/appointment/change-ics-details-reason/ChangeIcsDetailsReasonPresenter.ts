@@ -110,7 +110,7 @@ export default class ChangeIcsDetailsReasonPresenter extends PresenterBase<
     }
   }
 
-  protected buildPageContent(res: Response): ChangeIcsDetailsReasonViewModel {
+  protected buildViewModel(res: Response): ChangeIcsDetailsReasonViewModel {
     const content: ChangeIcsDetailsReasonContent = this.buildStaticContent(res)
     const formData: ChangeIcsDetailsReasonFormData = this.session
       ? {

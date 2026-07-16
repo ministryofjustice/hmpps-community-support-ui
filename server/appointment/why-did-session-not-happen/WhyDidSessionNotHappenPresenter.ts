@@ -129,7 +129,7 @@ export default class WhyDidSessionNotHappenPresenter extends PresenterBase<
     }
   }
 
-  protected buildPageContent(res: Response): WhyDidSessionNotHappenViewModel {
+  protected buildViewModel(res: Response): WhyDidSessionNotHappenViewModel {
     const content: WhyDidSessionNotHappenContent = this.buildStaticContent(res)
     const formData: Partial<components['schemas']['SessionNotHappenReasonRequest']> = this.session
       ? {

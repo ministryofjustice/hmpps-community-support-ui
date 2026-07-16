@@ -63,7 +63,7 @@ describe('AdditionalSupportNeedsPresenter', () => {
     } as unknown as Response
     const name = { firstName: 'Alex', lastName: 'River' }
     const presenter = new AdditionalSuportNeedsPresenter(name)
-    const result = presenter.buildPageContent(res)
+    const result = presenter.buildViewModel(res)
     expect(result).toBeDefined()
     // TODO rest of this test
   })

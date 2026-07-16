@@ -24,7 +24,7 @@ describe('TaskListPresenter - Page Rendering', () => {
     const presenter = new TaskListPresenter(mockRefereeName, mockTaskListState)
     const content = TaskListContent.build()
     const response = { locals: { content } } as unknown as Response
-    const viewModel = presenter.buildPageContent(response)
+    const viewModel = presenter.buildViewModel(response)
 
     // Basic page info
     expect(viewModel.pageHeader).toBe('John Smith')

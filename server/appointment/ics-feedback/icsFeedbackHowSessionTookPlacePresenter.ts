@@ -218,7 +218,7 @@ export default class IcsFeedbackHowSessionTookPlacePresenter extends PresenterBa
     }
   }
 
-  buildPageContent(res: Response): IcsFeedbackHowSessionTookPlaceViewModel {
+  buildViewModel(res: Response): IcsFeedbackHowSessionTookPlaceViewModel {
     const content = this.buildStaticContent(res)
     const { type } = this.sessionMethod
     const pageHeader = content.pageHeaders?.[type] ?? content.pageHeaders?.default ?? ''

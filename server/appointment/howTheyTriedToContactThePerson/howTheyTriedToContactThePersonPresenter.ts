@@ -74,7 +74,7 @@ export default class HowTheyTriedToContactThePersonPresenter extends PresenterBa
     }
   }
 
-  buildPageContent(res: Response): HowTheyTriedToContactThePersonViewModel {
+  buildViewModel(res: Response): HowTheyTriedToContactThePersonViewModel {
     const content = this.buildStaticContent(res)
     return {
       form: this.buildForm(content.feedbackForm, res.locals?.errors),

@@ -12,7 +12,7 @@ export default class TaskListPresenter extends PresenterBase<TaskListViewModel, 
     super()
   }
 
-  buildPageContent(res: Response): TaskListViewModel {
+  buildViewModel(res: Response): TaskListViewModel {
     const content = this.buildStaticContent(res)
     return {
       pageTitle: content.pageTitle,

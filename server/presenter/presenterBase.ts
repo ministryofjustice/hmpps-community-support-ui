@@ -1,9 +1,9 @@
 import type { Response } from 'express'
 
-export default abstract class PresenterBase<PageContentType, StaticContentType> {
+export default abstract class PresenterBase<PageViewModel, StaticContentType> {
   constructor() {}
 
-  protected abstract buildPageContent(res: Response): PageContentType
+  protected abstract buildViewModel(res: Response): PageViewModel
 
   // For now returns the raw string, in future will return a computed path
   protected abstract getTemplatePath(): string
@@ -15,7 +15,7 @@ export default abstract class PresenterBase<PageContentType, StaticContentType> 
 
   renderPage(res: Response): void {
     return res.render(this.getTemplatePath(), {
-      content: this.buildPageContent(res),
+      content: this.buildViewModel(res),
     })
   }
 }
