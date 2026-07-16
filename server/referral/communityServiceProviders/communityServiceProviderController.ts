@@ -1,29 +1,20 @@
-import { Request, Response, NextFunction } from 'express'
+import { Request, Response } from 'express'
 import CommunityServiceProviderService from '../../services/communityServiceProviderService'
-import CommunityServiceProviderPresenter from './communityServiceProviderPresenter'
-import ViewUtils from '../../utils/viewUtils'
-import { GovukFrontendSummaryList, GovukFrontendSummaryListRow } from '../../@types/govukFrontend'
+import CommunityServiceProviderPresenter2 from './communityServiceProviderPresenter2'
 
 class CommunityServiceProviderController {
   constructor(private readonly communityServiceProviderService: CommunityServiceProviderService) {}
 
-  async showCommunityServiceProviderPage(req: Request, res: Response, next: NextFunction) {
-    const { personDetailsId } = req.params as { personDetailsId: string }
+  async showCommunityServiceProviderPage(req: Request, res: Response) {
+    const personDetailsId = req.session?.personId
     const { username } = res.locals.user
     const communitySupportServiceProviders = await this.communityServiceProviderService.getCommunityServiceProviders(
       personDetailsId,
       username,
     )
 
-    const presenter = new CommunityServiceProviderPresenter(communitySupportServiceProviders.communitySupportServices)
+    const presenter = new CommunityServiceProviderPresenter2(communitySupportServiceProviders.communitySupportServices)
     return presenter.renderPage(res)
-  }
-
-  static summaryListArgs(items: GovukFrontendSummaryListRow[]): GovukFrontendSummaryList {
-    return {
-      ...ViewUtils.summaryList(items),
-      classes: 'govuk-summary-list--no-border refer-and-monitor__intervention-summary-list',
-    }
   }
 }
 

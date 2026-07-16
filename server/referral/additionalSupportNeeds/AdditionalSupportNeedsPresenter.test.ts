@@ -1,4 +1,5 @@
 import { Response } from 'express'
+import { AdditionalSupportNeedsDto } from '@community-support-api'
 import AdditionalSuportNeedsPresenter from './AdditionalSupportNeedsPresenter'
 
 describe('AdditionalSupportNeedsPresenter', () => {
@@ -61,8 +62,11 @@ describe('AdditionalSupportNeedsPresenter', () => {
         content,
       },
     } as unknown as Response
-    const name = { firstName: 'Alex', lastName: 'River' }
-    const presenter = new AdditionalSuportNeedsPresenter(name)
+    const dto: AdditionalSupportNeedsDto = {
+      refereeName: { firstName: 'Alex', lastName: 'River' },
+      needsAdditionalSupport: false,
+    }
+    const presenter = new AdditionalSuportNeedsPresenter(dto)
     const result = presenter.buildViewModel(res)
     expect(result).toBeDefined()
     // TODO rest of this test

@@ -2,17 +2,16 @@ import { Request, Response } from 'express'
 import { CommunitySupportServicesProvider } from '@community-support-api'
 import CommunityServiceProviderService from '../../services/communityServiceProviderService'
 import CommunityServiceProviderController from './communityServiceProviderController'
-import CommunityServiceProviderPresenter from './communityServiceProviderPresenter'
+import CommunityServiceProviderPresenter2 from './communityServiceProviderPresenter2'
 
 jest.mock('../../services/communityServiceProviderService')
-jest.mock('./communityServiceProviderPresenter')
+jest.mock('./communityServiceProviderPresenter2')
 
 describe('CommunityServiceProviderController', () => {
   let communityServiceProviderService: jest.Mocked<CommunityServiceProviderService>
   let communityServiceProviderController: CommunityServiceProviderController
   let req: Request
   let res: Response
-  let next: jest.Mock
 
   beforeEach(() => {
     communityServiceProviderService = {
@@ -21,17 +20,26 @@ describe('CommunityServiceProviderController', () => {
     communityServiceProviderController = new CommunityServiceProviderController(communityServiceProviderService)
 
     req = {
-      params: { personDetailsId: 'CRN123' },
+      session: {
+        personId: 'CRN123',
+      },
     } as unknown as Request
     res = {
-      locals: { user: { username: 'user1' } },
+      locals: {
+        user: { username: 'user1' },
+        content: {
+          pageHeader: 'Select the Community Support service to make a referral',
+          continueButtonText: 'Continue',
+          regionLabel: 'Location',
+          providerLabel: 'Delivery Partner',
+        },
+      },
       render: jest.fn(),
     } as unknown as Response
-    next = jest.fn()
   })
 
   describe('showCommunityServiceProviderPage', () => {
-    it('should render community service provider page with community service provider data', async () => {
+    test('should render community service provider page with community service provider data', async () => {
       const mockCommunityServiceProviderData = {
         personId: 'personDetails123',
         communitySupportServices: [
@@ -42,10 +50,10 @@ describe('CommunityServiceProviderController', () => {
 
       communityServiceProviderService.getCommunityServiceProviders.mockResolvedValue(mockCommunityServiceProviderData)
 
-      await communityServiceProviderController.showCommunityServiceProviderPage(req, res, next)
+      await communityServiceProviderController.showCommunityServiceProviderPage(req, res)
 
       expect(communityServiceProviderService.getCommunityServiceProviders).toHaveBeenCalledWith('CRN123', 'user1')
-      expect(CommunityServiceProviderPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+      expect(CommunityServiceProviderPresenter2.prototype.renderPage).toHaveBeenCalledWith(res)
     })
   })
 })

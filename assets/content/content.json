@@ -489,15 +489,15 @@
         "subTasks": {
           "checkRiskInformation": {
             "text": "Check risk information",
-            "href": "/referral/new/check-risk-information"
+            "href": "/referral/task-list/check-risk-information"
           },
           "selectPersonNeeds": {
             "text": "Select the person's needs",
-            "href": "/referral/new/select-person-needs"
+            "href": "/referral/task-list/select-person-needs"
           },
           "addSupportNeeds": {
             "text": "Add details of any additional support needs",
-            "href": "/referral/new/add-support-needs"
+            "href": "/referral/task-list/add-support-needs"
           }
         }
       },
@@ -515,7 +515,7 @@
         "subTasks": {
           "checkAnswersAndSubmit": {
             "text": "Check answers and submit",
-            "href": "/referral/check-referral-information/{{ id }}"
+            "href": "/referral/check-referral-information"
           }
         }
       }

@@ -1,27 +1,18 @@
 import { Response } from 'express'
-import { randomUUID } from 'crypto'
 import TaskListPresenter from './TaskListPresenter'
-import TaskListState from './TaskListState'
 import TaskListContent from '../../testutils/factories/TaskListContent'
 
 describe('TaskListPresenter - Page Rendering', () => {
-  const mockRefereeName = 'John Smith'
-  const mockReferralId = randomUUID()
-
-  const mockTaskListState: TaskListState = {
-    referralId: mockReferralId,
-    sections: {
-      personalDetails: { status: 'completed' },
-      riskInformation: { status: 'in-progress' },
-      personNeeds: { status: 'incomplete' },
-      supportNeeds: { status: 'incomplete' },
-      contactDetails: { status: 'incomplete' },
-      checkAnswers: { status: 'cannot-start-yet' },
-    },
-  }
-
-  it('rendering', () => {
-    const presenter = new TaskListPresenter(mockRefereeName, mockTaskListState)
+  test('rendering', () => {
+    const taskListState = {
+      fullName: 'John Smith',
+      confirmPersonalDetailsCompleted: true,
+      checkRiskInformationCompleted: false,
+      selectThePersonsNeedsCompleted: false,
+      addDetailsOfAnyAdditionalSupportNeedsCompleted: false,
+      addDetailsOfMainPointOfContactCompleted: false,
+    }
+    const presenter = new TaskListPresenter(taskListState)
     const content = TaskListContent.build()
     const response = { locals: { content } } as unknown as Response
     const viewModel = presenter.buildViewModel(response)
@@ -43,13 +34,11 @@ describe('TaskListPresenter - Page Rendering', () => {
     expect(sections.contactDetails.title).toBe('Referral contact details')
     expect(sections.checkAnswers.title).toBe('Check answers and submit')
 
-    // Check answers link should have mockReferralId replaced
     const checkAnswersLink = sections.checkAnswers.taskList.items[0].href
-    expect(checkAnswersLink).toContain(mockReferralId)
-    expect(checkAnswersLink).not.toContain('{{ id }}')
+    expect(checkAnswersLink).not.toContain('/referral/task-list')
 
     // Status rendering
     expect(sections.personalDetails.taskList.items[0].status.text).toBe('Completed')
-    expect(sections.referralInformation.taskList.items[0].status.tag?.text).toBe('In progress')
+    expect(sections.referralInformation.taskList.items[0].status.tag.text).toBe('Incomplete')
   })
 })
