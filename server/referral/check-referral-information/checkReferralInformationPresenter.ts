@@ -19,7 +19,7 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
     super()
   }
 
-  buildPageContent(res: Response): CheckReferralInformationViewModel {
+  buildViewModel(res: Response): CheckReferralInformationViewModel {
     const viewModel = {} as CheckReferralInformationViewModel
     const content = this.buildStaticContent(res)
     viewModel.pageHeader = content.pageHeader

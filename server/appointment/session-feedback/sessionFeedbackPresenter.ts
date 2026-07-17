@@ -73,7 +73,7 @@ export default class SessionFeedbackPresenter extends PresenterBase<SessionFeedb
     }
   }
 
-  buildPageContent(res: Response): SessionFeedbackViewModel {
+  buildViewModel(res: Response): SessionFeedbackViewModel {
     const content = this.buildStaticContent(res)
     return {
       pageHeader: content.pageHeader,

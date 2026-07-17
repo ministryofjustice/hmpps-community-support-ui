@@ -184,7 +184,7 @@ export default class ReferralDetailsPresenter extends PresenterBase<ReferralDeta
     }))
   }
 
-  buildPageContent(res: Response): ReferralDetailsViewModel {
+  buildViewModel(res: Response): ReferralDetailsViewModel {
     const content = this.buildStaticContent(res)
     return {
       name: this.referralDetails.personDetailsTableData.name,

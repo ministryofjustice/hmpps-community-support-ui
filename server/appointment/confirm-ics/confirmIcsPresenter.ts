@@ -23,7 +23,7 @@ export default class ConfirmIcsPresenter extends PresenterBase<ConfirmIcsViewMod
     super()
   }
 
-  buildPageContent(res: Response): ConfirmIcsViewModel {
+  buildViewModel(res: Response): ConfirmIcsViewModel {
     const viewModel = {} as ConfirmIcsViewModel
     const content = this.buildStaticContent(res)
     viewModel.pageHeader = content.pageHeader

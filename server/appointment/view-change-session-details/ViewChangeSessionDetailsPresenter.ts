@@ -38,7 +38,7 @@ export default class ViewChangeSessionDetailsPresenter extends PresenterBase<
     super()
   }
 
-  buildPageContent(_res: Response): ViewChangeSessionDetailsViewModel {
+  buildViewModel(_res: Response): ViewChangeSessionDetailsViewModel {
     return {
       pageHeader: 'View session details',
       backLink: { href: `/progress/${this.referralId}` },

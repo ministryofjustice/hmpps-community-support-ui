@@ -13,7 +13,7 @@ export default class ConfirmationPresenter extends PresenterBase<
     super()
   }
 
-  buildPageContent(res: Response): ReferralConfirmationViewModel {
+  buildViewModel(res: Response): ReferralConfirmationViewModel {
     const content = this.buildStaticContent(res)
     const viewModel = {} as ReferralConfirmationViewModel
     viewModel.staticContent = content
@@ -34,6 +34,6 @@ export default class ConfirmationPresenter extends PresenterBase<
   }
 
   renderPage(res: Response): void {
-    return res.render(this.getTemplatePath(), this.buildPageContent(res))
+    return res.render(this.getTemplatePath(), this.buildViewModel(res))
   }
 }

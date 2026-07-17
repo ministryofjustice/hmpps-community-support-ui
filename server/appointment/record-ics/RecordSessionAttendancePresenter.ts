@@ -158,7 +158,7 @@ export default class RecordSessionAttendancePresenter extends PresenterBase<
     }
   }
 
-  buildPageContent(res: Response): RecordSessionAttendanceViewModel {
+  buildViewModel(res: Response): RecordSessionAttendanceViewModel {
     const content = this.buildStaticContent(res)
     this.errors = res.locals.errors
     return {

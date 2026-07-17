@@ -13,7 +13,7 @@ export default class FoundPersonPresenter extends PresenterBase<FoundPersonViewM
     super()
   }
 
-  protected override buildPageContent(res: Response): FoundPersonViewModel {
+  protected override buildViewModel(res: Response): FoundPersonViewModel {
     const { foundPerson } = this
     const identifierRow = resolveIdentifierRow(foundPerson)
 
@@ -36,7 +36,7 @@ export default class FoundPersonPresenter extends PresenterBase<FoundPersonViewM
   }
 
   renderPage(res: Response): void {
-    const pageContent = this.buildPageContent(res)
+    const pageContent = this.buildViewModel(res)
     return res.render(this.getTemplatePath(), {
       content: pageContent,
     })

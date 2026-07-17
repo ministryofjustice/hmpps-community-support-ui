@@ -23,7 +23,7 @@ export default class CaseListPresenter extends PresenterBase<CaseListViewModel, 
     this.parsedCaseList = this.buildCaseList(this.caseList)
   }
 
-  protected override buildPageContent(res: Response): CaseListViewModel {
+  protected override buildViewModel(res: Response): CaseListViewModel {
     const viewModel = {} as CaseListViewModel
     viewModel.staticContent = this.buildStaticContent(res)
     viewModel.navBar = this.buildSubNav(viewModel.staticContent)
