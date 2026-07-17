@@ -55,7 +55,7 @@ export default class AdditionalSuportNeedsPresenter extends PresenterBase<
     super()
   }
 
-  buildPageContent(res: Response): AdditionalSuportNeedsViewModel {
+  buildViewModel(res: Response): AdditionalSuportNeedsViewModel {
     const content = this.buildStaticContent(res)
     const { firstName, middleNames, lastName } = this.data
     const name = middleNames ? `${firstName} ${middleNames} ${lastName}` : `${firstName} ${lastName}`

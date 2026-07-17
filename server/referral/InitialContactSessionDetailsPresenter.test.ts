@@ -58,7 +58,7 @@ describe('InitialContactSessionDetailsPresenter', () => {
     } as AppointmentIcsResponse
 
     const presenter = new InitialContactSessionDetailsPresenter(virtualMeetingData, caseRef)
-    const viewModel = presenter.buildPageContent(response)
+    const viewModel = presenter.buildViewModel(response)
     test('buildPageContent the correct view model', () => {
       expect(viewModel).toMatchSnapshot()
     })
@@ -107,7 +107,7 @@ describe('InitialContactSessionDetailsPresenter', () => {
     } as AppointmentIcsResponse
     test('buildPageContent the correct view model', () => {
       const presenter = new InitialContactSessionDetailsPresenter(inPersonMeetingData, caseRef)
-      const viewModel = presenter.buildPageContent(response)
+      const viewModel = presenter.buildViewModel(response)
       expect(viewModel).toMatchSnapshot()
       // reason row IS NOT in viewModel
       expect(viewModel.icsDetails.rows).not.toEqual(
@@ -131,7 +131,7 @@ describe('InitialContactSessionDetailsPresenter', () => {
       const data = { ...inPersonMeetingData, sessionMethod: { ...inPersonMeetingData.sessionMethod } }
       data.sessionMethod.postcode = 'A11 11A'
       const presenter = new InitialContactSessionDetailsPresenter(data, caseRef)
-      expect(presenter.buildPageContent(response)).toMatchSnapshot()
+      expect(presenter.buildViewModel(response)).toMatchSnapshot()
     })
 
     test('with fullAddress', () => {
@@ -142,7 +142,7 @@ describe('InitialContactSessionDetailsPresenter', () => {
       data.sessionMethod.county = 'Mockinghamshire'
       data.sessionMethod.postcode = 'MK0 1AA'
       const presenter = new InitialContactSessionDetailsPresenter(data, caseRef)
-      expect(presenter.buildPageContent(response)).toMatchSnapshot()
+      expect(presenter.buildViewModel(response)).toMatchSnapshot()
     })
   })
 
@@ -177,7 +177,7 @@ describe('InitialContactSessionDetailsPresenter', () => {
     test('historical appointment', () => {
       const data = { ...historicalMeetingData, sessionMethod: { ...historicalMeetingData.sessionMethod } }
       const presenter = new InitialContactSessionDetailsPresenter(data, caseRef, true)
-      const viewModel = presenter.buildPageContent(response)
+      const viewModel = presenter.buildViewModel(response)
       expect(viewModel).toMatchSnapshot()
 
       expect(viewModel.historical).toBeTruthy()

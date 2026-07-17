@@ -178,7 +178,7 @@ export default class RecordSessionDetailsPresenter extends PresenterBase<
     }
   }
 
-  buildPageContent(res: Response): RecordSessionDetailsViewModel {
+  buildViewModel(res: Response): RecordSessionDetailsViewModel {
     const content: RecordSessionDetailsContent = this.buildStaticContent(res)
     const formData: RecordSessionDetailsFormData = this.session
       ? {

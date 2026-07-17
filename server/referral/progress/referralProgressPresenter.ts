@@ -118,7 +118,7 @@ export default class ReferralProgressPresenter extends PresenterBase<
     }
   }
 
-  buildPageContent(res: Response): ReferralProgressViewModel {
+  buildViewModel(res: Response): ReferralProgressViewModel {
     const content = this.buildStaticContent(res)
     const [latestAppointment] = this.getAppointments()
 

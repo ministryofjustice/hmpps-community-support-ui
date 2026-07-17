@@ -262,7 +262,7 @@ describe('ReferralDetailsPresenter', () => {
     const presenter = new ReferralDetailsPresenter(dto, null, authSource)
     const content = ReferralDetailsContent.build()
     const response = { locals: { content } } as unknown as Response
-    const pageContent = presenter.buildPageContent(response)
+    const pageContent = presenter.buildViewModel(response)
 
     delete expected.referral.rows[1].value.text
     expect(pageContent).toStrictEqual(expected)
@@ -277,7 +277,7 @@ describe('ReferralDetailsPresenter', () => {
     const presenter = new ReferralDetailsPresenter(dto, null, authSource)
     const content = ReferralDetailsContent.build()
     const response = { locals: { content } } as unknown as Response
-    const pageContent = presenter.buildPageContent(response)
+    const pageContent = presenter.buildViewModel(response)
 
     delete expected.referral.rows[1].value.html
     expected.referral.rows[1].value.text = 'Unassigned'
@@ -298,7 +298,7 @@ describe('ReferralDetailsPresenter', () => {
     const presenter = new ReferralDetailsPresenter(dto, null, authSource)
     const content = ReferralDetailsContent.build()
     const response = { locals: { content } } as unknown as Response
-    const pageContent = presenter.buildPageContent(response)
+    const pageContent = presenter.buildViewModel(response)
 
     delete expected.referral.rows[1].value.html
     expected.referral.rows[1].value.text = 'Unassigned'
@@ -319,7 +319,7 @@ describe('ReferralDetailsPresenter', () => {
     const presenter = new ReferralDetailsPresenter(dto, null, 'delius')
     const content = ReferralDetailsContent.build()
     const response = { locals: { content } } as unknown as Response
-    const pageContent = presenter.buildPageContent(response)
+    const pageContent = presenter.buildViewModel(response)
 
     delete expected.referral.rows[1].value.html
     expected.referral.rows[1].value.text = 'Unassigned'
