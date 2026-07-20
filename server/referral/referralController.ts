@@ -120,7 +120,10 @@ export default class ReferralController {
       const referralInformation = await this.referralService.getReferralInformation(referralId, username)
 
       req.session.referralCreationDetails.referralInformation = referralInformation
-      const presenter = new CheckReferralInformationPresenter(referralInformation, referralCreationDetails.personDetails)
+      const presenter = new CheckReferralInformationPresenter(
+        referralInformation,
+        referralCreationDetails.personDetails,
+      )
       return presenter.renderPage(res)
     } catch (error) {
       logger.error('Error retrieving referral:', error)

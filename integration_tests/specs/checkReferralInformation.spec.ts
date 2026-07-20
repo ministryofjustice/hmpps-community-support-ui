@@ -12,12 +12,14 @@ test.describe('Check Referral Information Page', () => {
   const mockReferralId = referralInformationTaskList.referralId
   const mockPersonId = randomUUID()
   const mockReferralDetailsInCommunity = {
-    id: mockPersonId,
-    personIdentifier: 'A123456',
-    firstName: 'Alex',
-    lastName: 'River',
-    dateOfBirth: '20 Feb 1975 (51 years old)',
-    sex: 'Male',
+    personDetails: {
+      id: mockPersonId,
+      personIdentifier: 'A123456',
+      firstName: 'Alex',
+      lastName: 'River',
+      dateOfBirth: '20 Feb 1975 (51 years old)',
+      sex: 'Male',
+    },
   }
   const mockSubmitReferralResponse = {
     referralId: mockReferralId,
