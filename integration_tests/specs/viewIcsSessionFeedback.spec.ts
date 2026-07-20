@@ -160,7 +160,7 @@ test.describe('View ICS Session Feedback', () => {
     const pageObject = await ViewIcsSessionFeedbackPage.verifyOnPage(page)
 
     await expect(pageObject.header).toHaveText('View session feedback')
-    await expect(page).toHaveURL(ViewIcsSessionFeedbackPage.url(caseRefId, '0'))
+    await expect(page).toHaveURL(ViewIcsSessionFeedbackPage.url(caseRefId, icsFeedbackId))
 
     const sessionDetailsCard = page.locator('.govuk-summary-card', { hasText: 'Session details' })
 

@@ -14,8 +14,8 @@ export default class ViewIcsSessionFeedbackPage extends AbstractPage {
 
   readonly sessionFeedbackSummary: Locator
 
-  static url(caseRefId: string, rowIndex: string): string {
-    return `/ics-feedback/${caseRefId}/session/${rowIndex}`
+  static url(caseRefId: string, icsFeedbackId: string): string {
+    return `/ics-feedback/${caseRefId}/session/${icsFeedbackId}`
   }
 
   private constructor(page: Page) {

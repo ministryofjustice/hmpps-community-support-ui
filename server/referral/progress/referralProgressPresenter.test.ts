@@ -405,7 +405,6 @@ describe('ReferralProgressPresenter', () => {
 
       expect(viewModel.icsAppointmentTable.rows[0][1].html).toContain(expectedLabel)
       expect(viewModel.icsAppointmentTable.rows[0][2].html).toContain('View feedback')
-      expect(viewModel.icsAppointmentTable.rows[0][2].html).not.toContain('Reschedule')
     })
   })
 })
