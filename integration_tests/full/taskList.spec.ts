@@ -9,16 +9,12 @@ test.describe('Task List Page', () => {
   const mockReferralId = referralInformationTaskList.referralId
   const mockPersonId = randomUUID()
   const mockReferralDetailsInCommunity = {
-    personDetails: {
-      id: mockPersonId,
-      personIdentifier: 'A123456',
-      firstName: 'Alex',
-      lastName: 'River',
-      dateOfBirth: '20 Feb 1975 (51 years old)',
-      sex: 'Male',
-    },
-    communityServiceProviderId: 'csp-id-123',
-    crn: 'A123456',
+    id: mockPersonId,
+    personIdentifier: 'A123456',
+    firstName: 'Alex',
+    lastName: 'River',
+    dateOfBirth: '20 Feb 1975 (51 years old)',
+    sex: 'Male',
   }
 
   test.beforeEach(async ({ page }) => {

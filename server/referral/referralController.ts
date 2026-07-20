@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import { CreateReferralRequest, ReferralUserAssignmentsResponse, AssignmentFailureDto } from '@community-support-api'
+import { ReferralUserAssignmentsResponse, AssignmentFailureDto, Person } from '@community-support-api'
 import ReferralService from '../services/referralService'
 import PersonService from '../services/personService'
 import ConfirmationPresenter from './confirmation/confirmationPresenter'
@@ -76,7 +76,7 @@ export default class ReferralController {
       const normalizedIdentifier = trimmedIdentifier.toUpperCase()
       const foundPerson = await this.personService.getPersonByIdentifier(normalizedIdentifier, username)
       const presenter = new FoundPersonPresenter(foundPerson)
-      req.session.referralCreationDetails = { personDetails: foundPerson } as CreateReferralRequest
+      req.session.referralCreationDetails = foundPerson
       return presenter.renderPage(res)
     } catch (error) {
       if (error.responseStatus === 404) {
@@ -110,19 +110,16 @@ export default class ReferralController {
   async checkReferralInformation(req: Request, res: Response): Promise<void> {
     const { username } = res.locals.user
     const referralId = req.params.id as string
-    const referralCreationDetails = req.session ? (req.session.referralCreationDetails as CreateReferralRequest) : null
+    const referralCreationDetails = req.session ? req.session.referralCreationDetails : null
 
-    if (!referralCreationDetails || !referralCreationDetails.personDetails) {
+    if (!referralCreationDetails || !referralCreationDetails.personIdentifier) {
       return res.redirect('/referral/new/find-a-person')
     }
 
     try {
       const referralInformation = await this.referralService.getReferralInformation(referralId, username)
 
-      const presenter = new CheckReferralInformationPresenter(
-        referralInformation,
-        referralCreationDetails.personDetails,
-      )
+      const presenter = new CheckReferralInformationPresenter(referralInformation, referralCreationDetails)
       return presenter.renderPage(res)
     } catch (error) {
       logger.error('Error retrieving referral:', error)
@@ -291,17 +288,16 @@ export default class ReferralController {
 
   async showTaskList(req: Request, res: Response) {
     const { username } = res.locals.user
-    const referralCreationDetails = req.session ? req.session.referralCreationDetails : null
+    const referralCreationDetails: Person = req.session ? req.session.referralCreationDetails : null
 
-    if (!referralCreationDetails || !referralCreationDetails.personDetails) {
+    if (!referralCreationDetails || !referralCreationDetails.personIdentifier) {
       return res.redirect('/referral/new/find-a-person')
     }
 
-    const { personIdentifier } = referralCreationDetails.personDetails
+    const { personIdentifier } = referralCreationDetails
 
     try {
       const createReferralRequest = {
-        personDetails: referralCreationDetails.personDetails,
         communityServiceProviderId: req.params.id as string,
         personIdentifier,
         urgency: false,
@@ -317,7 +313,7 @@ export default class ReferralController {
       saveTaskListState(req, taskListState)
 
       const presenter = new TaskListPresenter(
-        `${referralCreationDetails.personDetails.firstName} ${referralCreationDetails.personDetails.lastName}`,
+        `${referralCreationDetails.firstName} ${referralCreationDetails.lastName}`,
         taskListState,
       )
       return presenter.renderPage(res)

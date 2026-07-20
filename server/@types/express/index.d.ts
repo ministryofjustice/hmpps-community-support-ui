@@ -1,5 +1,4 @@
 import {
-  CreateReferralRequest,
   ReferralUserAssignmentResponse,
   CreateAppointmentRequest,
   ReferralInformationDto,
@@ -38,7 +37,7 @@ export declare module 'express-session' {
   interface SessionData {
     returnTo: string
     formKeys: string[]
-    referralCreationDetails: CreateReferralRequest
+    referralCreationDetails: Person
     assignmentResults: ReferralUserAssignmentResponse
     createAppointmentRequest: CreateAppointmentRequest
     ChangeAppointmentDetails: ChangeAppointmentDetails

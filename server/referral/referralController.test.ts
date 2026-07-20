@@ -163,17 +163,12 @@ describe('ReferralController', () => {
     })
     it('should create referral and render check referral information page', async () => {
       req.session.referralCreationDetails = {
-        crn: 'CRN123',
-        personDetails: {
-          id: 'person123',
-          personIdentifier: 'CRN123',
-          firstName: 'Test',
-          lastName: 'User',
-          dateOfBirth: '1/1/1990',
-        } as Person,
-        communityServiceProviderId: 'service123',
-        personIdentifier: '',
-      } as Request['session']['referralCreationDetails']
+        id: 'person123',
+        personIdentifier: 'CRN123',
+        firstName: 'Test',
+        lastName: 'User',
+        dateOfBirth: '1/1/1990',
+      } as Person
       req.params.id = 'referral123'
       res.locals.content = CheckReferralInformationContent.build()
       const mockReferralInformation = {} as ReferralInformation
@@ -184,23 +179,19 @@ describe('ReferralController', () => {
       expect(referralService.getReferralInformation).toHaveBeenCalledWith('referral123', 'user1')
       expect(CheckReferralInformationPresenter).toHaveBeenCalledWith(
         mockReferralInformation,
-        req.session.referralCreationDetails.personDetails,
+        req.session.referralCreationDetails,
       )
       expect(CheckReferralInformationPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
     })
 
     it('should flash error and redirect to find a person page if referral information not exist', async () => {
       req.session.referralCreationDetails = {
+        id: 'person123',
         personIdentifier: 'CRN123',
-        personDetails: {
-          id: 'person123',
-          personIdentifier: 'CRN123',
-          firstName: 'Test',
-          lastName: 'User',
-          dateOfBirth: '1/1/1990',
-        } as Person,
-        communityServiceProviderId: 'service123',
-      }
+        firstName: 'Test',
+        lastName: 'User',
+        dateOfBirth: '1/1/1990',
+      } as Person
       referralService.getReferralInformation.mockRejectedValue(new Error('Referral retrieving failed'))
 
       await referralController.checkReferralInformation(req, res)
