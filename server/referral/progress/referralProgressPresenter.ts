@@ -267,10 +267,9 @@ export default class ReferralProgressPresenter extends PresenterBase<
   }
 
   private currentRowActions(hasAppointment: boolean): { label: string; href: string }[] {
-    const configMap = getStatusConfig(this.caseReference, '', '', false, this.authSource)
-
     if (!hasAppointment) {
-      return configMap.NOT_SCHEDULED.actions
+      const notScheduledConfig = getStatusConfig(this.caseReference, '', '', false, this.authSource)
+      return notScheduledConfig.NOT_SCHEDULED.actions
     }
 
     const [current] = this.getAppointments()
