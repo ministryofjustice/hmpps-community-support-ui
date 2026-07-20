@@ -28,7 +28,7 @@ const getStatusConfig = (
   const isProbationPractitioner = authSource === 'delius'
   const rescheduleActions = isProbationPractitioner
     ? [{ label: 'View feedback', href: `/ics-feedback/${caseReference}/session/${icsFeedbackId}` }]
-    : buildRescheduleActions(caseReference, appointmentIcsId, icsFeedbackId, isCurrent)
+    : buildRescheduleActions(caseReference, icsFeedbackId, isCurrent, isProbationPractitioner)
   return {
     NOT_SCHEDULED: {
       label: 'Not scheduled',
@@ -89,11 +89,11 @@ const getAppointmentStatus = ({ status, dateTime }: ReferralAppointmentHistory):
 
 const buildRescheduleActions = (
   caseReference: string,
-  appointmentIcsId: string,
   icsFeedbackId: string,
   isCurrent: boolean,
+  isProbationPractitioner: boolean,
 ) => {
-  return isCurrent
+  return isCurrent && !isProbationPractitioner
     ? [
         { label: 'Reschedule', href: `/referral/${caseReference}/appointment/schedule-ics` },
         { label: 'View feedback', href: `/ics-feedback/${caseReference}/session/${icsFeedbackId}` },
