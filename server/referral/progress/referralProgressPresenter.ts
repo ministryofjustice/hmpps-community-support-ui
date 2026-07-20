@@ -20,9 +20,9 @@ type StatusConfig = { label: string; tagClass: string; actions: { label: string;
 
 const getStatusConfig = (
   caseReference: string,
-  appointmentIcsId: string = '',
-  icsFeedbackId: string = '',
-  isCurrent: boolean = false,
+  appointmentIcsId: string,
+  icsFeedbackId: string,
+  isCurrent: boolean,
   authSource?: AuthSource,
 ): Record<StatusKey, StatusConfig> => {
   const isProbationPractitioner = authSource === 'delius'
