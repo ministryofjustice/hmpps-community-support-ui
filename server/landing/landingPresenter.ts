@@ -3,7 +3,7 @@ import PresenterBase from '../presenter/presenterBase'
 import { LandingContent, LandingViewModel } from './landingViewModel'
 
 export default class LandingPresenter extends PresenterBase<LandingViewModel, LandingContent> {
-  protected override buildPageContent(res: Response): LandingViewModel {
+  protected override buildViewModel(res: Response): LandingViewModel {
     const content = this.buildStaticContent(res)
 
     if (!content || !content.pageHeader || !Array.isArray(content.tiles)) {
