@@ -163,7 +163,6 @@ describe('ReferralController', () => {
     })
     it('should create referral and render check referral information page', async () => {
       req.session.referralCreationDetails = {
-        crn: 'CRN123',
         personDetails: {
           id: 'person123',
           personIdentifier: 'CRN123',
@@ -171,9 +170,7 @@ describe('ReferralController', () => {
           lastName: 'User',
           dateOfBirth: '1/1/1990',
         } as Person,
-        communityServiceProviderId: 'service123',
-        personIdentifier: '',
-      } as Request['session']['referralCreationDetails']
+      }
       req.params.id = 'referral123'
       res.locals.content = CheckReferralInformationContent.build()
       const mockReferralInformation = {} as ReferralInformation
@@ -191,7 +188,6 @@ describe('ReferralController', () => {
 
     it('should flash error and redirect to find a person page if referral information not exist', async () => {
       req.session.referralCreationDetails = {
-        personIdentifier: 'CRN123',
         personDetails: {
           id: 'person123',
           personIdentifier: 'CRN123',
@@ -199,7 +195,6 @@ describe('ReferralController', () => {
           lastName: 'User',
           dateOfBirth: '1/1/1990',
         } as Person,
-        communityServiceProviderId: 'service123',
       }
       referralService.getReferralInformation.mockRejectedValue(new Error('Referral retrieving failed'))
 
