@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import CommunityServiceProviderService from '../../services/communityServiceProviderService'
-import CommunityServiceProviderPresenter2 from './communityServiceProviderPresenter2'
+import CommunityServiceProviderPresenter from './communityServiceProviderPresenter'
 
 class CommunityServiceProviderController {
   constructor(private readonly communityServiceProviderService: CommunityServiceProviderService) {}
@@ -13,7 +13,7 @@ class CommunityServiceProviderController {
       username,
     )
 
-    const presenter = new CommunityServiceProviderPresenter2(communitySupportServiceProviders.communitySupportServices)
+    const presenter = new CommunityServiceProviderPresenter(communitySupportServiceProviders.communitySupportServices)
     return presenter.renderPage(res)
   }
 }

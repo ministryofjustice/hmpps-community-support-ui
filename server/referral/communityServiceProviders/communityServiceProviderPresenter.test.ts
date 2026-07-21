@@ -1,12 +1,12 @@
 import { Response } from 'express'
 import { CommunitySupportServiceProviders } from '@community-support-api'
-import CommunityServiceProviderPresenter from './communityServiceProviderPresenter2'
+import CommunityServiceProviderPresenter from './communityServiceProviderPresenter'
 import CommunityServiceProviderContentFactory from '../../testutils/factories/CommunityServiceProvidersContent'
-import { CommunityServiceProviderContent2, CommunityServiceProviderViewModel2 } from './communityServiceProvidersModel2'
+import { CommunityServiceProviderContent, CommunityServiceProviderViewModel } from './communityServiceProvidersModel'
 
 describe('CommunityServiceProviderPresenter', () => {
   let res: Response
-  let content: CommunityServiceProviderContent2
+  let content: CommunityServiceProviderContent
   beforeEach(() => {
     content = CommunityServiceProviderContentFactory.build()
     res = {
@@ -29,8 +29,8 @@ describe('CommunityServiceProviderPresenter', () => {
       const presenter = new CommunityServiceProviderPresenter(CommunityServiceProviders)
       presenter.renderPage(res)
       expect(res.render).toHaveBeenCalledWith(
-        'communityServiceProviders/providers2',
-        expect.objectContaining({} as CommunityServiceProviderViewModel2),
+        'communityServiceProviders/providers',
+        expect.objectContaining({} as CommunityServiceProviderViewModel),
       )
     })
   })

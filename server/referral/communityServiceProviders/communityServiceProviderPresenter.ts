@@ -2,11 +2,11 @@ import type { CommunitySupportServiceProviders } from '@community-support-api'
 import { Response } from 'express'
 import { GovukFrontendRadios, GovukFrontendRadiosItem } from '@govuk-frontend'
 import PresenterBase from '../../presenter/presenterBase'
-import { CommunityServiceProviderContent2, CommunityServiceProviderViewModel2 } from './communityServiceProvidersModel2'
+import { CommunityServiceProviderContent, CommunityServiceProviderViewModel } from './communityServiceProvidersModel'
 
-export default class CommunityServiceProviderPresenter2 extends PresenterBase<
-  CommunityServiceProviderViewModel2,
-  CommunityServiceProviderContent2
+export default class CommunityServiceProviderPresenter extends PresenterBase<
+  CommunityServiceProviderViewModel,
+  CommunityServiceProviderContent
 > {
   constructor(private readonly communitySupportServiceProviders: CommunitySupportServiceProviders[]) {
     super()
@@ -19,7 +19,7 @@ export default class CommunityServiceProviderPresenter2 extends PresenterBase<
     }))
   }
 
-  private buildRadios(content: CommunityServiceProviderContent2): GovukFrontendRadios {
+  private buildRadios(content: CommunityServiceProviderContent): GovukFrontendRadios {
     return {
       name: 'service',
       fieldset: {
@@ -33,7 +33,7 @@ export default class CommunityServiceProviderPresenter2 extends PresenterBase<
     }
   }
 
-  buildViewModel(res: Response): CommunityServiceProviderViewModel2 {
+  buildViewModel(res: Response): CommunityServiceProviderViewModel {
     const content = this.buildStaticContent(res)
     return {
       backLink: { href: `/referral/new/find-a-person` },
@@ -45,6 +45,6 @@ export default class CommunityServiceProviderPresenter2 extends PresenterBase<
   }
 
   getTemplatePath(): string {
-    return 'communityServiceProviders/providers2'
+    return 'communityServiceProviders/providers'
   }
 }

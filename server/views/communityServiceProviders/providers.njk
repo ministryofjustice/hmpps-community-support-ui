@@ -1,23 +1,15 @@
 {% extends "../partials/layout.njk" %}
 
-{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% set pageTitle = applicationName + " - Referral" %}
 {% set mainClasses = "govuk-body" %}
 
 {% block content %}
-
-<h1 class="govuk-heading-xl">Select a Community Service Provider to make a referral</h1>
-
-  {% for summary in content.serviceProviderItems %}
-    <h2 class="govuk-heading-l">
-      <a class="govuk-link" href="{{summary.url}}">{{ summary.title }}</a>
-    </h2>
-
-    <p class="govuk-body">{{ summary.truncatedDescription | striptags(true) | escape | nl2br }}</p>
-
-    {{ govukSummaryList(summary.summary) }}
-
-  {% endfor %}
-
+  <form method="post" >
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    {{ govukRadios(content.radios) }}
+    {{ govukButton(content.button) }}
+  </form>
 {% endblock %}

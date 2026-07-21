@@ -2,10 +2,10 @@ import { Request, Response } from 'express'
 import { CommunitySupportServicesProvider } from '@community-support-api'
 import CommunityServiceProviderService from '../../services/communityServiceProviderService'
 import CommunityServiceProviderController from './communityServiceProviderController'
-import CommunityServiceProviderPresenter2 from './communityServiceProviderPresenter2'
+import CommunityServiceProviderPresenter from './communityServiceProviderPresenter'
 
 jest.mock('../../services/communityServiceProviderService')
-jest.mock('./communityServiceProviderPresenter2')
+jest.mock('./communityServiceProviderPresenter')
 
 describe('CommunityServiceProviderController', () => {
   let communityServiceProviderService: jest.Mocked<CommunityServiceProviderService>
@@ -53,7 +53,7 @@ describe('CommunityServiceProviderController', () => {
       await communityServiceProviderController.showCommunityServiceProviderPage(req, res)
 
       expect(communityServiceProviderService.getCommunityServiceProviders).toHaveBeenCalledWith('CRN123', 'user1')
-      expect(CommunityServiceProviderPresenter2.prototype.renderPage).toHaveBeenCalledWith(res)
+      expect(CommunityServiceProviderPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
     })
   })
 })
