@@ -1,10 +1,9 @@
 import { Factory } from 'fishery'
-import { CommunityServiceProviderContent } from '../../referral/communityServiceProviders/communityServiceProvidersModel'
+import { CommunityServiceProviderContent2 } from '../../referral/communityServiceProviders/communityServiceProvidersModel2'
 
-class CommunityServiceProviderContentFactory extends Factory<CommunityServiceProviderContent> {}
+class CommunityServiceProviderContentFactory extends Factory<CommunityServiceProviderContent2> {}
 
 export default CommunityServiceProviderContentFactory.define(({ transientParams }) => ({
   pageHeader: transientParams.pageHeader || 'Community service providers',
-  regionLabel: transientParams.regionLabel || 'Region',
-  providerLabel: transientParams.providerLabel || 'Provider',
+  continueButtonText: transientParams.continueButtonText || 'Save and Continue',
 }))
