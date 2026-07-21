@@ -70,7 +70,7 @@ export default class ViewSessionFeedbackPresenter extends PresenterBase<ViewSess
     super()
   }
 
-  buildPageContent(res: Response): ViewSessionFeedbackViewModel {
+  buildViewModel(res: Response): ViewSessionFeedbackViewModel {
     const didSessionHappen = this.icsFeedbackSubmissionResponse.recordSessionDidSessionHappen === true
 
     return {

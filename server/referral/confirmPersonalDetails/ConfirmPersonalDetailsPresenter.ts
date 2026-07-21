@@ -172,7 +172,7 @@ export default class ConfirmPersonalDetailsPresenter extends PresenterBase<
     return `${firstName} ${middleNames || ''} ${lastName}`
   }
 
-  buildPageContent(res: Response): ConfirmPersonalDetailsViewModel {
+  buildViewModel(res: Response): ConfirmPersonalDetailsViewModel {
     const content = this.buildStaticContent(res)
     return {
       heading: content.pageHeader.replace('{{ name }}', this.getFullName()),

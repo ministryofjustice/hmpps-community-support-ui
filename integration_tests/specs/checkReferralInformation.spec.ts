@@ -20,8 +20,6 @@ test.describe('Check Referral Information Page', () => {
       dateOfBirth: '20 Feb 1975 (51 years old)',
       sex: 'Male',
     },
-    communityServiceProviderId: 'csp-id-123',
-    crn: 'A123456',
   }
   const mockSubmitReferralResponse = {
     referralId: mockReferralId,

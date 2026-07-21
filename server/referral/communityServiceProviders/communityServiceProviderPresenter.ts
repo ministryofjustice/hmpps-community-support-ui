@@ -12,7 +12,7 @@ export default class CommunityServiceProviderPresenter extends PresenterBase<
     super()
   }
 
-  protected override buildPageContent(res: Response): CommunityServiceProviderViewModel {
+  protected override buildViewModel(res: Response): CommunityServiceProviderViewModel {
     const content = this.buildStaticContent(res)
     const viewModel = {} as CommunityServiceProviderViewModel
     viewModel.content = content

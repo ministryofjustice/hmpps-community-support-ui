@@ -365,7 +365,7 @@ describe('ScheduleIcsPresenter', () => {
     describe('no form data, no errors', () => {
       test('correct content when the identifier is a CRN', () => {
         const presenter = new ScheduleIcsPresenter(caseReference, probationOfficesData, [], referralInformation)
-        const viewModel = presenter.buildPageContent(res)
+        const viewModel = presenter.buildViewModel(res)
         checkContentInCommunity(viewModel, {}, {})
       })
     })
@@ -388,7 +388,7 @@ describe('ScheduleIcsPresenter', () => {
           referralInformation,
           formData,
         )
-        const viewModel = presenter.buildPageContent(res)
+        const viewModel = presenter.buildViewModel(res)
         checkContentInCommunity(viewModel, formData, {})
       })
       test('correct content when the identifier is a CRN - by video', () => {
@@ -409,7 +409,7 @@ describe('ScheduleIcsPresenter', () => {
           referralInformation,
           formData,
         )
-        const viewModel = presenter.buildPageContent(res)
+        const viewModel = presenter.buildViewModel(res)
         checkContentInCommunity(viewModel, formData, {})
       })
       test('correct content when the identifier is a CRN - in person probation office', () => {
@@ -430,7 +430,7 @@ describe('ScheduleIcsPresenter', () => {
           referralInformation,
           formData,
         )
-        const viewModel = presenter.buildPageContent(res)
+        const viewModel = presenter.buildViewModel(res)
         checkContentInCommunity(viewModel, formData, {})
       })
       test('correct content when the identifier is a CRN - in person somewhere else', () => {
@@ -455,7 +455,7 @@ describe('ScheduleIcsPresenter', () => {
           referralInformation,
           formData,
         )
-        const viewModel = presenter.buildPageContent(res)
+        const viewModel = presenter.buildViewModel(res)
         checkContentInCommunity(viewModel, formData, {})
       })
     })
@@ -501,7 +501,7 @@ describe('ScheduleIcsPresenter', () => {
           formData,
           errors,
         )
-        const viewModel = presenter.buildPageContent(res)
+        const viewModel = presenter.buildViewModel(res)
         checkContentInCommunity(viewModel, formData, errors.messages)
       })
       test('correct content when the identifier is a CRN - by video', () => {
@@ -535,7 +535,7 @@ describe('ScheduleIcsPresenter', () => {
           formData,
           errors,
         )
-        const viewModel = presenter.buildPageContent(res)
+        const viewModel = presenter.buildViewModel(res)
         checkContentInCommunity(viewModel, formData, errors.messages)
       })
       test('correct content when the identifier is a CRN - in person probation office', () => {
@@ -570,7 +570,7 @@ describe('ScheduleIcsPresenter', () => {
           formData,
           errors,
         )
-        const viewModel = presenter.buildPageContent(res)
+        const viewModel = presenter.buildViewModel(res)
         checkContentInCommunity(viewModel, formData, errors.messages)
       })
       test('correct content when the identifier is a CRN - in person somewhere else', () => {
@@ -637,7 +637,7 @@ describe('ScheduleIcsPresenter', () => {
           formData,
           error,
         )
-        const viewModel = presenter.buildPageContent(res)
+        const viewModel = presenter.buildViewModel(res)
         checkContentInCommunity(viewModel, formData, error.messages)
       })
       test('correct content when the identifier is a CRN - missing informed', () => {
@@ -672,7 +672,7 @@ describe('ScheduleIcsPresenter', () => {
           formData,
           error,
         )
-        const viewModel = presenter.buildPageContent(res)
+        const viewModel = presenter.buildViewModel(res)
         checkContentInCommunity(viewModel, formData, error.messages)
       })
       test('correct content when the identifier is a CRN - missing informed other method', () => {
@@ -707,7 +707,7 @@ describe('ScheduleIcsPresenter', () => {
           formData,
           error,
         )
-        const viewModel = presenter.buildPageContent(res)
+        const viewModel = presenter.buildViewModel(res)
         checkContentInCommunity(viewModel, formData, error.messages)
       })
     })

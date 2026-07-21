@@ -217,7 +217,7 @@ export default class InitialContactSessionDetailsPresenter extends PresenterBase
     }
   }
 
-  buildPageContent(res: Response): InitialContactSessionDetailsViewModel {
+  buildViewModel(res: Response): InitialContactSessionDetailsViewModel {
     const content = this.buildStaticContent(res)
     return {
       title: content.title,

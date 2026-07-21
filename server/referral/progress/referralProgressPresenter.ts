@@ -20,14 +20,15 @@ type StatusConfig = { label: string; tagClass: string; actions: { label: string;
 
 const getStatusConfig = (
   caseReference: string,
-  appointmentIcsId: string = '',
-  rowIndex: string = '',
+  appointmentIcsId: string,
+  icsFeedbackId: string,
+  isCurrent: boolean,
   authSource?: AuthSource,
 ): Record<StatusKey, StatusConfig> => {
   const isProbationPractitioner = authSource === 'delius'
   const rescheduleActions = isProbationPractitioner
-    ? [{ label: 'View feedback', href: `/ics-feedback/${caseReference}/session/${rowIndex}` }]
-    : buildRescheduleActions(caseReference, appointmentIcsId, rowIndex)
+    ? [{ label: 'View feedback', href: `/ics-feedback/${caseReference}/session/${icsFeedbackId}` }]
+    : buildRescheduleActions(caseReference, icsFeedbackId, isCurrent, isProbationPractitioner)
   return {
     NOT_SCHEDULED: {
       label: 'Not scheduled',
@@ -73,7 +74,7 @@ const getStatusConfig = (
     COMPLETED: {
       label: 'Completed',
       tagClass: 'govuk-tag--green',
-      actions: [{ label: 'View feedback', href: `/ics-feedback/${caseReference}/session/${rowIndex}` }],
+      actions: [{ label: 'View feedback', href: `/ics-feedback/${caseReference}/session/${icsFeedbackId}` }],
     },
   }
 }
@@ -86,13 +87,18 @@ const getAppointmentStatus = ({ status, dateTime }: ReferralAppointmentHistory):
   return isPast(dateTime) ? 'NEEDS_FEEDBACK' : status
 }
 
-const buildRescheduleActions = (caseReference: string, appointmentIcsId: string, rowIndex: string) => {
-  return rowIndex === '0'
+const buildRescheduleActions = (
+  caseReference: string,
+  icsFeedbackId: string,
+  isCurrent: boolean,
+  isProbationPractitioner: boolean,
+) => {
+  return isCurrent && !isProbationPractitioner
     ? [
         { label: 'Reschedule', href: `/referral/${caseReference}/appointment/schedule-ics` },
-        { label: 'View feedback', href: `/ics-feedback/${caseReference}/session/${rowIndex}` },
+        { label: 'View feedback', href: `/ics-feedback/${caseReference}/session/${icsFeedbackId}` },
       ]
-    : [{ label: 'View feedback', href: `/ics-feedback/${caseReference}/session/${rowIndex}` }]
+    : [{ label: 'View feedback', href: `/ics-feedback/${caseReference}/session/${icsFeedbackId}` }]
 }
 
 export default class ReferralProgressPresenter extends PresenterBase<
@@ -118,7 +124,7 @@ export default class ReferralProgressPresenter extends PresenterBase<
     }
   }
 
-  buildPageContent(res: Response): ReferralProgressViewModel {
+  buildViewModel(res: Response): ReferralProgressViewModel {
     const content = this.buildStaticContent(res)
     const [latestAppointment] = this.getAppointments()
 
@@ -201,7 +207,7 @@ export default class ReferralProgressPresenter extends PresenterBase<
   }
 
   private buildNotScheduledRow(showActions: boolean): GovukFrontendTableRow[] {
-    const configMap = getStatusConfig(this.caseReference, '', '', this.authSource)
+    const configMap = getStatusConfig(this.caseReference, '', '', false, this.authSource)
     const config = configMap.NOT_SCHEDULED
     const row: GovukFrontendTableRow = [{ html: `<span class="govuk-tag ${config.tagClass}">${config.label}</span>` }]
 
@@ -215,9 +221,15 @@ export default class ReferralProgressPresenter extends PresenterBase<
   private buildProgressTableRow(
     row: ReferralAppointmentHistory,
     showActions: boolean,
-    rowIndex = '0',
+    isCurrent = false,
   ): GovukFrontendTableRow {
-    const configMap = getStatusConfig(this.caseReference, row.appointmentIcsId, rowIndex, this.authSource)
+    const configMap = getStatusConfig(
+      this.caseReference,
+      row.appointmentIcsId,
+      row.icsFeedbackId ?? '',
+      isCurrent,
+      this.authSource,
+    )
     const appointementStatus = getAppointmentStatus(row)
     const config = configMap[appointementStatus] ?? configMap.NOT_SCHEDULED
 
@@ -235,14 +247,14 @@ export default class ReferralProgressPresenter extends PresenterBase<
 
   private buildInProgressTableRow(showActions: boolean): GovukFrontendTableRow[] {
     const [current] = this.getAppointments()
-    return [this.buildProgressTableRow(current, showActions, '0')]
+    return [this.buildProgressTableRow(current, showActions, true)]
   }
 
   private buildAppointmentHistoryTableRows(): GovukFrontendTableRow[] {
     const [, ...history] = this.getAppointments()
 
-    return history.map((appointment, index) => {
-      return this.buildProgressTableRow(appointment, true, index.toString())
+    return history.map(appointment => {
+      return this.buildProgressTableRow(appointment, true, false)
     })
   }
 
@@ -255,15 +267,20 @@ export default class ReferralProgressPresenter extends PresenterBase<
   }
 
   private currentRowActions(hasAppointment: boolean): { label: string; href: string }[] {
-    const configMap = getStatusConfig(this.caseReference, '', '', this.authSource)
-
     if (!hasAppointment) {
-      return configMap.NOT_SCHEDULED.actions
+      const notScheduledConfig = getStatusConfig(this.caseReference, '', '', false, this.authSource)
+      return notScheduledConfig.NOT_SCHEDULED.actions
     }
 
     const [current] = this.getAppointments()
     const currentStatus = getAppointmentStatus(current)
-    const statusConfig = getStatusConfig(this.caseReference, current.appointmentIcsId, '0', this.authSource)
+    const statusConfig = getStatusConfig(
+      this.caseReference,
+      current.appointmentIcsId,
+      current.icsFeedbackId ?? '',
+      true,
+      this.authSource,
+    )
     return (statusConfig[currentStatus] ?? statusConfig.NOT_SCHEDULED).actions
   }
 
@@ -284,7 +301,10 @@ export default class ReferralProgressPresenter extends PresenterBase<
 
     for (const appt of this.referralProgress.appointments ?? []) {
       const key = appt.appointmentIcsId ?? `unknown-${appt.dateTime}`
-      appointments.set(key, appt)
+      const existing = appointments.get(key)
+      if (!existing || appt.dateTime > existing.dateTime) {
+        appointments.set(key, appt)
+      }
     }
 
     return [...appointments.values()]

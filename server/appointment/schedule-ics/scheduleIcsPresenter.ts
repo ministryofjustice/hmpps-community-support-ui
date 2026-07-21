@@ -350,7 +350,7 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
     return { text: submitButtonText, classes: 'govuk-!-margin-top-6' }
   }
 
-  buildPageContent(res: Response): ScheduleIcsViewModel {
+  buildViewModel(res: Response): ScheduleIcsViewModel {
     const content = this.buildStaticContent(res)
     const submitHref = content.submitHref.replace('{{ caseRef }}', this.caseReference)
     const backLinkHref = content.backLink.replace('{{ caseRef }}', this.caseReference)

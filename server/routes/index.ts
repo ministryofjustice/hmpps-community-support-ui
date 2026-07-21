@@ -148,7 +148,7 @@ export default function routes({
     appointmentController.submitFeedback(req, res)
   })
 
-  get('/ics-feedback/:caseRefId/session/:rowIndex', async (req, res) => {
+  get('/ics-feedback/:caseRefId/session/:icsFeedbackId', async (req, res) => {
     icsFeedbackController.viewFeedback(req, res)
   })
 

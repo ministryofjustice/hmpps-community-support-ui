@@ -1,5 +1,4 @@
 import {
-  CreateReferralRequest,
   ReferralUserAssignmentResponse,
   CreateAppointmentRequest,
   ReferralInformationDto,
@@ -10,6 +9,7 @@ import { HmppsUser } from '../../interfaces/hmppsUser'
 import { ChangeAppointmentDetails } from '../../appointment/change-ics-details-reason/ChangeAppointmentDetails'
 import { ReferralProgressBannerContent } from '../../referral/progress/ReferralProgressBannerContent'
 import { TaskListState } from '../../referral/taskList/TaskListState'
+import { ReferralCreationDetails } from '../../referral/referralDetails/ReferralCreationDetails'
 
 export interface HowSessionTookPlace {
   type: 'PHONE' | 'VIDEO' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION'
@@ -26,19 +26,12 @@ export interface IcsFeedbackHowSessionTookPlaceSession {
   howSessionTookPlace?: HowSessionTookPlace
 }
 
-export interface SessionFeedbackDetails {
-  appointmentId: string
-  appointmentDateTime: string
-  icsFeedbackId?: string
-  rowIndex: number
-}
-
 export declare module 'express-session' {
   // Declare that the session will potentially contain these additional fields
   interface SessionData {
     returnTo: string
     formKeys: string[]
-    referralCreationDetails: CreateReferralRequest
+    referralCreationDetails: ReferralCreationDetails
     assignmentResults: ReferralUserAssignmentResponse
     createAppointmentRequest: CreateAppointmentRequest
     ChangeAppointmentDetails: ChangeAppointmentDetails
@@ -46,7 +39,6 @@ export declare module 'express-session' {
     pending: Record<string, string>
     referralProgressBanner?: ReferralProgressBannerContent
     icsFeedbackSubmission: IcsFeedbackSubmission & { caseReferenceId: string }
-    icsFeedbackInfo: SessionFeedbackDetails[]
     taskList?: TaskListState
   }
 }

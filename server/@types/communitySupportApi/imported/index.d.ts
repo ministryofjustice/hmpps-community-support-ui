@@ -589,45 +589,10 @@ export interface components {
       referenceNumber?: string | null
     }
     CreateReferralRequest: {
-      personDetails: components['schemas']['PersonDto']
       /** Format: uuid */
       communityServiceProviderId: string
       personIdentifier: string
       urgency?: boolean | null
-    }
-    PersonAdditionalDetails: {
-      ethnicity?: string | null
-      preferredLanguage?: string | null
-      neurodiverseConditions?: string | null
-      religionOrBelief?: string | null
-      transgender?: string | null
-      sexualOrientation?: string | null
-      genderIdentity?: string | null
-      nationalities: string[]
-      interestToImmigration?: boolean | null
-      address?: string | null
-      addressType?: string | null
-      addressTypeVerified: boolean
-      /** Format: date */
-      addressStartDate?: string | null
-      addressNotes?: string | null
-      phoneNumber?: string | null
-      mobileNumber?: string | null
-      emailAddress?: string | null
-      disability?: boolean | null
-    }
-    PersonDto: {
-      /** Format: uuid */
-      id: string
-      personIdentifier?: string | null
-      title?: string | null
-      firstName: string
-      middleNames?: string | null
-      lastName: string
-      dateOfBirth: string
-      sex?: string | null
-      prisonNumbers: string[]
-      additionalDetails?: components['schemas']['PersonAdditionalDetails'] | null
     }
     ReferralInformationDto: {
       /** Format: uuid */
@@ -804,12 +769,12 @@ export interface components {
       value?: string | null
     }
     TaskListStatusResponseDto: {
-      confirmPersonalDetails: boolean
-      checkRiskInformation: boolean
-      selectThePersonsNeeds: boolean
-      addDetailsOfAnyAdditionalSupportNeeds: boolean
-      addDetailsOfMainPointOfContact: boolean
-      checkAnswers: boolean
+      fullName: string
+      confirmPersonalDetailsCompleted: boolean
+      checkRiskInformationCompleted: boolean
+      selectThePersonsNeedsCompleted: boolean
+      addDetailsOfAnyAdditionalSupportNeedsCompleted: boolean
+      addDetailsOfMainPointOfContactCompleted: boolean
     }
     ArnsRiskConcernsToSelfDto: {
       suicide?: components['schemas']['ArnsRiskDto'] | null
@@ -959,6 +924,40 @@ export interface components {
       probationRegionId: string
       govUkUrl?: string | null
       deliusCRSLocationId?: string | null
+    }
+    PersonAdditionalDetails: {
+      ethnicity?: string | null
+      preferredLanguage?: string | null
+      neurodiverseConditions?: string | null
+      religionOrBelief?: string | null
+      transgender?: string | null
+      sexualOrientation?: string | null
+      genderIdentity?: string | null
+      nationalities: string[]
+      interestToImmigration?: boolean | null
+      address?: string | null
+      addressType?: string | null
+      addressTypeVerified: boolean
+      /** Format: date */
+      addressStartDate?: string | null
+      addressNotes?: string | null
+      phoneNumber?: string | null
+      mobileNumber?: string | null
+      emailAddress?: string | null
+      disability?: boolean | null
+    }
+    PersonDto: {
+      /** Format: uuid */
+      id: string
+      personIdentifier?: string | null
+      title?: string | null
+      firstName: string
+      middleNames?: string | null
+      lastName: string
+      dateOfBirth: string
+      sex?: string | null
+      prisonNumbers: string[]
+      additionalDetails?: components['schemas']['PersonAdditionalDetails'] | null
     }
     ConfirmPersonDetailsBffDto: {
       /** Format: uuid */

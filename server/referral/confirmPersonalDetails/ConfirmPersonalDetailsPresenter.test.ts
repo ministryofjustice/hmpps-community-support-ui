@@ -90,7 +90,7 @@ describe('ConfirmPersonalDetailsPresenter', () => {
   } as unknown as Response
   test('builds correct view model', () => {
     const presenter = new ConfirmPersonalDetailsPresenter(data)
-    const viewModel = presenter.buildPageContent(res)
+    const viewModel = presenter.buildViewModel(res)
     expect(viewModel.backLink.href).toBe('/referral/task-list/A1234CD')
     expect(viewModel.heading).toBe('Charlie Robert Smith')
     expect(viewModel.subheading).toBe('Confirm personal details')
@@ -178,7 +178,7 @@ describe('ConfirmPersonalDetailsPresenter', () => {
       },
     })
 
-    const viewModel = presenter.buildPageContent(res)
+    const viewModel = presenter.buildViewModel(res)
     const [, , , addressRow] = viewModel.contact.rows
 
     expect(singleLineHtml(addressRow.key.html)).toBe(
