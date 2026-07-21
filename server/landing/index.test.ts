@@ -1,6 +1,6 @@
 import type { Express } from 'express'
 import request from 'supertest'
-import { appWithAllRoutes, user } from './testutils/appSetup'
+import { appWithAllRoutes, user } from '../routes/testutils/appSetup'
 import AuditService, { Page } from '../services/auditService'
 
 jest.mock('../services/auditService')

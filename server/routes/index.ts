@@ -9,6 +9,7 @@ import CommunityServiceProviderController from '../referral/communityServiceProv
 import AppointmentController from '../appointment/appointmentController'
 import IcsFeedbackController from '../appointment/icsFeedbackController'
 import asyncMiddleware from '../middleware/asyncMiddleware'
+import LandingController from '../landing/landingController'
 
 export default function routes({
   auditService,
@@ -31,12 +32,14 @@ export default function routes({
   const caseListController = new CaseListController(caseListService)
   const appointmentController = new AppointmentController(referralService, appointmentService, referenceDataService)
   const icsFeedbackController = new IcsFeedbackController(appointmentService)
+  const landingController = new LandingController()
 
   router.get('/', async (req, res, next) => {
     await auditService.logPageView(Page.INDEX_PAGE, { who: res.locals.user.username, correlationId: req.id })
-
-    return res.render('pages/index', {})
+    next()
   })
+
+  get('/', async (req, res) => landingController.showLandingPage(req, res))
 
   // NOTE: Generic `:id` route is declared after more-specific `/referral/*` routes
 

@@ -1,4 +1,21 @@
 {
+  "/": {
+    "pageHeader": "Community Support",
+    "tiles": [
+      {
+        "heading": "Make a referral",
+        "description": "Start a new referral for Community Support services.",
+        "href": "/referral/new/find-a-person",
+        "dataTestId": "make-referral-tile"
+      },
+      {
+        "heading": "View cases",
+        "description": "View your cases and other cases in progress.",
+        "href": "/cases-in-progress",
+        "dataTestId": "view-cases-tile"
+      }
+    ]
+  },
   "/referral/new/find-a-person": {
     "pageHeader": "Confirm this is the correct person for referral",
     "continueButtonText": "Continue",
@@ -37,17 +54,8 @@
         "href": "/cases-in-progress"
       }
     ],
-    "unassignedColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Date received"
-    ],
-    "inProgressColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Assigned to",
-      "Date received"
-    ],
+    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
+    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
     "noCasesMessage": "There are no {0} cases to view."
   },
   "/cases-in-progress": {
@@ -66,17 +74,8 @@
         "href": "/cases-in-progress"
       }
     ],
-    "unassignedColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Date received"
-    ],
-    "inProgressColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Assigned to",
-      "Date received"
-    ],
+    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
+    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
     "noCasesMessage": "There are no {0} cases to view."
   },
   "/referral-details/:id": {
@@ -179,15 +178,8 @@
         "href": "/change-log"
       }
     ],
-    "progressActiveColumnHeaders": [
-      "Date and time",
-      "Status",
-      "Action"
-    ],
-    "progressInactiveColumnHeaders": [
-      "Status",
-      "Action"
-    ],
+    "progressActiveColumnHeaders": ["Date and time", "Status", "Action"],
+    "progressInactiveColumnHeaders": ["Status", "Action"],
     "historySummary": "View ICS history"
   },
   "/ics-feedback/:id/did-session-take-place": {
