@@ -4,25 +4,19 @@
 {% set mainClasses = "govuk-body" %}
 
 {% block content %}
-<h1 class="govuk-heading-l">Community Support</h1>
+<h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
     <div class="govuk-width-container">
         <ul class="govuk-grid-row card-group">
-            <li class="govuk-grid-column-one-third card-group__item">
-                <div class="card card--clickable" data-test="make-referral-tile">
-                    <h2 class="govuk-heading-m card__heading">
-                        <a class="govuk-link card__link govuk-link--no-visited-state" href="/referral/new/find-a-person">Make a referral</a>
-                    </h2>
-                    <p class="govuk-body card__description">Start a new referral for Community Support services.</p>
-                </div>
-            </li>
-            <li class="govuk-grid-column-one-third card-group__item">
-                <div class="card card--clickable" data-test="view-cases-tile">
-                    <h2 class="govuk-heading-m card__heading">
-                        <a class="govuk-link card__link govuk-link--no-visited-state" href="/cases-in-progress">View cases</a>
-                    </h2>
-                    <p class="govuk-body card__description">View your cases and other cases in progress.</p>
-                </div>
-            </li>
+            {% for tile in content.tiles %}
+                <li class="govuk-grid-column-one-third card-group__item">
+                    <div class="card card--clickable" data-test="{{ tile.dataTestId }}" data-testid="{{ tile.dataTestId }}" data-qa="{{ tile.dataTestId }}">
+                        <h2 class="govuk-heading-m card__heading">
+                            <a class="govuk-link card__link govuk-link--no-visited-state" href="{{ tile.href }}">{{ tile.heading }}</a>
+                        </h2>
+                        <p class="govuk-body card__description">{{ tile.description }}</p>
+                    </div>
+                </li>
+            {% endfor %}
         </ul>
     </div>
 {% endblock %}
