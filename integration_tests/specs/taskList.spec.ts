@@ -52,11 +52,6 @@ test.describe.skip('Task List Page', () => {
   })
 
   test('should display check answers status correctly after updated all task status to completed', async ({ page }) => {
-    // await seedSessionTaskListState(page, mockPersonId, 'personalDetails', 'completed')
-    // await seedSessionTaskListState(page, mockPersonId, 'riskInformation', 'completed')
-    // await seedSessionTaskListState(page, mockPersonId, 'personNeeds', 'completed')
-    // await seedSessionTaskListState(page, mockPersonId, 'supportNeeds', 'completed')
-    // await seedSessionTaskListState(page, mockPersonId, 'contactDetails', 'completed')
     await page.goto(TaskListPage.url(mockReferralId))
     const taskListPage = await TaskListPage.verifyOnPage(page)
     await taskListPage.verifyTaskStatus('Personal details', 'Confirm personal details', 'Completed')
