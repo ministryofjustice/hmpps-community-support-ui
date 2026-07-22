@@ -69,6 +69,7 @@ export default class ReferralController {
       const normalizedIdentifier = trimmedIdentifier.toUpperCase()
       const foundPerson = await this.personService.getPersonByIdentifier(normalizedIdentifier, username)
       const presenter = new FoundPersonPresenter(foundPerson)
+      req.session.referralCreationDetails = { personDetails: foundPerson }
       req.session.personId = foundPerson.personIdentifier
       return presenter.renderPage(res)
     } catch (error) {
