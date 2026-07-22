@@ -12,7 +12,7 @@ describe('TaskListPresenter - Page Rendering', () => {
       addDetailsOfAnyAdditionalSupportNeedsCompleted: false,
       addDetailsOfMainPointOfContactCompleted: false,
     }
-    const presenter = new TaskListPresenter(taskListState)
+    const presenter = new TaskListPresenter(taskListState, 'referralId')
     const content = TaskListContent.build()
     const response = { locals: { content } } as unknown as Response
     const viewModel = presenter.buildViewModel(response)

@@ -282,7 +282,7 @@ export default class ReferralController {
     }
 
     const taskListStatus = await this.referralService.getTaskListStatus(draftReferalId, username)
-    const presenter = new TaskListPresenter(taskListStatus)
+    const presenter = new TaskListPresenter(taskListStatus, draftReferalId)
     return presenter.renderPage(res)
   }
 

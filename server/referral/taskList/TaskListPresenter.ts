@@ -19,7 +19,10 @@ const getTaskListStatus = (data: TaskListStatusDto) => {
 }
 
 export default class TaskListPresenter extends PresenterBase<TaskListViewModel, TaskListPageContent> {
-  constructor(private readonly data: TaskListStatusDto) {
+  constructor(
+    private readonly data: TaskListStatusDto,
+    private readonly referralId: string,
+  ) {
     super()
   }
 
@@ -78,7 +81,7 @@ export default class TaskListPresenter extends PresenterBase<TaskListViewModel, 
           items: [
             {
               title: { text: content.checkAnswers.subTasks.checkAnswersAndSubmit.text },
-              href: content.checkAnswers.subTasks.checkAnswersAndSubmit.href,
+              href: content.checkAnswers.subTasks.checkAnswersAndSubmit.href.replace('{{ id }}', this.referralId),
               status: status.checkAnswers,
             },
           ],
