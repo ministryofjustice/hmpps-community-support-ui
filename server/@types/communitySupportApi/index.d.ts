@@ -33,6 +33,8 @@ type CaseWorkerSummary = components['schemas']['CaseWorkerSummaryDto']
 type TaskListStatusDto = components['schemas']['TaskListStatusResponseDto']
 type ConfirmPersonDetailsBffDto = components['schemas']['ConfirmPersonDetailsBffDto']
 type AdditionalSupportNeedsDto = components['schemas']['AdditionalSupportNeedsBffResponseDto']
+type NeedsInterpreterBffResponseDto = components['schemas']['NeedsInterpreterBffResponseDto']
+type Selection = components['schemas']['Selection']
 
 export type {
   Referral,
@@ -67,4 +69,6 @@ export type {
   TaskListStatusDto,
   ConfirmPersonDetailsBffDto,
   AdditionalSupportNeedsDto,
+  NeedsInterpreterBffResponseDto,
+  Selection,
 }

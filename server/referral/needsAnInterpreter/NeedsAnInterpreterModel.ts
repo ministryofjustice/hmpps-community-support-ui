@@ -16,10 +16,4 @@ export interface NeedsAnInterpreterViewModel {
   heading: string
   radios: GovukFrontendRadiosWithConditional
   button: GovukFrontendButton
-  postHref: string
-}
-export interface NeedsAnInterpreterDataModel {
-  firstName: string
-  middleNames?: string
-  lastName: string
 }

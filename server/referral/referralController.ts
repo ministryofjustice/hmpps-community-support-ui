@@ -23,7 +23,7 @@ export default class ReferralController {
   constructor(
     private readonly referralService: ReferralService,
     private readonly personService: PersonService,
-  ) { }
+  ) {}
 
   private static isValidPersonIdentifier(personIdentifier: string): boolean {
     const normalized = personIdentifier.trim().toUpperCase()
@@ -339,15 +339,19 @@ export default class ReferralController {
     }
   }
 
-  showNeedsAnInterpreter(req: Request, res: Response): unknown {
-    /* const referralCreationDetails = req.session ? req.session.referralCreationDetails : null
-    if (!referralCreationDetails || !referralCreationDetails.personDetails) {
+  async showNeedsAnInterpreter(req: Request, res: Response) {
+    const { username } = res.locals.user
+    const draftReferalId = req.session?.draftReferalId
+    if (!draftReferalId) {
       return res.redirect('/referral/new/find-a-person')
-    } */
-
-    // const { personDetails } = referralCreationDetails
-    const personDetails = { firstName: 'Joe', lastName: 'Bloggs' }
-    const presenter = new NeedsAnInterpreterPresenter(personDetails)
-    return presenter.renderPage(res)
+    }
+    try {
+      const pageData = await this.referralService.getNeedsInterpreterPageData(draftReferalId, username)
+      const presenter = new NeedsAnInterpreterPresenter(pageData)
+      return presenter.renderPage(res)
+    } catch (e) {
+      logger.error(e)
+      return res.redirect('/referral/new/find-person')
+    }
   }
 }

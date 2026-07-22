@@ -1,20 +1,22 @@
 import { Response } from 'express'
+import { NeedsInterpreterBffResponseDto, Selection } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
-import {
-  NeedsAnInterpreterContent,
-  NeedsAnInterpreterDataModel,
-  NeedsAnInterpreterViewModel,
-} from './NeedsAnInterpreterModel'
+import { NeedsAnInterpreterContent, NeedsAnInterpreterViewModel } from './NeedsAnInterpreterModel'
 import { GovukFrontendRadiosWithConditional } from '../../@types/govukFrontend/derived'
 import { buildInput } from '../../utils/utils'
 
-const buildConditional = (content: NeedsAnInterpreterContent, name: string): string =>
+const buildConditional = (content: NeedsAnInterpreterContent, name: string, value: string | null): string =>
   buildInput({
     name: 'language',
     label: { text: content.yesCoditional.replace('{{ name }}', name) },
+    value,
   })
 
-const buildRadios = (content: NeedsAnInterpreterContent, name: string): GovukFrontendRadiosWithConditional => {
+const buildRadios = (
+  content: NeedsAnInterpreterContent,
+  selection: Selection,
+  name: string,
+): GovukFrontendRadiosWithConditional => {
   return {
     name: 'needsInterpreter',
     fieldset: {
@@ -28,10 +30,12 @@ const buildRadios = (content: NeedsAnInterpreterContent, name: string): GovukFro
       {
         value: content.yesOptionLabel,
         text: content.yesOptionLabel,
-        conditional: { html: buildConditional(content, name) },
+        checked: selection.selected,
+        conditional: { html: buildConditional(content, name, selection.value) },
       },
       {
         value: content.noOptionLabel,
+        checked: !selection.selected,
         text: content.noOptionLabel,
       },
     ],
@@ -42,24 +46,23 @@ export default class NeedsAnInterpreterPresenter extends PresenterBase<
   NeedsAnInterpreterViewModel,
   NeedsAnInterpreterContent
 > {
-  constructor(private readonly data: NeedsAnInterpreterDataModel) {
+  constructor(private readonly data: NeedsInterpreterBffResponseDto) {
     super()
   }
 
-  buildPageContent(res: Response): NeedsAnInterpreterViewModel {
+  buildViewModel(res: Response): NeedsAnInterpreterViewModel {
     const content = this.buildStaticContent(res)
-    const { firstName, middleNames, lastName } = this.data
-    const name = middleNames ? `${firstName} ${middleNames} ${lastName}` : `${firstName} ${lastName}`
+    const { firstName, middleName, lastName } = this.data.refereeName
+    const name = middleName ? `${firstName} ${middleName} ${lastName}` : `${firstName} ${lastName}`
     return {
       heading: name,
       backLink: {
         href: content.backlink,
       },
-      radios: buildRadios(content, firstName),
+      radios: buildRadios(content, this.data.language, firstName),
       button: {
         text: content.button,
       },
-      postHref: content.url,
     }
   }
 
