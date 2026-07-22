@@ -12,7 +12,6 @@ describe('CommunityServiceProviderController', () => {
   let communityServiceProviderController: CommunityServiceProviderController
   let req: Request
   let res: Response
-  let next: jest.Mock
 
   beforeEach(() => {
     communityServiceProviderService = {
@@ -21,17 +20,26 @@ describe('CommunityServiceProviderController', () => {
     communityServiceProviderController = new CommunityServiceProviderController(communityServiceProviderService)
 
     req = {
-      params: { personDetailsId: 'CRN123' },
+      session: {
+        personId: 'CRN123',
+      },
     } as unknown as Request
     res = {
-      locals: { user: { username: 'user1' } },
+      locals: {
+        user: { username: 'user1' },
+        content: {
+          pageHeader: 'Select the Community Support service to make a referral',
+          continueButtonText: 'Continue',
+          regionLabel: 'Location',
+          providerLabel: 'Delivery Partner',
+        },
+      },
       render: jest.fn(),
     } as unknown as Response
-    next = jest.fn()
   })
 
   describe('showCommunityServiceProviderPage', () => {
-    it('should render community service provider page with community service provider data', async () => {
+    test('should render community service provider page with community service provider data', async () => {
       const mockCommunityServiceProviderData = {
         personId: 'personDetails123',
         communitySupportServices: [
@@ -42,7 +50,7 @@ describe('CommunityServiceProviderController', () => {
 
       communityServiceProviderService.getCommunityServiceProviders.mockResolvedValue(mockCommunityServiceProviderData)
 
-      await communityServiceProviderController.showCommunityServiceProviderPage(req, res, next)
+      await communityServiceProviderController.showCommunityServiceProviderPage(req, res)
 
       expect(communityServiceProviderService.getCommunityServiceProviders).toHaveBeenCalledWith('CRN123', 'user1')
       expect(CommunityServiceProviderPresenter.prototype.renderPage).toHaveBeenCalledWith(res)

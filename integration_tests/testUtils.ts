@@ -2,7 +2,6 @@ import { Page } from '@playwright/test'
 import tokenVerification from './mockApis/tokenVerification'
 import hmppsAuth, { type UserToken } from './mockApis/hmppsAuth'
 import { resetStubs } from './mockApis/wiremock'
-import { TaskStatus } from '../server/referral/taskList/TaskListViewModel'
 
 export { resetStubs }
 
@@ -97,22 +96,6 @@ export const seedSessionCreate = async (page: Page, referralInformation: object)
 export const seedSessionCreateReferralDetails = async (page: Page, referralCreationDetails: object): Promise<void> => {
   await page.request.post('/test/setup-create-referral-details', {
     data: referralCreationDetails,
-    headers: { 'Content-Type': 'application/json' },
-  })
-}
-
-export const seedSessionTaskListState = async (
-  page: Page,
-  personId: string,
-  taskName: string,
-  taskStatus: TaskStatus,
-): Promise<void> => {
-  await page.request.post('/test/setup-task-list-state', {
-    data: {
-      personId,
-      taskName,
-      taskStatus,
-    },
     headers: { 'Content-Type': 'application/json' },
   })
 }

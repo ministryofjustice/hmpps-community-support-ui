@@ -8,7 +8,6 @@ import { GovukFrontendErrorSummaryErrorListElement } from '@govuk-frontend'
 import { HmppsUser } from '../../interfaces/hmppsUser'
 import { ChangeAppointmentDetails } from '../../appointment/change-ics-details-reason/ChangeAppointmentDetails'
 import { ReferralProgressBannerContent } from '../../referral/progress/ReferralProgressBannerContent'
-import { TaskListState } from '../../referral/taskList/TaskListState'
 import { ReferralCreationDetails } from '../../referral/referralDetails/ReferralCreationDetails'
 
 export interface HowSessionTookPlace {
@@ -39,7 +38,8 @@ export declare module 'express-session' {
     pending: Record<string, string>
     referralProgressBanner?: ReferralProgressBannerContent
     icsFeedbackSubmission: IcsFeedbackSubmission & { caseReferenceId: string }
-    taskList?: TaskListState
+    draftReferalId: string
+    personId: string
   }
 }
 

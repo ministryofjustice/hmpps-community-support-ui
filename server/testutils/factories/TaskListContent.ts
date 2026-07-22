@@ -1,7 +1,7 @@
 import { Factory } from 'fishery'
-import { TaskListContent } from '../../referral/taskList/TaskListViewModel'
+import { TaskListPageContent } from '../../referral/taskList/TaskListViewModel'
 
-class TaskListContentFactory extends Factory<TaskListContent> {}
+class TaskListContentFactory extends Factory<TaskListPageContent> {}
 
 export default TaskListContentFactory.define(({ transientParams }) => ({
   pageTitle: 'Make a referral - [service name]',

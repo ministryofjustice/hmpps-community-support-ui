@@ -53,7 +53,7 @@ describe('ConfirmPersonalDetailsPresenter', () => {
       content: {
         pageHeader: '{{ name }}',
         pageSubHeader: 'Confirm personal details',
-        backLink: '/referral/task-list/{{ id }}',
+        backLink: '/referral/task-list',
         defaultFieldValue: 'Not available',
         personalDetailsCard: {
           heading: 'Personal details',
@@ -91,7 +91,7 @@ describe('ConfirmPersonalDetailsPresenter', () => {
   test('builds correct view model', () => {
     const presenter = new ConfirmPersonalDetailsPresenter(data)
     const viewModel = presenter.buildViewModel(res)
-    expect(viewModel.backLink.href).toBe('/referral/task-list/A1234CD')
+    expect(viewModel.backLink.href).toBe('/referral/task-list')
     expect(viewModel.heading).toBe('Charlie Robert Smith')
     expect(viewModel.subheading).toBe('Confirm personal details')
 

@@ -49,15 +49,19 @@ export default function routes({
     await referralController.handleGetFindPersonRequest(req, res, next)
   })
 
-  post('/referral/new/find-a-person', async (req, res, next) => {
-    await referralController.handlePostFindPersonRequest(req, res, next)
+  post('/referral/new/find-a-person', async (req, res) => {
+    await referralController.handlePostFindPersonRequest(req, res)
   })
 
-  get('/referral/new/select-a-service', async (req, res, next) => {
-    await communityServiceProviderController.showCommunityServiceProviderPage(req, res, next)
+  get('/referral/new/select-a-service', (req, res) => {
+    communityServiceProviderController.showCommunityServiceProviderPage(req, res)
   })
 
-  get('/referral/:id/confirmation', async (req, res, next) => referralController.viewConfirmation(req, res, next))
+  post('/referral/new/select-a-service', (req, res) => {
+    referralController.communityServiceProviderPage(req, res)
+  })
+
+  get('/referral/:id/confirmation', async (req, res) => referralController.viewConfirmation(req, res))
 
   get('/referral/check-referral-information/:id', async (req, res) =>
     referralController.checkReferralInformation(req, res),
@@ -66,10 +70,6 @@ export default function routes({
   post('/referral/:referralId/submit-referral-information', async (req, res) =>
     referralController.submitReferralInformation(req, res),
   )
-
-  get('/referral/:id', async (req, res, next) => {
-    await referralController.showReferralPage(req, res, next)
-  })
 
   get('/unassigned-cases', async (req, res, next) => {
     await caseListController.showCaseList(req, res)
@@ -202,7 +202,11 @@ export default function routes({
     referralController.confirmPersonalDetails(req, res),
   )
 
-  get('/referral/task-list/:id', (req, res) => referralController.showTaskList(req, res))
+  get('/referral/task-list', (req, res) => referralController.showTaskList(req, res))
+
+  get('/referral/:id', async (req, res, next) => {
+    await referralController.showReferralPage(req, res, next)
+  })
 
   return router
 }

@@ -123,6 +123,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/draft-referral/needs-interpreter/{referralId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    /** Update the Interpreter Needs information for a Draft Referral */
+    patch: operations['updateNeedsInterpreter']
+    trace?: never
+  }
   '/draft-referral/additional-support-needs/{referralId}': {
     parameters: {
       query?: never
@@ -387,6 +404,23 @@ export interface paths {
     }
     /** Get a single ICS feedback record by its ID */
     get: operations['getIcsFeedback']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/draft-referral/needs-interpreter/{referralId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get interpreter needs page data */
+    get: operations['getNeedsInterpreterPage']
     put?: never
     post?: never
     delete?: never
@@ -736,6 +770,23 @@ export interface components {
       sessionCommunications?: string[] | null
       personFirstName: string
     }
+    NeedsInterpreterRequest: {
+      needsInterpreter: boolean
+      language?: string | null
+    }
+    NeedsInterpreterBffResponseDto: {
+      refereeName: components['schemas']['RefereeName']
+      language?: components['schemas']['Selection'] | null
+    }
+    RefereeName: {
+      firstName: string
+      middleName?: string | null
+      lastName: string
+    }
+    Selection: {
+      selected: boolean
+      value?: string | null
+    }
     AdditionalSupportNeedsRequest: {
       physicalHealth?: string | null
       mentalEmotionalHealth?: string | null
@@ -758,15 +809,6 @@ export interface components {
       diversity?: components['schemas']['Selection'] | null
       anythingElse?: components['schemas']['Selection'] | null
       needsAdditionalSupport: boolean
-    }
-    RefereeName: {
-      firstName: string
-      middleName?: string | null
-      lastName: string
-    }
-    Selection: {
-      selected: boolean
-      value?: string | null
     }
     TaskListStatusResponseDto: {
       fullName: string
@@ -1318,6 +1360,41 @@ export interface operations {
       }
     }
   }
+  updateNeedsInterpreter: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['NeedsInterpreterRequest']
+      }
+    }
+    responses: {
+      /** @description Interpreter needs information updated */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['NeedsInterpreterBffResponseDto']
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
   updateAdditionalSupportNeeds: {
     parameters: {
       query?: never
@@ -1807,6 +1884,37 @@ export interface operations {
         }
       }
       /** @description ICS feedback not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getNeedsInterpreterPage: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Interpreter needs data found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['NeedsInterpreterBffResponseDto']
+        }
+      }
+      /** @description Referral, or the Referral's Person, not found */
       404: {
         headers: {
           [name: string]: unknown

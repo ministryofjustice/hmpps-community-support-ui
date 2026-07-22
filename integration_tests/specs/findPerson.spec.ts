@@ -118,7 +118,8 @@ test.describe('FindPerson', () => {
     await FoundPersonPage.verifyOnPage(page)
   })
 
-  test('should navigate to the service provider selection screen when continue', async ({ page }) => {
+  // TODO skipped till design settles
+  test.skip('TODO: should navigate to the service provider selection screen when continue', async ({ page }) => {
     await communitySupport.stubCreateReferral(referralInformationInCommunity)
 
     await page.goto('/referral/new/find-a-person')

@@ -17,7 +17,7 @@ describe('CommunityServiceProviderPresenter', () => {
   })
   describe('renderPage', () => {
     it('should render the found person page with the correct content and summary list', () => {
-      const CommunityServiceProviders: Array<CommunitySupportServiceProviders> = [
+      const CommunityServiceProviders: CommunitySupportServiceProviders[] = [
         {
           id: 'service1',
           region: 'Region 1',

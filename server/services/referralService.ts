@@ -5,6 +5,8 @@ import {
   ReferralInformation,
   ReferralProgress,
   ConfirmPersonDetailsBffDto,
+  AdditionalSupportNeedsDto,
+  TaskListStatusDto,
 } from '@community-support-api'
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
 
@@ -15,23 +17,23 @@ export default class ReferralService {
     return this.communitySupportApiClient.getCaseDetailsById(caseIdentifier, username)
   }
 
-  async getReferralById(referralId: string, username: string) {
+  getReferralById(referralId: string, username: string) {
     return this.communitySupportApiClient.getReferralById(referralId, username)
   }
 
-  async createReferral(referralData: CreateReferralRequest, username: string) {
+  createReferral(referralData: CreateReferralRequest, username: string): Promise<ReferralInformation> {
     return this.communitySupportApiClient.createReferral(referralData, username)
   }
 
-  async submitReferralById(referralId: string, username: string) {
+  submitReferralById(referralId: string, username: string) {
     return this.communitySupportApiClient.submitReferralById(referralId, username)
   }
 
-  async getReferralUserAssignments(caseIdentifier: string, username: string) {
+  getReferralUserAssignments(caseIdentifier: string, username: string) {
     return this.communitySupportApiClient.getReferralUserAssignments(caseIdentifier, username)
   }
 
-  async submitReferralUserAssignments(
+  submitReferralUserAssignments(
     caseIdentifier: string,
     assignmentsData: ReferralUserAssignmentsRequest,
     username: string,
@@ -49,5 +51,13 @@ export default class ReferralService {
 
   getPersonalDetails(id: string, username: string): Promise<ConfirmPersonDetailsBffDto> {
     return this.communitySupportApiClient.getPersonalDetails(id, username)
+  }
+
+  getAdditionalSupportNeeds(id: string, username: string): Promise<AdditionalSupportNeedsDto> {
+    return this.communitySupportApiClient.getAdditionalSupportNeeds(id, username)
+  }
+
+  getTaskListStatus(referralId: string, username: string): Promise<TaskListStatusDto> {
+    return this.communitySupportApiClient.getTaskListStatus(referralId, username)
   }
 }
