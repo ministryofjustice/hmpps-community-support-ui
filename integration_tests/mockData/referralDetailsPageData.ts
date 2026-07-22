@@ -1,6 +1,10 @@
-import type { ReferralDetailsResponseDto } from '@community-support-api'
+import type { ReferralDetailsResponseDto, CaseWorkerDto } from '@community-support-api'
 
-export function referralPageData(id: string | null, personNumber: string = 'CRN123'): ReferralDetailsResponseDto {
+export function referralPageData(
+  id: string | null,
+  personNumber: string = 'CRN123',
+  assignedTo: CaseWorkerDto[] = [],
+): ReferralDetailsResponseDto {
   return {
     id: id || '{{request.path.[3]}}',
     referenceNumber: 'QD0878DE',
@@ -28,7 +32,7 @@ export function referralPageData(id: string | null, personNumber: string = 'CRN1
     },
     referralDetailsTableData: {
       referralDate: '2026-05-09T11:23:00.780Z',
-      assignedTo: [],
+      assignedTo,
     },
   }
 }
