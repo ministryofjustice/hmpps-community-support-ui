@@ -300,13 +300,21 @@ export default class ReferralController {
     return presenter.renderPage(res)
   }
 
-  async confirmPersonalDetails(req: Request, res: Response): Promise<void> {
-    const draftReferralKey = req.session.draftReferalId
-    if (!draftReferralKey) {
-      return res.redirect('/referral/new/find-a-person')
+  async confirmPersonalDetails(req: Request, res: Response) {
+    const { username } = res.locals.user
+    const draftReferalId = req.session?.draftReferalId
+    if (!draftReferalId) {
+      res.redirect('/referral/new/find-a-person')
+      return
     }
-    /* TODO */
-    return res.redirect(`/referral/task-list`)
+    try {
+      const pageData = await this.referralService.getPersonalDetails(draftReferalId, username)
+      const presenter = new ConfirmPersonalDetailsPresenter(pageData)
+      presenter.renderPage(res)
+    } catch (e) {
+      logger.error(e)
+      res.redirect('/referral/new/find-a-person')
+    }
   }
 
   async showAdditionalSupportNeeds(req: Request, res: Response) {
@@ -335,7 +343,7 @@ export default class ReferralController {
       res.redirect('/referral/task-list')
     } catch (e) {
       logger.error(e)
-      res.redirect('/referral/new/find-person')
+      res.redirect('/referral/new/find-a-person')
     }
   }
 
