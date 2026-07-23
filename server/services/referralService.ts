@@ -7,6 +7,7 @@ import {
   ConfirmPersonDetailsBffDto,
   AdditionalSupportNeedsDto,
   TaskListStatusDto,
+  NeedsInterpreterBffResponseDto,
 } from '@community-support-api'
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
 
@@ -59,5 +60,9 @@ export default class ReferralService {
 
   getTaskListStatus(referralId: string, username: string): Promise<TaskListStatusDto> {
     return this.communitySupportApiClient.getTaskListStatus(referralId, username)
+  }
+
+  getNeedsInterpreterPageData(referralId: string, username: string): Promise<NeedsInterpreterBffResponseDto> {
+    return this.communitySupportApiClient.getNeedsInterpreterPageData(referralId, username)
   }
 }

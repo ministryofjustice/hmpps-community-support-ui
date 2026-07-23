@@ -628,5 +628,14 @@
       }
     ],
     "defaultItemLabel": "{{ firstName }} does not need any additional support"
+  },
+  "/referral/task-list/needs-an-interpreter": {
+    "pageHeader": "Dose {{ name }} need an interpreter?",
+    "radioHeader": "What language does {{ name }} need ",
+    "yesOptionLabel": "Yes",
+    "yesCoditional": "What language does {{ name }} need an interpreter for?",
+    "noOptionLabel": "No",
+    "button": "Save and Continue",
+    "backlink": "/referral/task-list/additional-support-needs"
   }
 }

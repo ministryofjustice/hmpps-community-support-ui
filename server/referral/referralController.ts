@@ -13,6 +13,7 @@ import AdditionalSuportNeedsPresenter from './additionalSupportNeeds/AdditionalS
 import ReferralCreationDetails from './referralDetails/ReferralCreationDetails'
 import TaskListPresenter from './taskList/TaskListPresenter'
 import CheckReferralInformationPresenter from './check-referral-information/checkReferralInformationPresenter'
+import NeedsAnInterpreterPresenter from './needsAnInterpreter/NeedsAnInterpreterPresenter'
 
 export default class ReferralController {
   private static readonly CRN_REGEX = /^[A-Za-z]\d{6}$/
@@ -343,6 +344,22 @@ export default class ReferralController {
     } catch (e) {
       logger.error(e)
       res.redirect('/referral/new/find-a-person')
+    }
+  }
+
+  async showNeedsAnInterpreter(req: Request, res: Response) {
+    const { username } = res.locals.user
+    const draftReferalId = req.session?.draftReferalId
+    if (!draftReferalId) {
+      return res.redirect('/referral/new/find-a-person')
+    }
+    try {
+      const pageData = await this.referralService.getNeedsInterpreterPageData(draftReferalId, username)
+      const presenter = new NeedsAnInterpreterPresenter(pageData)
+      return presenter.renderPage(res)
+    } catch (e) {
+      logger.error(e)
+      return res.redirect('/referral/new/find-person')
     }
   }
 }
