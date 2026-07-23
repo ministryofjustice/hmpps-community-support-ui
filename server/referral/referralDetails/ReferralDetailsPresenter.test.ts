@@ -223,13 +223,11 @@ describe('ReferralDetailsPresenter', () => {
         },
       ],
     },
-    isAssigned: true,
   })
   const setupDefaultExpected = (inputDto: ReferralDetailsResponseDto) => createBaseExpected(inputDto)
 
   const setupUnassignedExpected = (inputDto: ReferralDetailsResponseDto) => {
     const result = createBaseExpected(inputDto)
-    result.isAssigned = false
     result.subNav = {
       label: 'Sub navigation',
       items: [

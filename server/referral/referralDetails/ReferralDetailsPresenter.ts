@@ -24,7 +24,6 @@ export interface ReferralDetailsViewModel {
   contact: GovukFrontendSummaryList
   referral: GovukFrontendSummaryList
   backLink: GovukFrontendBackLink
-  isAssigned: boolean
 }
 
 const nonEmptyStringOrDefault = (str: string | undefined | null, defaultValue: string): string =>
@@ -189,17 +188,15 @@ export default class ReferralDetailsPresenter extends PresenterBase<ReferralDeta
 
   buildViewModel(res: Response): ReferralDetailsViewModel {
     const content = this.buildStaticContent(res)
-    const isReferralAssigned = this.isReferralAssigned()
     return {
       name: this.referralDetails.personDetailsTableData.name,
-      subNav: this.buildSubNav(content, isReferralAssigned),
+      subNav: this.buildSubNav(content, this.isReferralAssigned()),
       successBanner: this.assignResult ? this.buildSuccessBanner(content.successBannerHeading) : null,
       personal: this.buildPersonalDetails(content.personalDetailsCard, content.defaultFieldValue),
       equality: this.buildEqualityDetails(content.equalityMonitoringCard, content.defaultFieldValue),
       contact: this.buildContactDetails(content.contactDetailsCard, content.defaultFieldValue),
       referral: this.buildReferralDetails(content.referralDetailsCard, content.defaultFieldValue),
       backLink: { href: '/unassigned-cases' },
-      isAssigned: isReferralAssigned,
     }
   }
 
