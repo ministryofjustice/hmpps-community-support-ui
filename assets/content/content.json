@@ -218,7 +218,7 @@
     },
     "videoCallReasonLabel": "Why was this session not in person?",
     "phoneCallReasonLabel": "Why was this session not in person?",
-    "probationOfficeSelectBlankText": "Select probation office",
+    "probationOfficeSelectBlankText": "Select a probation office",
     "probationOfficeSelectLabel": "Select a probation office",
     "addressLine1Label": "Address line 1",
     "addressLine2Label": "Address line 2 (optional)",
@@ -470,7 +470,53 @@
     },
     "time": {
       "label": "What time does the session start?",
-      "hint": "Use the 12-hour clock, for example 11:30am or 3pm."
+      "hint": "Use the 12-hour clock, for example 11:30am or 3pm.",
+      "AMorPM": "AM or PM"
+    },
+    "howSessionTakePlace": {
+      "label": "How will the session take place?",
+      "hint": "Select one option.",
+      "radioItems": {
+        "phone": {
+          "text": "Phone call",
+          "label": "Why is this session not in person?"
+        },
+        "video": {
+          "text": "Video call",
+          "label": "Why is this session not in person?"
+        },
+        "prison": {
+          "text": "In-person meeting - prison establishment",
+          "label": "Select prison"
+        },
+        "probation": {
+          "text": "In-person meeting - probation office",
+          "label": "Select a probation office"
+        },
+        "somewhereElse": {
+          "text": "In-person meeting - somewhere else",
+          "addressLabels": {
+            "address1": "Address line 1",
+            "address2": "Address line 2 (optional)",
+            "townOrCity": "Town or city",
+            "county": "County (optional)",
+            "postcode": "Postcode"
+          }
+        }
+      }
+    },
+    "informed": {
+      "label": "How was {{ firstname }} informed about the session?",
+      "hint": "Select all that apply.",
+      "selectionItems": {
+        "phone": "Phone call",
+        "text": "Text message",
+        "email": "Email",
+        "other": {
+          "text": "Other",
+          "label": "Other method of contact"
+        }
+      }
     },
     "submitButtonText": "Save and continue",
     "submitHref": "/referral/{{ caseRef }}/appointment/schedule-ics",
@@ -484,7 +530,53 @@
     },
     "time": {
       "label": "What time does the session start?",
-      "hint": "Use the 12-hour clock, for example 11:30am or 3pm."
+      "hint": "Use the 12-hour clock, for example 11:30am or 3pm.",
+      "AMorPM": "AM or PM"
+    },
+    "howSessionTakePlace": {
+      "label": "How will the session take place?",
+      "hint": "Select one option.",
+      "radioItems": {
+        "phone": {
+          "text": "Phone call",
+          "label": "Why is this session not in person?"
+        },
+        "video": {
+          "text": "Video call",
+          "label": "Why is this session not in person?"
+        },
+        "prison": {
+          "text": "In-person meeting - prison establishment",
+          "label": "Select prison"
+        },
+        "probation": {
+          "text": "In-person meeting - probation office",
+          "label": "Select a probation office"
+        },
+        "somewhereElse": {
+          "text": "In-person meeting - somewhere else",
+          "addressLabels": {
+            "address1": "Address line 1",
+            "address2": "Address line 2 (optional)",
+            "townOrCity": "Town or city",
+            "county": "County (optional)",
+            "postcode": "Postcode"
+          }
+        }
+      }
+    },
+    "informed": {
+      "label": "How was {{ firstname }} informed about the session?",
+      "hint": "Select all that apply.",
+      "selectionItems": {
+        "phone": "Phone call",
+        "text": "Text message",
+        "email": "Email",
+        "other": {
+          "text": "Other",
+          "label": "Other method of contact"
+        }
+      }
     },
     "submitButtonText": "Save and continue",
     "submitHref": "/referral/{{ caseRef }}/ics-change-details",

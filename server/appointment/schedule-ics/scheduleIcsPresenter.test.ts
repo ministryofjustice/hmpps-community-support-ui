@@ -47,7 +47,7 @@ describe('ScheduleIcsPresenter', () => {
   const probationOfficeItems = [
     {
       value: '',
-      text: 'Select probation office',
+      text: 'Select a probation office',
     },
     {
       value: 'Derby: Derwent Centre',
@@ -553,12 +553,12 @@ describe('ScheduleIcsPresenter', () => {
           list: [
             {
               href: '#probationOfficeList',
-              text: 'Select probation office',
+              text: 'Select a probation office',
             },
           ],
           messages: {
             probationOfficeList: {
-              text: 'Select probation office',
+              text: 'Select a probation office',
             },
           },
         }

@@ -47,10 +47,45 @@ export interface LabelAndHint {
   hint: string
 }
 
+export interface ListItem {
+  text: string
+  label: string
+}
+
+export interface RadioItems {
+  radioItems: {
+    phone: ListItem
+    video: ListItem
+    prison: ListItem
+    probation: ListItem
+    somewhereElse: {
+      text: string
+      addressLabels: {
+        address1: string
+        address2: string
+        townOrCity: string
+        county: string
+        postcode: string
+      }
+    }
+  }
+}
+
+export interface SelectionItems {
+  selectionItems: {
+    phone: string
+    text: string
+    email: string
+    other: ListItem
+  }
+}
+
 export interface ScheduleIcsContent {
   pageHeader: string
   date: LabelAndHint
-  time: LabelAndHint
+  time: LabelAndHint & { AMorPM: string }
+  howSessionTakePlace: LabelAndHint & RadioItems
+  informed: LabelAndHint & SelectionItems
   submitButtonText: string
   submitHref: string
   backLink: string

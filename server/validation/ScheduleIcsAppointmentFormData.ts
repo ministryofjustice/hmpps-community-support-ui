@@ -126,8 +126,7 @@ const timeSchema = z
         message: 'Session start time must include an hour and minute',
         path: ['sessionTime-hour'],
       })
-    }
-    if (minuteEmpty) {
+    } else if (minuteEmpty) {
       ctx.addIssue({
         code: 'custom',
         message: 'Session start time must include an hour and minute',
