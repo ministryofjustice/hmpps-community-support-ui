@@ -591,7 +591,7 @@
           },
           "addSupportNeeds": {
             "text": "Add details of any additional support needs",
-            "href": "/referral/task-list/add-support-needs"
+            "href": "/referral/task-list/additional-support-needs"
           }
         }
       },
@@ -787,11 +787,11 @@
         "detailsLabel": "Give details of any other needs and how the delivery partner can support {{ firstName }}"
       }
     ],
-    "defaultItemLabel": "{{ firstName }} does not need any additional support"
+    "defaultItemLabel": "{{ firstName }} does not need any additional support",
+    "button": "Save and Continue"
   },
   "/referral/task-list/needs-an-interpreter": {
-    "pageHeader": "Dose {{ name }} need an interpreter?",
-    "radioHeader": "What language does {{ name }} need ",
+    "pageHeader": "Does {{ name }} need an interpreter?",
     "yesOptionLabel": "Yes",
     "yesCoditional": "What language does {{ name }} need an interpreter for?",
     "noOptionLabel": "No",

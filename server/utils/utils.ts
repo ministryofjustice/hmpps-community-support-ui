@@ -4,6 +4,7 @@ import {
   GovukFrontendInput,
   GovukFrontendLabel,
   GovukFrontendSelect,
+  GovukFrontendTextarea,
 } from '@govuk-frontend'
 
 const properCase = (word: string): string =>
@@ -76,15 +77,26 @@ export const buildInputErrors = (name: string, { text, html }: GovukFrontendErro
   return ''
 }
 
-export const buildInput = ({ name, label, value, hint, errorMessage }: GovukFrontendInput) => {
+export const buildInput = ({ name, label, value, hint, errorMessage, spellcheck }: GovukFrontendInput) => {
   return `<div class="govuk-form-group">
     <h1 class="govuk-label-wrapper">
     ${buildLabel(name, label)}
   </h1>
   ${hint ? buildHint(hint) : ''}
   ${errorMessage ? buildInputErrors(name, errorMessage) : ''}
-  <input class="govuk-input" id="${name}" name="${name}" type="text" value="${value || ''}">
+  <input class="govuk-input" id="${name}" name="${name}" type="text" spellcheck="${spellcheck}" value="${value || ''}"/>
     </div>`
+}
+
+export const buildTextArea = ({ name, label, value, hint, errorMessage, rows, spellcheck }: GovukFrontendTextarea) => {
+  return `<div class="govuk-form-group">
+    <h1 class="govuk-label-wrapper">
+    ${buildLabel(name, label)}
+    </h1>
+  ${hint ? buildHint(hint) : ''}
+  ${errorMessage ? buildInputErrors(name, errorMessage) : ''}
+  <textarea class="govuk-textarea" id="${name}" name="${name}" rows="${rows}" spellcheck="${spellcheck}" value="${value || ''}"></textarea>
+  </div>`
 }
 
 export const buildSelect = ({ name, label, hint, errorMessage, items }: GovukFrontendSelect): string => {
@@ -97,3 +109,18 @@ ${items.map(({ value, text, selected }) => `<option value="${value}" ${selected 
   </select>
 </div>`
 }
+
+export const toCamelCase = (str: string): string =>
+  str
+    .split(' ')
+    .flatMap(subStr => subStr.split('-'))
+    .flatMap(subStr => subStr.split('_'))
+    .map((word, index) => {
+      // If it is the first word make sure to lowercase all the chars.
+      if (index === 0) {
+        return word.toLowerCase()
+      }
+      // If it is not the first word only upper case the first char and lowercase the rest.
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+    })
+    .join('')

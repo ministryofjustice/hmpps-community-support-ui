@@ -26,6 +26,8 @@ import type {
   NeedsInterpreterBffResponseDto,
   CommunitySupportRiskDto,
   CommunitySupportRiskInformationDto,
+  AdditionalSupportNeedsRequest,
+  NeedsInterpreterRequest,
 } from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
@@ -162,7 +164,11 @@ export default class CommunitySupportApiClient extends RestClient {
     )
   }
 
-  savePersonalDetailsConfirmed(draftReferalId: string, username: string): Promise<void> {
-    return this.patch({ path: `/draft-referral/confirm-person-details/${draftReferalId}` }, asSystem(username))
+  submitAdditionalSupportNeeds(data: AdditionalSupportNeedsRequest, referralId: string, username: string) {
+    return this.patch({ path: `/draft-referral/additional-support-needs/${referralId}`, data }, asSystem(username))
+  }
+
+  submitNeedsAnInterpreter(data: NeedsInterpreterRequest, draftReferalId: string, username: string) {
+    return this.patch({ path: `/draft-referral/needs-interpreter/${draftReferalId}`, data }, asSystem(username))
   }
 }

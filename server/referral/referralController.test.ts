@@ -1,11 +1,5 @@
 import { Request, Response } from 'express'
-import {
-  Person,
-  ReferralInformation,
-  CaseWorkerDto,
-  ConfirmPersonDetailsBffDto,
-  CommunitySupportRiskDto,
-} from '@community-support-api'
+import { Person, ReferralInformation, CaseWorkerDto, CommunitySupportRiskDto } from '@community-support-api'
 import ReferralController from './referralController'
 import ReferralService from '../services/referralService'
 import PersonService from '../services/personService'
@@ -375,7 +369,7 @@ describe('ReferralController', () => {
     })
 
     it('should render the risk summary page using the draft referral id', async () => {
-      req = { session: { draftReferalId: 'referral-uuid-1' } } as unknown as Request
+      req = { session: { draftReferralId: 'referral-uuid-1' } } as unknown as Request
       const risk = { firstName: 'Alex', lastName: 'River', crn: 'X123456' } as unknown as CommunitySupportRiskDto
       referralService.getRoshRisksByReferralId.mockResolvedValue(risk)
 
@@ -408,7 +402,7 @@ describe('ReferralController', () => {
     })
 
     it('should save the risk information and redirect to the task list', async () => {
-      req = { session: { draftReferalId: 'referral-uuid-1' } } as unknown as Request
+      req = { session: { draftReferralId: 'referral-uuid-1' } } as unknown as Request
       const risk = {
         firstName: 'Alex',
         lastName: 'River',

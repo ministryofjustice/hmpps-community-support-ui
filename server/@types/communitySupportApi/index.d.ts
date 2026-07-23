@@ -42,6 +42,9 @@ type ArnsRiskDto = components['schemas']['ArnsRiskDto']
 type ArnsRiskRoshSummaryDto = components['schemas']['ArnsRiskRoshSummaryDto']
 type CommunitySupportRiskInformationDto = components['schemas']['CommunitySupportRiskInformationDto']
 
+type AdditionalSupportNeedsRequest = components['schemas']['AdditionalSupportNeedsRequest']
+type NeedsInterpreterRequest = components['schemas']['NeedsInterpreterRequest']
+
 export type {
   Referral,
   CommunitySupportServicesProvider,
@@ -83,4 +86,6 @@ export type {
   ArnsRiskDto,
   ArnsRiskRoshSummaryDto,
   CommunitySupportRiskInformationDto,
+  AdditionalSupportNeedsRequest,
+  NeedsInterpreterRequest,
 }

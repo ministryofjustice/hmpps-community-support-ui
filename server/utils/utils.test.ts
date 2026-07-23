@@ -1,4 +1,4 @@
-import { convertToTitleCase, initialiseName } from './utils'
+import { convertToTitleCase, initialiseName, toCamelCase } from './utils'
 
 describe('convert to title case', () => {
   it.each([
@@ -26,5 +26,18 @@ describe('initialise name', () => {
     ['Double barrelled', 'Robert-John Smith-Jones-Wilson', 'R. Smith-Jones-Wilson'],
   ])('%s initialiseName(%s, %s)', (_: string, a: string, expected: string) => {
     expect(initialiseName(a)).toEqual(expected)
+  })
+})
+
+describe('toCamelCase', () => {
+  describe('hello world', () => {
+    ;['hello world', 'hello-world', 'hello_world', 'HELLO WORLD', 'Hello World'].forEach(input =>
+      test(input, () => expect(toCamelCase(input)).toBe('helloWorld')),
+    )
+  })
+  describe('my variable name', () => {
+    ;['my_variable_name', 'my-variable-name'].forEach(input =>
+      test(input, () => expect(toCamelCase(input)).toBe('myVariableName')),
+    )
   })
 })

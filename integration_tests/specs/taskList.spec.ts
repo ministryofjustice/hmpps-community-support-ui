@@ -6,6 +6,8 @@ import { referralInformationTaskList } from '../mockData/referralInformationData
 import TaskListPage from '../pages/TaskListPage'
 import HomePage from '../pages/homePage'
 import FindPersonPage from '../pages/findPersonPage'
+import AdditionalSupportNeedsPage from '../pages/AdditionalSupportNeedsPage'
+import NeedsAnInterpreterPage from '../pages/NeedsAnInterpreterPage'
 
 // These tests will have to move to end to end testing
 
@@ -15,7 +17,7 @@ test.describe('Task List Journey', () => {
   test.beforeEach(async ({ page }) => {
     await resetStubs()
     await communitySupport.stubGetPerson()
-    await communitySupport.stubGetCommunitySupportServices()
+    await communitySupport.stubGetCommunitySupportServicesTwoOptions()
     await communitySupport.stubCreateReferral({
       referralId,
       personId: '',
@@ -71,7 +73,7 @@ test.describe('Task List Journey', () => {
       })
       await test.step('service select', async () => {
         await expect(page.getByRole('heading', { name: 'Select the Community Support' })).toBeVisible()
-        await page.getByRole('radio', { name: 'Accommodation support' }).check()
+        await page.getByRole('radio', { name: 'First Accommodation support' }).check()
         await page.getByRole('button', { name: 'Continue' }).click()
       })
       await test.step('confirm task list page', async () => {
@@ -79,6 +81,7 @@ test.describe('Task List Journey', () => {
       })
     })
   })
+
   test('confirm personal details', async ({ page }) => {
     await communitySupport.stubGetConfirmPersonalDetailsData(referralId, {
       id: '',
@@ -122,7 +125,6 @@ test.describe('Task List Journey', () => {
         },
       },
     })
-    await communitySupport.stubSubmitConfirmPersonalDetails(referralId)
 
     await test.step('select confirm personal details task', async () => {
       const taskListPom = await TaskListPage.verifyOnPage(page)
@@ -161,6 +163,66 @@ test.describe('Task List Journey', () => {
           tag: undefined,
         },
       })
+      await TaskListPage.verifyOnPage(page)
+    })
+  })
+
+  test('additional support needs task', async ({ page }) => {
+    await communitySupport.stubGetAdditionalSupportNeeds(referralId, {
+      refereeName: {
+        firstName: 'Alex',
+        lastName: 'Rivers',
+      },
+      physicalHealth: {
+        selected: false,
+      },
+      mentalEmotionalHealth: {
+        selected: false,
+      },
+      neurodiversity: {
+        selected: false,
+      },
+      locationTravel: {
+        selected: false,
+      },
+      caringResponsibilities: {
+        selected: false,
+      },
+      employmentResponsibilities: {
+        selected: false,
+      },
+      diversity: {
+        selected: false,
+      },
+      anythingElse: {
+        selected: false,
+      },
+      needsAdditionalSupport: false,
+    })
+    await communitySupport.stubSubmitAdditionalSupportNeeds(referralId)
+    await communitySupport.stubGetNeedsAnInterpreter(referralId, {
+      refereeName: {
+        firstName: 'Alex',
+        lastName: 'Rivers',
+      },
+    })
+    await communitySupport.stubSubmitNeedsAnInterpreter(referralId)
+
+    await test.step('select additional support needs', async () => {
+      const taskListPom = await TaskListPage.verifyOnPage(page)
+      await taskListPom.clickAddSupportNeedsTask()
+    })
+    await test.step('fill out additional support needs', async () => {
+      const pom = await AdditionalSupportNeedsPage.verifyOnPage(page, 'Alex', 'Rivers')
+      await pom.select('Alex does not need any additional support')
+      await pom.clickSaveAndContinue()
+    })
+    await test.step('fill out needs interpreter', async () => {
+      const pom = await NeedsAnInterpreterPage.verifyOnPage(page, 'Alex')
+      await pom.select('No')
+      await pom.clickSaveAndContinue()
+    })
+    await test.step('on task list', async () => {
       await TaskListPage.verifyOnPage(page)
     })
   })

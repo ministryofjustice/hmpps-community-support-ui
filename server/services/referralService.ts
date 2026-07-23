@@ -10,8 +10,10 @@ import {
   NeedsInterpreterBffResponseDto,
   CommunitySupportRiskDto,
   CommunitySupportRiskInformationDto,
+  AdditionalSupportNeedsRequest,
 } from '@community-support-api'
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
+import { NeedsAnInterpreterFormData } from '../validation/NeedsAnInterpreterFormDataSchema'
 
 export default class ReferralService {
   constructor(private readonly communitySupportApiClient: CommunitySupportApiClient) {}
@@ -80,7 +82,11 @@ export default class ReferralService {
     return this.communitySupportApiClient.saveRiskInformation(referralId, riskInformation, username)
   }
 
-  savePersonalDetailsConfirmed(draftReferalId: string, username: string): Promise<void> {
-    return this.communitySupportApiClient.savePersonalDetailsConfirmed(draftReferalId, username)
+  submitAdditionalSupportNeeds(data: AdditionalSupportNeedsRequest, referralId: string, username: string) {
+    return this.communitySupportApiClient.submitAdditionalSupportNeeds(data, referralId, username)
+  }
+
+  submitNeedsAnInterpreter(body: NeedsAnInterpreterFormData, draftReferalId: string, username: string) {
+    return this.communitySupportApiClient.submitNeedsAnInterpreter(body, draftReferalId, username)
   }
 }

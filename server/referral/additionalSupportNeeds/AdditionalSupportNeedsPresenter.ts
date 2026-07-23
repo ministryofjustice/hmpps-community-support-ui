@@ -8,21 +8,26 @@ import {
   AdditionalSuportNeedsViewModel,
 } from './AdditionalSupportNeedsModel'
 import { WithConditional } from '../../@types/govukFrontend/derived'
-import { buildInput } from '../../utils/utils'
+import { buildTextArea } from '../../utils/utils'
 
 const buildItem =
   (firstName: string) =>
-  ({ label, hint, detailsLabel }: ItemContent): WithConditional<GovukFrontendCheckboxesItem> => ({
-    value: label.replace('{{ firstName }}', firstName),
-    text: label.replace('{{ firstName }}', firstName),
-    hint: { text: hint },
-    conditional: {
-      html: buildInput({
-        name: label,
-        label: { text: detailsLabel.replace('{{ firstName }}', firstName) },
-      }),
-    },
-  })
+  ({ label, hint, detailsLabel }: ItemContent): WithConditional<GovukFrontendCheckboxesItem> => {
+    const option = label.split(' ').at(0)
+    return {
+      value: option,
+      text: label,
+      hint: { text: hint },
+      conditional: {
+        html: buildTextArea({
+          name: `${option}Value`,
+          label: { text: detailsLabel.replace('{{ firstName }}', firstName) },
+          rows: '5',
+          spellcheck: true,
+        }),
+      },
+    }
+  }
 
 const buildItems = (
   { items, defaultItemLabel }: AdditionalSuportNeedsContent,
@@ -30,11 +35,15 @@ const buildItems = (
 ): WithConditional<GovukFrontendCheckboxesItem>[] =>
   items.map(buildItem(firstName)).concat([
     { divider: 'or', value: '' },
-    { value: defaultItemLabel, text: defaultItemLabel.replace('{{ firstName }}', firstName), behaviour: 'exclusive' },
+    {
+      value: 'none',
+      text: defaultItemLabel.replace('{{ firstName }}', firstName),
+      behaviour: 'exclusive',
+    },
   ])
 
 const buildChecklist = (content: AdditionalSuportNeedsContent, firstName: string): GovukFrontendCheckboxes => ({
-  name: 'additional-needs',
+  name: 'AdditionalNeeds',
   attributes: { 'test-id': 'additional-needs' },
   fieldset: {
     legend: {
@@ -42,6 +51,7 @@ const buildChecklist = (content: AdditionalSuportNeedsContent, firstName: string
       isPageHeading: true,
       classes: 'govuk-fieldset__legend--l',
     },
+    attributes: { 'test-id': 'additional-needs-legend' },
   },
   hint: { text: content.hint },
   items: buildItems(content, firstName),
@@ -62,7 +72,7 @@ export default class AdditionalSuportNeedsPresenter extends PresenterBase<
     return {
       heading: name,
       checkList: buildChecklist(content, firstName),
-      postHref: '#',
+      button: { text: content.button },
     }
   }
 
