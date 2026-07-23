@@ -218,7 +218,7 @@ describe('ReferralController', () => {
         params: { identifier: 'referral-id-1' },
         flash: jest.fn(),
       } as unknown as Request
-      await referralController.showAssignCaseWorkersPage(req, res, next)
+      await referralController.showAssignCaseWorkersPage(req, res)
       expect(res.render).toHaveBeenCalledWith('referral/assign', {
         caseworkers: undefined,
         content: {
@@ -242,7 +242,7 @@ describe('ReferralController', () => {
       }
       referralService.getReferralUserAssignments.mockRejectedValue(mockErrorData)
 
-      await referralController.showAssignCaseWorkersPage(req, res, next)
+      await referralController.showAssignCaseWorkersPage(req, res)
 
       expect(referralService.getReferralUserAssignments).toHaveBeenCalledWith('referral-id-123', 'user1')
       expect(req.flash).toHaveBeenCalledWith('referralIdError', "No referral with identifier 'referral-id-123' found")
@@ -270,7 +270,7 @@ describe('ReferralController', () => {
       ] as CaseWorkerDto[]
       referralService.getReferralUserAssignments.mockResolvedValue(caseworkers)
 
-      await referralController.showAssignCaseWorkersPage(req, res, next)
+      await referralController.showAssignCaseWorkersPage(req, res)
 
       expect(referralService.getReferralUserAssignments).toHaveBeenCalledWith('referral-id-123', 'user1')
       expect(res.render).toHaveBeenCalledWith('referral/assign', {
