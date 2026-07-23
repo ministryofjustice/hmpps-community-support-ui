@@ -23,6 +23,7 @@ import type {
   ConfirmPersonDetailsBffDto,
   AdditionalSupportNeedsDto,
   TaskListStatusDto,
+  NeedsInterpreterBffResponseDto,
 } from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
@@ -138,5 +139,9 @@ export default class CommunitySupportApiClient extends RestClient {
 
   getTaskListStatus(referralId: string, username: string): Promise<TaskListStatusDto> {
     return this.get({ path: `/bff/task-list-status/${referralId}` }, asSystem(username))
+  }
+
+  getNeedsInterpreterPageData(referralId: string, username: string): Promise<NeedsInterpreterBffResponseDto> {
+    return this.get({ path: `/bff/draft-referral/needs-interpreter/${referralId}` }, asSystem(username))
   }
 }

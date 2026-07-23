@@ -173,6 +173,8 @@ export default function routes({
     referralController.showAdditionalSupportNeeds(req, res),
   )
 
+  get('/referral/task-list/needs-an-interpreter', (req, res) => referralController.showNeedsAnInterpreter(req, res))
+
   get('/referral/task-list/:id', (req, res) => referralController.showTaskList(req, res))
 
   post('/referral/task-list/confirm-personal-details', (req, res) =>
