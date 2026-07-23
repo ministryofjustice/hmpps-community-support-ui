@@ -1,11 +1,15 @@
 import type { SuperAgentRequest } from 'superagent'
 import {
   AppointmentIcsResponse,
+  ConfirmPersonDetailsBffDto,
+  CommunitySupportRiskDto,
+  CommunitySupportRiskInformationDto,
   IcsFeedbackSubmission,
   IcsFeedbackSubmissionResponse,
   ProbationOffice,
   ReferralInformation,
   SubmitReferralResponse,
+  TaskListStatusDto,
   CaseWorkerDto,
 } from '@community-support-api'
 import { stubFor } from './wiremock'
@@ -439,6 +443,66 @@ export default {
         status: httpStatus,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: referralInformation,
+        transformers: ['response-template'],
+      },
+    }),
+  stubGetPersonalDetails: (
+    personIdentifier: string,
+    personalDetails: ConfirmPersonDetailsBffDto,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: `/community-support/bff/confirm-person-details/${personIdentifier}`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: personalDetails,
+        transformers: ['response-template'],
+      },
+    }),
+  stubGetRoshRisks: (referralId: string, risk: CommunitySupportRiskDto, httpStatus = 200): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: `/community-support/bff/risk/rosh/${referralId}`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: risk,
+        transformers: ['response-template'],
+      },
+    }),
+  stubGetTaskListStatus: (referralId: string, taskListStatus: TaskListStatusDto, httpStatus = 200): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: `/community-support/bff/task-list-status/${referralId}`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: taskListStatus,
+        transformers: ['response-template'],
+      },
+    }),
+  stubSaveRiskInformation: (
+    referralId: string,
+    riskInformation: CommunitySupportRiskInformationDto,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'PUT',
+        urlPathPattern: `/community-support/risk-information/${referralId}`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: riskInformation,
         transformers: ['response-template'],
       },
     }),

@@ -1,5 +1,11 @@
 import { Request, Response } from 'express'
-import { Person, ReferralInformation, CaseWorkerDto } from '@community-support-api'
+import {
+  Person,
+  ReferralInformation,
+  CaseWorkerDto,
+  ConfirmPersonDetailsBffDto,
+  CommunitySupportRiskDto,
+} from '@community-support-api'
 import ReferralController from './referralController'
 import ReferralService from '../services/referralService'
 import PersonService from '../services/personService'
@@ -8,12 +14,16 @@ import CheckReferralInformationPresenter from './check-referral-information/chec
 import ConfirmationContent from '../testutils/factories/ConfirmationContent'
 import CheckReferralInformationContent from '../testutils/factories/CheckReferralInformationContent'
 import ConfirmationPresenter from './confirmation/confirmationPresenter'
+import RiskSummaryPresenter from './riskSummary/RiskSummaryPresenter'
+import ConfirmPersonalDetailsPresenter from './confirmPersonalDetails/ConfirmPersonalDetailsPresenter'
 
 jest.mock('../services/referralService')
 jest.mock('../middleware/formValidationMiddleware')
 jest.mock('../referral/foundPerson/foundPersonPresenter')
 jest.mock('../referral/check-referral-information/checkReferralInformationPresenter')
 jest.mock('./confirmation/confirmationPresenter')
+jest.mock('./riskSummary/RiskSummaryPresenter')
+jest.mock('./confirmPersonalDetails/ConfirmPersonalDetailsPresenter')
 
 describe('ReferralController', () => {
   let referralService: jest.Mocked<ReferralService>
@@ -29,6 +39,9 @@ describe('ReferralController', () => {
       createReferral: jest.fn(),
       getReferralUserAssignments: jest.fn(),
       getReferralInformation: jest.fn(),
+      getPersonalDetails: jest.fn(),
+      getRoshRisksByReferralId: jest.fn(),
+      saveRiskInformation: jest.fn(),
     } as unknown as jest.Mocked<ReferralService>
     personService = {
       getPersonByIdentifier: jest.fn(),
@@ -38,6 +51,8 @@ describe('ReferralController', () => {
     FoundPersonPresenter.prototype.renderPage = jest.fn()
     CheckReferralInformationPresenter.prototype.renderPage = jest.fn()
     ConfirmationPresenter.prototype.renderPage = jest.fn()
+    RiskSummaryPresenter.prototype.renderPage = jest.fn()
+    ConfirmPersonalDetailsPresenter.prototype.renderPage = jest.fn()
 
     req = {
       params: { id: 'referral123' },
@@ -163,6 +178,7 @@ describe('ReferralController', () => {
     })
     test.skip('should create referral and render check referral information page', async () => {
       req.session.referralCreationDetails = {
+        personIdentifier: 'CRN123',
         personDetails: {
           id: 'person123',
           personIdentifier: 'CRN123',
@@ -280,6 +296,145 @@ describe('ReferralController', () => {
         },
         caseworkers,
       })
+    })
+  })
+
+  describe('showConfirmPersonalDetails', () => {
+    it('should redirect to find a person page when there is no draft referral in session', async () => {
+      req = { session: {} } as unknown as Request
+
+      await referralController.showConfirmPersonalDetails(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('/referral/new/find-a-person')
+    })
+
+    it('should redirect to find a person page when there is no personId in session', async () => {
+      req = { session: { draftReferalId: 'referral-uuid-1' } } as unknown as Request
+
+      await referralController.showConfirmPersonalDetails(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('/referral/new/find-a-person')
+    })
+
+    it('should render the confirm personal details page using the stored personId', async () => {
+      req = {
+        session: { draftReferalId: 'referral-uuid-1', personId: 'X123456' },
+      } as unknown as Request
+      const personalDetails = { personalDetails: { crn: 'X123456' } } as unknown as ConfirmPersonDetailsBffDto
+      referralService.getPersonalDetails.mockResolvedValue(personalDetails)
+
+      await referralController.showConfirmPersonalDetails(req, res)
+
+      expect(referralService.getPersonalDetails).toHaveBeenCalledWith('X123456', 'user1')
+      expect(ConfirmPersonalDetailsPresenter).toHaveBeenCalledWith(personalDetails)
+      expect(ConfirmPersonalDetailsPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+    })
+  })
+
+  describe('confirmPersonalDetails', () => {
+    it('should redirect to find a person page when there is no draft referral in session', async () => {
+      req = { session: {} } as unknown as Request
+
+      await referralController.confirmPersonalDetails(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('/referral/new/find-a-person')
+    })
+
+    it('should render the confirm personal details page using the draft referral id', async () => {
+      req = { session: { draftReferalId: 'referral-uuid-1' } } as unknown as Request
+      const personalDetails = { personalDetails: { crn: 'X123456' } } as unknown as ConfirmPersonDetailsBffDto
+      referralService.getPersonalDetails.mockResolvedValue(personalDetails)
+
+      await referralController.confirmPersonalDetails(req, res)
+
+      expect(referralService.getPersonalDetails).toHaveBeenCalledWith('referral-uuid-1', 'user1')
+      expect(ConfirmPersonalDetailsPresenter).toHaveBeenCalledWith(personalDetails)
+      expect(ConfirmPersonalDetailsPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+    })
+
+    it('should redirect to find a person page when fetching personal details fails', async () => {
+      req = { session: { draftReferalId: 'referral-uuid-1' } } as unknown as Request
+      referralService.getPersonalDetails.mockRejectedValue(new Error('boom'))
+
+      await referralController.confirmPersonalDetails(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('/referral/new/find-a-person')
+    })
+  })
+
+  describe('showRiskSummary', () => {
+    it('should redirect to find a person page when there is no draft referral in session', async () => {
+      req = { session: {} } as unknown as Request
+
+      await referralController.showRiskSummary(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('/referral/new/find-a-person')
+    })
+
+    it('should render the risk summary page using the draft referral id', async () => {
+      req = { session: { draftReferalId: 'referral-uuid-1' } } as unknown as Request
+      const risk = { firstName: 'Alex', lastName: 'River', crn: 'X123456' } as unknown as CommunitySupportRiskDto
+      referralService.getRoshRisksByReferralId.mockResolvedValue(risk)
+
+      await referralController.showRiskSummary(req, res)
+
+      expect(referralService.getPersonalDetails).not.toHaveBeenCalled()
+      expect(referralService.getRoshRisksByReferralId).toHaveBeenCalledWith('referral-uuid-1', 'user1')
+      expect(RiskSummaryPresenter).toHaveBeenCalledWith(risk, 'referral-uuid-1')
+      expect(RiskSummaryPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+    })
+  })
+
+  describe('confirmRiskSummary', () => {
+    it('should redirect to find a person page when there is no draft referral in session', async () => {
+      req = { session: {} } as unknown as Request
+
+      await referralController.confirmRiskSummary(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('/referral/new/find-a-person')
+    })
+
+    it('should save the risk information and redirect to the task list', async () => {
+      req = { session: { draftReferalId: 'referral-uuid-1' } } as unknown as Request
+      const risk = {
+        firstName: 'Alex',
+        lastName: 'River',
+        crn: 'X123456',
+        summary: {
+          whoIsAtRisk: 'Public, known adults and staff are at risk.',
+          natureOfRisk: 'Physical violence and intimidation towards others.',
+          riskImminence: 'Risk is immediate.',
+        },
+        riskToSelf: {
+          suicide: { risk: 'YES', currentConcernsText: 'Suicide concern' },
+          selfHarm: { risk: 'DK' },
+          hostelSetting: { risk: 'NO' },
+          vulnerability: { risk: 'YES', currentConcernsText: 'Vulnerability concern' },
+          custody: { risk: 'YES', currentConcernsText: 'Custody concern' },
+        },
+      } as unknown as CommunitySupportRiskDto
+      referralService.getRoshRisksByReferralId.mockResolvedValue(risk)
+
+      await referralController.confirmRiskSummary(req, res)
+
+      expect(referralService.getRoshRisksByReferralId).toHaveBeenCalledWith('referral-uuid-1', 'user1')
+      expect(referralService.saveRiskInformation).toHaveBeenCalledWith(
+        'referral-uuid-1',
+        {
+          id: 'referral-uuid-1',
+          referralId: 'referral-uuid-1',
+          riskSummaryWhoIsAtRisk: 'Public, known adults and staff are at risk.',
+          riskSummaryNatureOfRisk: 'Physical violence and intimidation towards others.',
+          riskSummaryRiskImminence: 'Risk is immediate.',
+          riskToSelfSuicide: 'Suicide concern',
+          riskToSelfSelfHarm: undefined,
+          riskToSelfHostelSetting: undefined,
+          riskToSelfVulnerability: 'Vulnerability concern',
+          additionalInformation: 'Custody concern',
+        },
+        'user1',
+      )
+      expect(res.redirect).toHaveBeenCalledWith('/referral/task-list')
     })
   })
 })

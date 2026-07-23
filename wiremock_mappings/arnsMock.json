@@ -1,0 +1,169 @@
+{
+  "mappings": [
+    {
+      "name": "ARNS get ROSH risks by CRN - within 12 months",
+      "request": {
+        "method": "GET",
+        "urlPathPattern": "/assess-risks-and-needs/risks/crn/X[0-9]{6}"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "riskToSelf": {
+            "suicide": {
+              "risk": "YES",
+              "previous": "YES",
+              "previousConcernsText": "Previous attempt in 2022 while in custody.",
+              "current": "YES",
+              "currentConcernsText": "Expressed suicidal ideation during last supervision."
+            },
+            "selfHarm": {
+              "risk": "YES",
+              "previous": "YES",
+              "previousConcernsText": "History of cutting behaviour.",
+              "current": "NO",
+              "currentConcernsText": null
+            },
+            "custody": {
+              "risk": "NO",
+              "previous": "NO",
+              "previousConcernsText": null,
+              "current": "NO",
+              "currentConcernsText": null
+            },
+            "hostelSetting": {
+              "risk": "DK",
+              "previous": "DK",
+              "previousConcernsText": null,
+              "current": "DK",
+              "currentConcernsText": null
+            },
+            "vulnerability": {
+              "risk": "YES",
+              "previous": "NO",
+              "previousConcernsText": null,
+              "current": "YES",
+              "currentConcernsText": "Mental health deterioration noted by GP."
+            }
+          },
+          "otherRisks": {
+            "escapeOrAbscond": "NO",
+            "controlIssuesDisruptiveBehaviour": "YES",
+            "breachOfTrust": "YES",
+            "riskToOtherPrisoners": "NO"
+          },
+          "summary": {
+            "whoIsAtRisk": "Public, known adults and staff are at risk.",
+            "natureOfRisk": "Physical violence and intimidation towards others.",
+            "riskImminence": "Risk is immediate, particularly when under the influence of alcohol.",
+            "riskIncreaseFactors": "Alcohol and drug misuse, breakdown of relationships, unemployment.",
+            "riskMitigationFactors": "Regular probation contact, engagement with alcohol treatment programme.",
+            "analysisOfRiskFactors": "Pattern of domestic violence linked to substance misuse. Risk escalates rapidly.",
+            "riskInCommunity": {
+              "VERY_HIGH": ["Known Adult"],
+              "HIGH": ["Public", "Staff"],
+              "LOW": ["Children", "Prisoners"]
+            },
+            "riskInCustody": {
+              "HIGH": ["Staff", "Prisoners"],
+              "LOW": ["Children", "Public"]
+            },
+            "overallRiskLevel": "VERY_HIGH"
+          },
+          "assessedOn": "2026-03-12T14:25:00"
+        }
+      }
+    },
+    {
+      "name": "ARNS get ROSH risks by CRN - stale assessment (older than 12 months)",
+      "request": {
+        "method": "GET",
+        "urlPathPattern": "/assess-risks-and-needs/risks/crn/S[0-9]{6}"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "riskToSelf": {
+            "suicide": {
+              "risk": "NO",
+              "previous": "NO",
+              "previousConcernsText": null,
+              "current": "NO",
+              "currentConcernsText": null
+            },
+            "selfHarm": {
+              "risk": "NO",
+              "previous": "NO",
+              "previousConcernsText": null,
+              "current": "NO",
+              "currentConcernsText": null
+            },
+            "custody": {
+              "risk": "NO",
+              "previous": "NO",
+              "previousConcernsText": null,
+              "current": "NO",
+              "currentConcernsText": null
+            },
+            "hostelSetting": {
+              "risk": "NO",
+              "previous": "NO",
+              "previousConcernsText": null,
+              "current": "NO",
+              "currentConcernsText": null
+            },
+            "vulnerability": {
+              "risk": "NO",
+              "previous": "NO",
+              "previousConcernsText": null,
+              "current": "NO",
+              "currentConcernsText": null
+            }
+          },
+          "otherRisks": {
+            "escapeOrAbscond": "NO",
+            "controlIssuesDisruptiveBehaviour": "NO",
+            "breachOfTrust": "NO",
+            "riskToOtherPrisoners": "NO"
+          },
+          "summary": {
+            "whoIsAtRisk": null,
+            "natureOfRisk": null,
+            "riskImminence": null,
+            "riskIncreaseFactors": null,
+            "riskMitigationFactors": null,
+            "analysisOfRiskFactors": null,
+            "riskInCommunity": {},
+            "riskInCustody": {},
+            "overallRiskLevel": null
+          },
+          "assessedOn": "2024-01-01T09:00:00"
+        }
+      }
+    },
+    {
+      "name": "ARNS ROSH risks not found by CRN",
+      "request": {
+        "method": "GET",
+        "urlPathPattern": "/assess-risks-and-needs/risks/crn/Z[0-9]{6}"
+      },
+      "response": {
+        "status": 404,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "status": 404,
+          "error": "Not Found",
+          "message": "ROSH risks not found in Assess Risks and Needs"
+        }
+      }
+    }
+  ]
+}
