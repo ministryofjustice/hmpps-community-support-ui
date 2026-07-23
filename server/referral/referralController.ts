@@ -145,7 +145,7 @@ export default class ReferralController {
     }
   }
 
-  async showAssignCaseWorkersPage(req: Request, res: Response, next: NextFunction) {
+  async showAssignCaseWorkersPage(req: Request, res: Response) {
     const { identifier } = req.params as { identifier: string }
     const { username } = res.locals.user
     const viewModel = {

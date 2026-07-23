@@ -39,59 +39,43 @@ export default function routes({
     next()
   })
 
-  get('/', async (req, res) => landingController.showLandingPage(req, res))
+  get('/', (req, res) => landingController.showLandingPage(req, res))
 
   // NOTE: Generic `:id` route is declared after more-specific `/referral/*` routes
 
-  get('/referral-details/:id', async (req, res) => referralController.showReferralDetailsPage(req, res))
+  get('/referral-details/:id', (req, res) => referralController.showReferralDetailsPage(req, res))
 
-  get('/referral/new/find-a-person', async (req, res, next) => {
-    await referralController.handleGetFindPersonRequest(req, res, next)
-  })
+  get('/referral/new/find-a-person', (req, res, next) => referralController.handleGetFindPersonRequest(req, res, next))
 
-  post('/referral/new/find-a-person', async (req, res) => {
-    await referralController.handlePostFindPersonRequest(req, res)
-  })
+  post('/referral/new/find-a-person', (req, res) => referralController.handlePostFindPersonRequest(req, res))
 
-  get('/referral/new/select-a-service', (req, res) => {
-    communityServiceProviderController.showCommunityServiceProviderPage(req, res)
-  })
-
-  post('/referral/new/select-a-service', (req, res) => {
-    referralController.communityServiceProviderPage(req, res)
-  })
-
-  get('/referral/:id/confirmation', async (req, res) => referralController.viewConfirmation(req, res))
-
-  get('/referral/check-referral-information/:id', async (req, res) =>
-    referralController.checkReferralInformation(req, res),
+  get('/referral/new/select-a-service', (req, res) =>
+    communityServiceProviderController.showCommunityServiceProviderPage(req, res),
   )
 
-  post('/referral/:referralId/submit-referral-information', async (req, res) =>
+  post('/referral/new/select-a-service', (req, res) => referralController.communityServiceProviderPage(req, res))
+
+  get('/referral/:id/confirmation', (req, res) => referralController.viewConfirmation(req, res))
+
+  get('/referral/check-referral-information/:id', (req, res) => referralController.checkReferralInformation(req, res))
+
+  post('/referral/:referralId/submit-referral-information', (req, res) =>
     referralController.submitReferralInformation(req, res),
   )
 
-  get('/unassigned-cases', async (req, res, next) => {
-    await caseListController.showCaseList(req, res)
-  })
+  get('/unassigned-cases', (req, res) => caseListController.showCaseList(req, res))
 
-  get('/cases-in-progress', async (req, res, next) => {
-    await caseListController.showCaseList(req, res)
-  })
+  get('/cases-in-progress', (req, res) => caseListController.showCaseList(req, res))
 
-  get('/referral/:identifier/assign', async (req, res, next) => {
-    await referralController.showAssignCaseWorkersPage(req, res, next)
-  })
+  get('/referral/:identifier/assign', (req, res) => referralController.showAssignCaseWorkersPage(req, res))
 
-  post('/referral/:identifier/assign', async (req, res) => {
-    await referralController.submitReferralUserAssignments(req, res)
-  })
+  post('/referral/:identifier/assign', (req, res) => referralController.submitReferralUserAssignments(req, res))
 
-  get('/referral/referral-assignments/:identifier', async (req, res, next) => {
-    await referralController.showAssignCaseWorkersPage(req, res, next)
-  })
+  get('/referral/referral-assignments/:identifier', (req, res) =>
+    referralController.showAssignCaseWorkersPage(req, res),
+  )
 
-  get('/referral/:caseRefId/appointment/confirm-ics', async (req, res) => appointmentController.checkIcs(req, res))
+  get('/referral/:caseRefId/appointment/confirm-ics', (req, res) => appointmentController.checkIcs(req, res))
 
   get('/referral/:caseRefId/appointment/schedule-ics', (req, res) => appointmentController.showScheduleIcs(req, res))
 
@@ -121,13 +105,12 @@ export default function routes({
 
   post('/referral/:caseRefId/appointment/submit-ics', async (req, res) => appointmentController.submitIcs(req, res))
 
-  get('/progress/:caseReference', async (req, res) => {
-    await referralController.showReferralProgressDetails(req, res)
-  })
+  get('/progress/:caseReference', (req, res) => referralController.showReferralProgressDetails(req, res))
 
   get('/ics-feedback/:caseRefId/attendance', async (req, res) =>
     appointmentController.icsAppointmentAttendance(req, res),
   )
+
   post('/ics-feedback/:caseRefId/attendance', async (req, res) =>
     appointmentController.recordIcsAppointmentAttendance(req, res),
   )
@@ -140,17 +123,11 @@ export default function routes({
 
   post('/ics-feedback/:caseRefId/session-details', (req, res) => appointmentController.recordSessionDetails(req, res))
 
-  get('/ics-feedback/:caseRefId/check-answers', async (req, res) => {
-    appointmentController.checkIcsFeedback(req, res)
-  })
+  get('/ics-feedback/:caseRefId/check-answers', (req, res) => appointmentController.checkIcsFeedback(req, res))
 
-  post('/ics-feedback/:caseRefId/submit', async (req, res) => {
-    appointmentController.submitFeedback(req, res)
-  })
+  post('/ics-feedback/:caseRefId/submit', (req, res) => appointmentController.submitFeedback(req, res))
 
-  get('/ics-feedback/:caseRefId/session/:icsFeedbackId', async (req, res) => {
-    icsFeedbackController.viewFeedback(req, res)
-  })
+  get('/ics-feedback/:caseRefId/session/:icsFeedbackId', (req, res) => icsFeedbackController.viewFeedback(req, res))
 
   get('/ics-feedback/:caseRefId/why-did-the-session-not-happen', (req, res) =>
     appointmentController.whyDidSessionNotHappen(req, res),
@@ -206,9 +183,7 @@ export default function routes({
 
   get('/referral/task-list', (req, res) => referralController.showTaskList(req, res))
 
-  get('/referral/:id', async (req, res, next) => {
-    await referralController.showReferralPage(req, res, next)
-  })
+  get('/referral/:id', (req, res, next) => referralController.showReferralPage(req, res, next))
 
   return router
 }
