@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test'
 
 import { differenceInYears, format } from 'date-fns'
 import { randomUUID } from 'node:crypto'
+import { CaseWorkerDto } from '@community-support-api'
 import { login, resetStubs } from '../testUtils'
 import communitySupport from '../mockApis/communitySupport'
 import ReferralDetailsPage from '../pages/referralDetailsPage'
@@ -231,6 +232,32 @@ test.describe('Referral Details Page', () => {
     await test.step('check navigation on click', async () => {
       await action.click()
       await expect(page).toHaveURL(AssignPage.url(id))
+    })
+  })
+  // IPB-2387
+  test('Hide progress tab when case is unassigned', async ({ page }) => {
+    const referralDetailsPage = await ReferralDetailsPage.verifyOnPage(page)
+    await test.step('check progress tab', async () => {
+      await expect(referralDetailsPage.progressTab).toHaveCount(0)
+    })
+  })
+  test('Show progress tab when case is assigned', async ({ page }) => {
+    const caseWorkers: CaseWorkerDto[] = [
+      {
+        userType: 'INTERNAL',
+        userId: 'user-id-1',
+        fullName: 'test user',
+        emailAddress: 'testuser1@email.com',
+      },
+    ]
+
+    await communitySupport.stubGetReferralDetailsPage(200, id, undefined, caseWorkers)
+    await test.step('go to referral details page', async () => {
+      await page.goto(ReferralDetailsPage.url(id))
+    })
+    const referralDetailsPage = await ReferralDetailsPage.verifyOnPage(page)
+    await test.step('check progress tab', async () => {
+      await expect(referralDetailsPage.progressTab).toHaveCount(1)
     })
   })
 })

@@ -6,6 +6,7 @@ import {
   ProbationOffice,
   ReferralInformation,
   SubmitReferralResponse,
+  CaseWorkerDto,
 } from '@community-support-api'
 import { stubFor } from './wiremock'
 import { duplicateData } from '../testUtils'
@@ -16,14 +17,6 @@ import { components } from '../../server/@types/communitySupportApi/imported'
 export interface AssignmentFailureDto {
   emailAddress: string
   reason: string
-}
-export interface CaseWorkerDto {
-  /** @enum {string} */
-  userType: 'INTERNAL' | 'EXTERNAL'
-  /** Format: uuid */
-  userId?: string
-  fullName?: string
-  emailAddress: string
 }
 export interface ReferralUserAssignmentsResponse {
   success: boolean
@@ -301,9 +294,10 @@ export default {
       },
     }),
   stubGetReferralDetailsPage: (
-    httpStatus = 200,
+    httpStatus: number = 200,
     referralId: string | null = null,
     personNumber: string = 'CRN123',
+    assignedTo: CaseWorkerDto[] = [],
   ): SuperAgentRequest =>
     stubFor({
       request: {
@@ -313,7 +307,7 @@ export default {
       response: {
         status: httpStatus,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: referralDetailsPageData(referralId, personNumber),
+        jsonBody: referralDetailsPageData(referralId, personNumber, assignedTo),
         transformers: ['response-template'],
       },
     }),
