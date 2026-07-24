@@ -65,6 +65,38 @@ describe('AdditionalSupportNeedsPresenter', () => {
     const dto: AdditionalSupportNeedsDto = {
       refereeName: { firstName: 'Alex', lastName: 'River' },
       needsAdditionalSupport: false,
+      physicalHealth: {
+        selected: false,
+        value: '',
+      },
+      mentalEmotionalHealth: {
+        selected: false,
+        value: '',
+      },
+      neurodiversity: {
+        selected: false,
+        value: '',
+      },
+      locationTravel: {
+        selected: false,
+        value: '',
+      },
+      caringResponsibilities: {
+        selected: false,
+        value: '',
+      },
+      employmentResponsibilities: {
+        selected: false,
+        value: '',
+      },
+      diversity: {
+        selected: false,
+        value: '',
+      },
+      anythingElse: {
+        selected: false,
+        value: '',
+      },
     }
     const presenter = new AdditionalSuportNeedsPresenter(dto)
     const result = presenter.buildViewModel(res)

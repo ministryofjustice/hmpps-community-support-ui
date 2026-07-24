@@ -31,6 +31,7 @@ type AppointmentDeliveryDetails = components['schemas']['AppointmentDelivery']
 type CaseWorkerSummary = components['schemas']['CaseWorkerSummaryDto']
 
 type TaskListStatusDto = components['schemas']['TaskListStatusResponseDto']
+type TaskListStatusItem = components['schemas']['TaskListStatusItem']
 type ConfirmPersonDetailsBffDto = components['schemas']['ConfirmPersonDetailsBffDto']
 type AdditionalSupportNeedsDto = components['schemas']['AdditionalSupportNeedsBffResponseDto']
 type NeedsInterpreterBffResponseDto = components['schemas']['NeedsInterpreterBffResponseDto']
@@ -67,6 +68,7 @@ export type {
   SessionMethod,
   CaseWorkerSummary,
   TaskListStatusDto,
+  TaskListStatusItem,
   ConfirmPersonDetailsBffDto,
   AdditionalSupportNeedsDto,
   NeedsInterpreterBffResponseDto,

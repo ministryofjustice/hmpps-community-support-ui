@@ -6,11 +6,15 @@ describe('TaskListPresenter - Page Rendering', () => {
   test('rendering', () => {
     const taskListState = {
       fullName: 'John Smith',
-      confirmPersonalDetailsCompleted: true,
-      checkRiskInformationCompleted: false,
-      selectThePersonsNeedsCompleted: false,
-      addDetailsOfAnyAdditionalSupportNeedsCompleted: false,
-      addDetailsOfMainPointOfContactCompleted: false,
+      confirmPersonalDetailsCompleted: { completed: true, statusText: 'Completed', tag: 'govuk-tag--green' },
+      checkRiskInformationCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+      selectThePersonsNeedsCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+      addDetailsOfAnyAdditionalSupportNeedsCompleted: {
+        completed: false,
+        statusText: 'Incomplete',
+        tag: 'govuk-tag--blue',
+      },
+      addDetailsOfMainPointOfContactCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
     }
     const presenter = new TaskListPresenter(taskListState, 'referralId')
     const content = TaskListContent.build()
@@ -38,7 +42,7 @@ describe('TaskListPresenter - Page Rendering', () => {
     expect(checkAnswersLink).not.toContain('/referral/task-list')
 
     // Status rendering
-    expect(sections.personalDetails.taskList.items[0].status.text).toBe('Completed')
+    expect(sections.personalDetails.taskList.items[0].status.tag.text).toBe('Completed')
     expect(sections.referralInformation.taskList.items[0].status.tag.text).toBe('Incomplete')
   })
 })
