@@ -45,8 +45,8 @@ export const validateRequestBodyAgainstSchema = <Schema extends ZodType>(
       Object.entries(errors).forEach(([field, errorMessage]) => {
         req.session.formKeys.push(field)
         if (Array.isArray(errorMessage)) {
-          let errorMessages = errorMessage as string[]
-          errorMessages.forEach(errorMessage => req.flash(`${field}Error`, `${errorMessage}`))
+          const errorMessages = errorMessage as string[]
+          errorMessages.forEach(msg => req.flash(`${field}Error`, `${msg}`))
         } else {
           req.flash(`${field}Error`, `${errorMessage}`)
         }
