@@ -21,6 +21,7 @@ export default class ReferralDetailsPage extends AbstractPage {
     readonly equalityMonitoringSummary: SummaryList,
     readonly contactDetailsSummary: SummaryList,
     readonly referralDetailsSummary: SummaryList,
+    readonly progressTab: Locator,
   ) {
     super(page)
     this.successHeader = page.locator('h3', { hasText: 'Case assigned' })
@@ -30,6 +31,7 @@ export default class ReferralDetailsPage extends AbstractPage {
     this.multipleAssignmentsMessage = page
       .locator('[data-testid="success-message"] p')
       .filter({ hasText: 'The case has been assigned to caseworkers' })
+    this.progressTab = page.getByRole('link', { name: 'Progress' })
   }
 
   static async verifyOnPage(page: Page): Promise<ReferralDetailsPage> {
@@ -40,6 +42,7 @@ export default class ReferralDetailsPage extends AbstractPage {
     const equalityMonitoringSummary = await SummaryList.create(page.locator('[data-testid="equality-details"]'))
     const contactDetailsSummary = await SummaryList.create(page.locator('[data-testid="contact-details"]'))
     const referralDetailsSummary = await SummaryList.create(page.locator('[data-testid="referral-details"]'))
+    const progressTab = page.getByRole('link', { name: 'Progress' })
     const referralDetailsPage = new ReferralDetailsPage(
       page,
       header,
@@ -48,6 +51,7 @@ export default class ReferralDetailsPage extends AbstractPage {
       equalityMonitoringSummary,
       contactDetailsSummary,
       referralDetailsSummary,
+      progressTab,
     )
     return referralDetailsPage
   }
@@ -60,6 +64,7 @@ export default class ReferralDetailsPage extends AbstractPage {
     const equalityMonitoringSummary = await SummaryList.create(page.locator('[data-testid="equality-details"]'))
     const contactDetailsSummary = await SummaryList.create(page.locator('[data-testid="contact-details"]'))
     const referralDetailsSummary = await SummaryList.create(page.locator('[data-testid="referral-details"]'))
+    const progressTab = page.getByRole('link', { name: 'Progress' })
     const assignedPage = new ReferralDetailsPage(
       page,
       header,
@@ -68,6 +73,7 @@ export default class ReferralDetailsPage extends AbstractPage {
       equalityMonitoringSummary,
       contactDetailsSummary,
       referralDetailsSummary,
+      progressTab,
     )
     await expect(assignedPage.successHeader).toBeVisible()
     if (messageType === 'single') {
