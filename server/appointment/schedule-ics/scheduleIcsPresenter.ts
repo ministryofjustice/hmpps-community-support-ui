@@ -24,11 +24,12 @@ export interface ValidationError {
 const buildProbationOfficesSelectItems = (
   probationOffices: ProbationOffice[],
   formData: ScheduleFormData | undefined,
+  content: ScheduleIcsContent,
 ): GovukFrontendSelectItem[] => {
   const defaultItem = [
     {
       value: '',
-      text: 'Select probation office',
+      text: content.howSessionTakePlace.radioItems.probation.label,
     },
   ]
   return defaultItem.concat(
@@ -43,11 +44,12 @@ const buildProbationOfficesSelectItems = (
 const buildPrisonOfficesSelectItems = (
   prisionOffices: Prison[],
   formData: ScheduleFormData | undefined,
+  content: ScheduleIcsContent,
 ): GovukFrontendSelectItem[] => {
   const defaultItem = [
     {
       value: '',
-      text: 'Select prison',
+      text: content.howSessionTakePlace.radioItems.prison.label,
     },
   ]
   return defaultItem.concat(
@@ -74,11 +76,11 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
     this.inCustody = !isIdentifierACrn(this.referralInformation.personIdentifier)
   }
 
-  private buildAddressInput() {
+  private buildAddressInput(content: ScheduleIcsContent) {
     return (
       buildInput({
         label: {
-          text: 'Address line 1',
+          text: content.howSessionTakePlace.radioItems.somewhereElse.addressLabels.address1,
         },
         id: 'addressLine1',
         name: 'addressLine1',
@@ -88,7 +90,7 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
       }) +
       buildInput({
         label: {
-          text: 'Address line 2 (optional)',
+          text: content.howSessionTakePlace.radioItems.somewhereElse.addressLabels.address2,
         },
         id: 'addressLine2',
         name: 'addressLine2',
@@ -98,7 +100,7 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
       }) +
       buildInput({
         label: {
-          text: 'Town or city',
+          text: content.howSessionTakePlace.radioItems.somewhereElse.addressLabels.townOrCity,
         },
         classes: 'govuk-!-width-two-thirds',
         id: 'addressTown',
@@ -109,7 +111,7 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
       }) +
       buildInput({
         label: {
-          text: 'County (optional)',
+          text: content.howSessionTakePlace.radioItems.somewhereElse.addressLabels.county,
         },
         classes: 'govuk-!-width-two-thirds',
         id: 'addressCounty',
@@ -119,7 +121,7 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
       }) +
       buildInput({
         label: {
-          text: 'Postcode',
+          text: content.howSessionTakePlace.radioItems.somewhereElse.addressLabels.postcode,
         },
         classes: 'govuk-input--width-10',
         id: 'addressPostcode',
@@ -131,17 +133,17 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
     )
   }
 
-  private buildInCommunityRadioItems(): WithConditional<GovukFrontendRadiosItem>[] {
+  private buildInCommunityRadioItems(content: ScheduleIcsContent): WithConditional<GovukFrontendRadiosItem>[] {
     return [
       {
         value: 'InProbationOffice',
-        text: 'In-person meeting - probation office',
+        text: content.howSessionTakePlace.radioItems.probation.text,
         conditional: {
           html: buildSelect({
             id: 'probationOfficeList',
             name: 'probationOfficeList',
             label: {},
-            items: buildProbationOfficesSelectItems(this.probationOffices, this.formData),
+            items: buildProbationOfficesSelectItems(this.probationOffices, this.formData, content),
             value: this.formData?.probationOffice,
             errorMessage: this.validationErrors?.messages?.probationOfficeList,
           }),
@@ -149,23 +151,23 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
       },
       {
         value: 'InSomewhereElse',
-        text: 'In-person meeting - somewhere else',
-        conditional: { html: this.buildAddressInput() },
+        text: content.howSessionTakePlace.radioItems.somewhereElse.text,
+        conditional: { html: this.buildAddressInput(content) },
       },
     ]
   }
 
-  private buildInCustodyRadioItems(): WithConditional<GovukFrontendRadiosItem>[] {
+  private buildInCustodyRadioItems(content: ScheduleIcsContent): WithConditional<GovukFrontendRadiosItem>[] {
     return [
       {
         value: 'InPrison',
-        text: 'In-person meeting - prison establishment',
+        text: content.howSessionTakePlace.radioItems.prison.text,
         conditional: {
           html: buildSelect({
             id: 'prisonList',
             name: 'prisonList',
             label: {},
-            items: buildPrisonOfficesSelectItems(this.prisonOffices, this.formData),
+            items: buildPrisonOfficesSelectItems(this.prisonOffices, this.formData, content),
             value: this.formData?.prison,
             errorMessage: this.validationErrors?.messages?.prisonList,
           }),
@@ -174,11 +176,11 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
     ]
   }
 
-  private buildRadioItems(): WithConditional<GovukFrontendRadiosItem>[] {
+  private buildRadioItems(content: ScheduleIcsContent): WithConditional<GovukFrontendRadiosItem>[] {
     const items: WithConditional<GovukFrontendRadiosItem>[] = [
       {
         value: 'ByPhone',
-        text: 'Phone call',
+        text: content.howSessionTakePlace.radioItems.phone.text,
         conditional: {
           html: buildInput({
             id: 'ByPhone',
@@ -189,14 +191,14 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
             spellcheck: false,
             classes: 'govuk-!-width-full',
             label: {
-              text: 'Why is this session not in person?',
+              text: content.howSessionTakePlace.radioItems.phone.label,
             },
           }),
         },
       },
       {
         value: 'ByVideo',
-        text: 'Video call',
+        text: content.howSessionTakePlace.radioItems.video.text,
         conditional: {
           html: buildInput({
             id: 'ByVideo',
@@ -207,21 +209,23 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
             spellcheck: false,
             classes: 'govuk-!-width-full',
             label: {
-              text: 'Why is this session not in person?',
+              text: content.howSessionTakePlace.radioItems.video.label,
             },
           }),
         },
       },
     ]
-    return items.concat(this.inCustody ? this.buildInCustodyRadioItems() : this.buildInCommunityRadioItems())
+    return items.concat(
+      this.inCustody ? this.buildInCustodyRadioItems(content) : this.buildInCommunityRadioItems(content),
+    )
   }
 
-  private buildHowWillTheSessionTakePlaceRadios(): GovukFrontendRadiosWithConditional {
+  private buildHowWillTheSessionTakePlaceRadios(content: ScheduleIcsContent): GovukFrontendRadiosWithConditional {
     return {
       name: 'sessionTakePlace',
       fieldset: {
         legend: {
-          text: 'How will the session take place?',
+          text: content.howSessionTakePlace.label,
           isPageHeading: false,
           classes: 'govuk-fieldset__legend govuk-fieldset__legend--m',
         },
@@ -230,9 +234,9 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
       value: this.formData?.sessionTakePlace || '',
       errorMessage: this.validationErrors?.messages?.sessionTakePlace,
       hint: {
-        text: 'Select one option.',
+        text: content.howSessionTakePlace.hint,
       },
-      items: this.buildRadioItems(),
+      items: this.buildRadioItems(content),
       attributes: { 'data-testid': 'sessionTakePlace-radios' },
     }
   }
@@ -281,35 +285,37 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
         },
       ],
       meridiemParams: {
-        label: 'AM or PM',
+        label: content.time.AMorPM,
         value: this.formData ? this.formData['sessionTime-meridiem'] : '',
       },
     }
   }
 
-  private buildHowWasTheyInformedAboutTheSession(): GovukFrontendCheckboxesWithConditional | undefined {
+  private buildHowWasTheyInformedAboutTheSession(
+    content: ScheduleIcsContent,
+  ): GovukFrontendCheckboxesWithConditional | undefined {
     return {
       name: 'informedMethods',
       fieldset: {
         legend: {
-          text: `How was ${this.referralInformation.firstName} informed about the session?`,
+          text: content.informed.label.replace('{{ firstname }}', this.referralInformation.firstName),
           isPageHeading: false,
           classes: 'govuk-fieldset__legend govuk-fieldset__legend--m',
         },
       },
       hint: {
-        text: 'Select all that apply.',
+        text: content.informed.hint,
       },
       items: [
         {
           value: 'informedByPhone',
-          text: 'Phone call',
+          text: content.informed.selectionItems.phone,
           checked:
             this.formData && this.formData.informedMethods && this.formData.informedMethods.includes('informedByPhone'),
         },
         {
           value: 'informedByTextMessage',
-          text: 'Text message',
+          text: content.informed.selectionItems.text,
           checked:
             this.formData &&
             this.formData.informedMethods &&
@@ -317,13 +323,13 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
         },
         {
           value: 'informedByEmail',
-          text: 'Email',
+          text: content.informed.selectionItems.email,
           checked:
             this.formData && this.formData.informedMethods && this.formData.informedMethods.includes('informedByEmail'),
         },
         {
           value: 'informedByOtherMethod',
-          text: 'Other',
+          text: content.informed.selectionItems.other.text,
           checked: this.formData?.otherMethodOfContact !== undefined && this.formData.otherMethodOfContact.length > 0,
           conditional: {
             html: buildInput({
@@ -335,7 +341,7 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
               spellcheck: false,
               classes: 'govuk-!-width-full',
               label: {
-                text: 'Other method of contact',
+                text: content.informed.selectionItems.other.label,
               },
             }),
           },
@@ -361,10 +367,10 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
       backLink: { href: backLinkHref },
       dateInput: this.buildDateInput(content),
       timeInput: this.buildTimeInput(content),
-      howWillTheSessionTakePlaceInput: this.buildHowWillTheSessionTakePlaceRadios(),
+      howWillTheSessionTakePlaceInput: this.buildHowWillTheSessionTakePlaceRadios(content),
       howWasTheyInformedAboutTheSessionInput: this.inCustody
         ? undefined
-        : this.buildHowWasTheyInformedAboutTheSession(),
+        : this.buildHowWasTheyInformedAboutTheSession(content),
     }
   }
 
