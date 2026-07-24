@@ -36,6 +36,11 @@ type ConfirmPersonDetailsBffDto = components['schemas']['ConfirmPersonDetailsBff
 type AdditionalSupportNeedsDto = components['schemas']['AdditionalSupportNeedsBffResponseDto']
 type NeedsInterpreterBffResponseDto = components['schemas']['NeedsInterpreterBffResponseDto']
 type Selection = components['schemas']['Selection']
+type CommunitySupportRiskDto = components['schemas']['CommunitySupportRiskDto']
+type ArnsRiskConcernsToSelfDto = components['schemas']['ArnsRiskConcernsToSelfDto']
+type ArnsRiskDto = components['schemas']['ArnsRiskDto']
+type ArnsRiskRoshSummaryDto = components['schemas']['ArnsRiskRoshSummaryDto']
+type CommunitySupportRiskInformationDto = components['schemas']['CommunitySupportRiskInformationDto']
 
 export type {
   Referral,
@@ -73,4 +78,9 @@ export type {
   AdditionalSupportNeedsDto,
   NeedsInterpreterBffResponseDto,
   Selection,
+  CommunitySupportRiskDto,
+  ArnsRiskConcernsToSelfDto,
+  ArnsRiskDto,
+  ArnsRiskRoshSummaryDto,
+  CommunitySupportRiskInformationDto,
 }

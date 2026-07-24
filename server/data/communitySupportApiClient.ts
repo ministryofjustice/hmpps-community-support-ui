@@ -24,6 +24,8 @@ import type {
   AdditionalSupportNeedsDto,
   TaskListStatusDto,
   NeedsInterpreterBffResponseDto,
+  CommunitySupportRiskDto,
+  CommunitySupportRiskInformationDto,
 } from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
@@ -143,5 +145,17 @@ export default class CommunitySupportApiClient extends RestClient {
 
   getNeedsInterpreterPageData(referralId: string, username: string): Promise<NeedsInterpreterBffResponseDto> {
     return this.get({ path: `/bff/draft-referral/needs-interpreter/${referralId}` }, asSystem(username))
+  }
+
+  getRoshRisksByReferralId(referralId: string, username: string): Promise<CommunitySupportRiskDto> {
+    return this.get({ path: `/bff/risk/rosh/${referralId}` }, asSystem(username))
+  }
+
+  saveRiskInformation(
+    referralId: string,
+    riskInformation: CommunitySupportRiskInformationDto,
+    username: string,
+  ): Promise<CommunitySupportRiskInformationDto> {
+    return this.put({ path: `/risk-information/${referralId}`, data: riskInformation }, asSystem(username))
   }
 }

@@ -54,17 +54,8 @@
         "href": "/cases-in-progress"
       }
     ],
-    "unassignedColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Date received"
-    ],
-    "inProgressColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Assigned to",
-      "Date received"
-    ],
+    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
+    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
     "noCasesMessage": "There are no {0} cases to view."
   },
   "/cases-in-progress": {
@@ -83,17 +74,8 @@
         "href": "/cases-in-progress"
       }
     ],
-    "unassignedColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Date received"
-    ],
-    "inProgressColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Assigned to",
-      "Date received"
-    ],
+    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
+    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
     "noCasesMessage": "There are no {0} cases to view."
   },
   "/referral-details/:id": {
@@ -196,15 +178,8 @@
         "href": "/change-log"
       }
     ],
-    "progressActiveColumnHeaders": [
-      "Date and time",
-      "Status",
-      "Action"
-    ],
-    "progressInactiveColumnHeaders": [
-      "Status",
-      "Action"
-    ],
+    "progressActiveColumnHeaders": ["Date and time", "Status", "Action"],
+    "progressInactiveColumnHeaders": ["Status", "Action"],
     "historySummary": "View ICS history"
   },
   "/ics-feedback/:id/did-session-take-place": {
@@ -606,7 +581,7 @@
         "subTasks": {
           "checkRiskInformation": {
             "text": "Check risk information",
-            "href": "/referral/task-list/check-risk-information"
+            "href": "/referral/task-list/view-risk-summary"
           },
           "selectPersonNeeds": {
             "text": "Select the person's needs",
@@ -673,6 +648,52 @@
     "warningText": "If this information is out of date or incorrect, you must update the information in NOMIS",
     "buttonText": "Save and continue",
     "postHref": "/referral/task-list/confirm-personal-details"
+  },
+  "/referral/task-list/view-risk-summary": {
+    "pageSubHeader": "OASys risk information",
+    "backLink": "/referral/task-list/{{ id }}",
+    "crnLabel": "CRN",
+    "dateOfBirthLabel": "Date of birth",
+    "lastUpdatedLabel": "Last updated (OASys)",
+    "defaultFieldValue": "Not available",
+    "noConcernsText": "No concerns identified",
+    "dontKnowText": "Don't know",
+    "noAdditionalInformationText": "None",
+    "changeHref": "/referral/task-list/view-risk-summary",
+    "whoIsAtRiskCard": {
+      "heading": "Who is at risk",
+      "changeLinkText": "Change"
+    },
+    "natureOfRiskCard": {
+      "heading": "What is the nature of the risk",
+      "changeLinkText": "Change"
+    },
+    "riskImminenceCard": {
+      "heading": "When is the risk likely to be greatest",
+      "changeLinkText": "Change"
+    },
+    "selfHarmCard": {
+      "heading": "Concerns in relation to self-harm",
+      "changeLinkText": "Change"
+    },
+    "suicideCard": {
+      "heading": "Concerns in relation to suicide",
+      "changeLinkText": "Change"
+    },
+    "hostelSettingCard": {
+      "heading": "Concerns in relation to coping in a hostel setting",
+      "changeLinkText": "Change"
+    },
+    "vulnerabilityCard": {
+      "heading": "Concerns in relation to vulnerability",
+      "changeLinkText": "Change"
+    },
+    "additionalInformationCard": {
+      "heading": "Additional information",
+      "changeLinkText": "Change"
+    },
+    "buttonText": "Save and continue",
+    "postHref": "/referral/task-list/view-risk-summary"
   },
   "/referral/task-list/additional-support-needs": {
     "header": "What does {{ firstName }} need support with to attend or take part in sessions?",

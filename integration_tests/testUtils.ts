@@ -100,6 +100,13 @@ export const seedSessionCreateReferralDetails = async (page: Page, referralCreat
   })
 }
 
+export const seedSessionRiskSummary = async (page: Page, draftReferalId: string, personId?: string): Promise<void> => {
+  await page.request.post('/test/setup-draft-referral-session', {
+    data: { draftReferalId, personId },
+    headers: { 'Content-Type': 'application/json' },
+  })
+}
+
 export const daysAfter = (base: Date, days: number, hour = 10): string => {
   const d = new Date(base)
   d.setDate(d.getDate() + days)

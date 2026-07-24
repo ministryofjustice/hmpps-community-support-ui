@@ -10,6 +10,7 @@ import type {
   ReferralInformation,
   ProbationOffice,
   IcsFeedbackSubmissionResponse,
+  CommunitySupportRiskInformationDto,
 } from '@community-support-api'
 import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import { AgentConfig, ApiConfig } from '@ministryofjustice/hmpps-rest-client'
@@ -86,6 +87,7 @@ describe('CommunitySupportApiClient tests', () => {
       }
       const referralRequestData: CreateReferralRequest = {
         communityServiceProviderId: 'csp-id-123',
+        personIdentifier: 'CRN123',
       } as CreateReferralRequest
       nock('http://localhost:8080', {
         reqheaders: { authorization: 'Bearer dummy-token' },
@@ -301,6 +303,31 @@ describe('CommunitySupportApiClient tests', () => {
       const result = communitySupportApiClient.getIcsSessionFeedback(icsFeedbackId, 'user1')
 
       expect(result).resolves.toEqual(mockIcsFeedbackResponse)
+    })
+  })
+  describe('saveRiskInformation tests', () => {
+    it('should save risk information on a 200 response', () => {
+      const riskInformation: CommunitySupportRiskInformationDto = {
+        id: 'referral-id-123',
+        referralId: 'referral-id-123',
+        riskSummaryWhoIsAtRisk: 'Public',
+        riskSummaryNatureOfRisk: 'Violence',
+        riskSummaryRiskImminence: 'Immediate',
+        riskToSelfSuicide: null,
+        riskToSelfSelfHarm: null,
+        riskToSelfHostelSetting: null,
+        riskToSelfVulnerability: null,
+        additionalInformation: null,
+      }
+      nock('http://localhost:8080', {
+        reqheaders: { authorization: 'Bearer dummy-token' },
+      })
+        .put('/risk-information/referral-id-123', riskInformation)
+        .reply(200, riskInformation)
+
+      const result = communitySupportApiClient.saveRiskInformation('referral-id-123', riskInformation, 'user1')
+
+      expect(result).resolves.toEqual(riskInformation)
     })
   })
 })

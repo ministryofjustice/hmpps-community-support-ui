@@ -14,6 +14,8 @@ import ReferralCreationDetails from './referralDetails/ReferralCreationDetails'
 import TaskListPresenter from './taskList/TaskListPresenter'
 import CheckReferralInformationPresenter from './check-referral-information/checkReferralInformationPresenter'
 import NeedsAnInterpreterPresenter from './needsAnInterpreter/NeedsAnInterpreterPresenter'
+import RiskSummaryPresenter from './riskSummary/RiskSummaryPresenter'
+import buildRiskInformationRequest from './riskSummary/buildRiskInformationRequest'
 
 export default class ReferralController {
   private static readonly CRN_REGEX = /^[A-Za-z]\d{6}$/
@@ -290,12 +292,13 @@ export default class ReferralController {
   async showConfirmPersonalDetails(req: Request, res: Response) {
     const { username } = res.locals.user
     const draftReferralKey = req.session.draftReferalId
+    const personIdentifier = req.session.personId
 
-    if (!draftReferralKey) {
+    if (!draftReferralKey || !personIdentifier) {
       return res.redirect('/referral/new/find-a-person')
     }
 
-    const data = await this.referralService.getPersonalDetails(draftReferralKey, username)
+    const data = await this.referralService.getPersonalDetails(personIdentifier, username)
     const presenter = new ConfirmPersonalDetailsPresenter(data)
     return presenter.renderPage(res)
   }
@@ -327,6 +330,32 @@ export default class ReferralController {
     const additionalSupportNeeds = await this.referralService.getAdditionalSupportNeeds(draftReferalId, username)
     const presenter = new AdditionalSuportNeedsPresenter(additionalSupportNeeds)
     return presenter.renderPage(res)
+  }
+
+  async showRiskSummary(req: Request, res: Response) {
+    const { username } = res.locals.user
+    const draftReferralKey = req.session?.draftReferalId
+
+    if (!draftReferralKey) {
+      return res.redirect('/referral/new/find-a-person')
+    }
+
+    const risk = await this.referralService.getRoshRisksByReferralId(draftReferralKey, username)
+    const presenter = new RiskSummaryPresenter(risk, draftReferralKey)
+    return presenter.renderPage(res)
+  }
+
+  async confirmRiskSummary(req: Request, res: Response): Promise<void> {
+    const { username } = res.locals.user
+    const draftReferralKey = req.session?.draftReferalId
+    if (!draftReferralKey) {
+      return res.redirect('/referral/new/find-a-person')
+    }
+
+    const risk = await this.referralService.getRoshRisksByReferralId(draftReferralKey, username)
+    const riskInformation = buildRiskInformationRequest(risk, draftReferralKey)
+    await this.referralService.saveRiskInformation(draftReferralKey, riskInformation, username)
+    return res.redirect('/referral/task-list')
   }
 
   async communityServiceProviderPage(req: Request, res: Response) {

@@ -8,6 +8,8 @@ import {
   AdditionalSupportNeedsDto,
   TaskListStatusDto,
   NeedsInterpreterBffResponseDto,
+  CommunitySupportRiskDto,
+  CommunitySupportRiskInformationDto,
 } from '@community-support-api'
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
 
@@ -64,5 +66,17 @@ export default class ReferralService {
 
   getNeedsInterpreterPageData(referralId: string, username: string): Promise<NeedsInterpreterBffResponseDto> {
     return this.communitySupportApiClient.getNeedsInterpreterPageData(referralId, username)
+  }
+
+  getRoshRisksByReferralId(referralId: string, username: string): Promise<CommunitySupportRiskDto> {
+    return this.communitySupportApiClient.getRoshRisksByReferralId(referralId, username)
+  }
+
+  saveRiskInformation(
+    referralId: string,
+    riskInformation: CommunitySupportRiskInformationDto,
+    username: string,
+  ): Promise<CommunitySupportRiskInformationDto> {
+    return this.communitySupportApiClient.saveRiskInformation(referralId, riskInformation, username)
   }
 }

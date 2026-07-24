@@ -84,6 +84,13 @@ export default function createApp(services: Services): express.Application {
       req.session.referralCreationDetails = req.body.referralCreationDetails
       res.sendStatus(200)
     })
+    app.post('/test/setup-draft-referral-session', (req, res) => {
+      req.session.draftReferalId = req.body.draftReferalId
+      if (req.body.personId) {
+        req.session.personId = req.body.personId
+      }
+      res.sendStatus(200)
+    })
   }
 
   app.use(setUpCsrf())
