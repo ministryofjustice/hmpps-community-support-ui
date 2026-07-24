@@ -92,7 +92,7 @@ describe('ConfirmPersonalDetailsPresenter', () => {
       },
     } as unknown as Response
     const viewModel = presenter.buildViewModel(res)
-    expect(viewModel.backLink.href).toBe('/referral/task-list')
+    expect(viewModel.backLink.href).toBe('/referral/task-list/A1234CD')
     expect(viewModel.heading).toBe('Charlie Robert Smith')
     expect(viewModel.subheading).toBe('Confirm personal details')
 
@@ -166,5 +166,27 @@ describe('ConfirmPersonalDetailsPresenter', () => {
     expect(viewModel.button.text).toBe('Save and continue')
 
     expect(viewModel.postHref).toBe('/referral/task-list/confirm-personal-details')
+  })
+  test('shows "No fixed abode" when address contains the no fixed abode postcode', () => {
+    const presenter = new ConfirmPersonalDetailsPresenter({
+      ...data,
+      contactDetails: {
+        ...data.contactDetails,
+        address: {
+          ...data.contactDetails.address,
+          value: '1 Test Street, NF1 1NF',
+          noFixedAbode: true,
+        },
+      },
+    })
+
+    const viewModel = presenter.buildViewModel(res)
+    const [, , , addressRow] = viewModel.contact.rows
+
+    expect(singleLineHtml(addressRow.key.html)).toBe(
+      'Main address<br><span class="govuk-body-s secondary-text govuk-!-font-weight-regular" style="color: #505a5f;">Last updated 2 February 2026</span>',
+    )
+
+    expect(singleLineHtml(addressRow.value.html)).toBe('No fixed abode')
   })
 })

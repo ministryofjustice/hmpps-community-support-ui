@@ -64,6 +64,14 @@ describe('AdditionalSupportNeedsPresenter', () => {
     } as unknown as Response
     const dto: AdditionalSupportNeedsDto = {
       refereeName: { firstName: 'Alex', lastName: 'River' },
+      physicalHealth: { selected: false },
+      mentalEmotionalHealth: { selected: false },
+      neurodiversity: { selected: false },
+      locationTravel: { selected: false },
+      caringResponsibilities: { selected: false },
+      employmentResponsibilities: { selected: false },
+      diversity: { selected: false },
+      anythingElse: { selected: false },
       needsAdditionalSupport: false,
       physicalHealth: {
         selected: false,
