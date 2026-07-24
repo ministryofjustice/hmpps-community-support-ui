@@ -1,11 +1,15 @@
 import { Response } from 'express'
 import { GovukFrontendTaskListItemStatus } from '@govuk-frontend'
-import { TaskListStatusDto } from '@community-support-api'
+import { TaskListStatusDto, TaskListStatusItem } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
 import { TaskListViewModel, TaskListPageContent, TaskListContent } from './TaskListViewModel'
 
-const getStatusTag = (status: boolean): GovukFrontendTaskListItemStatus =>
-  status ? { text: 'Completed' } : { tag: { text: 'Incomplete', classes: 'govuk-tag--blue' } }
+const getStatusTag = (status: TaskListStatusItem | null): GovukFrontendTaskListItemStatus => {
+  if (!status) {
+    return { tag: { text: 'Not Started', classes: 'govuk-tag--grey' } }
+  }
+  return { tag: { text: status.statusText, classes: status.tag } }
+}
 
 const getTaskListStatus = (data: TaskListStatusDto) => {
   return {
@@ -14,7 +18,7 @@ const getTaskListStatus = (data: TaskListStatusDto) => {
     personNeeds: getStatusTag(data.selectThePersonsNeedsCompleted),
     supportNeeds: getStatusTag(data.addDetailsOfAnyAdditionalSupportNeedsCompleted),
     contactDetails: getStatusTag(data.addDetailsOfMainPointOfContactCompleted),
-    checkAnswers: getStatusTag(false),
+    checkAnswers: getStatusTag(null),
   }
 }
 

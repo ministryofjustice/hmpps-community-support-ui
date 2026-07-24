@@ -46,6 +46,7 @@ describe('ConfirmPersonalDetailsPresenter', () => {
           type: 'Family',
           startAt: '2026-01-01',
           notes: 'stuff and things',
+          noFixedAbode: false,
         },
       },
     }
