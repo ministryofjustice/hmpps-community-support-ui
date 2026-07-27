@@ -56,11 +56,15 @@ test.describe('Risk Summary Page', () => {
 
   const mockTaskListStatus: TaskListStatusDto = {
     fullName: 'Alex River',
-    confirmPersonalDetailsCompleted: false,
-    checkRiskInformationCompleted: false,
-    selectThePersonsNeedsCompleted: false,
-    addDetailsOfAnyAdditionalSupportNeedsCompleted: false,
-    addDetailsOfMainPointOfContactCompleted: false,
+    confirmPersonalDetailsCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+    checkRiskInformationCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+    selectThePersonsNeedsCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+    addDetailsOfAnyAdditionalSupportNeedsCompleted: {
+      completed: false,
+      statusText: 'Incomplete',
+      tag: 'govuk-tag--blue',
+    },
+    addDetailsOfMainPointOfContactCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
   }
 
   test.beforeEach(async ({ page }) => {
