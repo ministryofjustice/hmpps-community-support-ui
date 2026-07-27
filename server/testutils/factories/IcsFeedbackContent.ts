@@ -14,7 +14,7 @@ export default IcsFeedbackContentFactory.define(({ transientParams }) => ({
   },
   videoCallReasonLabel: 'Why was this session not in person?',
   phoneCallReasonLabel: 'Why was this session not in person?',
-  probationOfficeSelectBlankText: 'Select probation office',
+  probationOfficeSelectBlankText: 'Select a probation office',
   probationOfficeSelectLabel: 'Select a probation office',
   addressLine1Label: 'Address line 1',
   addressLine2Label: 'Address line 2 (optional)',

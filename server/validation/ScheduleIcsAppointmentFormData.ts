@@ -168,7 +168,7 @@ const byVideoSchema = z.object({
 
 const inProbationOfficeSchema = z.object({
   sessionTakePlace: z.literal('InProbationOffice'),
-  probationOfficeList: z.string().nonempty({ error: 'Select probation office' }),
+  probationOfficeList: z.string().nonempty({ error: 'Select a probation office' }),
 })
 
 const inSomewhereElseSchema = z.object({
