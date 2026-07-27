@@ -613,10 +613,10 @@
       }
     }
   },
-  "/referral/task-list/:id/confirm-personal-details": {
+  "/referral/task-list/confirm-personal-details": {
     "pageHeader": "{{ name }}",
     "pageSubHeader": "Confirm personal details",
-    "backLink": "/referral/task-list/{{ id }}",
+    "backLink": "/referral/task-list",
     "defaultFieldValue": "Not available",
     "personalDetailsCard": {
       "heading": "Personal details",

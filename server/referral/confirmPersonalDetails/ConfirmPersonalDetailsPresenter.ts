@@ -1,6 +1,6 @@
 import { Response } from 'express'
 import { GovukFrontendSummaryList, GovukFrontendSummaryListRow } from '@govuk-frontend'
-import { differenceInYears } from 'date-fns'
+import { differenceInYears, formatDate } from 'date-fns'
 import { ConfirmPersonDetailsBffDto } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
 import dateFormat from '../../utils/dateFormat'
@@ -18,11 +18,14 @@ const nonEmptyStringOrDefault = (str: string | undefined | null, defaultValue: s
 
 type ContactAddress = ConfirmPersonDetailsBffDto['contactDetails']['address']
 
+const formatUpdatedAt = (updatedAt: string): string => (updatedAt !== '' ? dateFormat(new Date(updatedAt)) : 'unknown')
+
 export default class ConfirmPersonalDetailsPresenter extends PresenterBase<
   ConfirmPersonalDetailsViewModel,
   ConfirmPersonalDetailsContent
 > {
   constructor(private readonly data: ConfirmPersonDetailsBffDto) {
+    console.log(JSON.stringify(data, null, 2))
     super()
   }
 
@@ -58,7 +61,7 @@ export default class ConfirmPersonalDetailsPresenter extends PresenterBase<
           key: {
             html: `${cardContent.circumstancesLabel}<br>
             <span class="govuk-body-s secondary-text govuk-!-font-weight-regular" style="color: #505a5f;">
-              Last updated ${dateFormat(new Date(currentCircumstances.updatedAt))}
+              Last updated ${formatUpdatedAt(currentCircumstances.updatedAt)}
             </span>`,
           },
           value: { text: currentCircumstances.value },
@@ -67,7 +70,7 @@ export default class ConfirmPersonalDetailsPresenter extends PresenterBase<
           key: {
             html: `${cardContent.disabilitiesLabel}<br>
             <span class="govuk-body-s secondary-text govuk-!-font-weight-regular" style="color: #505a5f;">
-              Last updated ${dateFormat(new Date(disabilities.updatedAt))}
+              Last updated ${formatUpdatedAt(disabilities.updatedAt)}
             </span>`,
           },
           value: { text: disabilities.allDisabilities },
@@ -117,7 +120,7 @@ export default class ConfirmPersonalDetailsPresenter extends PresenterBase<
       key: {
         html: `${cardContent.mainAddressLabel}<br>
         <span class="govuk-body-s secondary-text govuk-!-font-weight-regular" style="color: #505a5f;">
-                Last updated ${dateFormat(new Date(address.updatedAt))}
+                Last updated ${formatUpdatedAt(address.updatedAt)}
               </span>`,
       },
       value: {
@@ -130,7 +133,7 @@ export default class ConfirmPersonalDetailsPresenter extends PresenterBase<
               </p>
               <p class="govuk-!-margin-top-2 govuk-!-margin-bottom-0">
                 <span class="govuk-summary-list__key govuk-!-padding-bottom-0">Start date</span>
-                <span>${dateFormat(new Date(address.startAt))}</span>
+                <span>${formatUpdatedAt(address.startAt)}</span>
               </p>
               <p class="govuk-!-margin-top-2 govuk-!-margin-bottom-0">
                 <span class="govuk-summary-list__key govuk-!-padding-bottom-0">Notes</span>

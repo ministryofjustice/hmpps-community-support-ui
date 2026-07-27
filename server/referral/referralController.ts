@@ -292,13 +292,12 @@ export default class ReferralController {
   async showConfirmPersonalDetails(req: Request, res: Response) {
     const { username } = res.locals.user
     const draftReferralKey = req.session.draftReferalId
-    const personIdentifier = req.session.personId
 
-    if (!draftReferralKey || !personIdentifier) {
+    if (!draftReferralKey) {
       return res.redirect('/referral/new/find-a-person')
     }
 
-    const data = await this.referralService.getPersonalDetails(personIdentifier, username)
+    const data = await this.referralService.getPersonalDetails(draftReferralKey, username)
     const presenter = new ConfirmPersonalDetailsPresenter(data)
     return presenter.renderPage(res)
   }

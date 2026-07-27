@@ -308,15 +308,15 @@ describe('ReferralController', () => {
       expect(res.redirect).toHaveBeenCalledWith('/referral/new/find-a-person')
     })
 
-    it('should redirect to find a person page when there is no personId in session', async () => {
-      req = { session: { draftReferalId: 'referral-uuid-1' } } as unknown as Request
+    it('should redirect to find a person page when there is no referralId in session', async () => {
+      req = { session: {} } as unknown as Request
 
       await referralController.showConfirmPersonalDetails(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith('/referral/new/find-a-person')
     })
 
-    it('should render the confirm personal details page using the stored personId', async () => {
+    it('should render the confirm personal details page using the stored draftReferralId', async () => {
       req = {
         session: { draftReferalId: 'referral-uuid-1', personId: 'X123456' },
       } as unknown as Request
@@ -325,7 +325,7 @@ describe('ReferralController', () => {
 
       await referralController.showConfirmPersonalDetails(req, res)
 
-      expect(referralService.getPersonalDetails).toHaveBeenCalledWith('X123456', 'user1')
+      expect(referralService.getPersonalDetails).toHaveBeenCalledWith('referral-uuid-1', 'user1')
       expect(ConfirmPersonalDetailsPresenter).toHaveBeenCalledWith(personalDetails)
       expect(ConfirmPersonalDetailsPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
     })
