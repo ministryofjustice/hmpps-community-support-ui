@@ -112,6 +112,7 @@ export default class ConfirmPersonalDetailsPresenter extends PresenterBase<
   }
 
   private buildAddressRow(address: ContactAddress, cardContent: ContactDetailsCard): GovukFrontendSummaryListRow {
+    const hasNoFixedAbode = address.noFixedAbode
     return {
       key: {
         html: `${cardContent.mainAddressLabel}<br>
@@ -120,7 +121,9 @@ export default class ConfirmPersonalDetailsPresenter extends PresenterBase<
               </span>`,
       },
       value: {
-        html: `${address.value}<br>
+        html: hasNoFixedAbode
+          ? 'No fixed abode'
+          : `${address.value}<br>
               <p class="govuk-!-margin-top-2 govuk-!-margin-bottom-0">
                 <span class="govuk-summary-list__key govuk-!-padding-bottom-0">Type of address</span>
                 <span>${address.type}</span>
