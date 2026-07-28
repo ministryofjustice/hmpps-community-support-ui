@@ -71,7 +71,18 @@ export default {
         transformers: ['response-template'],
       },
     }),
-
+  stubSubmitConfirmPersonalDetails: (draftReferalId: string, httpStatus = 200): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'PATCH',
+        urlPathPattern: `/community-support/draft-referral/confirm-person-details/${draftReferalId}`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: {},
+      },
+    }),
   stubGetCommunitySupportServices: (httpStatus = 200): SuperAgentRequest =>
     stubFor({
       request: {
@@ -486,6 +497,23 @@ export default {
         status: httpStatus,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: taskListStatus,
+        transformers: ['response-template'],
+      },
+    }),
+  stubGetConfirmPersonalDetailsData: (
+    referralId: string,
+    response: ConfirmPersonDetailsBffDto,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: `/community-support/bff/confirm-person-details/${referralId}`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: response,
         transformers: ['response-template'],
       },
     }),

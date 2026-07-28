@@ -131,8 +131,8 @@ export default class CommunitySupportApiClient extends RestClient {
     return this.get({ path: `/bff/ics-feedback/${icsFeedbackId}` }, asSystem(username))
   }
 
-  getPersonalDetails(personIdentifier: string, username: string): Promise<ConfirmPersonDetailsBffDto> {
-    return this.get({ path: `/bff/confirm-person-details/${personIdentifier}` }, asSystem(username))
+  getPersonalDetails(referralId: string, username: string): Promise<ConfirmPersonDetailsBffDto> {
+    return this.get({ path: `/bff/confirm-person-details/${referralId}` }, asSystem(username))
   }
 
   getAdditionalSupportNeeds(id: string, username: string): Promise<AdditionalSupportNeedsDto> {
@@ -157,5 +157,9 @@ export default class CommunitySupportApiClient extends RestClient {
     username: string,
   ): Promise<CommunitySupportRiskInformationDto> {
     return this.put({ path: `/risk-information/${referralId}`, data: riskInformation }, asSystem(username))
+  }
+
+  savePersonalDetailsConfirmed(draftReferalId: string, username: string): Promise<void> {
+    return this.patch({ path: `/draft-referral/confirm-person-details/${draftReferalId}` }, asSystem(username))
   }
 }

@@ -79,4 +79,8 @@ export default class ReferralService {
   ): Promise<CommunitySupportRiskInformationDto> {
     return this.communitySupportApiClient.saveRiskInformation(referralId, riskInformation, username)
   }
+
+  savePersonalDetailsConfirmed(draftReferalId: string, username: string): Promise<void> {
+    return this.communitySupportApiClient.savePersonalDetailsConfirmed(draftReferalId, username)
+  }
 }

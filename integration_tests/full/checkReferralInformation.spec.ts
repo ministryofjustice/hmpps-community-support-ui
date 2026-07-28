@@ -44,7 +44,7 @@ test.describe('Check Referral Information Page', () => {
     await page.goto('/')
     await login(page)
     await seedSessionCreateReferralDetails(page, { referralCreationDetails: mockReferralDetailsInCommunity })
-    await page.goto(TaskListPage.url(mockReferralId))
+    await page.goto(TaskListPage.url())
   })
 
   test('should display CRN and DOB on check referral information', async ({ page }) => {
