@@ -160,6 +160,6 @@ export default class CommunitySupportApiClient extends RestClient {
   }
 
   savePersonalDetailsConfirmed(draftReferalId: string, username: string): Promise<void> {
-    return this.put({ path: `draft-referral/confirm-person-details/${draftReferalId}` }, asSystem(username))
+    return this.patch({ path: `draft-referral/confirm-person-details/${draftReferalId}` }, asSystem(username))
   }
 }

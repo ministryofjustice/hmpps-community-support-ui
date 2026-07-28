@@ -293,47 +293,51 @@ export default class ReferralController {
     const { username } = res.locals.user
     const draftReferralKey = req.session.draftReferalId
 
-    if (!draftReferralKey) {
-      res.redirect('/referral/new/find-a-person')
-      return
+    if (draftReferralKey) {
+      try {
+        const data = await this.referralService.getPersonalDetails(draftReferralKey, username)
+        const presenter = new ConfirmPersonalDetailsPresenter(data)
+        return presenter.renderPage(res)
+      } catch (e) {
+        logger.error(e)
+        req.flash('confirmPersonalDetailsError', 'something has gone wrong')
+        return res.redirect('/referral/new/find-a-person')
+      }
     }
-    try {
-      const data = await this.referralService.getPersonalDetails(draftReferralKey, username)
-      const presenter = new ConfirmPersonalDetailsPresenter(data)
-      presenter.renderPage(res)
-    } catch (e) {
-      logger.error(e)
-      req.flash('confirmPersonalDetailsError', 'something has gone wrong')
-      res.redirect('/referral/new/find-a-person')
-    }
+    return res.redirect('/referral/new/find-a-person')
   }
 
-  async confirmPersonalDetails(req: Request, res: Response): Promise<void> {
+  async confirmPersonalDetails(req: Request, res: Response) {
     const { username } = res.locals.user
     const draftReferalId = req.session?.draftReferalId
-    if (!draftReferalId) {
-      res.redirect('/referral/new/find-a-person')
-      return
+    if (draftReferalId) {
+      try {
+        await this.referralService.savePersonalDetailsConfirmed(draftReferalId, username)
+        return res.redirect('/referral/task-list')
+      } catch (e) {
+        logger.error(e)
+        req.flash('confirmPersonalDetailsError', 'something has gone wrong')
+        return res.redirect('/referral/new/find-a-person')
+      }
     }
-    try {
-      await this.referralService.savePersonalDetailsConfirmed(draftReferalId, username)
-    } catch (e) {
-      logger.error(e)
-      req.flash('confirmPersonalDetailsError', 'something has gone wrong')
-      res.redirect('/referral/new/find-a-person')
-    }
+    return res.redirect('/referral/new/find-a-person')
   }
 
   async showAdditionalSupportNeeds(req: Request, res: Response) {
     const { username } = res.locals.user
     const draftReferalId = req.session?.draftReferalId
-    if (!draftReferalId) {
-      return res.redirect('/referral/new/find-a-person')
+    if (draftReferalId) {
+      try {
+        const additionalSupportNeeds = await this.referralService.getAdditionalSupportNeeds(draftReferalId, username)
+        const presenter = new AdditionalSuportNeedsPresenter(additionalSupportNeeds)
+        return presenter.renderPage(res)
+      } catch (e) {
+        logger.error(e)
+        req.flash('confirmPersonalDetailsError', 'something has gone wrong')
+        return res.redirect('/referral/new/find-a-person')
+      }
     }
-
-    const additionalSupportNeeds = await this.referralService.getAdditionalSupportNeeds(draftReferalId, username)
-    const presenter = new AdditionalSuportNeedsPresenter(additionalSupportNeeds)
-    return presenter.renderPage(res)
+    return res.redirect('/referral/new/find-a-person')
   }
 
   async showRiskSummary(req: Request, res: Response) {
