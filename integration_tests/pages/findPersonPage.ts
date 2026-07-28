@@ -66,4 +66,9 @@ export default class FindPersonPage extends AbstractPage {
   static content(): FindPersonContent {
     return pageContent
   }
+
+  async enterIdentifyierAndContinue(text: string) {
+    await this.identifierInput.fill(text)
+    await this.continueButton.click()
+  }
 }
