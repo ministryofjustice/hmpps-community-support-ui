@@ -6,7 +6,6 @@ import { referralInformationTaskList } from '../mockData/referralInformationData
 import TaskListPage from '../pages/TaskListPage'
 
 test.describe('Task List Page', () => {
-  const mockReferralId = referralInformationTaskList.referralId
   const mockPersonId = randomUUID()
   const mockReferralDetailsInCommunity = {
     personDetails: {
