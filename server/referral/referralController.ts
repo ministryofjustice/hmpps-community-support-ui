@@ -289,20 +289,26 @@ export default class ReferralController {
     return presenter.renderPage(res)
   }
 
-  async showConfirmPersonalDetails(req: Request, res: Response) {
+  async showConfirmPersonalDetails(req: Request, res: Response): Promise<void> {
     const { username } = res.locals.user
     const draftReferralKey = req.session.draftReferalId
 
     if (!draftReferralKey) {
-      return res.redirect('/referral/new/find-a-person')
+      res.redirect('/referral/new/find-a-person')
+      return
     }
-
-    const data = await this.referralService.getPersonalDetails(draftReferralKey, username)
-    const presenter = new ConfirmPersonalDetailsPresenter(data)
-    return presenter.renderPage(res)
+    try {
+      const data = await this.referralService.getPersonalDetails(draftReferralKey, username)
+      const presenter = new ConfirmPersonalDetailsPresenter(data)
+      presenter.renderPage(res)
+    } catch (e) {
+      logger.error(e)
+      req.flash('confirmPersonalDetailsError', 'something has gone wrong')
+      res.redirect('/referral/new/find-a-person')
+    }
   }
 
-  async confirmPersonalDetails(req: Request, res: Response) {
+  async confirmPersonalDetails(req: Request, res: Response): Promise<void> {
     const { username } = res.locals.user
     const draftReferalId = req.session?.draftReferalId
     if (!draftReferalId) {
@@ -310,11 +316,10 @@ export default class ReferralController {
       return
     }
     try {
-      const pageData = await this.referralService.getPersonalDetails(draftReferalId, username)
-      const presenter = new ConfirmPersonalDetailsPresenter(pageData)
-      presenter.renderPage(res)
+      await this.referralService.savePersonalDetailsConfirmed(draftReferalId, username)
     } catch (e) {
       logger.error(e)
+      req.flash('confirmPersonalDetailsError', 'something has gone wrong')
       res.redirect('/referral/new/find-a-person')
     }
   }

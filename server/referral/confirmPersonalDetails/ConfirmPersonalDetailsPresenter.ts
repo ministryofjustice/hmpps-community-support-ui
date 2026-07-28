@@ -1,6 +1,6 @@
 import { Response } from 'express'
 import { GovukFrontendSummaryList, GovukFrontendSummaryListRow } from '@govuk-frontend'
-import { differenceInYears, formatDate } from 'date-fns'
+import { differenceInYears } from 'date-fns'
 import { ConfirmPersonDetailsBffDto } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
 import dateFormat from '../../utils/dateFormat'
@@ -25,7 +25,6 @@ export default class ConfirmPersonalDetailsPresenter extends PresenterBase<
   ConfirmPersonalDetailsContent
 > {
   constructor(private readonly data: ConfirmPersonDetailsBffDto) {
-    console.log(JSON.stringify(data, null, 2))
     super()
   }
 

@@ -158,4 +158,8 @@ export default class CommunitySupportApiClient extends RestClient {
   ): Promise<CommunitySupportRiskInformationDto> {
     return this.put({ path: `/risk-information/${referralId}`, data: riskInformation }, asSystem(username))
   }
+
+  savePersonalDetailsConfirmed(draftReferalId: string, username: string): Promise<void> {
+    return this.put({ path: `draft-referral/confirm-person-details/${draftReferalId}` }, asSystem(username))
+  }
 }
