@@ -189,7 +189,6 @@ export default class ConfirmPersonalDetailsPresenter extends PresenterBase<
         preventDoubleClick: true,
         type: 'submit',
       },
-      postHref: content.postHref,
     }
   }
 

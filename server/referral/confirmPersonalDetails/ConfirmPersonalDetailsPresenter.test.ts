@@ -165,8 +165,6 @@ describe('ConfirmPersonalDetailsPresenter', () => {
     )
     // check button
     expect(viewModel.button.text).toBe('Save and continue')
-
-    expect(viewModel.postHref).toBe('/referral/task-list/confirm-personal-details')
   })
   test('shows "No fixed abode" when address contains the no fixed abode postcode', () => {
     const presenter = new ConfirmPersonalDetailsPresenter({
