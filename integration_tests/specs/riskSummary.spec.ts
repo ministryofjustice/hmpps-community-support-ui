@@ -105,11 +105,11 @@ test.describe('Risk Summary Page', () => {
     await page.goto(RiskSummaryPage.url())
     const riskSummaryPage = await RiskSummaryPage.verifyOnPage(page)
 
-    await expect(riskSummaryPage.backLink).toHaveAttribute('href', `/referral/task-list/${mockReferralId}`)
+    await expect(riskSummaryPage.backLink).toHaveAttribute('href', TaskListPage.url())
 
     await riskSummaryPage.backLink.click()
 
-    await expect(page).toHaveURL(new RegExp(`/referral/task-list/${mockReferralId}`))
+    await expect(page).toHaveURL(TaskListPage.url())
     await TaskListPage.verifyOnPage(page)
   })
 
