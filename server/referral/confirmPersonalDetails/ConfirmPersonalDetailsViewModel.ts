@@ -45,7 +45,6 @@ export interface ConfirmPersonalDetailsContent {
   contactDetailsCard: ContactDetailsCard
   warningText: string
   buttonText: string
-  postHref: string
 }
 
 export interface ConfirmPersonalDetailsViewModel {
@@ -57,5 +56,4 @@ export interface ConfirmPersonalDetailsViewModel {
   contact: GovukFrontendSummaryList
   warning: GovukFrontendWarningText
   button: GovukFrontendButton
-  postHref: string
 }

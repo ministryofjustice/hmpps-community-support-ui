@@ -308,17 +308,9 @@ export default class ReferralController {
   }
 
   async confirmPersonalDetails(req: Request, res: Response) {
-    const { username } = res.locals.user
     const draftReferalId = req.session?.draftReferalId
     if (draftReferalId) {
-      try {
-        await this.referralService.savePersonalDetailsConfirmed(draftReferalId, username)
-        return res.redirect('/referral/task-list')
-      } catch (e) {
-        logger.error(e)
-        req.flash('confirmPersonalDetailsError', 'something has gone wrong')
-        return res.redirect('/referral/new/find-a-person')
-      }
+      return res.redirect('/referral/task-list')
     }
     return res.redirect('/referral/new/find-a-person')
   }

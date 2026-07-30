@@ -130,7 +130,7 @@ test.describe('Task List Journey', () => {
     })
     await test.step('confirm personal details page', async () => {
       await expect(page.getByRole('heading', { name: 'Confirm personal details' })).toBeVisible()
-      await page.getByRole('button', { name: 'Save and continue' }).click()
+      await page.getByRole('button', { name: 'Continue' }).click()
     })
     await test.step('return to task list', async () => {
       await communitySupport.stubGetTaskListStatus(referralId, {
