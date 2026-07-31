@@ -179,8 +179,6 @@ export default function routes({
 
   post('/referral/task-list/view-risk-summary', (req, res) => referralController.confirmRiskSummary(req, res))
 
-  get('/referral/task-list/:id', (req, res) => referralController.showTaskList(req, res))
-
   post('/referral/task-list/confirm-personal-details', (req, res) =>
     referralController.confirmPersonalDetails(req, res),
   )
