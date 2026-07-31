@@ -33,7 +33,7 @@ test.describe('Check Referral Information Page', () => {
     await page.goto('/')
     await login(page)
     await seedSessionCreateReferralDetails(page, { referralCreationDetails: mockReferralDetailsInCommunity })
-    await page.goto(TaskListPage.url(mockReferralId))
+    await page.goto(TaskListPage.url())
   })
 
   test('should link back to find person from check referral information page', async ({ page }) => {

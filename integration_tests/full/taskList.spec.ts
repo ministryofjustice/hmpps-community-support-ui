@@ -6,7 +6,6 @@ import { referralInformationTaskList } from '../mockData/referralInformationData
 import TaskListPage from '../pages/TaskListPage'
 
 test.describe('Task List Page', () => {
-  const mockReferralId = referralInformationTaskList.referralId
   const mockPersonId = randomUUID()
   const mockReferralDetailsInCommunity = {
     personDetails: {
@@ -25,11 +24,11 @@ test.describe('Task List Page', () => {
     await page.goto('/')
     await login(page)
     await seedSessionCreateReferralDetails(page, { referralCreationDetails: mockReferralDetailsInCommunity })
-    await page.goto(TaskListPage.url(mockReferralId))
+    await page.goto(TaskListPage.url())
   })
 
   test('should display task list correctly', async ({ page }) => {
-    await page.goto(TaskListPage.url(mockReferralId))
+    await page.goto(TaskListPage.url())
     const taskListPage = await TaskListPage.verifyOnPage(page)
     await taskListPage.verifyTaskStatus('Personal details', 'Confirm personal details', 'Incomplete')
     await taskListPage.verifyTaskStatus('Referral information', 'Check risk information', 'Incomplete')
@@ -49,7 +48,7 @@ test.describe('Task List Page', () => {
   })
 
   test('should display task list correctly after updated task status', async ({ page }) => {
-    await page.goto(TaskListPage.url(mockReferralId))
+    await page.goto(TaskListPage.url())
     const taskListPage = await TaskListPage.verifyOnPage(page)
     await taskListPage.verifyTaskStatus('Personal details', 'Confirm personal details', 'Incomplete')
     await taskListPage.verifyTaskStatus('Referral information', 'Check risk information', 'Completed')
@@ -69,7 +68,7 @@ test.describe('Task List Page', () => {
   })
 
   test('should display check answers status correctly after updated all task status to completed', async ({ page }) => {
-    await page.goto(TaskListPage.url(mockReferralId))
+    await page.goto(TaskListPage.url())
     const taskListPage = await TaskListPage.verifyOnPage(page)
     await taskListPage.verifyTaskStatus('Personal details', 'Confirm personal details', 'Completed')
     await taskListPage.verifyTaskStatus('Referral information', 'Check risk information', 'Completed')
@@ -85,7 +84,7 @@ test.describe('Task List Page', () => {
   })
 
   test('should navigate to sub tasks', async ({ page }) => {
-    await page.goto(TaskListPage.url(mockReferralId))
+    await page.goto(TaskListPage.url())
     const taskListPage = await TaskListPage.verifyOnPage(page)
     await taskListPage.clickPersonalDetailsTask()
     await expect(taskListPage.page).toHaveURL(/personal-details/)

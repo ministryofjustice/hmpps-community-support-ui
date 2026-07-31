@@ -10,6 +10,10 @@ export default class HomePage extends AbstractPage {
 
   readonly tileLinks: Locator
 
+  static url(): string {
+    return '/'
+  }
+
   private constructor(page: Page) {
     super(page)
     this.header = page.getByRole('heading', { level: 1, name: 'Community Support' })
