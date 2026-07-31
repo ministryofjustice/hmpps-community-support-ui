@@ -15,8 +15,8 @@ export default class TaskListPage extends AbstractPage {
     this.backLink = page.getByRole('link', { name: 'Back', exact: true })
   }
 
-  static url(referralId: string): string {
-    return `/referral/task-list/${referralId}`
+  static url(): string {
+    return `/referral/task-list`
   }
 
   get personalDetailsSection() {
@@ -83,8 +83,8 @@ export default class TaskListPage extends AbstractPage {
     await this.checkAnswersTask.click()
   }
 
-  async goto(referralId: string) {
-    await this.page.goto(TaskListPage.url(referralId))
+  async goto() {
+    await this.page.goto(TaskListPage.url())
   }
 
   static async verifyOnPage(page: Page): Promise<TaskListPage> {
