@@ -71,18 +71,6 @@ export default {
         transformers: ['response-template'],
       },
     }),
-  stubSubmitConfirmPersonalDetails: (draftReferalId: string, httpStatus = 200): SuperAgentRequest =>
-    stubFor({
-      request: {
-        method: 'PATCH',
-        urlPathPattern: `/community-support/draft-referral/confirm-person-details/${draftReferalId}`,
-      },
-      response: {
-        status: httpStatus,
-        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: {},
-      },
-    }),
   stubGetCommunitySupportServices: (httpStatus = 200): SuperAgentRequest =>
     stubFor({
       request: {
@@ -106,7 +94,36 @@ export default {
         },
       },
     }),
-
+  stubGetCommunitySupportServicesTwoOptions: (httpStatus = 200): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: '/community-support/bff/referral-select-a-service',
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: {
+          personId: '11ea5182-09a2-4f3a-b07c-76ad5e6b765a',
+          communitySupportServices: [
+            {
+              id: 'service-id-123',
+              region: 'North West',
+              name: 'First Accommodation support',
+              providerName: 'Community Support Provider',
+              description: 'Support for accommodation and independent living.',
+            },
+            {
+              id: 'service-id-1456',
+              region: 'North West',
+              name: 'Second Accommodation support',
+              providerName: 'Community Support Provider',
+              description: 'Support for accommodation and independent living.',
+            },
+          ],
+        },
+      },
+    }),
   stubCreateReferral: (
     referralInformation: ReferralInformation = referralInformationInCommunity,
     httpStatus = 200,

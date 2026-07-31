@@ -15,7 +15,7 @@ test.describe('Task List Journey', () => {
   test.beforeEach(async ({ page }) => {
     await resetStubs()
     await communitySupport.stubGetPerson()
-    await communitySupport.stubGetCommunitySupportServices()
+    await communitySupport.stubGetCommunitySupportServicesTwoOptions()
     await communitySupport.stubCreateReferral({
       referralId,
       personId: '',
@@ -71,7 +71,7 @@ test.describe('Task List Journey', () => {
       })
       await test.step('service select', async () => {
         await expect(page.getByRole('heading', { name: 'Select the Community Support' })).toBeVisible()
-        await page.getByRole('radio', { name: 'Accommodation support' }).check()
+        await page.getByRole('radio', { name: 'First Accommodation support' }).check()
         await page.getByRole('button', { name: 'Continue' }).click()
       })
       await test.step('confirm task list page', async () => {
@@ -79,6 +79,22 @@ test.describe('Task List Journey', () => {
       })
     })
   })
+
+  test('change service provider', async ({ page }) => {
+    await test.step('select back', async () => {
+      const taskListPom = await TaskListPage.verifyOnPage(page)
+      await taskListPom.clickBackLink()
+    })
+    await test.step('service select', async () => {
+      await expect(page.getByRole('heading', { name: 'Select the Community Support' })).toBeVisible()
+      await page.getByRole('radio', { name: 'Second Accommodation support' }).check()
+      await page.getByRole('button', { name: 'Continue' }).click()
+    })
+    await test.step('on task list page', async () => {
+      const taskListPom = await TaskListPage.verifyOnPage(page)
+    })
+  })
+
   test('confirm personal details', async ({ page }) => {
     await communitySupport.stubGetConfirmPersonalDetailsData(referralId, {
       id: '',
@@ -122,7 +138,6 @@ test.describe('Task List Journey', () => {
         },
       },
     })
-    await communitySupport.stubSubmitConfirmPersonalDetails(referralId)
 
     await test.step('select confirm personal details task', async () => {
       const taskListPom = await TaskListPage.verifyOnPage(page)
