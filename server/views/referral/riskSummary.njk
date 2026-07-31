@@ -33,7 +33,12 @@
           {{ row.changeLink.text }}<span class="govuk-visually-hidden"> {{ row.heading | lower }}</span>
         </a>
       </div>
-      <p class="govuk-body">{{ row.content }}</p>
+      {% if row.indicator %}
+        <p class="govuk-body govuk-!-font-weight-bold" data-qa="risk-indicator">{{ row.indicator }}</p>
+      {% endif %}
+      {% if row.content %}
+        <p class="govuk-body">{{ row.content }}</p>
+      {% endif %}
     </div>
     <hr class="govuk-section-break govuk-section-break--visible govuk-section-break--m">
   {% endfor %}

@@ -148,7 +148,7 @@ export default class CommunitySupportApiClient extends RestClient {
   }
 
   getRoshRisksByReferralId(referralId: string, username: string): Promise<CommunitySupportRiskDto> {
-    return this.get({ path: `/bff/risk/rosh/${referralId}` }, asSystem(username))
+    return this.get({ path: `/bff/draft-referral/risk-information/${referralId}` }, asSystem(username))
   }
 
   saveRiskInformation(
@@ -156,7 +156,10 @@ export default class CommunitySupportApiClient extends RestClient {
     riskInformation: CommunitySupportRiskInformationDto,
     username: string,
   ): Promise<CommunitySupportRiskInformationDto> {
-    return this.put({ path: `/risk-information/${referralId}`, data: riskInformation }, asSystem(username))
+    return this.put(
+      { path: `/draft-referral/risk-information/${referralId}`, data: riskInformation },
+      asSystem(username),
+    )
   }
 
   savePersonalDetailsConfirmed(draftReferalId: string, username: string): Promise<void> {

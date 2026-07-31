@@ -121,8 +121,6 @@ describe('Referral service tests', () => {
   describe('saveRiskInformation', () => {
     it('should save risk information via the API client', async () => {
       const riskInformation: CommunitySupportRiskInformationDto = {
-        id: 'referral-uuid-1',
-        referralId: 'referral-uuid-1',
         riskSummaryWhoIsAtRisk: 'Public',
       }
       communitySupportApiClient.saveRiskInformation.mockResolvedValue(riskInformation)
