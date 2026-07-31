@@ -1,0 +1,159 @@
+#!/usr/bin/env bash
+#
+# script/local-user-setup: Creates/updates a local hmpps-auth test user with custom roles,
+# entirely offline (no GOV.UK Notify, no dev-hosted hmpps-auth). Safe to re-run (idempotent).
+#
+# Requires the local stack to already be up - any of docker-compose.yml,
+# docker-compose-localapi.yml or docker-compose-api-ghcr.yml - with hmpps-auth and
+# hmpps-manage-users healthy. Works regardless of which of those three compose files you
+# used, since it looks up the running auth-db/hmpps-manage-users containers by name rather
+# than assuming a specific compose file.
+#
+# Usage:
+#   script/local-user-setup [username] [role1,role2,...]
+#
+# Defaults:
+#   username: local.tester@digital.justice.gov.uk
+#   password: password123456 (fixed, for local dev/e2e convenience)
+#   roles:    COMMUNITY_SUPPORT_REFERRER,COMMUNITY_SUPPORT_PROVIDER
+#
+# What it does:
+#   1. Signs in as the seeded admin user (AUTH_ADM/password123456) via the real
+#      authorization_code flow and obtains a bearer token.
+#   2. Creates any missing custom roles via manage-users-api (ignores 409 conflicts).
+#   3. Creates the external user via manage-users-api if it doesn't already exist
+#      (the API call itself will report an HTTP 500 due to an unavoidable real
+#      GOV.UK Notify call in upstream manage-users-api - the user record is still
+#      created successfully beforehand, so this is expected and safe to ignore).
+#   4. Directly patches the user's password/verified/password_expiry in auth-db so
+#      it's immediately usable without an email link (mirrors how AUTH_ADM is seeded).
+#   5. Assigns the requested roles to the user (also may 500 for the same Notify
+#      reason on the *first* role assigned - ignored; roles are verified afterwards).
+#
+# After running, sign in at http://localhost:8090/auth/sign-in (or via the UI) with
+# the username/password above. On first login you'll hit a one-off "verify your
+# email" nag screen - click "This isn't required right now" / skip to continue.
+
+set -euo pipefail
+
+USERNAME="${1:-local.tester@digital.justice.gov.uk}"
+ROLES_CSV="${2:-COMMUNITY_SUPPORT_REFERRER,COMMUNITY_SUPPORT_PROVIDER}"
+PASSWORD="password123456"
+# bcrypt hash of "password123456" - same one used by the seeded AUTH_ADM/AUTH_USER accounts.
+PASSWORD_HASH='{bcrypt}$2a$10$Fmcp2KUKRW53US3EJfsxkOh.ekZhqz5.Baheb9E98QLwEFLb9csxy'
+
+AUTH_URL="http://localhost:8090/auth"
+MANAGE_USERS_URL="http://localhost:8096"
+CLIENT_ID="hmpps-community-support-ui-1"
+CLIENT_SECRET="clientsecret"
+CALLBACK="http://localhost:3000/sign-in/callback"
+
+COOKIES="$(mktemp)"
+trap 'rm -f "$COOKIES"' EXIT
+
+log() { echo "[local-user-setup] $*"; }
+
+urlencode() { python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1], safe=''))" "$1"; }
+
+json_field() { python3 -c "import json,sys; print(json.load(sys.stdin).get(sys.argv[1], ''))" "$1"; }
+
+# auth-db's container name differs between docker-compose.yml, docker-compose-localapi.yml
+# and docker-compose-api-ghcr.yml - find whichever one is actually running rather than
+# hardcoding one, so this script works no matter which compose file you used.
+AUTH_DB_CONTAINER=$(docker ps --filter "name=auth-db" --format '{{.Names}}' | head -1)
+if [[ -z "$AUTH_DB_CONTAINER" ]]; then
+  log "ERROR: no running auth-db container found. Start the stack first, e.g.:"
+  log "  docker compose up   (or -f docker-compose-localapi.yml / -f docker-compose-api-ghcr.yml)"
+  exit 1
+fi
+log "Using auth-db container: $AUTH_DB_CONTAINER"
+
+# --- 1. Get an AUTH_ADM bearer token via the real authorization_code flow ---
+log "Signing in as AUTH_ADM to obtain an admin token..."
+SIGNIN_PAGE=$(curl -sf -c "$COOKIES" "$AUTH_URL/sign-in")
+CSRF=$(echo "$SIGNIN_PAGE" | grep -o 'name="_csrf" value="[^"]*"' | head -1 | sed -E 's/.*value="([^"]*)"/\1/')
+curl -sf -b "$COOKIES" -c "$COOKIES" -o /dev/null -X POST "$AUTH_URL/sign-in" \
+  --data-urlencode "username=AUTH_ADM" \
+  --data-urlencode "password=password123456" \
+  --data-urlencode "_csrf=$CSRF"
+
+AUTHORIZE_LOCATION=$(curl -sf -b "$COOKIES" -c "$COOKIES" -D - -o /dev/null \
+  "$AUTH_URL/oauth/authorize?response_type=code&redirect_uri=$(urlencode "$CALLBACK")&client_id=$CLIENT_ID&state=setup" \
+  | grep -i "^location:" | tr -d '\r')
+CODE=$(echo "$AUTHORIZE_LOCATION" | grep -oE 'code=[^&]*' | cut -d= -f2)
+if [[ -z "$CODE" ]]; then
+  log "ERROR: could not obtain an authorization code. Is the stack up and healthy?"
+  exit 1
+fi
+
+TOKEN=$(curl -sf -u "$CLIENT_ID:$CLIENT_SECRET" -X POST "$AUTH_URL/oauth/token" \
+  --data-urlencode "grant_type=authorization_code" \
+  --data-urlencode "code=$CODE" \
+  --data-urlencode "redirect_uri=$CALLBACK" \
+  | json_field access_token)
+if [[ -z "$TOKEN" ]]; then
+  log "ERROR: could not obtain an access token."
+  exit 1
+fi
+log "Admin token obtained."
+
+# --- 2. Create custom roles (ignore already-exists conflicts) ---
+IFS=',' read -ra ROLES <<< "$ROLES_CSV"
+for ROLE in "${ROLES[@]}"; do
+  # roleName/roleDescription reject underscores and colons - roleCode is the only
+  # field allowed to contain underscores, so derive a human-readable name from it.
+  ROLE_NAME="${ROLE//_/ }"
+  STATUS=$(curl -s -o /tmp/local-user-setup-role.json -w '%{http_code}' -X POST "$MANAGE_USERS_URL/roles" \
+    -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+    -d "{\"roleCode\":\"$ROLE\",\"roleName\":\"$ROLE_NAME\",\"roleDescription\":\"Local test role $ROLE_NAME\",\"adminType\":[\"EXT_ADM\"]}")
+  if [[ "$STATUS" == "201" ]]; then
+    log "Created role $ROLE"
+  elif [[ "$STATUS" == "409" ]]; then
+    log "Role $ROLE already exists, skipping"
+  else
+    log "WARNING: unexpected status $STATUS creating role $ROLE ($(cat /tmp/local-user-setup-role.json))"
+  fi
+done
+rm -f /tmp/local-user-setup-role.json
+
+# --- 3. Create the external user (ignore the expected Notify-related 500) ---
+FIRST_NAME="Local"
+LAST_NAME="Tester"
+curl -s -o /dev/null -X POST "$MANAGE_USERS_URL/externalusers/create" \
+  -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+  -d "{\"email\":\"$USERNAME\",\"firstName\":\"$FIRST_NAME\",\"lastName\":\"$LAST_NAME\"}" || true
+log "Requested creation of user $USERNAME (a 500 here is expected/harmless - see script header)"
+
+# --- 4. Patch password/verified/password_expiry directly in auth-db ---
+log "Patching password + expiry for $USERNAME directly in auth-db..."
+docker exec -i "$AUTH_DB_CONTAINER" psql -U admin -d auth-db -v ON_ERROR_STOP=1 -c "
+  UPDATE users
+  SET password = '${PASSWORD_HASH}',
+      verified = true,
+      password_expiry = '3013-01-28 13:23:19'
+  WHERE upper(username) = upper('${USERNAME}');
+" > /dev/null
+
+USER_ID=$(docker exec -i "$AUTH_DB_CONTAINER" psql -U admin -d auth-db -t -A -c \
+  "SELECT user_id FROM users WHERE upper(username) = upper('${USERNAME}');" | tr -d '\r')
+if [[ -z "$USER_ID" ]]; then
+  log "ERROR: user $USERNAME was not found in auth-db - creation must have failed entirely."
+  exit 1
+fi
+log "User $USERNAME has user_id=$USER_ID"
+
+# --- 5. Assign roles ---
+for ROLE in "${ROLES[@]}"; do
+  curl -s -o /dev/null -X PUT "$MANAGE_USERS_URL/externalusers/$USER_ID/roles/$ROLE" \
+    -H "Authorization: Bearer $TOKEN" || true
+done
+
+ASSIGNED_ROLES=$(curl -sf "$MANAGE_USERS_URL/externalusers/$USER_ID/roles" -H "Authorization: Bearer $TOKEN" \
+  | python3 -c "import json,sys; print(', '.join(r['roleCode'] for r in json.load(sys.stdin)))")
+log "Roles now assigned to $USERNAME: $ASSIGNED_ROLES"
+
+echo
+log "Done. Sign in with:"
+log "  username: $USERNAME"
+log "  password: $PASSWORD"
+log "(On first login you'll see a one-off email verification nag - skip it to continue.)"
