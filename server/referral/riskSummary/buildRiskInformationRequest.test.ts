@@ -13,7 +13,7 @@ describe('buildRiskInformationRequest', () => {
       riskToSelf: {
         suicide: { risk: 'YES', previous: 'YES', current: 'YES', currentConcernsText: 'Suicide concern' },
         selfHarm: { risk: 'DK', previous: 'DK', current: 'DK' },
-        custody: { risk: 'YES', previous: 'YES', current: 'YES', currentConcernsText: 'Custody concern' },
+        custody: { risk: 'NO', previous: 'NO', current: 'NO' },
         hostelSetting: { risk: 'NO', previous: 'NO', current: 'NO' },
         vulnerability: {
           risk: 'YES',
@@ -22,6 +22,7 @@ describe('buildRiskInformationRequest', () => {
           currentConcernsText: 'Vulnerability concern',
         },
       },
+      additionalInformation: 'Custody concern',
       summary: {
         whoIsAtRisk: 'Public, known adults and staff are at risk.',
         natureOfRisk: 'Physical violence and intimidation towards others.',
@@ -35,11 +36,9 @@ describe('buildRiskInformationRequest', () => {
       },
     }
 
-    const result = buildRiskInformationRequest(risk, 'referral-uuid-1')
+    const result = buildRiskInformationRequest(risk)
 
     expect(result).toEqual({
-      id: 'referral-uuid-1',
-      referralId: 'referral-uuid-1',
       riskSummaryWhoIsAtRisk: 'Public, known adults and staff are at risk.',
       riskSummaryNatureOfRisk: 'Physical violence and intimidation towards others.',
       riskSummaryRiskImminence: 'Risk is immediate.',
@@ -63,11 +62,9 @@ describe('buildRiskInformationRequest', () => {
       summary: null,
     }
 
-    const result = buildRiskInformationRequest(risk, 'referral-uuid-1')
+    const result = buildRiskInformationRequest(risk)
 
     expect(result).toEqual({
-      id: 'referral-uuid-1',
-      referralId: 'referral-uuid-1',
       riskSummaryWhoIsAtRisk: undefined,
       riskSummaryNatureOfRisk: undefined,
       riskSummaryRiskImminence: undefined,
