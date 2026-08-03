@@ -92,8 +92,10 @@ export default class EditRiskSummaryPresenter extends PresenterBase<EditRiskSumm
       crn: nonEmptyStringOrDefault(crn, content.defaultFieldValue),
       dateOfBirthLabel: content.dateOfBirthLabel,
       dateOfBirth: `${dateFormat(dobDate)} (${age} years old)`,
-      lastUpdatedLabel: content.lastUpdatedLabel,
-      lastUpdated: this.risk.assessedOn ? dateFormat(new Date(this.risk.assessedOn)) : content.defaultFieldValue,
+      lastUpdatedInset: {
+        text: `${content.lastUpdatedLabel}: ${this.risk.assessedOn ? dateFormat(new Date(this.risk.assessedOn)) : content.defaultFieldValue}`,
+        attributes: { 'data-qa': 'last-updated' },
+      },
       textareas: this.buildTextareas(content),
       button: {
         text: content.buttonText,

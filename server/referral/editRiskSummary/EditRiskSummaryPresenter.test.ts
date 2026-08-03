@@ -107,7 +107,10 @@ describe('EditRiskSummaryPresenter', () => {
     expect(viewModel.subheading).toBe('Edit OASys risk information')
     expect(viewModel.crn).toBe('X123456')
     expect(viewModel.dateOfBirth).toBe('20 February 1975 (51 years old)')
-    expect(viewModel.lastUpdated).toBe('28 February 2026')
+    expect(viewModel.lastUpdatedInset).toEqual({
+      text: 'Last updated (OASys): 28 February 2026',
+      attributes: { 'data-qa': 'last-updated' },
+    })
 
     const [whoIsAtRisk, natureOfRisk, riskImminence, selfHarm, suicide, hostelSetting, vulnerability, additional] =
       viewModel.textareas
@@ -158,7 +161,7 @@ describe('EditRiskSummaryPresenter', () => {
 
     const viewModel = presenter.buildViewModel(res)
 
-    expect(viewModel.lastUpdated).toBe('Not available')
+    expect(viewModel.lastUpdatedInset.text).toBe('Last updated (OASys): Not available')
     const [whoIsAtRisk, , , selfHarm, , , , additional] = viewModel.textareas
     expect(whoIsAtRisk.value).toBe('')
     expect(selfHarm.value).toBe('')

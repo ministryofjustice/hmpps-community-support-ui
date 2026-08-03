@@ -18,11 +18,7 @@
   <hr class="govuk-section-break govuk-section-break--visible govuk-section-break--m">
   <h2 class="govuk-heading-m">{{ content.subheading }}</h2>
 
-  {{ govukInsetText({
-    text: content.lastUpdatedLabel + ': ' + content.lastUpdated,
-    attributes: { "data-qa": "last-updated" }
-  })
-  }}
+  {{ govukInsetText(content.lastUpdatedInset) }}
 
   <hr class="govuk-section-break govuk-section-break--visible govuk-section-break--m">
 
