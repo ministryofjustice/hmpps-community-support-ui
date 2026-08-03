@@ -1,12 +1,26 @@
 {% extends "../partials/layout.njk" %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% set pageTitle = applicationName + " - Error" %}
 {% set mainClasses = "govuk-body" %}
 
 {% block content %}
-
-  <h1>{{ message }}</h1>
-  <h2>{{ status }}</h2>
-  <pre>{{ stack }}</pre>
-
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {% if systemError %}
+        <h1 class="govuk-heading-l">{{ systemError.heading }}</h1>
+        <p class="govuk-body">{{ systemError.message }}</p>
+        {% if systemError.buttonText %}
+          <div class="govuk-button-group">
+              {{ govukButton({ text: systemError.buttonText, href: systemError.buttonUrl, preventDoubleClick: true }) }}
+          </div>
+        {% endif %}
+      {% else %}
+        {# Display current error page content (no change at all) #}
+        <h1>{{ message }}</h1>
+        <h2>{{ status }}</h2>
+        <pre>{{ stack }}</pre>
+      {% endif %}
+    </div>
+  </div>
 {% endblock %}

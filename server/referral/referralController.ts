@@ -129,7 +129,7 @@ export default class ReferralController {
     }
   }
 
-  async submitReferralInformation(req: Request, res: Response): Promise<void> {
+  async submitReferralInformation(req: Request, res: Response, next: NextFunction): Promise<void> {
     const { username } = res.locals.user
     const { referralId } = req.params as { referralId: string }
 
@@ -141,9 +141,17 @@ export default class ReferralController {
         logger.info('Referral already submitted')
         return res.redirect(`/referral/${referralId}/confirmation`)
       }
-      // no special error handling at this moment
-      logger.error('Error in submitting a referral:', error)
-      throw error
+      if (error.responseStatus === 401 || error.responseStatus === 403) {
+        return next(error)
+      }
+      res.locals.systemError = {
+        heading: 'Sorry, there has been a problem submitting the referral',
+        message:
+          'The referral has not been submitted and it has not been saved. You must create and submit the referral again.',
+        buttonText: 'Create a new referral',
+        buttonUrl: '/referral/new/find-a-person',
+      }
+      return next(error)
     }
   }
 

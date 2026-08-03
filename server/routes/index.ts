@@ -59,8 +59,8 @@ export default function routes({
 
   get('/referral/check-referral-information/:id', (req, res) => referralController.checkReferralInformation(req, res))
 
-  post('/referral/:referralId/submit-referral-information', (req, res) =>
-    referralController.submitReferralInformation(req, res),
+  post('/referral/:referralId/submit-referral-information', (req, res, next) =>
+    referralController.submitReferralInformation(req, res, next),
   )
 
   get('/unassigned-cases', (req, res) => caseListController.showCaseList(req, res))
