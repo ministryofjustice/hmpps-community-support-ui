@@ -12,7 +12,8 @@ export interface RiskSummaryContent {
   dateOfBirthLabel: string
   lastUpdatedLabel: string
   defaultFieldValue: string
-  noConcernsText: string
+  yesText: string
+  noText: string
   dontKnowText: string
   noAdditionalInformationText: string
   changeHref: string
@@ -30,6 +31,7 @@ export interface RiskSummaryContent {
 
 export interface RiskSummaryRow {
   heading: string
+  indicator?: string
   content: string
   changeLink: {
     href: string

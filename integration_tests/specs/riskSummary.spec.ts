@@ -7,6 +7,7 @@ import communitySupport from '../mockApis/communitySupport'
 import { getMatchingRequests } from '../mockApis/wiremock'
 import RiskSummaryPage from '../pages/RiskSummaryPage'
 import TaskListPage from '../pages/TaskListPage'
+import RiskSummaryErrorPage from '../pages/ErrorPage'
 
 test.describe('Risk Summary Page', () => {
   const mockReferralId = randomUUID()
@@ -41,6 +42,7 @@ test.describe('Risk Summary Page', () => {
         currentConcernsText: 'Mental health deterioration noted by GP.',
       },
     },
+    additionalInformation: 'Known to associate with a co-defendant in the local area.',
     summary: {
       whoIsAtRisk: 'Public, known adults and staff are at risk.',
       natureOfRisk: 'Physical violence and intimidation towards others.',
@@ -89,14 +91,34 @@ test.describe('Risk Summary Page', () => {
     await expect(riskSummaryPage.rowByHeading('Who is at risk')).toContainText(
       'Public, known adults and staff are at risk.',
     )
-    await expect(riskSummaryPage.rowByHeading('Concerns in relation to self-harm')).toContainText(`Don't know`)
-    await expect(riskSummaryPage.rowByHeading('Concerns in relation to suicide')).toContainText(
+    await expect(riskSummaryPage.rowByHeading('Risk of self-harm')).toContainText(`Don't know`)
+    await expect(riskSummaryPage.rowByHeading('Risk of suicide')).toContainText('Yes')
+    await expect(riskSummaryPage.rowByHeading('Risk of suicide')).toContainText(
       'Expressed suicidal ideation during last supervision.',
     )
-    await expect(riskSummaryPage.rowByHeading('Concerns in relation to coping in a hostel setting')).toContainText(
-      'No concerns identified',
+    await expect(riskSummaryPage.rowByHeading('Concerns in relation to coping in a hostel setting')).toContainText('No')
+    await expect(riskSummaryPage.rowByHeading('Concerns in relation to vulnerability')).toContainText('Yes')
+    await expect(riskSummaryPage.rowByHeading('Additional information')).toContainText(
+      'Known to associate with a co-defendant in the local area.',
     )
-    await expect(riskSummaryPage.rowByHeading('Additional information')).toContainText('None')
+  })
+
+  test('should show an edited concern even when OASys did not flag a risk for that field', async ({ page }) => {
+    await communitySupport.stubGetRoshRisks(mockReferralId, {
+      ...mockRisk,
+      riskToSelf: {
+        ...mockRisk.riskToSelf,
+        // Simulates the API merging in a case worker's edit for a field OASys itself did not flag.
+        hostelSetting: { risk: 'NO', previous: 'NO', current: 'NO', currentConcernsText: 'Edited via the edit page.' },
+      },
+    })
+
+    await page.goto(RiskSummaryPage.url())
+    const riskSummaryPage = await RiskSummaryPage.verifyOnPage(page)
+
+    await expect(riskSummaryPage.rowByHeading('Concerns in relation to coping in a hostel setting')).toContainText(
+      'Edited via the edit page.',
+    )
   })
 
   test('should link back to the task list for the referral, not the CRN', async ({ page }) => {
@@ -116,8 +138,6 @@ test.describe('Risk Summary Page', () => {
   test('should save the risk information and return to the task list when saved', async ({ page }) => {
     await communitySupport.stubGetTaskListStatus(mockReferralId, mockTaskListStatus)
     const savedRiskInformation: CommunitySupportRiskInformationDto = {
-      id: mockReferralId,
-      referralId: mockReferralId,
       riskSummaryWhoIsAtRisk: mockRisk.summary?.whoIsAtRisk,
       riskSummaryNatureOfRisk: mockRisk.summary?.natureOfRisk,
       riskSummaryRiskImminence: mockRisk.summary?.riskImminence,
@@ -125,7 +145,7 @@ test.describe('Risk Summary Page', () => {
       riskToSelfSelfHarm: null,
       riskToSelfHostelSetting: null,
       riskToSelfVulnerability: mockRisk.riskToSelf?.vulnerability?.currentConcernsText,
-      additionalInformation: null,
+      additionalInformation: mockRisk.additionalInformation,
     }
     await communitySupport.stubSaveRiskInformation(mockReferralId, savedRiskInformation)
 
@@ -139,7 +159,7 @@ test.describe('Risk Summary Page', () => {
 
     const matchingRequests = await getMatchingRequests({
       method: 'PUT',
-      urlPathPattern: `/community-support/risk-information/${mockReferralId}`,
+      urlPathPattern: `/community-support/draft-referral/risk-information/${mockReferralId}`,
     })
     const [savedRequest] = matchingRequests.body.requests
     expect(JSON.parse(savedRequest.body)).toMatchObject({
@@ -148,6 +168,34 @@ test.describe('Risk Summary Page', () => {
       riskSummaryRiskImminence: mockRisk.summary?.riskImminence,
       riskToSelfSuicide: mockRisk.riskToSelf?.suicide?.currentConcernsText,
       riskToSelfVulnerability: mockRisk.riskToSelf?.vulnerability?.currentConcernsText,
+      additionalInformation: mockRisk.additionalInformation,
     })
+  })
+
+  test('should show an error page when the risk information cannot be retrieved', async ({ page }) => {
+    await communitySupport.stubGetRoshRisks(mockReferralId, mockRisk, 500)
+
+    const response = await page.goto(RiskSummaryPage.url())
+
+    expect(response?.status()).toBe(500)
+    await RiskSummaryErrorPage.verifyOnPage(page)
+  })
+
+  test('should show an error page when saving the risk information fails', async ({ page }) => {
+    const savedRiskInformation: CommunitySupportRiskInformationDto = {}
+    await communitySupport.stubSaveRiskInformation(mockReferralId, savedRiskInformation, 500)
+
+    await page.goto(RiskSummaryPage.url())
+    const riskSummaryPage = await RiskSummaryPage.verifyOnPage(page)
+
+    const [response] = await Promise.all([
+      page.waitForResponse(
+        resp => resp.url().endsWith('/referral/task-list/view-risk-summary') && resp.request().method() === 'POST',
+      ),
+      riskSummaryPage.saveAndContinueButton.click(),
+    ])
+
+    expect(response.status()).toBe(500)
+    await RiskSummaryErrorPage.verifyOnPage(page)
   })
 })

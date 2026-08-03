@@ -16,6 +16,8 @@ import CheckReferralInformationPresenter from './check-referral-information/chec
 import NeedsAnInterpreterPresenter from './needsAnInterpreter/NeedsAnInterpreterPresenter'
 import RiskSummaryPresenter from './riskSummary/RiskSummaryPresenter'
 import buildRiskInformationRequest from './riskSummary/buildRiskInformationRequest'
+import EditRiskSummaryPresenter from './editRiskSummary/EditRiskSummaryPresenter'
+import buildRiskInformationRequestFromForm from './editRiskSummary/buildRiskInformationRequestFromForm'
 
 export default class ReferralController {
   private static readonly CRN_REGEX = /^[A-Za-z]\d{6}$/
@@ -361,9 +363,34 @@ export default class ReferralController {
     }
 
     const risk = await this.referralService.getRoshRisksByReferralId(draftReferralKey, username)
-    const riskInformation = buildRiskInformationRequest(risk, draftReferralKey)
+    const riskInformation = buildRiskInformationRequest(risk)
     await this.referralService.saveRiskInformation(draftReferralKey, riskInformation, username)
     return res.redirect('/referral/task-list')
+  }
+
+  async showEditRiskSummary(req: Request, res: Response) {
+    const { username } = res.locals.user
+    const draftReferralKey = req.session?.draftReferalId
+
+    if (!draftReferralKey) {
+      return res.redirect('/referral/new/find-a-person')
+    }
+
+    const risk = await this.referralService.getRoshRisksByReferralId(draftReferralKey, username)
+    const presenter = new EditRiskSummaryPresenter(risk)
+    return presenter.renderPage(res)
+  }
+
+  async submitEditRiskSummary(req: Request, res: Response): Promise<void> {
+    const { username } = res.locals.user
+    const draftReferralKey = req.session?.draftReferalId
+    if (!draftReferralKey) {
+      return res.redirect('/referral/new/find-a-person')
+    }
+
+    const riskInformation = buildRiskInformationRequestFromForm(req.body)
+    await this.referralService.saveRiskInformation(draftReferralKey, riskInformation, username)
+    return res.redirect('/referral/task-list/view-risk-summary')
   }
 
   async communityServiceProviderPage(req: Request, res: Response) {
