@@ -1,4 +1,9 @@
-import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendTextarea } from '@govuk-frontend'
+import {
+  GovukFrontendBackLink,
+  GovukFrontendButton,
+  GovukFrontendInsetText,
+  GovukFrontendTextarea,
+} from '@govuk-frontend'
 
 export interface EditRiskSummaryFieldContent {
   id: string
@@ -36,8 +41,7 @@ export interface EditRiskSummaryViewModel {
   crn: string
   dateOfBirthLabel: string
   dateOfBirth: string
-  lastUpdatedLabel: string
-  lastUpdated: string
+  lastUpdatedInset: GovukFrontendInsetText
   textareas: GovukFrontendTextarea[]
   button: GovukFrontendButton
   submitHref: string
