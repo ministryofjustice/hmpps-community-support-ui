@@ -34,6 +34,8 @@ export interface ReferralDetailsCard {
   assignedToDefaultValue: string
   link: string
   linkChange: string
+  targetServiceCompletionDateLabel: string
+  targetServiceCompletionDateReasonLabel: string
 }
 
 export interface ReferralDetailsContent {

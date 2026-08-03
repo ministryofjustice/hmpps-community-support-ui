@@ -15,6 +15,7 @@ import ConfirmationContent from '../testutils/factories/ConfirmationContent'
 import CheckReferralInformationContent from '../testutils/factories/CheckReferralInformationContent'
 import ConfirmationPresenter from './confirmation/confirmationPresenter'
 import RiskSummaryPresenter from './riskSummary/RiskSummaryPresenter'
+import EditRiskSummaryPresenter from './editRiskSummary/EditRiskSummaryPresenter'
 import ConfirmPersonalDetailsPresenter from './confirmPersonalDetails/ConfirmPersonalDetailsPresenter'
 
 jest.mock('../services/referralService')
@@ -23,6 +24,7 @@ jest.mock('../referral/foundPerson/foundPersonPresenter')
 jest.mock('../referral/check-referral-information/checkReferralInformationPresenter')
 jest.mock('./confirmation/confirmationPresenter')
 jest.mock('./riskSummary/RiskSummaryPresenter')
+jest.mock('./editRiskSummary/EditRiskSummaryPresenter')
 jest.mock('./confirmPersonalDetails/ConfirmPersonalDetailsPresenter')
 
 describe('ReferralController', () => {
@@ -52,6 +54,7 @@ describe('ReferralController', () => {
     CheckReferralInformationPresenter.prototype.renderPage = jest.fn()
     ConfirmationPresenter.prototype.renderPage = jest.fn()
     RiskSummaryPresenter.prototype.renderPage = jest.fn()
+    EditRiskSummaryPresenter.prototype.renderPage = jest.fn()
     ConfirmPersonalDetailsPresenter.prototype.renderPage = jest.fn()
 
     req = {
@@ -354,7 +357,7 @@ describe('ReferralController', () => {
 
     it('should redirect to find a person page when fetching personal details fails', async () => {
       req = { session: { draftReferalId: 'referral-uuid-1' }, flash: jest.fn() } as unknown as Request
-      referralService.getPersonalDetails.mockRejectedValue(new Error('boom'))
+      referralService.getPersonalDetails.mockRejectedValue(new Error('error retrieving personal details'))
 
       await referralController.showConfirmPersonalDetails(req, res)
 
@@ -383,6 +386,16 @@ describe('ReferralController', () => {
       expect(RiskSummaryPresenter).toHaveBeenCalledWith(risk, 'referral-uuid-1')
       expect(RiskSummaryPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
     })
+
+    it('should propagate the error when the risk information cannot be retrieved', async () => {
+      req = { session: { draftReferalId: 'referral-uuid-1' } } as unknown as Request
+      const apiError = new Error('error retrieving risk information')
+      referralService.getRoshRisksByReferralId.mockRejectedValue(apiError)
+
+      await expect(referralController.showRiskSummary(req, res)).rejects.toThrow('error retrieving risk information')
+
+      expect(RiskSummaryPresenter.prototype.renderPage).not.toHaveBeenCalled()
+    })
   })
 
   describe('confirmRiskSummary', () => {
@@ -410,8 +423,8 @@ describe('ReferralController', () => {
           selfHarm: { risk: 'DK' },
           hostelSetting: { risk: 'NO' },
           vulnerability: { risk: 'YES', currentConcernsText: 'Vulnerability concern' },
-          custody: { risk: 'YES', currentConcernsText: 'Custody concern' },
         },
+        additionalInformation: 'Custody concern',
       } as unknown as CommunitySupportRiskDto
       referralService.getRoshRisksByReferralId.mockResolvedValue(risk)
 
@@ -421,8 +434,6 @@ describe('ReferralController', () => {
       expect(referralService.saveRiskInformation).toHaveBeenCalledWith(
         'referral-uuid-1',
         {
-          id: 'referral-uuid-1',
-          referralId: 'referral-uuid-1',
           riskSummaryWhoIsAtRisk: 'Public, known adults and staff are at risk.',
           riskSummaryNatureOfRisk: 'Physical violence and intimidation towards others.',
           riskSummaryRiskImminence: 'Risk is immediate.',
@@ -435,6 +446,116 @@ describe('ReferralController', () => {
         'user1',
       )
       expect(res.redirect).toHaveBeenCalledWith('/referral/task-list')
+    })
+
+    it('should propagate the error when the risk information cannot be retrieved', async () => {
+      req = { session: { draftReferalId: 'referral-uuid-1' } } as unknown as Request
+      referralService.getRoshRisksByReferralId.mockRejectedValue(new Error('error retrieving risk information'))
+
+      await expect(referralController.confirmRiskSummary(req, res)).rejects.toThrow('error retrieving risk information')
+
+      expect(referralService.saveRiskInformation).not.toHaveBeenCalled()
+      expect(res.redirect).not.toHaveBeenCalled()
+    })
+
+    it('should propagate the error when saving the risk information fails', async () => {
+      req = { session: { draftReferalId: 'referral-uuid-1' } } as unknown as Request
+      const risk = { firstName: 'Alex', lastName: 'River', crn: 'X123456' } as unknown as CommunitySupportRiskDto
+      referralService.getRoshRisksByReferralId.mockResolvedValue(risk)
+      referralService.saveRiskInformation.mockRejectedValue(new Error('error saving risk information'))
+
+      await expect(referralController.confirmRiskSummary(req, res)).rejects.toThrow('error saving risk information')
+
+      expect(res.redirect).not.toHaveBeenCalledWith('/referral/task-list')
+    })
+  })
+
+  describe('showEditRiskSummary', () => {
+    it('should redirect to find a person page when there is no draft referral in session', async () => {
+      req = { session: {} } as unknown as Request
+
+      await referralController.showEditRiskSummary(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('/referral/new/find-a-person')
+    })
+
+    it('should render the edit risk summary page using the draft referral risk data', async () => {
+      req = { session: { draftReferalId: 'referral-uuid-1' } } as unknown as Request
+      const risk = { firstName: 'Alex', lastName: 'River', crn: 'X123456' } as unknown as CommunitySupportRiskDto
+      referralService.getRoshRisksByReferralId.mockResolvedValue(risk)
+
+      await referralController.showEditRiskSummary(req, res)
+
+      expect(referralService.getRoshRisksByReferralId).toHaveBeenCalledWith('referral-uuid-1', 'user1')
+      expect(EditRiskSummaryPresenter).toHaveBeenCalledWith(risk)
+      expect(EditRiskSummaryPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+    })
+
+    it('should propagate the error when the risk information cannot be retrieved', async () => {
+      req = { session: { draftReferalId: 'referral-uuid-1' } } as unknown as Request
+      referralService.getRoshRisksByReferralId.mockRejectedValue(new Error('error retrieving risk information'))
+
+      await expect(referralController.showEditRiskSummary(req, res)).rejects.toThrow(
+        'error retrieving risk information',
+      )
+
+      expect(EditRiskSummaryPresenter.prototype.renderPage).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('submitEditRiskSummary', () => {
+    it('should redirect to find a person page when there is no draft referral in session', async () => {
+      req = { session: {}, body: {} } as unknown as Request
+
+      await referralController.submitEditRiskSummary(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('/referral/new/find-a-person')
+    })
+
+    it('should save the submitted risk information and redirect to the view risk summary page', async () => {
+      req = {
+        session: { draftReferalId: 'referral-uuid-1' },
+        body: {
+          riskSummaryWhoIsAtRisk: 'Public, known adults and staff are at risk.',
+          riskSummaryNatureOfRisk: 'Physical violence and intimidation towards others.',
+          riskSummaryRiskImminence: 'Risk is immediate.',
+          riskToSelfSuicide: 'Suicide concern',
+          riskToSelfSelfHarm: 'Self harm concern',
+          riskToSelfHostelSetting: 'Hostel setting concern',
+          riskToSelfVulnerability: 'Vulnerability concern',
+          additionalInformation: 'Custody concern',
+        },
+      } as unknown as Request
+
+      await referralController.submitEditRiskSummary(req, res)
+
+      expect(referralService.saveRiskInformation).toHaveBeenCalledWith(
+        'referral-uuid-1',
+        {
+          riskSummaryWhoIsAtRisk: 'Public, known adults and staff are at risk.',
+          riskSummaryNatureOfRisk: 'Physical violence and intimidation towards others.',
+          riskSummaryRiskImminence: 'Risk is immediate.',
+          riskToSelfSuicide: 'Suicide concern',
+          riskToSelfSelfHarm: 'Self harm concern',
+          riskToSelfHostelSetting: 'Hostel setting concern',
+          riskToSelfVulnerability: 'Vulnerability concern',
+          additionalInformation: 'Custody concern',
+        },
+        'user1',
+      )
+      expect(res.redirect).toHaveBeenCalledWith('/referral/task-list/view-risk-summary')
+    })
+
+    it('should propagate the error when saving the risk information fails', async () => {
+      req = {
+        session: { draftReferalId: 'referral-uuid-1' },
+        body: { riskSummaryWhoIsAtRisk: 'Updated information.' },
+      } as unknown as Request
+      referralService.saveRiskInformation.mockRejectedValue(new Error('error saving risk information'))
+
+      await expect(referralController.submitEditRiskSummary(req, res)).rejects.toThrow('error saving risk information')
+
+      expect(res.redirect).not.toHaveBeenCalledWith('/referral/task-list/view-risk-summary')
     })
   })
 })
