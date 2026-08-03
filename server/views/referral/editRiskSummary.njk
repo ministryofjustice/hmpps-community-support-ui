@@ -1,0 +1,38 @@
+{% extends "../partials/layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+
+{% set pageTitle = "Edit risk summary - Community Support" %}
+{% set mainClasses = "govuk-body" %}
+
+{% block contentBody %}
+  <p class="govuk-body" data-qa="person-summary">
+    <span data-qa="crn">{{ content.crnLabel }}: {{ content.crn }}</span>
+    &nbsp;|&nbsp;
+    <span data-qa="date-of-birth">{{ content.dateOfBirthLabel }}: {{ content.dateOfBirth }}</span>
+  </p>
+
+  <h1 class="govuk-heading-l" data-qa="heading">{{ content.heading }}</h1>
+  <hr class="govuk-section-break govuk-section-break--visible govuk-section-break--m">
+  <h2 class="govuk-heading-m">{{ content.subheading }}</h2>
+
+  {{ govukInsetText({
+    text: content.lastUpdatedLabel + ': ' + content.lastUpdated,
+    attributes: { "data-qa": "last-updated" }
+  })
+  }}
+
+  <hr class="govuk-section-break govuk-section-break--visible govuk-section-break--m">
+
+  <form method="post" novalidate action="{{ content.submitHref }}">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+
+    {% for textarea in content.textareas %}
+      {{ govukTextarea(textarea) }}
+    {% endfor %}
+
+    {{ govukButton(content.button) }}
+  </form>
+{% endblock %}

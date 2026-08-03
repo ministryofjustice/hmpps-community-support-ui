@@ -495,7 +495,7 @@ export default {
     stubFor({
       request: {
         method: 'GET',
-        urlPathPattern: `/community-support/bff/risk/rosh/${referralId}`,
+        urlPathPattern: `/community-support/bff/draft-referral/risk-information/${referralId}`,
       },
       response: {
         status: httpStatus,
@@ -542,7 +542,7 @@ export default {
     stubFor({
       request: {
         method: 'PUT',
-        urlPathPattern: `/community-support/risk-information/${referralId}`,
+        urlPathPattern: `/community-support/draft-referral/risk-information/${referralId}`,
       },
       response: {
         status: httpStatus,

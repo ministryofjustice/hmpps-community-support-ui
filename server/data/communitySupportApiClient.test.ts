@@ -11,6 +11,7 @@ import type {
   ProbationOffice,
   IcsFeedbackSubmissionResponse,
   CommunitySupportRiskInformationDto,
+  CommunitySupportRiskDto,
 } from '@community-support-api'
 import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import { AgentConfig, ApiConfig } from '@ministryofjustice/hmpps-rest-client'
@@ -308,8 +309,6 @@ describe('CommunitySupportApiClient tests', () => {
   describe('saveRiskInformation tests', () => {
     it('should save risk information on a 200 response', () => {
       const riskInformation: CommunitySupportRiskInformationDto = {
-        id: 'referral-id-123',
-        referralId: 'referral-id-123',
         riskSummaryWhoIsAtRisk: 'Public',
         riskSummaryNatureOfRisk: 'Violence',
         riskSummaryRiskImminence: 'Immediate',
@@ -322,12 +321,33 @@ describe('CommunitySupportApiClient tests', () => {
       nock('http://localhost:8080', {
         reqheaders: { authorization: 'Bearer dummy-token' },
       })
-        .put('/risk-information/referral-id-123', riskInformation)
+        .put('/draft-referral/risk-information/referral-id-123', riskInformation)
         .reply(200, riskInformation)
 
       const result = communitySupportApiClient.saveRiskInformation('referral-id-123', riskInformation, 'user1')
 
       expect(result).resolves.toEqual(riskInformation)
+    })
+  })
+  describe('getRoshRisksByReferralId tests', () => {
+    it('should return ROSH risks on a 200 response', () => {
+      const riskDto: CommunitySupportRiskDto = {
+        firstName: 'Alex',
+        lastName: 'River',
+        crn: 'X123456',
+        dateOfBirth: '1975-02-20',
+        assessmentWithin12Months: true,
+        assessedOn: '2026-02-28T09:00:00',
+      }
+      nock('http://localhost:8080', {
+        reqheaders: { authorization: 'Bearer dummy-token' },
+      })
+        .get('/bff/draft-referral/risk-information/referral-id-123')
+        .reply(200, riskDto)
+
+      const result = communitySupportApiClient.getRoshRisksByReferralId('referral-id-123', 'user1')
+
+      expect(result).resolves.toEqual(riskDto)
     })
   })
 })
