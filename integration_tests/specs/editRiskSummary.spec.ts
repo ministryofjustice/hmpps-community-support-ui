@@ -6,7 +6,7 @@ import communitySupport from '../mockApis/communitySupport'
 import { getMatchingRequests } from '../mockApis/wiremock'
 import RiskSummaryPage from '../pages/RiskSummaryPage'
 import EditRiskSummaryPage from '../pages/EditRiskSummaryPage'
-import RiskSummaryErrorPage from '../pages/errorPage'
+import ErrorPage from '../pages/errorPage'
 
 test.describe('Edit Risk Summary Page', () => {
   const mockReferralId = randomUUID()
@@ -165,7 +165,7 @@ test.describe('Edit Risk Summary Page', () => {
     const response = await page.goto(EditRiskSummaryPage.url())
 
     expect(response?.status()).toBe(500)
-    await RiskSummaryErrorPage.verifyOnPage(page)
+    await ErrorPage.verifyOnSPage(page)
   })
 
   test('should show an error page when saving the edited risk information fails', async ({ page }) => {
@@ -183,6 +183,6 @@ test.describe('Edit Risk Summary Page', () => {
     ])
 
     expect(response.status()).toBe(500)
-    await RiskSummaryErrorPage.verifyOnPage(page)
+    await ErrorPage.verifyOnSPage(page)
   })
 })
