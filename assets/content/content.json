@@ -652,7 +652,7 @@
   },
   "/referral/task-list/view-risk-summary": {
     "pageSubHeader": "OASys risk information",
-    "backLink": "/referral/task-list/{{ id }}",
+    "backLink": "/referral/task-list",
     "crnLabel": "CRN",
     "dateOfBirthLabel": "Date of birth",
     "lastUpdatedLabel": "Last updated (OASys)",
@@ -693,8 +693,7 @@
       "heading": "Additional information",
       "changeLinkText": "Change"
     },
-    "buttonText": "Save and continue",
-    "postHref": "/referral/task-list/view-risk-summary"
+    "buttonText": "Save and continue"
   },
   "/referral/task-list/additional-support-needs": {
     "header": "What does {{ firstName }} need support with to attend or take part in sessions?",

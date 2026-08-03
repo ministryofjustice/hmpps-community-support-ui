@@ -38,7 +38,7 @@
     <hr class="govuk-section-break govuk-section-break--visible govuk-section-break--m">
   {% endfor %}
 
-  <form method="post" novalidate action="{{ content.postHref }}">
+  <form method="post" novalidate>
     <input type="hidden" name="_csrf" value="{{csrfToken}}">
     {{ govukButton(content.button) }}
   </form>

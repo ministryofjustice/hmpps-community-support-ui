@@ -79,7 +79,7 @@ export default class RiskSummaryPresenter extends PresenterBase<RiskSummaryViewM
     const age = differenceInYears(new Date(), dobDate)
 
     return {
-      backLink: { href: content.backLink.replace('{{ id }}', this.referralId) },
+      backLink: { href: content.backLink },
       heading: this.getFullName(),
       subheading: content.pageSubHeader,
       crnLabel: content.crnLabel,
@@ -94,7 +94,6 @@ export default class RiskSummaryPresenter extends PresenterBase<RiskSummaryViewM
         preventDoubleClick: true,
         type: 'submit',
       },
-      postHref: content.postHref,
     }
   }
 
