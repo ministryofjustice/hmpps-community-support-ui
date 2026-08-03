@@ -59,8 +59,8 @@ export default function routes({
 
   get('/referral/check-referral-information/:id', (req, res) => referralController.checkReferralInformation(req, res))
 
-  post('/referral/:referralId/submit-referral-information', (req, res) =>
-    referralController.submitReferralInformation(req, res),
+  post('/referral/:referralId/submit-referral-information', (req, res, next) =>
+    referralController.submitReferralInformation(req, res, next),
   )
 
   get('/unassigned-cases', (req, res) => caseListController.showCaseList(req, res))
@@ -178,8 +178,6 @@ export default function routes({
   get('/referral/task-list/view-risk-summary', (req, res) => referralController.showRiskSummary(req, res))
 
   post('/referral/task-list/view-risk-summary', (req, res) => referralController.confirmRiskSummary(req, res))
-
-  get('/referral/task-list/:id', (req, res) => referralController.showTaskList(req, res))
 
   post('/referral/task-list/confirm-personal-details', (req, res) =>
     referralController.confirmPersonalDetails(req, res),

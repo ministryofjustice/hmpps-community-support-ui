@@ -7,6 +7,7 @@ import TaskListPage from '../pages/TaskListPage'
 import FindPersonPage from '../pages/findPersonPage'
 import CheckReferralInformationPage from '../pages/checkReferralInformationPage'
 import ReferralConfirmationPage from '../pages/referralConfirmationPage'
+import ErrorPage from '../pages/errorPage'
 
 test.describe('Check Referral Information Page', () => {
   const mockReferralId = referralInformationTaskList.referralId
@@ -132,5 +133,43 @@ test.describe('Check Referral Information Page', () => {
 
     const referralConfirmationPage = await ReferralConfirmationPage.verifyOnPage(page)
     expect(referralConfirmationPage.header).toBeVisible()
+  })
+
+  test('should display system error page if internal error was encountered during the submission', async ({ page }) => {
+    await communitySupport.stubGetReferral()
+    await communitySupport.stubGetReferralInformation(200, mockReferralId, referralInformationTaskList)
+    await communitySupport.stubSubmitReferral(mockReferralId, mockSubmitReferralResponse, 500)
+
+    await page.goto(CheckReferralInformationPage.url(mockReferralId))
+
+    const checkReferralInformationPage = await CheckReferralInformationPage.verifyOnPage(page)
+
+    await checkReferralInformationPage.submitButton.click()
+
+    const errorPage = await ErrorPage.verifyOnSystemErrorPage(page, {
+      heading: 'Sorry, there has been a problem submitting the referral',
+      message:
+        'The referral has not been submitted and it has not been saved. You must create and submit the referral again.',
+      buttonText: 'Create a new referral',
+      buttonUrl: '/referral/new/find-a-person',
+    })
+
+    errorPage.clickButton()
+
+    await FindPersonPage.verifyOnPage(page)
+  })
+
+  test('should display default error page if other error was encountered during the submission', async ({ page }) => {
+    await communitySupport.stubGetReferral()
+    await communitySupport.stubGetReferralInformation(200, mockReferralId, referralInformationTaskList)
+    await communitySupport.stubSubmitReferral(mockReferralId, mockSubmitReferralResponse, 403)
+
+    await page.goto(CheckReferralInformationPage.url(mockReferralId))
+
+    const checkReferralInformationPage = await CheckReferralInformationPage.verifyOnPage(page)
+
+    await checkReferralInformationPage.submitButton.click()
+
+    await ErrorPage.verifyOnSPage(page)
   })
 })

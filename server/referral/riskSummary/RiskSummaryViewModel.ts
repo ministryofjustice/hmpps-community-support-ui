@@ -49,5 +49,4 @@ export interface RiskSummaryViewModel {
   lastUpdated: string
   rows: RiskSummaryRow[]
   button: GovukFrontendButton
-  postHref: string
 }

@@ -66,7 +66,7 @@ describe('RiskSummaryPresenter', () => {
     locals: {
       content: {
         pageSubHeader: 'OASys risk information',
-        backLink: '/referral/task-list/{{ id }}',
+        backLink: '/referral/task-list',
         crnLabel: 'CRN',
         dateOfBirthLabel: 'Date of birth',
         lastUpdatedLabel: 'Last updated (OASys)',
@@ -94,7 +94,7 @@ describe('RiskSummaryPresenter', () => {
     const presenter = new RiskSummaryPresenter(risk, 'referral-uuid-1')
     const viewModel = presenter.buildViewModel(res)
 
-    expect(viewModel.backLink.href).toBe('/referral/task-list/referral-uuid-1')
+    expect(viewModel.backLink.href).toBe('/referral/task-list')
     expect(viewModel.heading).toBe('Alex River')
     expect(viewModel.subheading).toBe('OASys risk information')
     expect(viewModel.crn).toBe('X123456')
@@ -127,7 +127,6 @@ describe('RiskSummaryPresenter', () => {
     expect(additional.content).toBe('None')
 
     expect(viewModel.button.text).toBe('Save and continue')
-    expect(viewModel.postHref).toBe('/referral/task-list/view-risk-summary')
   })
 
   test('falls back to default text when summary and risk fields are missing', () => {
