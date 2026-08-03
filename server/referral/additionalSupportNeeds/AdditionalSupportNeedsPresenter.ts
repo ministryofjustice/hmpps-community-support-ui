@@ -1,11 +1,11 @@
 import { Response } from 'express'
 import { GovukFrontendCheckboxes, GovukFrontendCheckboxesItem } from '@govuk-frontend'
+import { AdditionalSupportNeedsDto } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
 import {
   ItemContent,
   AdditionalSuportNeedsContent,
   AdditionalSuportNeedsViewModel,
-  AdditionalSuportNeedsDataModel,
 } from './AdditionalSupportNeedsModel'
 import { WithConditional } from '../../@types/govukFrontend/derived'
 import { buildInput } from '../../utils/utils'
@@ -51,14 +51,14 @@ export default class AdditionalSuportNeedsPresenter extends PresenterBase<
   AdditionalSuportNeedsViewModel,
   AdditionalSuportNeedsContent
 > {
-  constructor(private readonly data: AdditionalSuportNeedsDataModel) {
+  constructor(private readonly data: AdditionalSupportNeedsDto) {
     super()
   }
 
   buildViewModel(res: Response): AdditionalSuportNeedsViewModel {
     const content = this.buildStaticContent(res)
-    const { firstName, middleNames, lastName } = this.data
-    const name = middleNames ? `${firstName} ${middleNames} ${lastName}` : `${firstName} ${lastName}`
+    const { firstName, lastName } = this.data.refereeName
+    const name = `${firstName} ${lastName}`
     return {
       heading: name,
       checkList: buildChecklist(content, firstName),

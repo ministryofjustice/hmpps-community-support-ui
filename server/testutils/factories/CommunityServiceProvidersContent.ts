@@ -5,6 +5,5 @@ class CommunityServiceProviderContentFactory extends Factory<CommunityServicePro
 
 export default CommunityServiceProviderContentFactory.define(({ transientParams }) => ({
   pageHeader: transientParams.pageHeader || 'Community service providers',
-  regionLabel: transientParams.regionLabel || 'Region',
-  providerLabel: transientParams.providerLabel || 'Provider',
+  continueButtonText: transientParams.continueButtonText || 'Save and Continue',
 }))

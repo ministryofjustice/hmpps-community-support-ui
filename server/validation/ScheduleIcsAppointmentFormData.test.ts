@@ -767,7 +767,7 @@ describe('ScheduleIcsAppointmentFormData', () => {
         expect(result.error.issues).toHaveLength(1)
         const error = result.error.issues.at(0)
         expect(error.path).toStrictEqual(['probationOfficeList'])
-        expect(error.message).toBe('Select probation office')
+        expect(error.message).toBe('Select a probation office')
       }
     })
     test('InProbationOffice - happy path', () => {

@@ -136,7 +136,7 @@ describe('IcsFeedbackPresenter', () => {
       presenter.renderPage(res)
       const viewModel: IcsFeedbackHowSessionTookPlaceViewModel = (res.render as jest.Mock).mock.calls[0][1].content
       const selectItems = viewModel.probationDeliveryUnitSelectArgs.items ?? []
-      expect(selectItems[0].text).toBe('Select probation office')
+      expect(selectItems[0].text).toBe('Select a probation office')
     })
 
     it('handles empty probationOffices gracefully', () => {

@@ -1,19 +1,12 @@
-import { GovukFrontendSummaryList } from '@govuk-frontend'
+import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendRadios } from '@govuk-frontend'
 
 export type CommunityServiceProviderViewModel = {
-  content: CommunityServiceProviderContent
-  serviceProviderItems: Array<serviceProviderItem>
-}
-
-export type serviceProviderItem = {
-  url: string
-  title: string
-  truncatedDescription: string
-  summary: GovukFrontendSummaryList
+  backLink: GovukFrontendBackLink
+  radios: GovukFrontendRadios
+  button: GovukFrontendButton
 }
 
 export type CommunityServiceProviderContent = {
   pageHeader: string
-  regionLabel: string
-  providerLabel: string
+  continueButtonText: string
 }

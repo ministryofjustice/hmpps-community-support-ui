@@ -20,8 +20,6 @@ test.describe('Check Referral Information Page', () => {
       dateOfBirth: '20 Feb 1975 (51 years old)',
       sex: 'Male',
     },
-    communityServiceProviderId: 'csp-id-123',
-    crn: 'A123456',
   }
   const mockSubmitReferralResponse = {
     referralId: mockReferralId,
@@ -35,7 +33,7 @@ test.describe('Check Referral Information Page', () => {
     await page.goto('/')
     await login(page)
     await seedSessionCreateReferralDetails(page, { referralCreationDetails: mockReferralDetailsInCommunity })
-    await page.goto(TaskListPage.url(mockReferralId))
+    await page.goto(TaskListPage.url())
   })
 
   test('should link back to find person from check referral information page', async ({ page }) => {

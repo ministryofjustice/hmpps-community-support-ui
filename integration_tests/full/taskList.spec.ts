@@ -1,12 +1,11 @@
 import { test, expect } from '@playwright/test'
 import { randomUUID } from 'node:crypto'
-import { login, resetStubs, seedSessionCreateReferralDetails, seedSessionTaskListState } from '../testUtils'
+import { login, resetStubs, seedSessionCreateReferralDetails } from '../testUtils'
 import communitySupport from '../mockApis/communitySupport'
 import { referralInformationTaskList } from '../mockData/referralInformationData'
 import TaskListPage from '../pages/TaskListPage'
 
 test.describe('Task List Page', () => {
-  const mockReferralId = referralInformationTaskList.referralId
   const mockPersonId = randomUUID()
   const mockReferralDetailsInCommunity = {
     personDetails: {
@@ -17,8 +16,6 @@ test.describe('Task List Page', () => {
       dateOfBirth: '20 Feb 1975 (51 years old)',
       sex: 'Male',
     },
-    communityServiceProviderId: 'csp-id-123',
-    crn: 'A123456',
   }
 
   test.beforeEach(async ({ page }) => {
@@ -27,11 +24,11 @@ test.describe('Task List Page', () => {
     await page.goto('/')
     await login(page)
     await seedSessionCreateReferralDetails(page, { referralCreationDetails: mockReferralDetailsInCommunity })
-    await page.goto(TaskListPage.url(mockReferralId))
+    await page.goto(TaskListPage.url())
   })
 
   test('should display task list correctly', async ({ page }) => {
-    await page.goto(TaskListPage.url(mockReferralId))
+    await page.goto(TaskListPage.url())
     const taskListPage = await TaskListPage.verifyOnPage(page)
     await taskListPage.verifyTaskStatus('Personal details', 'Confirm personal details', 'Incomplete')
     await taskListPage.verifyTaskStatus('Referral information', 'Check risk information', 'Incomplete')
@@ -51,8 +48,7 @@ test.describe('Task List Page', () => {
   })
 
   test('should display task list correctly after updated task status', async ({ page }) => {
-    await seedSessionTaskListState(page, mockPersonId, 'riskInformation', 'completed')
-    await page.goto(TaskListPage.url(mockReferralId))
+    await page.goto(TaskListPage.url())
     const taskListPage = await TaskListPage.verifyOnPage(page)
     await taskListPage.verifyTaskStatus('Personal details', 'Confirm personal details', 'Incomplete')
     await taskListPage.verifyTaskStatus('Referral information', 'Check risk information', 'Completed')
@@ -72,12 +68,7 @@ test.describe('Task List Page', () => {
   })
 
   test('should display check answers status correctly after updated all task status to completed', async ({ page }) => {
-    await seedSessionTaskListState(page, mockPersonId, 'personalDetails', 'completed')
-    await seedSessionTaskListState(page, mockPersonId, 'riskInformation', 'completed')
-    await seedSessionTaskListState(page, mockPersonId, 'personNeeds', 'completed')
-    await seedSessionTaskListState(page, mockPersonId, 'supportNeeds', 'completed')
-    await seedSessionTaskListState(page, mockPersonId, 'contactDetails', 'completed')
-    await page.goto(TaskListPage.url(mockReferralId))
+    await page.goto(TaskListPage.url())
     const taskListPage = await TaskListPage.verifyOnPage(page)
     await taskListPage.verifyTaskStatus('Personal details', 'Confirm personal details', 'Completed')
     await taskListPage.verifyTaskStatus('Referral information', 'Check risk information', 'Completed')
@@ -93,7 +84,7 @@ test.describe('Task List Page', () => {
   })
 
   test('should navigate to sub tasks', async ({ page }) => {
-    await page.goto(TaskListPage.url(mockReferralId))
+    await page.goto(TaskListPage.url())
     const taskListPage = await TaskListPage.verifyOnPage(page)
     await taskListPage.clickPersonalDetailsTask()
     await expect(taskListPage.page).toHaveURL(/personal-details/)

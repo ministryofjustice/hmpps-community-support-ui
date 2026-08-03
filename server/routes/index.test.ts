@@ -31,7 +31,11 @@ describe('GET /', () => {
       .expect('Content-Type', /html/)
       .expect(200)
       .expect(res => {
-        expect(res.text).toContain('Welcome to the Community Support service.')
+        expect(res.text).toContain('Community Support')
+        expect(res.text).toContain('Make a referral')
+        expect(res.text).toContain('View cases')
+        expect(res.text).not.toContain('Unassigned Cases')
+        expect(res.text).not.toContain('Cases In Progress')
         expect(auditService.logPageView).toHaveBeenCalledWith(Page.INDEX_PAGE, {
           who: user.username,
           correlationId: expect.any(String),

@@ -16,8 +16,3 @@ export interface AdditionalSuportNeedsViewModel {
   checkList: GovukFrontendCheckboxes
   postHref: string
 }
-export interface AdditionalSuportNeedsDataModel {
-  firstName: string
-  middleNames?: string
-  lastName: string
-}

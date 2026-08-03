@@ -45,6 +45,7 @@ describe('ConfirmPersonalDetailsPresenter', () => {
         type: 'Family',
         startAt: '2026-01-01',
         notes: 'stuff and things',
+        noFixedAbode: false,
       },
     },
   }
@@ -53,7 +54,7 @@ describe('ConfirmPersonalDetailsPresenter', () => {
       content: {
         pageHeader: '{{ name }}',
         pageSubHeader: 'Confirm personal details',
-        backLink: '/referral/task-list/{{ id }}',
+        backLink: '/referral/task-list',
         defaultFieldValue: 'Not available',
         personalDetailsCard: {
           heading: 'Personal details',
@@ -88,10 +89,11 @@ describe('ConfirmPersonalDetailsPresenter', () => {
       },
     },
   } as unknown as Response
+
   test('builds correct view model', () => {
     const presenter = new ConfirmPersonalDetailsPresenter(data)
     const viewModel = presenter.buildViewModel(res)
-    expect(viewModel.backLink.href).toBe('/referral/task-list/A1234CD')
+    expect(viewModel.backLink.href).toBe('/referral/task-list')
     expect(viewModel.heading).toBe('Charlie Robert Smith')
     expect(viewModel.subheading).toBe('Confirm personal details')
 
@@ -163,8 +165,6 @@ describe('ConfirmPersonalDetailsPresenter', () => {
     )
     // check button
     expect(viewModel.button.text).toBe('Save and continue')
-
-    expect(viewModel.postHref).toBe('/referral/task-list/confirm-personal-details')
   })
   test('shows "No fixed abode" when address contains the no fixed abode postcode', () => {
     const presenter = new ConfirmPersonalDetailsPresenter({
@@ -174,6 +174,7 @@ describe('ConfirmPersonalDetailsPresenter', () => {
         address: {
           ...data.contactDetails.address,
           value: '1 Test Street, NF1 1NF',
+          noFixedAbode: true,
         },
       },
     })

@@ -1,15 +1,175 @@
 import { test, expect } from '@playwright/test'
 import { randomUUID } from 'node:crypto'
-import { login, resetStubs, seedSessionCreateReferralDetails, seedSessionTaskListState } from '../testUtils'
+import { login, resetStubs } from '../testUtils'
 import communitySupport from '../mockApis/communitySupport'
 import { referralInformationTaskList } from '../mockData/referralInformationData'
 import TaskListPage from '../pages/TaskListPage'
+import HomePage from '../pages/homePage'
+import FindPersonPage from '../pages/findPersonPage'
 
 // These tests will have to move to end to end testing
+
+test.describe('Task List Journey', () => {
+  const referralId = randomUUID()
+  const crn = 'X320741'
+  test.beforeEach(async ({ page }) => {
+    await resetStubs()
+    await communitySupport.stubGetPerson()
+    await communitySupport.stubGetCommunitySupportServices()
+    await communitySupport.stubCreateReferral({
+      referralId,
+      personId: '',
+      referralDate: '',
+      personIdentifier: '',
+      communityServiceProviderId: '',
+      communityServiceProviderName: '',
+      region: '',
+      deliveryPartner: '',
+    })
+    await communitySupport.stubGetTaskListStatus(referralId, {
+      fullName: 'Alex Rivers',
+      confirmPersonalDetailsCompleted: {
+        completed: false,
+        statusText: '',
+        tag: undefined,
+      },
+      checkRiskInformationCompleted: {
+        completed: false,
+        statusText: '',
+        tag: undefined,
+      },
+      selectThePersonsNeedsCompleted: {
+        completed: false,
+        statusText: '',
+        tag: undefined,
+      },
+      addDetailsOfAnyAdditionalSupportNeedsCompleted: {
+        completed: false,
+        statusText: '',
+        tag: undefined,
+      },
+      addDetailsOfMainPointOfContactCompleted: {
+        completed: false,
+        statusText: '',
+        tag: undefined,
+      },
+    })
+    await page.goto(HomePage.url())
+    await login(page)
+    await test.step('go to task list page', async () => {
+      await test.step('select make a referal', async () => {
+        const pom = await HomePage.verifyOnPage(page)
+        await pom.clickMakeAReferralTile()
+      })
+      await test.step('find a person', async () => {
+        const pom = await FindPersonPage.verifyOnPage(page)
+        await pom.enterIdentifyierAndContinue('X320741')
+      })
+      await test.step('confirm person', async () => {
+        await expect(page.getByRole('heading', { name: 'Confirm this is the correct' })).toBeVisible()
+        await page.getByRole('button', { name: 'Continue' }).click()
+      })
+      await test.step('service select', async () => {
+        await expect(page.getByRole('heading', { name: 'Select the Community Support' })).toBeVisible()
+        await page.getByRole('radio', { name: 'Accommodation support' }).check()
+        await page.getByRole('button', { name: 'Continue' }).click()
+      })
+      await test.step('confirm task list page', async () => {
+        await expect(page.getByRole('heading', { name: 'Make a referral' })).toBeVisible()
+      })
+    })
+  })
+  test('confirm personal details', async ({ page }) => {
+    await communitySupport.stubGetConfirmPersonalDetailsData(referralId, {
+      id: '',
+      personalDetails: {
+        firstName: 'Alex',
+        middleNames: '',
+        lastName: 'Rivers',
+        crn,
+        prisonNumbers: [],
+        dateOfBirth: '2026-07-27T13:36:00Z',
+        preferredLanguage: 'English',
+        currentCircumstances: {
+          updatedAt: '2026-07-27T13:36:00Z',
+          value: 'none',
+        },
+        disabilities: {
+          updatedAt: '2026-07-27T13:36:00Z',
+          allDisabilities: 'none',
+        },
+      },
+      equalityMonitoring: {
+        ethnicity: 'White',
+        genderIdentity: 'Male',
+        nationalities: ['British'],
+        religionOrBelief: 'Christian',
+        sex: 'Male',
+        sexualOrientation: 'Hetrosexual',
+        transgender: 'yes',
+      },
+      contactDetails: {
+        phoneNumber: '',
+        mobileNumber: '',
+        emailAddress: '',
+        address: {
+          updatedAt: '2026-07-27T13:36:00Z',
+          value: '',
+          type: '',
+          startAt: '2026-07-27T13:36:00Z',
+          notes: 'some notes',
+          noFixedAbode: true,
+        },
+      },
+    })
+    await communitySupport.stubSubmitConfirmPersonalDetails(referralId)
+
+    await test.step('select confirm personal details task', async () => {
+      const taskListPom = await TaskListPage.verifyOnPage(page)
+      await taskListPom.clickPersonalDetailsTask()
+    })
+    await test.step('confirm personal details page', async () => {
+      await expect(page.getByRole('heading', { name: 'Confirm personal details' })).toBeVisible()
+      await page.getByRole('button', { name: 'Continue' }).click()
+    })
+    await test.step('return to task list', async () => {
+      await communitySupport.stubGetTaskListStatus(referralId, {
+        fullName: 'Alex Rivers',
+        confirmPersonalDetailsCompleted: {
+          completed: true,
+          statusText: '',
+          tag: undefined,
+        },
+        checkRiskInformationCompleted: {
+          completed: false,
+          statusText: '',
+          tag: undefined,
+        },
+        selectThePersonsNeedsCompleted: {
+          completed: false,
+          statusText: '',
+          tag: undefined,
+        },
+        addDetailsOfAnyAdditionalSupportNeedsCompleted: {
+          completed: false,
+          statusText: '',
+          tag: undefined,
+        },
+        addDetailsOfMainPointOfContactCompleted: {
+          completed: false,
+          statusText: '',
+          tag: undefined,
+        },
+      })
+      await TaskListPage.verifyOnPage(page)
+    })
+  })
+})
+
 test.describe.skip('Task List Page', () => {
-  const mockReferralId = referralInformationTaskList.referralId
+  /* const mockReferralId = referralInformationTaskList.referralId
   const mockPersonId = randomUUID()
-  const mockReferralDetailsInCommunity = {
+   const mockReferralDetailsInCommunity = {
     personDetails: {
       id: mockPersonId,
       personIdentifier: 'A123456',
@@ -20,19 +180,19 @@ test.describe.skip('Task List Page', () => {
     },
     communityServiceProviderId: 'csp-id-123',
     crn: 'A123456',
-  }
+  } */
 
   test.beforeEach(async ({ page }) => {
     await resetStubs()
     await communitySupport.stubCreateReferral(referralInformationTaskList)
-    await page.goto('/')
+    await communitySupport.stubGetPerson()
+    await communitySupport.stubGetCommunitySupportServices()
+    await page.goto(HomePage.url())
     await login(page)
-    await seedSessionCreateReferralDetails(page, { referralCreationDetails: mockReferralDetailsInCommunity })
-    await page.goto(TaskListPage.url(mockReferralId))
   })
 
-  test('should display task list correctly', async ({ page }) => {
-    await page.goto(TaskListPage.url(mockReferralId))
+  test.skip('should display task list correctly', async ({ page }) => {
+    await page.goto(TaskListPage.url())
     const taskListPage = await TaskListPage.verifyOnPage(page)
     await taskListPage.verifyTaskStatus('Personal details', 'Confirm personal details', 'Incomplete')
     await taskListPage.verifyTaskStatus('Referral information', 'Check risk information', 'Incomplete')
@@ -51,13 +211,10 @@ test.describe.skip('Task List Page', () => {
     await taskListPage.verifyCheckAnswersLink(referralInformationTaskList.referralId)
   })
 
-  test('should display check answers status correctly after updated all task status to completed', async ({ page }) => {
-    await seedSessionTaskListState(page, mockPersonId, 'personalDetails', 'completed')
-    await seedSessionTaskListState(page, mockPersonId, 'riskInformation', 'completed')
-    await seedSessionTaskListState(page, mockPersonId, 'personNeeds', 'completed')
-    await seedSessionTaskListState(page, mockPersonId, 'supportNeeds', 'completed')
-    await seedSessionTaskListState(page, mockPersonId, 'contactDetails', 'completed')
-    await page.goto(TaskListPage.url(mockReferralId))
+  test.skip('should display check answers status correctly after updated all task status to completed', async ({
+    page,
+  }) => {
+    await page.goto(TaskListPage.url())
     const taskListPage = await TaskListPage.verifyOnPage(page)
     await taskListPage.verifyTaskStatus('Personal details', 'Confirm personal details', 'Completed')
     await taskListPage.verifyTaskStatus('Referral information', 'Check risk information', 'Completed')
@@ -72,8 +229,8 @@ test.describe.skip('Task List Page', () => {
     await taskListPage.verifyCheckAnswersLink(referralInformationTaskList.referralId)
   })
 
-  test('should navigate to sub tasks', async ({ page }) => {
-    await page.goto(TaskListPage.url(mockReferralId))
+  test.skip('should navigate to sub tasks', async ({ page }) => {
+    await page.goto(TaskListPage.url())
     const taskListPage = await TaskListPage.verifyOnPage(page)
     await taskListPage.clickPersonalDetailsTask()
     await expect(taskListPage.page).toHaveURL(/personal-details/)

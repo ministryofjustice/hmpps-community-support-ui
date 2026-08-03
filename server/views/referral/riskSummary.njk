@@ -1,0 +1,45 @@
+{% extends "../partials/layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+
+{% set pageTitle = "Referral - Community Support" %}
+{% set mainClasses = "govuk-body" %}
+
+{% block contentBody %}
+  <p class="govuk-body" data-qa="person-summary">
+    <span data-qa="crn">{{ content.crnLabel }}: {{ content.crn }}</span>
+    &nbsp;|&nbsp;
+    <span data-qa="date-of-birth">{{ content.dateOfBirthLabel }}: {{ content.dateOfBirth }}</span>
+  </p>
+
+  <h1 class="govuk-heading-l" data-qa="heading">{{ content.heading }}</h1>
+  <hr class="govuk-section-break govuk-section-break--visible govuk-section-break--m">
+  <h2 class="govuk-heading-m">{{ content.subheading }}</h2>
+
+    {{ govukInsetText({
+      text: content.lastUpdatedLabel + ': ' + content.lastUpdated,
+      attributes: { "data-qa": "last-updated" }
+    })
+  }}
+
+  <hr class="govuk-section-break govuk-section-break--visible govuk-section-break--m">
+
+  {% for row in content.rows %}
+    <div class="govuk-!-margin-bottom-4" data-qa="risk-row">
+      <div class="risk-summary__row-header">
+        <h3 class="govuk-heading-m govuk-!-margin-bottom-2">{{ row.heading }}</h3>
+        <a class="govuk-link" href="{{ row.changeLink.href }}">
+          {{ row.changeLink.text }}<span class="govuk-visually-hidden"> {{ row.heading | lower }}</span>
+        </a>
+      </div>
+      <p class="govuk-body">{{ row.content }}</p>
+    </div>
+    <hr class="govuk-section-break govuk-section-break--visible govuk-section-break--m">
+  {% endfor %}
+
+  <form method="post" novalidate>
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    {{ govukButton(content.button) }}
+  </form>
+{% endblock %}

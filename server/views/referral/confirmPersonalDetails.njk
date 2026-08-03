@@ -16,7 +16,7 @@
   {{ govukSummaryList(content.contact) }}
   {{ govukSummaryList(content.referral) }}
   {{ govukWarningText(content.warning) }}
-  <form method="post" novalidate action="{{content.postHref}}" >
+  <form method="post" novalidate>
     <input type="hidden" name="_csrf" value="{{csrfToken}}">
   {{ govukButton(content.button) }}
   </form>

@@ -17,7 +17,6 @@ import setUpWebSecurity from './middleware/setUpWebSecurity'
 import setUpWebSession from './middleware/setUpWebSession'
 import setUpFormValidation from './middleware/setUpFormValidation'
 import setUpContent from './middleware/setUpContent'
-import { updateSectionStatus } from './referral/taskList/TaskListHelper'
 
 import routes from './routes'
 import type { Services } from './services'
@@ -85,8 +84,11 @@ export default function createApp(services: Services): express.Application {
       req.session.referralCreationDetails = req.body.referralCreationDetails
       res.sendStatus(200)
     })
-    app.post('/test/setup-task-list-state', (req, res) => {
-      updateSectionStatus(req, req.body.personId, req.body.taskName, req.body.taskStatus)
+    app.post('/test/setup-draft-referral-session', (req, res) => {
+      req.session.draftReferalId = req.body.draftReferalId
+      if (req.body.personId) {
+        req.session.personId = req.body.personId
+      }
       res.sendStatus(200)
     })
   }

@@ -123,6 +123,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/draft-referral/needs-interpreter/{referralId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    /** Update the Interpreter Needs information for a Draft Referral */
+    patch: operations['updateNeedsInterpreter']
+    trace?: never
+  }
   '/draft-referral/additional-support-needs/{referralId}': {
     parameters: {
       query?: never
@@ -157,15 +174,15 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/bff/risk/rosh/{crn}': {
+  '/bff/risk/rosh/{referralId}': {
     parameters: {
       query?: never
       header?: never
       path?: never
       cookie?: never
     }
-    /** Get ROSH risks for a person by CRN */
-    get: operations['getRoshRisksByCrn']
+    /** Get ROSH risks for a referral */
+    get: operations['getRoshRisksByReferralId']
     put?: never
     post?: never
     delete?: never
@@ -217,6 +234,23 @@ export interface paths {
     }
     /** Get a single ICS appointment by ID */
     get: operations['getIcsAppointment']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/referral/check-referral-information/{caseIdentifier}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get check-referral-information page data */
+    get: operations['getReferralAndPersonInformation']
     put?: never
     post?: never
     delete?: never
@@ -395,6 +429,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/bff/draft-referral/needs-interpreter/{referralId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get interpreter needs page data */
+    get: operations['getNeedsInterpreterPage']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/bff/draft-referral/additional-support-needs/{referralId}': {
     parameters: {
       query?: never
@@ -455,6 +506,74 @@ export interface paths {
     }
     /** Get in-progress referrals for a community service provider */
     get: operations['getInProgressCases']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/draft-referral/needs-interpreter/{referralId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    /** Update the Interpreter Needs information for a Draft Referral */
+    patch: operations['updateNeedsInterpreter']
+    trace?: never
+  }
+  '/bff/risk/rosh/{referralId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get ROSH risks for a referral */
+    get: operations['getRoshRisksByReferralId']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/referral/check-referral-information/{caseIdentifier}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get check-referral-information page data */
+    get: operations['getReferralAndPersonInformation']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/draft-referral/needs-interpreter/{referralId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get interpreter needs page data */
+    get: operations['getNeedsInterpreterPage']
     put?: never
     post?: never
     delete?: never
@@ -542,45 +661,10 @@ export interface components {
       minute: number
       amPm: string
     }
-    InPersonAppointment: Omit<WithRequired<components['schemas']['SessionMethod'], 'type'>, 'appointmentCategory'> & {
-      probationOfficeName?: string | null
-      addressLine1?: string | null
-      addressLine2?: string | null
-      townOrCity?: string | null
-      county?: string | null
-      postcode?: string | null
-    } & {
-      /**
-       * @description discriminator enum property added by openapi-typescript
-       * @enum {string}
-       */
-      appointmentCategory: 'IN_PERSON'
-    } & {
-      /**
-       * @description discriminator enum property added by openapi-typescript
-       * @enum {string}
-       */
-      appointmentCategory: 'IN_PERSON'
-    }
     SessionMethod: {
       type: string
       appointmentCategory: string
     } & (components['schemas']['VirtualAppointment'] | components['schemas']['InPersonAppointment'])
-    VirtualAppointment: Omit<WithRequired<components['schemas']['SessionMethod'], 'type'>, 'appointmentCategory'> & {
-      whyNotInPersonReason?: string | null
-    } & {
-      /**
-       * @description discriminator enum property added by openapi-typescript
-       * @enum {string}
-       */
-      appointmentCategory: 'VIRTUAL'
-    } & {
-      /**
-       * @description discriminator enum property added by openapi-typescript
-       * @enum {string}
-       */
-      appointmentCategory: 'VIRTUAL'
-    }
     SubmitReferralResponseDto: {
       /** Format: uuid */
       referralId: string
@@ -589,45 +673,10 @@ export interface components {
       referenceNumber?: string | null
     }
     CreateReferralRequest: {
-      personDetails: components['schemas']['PersonDto']
       /** Format: uuid */
       communityServiceProviderId: string
       personIdentifier: string
       urgency?: boolean | null
-    }
-    PersonAdditionalDetails: {
-      ethnicity?: string | null
-      preferredLanguage?: string | null
-      neurodiverseConditions?: string | null
-      religionOrBelief?: string | null
-      transgender?: string | null
-      sexualOrientation?: string | null
-      genderIdentity?: string | null
-      nationalities: string[]
-      interestToImmigration?: boolean | null
-      address?: string | null
-      addressType?: string | null
-      addressTypeVerified: boolean
-      /** Format: date */
-      addressStartDate?: string | null
-      addressNotes?: string | null
-      phoneNumber?: string | null
-      mobileNumber?: string | null
-      emailAddress?: string | null
-      disability?: boolean | null
-    }
-    PersonDto: {
-      /** Format: uuid */
-      id: string
-      personIdentifier?: string | null
-      title?: string | null
-      firstName: string
-      middleNames?: string | null
-      lastName: string
-      dateOfBirth: string
-      sex?: string | null
-      prisonNumbers: string[]
-      additionalDetails?: components['schemas']['PersonAdditionalDetails'] | null
     }
     ReferralInformationDto: {
       /** Format: uuid */
@@ -723,7 +772,6 @@ export interface components {
       county?: string | null
       postcode?: string | null
     }
-    /** @description ICS appointment session feedback */
     AppointmentIcsFeedbackResponse: {
       /** Format: uuid */
       id: string
@@ -771,6 +819,23 @@ export interface components {
       sessionCommunications?: string[] | null
       personFirstName: string
     }
+    NeedsInterpreterRequest: {
+      needsInterpreter: boolean
+      language?: string | null
+    }
+    NeedsInterpreterBffResponseDto: {
+      refereeName: components['schemas']['RefereeName']
+      language?: components['schemas']['Selection'] | null
+    }
+    RefereeName: {
+      firstName: string
+      middleName?: string | null
+      lastName: string
+    }
+    Selection: {
+      selected: boolean
+      value?: string | null
+    }
     AdditionalSupportNeedsRequest: {
       physicalHealth?: string | null
       mentalEmotionalHealth?: string | null
@@ -784,32 +849,28 @@ export interface components {
     }
     AdditionalSupportNeedsBffResponseDto: {
       refereeName: components['schemas']['RefereeName']
-      physicalHealth?: components['schemas']['Selection'] | null
-      mentalEmotionalHealth?: components['schemas']['Selection'] | null
-      neurodiversity?: components['schemas']['Selection'] | null
-      locationTravel?: components['schemas']['Selection'] | null
-      caringResponsibilities?: components['schemas']['Selection'] | null
-      employmentResponsibilities?: components['schemas']['Selection'] | null
-      diversity?: components['schemas']['Selection'] | null
-      anythingElse?: components['schemas']['Selection'] | null
+      physicalHealth: components['schemas']['Selection']
+      mentalEmotionalHealth: components['schemas']['Selection']
+      neurodiversity: components['schemas']['Selection']
+      locationTravel: components['schemas']['Selection']
+      caringResponsibilities: components['schemas']['Selection']
+      employmentResponsibilities: components['schemas']['Selection']
+      diversity: components['schemas']['Selection']
+      anythingElse: components['schemas']['Selection']
       needsAdditionalSupport: boolean
     }
-    RefereeName: {
-      firstName: string
-      middleName?: string | null
-      lastName: string
-    }
-    Selection: {
-      selected: boolean
-      value?: string | null
+    TaskListStatusItem: {
+      completed: boolean
+      statusText: string
+      tag?: string | null
     }
     TaskListStatusResponseDto: {
-      confirmPersonalDetails: boolean
-      checkRiskInformation: boolean
-      selectThePersonsNeeds: boolean
-      addDetailsOfAnyAdditionalSupportNeeds: boolean
-      addDetailsOfMainPointOfContact: boolean
-      checkAnswers: boolean
+      fullName: string
+      confirmPersonalDetailsCompleted: components['schemas']['TaskListStatusItem']
+      checkRiskInformationCompleted: components['schemas']['TaskListStatusItem']
+      selectThePersonsNeedsCompleted: components['schemas']['TaskListStatusItem']
+      addDetailsOfAnyAdditionalSupportNeedsCompleted: components['schemas']['TaskListStatusItem']
+      addDetailsOfMainPointOfContactCompleted: components['schemas']['TaskListStatusItem']
     }
     ArnsRiskConcernsToSelfDto: {
       suicide?: components['schemas']['ArnsRiskDto'] | null
@@ -841,6 +902,10 @@ export interface components {
       overallRiskLevel?: string | null
     }
     CommunitySupportRiskDto: {
+      firstName: string
+      lastName: string
+      crn: string
+      dateOfBirth: string
       assessmentWithin12Months: boolean
       assessedOn?: string | null
       riskToSelf?: components['schemas']['ArnsRiskConcernsToSelfDto'] | null
@@ -856,6 +921,18 @@ export interface components {
       fullName: string
       appointmentDetails?: components['schemas']['AppointmentDetailsDto'] | null
       otherAppointmentMethods?: string[] | null
+    }
+    CheckReferralInformationDto: {
+      /** Format: uuid */
+      referralId: string
+      communityServiceProviderName: string
+      region: string
+      deliveryPartner: string
+      personIdentifier?: string | null
+      prisonNumbers: string[]
+      fullName: string
+      dateOfBirth: string
+      sex?: string | null
     }
     CommunitySupportServiceDto: {
       id: string
@@ -960,6 +1037,41 @@ export interface components {
       govUkUrl?: string | null
       deliusCRSLocationId?: string | null
     }
+    PersonAdditionalDetails: {
+      ethnicity?: string | null
+      preferredLanguage?: string | null
+      neurodiverseConditions?: string | null
+      religionOrBelief?: string | null
+      transgender?: string | null
+      sexualOrientation?: string | null
+      genderIdentity?: string | null
+      nationalities: string[]
+      interestToImmigration?: boolean | null
+      address?: string | null
+      addressType?: string | null
+      addressTypeVerified: boolean
+      /** Format: date */
+      addressStartDate?: string | null
+      addressNotes?: string | null
+      noFixedAbode?: boolean | null
+      phoneNumber?: string | null
+      mobileNumber?: string | null
+      emailAddress?: string | null
+      disability?: boolean | null
+    }
+    PersonDto: {
+      /** Format: uuid */
+      id: string
+      personIdentifier?: string | null
+      title?: string | null
+      firstName: string
+      middleNames?: string | null
+      lastName: string
+      dateOfBirth: string
+      sex?: string | null
+      prisonNumbers: string[]
+      additionalDetails?: components['schemas']['PersonAdditionalDetails'] | null
+    }
     ConfirmPersonDetailsBffDto: {
       /** Format: uuid */
       id: string
@@ -973,6 +1085,7 @@ export interface components {
       type: string
       startAt: string
       notes: string
+      noFixedAbode: boolean
     }
     ConfirmPersonalDetailsContact: {
       phoneNumber: string
@@ -1024,6 +1137,26 @@ export interface components {
       personIdentifier: string
       date: string
       caseWorkers: string[]
+    }
+    NeedsInterpreterRequest: {
+      needsInterpreter: boolean
+      language?: string | null
+    }
+    NeedsInterpreterBffResponseDto: {
+      refereeName: components['schemas']['RefereeName']
+      language?: components['schemas']['Selection'] | null
+    }
+    CheckReferralInformationDto: {
+      /** Format: uuid */
+      referralId: string
+      communityServiceProviderName: string
+      region: string
+      deliveryPartner: string
+      personIdentifier?: string | null
+      prisonNumbers: string[]
+      fullName: string
+      dateOfBirth: string
+      sex?: string | null
     }
   }
   responses: never
@@ -1319,6 +1452,41 @@ export interface operations {
       }
     }
   }
+  updateNeedsInterpreter: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['NeedsInterpreterRequest']
+      }
+    }
+    responses: {
+      /** @description Interpreter needs information updated */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['NeedsInterpreterBffResponseDto']
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
   updateAdditionalSupportNeeds: {
     parameters: {
       query?: never
@@ -1376,12 +1544,12 @@ export interface operations {
       }
     }
   }
-  getRoshRisksByCrn: {
+  getRoshRisksByReferralId: {
     parameters: {
       query?: never
       header?: never
       path: {
-        crn: string
+        referralId: string
       }
       cookie?: never
     }
@@ -1396,7 +1564,7 @@ export interface operations {
           'application/json': components['schemas']['CommunitySupportRiskDto']
         }
       }
-      /** @description ROSH risks not found for the given CRN */
+      /** @description Referral not found, or ROSH risks not found for the referral's CRN */
       404: {
         headers: {
           [name: string]: unknown
@@ -1491,6 +1659,37 @@ export interface operations {
         }
       }
       /** @description Appointment not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getReferralAndPersonInformation: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        caseIdentifier: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Referral information found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['CheckReferralInformationDto']
+        }
+      }
+      /** @description Referral not found */
       404: {
         headers: {
           [name: string]: unknown
@@ -1818,6 +2017,37 @@ export interface operations {
       }
     }
   }
+  getNeedsInterpreterPage: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Interpreter needs data found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['NeedsInterpreterBffResponseDto']
+        }
+      }
+      /** @description Referral, or the Referral's Person, not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
   getAdditionalSupportNeedsPage: {
     parameters: {
       query?: never
@@ -1956,6 +2186,134 @@ export interface operations {
         }
         content: {
           '*/*': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  updateNeedsInterpreter: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['NeedsInterpreterRequest']
+      }
+    }
+    responses: {
+      /** @description Interpreter needs information updated */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['NeedsInterpreterBffResponseDto']
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getRoshRisksByReferralId: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description ROSH risks found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['CommunitySupportRiskDto']
+        }
+      }
+      /** @description Referral not found, or ROSH risks not found for the referral's CRN */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getReferralAndPersonInformation: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        caseIdentifier: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Referral information found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['CheckReferralInformationDto']
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getNeedsInterpreterPage: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Interpreter needs data found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['NeedsInterpreterBffResponseDto']
+        }
+      }
+      /** @description Referral, or the Referral's Person, not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
         }
       }
     }

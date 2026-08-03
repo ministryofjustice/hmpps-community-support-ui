@@ -1,4 +1,21 @@
 {
+  "/": {
+    "pageHeader": "Community Support",
+    "tiles": [
+      {
+        "heading": "Make a referral",
+        "description": "Start a new referral for Community Support services.",
+        "href": "/referral/new/find-a-person",
+        "dataTestId": "make-referral-tile"
+      },
+      {
+        "heading": "View cases",
+        "description": "View your cases and other cases in progress.",
+        "href": "/cases-in-progress",
+        "dataTestId": "view-cases-tile"
+      }
+    ]
+  },
   "/referral/new/find-a-person": {
     "pageHeader": "Confirm this is the correct person for referral",
     "continueButtonText": "Continue",
@@ -37,17 +54,8 @@
         "href": "/cases-in-progress"
       }
     ],
-    "unassignedColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Date received"
-    ],
-    "inProgressColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Assigned to",
-      "Date received"
-    ],
+    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
+    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
     "noCasesMessage": "There are no {0} cases to view."
   },
   "/cases-in-progress": {
@@ -66,17 +74,8 @@
         "href": "/cases-in-progress"
       }
     ],
-    "unassignedColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Date received"
-    ],
-    "inProgressColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Assigned to",
-      "Date received"
-    ],
+    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
+    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
     "noCasesMessage": "There are no {0} cases to view."
   },
   "/referral-details/:id": {
@@ -179,15 +178,8 @@
         "href": "/change-log"
       }
     ],
-    "progressActiveColumnHeaders": [
-      "Date and time",
-      "Status",
-      "Action"
-    ],
-    "progressInactiveColumnHeaders": [
-      "Status",
-      "Action"
-    ],
+    "progressActiveColumnHeaders": ["Date and time", "Status", "Action"],
+    "progressInactiveColumnHeaders": ["Status", "Action"],
     "historySummary": "View ICS history"
   },
   "/ics-feedback/:id/did-session-take-place": {
@@ -201,7 +193,7 @@
     },
     "videoCallReasonLabel": "Why was this session not in person?",
     "phoneCallReasonLabel": "Why was this session not in person?",
-    "probationOfficeSelectBlankText": "Select probation office",
+    "probationOfficeSelectBlankText": "Select a probation office",
     "probationOfficeSelectLabel": "Select a probation office",
     "addressLine1Label": "Address line 1",
     "addressLine2Label": "Address line 2 (optional)",
@@ -453,7 +445,53 @@
     },
     "time": {
       "label": "What time does the session start?",
-      "hint": "Use the 12-hour clock, for example 11:30am or 3pm."
+      "hint": "Use the 12-hour clock, for example 11:30am or 3pm.",
+      "AMorPM": "AM or PM"
+    },
+    "howSessionTakePlace": {
+      "label": "How will the session take place?",
+      "hint": "Select one option.",
+      "radioItems": {
+        "phone": {
+          "text": "Phone call",
+          "label": "Why is this session not in person?"
+        },
+        "video": {
+          "text": "Video call",
+          "label": "Why is this session not in person?"
+        },
+        "prison": {
+          "text": "In-person meeting - prison establishment",
+          "label": "Select prison"
+        },
+        "probation": {
+          "text": "In-person meeting - probation office",
+          "label": "Select a probation office"
+        },
+        "somewhereElse": {
+          "text": "In-person meeting - somewhere else",
+          "addressLabels": {
+            "address1": "Address line 1",
+            "address2": "Address line 2 (optional)",
+            "townOrCity": "Town or city",
+            "county": "County (optional)",
+            "postcode": "Postcode"
+          }
+        }
+      }
+    },
+    "informed": {
+      "label": "How was {{ firstname }} informed about the session?",
+      "hint": "Select all that apply.",
+      "selectionItems": {
+        "phone": "Phone call",
+        "text": "Text message",
+        "email": "Email",
+        "other": {
+          "text": "Other",
+          "label": "Other method of contact"
+        }
+      }
     },
     "submitButtonText": "Save and continue",
     "submitHref": "/referral/{{ caseRef }}/appointment/schedule-ics",
@@ -467,7 +505,53 @@
     },
     "time": {
       "label": "What time does the session start?",
-      "hint": "Use the 12-hour clock, for example 11:30am or 3pm."
+      "hint": "Use the 12-hour clock, for example 11:30am or 3pm.",
+      "AMorPM": "AM or PM"
+    },
+    "howSessionTakePlace": {
+      "label": "How will the session take place?",
+      "hint": "Select one option.",
+      "radioItems": {
+        "phone": {
+          "text": "Phone call",
+          "label": "Why is this session not in person?"
+        },
+        "video": {
+          "text": "Video call",
+          "label": "Why is this session not in person?"
+        },
+        "prison": {
+          "text": "In-person meeting - prison establishment",
+          "label": "Select prison"
+        },
+        "probation": {
+          "text": "In-person meeting - probation office",
+          "label": "Select a probation office"
+        },
+        "somewhereElse": {
+          "text": "In-person meeting - somewhere else",
+          "addressLabels": {
+            "address1": "Address line 1",
+            "address2": "Address line 2 (optional)",
+            "townOrCity": "Town or city",
+            "county": "County (optional)",
+            "postcode": "Postcode"
+          }
+        }
+      }
+    },
+    "informed": {
+      "label": "How was {{ firstname }} informed about the session?",
+      "hint": "Select all that apply.",
+      "selectionItems": {
+        "phone": "Phone call",
+        "text": "Text message",
+        "email": "Email",
+        "other": {
+          "text": "Other",
+          "label": "Other method of contact"
+        }
+      }
     },
     "submitButtonText": "Save and continue",
     "submitHref": "/referral/{{ caseRef }}/ics-change-details",
@@ -497,15 +581,15 @@
         "subTasks": {
           "checkRiskInformation": {
             "text": "Check risk information",
-            "href": "/referral/new/check-risk-information"
+            "href": "/referral/task-list/view-risk-summary"
           },
           "selectPersonNeeds": {
             "text": "Select the person's needs",
-            "href": "/referral/new/select-person-needs"
+            "href": "/referral/task-list/select-person-needs"
           },
           "addSupportNeeds": {
             "text": "Add details of any additional support needs",
-            "href": "/referral/new/add-support-needs"
+            "href": "/referral/task-list/add-support-needs"
           }
         }
       },
@@ -529,10 +613,10 @@
       }
     }
   },
-  "/referral/task-list/:id/confirm-personal-details": {
+  "/referral/task-list/confirm-personal-details": {
     "pageHeader": "{{ name }}",
     "pageSubHeader": "Confirm personal details",
-    "backLink": "/referral/task-list/{{ id }}",
+    "backLink": "/referral/task-list",
     "defaultFieldValue": "Not available",
     "personalDetailsCard": {
       "heading": "Personal details",
@@ -562,8 +646,52 @@
       "mainAddressLabel": "Main address"
     },
     "warningText": "If this information is out of date or incorrect, you must update the information in NOMIS",
-    "buttonText": "Save and continue",
-    "postHref": "/referral/task-list/confirm-personal-details"
+    "buttonText": "Continue"
+  },
+  "/referral/task-list/view-risk-summary": {
+    "pageSubHeader": "OASys risk information",
+    "backLink": "/referral/task-list",
+    "crnLabel": "CRN",
+    "dateOfBirthLabel": "Date of birth",
+    "lastUpdatedLabel": "Last updated (OASys)",
+    "defaultFieldValue": "Not available",
+    "noConcernsText": "No concerns identified",
+    "dontKnowText": "Don't know",
+    "noAdditionalInformationText": "None",
+    "changeHref": "/referral/task-list/view-risk-summary",
+    "whoIsAtRiskCard": {
+      "heading": "Who is at risk",
+      "changeLinkText": "Change"
+    },
+    "natureOfRiskCard": {
+      "heading": "What is the nature of the risk",
+      "changeLinkText": "Change"
+    },
+    "riskImminenceCard": {
+      "heading": "When is the risk likely to be greatest",
+      "changeLinkText": "Change"
+    },
+    "selfHarmCard": {
+      "heading": "Concerns in relation to self-harm",
+      "changeLinkText": "Change"
+    },
+    "suicideCard": {
+      "heading": "Concerns in relation to suicide",
+      "changeLinkText": "Change"
+    },
+    "hostelSettingCard": {
+      "heading": "Concerns in relation to coping in a hostel setting",
+      "changeLinkText": "Change"
+    },
+    "vulnerabilityCard": {
+      "heading": "Concerns in relation to vulnerability",
+      "changeLinkText": "Change"
+    },
+    "additionalInformationCard": {
+      "heading": "Additional information",
+      "changeLinkText": "Change"
+    },
+    "buttonText": "Save and continue"
   },
   "/referral/task-list/additional-support-needs": {
     "header": "What does {{ firstName }} need support with to attend or take part in sessions?",
@@ -611,5 +739,14 @@
       }
     ],
     "defaultItemLabel": "{{ firstName }} does not need any additional support"
+  },
+  "/referral/task-list/needs-an-interpreter": {
+    "pageHeader": "Dose {{ name }} need an interpreter?",
+    "radioHeader": "What language does {{ name }} need ",
+    "yesOptionLabel": "Yes",
+    "yesCoditional": "What language does {{ name }} need an interpreter for?",
+    "noOptionLabel": "No",
+    "button": "Save and Continue",
+    "backlink": "/referral/task-list/additional-support-needs"
   }
 }

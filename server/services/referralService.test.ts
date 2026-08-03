@@ -4,6 +4,7 @@ import {
   AssignmentFailureDto,
   ReferralProgress,
   ReferralInformation,
+  CommunitySupportRiskInformationDto,
 } from '@community-support-api'
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
 import ReferralService from './referralService'
@@ -114,6 +115,26 @@ describe('Referral service tests', () => {
       const result = await referralService.getReferralInformation(caseReference, 'user1')
       expect(result).toStrictEqual(mockReferralInformation)
       expect(communitySupportApiClient.getReferralInformation).toHaveBeenCalledWith(caseReference, 'user1')
+    })
+  })
+
+  describe('saveRiskInformation', () => {
+    it('should save risk information via the API client', async () => {
+      const riskInformation: CommunitySupportRiskInformationDto = {
+        id: 'referral-uuid-1',
+        referralId: 'referral-uuid-1',
+        riskSummaryWhoIsAtRisk: 'Public',
+      }
+      communitySupportApiClient.saveRiskInformation.mockResolvedValue(riskInformation)
+
+      const result = await referralService.saveRiskInformation('referral-uuid-1', riskInformation, 'user1')
+
+      expect(result).toBe(riskInformation)
+      expect(communitySupportApiClient.saveRiskInformation).toHaveBeenCalledWith(
+        'referral-uuid-1',
+        riskInformation,
+        'user1',
+      )
     })
   })
 })

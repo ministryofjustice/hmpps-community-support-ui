@@ -1,7 +1,7 @@
 import { Factory } from 'fishery'
-import { TaskListContent } from '../../referral/taskList/TaskListViewModel'
+import { TaskListPageContent } from '../../referral/taskList/TaskListViewModel'
 
-class TaskListContentFactory extends Factory<TaskListContent> {}
+class TaskListContentFactory extends Factory<TaskListPageContent> {}
 
 export default TaskListContentFactory.define(({ transientParams }) => ({
   pageTitle: 'Make a referral - [service name]',
@@ -21,7 +21,7 @@ export default TaskListContentFactory.define(({ transientParams }) => ({
     referralInformation: {
       title: 'Referral information',
       subTasks: {
-        checkRiskInformation: { text: 'Check risk information', href: '/referral/new/check-risk-information' },
+        checkRiskInformation: { text: 'Check risk information', href: '/referral/task-list/view-risk-summary' },
         selectPersonNeeds: { text: `Select the person's needs`, href: '/referral/new/select-person-needs' },
         addSupportNeeds: {
           text: 'Add details of any additional support needs',
