@@ -4,7 +4,7 @@ import { ReferralDetailsResponseDto, ReferralUserAssignmentsResponse } from '@co
 import { differenceInYears } from 'date-fns'
 import { MojSubNavigation, MojSubNavigationItem } from '@moj-frontend'
 import PresenterBase from '../../presenter/presenterBase'
-import dateFormat from '../../utils/dateFormat'
+import dateFormat, { britishDateFormat } from '../../utils/dateFormat'
 import {
   AssignmentSuccessBanner,
   ContactDetailsCard,
@@ -136,6 +136,10 @@ export default class ReferralDetailsPresenter extends PresenterBase<ReferralDeta
     const assignedToValue = assignedToListIsPopulated
       ? assignedTo.map(user => createMailtoLink(user.fullName, user.emailAddress)).join('<br>')
       : cardContent.assignedToDefaultValue
+    const { targetServiceCompletionDate, targetServiceCompletionDateReason } = this.referralDetails
+    const completionDateValue = targetServiceCompletionDate
+      ? nonEmptyStringOrDefault(britishDateFormat(new Date(targetServiceCompletionDate)), defaultFieldValue)
+      : defaultFieldValue
     return {
       card: {
         title: { text: cardContent.heading },
@@ -157,6 +161,11 @@ export default class ReferralDetailsPresenter extends PresenterBase<ReferralDeta
                   href: this.assignReferalHref,
                 },
               ],
+        ),
+        govFrontendSummaryListRow(cardContent.targetServiceCompletionDateLabel, completionDateValue),
+        govFrontendSummaryListRow(
+          cardContent.targetServiceCompletionDateReasonLabel,
+          nonEmptyStringOrDefault(targetServiceCompletionDateReason, defaultFieldValue),
         ),
       ],
     }

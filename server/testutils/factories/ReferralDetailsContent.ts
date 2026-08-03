@@ -46,5 +46,7 @@ export default referralDetailsContentFactory.define(({ transientParams }) => ({
     assignedToDefaultValue: 'Unassigned',
     link: 'Assign to caseworker',
     linkChange: 'Change',
+    targetServiceCompletionDateLabel: 'What date does the service need to be completed by?',
+    targetServiceCompletionDateReasonLabel: 'Why does it need to be completed by this date?',
   },
 }))
