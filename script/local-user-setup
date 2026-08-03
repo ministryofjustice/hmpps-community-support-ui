@@ -36,6 +36,30 @@
 
 set -euo pipefail
 
+required_commands=(curl python3 docker)
+missing_commands=()
+
+for command in "${required_commands[@]}"; do
+  if ! command -v "$command" > /dev/null 2>&1; then
+    missing_commands+=("$command")
+  fi
+done
+
+if (( ${#missing_commands[@]} > 0 )); then
+  printf 'ERROR: missing required command(s): %s\n' "${missing_commands[*]}" >&2
+  exit 1
+fi
+
+if ! docker compose version > /dev/null 2>&1; then
+  echo "ERROR: Docker Compose v2 is required. Install or enable the Docker Compose plugin." >&2
+  exit 1
+fi
+
+if ! docker info > /dev/null 2>&1; then
+  echo "ERROR: Docker is not running or is not accessible to the current user." >&2
+  exit 1
+fi
+
 USERNAME="${1:-local.tester@digital.justice.gov.uk}"
 ROLES_CSV="${2:-COMMUNITY_SUPPORT_REFERRER,COMMUNITY_SUPPORT_PROVIDER}"
 PASSWORD="password123456"
