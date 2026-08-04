@@ -13,23 +13,23 @@
         },
         "jsonBody": [
           {
-            "agencyId": "ALI",
-            "description": "Albany (HMP)",
-            "longDescription": "HMP ALBANY",
+            "agencyId": "PR1",
+            "description": "Prison 1",
+            "longDescription": "PRISON 1",
             "agencyType": "INST",
             "active": true
           },
           {
-            "agencyId": "ACI",
-            "description": "Altcourse (HMP)",
-            "longDescription": "HMP ALTCOURSE",
+            "agencyId": "PR2",
+            "description": "Prison 2",
+            "longDescription": "PRISON 2",
             "agencyType": "INST",
             "active": true
           },
           {
-            "agencyId": "ASI",
-            "description": "Ashfield (HMP)",
-            "longDescription": "HMP & YOI ASHFIELD",
+            "agencyId": "PR3",
+            "description": "Prison 3",
+            "longDescription": "PRISON 3",
             "agencyType": "INST",
             "active": true
           }

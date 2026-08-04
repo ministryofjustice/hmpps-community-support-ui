@@ -667,7 +667,7 @@ test.describe('Confirm ICS Page', () => {
         RequestedBy.PROBATION_PRACTITIONER,
         'reasons',
         {
-          probationOffice: 'Derby: Derwent Centre',
+          probationOffice: 'Derby: Probation Centre 1',
           informedOther: 'Face to face',
         },
       )
@@ -678,7 +678,7 @@ test.describe('Confirm ICS Page', () => {
         await expect(confirmIcsPage.startTimeRow).toContainText('1:00pm')
         await expect(confirmIcsPage.methodRow).toContainText('In person')
         await expect(confirmIcsPage.notInPersonReasonRow).not.toBeVisible()
-        await expect(confirmIcsPage.locationRow).toContainText('Derby: Derwent Centre')
+        await expect(confirmIcsPage.locationRow).toContainText('Derby: Probation Centre 1')
         await expect(confirmIcsPage.sessionCommunicationRow).toContainText('Face to face')
         await expect(confirmIcsPage.sessionCommunicationRow).toContainText('Text message')
         await expect(confirmIcsPage.changeDetailsSummary).toBeVisible()

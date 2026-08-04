@@ -25,16 +25,16 @@ describe('PrisonApiClient tests', () => {
     it('should return a list of prisons on a 200 response', () => {
       const mockPrisons = [
         {
-          agencyId: 'ALI',
-          description: 'Albany (HMP)',
-          longDescription: 'HMP ALBANY',
+          agencyId: 'PR1',
+          description: 'Prison 1',
+          longDescription: 'PRISON 1',
           agencyType: 'INST',
           active: true,
         },
         {
-          agencyId: 'ACI',
-          description: 'Altcourse (HMP)',
-          longDescription: 'HMP ALTCOURSE',
+          agencyId: 'PR2',
+          description: 'Prison 2',
+          longDescription: 'PRISON 2',
           agencyType: 'INST',
           active: true,
         },
