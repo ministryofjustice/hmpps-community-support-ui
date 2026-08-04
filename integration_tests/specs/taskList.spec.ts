@@ -91,7 +91,7 @@ test.describe('Task List Journey', () => {
       await page.getByRole('button', { name: 'Continue' }).click()
     })
     await test.step('on task list page', async () => {
-      const taskListPom = await TaskListPage.verifyOnPage(page)
+      await TaskListPage.verifyOnPage(page)
     })
   })
 

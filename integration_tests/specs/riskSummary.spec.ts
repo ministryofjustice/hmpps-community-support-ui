@@ -7,7 +7,7 @@ import communitySupport from '../mockApis/communitySupport'
 import { getMatchingRequests } from '../mockApis/wiremock'
 import RiskSummaryPage from '../pages/RiskSummaryPage'
 import TaskListPage from '../pages/TaskListPage'
-import RiskSummaryErrorPage from '../pages/ErrorPage'
+import RiskSummaryErrorPage from '../pages/errorPage'
 
 test.describe('Risk Summary Page', () => {
   const mockReferralId = randomUUID()
