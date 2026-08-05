@@ -1,5 +1,6 @@
 import type { SuperAgentRequest } from 'superagent'
 import {
+  AdditionalSupportNeedsDto,
   AppointmentIcsResponse,
   ConfirmPersonDetailsBffDto,
   CommunitySupportRiskDto,
@@ -565,6 +566,23 @@ export default {
         status: httpStatus,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: icsFeedbackSubmissionResponse,
+        transformers: ['response-template'],
+      },
+    }),
+  stubGetAdditionalSupportNeeds: (
+    referralId: string,
+    data: AdditionalSupportNeedsDto,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: `/community-support/bff/draft-referral/additional-support-needs/${referralId}`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: data,
         transformers: ['response-template'],
       },
     }),
