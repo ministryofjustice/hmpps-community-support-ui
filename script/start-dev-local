@@ -1,0 +1,16 @@
+#!/bin/sh
+
+# script/start-dev-local: Start UI dependencies plus the latest published
+# hmpps-community-support-api image (docker-compose-api-ghcr.yml), then run the UI itself
+# on the host with hot reload. Use this for UI-only feature work when you don't need a
+# local API checkout.
+
+set -e
+
+cd "$(dirname "$0")/.."
+
+echo "==> Starting dependencies + latest published API (docker-compose-api-ghcr.yml)..."
+docker compose -f docker-compose-api-ghcr.yml up -d
+
+echo "==> Starting the UI with hot reload on http://localhost:3000 ..."
+node esbuild/esbuild --watch --env local.env

@@ -48,10 +48,6 @@ services:
     networks:
       - hmpps
     container_name: hmpps-manage-users-community-support-ui-local
-    depends_on:
-      - hmpps-auth
-      - nomis-user-roles-api
-      - hmpps-external-users-api
     ports:
       - "8096:8096"
     healthcheck:
@@ -65,6 +61,51 @@ services:
       - NOMIS_ENDPOINT_URL=http://nomis-user-roles-api:8097
       - DELIUS_ENDPOINT_URL=http://wiremock:8080/delius
       - AUTHORIZATION_SERVER_TOKEN_ENDPOINT_URL=http://hmpps-auth:8090/auth/oauth/token
+      # the `dev` profile's own application-dev.yml hardcodes a datasource pointing at
+      # localhost:5433/manage-users-db - override to point at our own db container instead
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://manage-users-db:5432/manage-users-db
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=admin_password
+      - HMPPS_SQS_PROVIDER=localstack
+      - HMPPS_SQS_LOCALSTACKURL=http://localstack:4566
+      # each downstream integration defaults to disabled - must be explicitly enabled with
+      # matching client_credentials clients registered in hmpps-auth's own seed data
+      - HMPPS_AUTH_ENABLED=true
+      - HMPPS_AUTH_CLIENT_CLIENT-ID=hmpps-manage-users-api
+      - HMPPS_AUTH_CLIENT_CLIENT-SECRET=clientsecret
+      - EXTERNAL_USERS_ENABLED=true
+      - EXTERNAL_USERS_CLIENT_CLIENT-ID=manage-users-api-ext-users-client
+      - EXTERNAL_USERS_CLIENT_CLIENT-SECRET=clientsecret
+      - NOMIS_ENABLED=true
+      - NOMIS_CLIENT_CLIENT-ID=manage-users-api-nomis-client
+      - NOMIS_CLIENT_CLIENT-SECRET=clientsecret
+      - DELIUS_ENABLED=true
+      - DELIUS_CLIENT_CLIENT-ID=manage-users-api-delius-client
+      - DELIUS_CLIENT_CLIENT-SECRET=clientsecret
+    depends_on:
+      hmpps-auth:
+        condition: service_started
+      nomis-user-roles-api:
+        condition: service_started
+      hmpps-external-users-api:
+        condition: service_started
+      manage-users-db:
+        condition: service_healthy
+
+  manage-users-db:
+    image: postgres:18
+    networks:
+      - hmpps
+    container_name: manage-users-db-community-support-ui-local
+    restart: always
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_PASSWORD=admin_password
+      - POSTGRES_USER=admin
+      - POSTGRES_DB=manage-users-db
+    healthcheck:
+      test: pg_isready -d manage-users-db -U admin
 
   nomis-user-roles-api:
     image: ghcr.io/ministryofjustice/nomis-user-roles-api:latest
