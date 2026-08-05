@@ -1,0 +1,18 @@
+#!/bin/sh
+
+# script/start-dev-api-feature: Start UI dependencies only (docker-compose-localapi.yml) -
+# hmpps-community-support-api is expected to be run separately, e.g. from IntelliJ with the
+# `local` Spring profile - then run the UI itself on the host with hot reload. Use this when
+# developing a feature across both repos at once.
+
+set -e
+
+cd "$(dirname "$0")/.."
+
+echo "==> Starting dependencies only (docker-compose-localapi.yml)..."
+echo "    Make sure hmpps-community-support-api is running separately"
+echo "    (e.g. IntelliJ, 'local' Spring profile, listening on :8080)."
+docker compose -f docker-compose-localapi.yml up -d
+
+echo "==> Starting the UI with hot reload on http://localhost:3000 ..."
+node esbuild/esbuild --watch --env api-feature.env
