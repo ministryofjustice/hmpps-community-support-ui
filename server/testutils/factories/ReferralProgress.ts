@@ -9,6 +9,14 @@ const referralId = randomUUID()
 export default ReferralProgressFactory.define<ReferralProgress>(({ sequence }) => ({
   referralId,
   fullName: 'Person Name',
+  actionPlanStatus: {
+    actionPlanId: randomUUID(),
+    status: {
+      submitted: false,
+      statusText: 'In progress',
+      tag: 'govuk-tag--blue',
+    },
+  },
   appointments: [
     {
       appointmentIcsId: `app-${sequence}`,

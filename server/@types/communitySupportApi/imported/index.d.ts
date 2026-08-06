@@ -123,6 +123,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/draft-referral/person-needs/{referralId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    /** Update criminogenic needs for a referral */
+    patch: operations['updateCriminogenicNeeds']
+    trace?: never
+  }
   '/draft-referral/needs-interpreter/{referralId}': {
     parameters: {
       query?: never
@@ -421,6 +438,23 @@ export interface paths {
     }
     /** Get ROSH risks for a referral */
     get: operations['getRoshRisksByReferralId']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/draft-referral/person-needs/{referralId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get criminogenic needs for a referral */
+    get: operations['getPersonCriminogenicNeeds']
     put?: never
     post?: never
     delete?: never
@@ -783,19 +817,64 @@ export interface components {
       sessionCommunications?: string[] | null
       personFirstName: string
     }
+    CriminogenicNeedsRequest: {
+      hasAccommodationNeeds?: boolean | null
+      accommodationDetails?: string | null
+      hasEmploymentEducationNeeds?: boolean | null
+      employmentEducationDetails?: string | null
+      hasFinancialNeeds?: boolean | null
+      financialDetails?: string | null
+      hasPersonalRelationshipsCommunityNeeds?: boolean | null
+      personalRelationshipsCommunityDetails?: string | null
+      hasDrugUseNeeds?: boolean | null
+      drugUseDetails?: string | null
+      hasAlcoholUseNeeds?: boolean | null
+      alcoholUseDetails?: string | null
+      hasHealthWellbeingNeeds?: boolean | null
+      healthWellbeingDetails?: string | null
+      hasThinkingBehavioursAttitudeNeeds?: boolean | null
+      thinkingBehavioursAttitudeDetails?: string | null
+    }
+    RefereeNameDto: {
+      firstName: string
+      middleName?: string | null
+      lastName: string
+    }
+    ReferralCriminogenicNeedsDto: {
+      /** Format: uuid */
+      id: string
+      /** Format: uuid */
+      referralId: string
+      refereeName: components['schemas']['RefereeNameDto']
+      hasAccommodationNeeds?: boolean | null
+      accommodationDetails?: string | null
+      hasEmploymentEducationNeeds?: boolean | null
+      employmentEducationDetails?: string | null
+      hasFinancialNeeds?: boolean | null
+      financialDetails?: string | null
+      hasPersonalRelationshipsCommunityNeeds?: boolean | null
+      personalRelationshipsCommunityDetails?: string | null
+      hasDrugUseNeeds?: boolean | null
+      drugUseDetails?: string | null
+      hasAlcoholUseNeeds?: boolean | null
+      alcoholUseDetails?: string | null
+      hasHealthWellbeingNeeds?: boolean | null
+      healthWellbeingDetails?: string | null
+      hasThinkingBehavioursAttitudeNeeds?: boolean | null
+      thinkingBehavioursAttitudeDetails?: string | null
+      /** Format: date-time */
+      updatedAt: string
+      /** Format: uuid */
+      updatedBy: string
+    }
     NeedsInterpreterRequest: {
       needsInterpreter?: boolean | null
       language?: string | null
     }
     NeedsInterpreterBffResponseDto: {
-      refereeName: components['schemas']['RefereeName']
+      refereeName: components['schemas']['RefereeNameDto']
       language?: components['schemas']['Selection'] | null
       needsInterpreter?: boolean | null
-    }
-    RefereeName: {
-      firstName: string
-      middleName?: string | null
-      lastName: string
     }
     Selection: {
       selected: boolean
@@ -813,7 +892,7 @@ export interface components {
       needsAdditionalSupport?: boolean | null
     }
     AdditionalSupportNeedsBffResponseDto: {
-      refereeName: components['schemas']['RefereeName']
+      refereeName: components['schemas']['RefereeNameDto']
       physicalHealth: components['schemas']['Selection']
       mentalEmotionalHealth: components['schemas']['Selection']
       neurodiversity: components['schemas']['Selection']
@@ -939,6 +1018,16 @@ export interface components {
       referralDate: string
       assignedTo: components['schemas']['CaseWorkerDto'][]
     }
+    ActionPlanStatus: {
+      submitted: boolean
+      statusText: string
+      tag?: string | null
+    }
+    ActionPlanStatusDto: {
+      /** Format: uuid */
+      actionPlanId: string
+      status: components['schemas']['ActionPlanStatus']
+    }
     ReferralAppointmentHistoryDto: {
       /** Format: uuid */
       appointmentIcsId: string
@@ -956,6 +1045,7 @@ export interface components {
       referralId: string
       fullName: string
       appointments: components['schemas']['ReferralAppointmentHistoryDto'][]
+      actionPlanStatus: components['schemas']['ActionPlanStatusDto']
     }
     ProbationOffice: {
       /** Format: int32 */
@@ -1388,6 +1478,41 @@ export interface operations {
         }
         content: {
           'application/json': unknown
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  updateCriminogenicNeeds: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CriminogenicNeedsRequest']
+      }
+    }
+    responses: {
+      /** @description Criminogenic needs information updated */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ReferralCriminogenicNeedsDto']
         }
       }
       /** @description Referral not found */
@@ -1956,6 +2081,37 @@ export interface operations {
         }
       }
       /** @description Referral not found, or ROSH risks not found for the referral's CRN */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getPersonCriminogenicNeeds: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Referral criminogenic needs data found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ReferralCriminogenicNeedsDto']
+        }
+      }
+      /** @description Referral criminogenic needs data not found */
       404: {
         headers: {
           [name: string]: unknown
