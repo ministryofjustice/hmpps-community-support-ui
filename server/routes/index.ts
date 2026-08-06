@@ -189,7 +189,10 @@ export default function routes({
 
   get('/referral/task-list', (req, res) => referralController.showTaskList(req, res))
 
-  get('/referral/:id', (req, res, next) => referralController.showReferralPage(req, res, next))
+  get('/referral/task-list/select-person-needs', (req, res) => referralController.showPersonNeeds(req, res))
 
+  post('/referral/task-list/select-person-needs', (req, res) => referralController.recordPersonNeeds(req, res))
+
+  get('/referral/:id', (req, res, next) => referralController.showReferralPage(req, res, next))
   return router
 }

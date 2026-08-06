@@ -10,6 +10,8 @@ import {
   NeedsInterpreterBffResponseDto,
   CommunitySupportRiskDto,
   CommunitySupportRiskInformationDto,
+  type ReferralCriminogenicNeedsDto,
+  type CriminogenicNeedsRequest,
 } from '@community-support-api'
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
 
@@ -80,7 +82,19 @@ export default class ReferralService {
     return this.communitySupportApiClient.saveRiskInformation(referralId, riskInformation, username)
   }
 
-  savePersonalDetailsConfirmed(draftReferalId: string, username: string): Promise<void> {
-    return this.communitySupportApiClient.savePersonalDetailsConfirmed(draftReferalId, username)
+  savePersonalDetailsConfirmed(draftReferralId: string, username: string): Promise<void> {
+    return this.communitySupportApiClient.savePersonalDetailsConfirmed(draftReferralId, username)
+  }
+
+  getPersonNeeds(draftReferralId: string, username: string): Promise<ReferralCriminogenicNeedsDto> {
+    return this.communitySupportApiClient.getPersonNeeds(draftReferralId, username)
+  }
+
+  savePersonNeeds(
+    draftReferralId: string,
+    personNeeds: CriminogenicNeedsRequest,
+    username: string,
+  ): Promise<ReferralCriminogenicNeedsDto> {
+    return this.communitySupportApiClient.savePersonNeeds(draftReferralId, personNeeds, username)
   }
 }

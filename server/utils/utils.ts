@@ -4,6 +4,7 @@ import {
   GovukFrontendInput,
   GovukFrontendLabel,
   GovukFrontendSelect,
+  GovukFrontendTextarea,
 } from '@govuk-frontend'
 
 const properCase = (word: string): string =>
@@ -85,6 +86,17 @@ export const buildInput = ({ name, label, value, hint, errorMessage }: GovukFron
   ${errorMessage ? buildInputErrors(name, errorMessage) : ''}
   <input class="govuk-input" id="${name}" name="${name}" type="text" value="${value || ''}">
     </div>`
+}
+
+export const buildTextarea = ({ name, label, value, hint, errorMessage }: GovukFrontendTextarea) => {
+  return `<div class="govuk-form-group">
+    <h1 class="govuk-label-wrapper">
+      ${buildLabel(name, label)}
+    </h1>
+    ${hint ? buildHint(hint) : ''}
+    ${errorMessage ? buildInputErrors(name, errorMessage) : ''}
+    <textarea class="govuk-textarea" id="${name}" name="${name}" type="text" rows="5" spellcheck="false" >${escapeHtml(value) || ''}</textarea>
+  </div>`
 }
 
 export const buildSelect = ({ name, label, hint, errorMessage, items }: GovukFrontendSelect): string => {

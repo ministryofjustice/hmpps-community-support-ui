@@ -41,6 +41,8 @@ type ArnsRiskConcernsToSelfDto = components['schemas']['ArnsRiskConcernsToSelfDt
 type ArnsRiskDto = components['schemas']['ArnsRiskDto']
 type ArnsRiskRoshSummaryDto = components['schemas']['ArnsRiskRoshSummaryDto']
 type CommunitySupportRiskInformationDto = components['schemas']['CommunitySupportRiskInformationDto']
+type ReferralCriminogenicNeedsDto = components['schemas']['ReferralCriminogenicNeedsDto']
+type CriminogenicNeedsRequest = components['schemas']['CriminogenicNeedsRequest']
 
 export type {
   Referral,
@@ -83,4 +85,6 @@ export type {
   ArnsRiskDto,
   ArnsRiskRoshSummaryDto,
   CommunitySupportRiskInformationDto,
+  ReferralCriminogenicNeedsDto,
+  CriminogenicNeedsRequest,
 }
