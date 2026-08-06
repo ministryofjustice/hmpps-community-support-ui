@@ -1,7 +1,6 @@
 import { Response } from 'express'
 import {
   GovukFrontendNotificationBanner,
-  GovukFrontendSummaryList,
   GovukFrontendTable,
   GovukFrontendTableHeadElement,
   GovukFrontendTableRow,
@@ -139,7 +138,7 @@ export default class ReferralProgressPresenter extends PresenterBase<
       historySummary: content.historySummary,
       icsAppointmentHistoryTable: this.buildIcsAppointmentHistoryTable(content),
       actionPlanTitle: content.actionPlanTitle,
-      actionPlanSummary: this.buildActionPlanSummary(content),
+      actionPlanTable: this.buildActionPlanTable(content),
     }
   }
 
@@ -189,7 +188,7 @@ export default class ReferralProgressPresenter extends PresenterBase<
         'data-module': 'moj-sortable-table',
         'data-testid': 'referral-progress-table',
       },
-      head: this.buildIcsAppointmentColumnHeaders(this.tableHeaders(headers, showActions)),
+      head: this.buildColumnHeaders(this.tableHeaders(headers, showActions)),
       rows: hasAppointment ? this.buildInProgressTableRow(showActions) : this.buildNotScheduledRow(showActions),
     }
   }
@@ -200,34 +199,32 @@ export default class ReferralProgressPresenter extends PresenterBase<
         'data-module': 'moj-sortable-table',
         'data-testid': 'referral-history-table',
       },
-      head: this.buildIcsAppointmentColumnHeaders(content.progressActiveColumnHeaders),
+      head: this.buildColumnHeaders(content.progressActiveColumnHeaders),
       rows: this.buildAppointmentHistoryTableRows(),
     }
   }
 
-  private buildActionPlanSummary(content: ReferralProgressContent): GovukFrontendSummaryList {
+  private buildActionPlanTable(content: ReferralProgressContent): GovukFrontendTable {
     const statusText = this.referralProgress.actionPlanStatus?.status?.statusText ?? ''
     const statusTag = this.referralProgress.actionPlanStatus?.status?.tag
     const statusTagHtml = statusTag ? `<strong class="govuk-tag ${statusTag}">${statusText}</strong>` : statusText
+    const actionPlanLink = `/referral/${this.caseReference}/action-plan`
 
     return {
       attributes: {
-        'data-testid': 'action-plan-summary',
+        'data-testid': 'action-plan-table',
       },
+      head: this.buildColumnHeaders([content.actionPlanStatusLabel, content.actionPlanActionsLabel]),
       rows: [
-        {
-          key: { text: content.actionPlanStatusLabel },
-          value: { text: statusText },
-        },
-        {
-          key: { text: content.actionPlanTagLabel },
-          value: { html: statusTagHtml },
-        },
+        [
+          { html: statusTagHtml },
+          { html: `<a href="${actionPlanLink}" class="govuk-link">${content.actionPlanLinkText}</a>` },
+        ],
       ],
     }
   }
 
-  private buildIcsAppointmentColumnHeaders(items: string[]): GovukFrontendTableHeadElement[] {
+  private buildColumnHeaders(items: string[]): GovukFrontendTableHeadElement[] {
     return items.map(header => ({ text: header }))
   }
 

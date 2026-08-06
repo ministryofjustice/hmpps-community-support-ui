@@ -142,9 +142,15 @@ test.describe('Referral Progress Page', () => {
 
     await test.step('I can see the Action plan section and summary list', async () => {
       await expect(referralProgressPage.actionPlanTitle).toBeVisible()
-      await expect(referralProgressPage.actionPlanSummary).toContainText('Status')
-      await expect(referralProgressPage.actionPlanSummary).toContainText('In progress')
-      await expect(referralProgressPage.actionPlanSummary.locator('.govuk-tag.govuk-tag--blue')).toContainText(
+      await expect(referralProgressPage.actionPlanTable).toContainText('Status')
+      await expect(referralProgressPage.actionPlanTable).toContainText('Actions')
+      await expect(referralProgressPage.actionPlanTable).toContainText('In progress')
+      await expect(referralProgressPage.actionPlanLink).toHaveText('View action plan')
+      await expect(referralProgressPage.actionPlanLink).toHaveAttribute(
+        'href',
+        `/referral/${caseReference}/action-plan`,
+      )
+      await expect(referralProgressPage.actionPlanTable.locator('.govuk-tag.govuk-tag--blue')).toContainText(
         'In progress',
       )
     })

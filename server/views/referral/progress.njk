@@ -4,7 +4,6 @@
 {% from "moj/components/sub-navigation/macro.njk" import mojSubNavigation %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/details/macro.njk" import govukDetails %}
-{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 
 {% set pageTitle = "Referral progress – " + applicationName %}
 {% set mainClasses = "govuk-body" %}
@@ -36,5 +35,5 @@
   {% endif %}
 
   <h3 class="govuk-heading-s">{{ content.actionPlanTitle }}</h3>
-  {{ govukSummaryList(content.actionPlanSummary) }}
+  {{ govukTable(content.actionPlanTable) }}
 {% endblock %}

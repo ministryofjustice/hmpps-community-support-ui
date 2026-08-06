@@ -165,7 +165,8 @@
     "progressSubNavTitle": "Progress",
     "actionPlanTitle": "Action plan",
     "actionPlanStatusLabel": "Status",
-    "actionPlanTagLabel": "Tag",
+    "actionPlanActionsLabel": "Actions",
+    "actionPlanLinkText": "View action plan",
     "subNavItems": [
       {
         "id": "caseDetails",

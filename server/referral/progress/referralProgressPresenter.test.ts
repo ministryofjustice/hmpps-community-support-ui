@@ -16,7 +16,8 @@ describe('ReferralProgressPresenter', () => {
     progressSubNavTitle: 'Progress',
     actionPlanTitle: 'Action plan',
     actionPlanStatusLabel: 'Status',
-    actionPlanTagLabel: 'Tag',
+    actionPlanActionsLabel: 'Actions',
+    actionPlanLinkText: 'View action plan',
     subNavItems: [],
     progressActiveColumnHeaders: ['Date and time', 'Status', 'Action'],
     progressInactiveColumnHeaders: ['Status', 'Action'],
@@ -74,13 +75,12 @@ describe('ReferralProgressPresenter', () => {
       const viewModel = presenter.buildViewModel(mockResponse)
 
       expect(viewModel.actionPlanTitle).toBe('Action plan')
-      expect(viewModel.actionPlanSummary.rows[0]).toEqual({
-        key: { text: 'Status' },
-        value: { text: 'In progress' },
-      })
-      expect(viewModel.actionPlanSummary.rows[1].key).toEqual({ text: 'Tag' })
-      expect(viewModel.actionPlanSummary.rows[1].value.html).toContain('govuk-tag govuk-tag--blue')
-      expect(viewModel.actionPlanSummary.rows[1].value.html).toContain('In progress')
+      expect(viewModel.actionPlanTable.head).toEqual([{ text: 'Status' }, { text: 'Actions' }])
+      expect(viewModel.actionPlanTable.rows).toHaveLength(1)
+      expect(viewModel.actionPlanTable.rows[0][0].html).toContain('govuk-tag govuk-tag--blue')
+      expect(viewModel.actionPlanTable.rows[0][0].html).toContain('In progress')
+      expect(viewModel.actionPlanTable.rows[0][1].html).toContain('View action plan')
+      expect(viewModel.actionPlanTable.rows[0][1].html).toContain(`/referral/${caseReference}/action-plan`)
     })
   })
 
