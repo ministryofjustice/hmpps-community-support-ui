@@ -43,7 +43,7 @@ export default class ReferralProgressPage extends AbstractPage {
     this.header = page.locator('h1')
     this.subNavBar = page.locator('.moj-sub-navigation__list')
     this.subHeader = page.locator('h2')
-    this.icsTitle = page.locator('h3')
+    this.icsTitle = page.getByRole('heading', { name: 'Initial contact session (ICS)', level: 3 })
     this.backLink = page.getByRole('link', { name: 'Back', exact: true })
     this.scheduleSessionLink = page.getByRole('link', { name: 'Schedule session', exact: true })
     this.viewOrChangeDetailsLink = page.getByRole('link', { name: 'View details', exact: true })
