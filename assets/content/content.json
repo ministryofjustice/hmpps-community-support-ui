@@ -163,6 +163,9 @@
   "/progress/:id": {
     "pageHeader": "Referral for",
     "progressSubNavTitle": "Progress",
+    "actionPlanTitle": "Action plan",
+    "actionPlanStatusLabel": "Status",
+    "actionPlanTagLabel": "Tag",
     "subNavItems": [
       {
         "id": "caseDetails",

@@ -1,6 +1,7 @@
 import { Response } from 'express'
 import {
   GovukFrontendNotificationBanner,
+  GovukFrontendSummaryList,
   GovukFrontendTable,
   GovukFrontendTableHeadElement,
   GovukFrontendTableRow,
@@ -137,6 +138,8 @@ export default class ReferralProgressPresenter extends PresenterBase<
       icsAppointmentTable: this.buildIcsAppointmentTable(content, !!latestAppointment),
       historySummary: content.historySummary,
       icsAppointmentHistoryTable: this.buildIcsAppointmentHistoryTable(content),
+      actionPlanTitle: content.actionPlanTitle,
+      actionPlanSummary: this.buildActionPlanSummary(content),
     }
   }
 
@@ -199,6 +202,28 @@ export default class ReferralProgressPresenter extends PresenterBase<
       },
       head: this.buildIcsAppointmentColumnHeaders(content.progressActiveColumnHeaders),
       rows: this.buildAppointmentHistoryTableRows(),
+    }
+  }
+
+  private buildActionPlanSummary(content: ReferralProgressContent): GovukFrontendSummaryList {
+    const statusText = this.referralProgress.actionPlanStatus?.status?.statusText ?? ''
+    const statusTag = this.referralProgress.actionPlanStatus?.status?.tag
+    const statusTagHtml = statusTag ? `<strong class="govuk-tag ${statusTag}">${statusText}</strong>` : statusText
+
+    return {
+      attributes: {
+        'data-testid': 'action-plan-summary',
+      },
+      rows: [
+        {
+          key: { text: content.actionPlanStatusLabel },
+          value: { text: statusText },
+        },
+        {
+          key: { text: content.actionPlanTagLabel },
+          value: { html: statusTagHtml },
+        },
+      ],
     }
   }
 

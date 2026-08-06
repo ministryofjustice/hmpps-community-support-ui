@@ -139,6 +139,15 @@ test.describe('Referral Progress Page', () => {
       await expect(referralProgressPage.icsTitle).toHaveText('Initial contact session (ICS)')
       await expect(referralProgressPage.icsTable.locator).toBeVisible()
     })
+
+    await test.step('I can see the Action plan section and summary list', async () => {
+      await expect(referralProgressPage.actionPlanTitle).toBeVisible()
+      await expect(referralProgressPage.actionPlanSummary).toContainText('Status')
+      await expect(referralProgressPage.actionPlanSummary).toContainText('In progress')
+      await expect(referralProgressPage.actionPlanSummary.locator('.govuk-tag.govuk-tag--blue')).toContainText(
+        'In progress',
+      )
+    })
   })
 
   const expectNotScheduledState = async (referralProgressPage: ReferralProgressPage) => {
