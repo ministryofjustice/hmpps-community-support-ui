@@ -19,6 +19,14 @@ export default function buildReferralProgress(
   return {
     referralId,
     fullName: 'Test User',
+    actionPlanStatus: {
+      actionPlanId: randomUUID(),
+      status: {
+        submitted: false,
+        statusText: 'In progress',
+        tag: 'govuk-tag--blue',
+      },
+    },
     appointments: appointments.map((appointment, appIndex) => {
       const appointmentIcsId = appointment.appointmentIcsId ?? `app-${appIndex + 1}`
 
