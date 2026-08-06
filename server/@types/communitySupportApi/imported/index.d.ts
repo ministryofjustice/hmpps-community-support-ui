@@ -191,6 +191,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/bff/referral/{referralReference}/action-plan': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get the Action Plan summary information associated with a Referral */
+    get: operations['getActionPlanSummary']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/bff/referral/{caseReference}/ics_appointment_feedback_details': {
     parameters: {
       query?: never
@@ -916,6 +933,19 @@ export interface components {
       addDetailsOfAnyAdditionalSupportNeedsCompleted: components['schemas']['TaskListStatusItem']
       addDetailsOfMainPointOfContactCompleted: components['schemas']['TaskListStatusItem']
     }
+    ActionPlanSummaryDto: {
+      personDetails: components['schemas']['ActionPlanSummaryPersonDetails']
+      needs: components['schemas']['ActionPlanSummaryNeed'][]
+    }
+    ActionPlanSummaryNeed: {
+      /** Format: uuid */
+      id: string
+      label: string
+      outcomes: string[]
+    }
+    ActionPlanSummaryPersonDetails: {
+      fullName: string
+    }
     AppointmentDetailsDto: {
       /** @enum {string|null} */
       method?: 'PHONE_CALL' | 'VIDEO_CALL' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION' | null
@@ -1614,6 +1644,37 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['TaskListStatusResponseDto']
+        }
+      }
+    }
+  }
+  getActionPlanSummary: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralReference: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Action Plan, and Referral, found - data returned */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ActionPlanSummaryDto']
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
         }
       }
     }
