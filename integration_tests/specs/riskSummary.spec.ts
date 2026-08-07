@@ -91,13 +91,25 @@ test.describe('Risk Summary Page', () => {
     await expect(riskSummaryPage.rowByHeading('Who is at risk')).toContainText(
       'Public, known adults and staff are at risk.',
     )
-    await expect(riskSummaryPage.rowByHeading('Risk of self-harm')).toContainText(`Don't know`)
-    await expect(riskSummaryPage.rowByHeading('Risk of suicide')).not.toContainText('Yes')
-    await expect(riskSummaryPage.rowByHeading('Risk of suicide')).toContainText(
+    // selfHarm has no concerns text in the mock data, so only the OASys indicator badge is shown.
+    await expect(riskSummaryPage.rowIndicator('Risk of self-harm')).toHaveText(`Don't know`)
+    await expect(riskSummaryPage.rowContent('Risk of self-harm')).toHaveCount(0)
+
+    // suicide has concerns text, so only that text is shown - the 'Yes' indicator badge is not rendered.
+    await expect(riskSummaryPage.rowIndicator('Risk of suicide')).toHaveCount(0)
+    await expect(riskSummaryPage.rowContent('Risk of suicide')).toHaveText(
       'Expressed suicidal ideation during last supervision.',
     )
-    await expect(riskSummaryPage.rowByHeading('Concerns in relation to coping in a hostel setting')).toContainText('No')
-    await expect(riskSummaryPage.rowByHeading('Concerns in relation to vulnerability')).not.toContainText('Yes')
+
+    // hostelSetting has no concerns text in the mock data, so only the OASys indicator badge is shown.
+    await expect(riskSummaryPage.rowIndicator('Concerns in relation to coping in a hostel setting')).toHaveText('No')
+    await expect(riskSummaryPage.rowContent('Concerns in relation to coping in a hostel setting')).toHaveCount(0)
+
+    // vulnerability has concerns text, so only that text is shown - the 'Yes' indicator badge is not rendered.
+    await expect(riskSummaryPage.rowIndicator('Concerns in relation to vulnerability')).toHaveCount(0)
+    await expect(riskSummaryPage.rowContent('Concerns in relation to vulnerability')).toHaveText(
+      'Mental health deterioration noted by GP.',
+    )
     await expect(riskSummaryPage.rowByHeading('Additional information')).toContainText(
       'Known to associate with a co-defendant in the local area.',
     )

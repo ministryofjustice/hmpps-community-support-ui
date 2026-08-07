@@ -35,6 +35,14 @@ export default class RiskSummaryPage extends AbstractPage {
     return this.page.getByTestId('risk-row').filter({ has: this.page.getByRole('heading', { name: heading }) })
   }
 
+  rowIndicator(heading: string): Locator {
+    return this.rowByHeading(heading).getByTestId('risk-indicator')
+  }
+
+  rowContent(heading: string): Locator {
+    return this.rowByHeading(heading).getByTestId('risk-content')
+  }
+
   static async verifyOnPage(page: Page): Promise<RiskSummaryPage> {
     const riskSummaryPage = new RiskSummaryPage(page)
     await expect(riskSummaryPage.heading).toBeVisible()
