@@ -92,12 +92,12 @@ test.describe('Risk Summary Page', () => {
       'Public, known adults and staff are at risk.',
     )
     await expect(riskSummaryPage.rowByHeading('Risk of self-harm')).toContainText(`Don't know`)
-    await expect(riskSummaryPage.rowByHeading('Risk of suicide')).toContainText('Yes')
+    await expect(riskSummaryPage.rowByHeading('Risk of suicide')).not.toContainText('Yes')
     await expect(riskSummaryPage.rowByHeading('Risk of suicide')).toContainText(
       'Expressed suicidal ideation during last supervision.',
     )
     await expect(riskSummaryPage.rowByHeading('Concerns in relation to coping in a hostel setting')).toContainText('No')
-    await expect(riskSummaryPage.rowByHeading('Concerns in relation to vulnerability')).toContainText('Yes')
+    await expect(riskSummaryPage.rowByHeading('Concerns in relation to vulnerability')).not.toContainText('Yes')
     await expect(riskSummaryPage.rowByHeading('Additional information')).toContainText(
       'Known to associate with a co-defendant in the local area.',
     )
