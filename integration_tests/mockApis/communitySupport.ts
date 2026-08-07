@@ -72,11 +72,11 @@ export default {
         transformers: ['response-template'],
       },
     }),
-  stubSubmitConfirmPersonalDetails: (draftReferalId: string, httpStatus = 200): SuperAgentRequest =>
+  stubSubmitConfirmPersonalDetails: (draftReferralId: string, httpStatus = 200): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'PATCH',
-        urlPathPattern: `/community-support/draft-referral/confirm-person-details/${draftReferalId}`,
+        urlPathPattern: `/community-support/draft-referral/confirm-person-details/${draftReferralId}`,
       },
       response: {
         status: httpStatus,

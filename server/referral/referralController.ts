@@ -314,8 +314,8 @@ export default class ReferralController {
   }
 
   async confirmPersonalDetails(req: Request, res: Response) {
-    const draftReferalId = req.session?.draftReferralId
-    if (draftReferalId) {
+    const draftReferralId = req.session?.draftReferralId
+    if (draftReferralId) {
       return res.redirect('/referral/task-list')
     }
     return res.redirect('/referral/new/find-a-person')
@@ -323,10 +323,10 @@ export default class ReferralController {
 
   async showAdditionalSupportNeeds(req: Request, res: Response) {
     const { username } = res.locals.user
-    const draftReferalId = req.session?.draftReferralId
-    if (draftReferalId) {
+    const draftReferralId = req.session?.draftReferralId
+    if (draftReferralId) {
       try {
-        const additionalSupportNeeds = await this.referralService.getAdditionalSupportNeeds(draftReferalId, username)
+        const additionalSupportNeeds = await this.referralService.getAdditionalSupportNeeds(draftReferralId, username)
         const presenter = new AdditionalSuportNeedsPresenter(additionalSupportNeeds)
         return presenter.renderPage(res)
       } catch (e) {

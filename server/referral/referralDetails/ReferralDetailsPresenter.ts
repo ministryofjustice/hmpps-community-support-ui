@@ -30,7 +30,7 @@ const nonEmptyStringOrDefault = (str: string | undefined | null, defaultValue: s
   (str ?? '').trim() || defaultValue
 
 export default class ReferralDetailsPresenter extends PresenterBase<ReferralDetailsViewModel, ReferralDetailsContent> {
-  private readonly assignReferalHref: string
+  private readonly assignReferralHref: string
 
   private readonly age: number
 
@@ -42,7 +42,7 @@ export default class ReferralDetailsPresenter extends PresenterBase<ReferralDeta
     private readonly authSource: string,
   ) {
     super()
-    this.assignReferalHref = `/referral/${referralDetails.id}/assign`
+    this.assignReferralHref = `/referral/${referralDetails.id}/assign`
     this.age = differenceInYears(this.today, new Date(referralDetails.personDetailsTableData.dateOfBirth))
   }
 
@@ -158,7 +158,7 @@ export default class ReferralDetailsPresenter extends PresenterBase<ReferralDeta
             : [
                 {
                   text: assignedToListIsPopulated ? cardContent.linkChange : cardContent.link,
-                  href: this.assignReferalHref,
+                  href: this.assignReferralHref,
                 },
               ],
         ),
