@@ -158,7 +158,7 @@ test.describe('Referral Details Page', () => {
         expect(summary.title).toHaveText('Referral details')
       })
       await test.step('summary has required number of rows', () => {
-        expect(summary.rows).toHaveLength(2)
+        expect(summary.rows).toHaveLength(4)
       })
       await test.step('First row should be the referral date field', () => {
         const row = summary.rows[0]
@@ -172,6 +172,16 @@ test.describe('Referral Details Page', () => {
         expect(row.key).toHaveText('Assigned to')
         const assignedTo = 'Unassigned'
         expect(row.value).toHaveText(assignedTo)
+      })
+      await test.step('Third row should be the target completion date field', () => {
+        const row = summary.rows[2]
+        expect(row.key).toHaveText('What date does the service need to be completed by?')
+        expect(row.value).toHaveText('Not available')
+      })
+      await test.step('Fourth row should be the target completion date reason field', () => {
+        const row = summary.rows[3]
+        expect(row.key).toHaveText('Why does it need to be completed by this date?')
+        expect(row.value).toHaveText('Not available')
       })
     })
   })

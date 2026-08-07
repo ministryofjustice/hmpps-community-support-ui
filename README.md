@@ -15,11 +15,11 @@ The easiest way to run the app is to use docker compose to create the service an
 
 `docker compose up`
 
+This builds `hmpps-community-support-api` from a sibling `../hmpps-community-support-api`
+checkout. If you don't have that checkout, or just want the latest published API instead,
+use `docker-compose-api-ghcr.yml` instead (see below).
+
 ### Running the app for development
-
-To start the main services excluding the example typescript template app:
-
-`docker compose up --scale=app=0`
 
 Create an environment file by copying `.env.example` -> `.env`
 Environment variables set in here will be available when running `start:dev`
@@ -34,26 +34,73 @@ And then, to build the assets and start the app with esbuild:
 
 `npm run start:dev`
 
-### Running alongside a local version of the API
+The UI itself always runs on the host this way (never in a container) - the compose files
+below only ever provide its dependencies, plus optionally a copy of the API.
 
-Sometimes you need to run a local version of the API, and test it against a local version of the UI.  E.g. if you wish to test th eimpact of API contract changes on the ability of the UI to build, or render.  
+### Choosing how the API runs
 
-We can do this with Docker to manage shared dependencies as it would as if we were using the version of the API on `main`
+There are three ways to run `hmpps-community-support-api` alongside the UI, depending on
+what you're working on. Each has its own `npm run` script that starts the right dependency
+stack in Docker and then starts the UI itself with hot reload (esbuild watch mode) - no
+manual `docker compose` commands needed for day-to-day use.
 
-Start the API from IntelliJ using the `local` Spring profile, then start the UI dependencies with the local API compose file.
+| Scenario | Command | Compose file used | API |
+| --- | --- | --- | --- |
+| Developing a UI-only feature, don't need real API responses | `npm run start:dev` | `docker-compose.yml` (builds API from `../hmpps-community-support-api`) | wiremock stub |
+| Developing a UI feature against the latest published API | `npm run start:dev:local` | `docker-compose-api-ghcr.yml` | latest GHCR image, no sibling checkout needed |
+| Developing a feature across both repos at once | `npm run start:dev:api-feature` | `docker-compose-localapi.yml` | run separately, e.g. IntelliJ with the `local` Spring profile |
 
 ```bash
-docker compose -f docker-compose-localapi.yml up
+# UI-only work, full stack built from source (default docker-compose.yml)
+npm run start:dev
+
+# UI-only work against the latest published API (no sibling API checkout needed)
+npm run start:dev:local
+
+# Feature work across both repos - start the API yourself first (e.g. IntelliJ,
+# `local` Spring profile, listening on :8080), then:
+npm run start:dev:api-feature
 ```
 
-The API local profile uses `http://hmpps-auth:8090/auth`, so ensure `hmpps-auth` resolves to `127.0.0.1` on your machine (for example via `/etc/hosts`).
+Each script brings up its dependency stack with `docker compose -f <file> up -d`, then runs
+`node esbuild/esbuild --watch` against a matching env file (`local.env` /
+`api-feature.env`) so `COMMUNITY_SUPPORT_API_URL` points at the right place. The UI keeps
+hot-reloading on file changes exactly as with plain `start:dev`. The underlying Docker stacks
+stay up between runs - stop them yourself with `docker compose -f <file> down` when you're
+done, or `docker compose down` for the default stack.
+
+For the `start:dev:api-feature` scenario, the API's `local` Spring profile uses
+`http://hmpps-auth:8090/auth`, so ensure `hmpps-auth` resolves to `127.0.0.1` on your machine
+(for example via `/etc/hosts`).
 
 ### Logging in with a test user
 
-Once the application is running you should then be able to login with:
+`AUTH_USER` / `password123456` has no roles and will be rejected by this app's role check
+(`allowedRoles`). Use the delius-sourced wiremock test user instead, which is granted
+`ROLE_PROBATION` by HMPPS Auth:
 
-username: AUTH_USER
-password: password123456
+username: bernard.beaks
+password: secret
+
+Note: `.env.example`'s `AUTH_CODE_CLIENT_ID`/`CLIENT_CREDS_CLIENT_ID` must match real clients
+seeded in HMPPS Auth's `auth-db` (`hmpps-community-support-ui-1` and
+`hmpps-community-support-ipb-ui-client-1`), not the placeholder `clientid`.
+
+### Creating local test users with custom roles
+
+Once any of the stacks above is up, `script/local-user-setup` creates a fully working local
+HMPPS Auth user (password set, no email step required) with whichever roles you need,
+entirely offline (no GOV.UK Notify/real Delius/Nomis dependency):
+
+```bash
+script/local-user-setup [email] [ROLE1,ROLE2,...]
+# defaults: local.tester@digital.justice.gov.uk / password123456 /
+#           COMMUNITY_SUPPORT_REFERRER,COMMUNITY_SUPPORT_PROVIDER
+```
+
+It works no matter which of the three stacks above you're running, and is safe to re-run
+(idempotent) - useful for local development and as a repeatable way to seed e2e test users.
+On first login you'll see a one-off "verify your email" nag - skip it to continue.
 
 ### Run linter
 

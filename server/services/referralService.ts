@@ -10,6 +10,7 @@ import {
   NeedsInterpreterBffResponseDto,
   CommunitySupportRiskDto,
   CommunitySupportRiskInformationDto,
+  ActionPlanSummaryDto,
 } from '@community-support-api'
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
 
@@ -52,6 +53,10 @@ export default class ReferralService {
     return this.communitySupportApiClient.getReferralInformation(caseIdentifier, username)
   }
 
+  getActionPlanSummary(caseReference: string, username: string): Promise<ActionPlanSummaryDto> {
+    return this.communitySupportApiClient.getActionPlanSummary(caseReference, username)
+  }
+
   getPersonalDetails(id: string, username: string): Promise<ConfirmPersonDetailsBffDto> {
     return this.communitySupportApiClient.getPersonalDetails(id, username)
   }
@@ -78,5 +83,9 @@ export default class ReferralService {
     username: string,
   ): Promise<CommunitySupportRiskInformationDto> {
     return this.communitySupportApiClient.saveRiskInformation(referralId, riskInformation, username)
+  }
+
+  savePersonalDetailsConfirmed(draftReferalId: string, username: string): Promise<void> {
+    return this.communitySupportApiClient.savePersonalDetailsConfirmed(draftReferalId, username)
   }
 }

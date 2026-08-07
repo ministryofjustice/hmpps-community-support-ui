@@ -5,6 +5,7 @@ import {
   ReferralProgress,
   ReferralInformation,
   CommunitySupportRiskInformationDto,
+  ActionPlanSummaryDto,
 } from '@community-support-api'
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
 import ReferralService from './referralService'
@@ -118,11 +119,28 @@ describe('Referral service tests', () => {
     })
   })
 
+  describe('getActionPlanSummary', () => {
+    it('should return action plan summary from API client', async () => {
+      const caseReference = 'AB1234CD'
+      const mockActionPlanSummary: ActionPlanSummaryDto = {
+        personDetails: {
+          fullName: 'Alex River',
+        },
+        needs: [],
+      }
+
+      communitySupportApiClient.getActionPlanSummary.mockResolvedValue(mockActionPlanSummary)
+
+      const result = await referralService.getActionPlanSummary(caseReference, 'user1')
+
+      expect(result).toStrictEqual(mockActionPlanSummary)
+      expect(communitySupportApiClient.getActionPlanSummary).toHaveBeenCalledWith(caseReference, 'user1')
+    })
+  })
+
   describe('saveRiskInformation', () => {
     it('should save risk information via the API client', async () => {
       const riskInformation: CommunitySupportRiskInformationDto = {
-        id: 'referral-uuid-1',
-        referralId: 'referral-uuid-1',
         riskSummaryWhoIsAtRisk: 'Public',
       }
       communitySupportApiClient.saveRiskInformation.mockResolvedValue(riskInformation)

@@ -221,6 +221,24 @@ describe('ReferralDetailsPresenter', () => {
             ],
           },
         },
+        {
+          key: {
+            text: 'What date does the service need to be completed by?',
+          },
+          value: {
+            text: '25/12/2026',
+          },
+          actions: null,
+        },
+        {
+          key: {
+            text: 'Why does it need to be completed by this date?',
+          },
+          value: {
+            text: 'Some reason',
+          },
+          actions: null,
+        },
       ],
     },
   })
@@ -271,6 +289,8 @@ describe('ReferralDetailsPresenter', () => {
           { fullName: 'assigned2', emailAddress: 'assigned2@email.com', userType: 'EXTERNAL' },
         ],
       },
+      targetServiceCompletionDate: '2026-12-25T11:23:00.780Z',
+      targetServiceCompletionDateReason: 'Some reason',
     }
     expected = setupDefaultExpected(dto)
   })

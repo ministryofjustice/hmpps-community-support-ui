@@ -129,9 +129,9 @@ test.describe('FindPerson', () => {
     await FoundPersonPage.verifyOnPage(page)
     await page.getByRole('button', { name: 'Continue' }).click()
     await expect(
-      page.getByRole('heading', { name: 'Select a Community Service Provider to make a referral' }),
+      page.getByRole('heading', { name: 'Select the Community Support service to make a referral' }),
     ).toBeVisible()
-    await expect(page.getByRole('link', { name: 'Accommodation support' })).toBeVisible()
+    await expect(page.getByRole('radio', { name: 'Accommodation support' })).toBeVisible()
   })
 
   test('should display the found details page when a person is found by prison number', async ({ page }) => {

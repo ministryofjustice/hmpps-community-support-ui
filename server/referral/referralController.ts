@@ -16,6 +16,8 @@ import CheckReferralInformationPresenter from './check-referral-information/chec
 import NeedsAnInterpreterPresenter from './needsAnInterpreter/NeedsAnInterpreterPresenter'
 import RiskSummaryPresenter from './riskSummary/RiskSummaryPresenter'
 import buildRiskInformationRequest from './riskSummary/buildRiskInformationRequest'
+import EditRiskSummaryPresenter from './editRiskSummary/EditRiskSummaryPresenter'
+import buildRiskInformationRequestFromForm from './editRiskSummary/buildRiskInformationRequestFromForm'
 
 export default class ReferralController {
   private static readonly CRN_REGEX = /^[A-Za-z]\d{6}$/
@@ -129,7 +131,7 @@ export default class ReferralController {
     }
   }
 
-  async submitReferralInformation(req: Request, res: Response): Promise<void> {
+  async submitReferralInformation(req: Request, res: Response, next: NextFunction): Promise<void> {
     const { username } = res.locals.user
     const { referralId } = req.params as { referralId: string }
 
@@ -141,9 +143,17 @@ export default class ReferralController {
         logger.info('Referral already submitted')
         return res.redirect(`/referral/${referralId}/confirmation`)
       }
-      // no special error handling at this moment
-      logger.error('Error in submitting a referral:', error)
-      throw error
+      if (error.responseStatus === 401 || error.responseStatus === 403) {
+        return next(error)
+      }
+      res.locals.systemError = {
+        heading: 'Sorry, there has been a problem submitting the referral',
+        message:
+          'The referral has not been submitted and it has not been saved. You must create and submit the referral again.',
+        buttonText: 'Create a new referral',
+        buttonUrl: '/referral/new/find-a-person',
+      }
+      return next(error)
     }
   }
 
@@ -289,47 +299,47 @@ export default class ReferralController {
     return presenter.renderPage(res)
   }
 
-  async showConfirmPersonalDetails(req: Request, res: Response) {
+  async showConfirmPersonalDetails(req: Request, res: Response): Promise<void> {
     const { username } = res.locals.user
     const draftReferralKey = req.session.draftReferalId
-    const personIdentifier = req.session.personId
 
-    if (!draftReferralKey || !personIdentifier) {
-      return res.redirect('/referral/new/find-a-person')
+    if (draftReferralKey) {
+      try {
+        const data = await this.referralService.getPersonalDetails(draftReferralKey, username)
+        const presenter = new ConfirmPersonalDetailsPresenter(data)
+        return presenter.renderPage(res)
+      } catch (e) {
+        logger.error(e)
+        req.flash('confirmPersonalDetailsError', 'something has gone wrong')
+        return res.redirect('/referral/new/find-a-person')
+      }
     }
-
-    const data = await this.referralService.getPersonalDetails(personIdentifier, username)
-    const presenter = new ConfirmPersonalDetailsPresenter(data)
-    return presenter.renderPage(res)
+    return res.redirect('/referral/new/find-a-person')
   }
 
   async confirmPersonalDetails(req: Request, res: Response) {
-    const { username } = res.locals.user
     const draftReferalId = req.session?.draftReferalId
-    if (!draftReferalId) {
-      res.redirect('/referral/new/find-a-person')
-      return
+    if (draftReferalId) {
+      return res.redirect('/referral/task-list')
     }
-    try {
-      const pageData = await this.referralService.getPersonalDetails(draftReferalId, username)
-      const presenter = new ConfirmPersonalDetailsPresenter(pageData)
-      presenter.renderPage(res)
-    } catch (e) {
-      logger.error(e)
-      res.redirect('/referral/new/find-a-person')
-    }
+    return res.redirect('/referral/new/find-a-person')
   }
 
   async showAdditionalSupportNeeds(req: Request, res: Response) {
     const { username } = res.locals.user
     const draftReferalId = req.session?.draftReferalId
-    if (!draftReferalId) {
-      return res.redirect('/referral/new/find-a-person')
+    if (draftReferalId) {
+      try {
+        const additionalSupportNeeds = await this.referralService.getAdditionalSupportNeeds(draftReferalId, username)
+        const presenter = new AdditionalSuportNeedsPresenter(additionalSupportNeeds)
+        return presenter.renderPage(res)
+      } catch (e) {
+        logger.error(e)
+        req.flash('confirmPersonalDetailsError', 'something has gone wrong')
+        return res.redirect('/referral/new/find-a-person')
+      }
     }
-
-    const additionalSupportNeeds = await this.referralService.getAdditionalSupportNeeds(draftReferalId, username)
-    const presenter = new AdditionalSuportNeedsPresenter(additionalSupportNeeds)
-    return presenter.renderPage(res)
+    return res.redirect('/referral/new/find-a-person')
   }
 
   async showRiskSummary(req: Request, res: Response) {
@@ -353,9 +363,34 @@ export default class ReferralController {
     }
 
     const risk = await this.referralService.getRoshRisksByReferralId(draftReferralKey, username)
-    const riskInformation = buildRiskInformationRequest(risk, draftReferralKey)
+    const riskInformation = buildRiskInformationRequest(risk)
     await this.referralService.saveRiskInformation(draftReferralKey, riskInformation, username)
     return res.redirect('/referral/task-list')
+  }
+
+  async showEditRiskSummary(req: Request, res: Response) {
+    const { username } = res.locals.user
+    const draftReferralKey = req.session?.draftReferalId
+
+    if (!draftReferralKey) {
+      return res.redirect('/referral/new/find-a-person')
+    }
+
+    const risk = await this.referralService.getRoshRisksByReferralId(draftReferralKey, username)
+    const presenter = new EditRiskSummaryPresenter(risk)
+    return presenter.renderPage(res)
+  }
+
+  async submitEditRiskSummary(req: Request, res: Response): Promise<void> {
+    const { username } = res.locals.user
+    const draftReferralKey = req.session?.draftReferalId
+    if (!draftReferralKey) {
+      return res.redirect('/referral/new/find-a-person')
+    }
+
+    const riskInformation = buildRiskInformationRequestFromForm(req.body)
+    await this.referralService.saveRiskInformation(draftReferralKey, riskInformation, username)
+    return res.redirect('/referral/task-list/view-risk-summary')
   }
 
   async communityServiceProviderPage(req: Request, res: Response) {

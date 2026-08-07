@@ -21,21 +21,43 @@ export default class RiskSummaryPresenter extends PresenterBase<RiskSummaryViewM
     return `${firstName} ${lastName}`
   }
 
-  private describeConcern(risk: ArnsRiskDto | null | undefined, content: RiskSummaryContent): string {
-    if (!risk || !risk.risk || risk.risk === 'NO') {
-      return content.noConcernsText
+  private concernIndicator(risk: ArnsRiskDto | null | undefined, content: RiskSummaryContent): string {
+    switch (risk?.risk) {
+      case 'YES':
+        return content.yesText
+      case 'NO':
+        return content.noText
+      case 'DK':
+        return content.dontKnowText
+      default:
+        return content.defaultFieldValue
     }
-    if (risk.risk === 'DK') {
-      return content.dontKnowText
-    }
-    return risk.currentConcernsText || content.noConcernsText
   }
 
-  private buildRow(card: RiskSummaryRowCard, text: string, content: RiskSummaryContent): RiskSummaryRow {
+  private buildRow(
+    card: RiskSummaryRowCard,
+    text: string,
+    content: RiskSummaryContent,
+    anchor: string,
+  ): RiskSummaryRow {
     return {
       heading: card.heading,
       content: text,
-      changeLink: { href: content.changeHref, text: card.changeLinkText },
+      changeLink: { href: `${content.changeHref}#${anchor}`, text: card.changeLinkText },
+    }
+  }
+
+  private buildConcernRow(
+    card: RiskSummaryRowCard,
+    risk: ArnsRiskDto | null | undefined,
+    content: RiskSummaryContent,
+    anchor: string,
+  ): RiskSummaryRow {
+    return {
+      heading: card.heading,
+      indicator: this.concernIndicator(risk, content),
+      content: risk?.currentConcernsText?.trim() ?? '',
+      changeLink: { href: `${content.changeHref}#${anchor}`, text: card.changeLinkText },
     }
   }
 
@@ -47,27 +69,29 @@ export default class RiskSummaryPresenter extends PresenterBase<RiskSummaryViewM
         content.whoIsAtRiskCard,
         nonEmptyStringOrDefault(summary?.whoIsAtRisk, content.defaultFieldValue),
         content,
+        'riskSummaryWhoIsAtRisk',
       ),
       this.buildRow(
         content.natureOfRiskCard,
         nonEmptyStringOrDefault(summary?.natureOfRisk, content.defaultFieldValue),
         content,
+        'riskSummaryNatureOfRisk',
       ),
       this.buildRow(
         content.riskImminenceCard,
         nonEmptyStringOrDefault(summary?.riskImminence, content.defaultFieldValue),
         content,
+        'riskSummaryRiskImminence',
       ),
-      this.buildRow(content.selfHarmCard, this.describeConcern(riskToSelf?.selfHarm, content), content),
-      this.buildRow(content.suicideCard, this.describeConcern(riskToSelf?.suicide, content), content),
-      this.buildRow(content.hostelSettingCard, this.describeConcern(riskToSelf?.hostelSetting, content), content),
-      this.buildRow(content.vulnerabilityCard, this.describeConcern(riskToSelf?.vulnerability, content), content),
+      this.buildConcernRow(content.selfHarmCard, riskToSelf?.selfHarm, content, 'riskToSelfSelfHarm'),
+      this.buildConcernRow(content.suicideCard, riskToSelf?.suicide, content, 'riskToSelfSuicide'),
+      this.buildConcernRow(content.hostelSettingCard, riskToSelf?.hostelSetting, content, 'riskToSelfHostelSetting'),
+      this.buildConcernRow(content.vulnerabilityCard, riskToSelf?.vulnerability, content, 'riskToSelfVulnerability'),
       this.buildRow(
         content.additionalInformationCard,
-        !riskToSelf?.custody || riskToSelf.custody.risk === 'NO'
-          ? content.noAdditionalInformationText
-          : this.describeConcern(riskToSelf.custody, content),
+        nonEmptyStringOrDefault(this.risk.additionalInformation, content.noAdditionalInformationText),
         content,
+        'additionalInformation',
       ),
     ]
   }
@@ -79,7 +103,7 @@ export default class RiskSummaryPresenter extends PresenterBase<RiskSummaryViewM
     const age = differenceInYears(new Date(), dobDate)
 
     return {
-      backLink: { href: content.backLink.replace('{{ id }}', this.referralId) },
+      backLink: { href: content.backLink },
       heading: this.getFullName(),
       subheading: content.pageSubHeader,
       crnLabel: content.crnLabel,
@@ -94,7 +118,6 @@ export default class RiskSummaryPresenter extends PresenterBase<RiskSummaryViewM
         preventDoubleClick: true,
         type: 'submit',
       },
-      postHref: content.postHref,
     }
   }
 

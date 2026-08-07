@@ -26,6 +26,7 @@ import type {
   NeedsInterpreterBffResponseDto,
   CommunitySupportRiskDto,
   CommunitySupportRiskInformationDto,
+  ActionPlanSummaryDto,
 } from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
@@ -106,6 +107,10 @@ export default class CommunitySupportApiClient extends RestClient {
     return this.get({ path: `/bff/referral-information/${caseReference}` }, asSystem(username))
   }
 
+  getActionPlanSummary(caseReference: string, username: string): Promise<ActionPlanSummaryDto> {
+    return this.get({ path: `/bff/referral/${caseReference}/action-plan` }, asSystem(username))
+  }
+
   getIcsById(referralId: string, icsId: string, username: string): Promise<AppointmentIcsResponse> {
     return this.get({ path: `/bff/referral/${referralId}/ics/${icsId}` }, asSystem(username))
   }
@@ -131,8 +136,8 @@ export default class CommunitySupportApiClient extends RestClient {
     return this.get({ path: `/bff/ics-feedback/${icsFeedbackId}` }, asSystem(username))
   }
 
-  getPersonalDetails(personIdentifier: string, username: string): Promise<ConfirmPersonDetailsBffDto> {
-    return this.get({ path: `/bff/confirm-person-details/${personIdentifier}` }, asSystem(username))
+  getPersonalDetails(referralId: string, username: string): Promise<ConfirmPersonDetailsBffDto> {
+    return this.get({ path: `/bff/confirm-person-details/${referralId}` }, asSystem(username))
   }
 
   getAdditionalSupportNeeds(id: string, username: string): Promise<AdditionalSupportNeedsDto> {
@@ -148,7 +153,7 @@ export default class CommunitySupportApiClient extends RestClient {
   }
 
   getRoshRisksByReferralId(referralId: string, username: string): Promise<CommunitySupportRiskDto> {
-    return this.get({ path: `/bff/risk/rosh/${referralId}` }, asSystem(username))
+    return this.get({ path: `/bff/draft-referral/risk-information/${referralId}` }, asSystem(username))
   }
 
   saveRiskInformation(
@@ -156,6 +161,13 @@ export default class CommunitySupportApiClient extends RestClient {
     riskInformation: CommunitySupportRiskInformationDto,
     username: string,
   ): Promise<CommunitySupportRiskInformationDto> {
-    return this.put({ path: `/risk-information/${referralId}`, data: riskInformation }, asSystem(username))
+    return this.put(
+      { path: `/draft-referral/risk-information/${referralId}`, data: riskInformation },
+      asSystem(username),
+    )
+  }
+
+  savePersonalDetailsConfirmed(draftReferalId: string, username: string): Promise<void> {
+    return this.patch({ path: `/draft-referral/confirm-person-details/${draftReferalId}` }, asSystem(username))
   }
 }

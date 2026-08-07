@@ -10,6 +10,7 @@ import AppointmentController from '../appointment/appointmentController'
 import IcsFeedbackController from '../appointment/icsFeedbackController'
 import asyncMiddleware from '../middleware/asyncMiddleware'
 import LandingController from '../landing/landingController'
+import ActionPlanController from '../referral/actionPlan/actionPlanController'
 
 export default function routes({
   auditService,
@@ -33,6 +34,7 @@ export default function routes({
   const appointmentController = new AppointmentController(referralService, appointmentService, referenceDataService)
   const icsFeedbackController = new IcsFeedbackController(appointmentService)
   const landingController = new LandingController()
+  const actionPlanController = new ActionPlanController(referralService)
 
   router.get('/', async (req, res, next) => {
     await auditService.logPageView(Page.INDEX_PAGE, { who: res.locals.user.username, correlationId: req.id })
@@ -59,8 +61,8 @@ export default function routes({
 
   get('/referral/check-referral-information/:id', (req, res) => referralController.checkReferralInformation(req, res))
 
-  post('/referral/:referralId/submit-referral-information', (req, res) =>
-    referralController.submitReferralInformation(req, res),
+  post('/referral/:referralId/submit-referral-information', (req, res, next) =>
+    referralController.submitReferralInformation(req, res, next),
   )
 
   get('/unassigned-cases', (req, res) => caseListController.showCaseList(req, res))
@@ -179,13 +181,17 @@ export default function routes({
 
   post('/referral/task-list/view-risk-summary', (req, res) => referralController.confirmRiskSummary(req, res))
 
-  get('/referral/task-list/:id', (req, res) => referralController.showTaskList(req, res))
+  get('/referral/task-list/edit-risk-summary', (req, res) => referralController.showEditRiskSummary(req, res))
+
+  post('/referral/task-list/edit-risk-summary', (req, res) => referralController.submitEditRiskSummary(req, res))
 
   post('/referral/task-list/confirm-personal-details', (req, res) =>
     referralController.confirmPersonalDetails(req, res),
   )
 
   get('/referral/task-list', (req, res) => referralController.showTaskList(req, res))
+
+  get('/referral/:id/action-plan', (req, res) => actionPlanController.showActionPlanPage(req, res))
 
   get('/referral/:id', (req, res, next) => referralController.showReferralPage(req, res, next))
 

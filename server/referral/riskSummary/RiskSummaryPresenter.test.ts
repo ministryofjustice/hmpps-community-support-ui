@@ -25,7 +25,7 @@ describe('RiskSummaryPresenter', () => {
         previous: 'DK',
         previousConcernsText: null,
         current: 'DK',
-        currentConcernsText: null,
+        currentConcernsText: 'User confirmed no self-harm concerns following review.',
       },
       custody: {
         risk: 'NO',
@@ -39,7 +39,8 @@ describe('RiskSummaryPresenter', () => {
         previous: 'NO',
         previousConcernsText: null,
         current: 'NO',
-        currentConcernsText: null,
+        // Case worker edited this via the edit page despite OASys recording 'NO' - the edit should win.
+        currentConcernsText: 'User updated: no ongoing hostel setting concerns identified during review.',
       },
       vulnerability: {
         risk: 'YES',
@@ -49,6 +50,7 @@ describe('RiskSummaryPresenter', () => {
         currentConcernsText: 'Mental health deterioration noted by GP.',
       },
     },
+    additionalInformation: 'Known to associate with a co-defendant in the local area.',
     summary: {
       whoIsAtRisk: 'Public, known adults and staff are at risk.',
       natureOfRisk: 'Physical violence and intimidation towards others.',
@@ -66,20 +68,24 @@ describe('RiskSummaryPresenter', () => {
     locals: {
       content: {
         pageSubHeader: 'OASys risk information',
-        backLink: '/referral/task-list/{{ id }}',
+        backLink: '/referral/task-list',
         crnLabel: 'CRN',
         dateOfBirthLabel: 'Date of birth',
         lastUpdatedLabel: 'Last updated (OASys)',
         defaultFieldValue: 'Not available',
-        noConcernsText: 'No concerns identified',
+        yesText: 'Yes',
+        noText: 'No',
         dontKnowText: `Don't know`,
         noAdditionalInformationText: 'None',
-        changeHref: '/referral/task-list/view-risk-summary',
+        changeHref: '/referral/task-list/edit-risk-summary',
         whoIsAtRiskCard: { heading: 'Who is at risk', changeLinkText: 'Change' },
         natureOfRiskCard: { heading: 'What is the nature of the risk', changeLinkText: 'Change' },
-        riskImminenceCard: { heading: 'When is the risk likely to be greatest', changeLinkText: 'Change' },
-        selfHarmCard: { heading: 'Concerns in relation to self-harm', changeLinkText: 'Change' },
-        suicideCard: { heading: 'Concerns in relation to suicide', changeLinkText: 'Change' },
+        riskImminenceCard: {
+          heading: 'In what circumstances or situations would offending be most likely to occur?',
+          changeLinkText: 'Change',
+        },
+        selfHarmCard: { heading: 'Risk of self-harm', changeLinkText: 'Change' },
+        suicideCard: { heading: 'Risk of suicide', changeLinkText: 'Change' },
         hostelSettingCard: { heading: 'Concerns in relation to coping in a hostel setting', changeLinkText: 'Change' },
         vulnerabilityCard: { heading: 'Concerns in relation to vulnerability', changeLinkText: 'Change' },
         additionalInformationCard: { heading: 'Additional information', changeLinkText: 'Change' },
@@ -94,7 +100,7 @@ describe('RiskSummaryPresenter', () => {
     const presenter = new RiskSummaryPresenter(risk, 'referral-uuid-1')
     const viewModel = presenter.buildViewModel(res)
 
-    expect(viewModel.backLink.href).toBe('/referral/task-list/referral-uuid-1')
+    expect(viewModel.backLink.href).toBe('/referral/task-list')
     expect(viewModel.heading).toBe('Alex River')
     expect(viewModel.subheading).toBe('OASys risk information')
     expect(viewModel.crn).toBe('X123456')
@@ -106,28 +112,38 @@ describe('RiskSummaryPresenter', () => {
 
     expect(whoIsAtRisk.heading).toBe('Who is at risk')
     expect(whoIsAtRisk.content).toBe('Public, known adults and staff are at risk.')
-    expect(whoIsAtRisk.changeLink).toEqual({ href: '/referral/task-list/view-risk-summary', text: 'Change' })
+    expect(whoIsAtRisk.changeLink).toEqual({
+      href: '/referral/task-list/edit-risk-summary#riskSummaryWhoIsAtRisk',
+      text: 'Change',
+    })
 
     expect(natureOfRisk.content).toBe('Physical violence and intimidation towards others.')
     expect(riskImminence.content).toBe('Risk is immediate, particularly when under the influence of alcohol.')
 
-    expect(selfHarm.heading).toBe('Concerns in relation to self-harm')
-    expect(selfHarm.content).toBe(`Don't know`)
+    expect(selfHarm.heading).toBe('Risk of self-harm')
+    expect(selfHarm.indicator).toBe(`Don't know`)
+    expect(selfHarm.content).toBe('User confirmed no self-harm concerns following review.')
 
-    expect(suicide.heading).toBe('Concerns in relation to suicide')
+    expect(suicide.heading).toBe('Risk of suicide')
+    expect(suicide.indicator).toBe('Yes')
     expect(suicide.content).toBe('Expressed suicidal ideation during last supervision.')
 
     expect(hostelSetting.heading).toBe('Concerns in relation to coping in a hostel setting')
-    expect(hostelSetting.content).toBe('No concerns identified')
+    expect(hostelSetting.indicator).toBe('No')
+    expect(hostelSetting.content).toBe('User updated: no ongoing hostel setting concerns identified during review.')
 
     expect(vulnerability.heading).toBe('Concerns in relation to vulnerability')
+    expect(vulnerability.indicator).toBe('Yes')
     expect(vulnerability.content).toBe('Mental health deterioration noted by GP.')
 
     expect(additional.heading).toBe('Additional information')
-    expect(additional.content).toBe('None')
+    expect(additional.content).toBe('Known to associate with a co-defendant in the local area.')
+    expect(additional.changeLink).toEqual({
+      href: '/referral/task-list/edit-risk-summary#additionalInformation',
+      text: 'Change',
+    })
 
     expect(viewModel.button.text).toBe('Save and continue')
-    expect(viewModel.postHref).toBe('/referral/task-list/view-risk-summary')
   })
 
   test('falls back to default text when summary and risk fields are missing', () => {
@@ -150,7 +166,8 @@ describe('RiskSummaryPresenter', () => {
     expect(viewModel.lastUpdated).toBe('Not available')
     const [whoIsAtRisk, , , selfHarm, , , , additional] = viewModel.rows
     expect(whoIsAtRisk.content).toBe('Not available')
-    expect(selfHarm.content).toBe('No concerns identified')
+    expect(selfHarm.indicator).toBe('Not available')
+    expect(selfHarm.content).toBe('')
     expect(additional.content).toBe('None')
   })
 })

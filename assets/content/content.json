@@ -132,7 +132,9 @@
       "assignedToLabel": "Assigned to",
       "assignedToDefaultValue": "Unassigned",
       "link": "Assign to caseworker",
-      "linkChange": "Change"
+      "linkChange": "Change",
+      "targetServiceCompletionDateLabel": "What date does the service need to be completed by?",
+      "targetServiceCompletionDateReasonLabel": "Why does it need to be completed by this date?"
     },
     "icsDetails": {
       "heading": "ICS details",
@@ -161,6 +163,10 @@
   "/progress/:id": {
     "pageHeader": "Referral for",
     "progressSubNavTitle": "Progress",
+    "actionPlanTitle": "Action plan",
+    "actionPlanStatusLabel": "Status",
+    "actionPlanActionsLabel": "Actions",
+    "actionPlanLinkText": "View action plan",
     "subNavItems": [
       {
         "id": "caseDetails",
@@ -181,6 +187,9 @@
     "progressActiveColumnHeaders": ["Date and time", "Status", "Action"],
     "progressInactiveColumnHeaders": ["Status", "Action"],
     "historySummary": "View ICS history"
+  },
+  "/referral/:id/action-plan": {
+    "pageHeader": "Action plan for {{ fullName }}"
   },
   "/ics-feedback/:id/did-session-take-place": {
     "submitButtonText": "Continue",
@@ -589,7 +598,7 @@
           },
           "addSupportNeeds": {
             "text": "Add details of any additional support needs",
-            "href": "/referral/task-list/add-support-needs"
+            "href": "/referral/task-list/additional-support-needs"
           }
         }
       },
@@ -613,10 +622,10 @@
       }
     }
   },
-  "/referral/task-list/:id/confirm-personal-details": {
+  "/referral/task-list/confirm-personal-details": {
     "pageHeader": "{{ name }}",
     "pageSubHeader": "Confirm personal details",
-    "backLink": "/referral/task-list/{{ id }}",
+    "backLink": "/referral/task-list",
     "defaultFieldValue": "Not available",
     "personalDetailsCard": {
       "heading": "Personal details",
@@ -646,20 +655,20 @@
       "mainAddressLabel": "Main address"
     },
     "warningText": "If this information is out of date or incorrect, you must update the information in NOMIS",
-    "buttonText": "Save and continue",
-    "postHref": "/referral/task-list/confirm-personal-details"
+    "buttonText": "Continue"
   },
   "/referral/task-list/view-risk-summary": {
     "pageSubHeader": "OASys risk information",
-    "backLink": "/referral/task-list/{{ id }}",
+    "backLink": "/referral/task-list",
     "crnLabel": "CRN",
     "dateOfBirthLabel": "Date of birth",
     "lastUpdatedLabel": "Last updated (OASys)",
     "defaultFieldValue": "Not available",
-    "noConcernsText": "No concerns identified",
+    "yesText": "Yes",
+    "noText": "No",
     "dontKnowText": "Don't know",
     "noAdditionalInformationText": "None",
-    "changeHref": "/referral/task-list/view-risk-summary",
+    "changeHref": "/referral/task-list/edit-risk-summary",
     "whoIsAtRiskCard": {
       "heading": "Who is at risk",
       "changeLinkText": "Change"
@@ -669,15 +678,15 @@
       "changeLinkText": "Change"
     },
     "riskImminenceCard": {
-      "heading": "When is the risk likely to be greatest",
+      "heading": "In what circumstances or situations would offending be most likely to occur?",
       "changeLinkText": "Change"
     },
     "selfHarmCard": {
-      "heading": "Concerns in relation to self-harm",
+      "heading": "Risk of self-harm",
       "changeLinkText": "Change"
     },
     "suicideCard": {
-      "heading": "Concerns in relation to suicide",
+      "heading": "Risk of suicide",
       "changeLinkText": "Change"
     },
     "hostelSettingCard": {
@@ -692,8 +701,53 @@
       "heading": "Additional information",
       "changeLinkText": "Change"
     },
+    "buttonText": "Save and continue"
+  },
+  "/referral/task-list/edit-risk-summary": {
+    "pageHeader": "Edit OASys risk information",
+    "backLink": "/referral/task-list/view-risk-summary",
+    "crnLabel": "CRN",
+    "dateOfBirthLabel": "Date of birth",
+    "lastUpdatedLabel": "Last updated (OASys)",
+    "defaultFieldValue": "Not available",
+    "yesText": "Yes",
+    "noText": "No",
+    "dontKnowText": "Don't know",
+    "noAdditionalInformationText": "None",
+    "submitHref": "/referral/task-list/edit-risk-summary",
     "buttonText": "Save and continue",
-    "postHref": "/referral/task-list/view-risk-summary"
+    "whoIsAtRiskField": {
+      "id": "riskSummaryWhoIsAtRisk",
+      "label": "Who is at risk"
+    },
+    "natureOfRiskField": {
+      "id": "riskSummaryNatureOfRisk",
+      "label": "What is the nature of the risk"
+    },
+    "riskImminenceField": {
+      "id": "riskSummaryRiskImminence",
+      "label": "In what circumstances or situations would offending be most likely to occur?"
+    },
+    "selfHarmField": {
+      "id": "riskToSelfSelfHarm",
+      "label": "Risk of self-harm"
+    },
+    "suicideField": {
+      "id": "riskToSelfSuicide",
+      "label": "Risk of suicide"
+    },
+    "hostelSettingField": {
+      "id": "riskToSelfHostelSetting",
+      "label": "Concerns in relation to coping in a hostel setting"
+    },
+    "vulnerabilityField": {
+      "id": "riskToSelfVulnerability",
+      "label": "Concerns in relation to vulnerability"
+    },
+    "additionalInformationField": {
+      "id": "additionalInformation",
+      "label": "Additional information"
+    }
   },
   "/referral/task-list/additional-support-needs": {
     "header": "What does {{ firstName }} need support with to attend or take part in sessions?",
