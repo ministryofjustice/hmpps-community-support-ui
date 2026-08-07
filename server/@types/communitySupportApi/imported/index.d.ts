@@ -157,6 +157,23 @@ export interface paths {
     patch: operations['updateNeedsInterpreter']
     trace?: never
   }
+  '/draft-referral/community-service-provider/{referralId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    /** Update the Community Service Provider for a Draft Referral */
+    patch: operations['updateCommunityServiceProvider']
+    trace?: never
+  }
   '/draft-referral/additional-support-needs/{referralId}': {
     parameters: {
       query?: never
@@ -897,6 +914,17 @@ export interface components {
       selected: boolean
       value?: string | null
     }
+    CommunityServiceProviderRequest: {
+      /** Format: uuid */
+      communityServiceProviderId: string
+    }
+    CommunityServiceProviderBffResponseDto: {
+      /** Format: uuid */
+      referralId: string
+      /** Format: uuid */
+      communityServiceProviderId: string
+      communityServiceProviderName: string
+    }
     AdditionalSupportNeedsRequest: {
       physicalHealth?: string | null
       mentalEmotionalHealth?: string | null
@@ -1581,6 +1609,41 @@ export interface operations {
         }
       }
       /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  updateCommunityServiceProvider: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CommunityServiceProviderRequest']
+      }
+    }
+    responses: {
+      /** @description Community Service Provider updated */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['CommunityServiceProviderBffResponseDto']
+        }
+      }
+      /** @description Referral, or the Community Service Provider, not found */
       404: {
         headers: {
           [name: string]: unknown

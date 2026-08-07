@@ -12,6 +12,7 @@ import {
   CommunitySupportRiskInformationDto,
   type ReferralCriminogenicNeedsDto,
   type CriminogenicNeedsRequest,
+  ActionPlanSummaryDto,
 } from '@community-support-api'
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
 
@@ -52,6 +53,10 @@ export default class ReferralService {
 
   getReferralInformation(caseIdentifier: string, username: string): Promise<ReferralInformation> {
     return this.communitySupportApiClient.getReferralInformation(caseIdentifier, username)
+  }
+
+  getActionPlanSummary(caseReference: string, username: string): Promise<ActionPlanSummaryDto> {
+    return this.communitySupportApiClient.getActionPlanSummary(caseReference, username)
   }
 
   getPersonalDetails(id: string, username: string): Promise<ConfirmPersonDetailsBffDto> {

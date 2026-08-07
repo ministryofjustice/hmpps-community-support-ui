@@ -188,6 +188,9 @@
     "progressInactiveColumnHeaders": ["Status", "Action"],
     "historySummary": "View ICS history"
   },
+  "/referral/:id/action-plan": {
+    "pageHeader": "Action plan for {{ fullName }}"
+  },
   "/ics-feedback/:id/did-session-take-place": {
     "submitButtonText": "Continue",
     "pageHeaders": {

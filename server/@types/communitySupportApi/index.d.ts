@@ -37,6 +37,7 @@ type AdditionalSupportNeedsDto = components['schemas']['AdditionalSupportNeedsBf
 type NeedsInterpreterBffResponseDto = components['schemas']['NeedsInterpreterBffResponseDto']
 type Selection = components['schemas']['Selection']
 type CommunitySupportRiskDto = components['schemas']['CommunitySupportRiskDto']
+type ActionPlanSummaryDto = components['schemas']['ActionPlanSummaryDto']
 type ArnsRiskConcernsToSelfDto = components['schemas']['ArnsRiskConcernsToSelfDto']
 type ArnsRiskDto = components['schemas']['ArnsRiskDto']
 type ArnsRiskRoshSummaryDto = components['schemas']['ArnsRiskRoshSummaryDto']
@@ -81,6 +82,7 @@ export type {
   NeedsInterpreterBffResponseDto,
   Selection,
   CommunitySupportRiskDto,
+  ActionPlanSummaryDto,
   ArnsRiskConcernsToSelfDto,
   ArnsRiskDto,
   ArnsRiskRoshSummaryDto,
