@@ -431,12 +431,7 @@ export default class ReferralController {
     }
 
     let pageData: personNeedsFormData
-    try {
-      pageData = await this.referralService.getPersonNeeds(draftReferralId, username)
-    } catch {
-      logger.info(
-        `No criminogenic needs found for person identifier ${req.session.referralCreationDetails.personDetails.personIdentifier}`,
-      )
+    if (req.session.referralCreationDetails.personNeeds) {
       pageData = {
         referralId: draftReferralId,
         refereeName: {
@@ -467,6 +462,22 @@ export default class ReferralController {
           req.session.referralCreationDetails.personNeeds?.personNeedsCheckboxes.includes('thinking'),
         thinkingBehavioursAttitudeDetails: req.session.referralCreationDetails.personNeeds?.thinkingInput,
       }
+    } else {
+      try {
+        pageData = await this.referralService.getPersonNeeds(draftReferralId, username)
+      } catch {
+        logger.info(
+          `No criminogenic needs found for person identifier ${req.session.referralCreationDetails.personDetails.personIdentifier}`,
+        )
+        pageData = {
+          referralId: draftReferralId,
+          refereeName: {
+            firstName: req.session.referralCreationDetails.personDetails.firstName,
+            middleName: req.session.referralCreationDetails.personDetails.middleNames,
+            lastName: req.session.referralCreationDetails.personDetails.lastName,
+          },
+        }
+      }
     }
     const validationErrors = res.locals.errors
 
@@ -486,6 +497,7 @@ export default class ReferralController {
     return validateRequestBodyAgainstSchema(PersonNeedsSchema, req, res, () => {
       const personNeedsRequest = buildPersonNeedsRequest(req.body as PersonNeeds)
       this.referralService.savePersonNeeds(draftReferralId, personNeedsRequest, username)
+      delete req.session.referralCreationDetails.personNeeds
       return res.redirect('/referral/task-list')
     })
   }
