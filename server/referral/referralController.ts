@@ -441,16 +441,21 @@ export default class ReferralController {
         },
       }
       if (req.session.referralCreationDetails.personNeeds.personNeedsCheckboxes) {
-        pageData.hasAccommodationNeeds = req.session.referralCreationDetails.personNeeds?.personNeedsCheckboxes.includes('accommodation')
+        pageData.hasAccommodationNeeds =
+          req.session.referralCreationDetails.personNeeds?.personNeedsCheckboxes.includes('accommodation')
         pageData.accommodationDetails = req.session.referralCreationDetails.personNeeds?.accommodationInput
-        pageData.hasEmploymentEducationNeeds = req.session.referralCreationDetails.personNeeds?.personNeedsCheckboxes.includes('employment')
+        pageData.hasEmploymentEducationNeeds =
+          req.session.referralCreationDetails.personNeeds?.personNeedsCheckboxes.includes('employment')
         pageData.employmentEducationDetails = req.session.referralCreationDetails.personNeeds?.employmentInput
-        pageData.hasFinancialNeeds = req.session.referralCreationDetails.personNeeds?.personNeedsCheckboxes.includes('finances')
+        pageData.hasFinancialNeeds =
+          req.session.referralCreationDetails.personNeeds?.personNeedsCheckboxes.includes('finances')
         pageData.financialDetails = req.session.referralCreationDetails.personNeeds?.financesInput
         pageData.hasPersonalRelationshipsCommunityNeeds =
           req.session.referralCreationDetails.personNeeds?.personNeedsCheckboxes.includes('relationships')
-        pageData.personalRelationshipsCommunityDetails = req.session.referralCreationDetails.personNeeds?.relationshipsInput
-        pageData.hasDrugUseNeeds = req.session.referralCreationDetails.personNeeds?.personNeedsCheckboxes.includes('drugUse')
+        pageData.personalRelationshipsCommunityDetails =
+          req.session.referralCreationDetails.personNeeds?.relationshipsInput
+        pageData.hasDrugUseNeeds =
+          req.session.referralCreationDetails.personNeeds?.personNeedsCheckboxes.includes('drugUse')
         pageData.drugUseDetails = req.session.referralCreationDetails.personNeeds?.drugUseInput
         pageData.hasAlcoholUseNeeds =
           req.session.referralCreationDetails.personNeeds?.personNeedsCheckboxes.includes('alcoholUse')
