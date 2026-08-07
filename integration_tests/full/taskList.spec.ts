@@ -1,152 +1,32 @@
 import { test, expect } from '@playwright/test'
-import { randomUUID } from 'node:crypto'
-import { login, resetStubs, seedSessionCreateReferralDetails, seedSessionRiskSummary } from '../testUtils'
+import { login, resetStubs, seedSessionRiskSummary } from '../testUtils'
 import communitySupport from '../mockApis/communitySupport'
 import { referralInformationTaskList } from '../mockData/referralInformationData'
 import TaskListPage from '../pages/TaskListPage'
 
+const { referralId } = referralInformationTaskList
+
+const incompleteStatus = { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' }
+const completedStatus = { completed: true, statusText: 'Completed', tag: undefined }
+
 test.describe('Task List Page', () => {
-  const mockPersonId = randomUUID()
-  const mockReferralDetailsInCommunity = {
-    personDetails: {
-      id: mockPersonId,
-      personIdentifier: 'A123456',
-      firstName: 'Alex',
-      lastName: 'River',
-      dateOfBirth: '20 Feb 1975 (51 years old)',
-      sex: 'Male',
-    },
-  }
-
-  const mockPersonalDetails = {
-    id: '',
-    personalDetails: {
-      firstName: 'Alex',
-      middleNames: '',
-      lastName: 'Rivers',
-      crn: 'X320741',
-      prisonNumbers: [],
-      dateOfBirth: '2026-07-27T13:36:00Z',
-      preferredLanguage: 'English',
-      currentCircumstances: {
-        updatedAt: '2026-07-27T13:36:00Z',
-        value: 'none',
-      },
-      disabilities: {
-        updatedAt: '2026-07-27T13:36:00Z',
-        allDisabilities: 'none',
-      },
-    },
-    equalityMonitoring: {
-      ethnicity: 'White',
-      genderIdentity: 'Male',
-      nationalities: ['British'],
-      religionOrBelief: 'Christian',
-      sex: 'Male',
-      sexualOrientation: 'Hetrosexual',
-      transgender: 'yes',
-    },
-    contactDetails: {
-      phoneNumber: '',
-      mobileNumber: '',
-      emailAddress: '',
-      address: {
-        updatedAt: '2026-07-27T13:36:00Z',
-        value: '',
-        type: '',
-        startAt: '2026-07-27T13:36:00Z',
-        notes: 'some notes',
-        noFixedAbode: true,
-      },
-    },
-  }
-
-  const mockRisk = {
-    firstName: 'Alex',
-    lastName: 'River',
-    crn: 'X320741',
-    dateOfBirth: '1975-02-20',
-    assessmentWithin12Months: true,
-    assessedOn: '2026-02-28T09:00:00',
-    riskToSelf: {
-      suicide: {
-        risk: 'YES',
-        previous: 'YES',
-        previousConcernsText: 'Previous attempt in 2022 while in custody.',
-        current: 'YES',
-        currentConcernsText: 'Expressed suicidal ideation during last supervision.',
-      },
-      selfHarm: { risk: 'DK', previous: 'DK', current: 'DK' },
-      custody: { risk: 'NO', previous: 'NO', current: 'NO' },
-      hostelSetting: {
-        risk: 'NO',
-        previous: 'NO',
-        current: 'NO',
-      },
-      vulnerability: {
-        risk: 'YES',
-        previous: 'NO',
-        current: 'YES',
-        currentConcernsText: 'Mental health deterioration noted by GP.',
-      },
-    },
-    additionalInformation: 'Known to associate with a co-defendant in the local area.',
-    summary: {
-      whoIsAtRisk: 'Public, known adults and staff are at risk.',
-      natureOfRisk: 'Physical violence and intimidation towards others.',
-      riskImminence: 'Risk is immediate, particularly when under the influence of alcohol.',
-      riskIncreaseFactors: 'Alcohol and drug misuse.',
-      riskMitigationFactors: 'Regular probation contact.',
-      analysisOfRiskFactors: 'Pattern of domestic violence linked to substance misuse.',
-      riskInCommunity: { HIGH: ['Public'] },
-      riskInCustody: { LOW: ['Public'] },
-      overallRiskLevel: 'VERY_HIGH',
-    },
-  }
-
-  const incompleteTaskListStatus = {
-    fullName: 'John Doe',
-    confirmPersonalDetailsCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-    checkRiskInformationCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-    selectThePersonsNeedsCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-    addDetailsOfAnyAdditionalSupportNeedsCompleted: {
-      completed: false,
-      statusText: 'Incomplete',
-      tag: 'govuk-tag--blue',
-    },
-    addDetailsOfMainPointOfContactCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-  }
-
-  const completedTaskListStatus = {
-    fullName: 'John Doe',
-    confirmPersonalDetailsCompleted: { completed: true, statusText: 'Completed', tag: 'govuk-tag--green' },
-    checkRiskInformationCompleted: { completed: true, statusText: 'Completed', tag: 'govuk-tag--green' },
-    selectThePersonsNeedsCompleted: { completed: true, statusText: 'Completed', tag: 'govuk-tag--green' },
-    addDetailsOfAnyAdditionalSupportNeedsCompleted: {
-      completed: true,
-      statusText: 'Completed',
-      tag: 'govuk-tag--green',
-    },
-    addDetailsOfMainPointOfContactCompleted: { completed: true, statusText: 'Completed', tag: 'govuk-tag--green' },
-  }
-
   test.beforeEach(async ({ page }) => {
     await resetStubs()
-    await communitySupport.stubCreateReferral(referralInformationTaskList)
-    await communitySupport.stubGetTaskListStatus(referralInformationTaskList.referralId, incompleteTaskListStatus)
-    await communitySupport.stubGetConfirmPersonalDetailsData(
-      referralInformationTaskList.referralId,
-      mockPersonalDetails,
-    )
-    await communitySupport.stubGetRoshRisks(referralInformationTaskList.referralId, mockRisk)
     await page.goto('/')
     await login(page)
-    await seedSessionCreateReferralDetails(page, { referralCreationDetails: mockReferralDetailsInCommunity })
-    await seedSessionRiskSummary(page, referralInformationTaskList.referralId, mockPersonId)
-    await page.goto(TaskListPage.url())
+    await seedSessionRiskSummary(page, referralId)
   })
 
-  test('should display task list correctly', async ({ page }) => {
+  // AC3 + AC4 - Display Additional Support Needs task with Incomplete status
+  test('should display task list correctly with all tasks Incomplete', async ({ page }) => {
+    await communitySupport.stubGetTaskListStatus(referralId, {
+      fullName: 'Alex Rivers',
+      confirmPersonalDetailsCompleted: incompleteStatus,
+      checkRiskInformationCompleted: incompleteStatus,
+      selectThePersonsNeedsCompleted: incompleteStatus,
+      addDetailsOfAnyAdditionalSupportNeedsCompleted: incompleteStatus,
+      addDetailsOfMainPointOfContactCompleted: incompleteStatus,
+    })
     await page.goto(TaskListPage.url())
     const taskListPage = await TaskListPage.verifyOnPage(page)
     await taskListPage.verifyTaskStatus('Personal details', 'Confirm personal details', 'Incomplete')
@@ -162,16 +42,19 @@ test.describe('Task List Page', () => {
       'Add details of main point of contact',
       'Incomplete',
     )
-    await taskListPage.verifyTaskStatus('Check answers and submit', 'Check answers and submit', 'Not Started')
-    await taskListPage.verifyCheckAnswersLink(referralInformationTaskList.referralId)
+    await taskListPage.verifyTaskStatus('Check answers and submit', 'Check answers and submit', 'Cannot start yet')
+    await taskListPage.verifyCheckAnswersLink(referralId)
   })
 
-  test('should display task list correctly after updated task status', async ({ page }) => {
-    await communitySupport.stubGetTaskListStatus(referralInformationTaskList.referralId, {
-      ...incompleteTaskListStatus,
-      checkRiskInformationCompleted: { completed: true, statusText: 'Completed', tag: 'govuk-tag--green' },
+  test('should display task list correctly after one task is updated to Completed', async ({ page }) => {
+    await communitySupport.stubGetTaskListStatus(referralId, {
+      fullName: 'Alex Rivers',
+      confirmPersonalDetailsCompleted: incompleteStatus,
+      checkRiskInformationCompleted: completedStatus,
+      selectThePersonsNeedsCompleted: incompleteStatus,
+      addDetailsOfAnyAdditionalSupportNeedsCompleted: incompleteStatus,
+      addDetailsOfMainPointOfContactCompleted: incompleteStatus,
     })
-
     await page.goto(TaskListPage.url())
     const taskListPage = await TaskListPage.verifyOnPage(page)
     await taskListPage.verifyTaskStatus('Personal details', 'Confirm personal details', 'Incomplete')
@@ -187,13 +70,19 @@ test.describe('Task List Page', () => {
       'Add details of main point of contact',
       'Incomplete',
     )
-    await taskListPage.verifyTaskStatus('Check answers and submit', 'Check answers and submit', 'Not Started')
-    await taskListPage.verifyCheckAnswersLink(referralInformationTaskList.referralId)
+    await taskListPage.verifyTaskStatus('Check answers and submit', 'Check answers and submit', 'Cannot start yet')
+    await taskListPage.verifyCheckAnswersLink(referralId)
   })
 
-  test('should display check answers status correctly after updated all task status to completed', async ({ page }) => {
-    await communitySupport.stubGetTaskListStatus(referralInformationTaskList.referralId, completedTaskListStatus)
-
+  test('should display check answers status correctly after all tasks are Completed', async ({ page }) => {
+    await communitySupport.stubGetTaskListStatus(referralId, {
+      fullName: 'Alex Rivers',
+      confirmPersonalDetailsCompleted: completedStatus,
+      checkRiskInformationCompleted: completedStatus,
+      selectThePersonsNeedsCompleted: completedStatus,
+      addDetailsOfAnyAdditionalSupportNeedsCompleted: completedStatus,
+      addDetailsOfMainPointOfContactCompleted: completedStatus,
+    })
     await page.goto(TaskListPage.url())
     const taskListPage = await TaskListPage.verifyOnPage(page)
     await taskListPage.verifyTaskStatus('Personal details', 'Confirm personal details', 'Completed')
@@ -205,11 +94,19 @@ test.describe('Task List Page', () => {
       'Completed',
     )
     await taskListPage.verifyTaskStatus('Referral contact details', 'Add details of main point of contact', 'Completed')
-    await taskListPage.verifyTaskStatus('Check answers and submit', 'Check answers and submit', 'Not Started')
-    await taskListPage.verifyCheckAnswersLink(referralInformationTaskList.referralId)
+    await taskListPage.verifyTaskStatus('Check answers and submit', 'Check answers and submit', 'Completed')
+    await taskListPage.verifyCheckAnswersLink(referralId)
   })
 
   test('should navigate to sub tasks', async ({ page }) => {
+    await communitySupport.stubGetTaskListStatus(referralId, {
+      fullName: 'Alex Rivers',
+      confirmPersonalDetailsCompleted: incompleteStatus,
+      checkRiskInformationCompleted: incompleteStatus,
+      selectThePersonsNeedsCompleted: incompleteStatus,
+      addDetailsOfAnyAdditionalSupportNeedsCompleted: incompleteStatus,
+      addDetailsOfMainPointOfContactCompleted: incompleteStatus,
+    })
     await page.goto(TaskListPage.url())
     const taskListPage = await TaskListPage.verifyOnPage(page)
     await taskListPage.clickPersonalDetailsTask()
@@ -218,5 +115,98 @@ test.describe('Task List Page', () => {
     await taskListPage.page.goBack()
     await taskListPage.clickCheckRiskInformationTask()
     await expect(taskListPage.page).toHaveURL(/view-risk-summary/)
+  })
+
+  // AC5 - Navigate to Additional support needs
+  test('should navigate to additional support needs screen when link is clicked', async ({ page }) => {
+    await communitySupport.stubGetTaskListStatus(referralId, {
+      fullName: 'Alex Rivers',
+      confirmPersonalDetailsCompleted: incompleteStatus,
+      checkRiskInformationCompleted: incompleteStatus,
+      selectThePersonsNeedsCompleted: incompleteStatus,
+      addDetailsOfAnyAdditionalSupportNeedsCompleted: incompleteStatus,
+      addDetailsOfMainPointOfContactCompleted: incompleteStatus,
+    })
+    await communitySupport.stubGetAdditionalSupportNeeds(referralId, {
+      refereeName: { firstName: 'Alex', lastName: 'Rivers' },
+      physicalHealth: { selected: false, value: null },
+      mentalEmotionalHealth: { selected: false, value: null },
+      neurodiversity: { selected: false, value: null },
+      locationTravel: { selected: false, value: null },
+      caringResponsibilities: { selected: false, value: null },
+      employmentResponsibilities: { selected: false, value: null },
+      diversity: { selected: false, value: null },
+      anythingElse: { selected: false, value: null },
+      needsAdditionalSupport: null,
+    })
+    await page.goto(TaskListPage.url())
+    const taskListPage = await TaskListPage.verifyOnPage(page)
+    await taskListPage.clickAddSupportNeedsTask()
+    await expect(taskListPage.page).toHaveURL(/additional-support-needs/)
+    await expect(
+      page.getByRole('heading', { name: 'What does Alex need support with to attend or take part in sessions?' }),
+    ).toBeVisible()
+  })
+
+  // AC8 - Persist completed status / AC9 - Persist incomplete status
+  test('should display correct status for additional support needs task based on completion', async ({ page }) => {
+    await communitySupport.stubGetTaskListStatus(referralId, {
+      fullName: 'Alex Rivers',
+      confirmPersonalDetailsCompleted: incompleteStatus,
+      checkRiskInformationCompleted: incompleteStatus,
+      selectThePersonsNeedsCompleted: incompleteStatus,
+      addDetailsOfAnyAdditionalSupportNeedsCompleted: completedStatus,
+      addDetailsOfMainPointOfContactCompleted: incompleteStatus,
+    })
+    await page.goto(TaskListPage.url())
+    const taskListPage = await TaskListPage.verifyOnPage(page)
+    await taskListPage.verifyTaskStatus(
+      'Referral information',
+      'Add details of any additional support needs',
+      'Completed',
+    )
+  })
+
+  // AC10 - Maintain Completed Status When Revisiting additional support needs Task
+  test('should maintain Completed status when revisiting additional support needs task', async ({ page }) => {
+    await communitySupport.stubGetTaskListStatus(referralId, {
+      fullName: 'Alex Rivers',
+      confirmPersonalDetailsCompleted: incompleteStatus,
+      checkRiskInformationCompleted: incompleteStatus,
+      selectThePersonsNeedsCompleted: incompleteStatus,
+      addDetailsOfAnyAdditionalSupportNeedsCompleted: completedStatus,
+      addDetailsOfMainPointOfContactCompleted: incompleteStatus,
+    })
+    await communitySupport.stubGetAdditionalSupportNeeds(referralId, {
+      refereeName: { firstName: 'Alex', lastName: 'Rivers' },
+      physicalHealth: { selected: false, value: null },
+      mentalEmotionalHealth: { selected: false, value: null },
+      neurodiversity: { selected: false, value: null },
+      locationTravel: { selected: false, value: null },
+      caringResponsibilities: { selected: false, value: null },
+      employmentResponsibilities: { selected: false, value: null },
+      diversity: { selected: false, value: null },
+      anythingElse: { selected: false, value: null },
+      needsAdditionalSupport: null,
+    })
+    await page.goto(TaskListPage.url())
+    const taskListPage = await TaskListPage.verifyOnPage(page)
+    await taskListPage.verifyTaskStatus(
+      'Referral information',
+      'Add details of any additional support needs',
+      'Completed',
+    )
+    await taskListPage.clickAddSupportNeedsTask()
+    await expect(taskListPage.page).toHaveURL(/additional-support-needs/)
+    await expect(
+      page.getByRole('heading', { name: 'What does Alex need support with to attend or take part in sessions?' }),
+    ).toBeVisible()
+    await page.goto(TaskListPage.url())
+    await TaskListPage.verifyOnPage(page)
+    await taskListPage.verifyTaskStatus(
+      'Referral information',
+      'Add details of any additional support needs',
+      'Completed',
+    )
   })
 })
