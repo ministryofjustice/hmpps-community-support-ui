@@ -113,11 +113,11 @@ describe('ConfirmPersonalDetailsPresenter', () => {
     expect(languageRow.key.text).toBe('Preferred language')
     expect(languageRow.value.text).toBe('English')
     expect(singleLineHtml(circumstancesRow.key.html)).toBe(
-      `Current circumstances<br><span class="govuk-body-s secondary-text govuk-!-font-weight-regular" style="color: #505a5f;">Last updated 4 February 2026</span>`,
+      `Current circumstances<br><span class="govuk-body-s secondary-text govuk-!-font-weight-regular">Last updated: 4 February 2026</span>`,
     )
     expect(circumstancesRow.value.text).toBe('current circumstances')
     expect(singleLineHtml(disabilitiesRow.key.html)).toBe(
-      `Disabilities<br><span class="govuk-body-s secondary-text govuk-!-font-weight-regular" style="color: #505a5f;">Last updated 3 February 2026</span>`,
+      `Disabilities<br><span class="govuk-body-s secondary-text govuk-!-font-weight-regular">Last updated: 3 February 2026</span>`,
     )
     expect(disabilitiesRow.value.text).toBe('Dyslexia, Something else')
 
@@ -153,7 +153,7 @@ describe('ConfirmPersonalDetailsPresenter', () => {
     expect(emailRow.key.text).toBe('Email address')
     expect(emailRow.value.text).toBe('Not available')
     expect(singleLineHtml(addressRow.key.html)).toBe(
-      'Main address<br><span class="govuk-body-s secondary-text govuk-!-font-weight-regular" style="color: #505a5f;">Last updated 2 February 2026</span>',
+      'Main address<br><span class="govuk-body-s secondary-text govuk-!-font-weight-regular">Last updated: 2 February 2026</span>',
     )
     expect(singleLineHtml(addressRow.value.html)).toBe(
       '1 Main Street, ATown, A11 11A<br><p class="govuk-!-margin-top-2 govuk-!-margin-bottom-0"><span class="govuk-summary-list__key govuk-!-padding-bottom-0">Type of address</span><span>Family</span></p><p class="govuk-!-margin-top-2 govuk-!-margin-bottom-0"><span class="govuk-summary-list__key govuk-!-padding-bottom-0">Start date</span><span>1 January 2026</span></p><p class="govuk-!-margin-top-2 govuk-!-margin-bottom-0"><span class="govuk-summary-list__key govuk-!-padding-bottom-0">Notes</span><span>stuff and things</span></p>',
@@ -183,9 +183,105 @@ describe('ConfirmPersonalDetailsPresenter', () => {
     const [, , , addressRow] = viewModel.contact.rows
 
     expect(singleLineHtml(addressRow.key.html)).toBe(
-      'Main address<br><span class="govuk-body-s secondary-text govuk-!-font-weight-regular" style="color: #505a5f;">Last updated 2 February 2026</span>',
+      'Main address<br><span class="govuk-body-s secondary-text govuk-!-font-weight-regular">Last updated: 2 February 2026</span>',
     )
 
     expect(singleLineHtml(addressRow.value.html)).toBe('No fixed abode')
+  })
+
+  test('shows "Not available" for main address when no fixed abode is false and address is blank', () => {
+    const presenter = new ConfirmPersonalDetailsPresenter({
+      ...data,
+      contactDetails: {
+        ...data.contactDetails,
+        address: {
+          ...data.contactDetails.address,
+          value: '   ',
+          noFixedAbode: false,
+        },
+      },
+    })
+
+    const viewModel = presenter.buildViewModel(res)
+    const [, , , addressRow] = viewModel.contact.rows
+
+    expect(singleLineHtml(addressRow.value.html)).toBe(
+      'Not available<br><p class="govuk-!-margin-top-2 govuk-!-margin-bottom-0"><span class="govuk-summary-list__key govuk-!-padding-bottom-0">Type of address</span><span>Family</span></p><p class="govuk-!-margin-top-2 govuk-!-margin-bottom-0"><span class="govuk-summary-list__key govuk-!-padding-bottom-0">Start date</span><span>1 January 2026</span></p><p class="govuk-!-margin-top-2 govuk-!-margin-bottom-0"><span class="govuk-summary-list__key govuk-!-padding-bottom-0">Notes</span><span>stuff and things</span></p>',
+    )
+  })
+
+  test('shows "Not available" for start date when missing', () => {
+    const presenter = new ConfirmPersonalDetailsPresenter({
+      ...data,
+      contactDetails: {
+        ...data.contactDetails,
+        address: {
+          ...data.contactDetails.address,
+          startAt: '',
+          noFixedAbode: false,
+        },
+      },
+    })
+
+    const viewModel = presenter.buildViewModel(res)
+    const [, , , addressRow] = viewModel.contact.rows
+
+    expect(singleLineHtml(addressRow.value.html)).toContain(
+      '<span class="govuk-summary-list__key govuk-!-padding-bottom-0">Start date</span><span>Not available</span>',
+    )
+  })
+
+  test('shows "Not available" when current circumstances value is blank', () => {
+    const presenter = new ConfirmPersonalDetailsPresenter({
+      ...data,
+      personalDetails: {
+        ...data.personalDetails,
+        currentCircumstances: {
+          ...data.personalDetails.currentCircumstances,
+          value: '   ',
+        },
+      },
+    })
+
+    const viewModel = presenter.buildViewModel(res)
+    const [, , , , , circumstancesRow] = viewModel.personal.rows
+
+    expect(circumstancesRow.value.text).toBe('Not available')
+  })
+
+  test('shows "Not available" when disabilities data is blank', () => {
+    const presenter = new ConfirmPersonalDetailsPresenter({
+      ...data,
+      personalDetails: {
+        ...data.personalDetails,
+        disabilities: {
+          ...data.personalDetails.disabilities,
+          allDisabilities: '',
+        },
+      },
+    })
+
+    const viewModel = presenter.buildViewModel(res)
+    const [, , , , , , disabilitiesRow] = viewModel.personal.rows
+
+    expect(disabilitiesRow.value.text).toBe('Not available')
+  })
+
+  test('shows "None" when user has no disabilities', () => {
+    const presenter = new ConfirmPersonalDetailsPresenter({
+      ...data,
+      personalDetails: {
+        ...data.personalDetails,
+        disabilities: {
+          ...data.personalDetails.disabilities,
+          allDisabilities: 'None',
+        },
+      },
+    })
+
+    const viewModel = presenter.buildViewModel(res)
+    const [, , , , , , disabilitiesRow] = viewModel.personal.rows
+
+    expect(disabilitiesRow.value.text).toBe('None')
   })
 })

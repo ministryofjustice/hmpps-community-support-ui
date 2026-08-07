@@ -18,7 +18,8 @@ const nonEmptyStringOrDefault = (str: string | undefined | null, defaultValue: s
 
 type ContactAddress = ConfirmPersonDetailsBffDto['contactDetails']['address']
 
-const formatUpdatedAt = (updatedAt: string): string => (updatedAt !== '' ? dateFormat(new Date(updatedAt)) : 'unknown')
+const formatUpdatedAt = (updatedAt: string | undefined | null): string =>
+  (updatedAt ?? '').trim() !== '' ? dateFormat(new Date(updatedAt as string)) : 'Not available'
 
 export default class ConfirmPersonalDetailsPresenter extends PresenterBase<
   ConfirmPersonalDetailsViewModel,
@@ -59,20 +60,20 @@ export default class ConfirmPersonalDetailsPresenter extends PresenterBase<
         {
           key: {
             html: `${cardContent.circumstancesLabel}<br>
-            <span class="govuk-body-s secondary-text govuk-!-font-weight-regular" style="color: #505a5f;">
-              Last updated ${formatUpdatedAt(currentCircumstances.updatedAt)}
+            <span class="govuk-body-s secondary-text govuk-!-font-weight-regular">
+              Last updated: ${formatUpdatedAt(currentCircumstances.updatedAt)}
             </span>`,
           },
-          value: { text: currentCircumstances.value },
+          value: { text: nonEmptyStringOrDefault(currentCircumstances.value, defaultFieldValue) },
         },
         {
           key: {
             html: `${cardContent.disabilitiesLabel}<br>
-            <span class="govuk-body-s secondary-text govuk-!-font-weight-regular" style="color: #505a5f;">
-              Last updated ${formatUpdatedAt(disabilities.updatedAt)}
+            <span class="govuk-body-s secondary-text govuk-!-font-weight-regular">
+              Last updated: ${formatUpdatedAt(disabilities.updatedAt)}
             </span>`,
           },
-          value: { text: disabilities.allDisabilities },
+          value: { text: nonEmptyStringOrDefault(disabilities.allDisabilities, defaultFieldValue) },
         },
       ],
     }
@@ -115,20 +116,21 @@ export default class ConfirmPersonalDetailsPresenter extends PresenterBase<
 
   private buildAddressRow(address: ContactAddress, cardContent: ContactDetailsCard): GovukFrontendSummaryListRow {
     const hasNoFixedAbode = address.noFixedAbode
+    const mainAddress = nonEmptyStringOrDefault(address.value, 'Not available')
     return {
       key: {
         html: `${cardContent.mainAddressLabel}<br>
-        <span class="govuk-body-s secondary-text govuk-!-font-weight-regular" style="color: #505a5f;">
-                Last updated ${formatUpdatedAt(address.updatedAt)}
-              </span>`,
+        <span class="govuk-body-s secondary-text govuk-!-font-weight-regular">
+            Last updated: ${formatUpdatedAt(address.updatedAt)}
+        </span>`,
       },
       value: {
         html: hasNoFixedAbode
           ? 'No fixed abode'
-          : `${address.value}<br>
+          : `${mainAddress}<br>
               <p class="govuk-!-margin-top-2 govuk-!-margin-bottom-0">
                 <span class="govuk-summary-list__key govuk-!-padding-bottom-0">Type of address</span>
-                <span>${address.type}</span>
+                <span>${nonEmptyStringOrDefault(address.type, 'Not available')}</span>
               </p>
               <p class="govuk-!-margin-top-2 govuk-!-margin-bottom-0">
                 <span class="govuk-summary-list__key govuk-!-padding-bottom-0">Start date</span>
