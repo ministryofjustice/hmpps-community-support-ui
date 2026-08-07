@@ -6,6 +6,7 @@ import {
   CommunitySupportRiskInformationDto,
   IcsFeedbackSubmission,
   IcsFeedbackSubmissionResponse,
+  ActionPlanSummaryDto,
   ProbationOffice,
   ReferralInformation,
   SubmitReferralResponse,
@@ -456,6 +457,23 @@ export default {
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: referralInformation,
         transformers: ['response-template'],
+      },
+    }),
+
+  stubGetActionPlanSummary: (
+    _caseReference: string,
+    actionPlanSummary: ActionPlanSummaryDto,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPattern: '/community-support/bff/referral/.*/action-plan.*',
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: actionPlanSummary,
       },
     }),
   stubGetPersonalDetails: (

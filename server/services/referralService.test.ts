@@ -5,6 +5,7 @@ import {
   ReferralProgress,
   ReferralInformation,
   CommunitySupportRiskInformationDto,
+  ActionPlanSummaryDto,
 } from '@community-support-api'
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
 import ReferralService from './referralService'
@@ -115,6 +116,25 @@ describe('Referral service tests', () => {
       const result = await referralService.getReferralInformation(caseReference, 'user1')
       expect(result).toStrictEqual(mockReferralInformation)
       expect(communitySupportApiClient.getReferralInformation).toHaveBeenCalledWith(caseReference, 'user1')
+    })
+  })
+
+  describe('getActionPlanSummary', () => {
+    it('should return action plan summary from API client', async () => {
+      const caseReference = 'AB1234CD'
+      const mockActionPlanSummary: ActionPlanSummaryDto = {
+        personDetails: {
+          fullName: 'Alex River',
+        },
+        needs: [],
+      }
+
+      communitySupportApiClient.getActionPlanSummary.mockResolvedValue(mockActionPlanSummary)
+
+      const result = await referralService.getActionPlanSummary(caseReference, 'user1')
+
+      expect(result).toStrictEqual(mockActionPlanSummary)
+      expect(communitySupportApiClient.getActionPlanSummary).toHaveBeenCalledWith(caseReference, 'user1')
     })
   })
 
