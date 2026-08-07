@@ -119,4 +119,8 @@ export default class TaskListPage extends AbstractPage {
   async verifyCheckAnswersLink(referralId: string) {
     await expect(this.checkAnswersTask).toHaveAttribute('href', new RegExp(referralId))
   }
+
+  async clickBackLink() {
+    await this.backLink.click()
+  }
 }

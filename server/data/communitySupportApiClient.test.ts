@@ -12,6 +12,7 @@ import type {
   IcsFeedbackSubmissionResponse,
   CommunitySupportRiskInformationDto,
   CommunitySupportRiskDto,
+  ActionPlanSummaryDto,
 } from '@community-support-api'
 import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import { AgentConfig, ApiConfig } from '@ministryofjustice/hmpps-rest-client'
@@ -288,6 +289,27 @@ describe('CommunitySupportApiClient tests', () => {
       const result = communitySupportApiClient.getReferralInformation(caseReference, 'user1')
 
       expect(result).resolves.toEqual(mockReferralInformation)
+    })
+  })
+  describe('getActionPlanSummary tests', () => {
+    it('should return action plan summary with a 200 response', () => {
+      const caseReference = 'AB1234CD'
+      const mockActionPlanSummary: ActionPlanSummaryDto = {
+        personDetails: {
+          fullName: 'Alex River',
+        },
+        needs: [],
+      }
+
+      nock('http://localhost:8080', {
+        reqheaders: { authorization: 'Bearer dummy-token' },
+      })
+        .get(`/bff/referral/${caseReference}/action-plan`)
+        .reply(200, mockActionPlanSummary)
+
+      const result = communitySupportApiClient.getActionPlanSummary(caseReference, 'user1')
+
+      expect(result).resolves.toEqual(mockActionPlanSummary)
     })
   })
   describe('getIcsFeedbackSubmissionResponse tests', () => {

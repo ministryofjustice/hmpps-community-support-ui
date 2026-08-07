@@ -163,6 +163,10 @@
   "/progress/:id": {
     "pageHeader": "Referral for",
     "progressSubNavTitle": "Progress",
+    "actionPlanTitle": "Action plan",
+    "actionPlanStatusLabel": "Status",
+    "actionPlanActionsLabel": "Actions",
+    "actionPlanLinkText": "View action plan",
     "subNavItems": [
       {
         "id": "caseDetails",
@@ -183,6 +187,9 @@
     "progressActiveColumnHeaders": ["Date and time", "Status", "Action"],
     "progressInactiveColumnHeaders": ["Status", "Action"],
     "historySummary": "View ICS history"
+  },
+  "/referral/:id/action-plan": {
+    "pageHeader": "Action plan for {{ fullName }}"
   },
   "/ics-feedback/:id/did-session-take-place": {
     "submitButtonText": "Continue",
@@ -591,7 +598,7 @@
           },
           "addSupportNeeds": {
             "text": "Add details of any additional support needs",
-            "href": "/referral/task-list/add-support-needs"
+            "href": "/referral/task-list/additional-support-needs"
           }
         }
       },
