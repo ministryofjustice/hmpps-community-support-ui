@@ -1,5 +1,6 @@
 import type { SuperAgentRequest } from 'superagent'
 import {
+  AdditionalSupportNeedsDto,
   AppointmentIcsResponse,
   ConfirmPersonDetailsBffDto,
   CommunitySupportRiskDto,
@@ -73,18 +74,6 @@ export default {
         transformers: ['response-template'],
       },
     }),
-  stubSubmitConfirmPersonalDetails: (draftReferralId: string, httpStatus = 200): SuperAgentRequest =>
-    stubFor({
-      request: {
-        method: 'PATCH',
-        urlPathPattern: `/community-support/draft-referral/confirm-person-details/${draftReferralId}`,
-      },
-      response: {
-        status: httpStatus,
-        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: {},
-      },
-    }),
   stubGetCommunitySupportServices: (httpStatus = 200): SuperAgentRequest =>
     stubFor({
       request: {
@@ -108,7 +97,36 @@ export default {
         },
       },
     }),
-
+  stubGetCommunitySupportServicesTwoOptions: (httpStatus = 200): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: '/community-support/bff/referral-select-a-service',
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: {
+          personId: '11ea5182-09a2-4f3a-b07c-76ad5e6b765a',
+          communitySupportServices: [
+            {
+              id: 'service-id-123',
+              region: 'North West',
+              name: 'First Accommodation support',
+              providerName: 'Community Support Provider',
+              description: 'Support for accommodation and independent living.',
+            },
+            {
+              id: 'service-id-1456',
+              region: 'North West',
+              name: 'Second Accommodation support',
+              providerName: 'Community Support Provider',
+              description: 'Support for accommodation and independent living.',
+            },
+          ],
+        },
+      },
+    }),
   stubCreateReferral: (
     referralInformation: ReferralInformation = referralInformationInCommunity,
     httpStatus = 200,
@@ -567,6 +585,23 @@ export default {
         status: httpStatus,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: icsFeedbackSubmissionResponse,
+        transformers: ['response-template'],
+      },
+    }),
+  stubGetAdditionalSupportNeeds: (
+    referralId: string,
+    data: AdditionalSupportNeedsDto,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: `/community-support/bff/draft-referral/additional-support-needs/${referralId}`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: data,
         transformers: ['response-template'],
       },
     }),
