@@ -499,9 +499,9 @@ export default class ReferralController {
     const { referralCreationDetails } = req.session
     referralCreationDetails.personNeeds = req.body as PersonNeeds
 
-    return validateRequestBodyAgainstSchema(PersonNeedsSchema, req, res, () => {
+    return validateRequestBodyAgainstSchema(PersonNeedsSchema, req, res, async () => {
       const personNeedsRequest = buildPersonNeedsRequest(req.body as PersonNeeds)
-      this.referralService.savePersonNeeds(draftReferralId, personNeedsRequest, username)
+      await this.referralService.savePersonNeeds(draftReferralId, personNeedsRequest, username)
       delete req.session.referralCreationDetails.personNeeds
       return res.redirect('/referral/task-list')
     })
