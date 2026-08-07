@@ -26,6 +26,7 @@ import type {
   NeedsInterpreterBffResponseDto,
   CommunitySupportRiskDto,
   CommunitySupportRiskInformationDto,
+  ActionPlanSummaryDto,
 } from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
@@ -104,6 +105,10 @@ export default class CommunitySupportApiClient extends RestClient {
 
   getReferralInformation(caseReference: string, username: string): Promise<ReferralInformation> {
     return this.get({ path: `/bff/referral-information/${caseReference}` }, asSystem(username))
+  }
+
+  getActionPlanSummary(caseReference: string, username: string): Promise<ActionPlanSummaryDto> {
+    return this.get({ path: `/bff/referral/${caseReference}/action-plan` }, asSystem(username))
   }
 
   getIcsById(referralId: string, icsId: string, username: string): Promise<AppointmentIcsResponse> {

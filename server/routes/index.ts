@@ -10,6 +10,7 @@ import AppointmentController from '../appointment/appointmentController'
 import IcsFeedbackController from '../appointment/icsFeedbackController'
 import asyncMiddleware from '../middleware/asyncMiddleware'
 import LandingController from '../landing/landingController'
+import ActionPlanController from '../referral/actionPlan/actionPlanController'
 
 export default function routes({
   auditService,
@@ -33,6 +34,7 @@ export default function routes({
   const appointmentController = new AppointmentController(referralService, appointmentService, referenceDataService)
   const icsFeedbackController = new IcsFeedbackController(appointmentService)
   const landingController = new LandingController()
+  const actionPlanController = new ActionPlanController(referralService)
 
   router.get('/', async (req, res, next) => {
     await auditService.logPageView(Page.INDEX_PAGE, { who: res.locals.user.username, correlationId: req.id })
@@ -188,6 +190,8 @@ export default function routes({
   )
 
   get('/referral/task-list', (req, res) => referralController.showTaskList(req, res))
+
+  get('/referral/:id/action-plan', (req, res) => actionPlanController.showActionPlanPage(req, res))
 
   get('/referral/:id', (req, res, next) => referralController.showReferralPage(req, res, next))
 
