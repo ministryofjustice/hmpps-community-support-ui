@@ -114,7 +114,7 @@ test.describe('Task List Page', () => {
 
     await taskListPage.page.goBack()
     await taskListPage.clickCheckRiskInformationTask()
-    await expect(taskListPage.page).toHaveURL(/risk-information/)
+    await expect(taskListPage.page).toHaveURL(/view-risk-summary/)
   })
 
   // AC5 - Navigate to Additional support needs

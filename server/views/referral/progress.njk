@@ -33,4 +33,7 @@
   {% else %}
     <p class="govuk-body">No appointments scheduled</p>
   {% endif %}
+
+  <h3 class="govuk-heading-s">{{ content.actionPlanTitle }}</h3>
+  {{ govukTable(content.actionPlanTable) }}
 {% endblock %}

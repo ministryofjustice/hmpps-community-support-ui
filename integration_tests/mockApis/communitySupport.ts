@@ -34,6 +34,7 @@ export interface ReferralProgress {
   referralId: string
   fullName: string
   appointments: components['schemas']['ReferralAppointmentHistoryDto'][]
+  actionPlanStatus: components['schemas']['ActionPlanStatusDto']
 }
 
 export default {
