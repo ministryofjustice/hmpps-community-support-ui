@@ -27,16 +27,20 @@ export const PersonNeedsSchema = z
         path: ['accommodationInput'],
       })
     }
-    if (val.personNeedsCheckboxes.includes('employment and education') && !val.employmentInput) {
-      ctx.addIssue({ code: 'custom', message: formatError(EMPTY_DETAILS, 'employment'), path: ['employmentInput'] })
+    if (val.personNeedsCheckboxes.includes('employment') && !val.employmentInput) {
+      ctx.addIssue({
+        code: 'custom',
+        message: formatError(EMPTY_DETAILS, 'employment and education'),
+        path: ['employmentInput'],
+      })
     }
     if (val.personNeedsCheckboxes.includes('finances') && !val.financesInput) {
       ctx.addIssue({ code: 'custom', message: formatError(EMPTY_DETAILS, 'finances'), path: ['financesInput'] })
     }
-    if (val.personNeedsCheckboxes.includes('personal relationships and community') && !val.relationshipsInput) {
+    if (val.personNeedsCheckboxes.includes('relationships') && !val.relationshipsInput) {
       ctx.addIssue({
         code: 'custom',
-        message: formatError(EMPTY_DETAILS, 'relationship'),
+        message: formatError(EMPTY_DETAILS, 'personal relationships and community'),
         path: ['relationshipsInput'],
       })
     }
