@@ -14,6 +14,10 @@ describe('ReferralProgressPresenter', () => {
   const mockContent: ReferralProgressContent = {
     pageHeader: 'Referral for',
     progressSubNavTitle: 'Progress',
+    actionPlanTitle: 'Action plan',
+    actionPlanStatusLabel: 'Status',
+    actionPlanActionsLabel: 'Actions',
+    actionPlanLinkText: 'View action plan',
     subNavItems: [],
     progressActiveColumnHeaders: ['Date and time', 'Status', 'Action'],
     progressInactiveColumnHeaders: ['Status', 'Action'],
@@ -62,6 +66,21 @@ describe('ReferralProgressPresenter', () => {
       expect(viewModel.icsAppointmentTable.rows).toEqual([
         [{ html: expect.stringContaining('Not scheduled') }, { html: expect.stringContaining('Schedule session') }],
       ])
+    })
+
+    it('renders Action Plan summary list from referral progress status data', () => {
+      const referralProgressNoAppointment: ReferralProgress = buildReferralProgress([])
+
+      const presenter = new ReferralProgressPresenter(referralProgressNoAppointment, caseReference)
+      const viewModel = presenter.buildViewModel(mockResponse)
+
+      expect(viewModel.actionPlanTitle).toBe('Action plan')
+      expect(viewModel.actionPlanTable.head).toEqual([{ text: 'Status' }, { text: 'Actions' }])
+      expect(viewModel.actionPlanTable.rows).toHaveLength(1)
+      expect(viewModel.actionPlanTable.rows[0][0].html).toContain('govuk-tag govuk-tag--blue')
+      expect(viewModel.actionPlanTable.rows[0][0].html).toContain('In progress')
+      expect(viewModel.actionPlanTable.rows[0][1].html).toContain('View action plan')
+      expect(viewModel.actionPlanTable.rows[0][1].html).toContain(`/referral/${caseReference}/action-plan`)
     })
   })
 
