@@ -139,6 +139,21 @@ test.describe('Referral Progress Page', () => {
       await expect(referralProgressPage.icsTitle).toHaveText('Initial contact session (ICS)')
       await expect(referralProgressPage.icsTable.locator).toBeVisible()
     })
+
+    await test.step('I can see the Action plan section and summary list', async () => {
+      await expect(referralProgressPage.actionPlanTitle).toBeVisible()
+      await expect(referralProgressPage.actionPlanTable).toContainText('Status')
+      await expect(referralProgressPage.actionPlanTable).toContainText('Actions')
+      await expect(referralProgressPage.actionPlanTable).toContainText('In progress')
+      await expect(referralProgressPage.actionPlanLink).toHaveText('View action plan')
+      await expect(referralProgressPage.actionPlanLink).toHaveAttribute(
+        'href',
+        `/referral/${caseReference}/action-plan`,
+      )
+      await expect(referralProgressPage.actionPlanTable.locator('.govuk-tag.govuk-tag--blue')).toContainText(
+        'In progress',
+      )
+    })
   })
 
   const expectNotScheduledState = async (referralProgressPage: ReferralProgressPage) => {
