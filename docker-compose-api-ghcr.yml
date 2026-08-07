@@ -10,7 +10,7 @@
 #   127.0.0.1 hmpps-auth
 services:
   redis:
-    image: 'cimg/redis:8.8'
+    image: 'cimg/redis:8.10'
     networks:
       - hmpps
     container_name: redis-community-support-ui-api-ghcr
