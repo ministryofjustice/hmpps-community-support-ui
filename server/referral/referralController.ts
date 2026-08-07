@@ -439,28 +439,28 @@ export default class ReferralController {
           middleName: req.session.referralCreationDetails.personDetails.middleNames,
           lastName: req.session.referralCreationDetails.personDetails.lastName,
         },
-        hasAccommodationNeeds:
-          req.session.referralCreationDetails.personNeeds?.personNeedsCheckboxes.includes('accommodation'),
-        accommodationDetails: req.session.referralCreationDetails.personNeeds?.accommodationInput,
-        hasEmploymentEducationNeeds:
-          req.session.referralCreationDetails.personNeeds?.personNeedsCheckboxes.includes('employment'),
-        employmentEducationDetails: req.session.referralCreationDetails.personNeeds?.employmentInput,
-        hasFinancialNeeds: req.session.referralCreationDetails.personNeeds?.personNeedsCheckboxes.includes('finances'),
-        financialDetails: req.session.referralCreationDetails.personNeeds?.financesInput,
-        hasPersonalRelationshipsCommunityNeeds:
-          req.session.referralCreationDetails.personNeeds?.personNeedsCheckboxes.includes('relationships'),
-        personalRelationshipsCommunityDetails: req.session.referralCreationDetails.personNeeds?.relationshipsInput,
-        hasDrugUseNeeds: req.session.referralCreationDetails.personNeeds?.personNeedsCheckboxes.includes('drugUse'),
-        drugUseDetails: req.session.referralCreationDetails.personNeeds?.drugUseInput,
-        hasAlcoholUseNeeds:
-          req.session.referralCreationDetails.personNeeds?.personNeedsCheckboxes.includes('alcoholUse'),
-        alcoholUseDetails: req.session.referralCreationDetails.personNeeds?.alcoholUseDetails,
-        hasHealthWellbeingNeeds:
-          req.session.referralCreationDetails.personNeeds?.personNeedsCheckboxes.includes('health'),
-        healthWellbeingDetails: req.session.referralCreationDetails.personNeeds?.healthInput,
-        hasThinkingBehavioursAttitudeNeeds:
-          req.session.referralCreationDetails.personNeeds?.personNeedsCheckboxes.includes('thinking'),
-        thinkingBehavioursAttitudeDetails: req.session.referralCreationDetails.personNeeds?.thinkingInput,
+      }
+      if (req.session.referralCreationDetails.personNeeds.personNeedsCheckboxes) {
+        pageData.hasAccommodationNeeds = req.session.referralCreationDetails.personNeeds?.personNeedsCheckboxes.includes('accommodation')
+        pageData.accommodationDetails = req.session.referralCreationDetails.personNeeds?.accommodationInput
+        pageData.hasEmploymentEducationNeeds = req.session.referralCreationDetails.personNeeds?.personNeedsCheckboxes.includes('employment')
+        pageData.employmentEducationDetails = req.session.referralCreationDetails.personNeeds?.employmentInput
+        pageData.hasFinancialNeeds = req.session.referralCreationDetails.personNeeds?.personNeedsCheckboxes.includes('finances')
+        pageData.financialDetails = req.session.referralCreationDetails.personNeeds?.financesInput
+        pageData.hasPersonalRelationshipsCommunityNeeds =
+          req.session.referralCreationDetails.personNeeds?.personNeedsCheckboxes.includes('relationships')
+        pageData.personalRelationshipsCommunityDetails = req.session.referralCreationDetails.personNeeds?.relationshipsInput
+        pageData.hasDrugUseNeeds = req.session.referralCreationDetails.personNeeds?.personNeedsCheckboxes.includes('drugUse')
+        pageData.drugUseDetails = req.session.referralCreationDetails.personNeeds?.drugUseInput
+        pageData.hasAlcoholUseNeeds =
+          req.session.referralCreationDetails.personNeeds?.personNeedsCheckboxes.includes('alcoholUse')
+        pageData.alcoholUseDetails = req.session.referralCreationDetails.personNeeds?.alcoholUseDetails
+        pageData.hasHealthWellbeingNeeds =
+          req.session.referralCreationDetails.personNeeds?.personNeedsCheckboxes.includes('health')
+        pageData.healthWellbeingDetails = req.session.referralCreationDetails.personNeeds?.healthInput
+        pageData.hasThinkingBehavioursAttitudeNeeds =
+          req.session.referralCreationDetails.personNeeds?.personNeedsCheckboxes.includes('thinking')
+        pageData.thinkingBehavioursAttitudeDetails = req.session.referralCreationDetails.personNeeds?.thinkingInput
       }
     } else {
       try {
