@@ -53,10 +53,11 @@ export default class RiskSummaryPresenter extends PresenterBase<RiskSummaryViewM
     content: RiskSummaryContent,
     anchor: string,
   ): RiskSummaryRow {
+    const concernsText = risk?.currentConcernsText?.trim() ?? ''
     return {
       heading: card.heading,
-      indicator: this.concernIndicator(risk, content),
-      content: risk?.currentConcernsText?.trim() ?? '',
+      indicator: concernsText ? undefined : this.concernIndicator(risk, content),
+      content: concernsText,
       changeLink: { href: `${content.changeHref}#${anchor}`, text: card.changeLinkText },
     }
   }
