@@ -7,7 +7,7 @@ export default TaskListContentFactory.define(({ transientParams }) => ({
   pageTitle: 'Make a referral - [service name]',
   pageHeader: transientParams.pageHeader || '{{ fullName }}',
   pageSubHeader: transientParams.pageSubHeader || 'Make a referral',
-  backLink: '/referral/new/select-a-service',
+  backLink: '/referral/new/find-a-person',
   taskList: {
     personalDetails: {
       title: 'Personal details',

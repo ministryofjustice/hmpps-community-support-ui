@@ -24,7 +24,7 @@ describe('TaskListPresenter - Page Rendering', () => {
     // Basic page info
     expect(viewModel.pageHeader).toBe('John Smith')
     expect(viewModel.pageSubHeader).toBe('Make a referral')
-    expect(viewModel.backLink.href).toBe('/referral/new/select-a-service')
+    expect(viewModel.backLink.href).toBe('/referral/new/find-a-person')
 
     // Task list structure
     const sections = viewModel.taskListItemsBySection

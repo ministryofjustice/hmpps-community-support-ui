@@ -82,13 +82,12 @@ describe('CommunitySupportApiClient tests', () => {
         lastName: 'Doe',
         sex: 'Male',
         personId: 'person-id-123',
-        communityServiceProviderId: 'csp-id-123',
-        communityServiceProviderName: 'Community Support Provider',
-        region: 'North West',
-        deliveryPartner: 'Delivery Partner Ltd',
+        communityServiceProviderId: '',
+        communityServiceProviderName: '',
+        region: '',
+        deliveryPartner: '',
       }
       const referralRequestData: CreateReferralRequest = {
-        communityServiceProviderId: 'csp-id-123',
         personIdentifier: 'CRN123',
       } as CreateReferralRequest
       nock('http://localhost:8080', {

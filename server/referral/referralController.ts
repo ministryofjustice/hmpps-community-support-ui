@@ -391,9 +391,7 @@ export default class ReferralController {
 
   async communityServiceProviderPage(req: Request, res: Response) {
     const { username } = res.locals.user
-    const { service } = req.body
     const referralRequest = {
-      communityServiceProviderId: service,
       personIdentifier: req.session.personId,
     }
     try {

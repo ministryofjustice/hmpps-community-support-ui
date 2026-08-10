@@ -704,8 +704,6 @@ export interface components {
       referenceNumber?: string | null
     }
     CreateReferralRequest: {
-      /** Format: uuid */
-      communityServiceProviderId: string
       personIdentifier: string
       urgency?: boolean | null
     }
@@ -721,11 +719,11 @@ export interface components {
       sex?: string | null
       personIdentifier: string
       /** Format: uuid */
-      communityServiceProviderId: string
-      communityServiceProviderName: string
-      region: string
+      communityServiceProviderId?: string | null
+      communityServiceProviderName?: string | null
+      region?: string | null
       referenceNumber?: string | null
-      deliveryPartner: string
+      deliveryPartner?: string | null
     }
     AssignCaseWorkersRequest: {
       emails: string[]
@@ -988,9 +986,9 @@ export interface components {
     CheckReferralInformationDto: {
       /** Format: uuid */
       referralId: string
-      communityServiceProviderName: string
-      region: string
-      deliveryPartner: string
+      communityServiceProviderName?: string | null
+      region?: string | null
+      deliveryPartner?: string | null
       personIdentifier?: string | null
       prisonNumbers: string[]
       fullName: string
