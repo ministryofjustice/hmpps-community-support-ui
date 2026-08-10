@@ -4,7 +4,6 @@ import FindPersonPage from '../pages/findPersonPage'
 import FoundPersonPage from '../pages/foundPersonPage'
 import HomePage from '../pages/homePage'
 import communitySupport from '../mockApis/communitySupport'
-import { referralInformationInCommunity } from '../mockData/referralInformationData'
 
 test.describe('FindPerson', () => {
   test.beforeEach(async ({ page }) => {
@@ -116,23 +115,6 @@ test.describe('FindPerson', () => {
     await findPersonPage.continueButton.click()
 
     await FoundPersonPage.verifyOnPage(page)
-  })
-
-  // TODO skipped till design settles
-  test.skip('TODO: should navigate to the service provider selection screen when continue', async ({ page }) => {
-    await communitySupport.stubCreateReferral(referralInformationInCommunity)
-
-    await page.goto('/referral/new/find-a-person')
-    const findPersonPage = await FindPersonPage.verifyOnPage(page)
-    await findPersonPage.identifierInput.fill('X320741')
-    await page.getByRole('button', { name: 'Continue' }).click()
-
-    await FoundPersonPage.verifyOnPage(page)
-    await page.getByRole('button', { name: 'Continue' }).click()
-    await expect(
-      page.getByRole('heading', { name: 'Select a Community Service Provider to make a referral' }),
-    ).toBeVisible()
-    await expect(page.getByRole('link', { name: 'Accommodation support' })).toBeVisible()
   })
 
   test('should display the found details page when a person is found by prison number', async ({ page }) => {
