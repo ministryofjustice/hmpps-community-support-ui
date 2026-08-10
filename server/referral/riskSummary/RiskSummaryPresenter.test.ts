@@ -121,19 +121,19 @@ describe('RiskSummaryPresenter', () => {
     expect(riskImminence.content).toBe('Risk is immediate, particularly when under the influence of alcohol.')
 
     expect(selfHarm.heading).toBe('Risk of self-harm')
-    expect(selfHarm.indicator).toBe(`Don't know`)
+    expect(selfHarm.indicator).toBeUndefined()
     expect(selfHarm.content).toBe('User confirmed no self-harm concerns following review.')
 
     expect(suicide.heading).toBe('Risk of suicide')
-    expect(suicide.indicator).toBe('Yes')
+    expect(suicide.indicator).toBeUndefined()
     expect(suicide.content).toBe('Expressed suicidal ideation during last supervision.')
 
     expect(hostelSetting.heading).toBe('Concerns in relation to coping in a hostel setting')
-    expect(hostelSetting.indicator).toBe('No')
+    expect(hostelSetting.indicator).toBeUndefined()
     expect(hostelSetting.content).toBe('User updated: no ongoing hostel setting concerns identified during review.')
 
     expect(vulnerability.heading).toBe('Concerns in relation to vulnerability')
-    expect(vulnerability.indicator).toBe('Yes')
+    expect(vulnerability.indicator).toBeUndefined()
     expect(vulnerability.content).toBe('Mental health deterioration noted by GP.')
 
     expect(additional.heading).toBe('Additional information')
@@ -169,5 +169,24 @@ describe('RiskSummaryPresenter', () => {
     expect(selfHarm.indicator).toBe('Not available')
     expect(selfHarm.content).toBe('')
     expect(additional.content).toBe('None')
+  })
+
+  test('shows the indicator badge when there is no concerns text, rather than showing both', () => {
+    const presenter = new RiskSummaryPresenter(
+      {
+        ...risk,
+        riskToSelf: {
+          ...risk.riskToSelf,
+          suicide: { risk: 'YES', currentConcernsText: null },
+        },
+      },
+      'referral-uuid-1',
+    )
+
+    const viewModel = presenter.buildViewModel(res)
+
+    const [, , , , suicide] = viewModel.rows
+    expect(suicide.indicator).toBe('Yes')
+    expect(suicide.content).toBe('')
   })
 })
