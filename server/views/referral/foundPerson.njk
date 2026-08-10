@@ -9,7 +9,7 @@
 {% block contentBody %}
   <h1 class="govuk-heading-l">{{content.staticContent.pageHeader}}</h1>
     {{ govukSummaryList(content.personSummary) }}
-    <form method="post" novalidate action="/referral/new/confirm-person">
+    <form method="post" novalidate action="{{ content.staticContent.continueButtonLink }}">
       <input type="hidden" name="_csrf" value="{{csrfToken}}">
       <div class="govuk-button-group">
         {{ govukButton({
