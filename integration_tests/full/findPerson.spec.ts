@@ -8,7 +8,7 @@ import communitySupport from '../mockApis/communitySupport'
 import { referralInformationInCommunity } from '../mockData/referralInformationData'
 
 test.describe('FindPerson', () => {
-  const incompleteStatus = { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' }
+
   test.beforeEach(async ({ page }) => {
     await resetStubs()
     await communitySupport.stubGetPerson()
@@ -121,6 +121,7 @@ test.describe('FindPerson', () => {
   })
 
   test('should navigate to the task list page when continue is clicked from found person page', async ({ page }) => {
+    const incompleteStatus = { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' }
     await communitySupport.stubCreateReferral(referralInformationInCommunity)
     await communitySupport.stubGetTaskListStatus(referralInformationInCommunity.referralId, {
       fullName: 'Alex River',
