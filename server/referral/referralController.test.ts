@@ -321,7 +321,7 @@ describe('ReferralController', () => {
 
     it('should render the confirm personal details page using the stored draftReferralId', async () => {
       req = {
-        session: { draftReferalId: 'referral-uuid-1', personId: 'X123456' },
+        session: { draftReferralId: 'referral-uuid-1', personId: 'X123456' },
       } as unknown as Request
       const personalDetails = { personalDetails: { crn: 'X123456' } } as unknown as ConfirmPersonDetailsBffDto
       referralService.getPersonalDetails.mockResolvedValue(personalDetails)
@@ -344,7 +344,7 @@ describe('ReferralController', () => {
     })
 
     it('should render the confirm personal details page using the draft referral id', async () => {
-      req = { session: { draftReferalId: 'referral-uuid-1' } } as unknown as Request
+      req = { session: { draftReferralId: 'referral-uuid-1' } } as unknown as Request
       const personalDetails = { personalDetails: { crn: 'X123456' } } as unknown as ConfirmPersonDetailsBffDto
       referralService.getPersonalDetails.mockResolvedValue(personalDetails)
 
@@ -356,7 +356,7 @@ describe('ReferralController', () => {
     })
 
     it('should redirect to find a person page when fetching personal details fails', async () => {
-      req = { session: { draftReferalId: 'referral-uuid-1' }, flash: jest.fn() } as unknown as Request
+      req = { session: { draftReferralId: 'referral-uuid-1' }, flash: jest.fn() } as unknown as Request
       referralService.getPersonalDetails.mockRejectedValue(new Error('error retrieving personal details'))
 
       await referralController.showConfirmPersonalDetails(req, res)
@@ -375,7 +375,7 @@ describe('ReferralController', () => {
     })
 
     it('should render the risk summary page using the draft referral id', async () => {
-      req = { session: { draftReferalId: 'referral-uuid-1' } } as unknown as Request
+      req = { session: { draftReferralId: 'referral-uuid-1' } } as unknown as Request
       const risk = { firstName: 'Alex', lastName: 'River', crn: 'X123456' } as unknown as CommunitySupportRiskDto
       referralService.getRoshRisksByReferralId.mockResolvedValue(risk)
 
@@ -388,7 +388,7 @@ describe('ReferralController', () => {
     })
 
     it('should propagate the error when the risk information cannot be retrieved', async () => {
-      req = { session: { draftReferalId: 'referral-uuid-1' } } as unknown as Request
+      req = { session: { draftReferralId: 'referral-uuid-1' } } as unknown as Request
       const apiError = new Error('error retrieving risk information')
       referralService.getRoshRisksByReferralId.mockRejectedValue(apiError)
 
@@ -408,7 +408,7 @@ describe('ReferralController', () => {
     })
 
     it('should save the risk information and redirect to the task list', async () => {
-      req = { session: { draftReferalId: 'referral-uuid-1' } } as unknown as Request
+      req = { session: { draftReferralId: 'referral-uuid-1' } } as unknown as Request
       const risk = {
         firstName: 'Alex',
         lastName: 'River',
@@ -449,7 +449,7 @@ describe('ReferralController', () => {
     })
 
     it('should propagate the error when the risk information cannot be retrieved', async () => {
-      req = { session: { draftReferalId: 'referral-uuid-1' } } as unknown as Request
+      req = { session: { draftReferralId: 'referral-uuid-1' } } as unknown as Request
       referralService.getRoshRisksByReferralId.mockRejectedValue(new Error('error retrieving risk information'))
 
       await expect(referralController.confirmRiskSummary(req, res)).rejects.toThrow('error retrieving risk information')
@@ -459,7 +459,7 @@ describe('ReferralController', () => {
     })
 
     it('should propagate the error when saving the risk information fails', async () => {
-      req = { session: { draftReferalId: 'referral-uuid-1' } } as unknown as Request
+      req = { session: { draftReferralId: 'referral-uuid-1' } } as unknown as Request
       const risk = { firstName: 'Alex', lastName: 'River', crn: 'X123456' } as unknown as CommunitySupportRiskDto
       referralService.getRoshRisksByReferralId.mockResolvedValue(risk)
       referralService.saveRiskInformation.mockRejectedValue(new Error('error saving risk information'))
@@ -480,7 +480,7 @@ describe('ReferralController', () => {
     })
 
     it('should render the edit risk summary page using the draft referral risk data', async () => {
-      req = { session: { draftReferalId: 'referral-uuid-1' } } as unknown as Request
+      req = { session: { draftReferralId: 'referral-uuid-1' } } as unknown as Request
       const risk = { firstName: 'Alex', lastName: 'River', crn: 'X123456' } as unknown as CommunitySupportRiskDto
       referralService.getRoshRisksByReferralId.mockResolvedValue(risk)
 
@@ -492,7 +492,7 @@ describe('ReferralController', () => {
     })
 
     it('should propagate the error when the risk information cannot be retrieved', async () => {
-      req = { session: { draftReferalId: 'referral-uuid-1' } } as unknown as Request
+      req = { session: { draftReferralId: 'referral-uuid-1' } } as unknown as Request
       referralService.getRoshRisksByReferralId.mockRejectedValue(new Error('error retrieving risk information'))
 
       await expect(referralController.showEditRiskSummary(req, res)).rejects.toThrow(
@@ -514,7 +514,7 @@ describe('ReferralController', () => {
 
     it('should save the submitted risk information and redirect to the view risk summary page', async () => {
       req = {
-        session: { draftReferalId: 'referral-uuid-1' },
+        session: { draftReferralId: 'referral-uuid-1' },
         body: {
           riskSummaryWhoIsAtRisk: 'Public, known adults and staff are at risk.',
           riskSummaryNatureOfRisk: 'Physical violence and intimidation towards others.',
@@ -548,7 +548,7 @@ describe('ReferralController', () => {
 
     it('should propagate the error when saving the risk information fails', async () => {
       req = {
-        session: { draftReferalId: 'referral-uuid-1' },
+        session: { draftReferralId: 'referral-uuid-1' },
         body: { riskSummaryWhoIsAtRisk: 'Updated information.' },
       } as unknown as Request
       referralService.saveRiskInformation.mockRejectedValue(new Error('error saving risk information'))

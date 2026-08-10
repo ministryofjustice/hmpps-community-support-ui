@@ -1,0 +1,19 @@
+{% extends "../partials/layout.njk" %}
+
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = "Select what needs the referral should focus on - [Service name]" %}
+{% set mainClasses = "govuk-body" %}
+
+{% block contentBody %}
+
+<h1 class="govuk-heading-xl govuk-!-margin-bottom-4">{{ content.heading }}</h1>
+<hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible govuk-!-width-full">
+<form method="post" action="{{content.submitHref}}" >
+  <input type="hidden" name="_csrf" value="{{csrfToken}}">
+  {{ govukCheckboxes(content.checkboxes) }}
+  {{ govukButton(content.submitButton) }}
+</form>
+
+{% endblock %}

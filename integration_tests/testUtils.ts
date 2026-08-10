@@ -100,9 +100,9 @@ export const seedSessionCreateReferralDetails = async (page: Page, referralCreat
   })
 }
 
-export const seedSessionRiskSummary = async (page: Page, draftReferalId: string, personId?: string): Promise<void> => {
+export const seedSessionRiskSummary = async (page: Page, draftReferralId: string, personId?: string): Promise<void> => {
   await page.request.post('/test/setup-draft-referral-session', {
-    data: { draftReferalId, personId },
+    data: { draftReferralId, personId },
     headers: { 'Content-Type': 'application/json' },
   })
 }

@@ -85,7 +85,7 @@ export default function createApp(services: Services): express.Application {
       res.sendStatus(200)
     })
     app.post('/test/setup-draft-referral-session', (req, res) => {
-      req.session.draftReferalId = req.body.draftReferalId
+      req.session.draftReferralId = req.body.draftReferralId
       if (req.body.personId) {
         req.session.personId = req.body.personId
       }

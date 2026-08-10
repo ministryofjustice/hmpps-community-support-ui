@@ -38,7 +38,7 @@ export declare module 'express-session' {
     pending: Record<string, string>
     referralProgressBanner?: ReferralProgressBannerContent
     icsFeedbackSubmission: IcsFeedbackSubmission & { caseReferenceId: string }
-    draftReferalId: string
+    draftReferralId: string
     personId: string
   }
 }

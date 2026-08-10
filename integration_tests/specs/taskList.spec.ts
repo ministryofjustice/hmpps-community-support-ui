@@ -57,7 +57,7 @@ test.describe('Task List Journey', () => {
     await page.goto(HomePage.url())
     await login(page)
     await test.step('go to task list page', async () => {
-      await test.step('select make a referal', async () => {
+      await test.step('select make a referral', async () => {
         const pom = await HomePage.verifyOnPage(page)
         await pom.clickMakeAReferralTile()
       })

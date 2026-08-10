@@ -26,6 +26,8 @@ import type {
   NeedsInterpreterBffResponseDto,
   CommunitySupportRiskDto,
   CommunitySupportRiskInformationDto,
+  ReferralCriminogenicNeedsDto,
+  CriminogenicNeedsRequest,
   ActionPlanSummaryDto,
 } from '@community-support-api'
 import config from '../config'
@@ -167,7 +169,22 @@ export default class CommunitySupportApiClient extends RestClient {
     )
   }
 
-  savePersonalDetailsConfirmed(draftReferalId: string, username: string): Promise<void> {
-    return this.patch({ path: `/draft-referral/confirm-person-details/${draftReferalId}` }, asSystem(username))
+  savePersonalDetailsConfirmed(draftReferralId: string, username: string): Promise<void> {
+    return this.patch({ path: `/draft-referral/confirm-person-details/${draftReferralId}` }, asSystem(username))
+  }
+
+  getPersonNeeds(draftReferralId: string, username: string): Promise<ReferralCriminogenicNeedsDto> {
+    return this.get({ path: `/bff/draft-referral/person-needs/${draftReferralId}` }, asSystem(username))
+  }
+
+  savePersonNeeds(
+    draftReferralId: string,
+    personNeeds: CriminogenicNeedsRequest,
+    username: string,
+  ): Promise<ReferralCriminogenicNeedsDto> {
+    return this.patch(
+      { path: `/draft-referral/person-needs/${draftReferralId}`, data: personNeeds },
+      asSystem(username),
+    )
   }
 }
