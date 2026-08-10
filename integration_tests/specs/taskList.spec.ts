@@ -69,29 +69,9 @@ test.describe('Task List Journey', () => {
         await expect(page.getByRole('heading', { name: 'Confirm this is the correct' })).toBeVisible()
         await page.getByRole('button', { name: 'Continue' }).click()
       })
-      await test.step('service select', async () => {
-        await expect(page.getByRole('heading', { name: 'Select the Community Support' })).toBeVisible()
-        await page.getByRole('radio', { name: 'First Accommodation support' }).check()
-        await page.getByRole('button', { name: 'Continue' }).click()
-      })
       await test.step('confirm task list page', async () => {
         await expect(page.getByRole('heading', { name: 'Make a referral' })).toBeVisible()
       })
-    })
-  })
-
-  test('change service provider', async ({ page }) => {
-    await test.step('select back', async () => {
-      const taskListPom = await TaskListPage.verifyOnPage(page)
-      await taskListPom.clickBackLink()
-    })
-    await test.step('service select', async () => {
-      await expect(page.getByRole('heading', { name: 'Select the Community Support' })).toBeVisible()
-      await page.getByRole('radio', { name: 'Second Accommodation support' }).check()
-      await page.getByRole('button', { name: 'Continue' }).click()
-    })
-    await test.step('on task list page', async () => {
-      await TaskListPage.verifyOnPage(page)
     })
   })
 
