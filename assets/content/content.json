@@ -24,12 +24,6 @@
     "enterDifferentIdentifierLinkText": "Enter a different CRN or prison number",
     "enterDifferentIdentifierLinkHref": "/referral/new/find-a-person"
   },
-  "/referral/new/select-a-service": {
-    "pageHeader": "Select the Community Support service to make a referral",
-    "continueButtonText": "Continue",
-    "regionLabel": "Location",
-    "providerLabel": "Delivery Partner"
-  },
   "/referral/check-referral-information/:id": {
     "pageHeader": "Check referral information",
     "submitButtonText": "Submit referral"

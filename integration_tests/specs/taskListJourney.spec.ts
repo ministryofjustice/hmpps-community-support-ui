@@ -8,7 +8,7 @@ import FindPersonPage from '../pages/findPersonPage'
 
 /**
  * End-to-end journey regression tests for the Task List Additional Support Needs ACs.
- * Each test navigates the full UI journey: login → home → find person → confirm → select service → task list.
+ * Each test navigates the full UI journey: login → home → find person → confirm → task list.
  */
 test.describe('Task List E2E Journey Regression', () => {
   const referralId = randomUUID()

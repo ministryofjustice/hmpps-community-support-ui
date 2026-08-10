@@ -5,7 +5,6 @@ import { Page } from '../services/auditService'
 
 import ReferralController from '../referral/referralController'
 import CaseListController from '../caseList/caseListController'
-import CommunityServiceProviderController from '../referral/communityServiceProviders/communityServiceProviderController'
 import AppointmentController from '../appointment/appointmentController'
 import IcsFeedbackController from '../appointment/icsFeedbackController'
 import asyncMiddleware from '../middleware/asyncMiddleware'
@@ -14,7 +13,6 @@ import ActionPlanController from '../referral/actionPlan/actionPlanController'
 
 export default function routes({
   auditService,
-  communityServiceProviderService,
   personService,
   referralService,
   caseListService,
@@ -29,7 +27,6 @@ export default function routes({
   const post = (path: string, handler: RequestHandler): Router => router.post(path, asyncMiddleware(handler))
 
   const referralController = new ReferralController(referralService, personService)
-  const communityServiceProviderController = new CommunityServiceProviderController(communityServiceProviderService)
   const caseListController = new CaseListController(caseListService)
   const appointmentController = new AppointmentController(referralService, appointmentService, referenceDataService)
   const icsFeedbackController = new IcsFeedbackController(appointmentService)
@@ -52,12 +49,6 @@ export default function routes({
   post('/referral/new/find-a-person', (req, res) => referralController.handlePostFindPersonRequest(req, res))
 
   post('/referral/new/confirm-person', (req, res) => referralController.communityServiceProviderPage(req, res))
-
-  get('/referral/new/select-a-service', (req, res) =>
-    communityServiceProviderController.showCommunityServiceProviderPage(req, res),
-  )
-
-  post('/referral/new/select-a-service', (req, res) => referralController.communityServiceProviderPage(req, res))
 
   get('/referral/:id/confirmation', (req, res) => referralController.viewConfirmation(req, res))
 
