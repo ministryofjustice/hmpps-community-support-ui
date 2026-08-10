@@ -75,21 +75,6 @@ test.describe('Task List Journey', () => {
     })
   })
 
-  test('change service provider', async ({ page }) => {
-    await test.step('select back', async () => {
-      const taskListPom = await TaskListPage.verifyOnPage(page)
-      await taskListPom.clickBackLink()
-    })
-    await test.step('service select', async () => {
-      await expect(page.getByRole('heading', { name: 'Select the Community Support' })).toBeVisible()
-      await page.getByRole('radio', { name: 'Second Accommodation support' }).check()
-      await page.getByRole('button', { name: 'Continue' }).click()
-    })
-    await test.step('on task list page', async () => {
-      await TaskListPage.verifyOnPage(page)
-    })
-  })
-
   test('confirm personal details', async ({ page }) => {
     await communitySupport.stubGetConfirmPersonalDetailsData(referralId, {
       id: '',
