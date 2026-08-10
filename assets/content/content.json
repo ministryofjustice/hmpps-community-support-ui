@@ -19,7 +19,7 @@
   "/referral/new/find-a-person": {
     "pageHeader": "Confirm this is the correct person for referral",
     "continueButtonText": "Continue",
-    "continueButtonLink": "/referral/referral/task-list",
+    "continueButtonLink": "/referral/new/confirm-person",
     "backLink": "/referral/new/find-a-person",
     "enterDifferentIdentifierLinkText": "Enter a different CRN or prison number",
     "enterDifferentIdentifierLinkHref": "/referral/new/find-a-person"
