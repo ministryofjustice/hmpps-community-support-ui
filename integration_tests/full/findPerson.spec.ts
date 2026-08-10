@@ -1,9 +1,9 @@
 import { expect, test } from '@playwright/test'
-import { randomUUID } from 'node:crypto'
 import { login, resetStubs } from '../testUtils'
 import FindPersonPage from '../pages/findPersonPage'
 import FoundPersonPage from '../pages/foundPersonPage'
 import HomePage from '../pages/homePage'
+import TaskListPage from '../pages/TaskListPage'
 import communitySupport from '../mockApis/communitySupport'
 import { referralInformationInCommunity } from '../mockData/referralInformationData'
 
@@ -138,7 +138,7 @@ test.describe('FindPerson', () => {
 
     await FoundPersonPage.verifyOnPage(page)
     await page.getByRole('button', { name: 'Continue' }).click()
-    await expect(page.getByRole('heading', { name: 'Alex River' })).toBeVisible()
+    await TaskListPage.verifyOnPage(page)
   })
 
   test('should display the found details page when a person is found by prison number', async ({ page }) => {
