@@ -77,7 +77,7 @@ describe('CommunitySupportApiClient tests', () => {
   describe('createReferral tests', () => {
     it('should create a referral on a 200 response', () => {
       const referralInformationDto = {
-        crn: 'CRN121',
+        crn: 'CRN123',
         firstName: 'John',
         lastName: 'Doe',
         sex: 'Male',
