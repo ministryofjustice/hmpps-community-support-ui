@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import { randomUUID } from 'node:crypto'
 import { login, resetStubs } from '../testUtils'
 import FindPersonPage from '../pages/findPersonPage'
 import FoundPersonPage from '../pages/foundPersonPage'
@@ -7,6 +8,7 @@ import communitySupport from '../mockApis/communitySupport'
 import { referralInformationInCommunity } from '../mockData/referralInformationData'
 
 test.describe('FindPerson', () => {
+  const incompleteStatus = { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' }
   test.beforeEach(async ({ page }) => {
     await resetStubs()
     await communitySupport.stubGetPerson()
@@ -118,8 +120,16 @@ test.describe('FindPerson', () => {
     await FoundPersonPage.verifyOnPage(page)
   })
 
-  test('should navigate to the service provider selection screen when continue', async ({ page }) => {
+  test('should navigate to the task list page when continue is clicked from found person page', async ({ page }) => {
     await communitySupport.stubCreateReferral(referralInformationInCommunity)
+    await communitySupport.stubGetTaskListStatus(referralInformationInCommunity.referralId, {
+      fullName: 'Alex River',
+      confirmPersonalDetailsCompleted: incompleteStatus,
+      checkRiskInformationCompleted: incompleteStatus,
+      selectThePersonsNeedsCompleted: incompleteStatus,
+      addDetailsOfAnyAdditionalSupportNeedsCompleted: incompleteStatus,
+      addDetailsOfMainPointOfContactCompleted: incompleteStatus,
+    })
 
     await page.goto('/referral/new/find-a-person')
     const findPersonPage = await FindPersonPage.verifyOnPage(page)
@@ -128,10 +138,7 @@ test.describe('FindPerson', () => {
 
     await FoundPersonPage.verifyOnPage(page)
     await page.getByRole('button', { name: 'Continue' }).click()
-    await expect(
-      page.getByRole('heading', { name: 'Select the Community Support service to make a referral' }),
-    ).toBeVisible()
-    await expect(page.getByRole('radio', { name: 'Accommodation support' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Alex River' })).toBeVisible()
   })
 
   test('should display the found details page when a person is found by prison number', async ({ page }) => {
