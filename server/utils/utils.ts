@@ -84,7 +84,7 @@ export const buildInput = ({ name, label, value, hint, errorMessage, spellcheck 
   </h1>
   ${hint ? buildHint(hint) : ''}
   ${errorMessage ? buildInputErrors(name, errorMessage) : ''}
-  <input class="govuk-input" id="${name}" name="${name}" type="text" spellcheck="${spellcheck}" value="${value || ''}">
+  <input class="govuk-input" id="${name}" name="${name}" type="text" spellcheck="${spellcheck || false}" value="${value || ''}">
     </div>`
 }
 
@@ -95,7 +95,7 @@ export const buildTextarea = ({ name, label, value, hint, errorMessage, spellche
     </h1>
     ${hint ? buildHint(hint) : ''}
     ${errorMessage ? buildInputErrors(name, errorMessage) : ''}
-    <textarea class="govuk-textarea" id="${name}" name="${name}" type="text" rows="5" spellcheck="${spellcheck}" >${escapeHtml(value) || ''}</textarea>
+    <textarea class="govuk-textarea" id="${name}" name="${name}" type="text" rows="5" spellcheck="${spellcheck || false}" >${escapeHtml(value) || ''}</textarea>
   </div>`
 }
 
