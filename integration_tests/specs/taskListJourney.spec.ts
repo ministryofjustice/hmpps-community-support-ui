@@ -84,10 +84,10 @@ test.describe('Task List E2E Journey Regression', () => {
   })
 
   // AC2 - Back navigation
-  test('AC2: should navigate back to confirm person when Back is clicked', async ({ page }) => {
+  test('AC2: should navigate back to find person when Back is clicked', async ({ page }) => {
     const taskListPom = await TaskListPage.verifyOnPage(page)
     await taskListPom.clickBackLink()
-    await expect(page.getByRole('heading', { name: 'Confirm this is the correct person for referral' })).toBeVisible()
+    await FindPersonPage.verifyOnPage(page)
   })
 
   // AC3 - Display Additional Support Needs task
