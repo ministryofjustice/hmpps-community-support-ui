@@ -51,6 +51,8 @@ export default function routes({
 
   post('/referral/new/find-a-person', (req, res) => referralController.handlePostFindPersonRequest(req, res))
 
+  post('/referral/new/confirm-person', (req, res) => referralController.communityServiceProviderPage(req, res))
+
   get('/referral/new/select-a-service', (req, res) =>
     communityServiceProviderController.showCommunityServiceProviderPage(req, res),
   )

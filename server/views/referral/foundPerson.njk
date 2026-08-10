@@ -9,13 +9,16 @@
 {% block contentBody %}
   <h1 class="govuk-heading-l">{{content.staticContent.pageHeader}}</h1>
     {{ govukSummaryList(content.personSummary) }}
-    <div class="govuk-button-group">
-      {{ govukButton({
-        text: content.staticContent.continueButtonText,
-        href: content.staticContent.continueButtonLink
-      }) }}
-      <a class="govuk-link" href="{{ content.staticContent.enterDifferentIdentifierLinkHref }}">
-        {{ content.staticContent.enterDifferentIdentifierLinkText }}
-      </a>
-    </div>
+    <form method="post" novalidate action="/referral/new/confirm-person">
+      <input type="hidden" name="_csrf" value="{{csrfToken}}">
+      <div class="govuk-button-group">
+        {{ govukButton({
+          text: content.staticContent.continueButtonText,
+          preventDoubleClick: true
+        }) }}
+        <a class="govuk-link" href="{{ content.staticContent.enterDifferentIdentifierLinkHref }}">
+          {{ content.staticContent.enterDifferentIdentifierLinkText }}
+        </a>
+      </div>
+    </form>
 {% endblock %}
