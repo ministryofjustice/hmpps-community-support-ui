@@ -3,17 +3,14 @@ import { GovukFrontendRadiosWithConditional } from '../../@types/govukFrontend/d
 
 export interface NeedsAnInterpreterContent {
   pageHeader: string
-  radioHeader: string
   yesOptionLabel: string
   yesCoditional: string
   noOptionLabel: string
   button: string
   backlink: string
-  url: string
 }
 export interface NeedsAnInterpreterViewModel {
   backLink: GovukFrontendBackLink
-  heading: string
   radios: GovukFrontendRadiosWithConditional
   button: GovukFrontendButton
 }

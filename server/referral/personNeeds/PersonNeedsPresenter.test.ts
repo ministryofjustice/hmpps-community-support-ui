@@ -150,7 +150,7 @@ describe('PersonNeedsPresenter', () => {
     expectedError?: string | null,
   ): void => {
     expect(html).toContain(
-      `<textarea class="govuk-textarea" id="${name}Input" name="${name}Input" type="text" rows="5" spellcheck="false" >${expectedValue || ''}</textarea>`,
+      `<textarea class="govuk-textarea" id="${name}Input" name="${name}Input" rows="5" spellcheck="false" >${expectedValue || ''}</textarea>`,
     )
     if (expectedError) expect(html).toContain(`<span class="govuk-visually-hidden">Error:</span> ${expectedError}`)
     else expect(html).not.toContain('class="govuk-error-message"')

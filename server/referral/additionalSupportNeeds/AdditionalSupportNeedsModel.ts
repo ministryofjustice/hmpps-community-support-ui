@@ -1,4 +1,5 @@
-import { GovukFrontendCheckboxes } from '@govuk-frontend'
+import { GovukFrontendBackLink, GovukFrontendButton } from '@govuk-frontend'
+import { GovukFrontendCheckboxesWithConditional } from '../../@types/govukFrontend/derived'
 
 export interface ItemContent {
   label: string
@@ -10,9 +11,12 @@ export interface AdditionalSuportNeedsContent {
   hint: string
   items: ItemContent[]
   defaultItemLabel: string
+  button: string
+  backlink: string
 }
 export interface AdditionalSuportNeedsViewModel {
   heading: string
-  checkList: GovukFrontendCheckboxes
-  postHref: string
+  checkList: GovukFrontendCheckboxesWithConditional
+  button: GovukFrontendButton
+  backLink: GovukFrontendBackLink
 }
