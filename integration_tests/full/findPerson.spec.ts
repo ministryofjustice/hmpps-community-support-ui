@@ -8,7 +8,6 @@ import communitySupport from '../mockApis/communitySupport'
 import { referralInformationInCommunity } from '../mockData/referralInformationData'
 
 test.describe('FindPerson', () => {
-
   test.beforeEach(async ({ page }) => {
     await resetStubs()
     await communitySupport.stubGetPerson()
