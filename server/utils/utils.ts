@@ -77,25 +77,25 @@ export const buildInputErrors = (name: string, { text, html }: GovukFrontendErro
   return ''
 }
 
-export const buildInput = ({ name, label, value, hint, errorMessage }: GovukFrontendInput) => {
+export const buildInput = ({ name, label, value, hint, errorMessage, spellcheck }: GovukFrontendInput) => {
   return `<div class="govuk-form-group">
     <h1 class="govuk-label-wrapper">
     ${buildLabel(name, label)}
   </h1>
   ${hint ? buildHint(hint) : ''}
   ${errorMessage ? buildInputErrors(name, errorMessage) : ''}
-  <input class="govuk-input" id="${name}" name="${name}" type="text" value="${value || ''}">
+  <input class="govuk-input" id="${name}" name="${name}" type="text" spellcheck="${spellcheck}" value="${value || ''}">
     </div>`
 }
 
-export const buildTextarea = ({ name, label, value, hint, errorMessage }: GovukFrontendTextarea) => {
+export const buildTextarea = ({ name, label, value, hint, errorMessage, spellcheck }: GovukFrontendTextarea) => {
   return `<div class="govuk-form-group">
     <h1 class="govuk-label-wrapper">
       ${buildLabel(name, label)}
     </h1>
     ${hint ? buildHint(hint) : ''}
     ${errorMessage ? buildInputErrors(name, errorMessage) : ''}
-    <textarea class="govuk-textarea" id="${name}" name="${name}" type="text" rows="5" spellcheck="false" >${escapeHtml(value) || ''}</textarea>
+    <textarea class="govuk-textarea" id="${name}" name="${name}" type="text" rows="5" spellcheck="${spellcheck}" >${escapeHtml(value) || ''}</textarea>
   </div>`
 }
 
