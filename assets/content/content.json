@@ -19,7 +19,7 @@
   "/referral/new/find-a-person": {
     "pageHeader": "Confirm this is the correct person for referral",
     "continueButtonText": "Continue",
-    "continueButtonLink": "/referral/new/select-a-service",
+    "continueButtonLink": "/referral/referral/task-list",
     "backLink": "/referral/new/find-a-person",
     "enterDifferentIdentifierLinkText": "Enter a different CRN or prison number",
     "enterDifferentIdentifierLinkHref": "/referral/new/find-a-person"
@@ -574,7 +574,7 @@
     "pageTitle": "Make a referral - [service name]",
     "pageHeader": "{{ fullName }}",
     "pageSubHeader": "Make a referral",
-    "backLink": "/referral/new/select-a-service",
+    "backLink": "/referral/new/find-a-person",
     "taskList": {
       "personalDetails": {
         "title": "Personal details",

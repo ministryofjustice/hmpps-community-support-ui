@@ -68,11 +68,6 @@ test.describe('Task List E2E Journey Regression', () => {
       await expect(page.getByRole('heading', { name: 'Confirm this is the correct' })).toBeVisible()
       await page.getByRole('button', { name: 'Continue' }).click()
     })
-    await test.step('select service', async () => {
-      await expect(page.getByRole('heading', { name: 'Select the Community Support' })).toBeVisible()
-      await page.getByRole('radio', { name: 'First Accommodation support' }).check()
-      await page.getByRole('button', { name: 'Continue' }).click()
-    })
   }
 
   test.beforeEach(async ({ page }) => {
@@ -82,17 +77,17 @@ test.describe('Task List E2E Journey Regression', () => {
   })
 
   // AC1 - Navigate to main task list
-  test('AC1: should land on main task list after selecting a service', async ({ page }) => {
+  test('AC1: should land on main task list after selecting and confirming a person', async ({ page }) => {
     const taskListPom = await TaskListPage.verifyOnPage(page)
     await expect(taskListPom.header).toBeVisible()
     await expect(taskListPom.subHeader).toBeVisible()
   })
 
   // AC2 - Back navigation
-  test('AC2: should navigate back to service selection when Back is clicked', async ({ page }) => {
+  test('AC2: should navigate back to confirm person when Back is clicked', async ({ page }) => {
     const taskListPom = await TaskListPage.verifyOnPage(page)
     await taskListPom.clickBackLink()
-    await expect(page.getByRole('heading', { name: 'Select the Community Support' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Confirm this is the correct person for referral' })).toBeVisible()
   })
 
   // AC3 - Display Additional Support Needs task
