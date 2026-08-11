@@ -78,8 +78,7 @@ export default class ReferralDetailsPresenter extends PresenterBase<ReferralDeta
     defaultFieldValue: string,
   ): GovukFrontendSummaryList {
     const { equalityDetailsTableData } = this.referralDetails
-    const { ethnicity, religionOrBelief, sex, genderIdentity, sexualOrientation, transgender } =
-      equalityDetailsTableData
+    const { ethnicity, religionOrBelief, sex } = equalityDetailsTableData
     return {
       card: {
         title: { text: cardContent.heading },
@@ -92,15 +91,6 @@ export default class ReferralDetailsPresenter extends PresenterBase<ReferralDeta
           nonEmptyStringOrDefault(religionOrBelief, defaultFieldValue),
         ),
         govFrontendSummaryListRow(cardContent.sexLabel, nonEmptyStringOrDefault(sex, defaultFieldValue)),
-        govFrontendSummaryListRow(cardContent.genderLabel, nonEmptyStringOrDefault(genderIdentity, defaultFieldValue)),
-        govFrontendSummaryListRow(
-          cardContent.sexualOrientationLabel,
-          nonEmptyStringOrDefault(sexualOrientation, defaultFieldValue),
-        ),
-        govFrontendSummaryListRow(
-          cardContent.transgenderLabel,
-          nonEmptyStringOrDefault(transgender, defaultFieldValue),
-        ),
       ],
     }
   }

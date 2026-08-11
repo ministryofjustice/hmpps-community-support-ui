@@ -83,8 +83,7 @@ export default class ConfirmPersonalDetailsPresenter extends PresenterBase<
     cardContent: EqualityMonitoringCard,
     defaultFieldValue: string,
   ): GovukFrontendSummaryList {
-    const { nationalities, ethnicity, religionOrBelief, sex, genderIdentity, sexualOrientation, transgender } =
-      this.data.equalityMonitoring
+    const { nationalities, ethnicity, religionOrBelief, sex } = this.data.equalityMonitoring
     return {
       card: {
         title: { text: cardContent.heading },
@@ -101,15 +100,6 @@ export default class ConfirmPersonalDetailsPresenter extends PresenterBase<
           nonEmptyStringOrDefault(religionOrBelief, defaultFieldValue),
         ),
         govFrontendSummaryListRow(cardContent.sexLabel, nonEmptyStringOrDefault(sex, defaultFieldValue)),
-        govFrontendSummaryListRow(cardContent.genderLabel, nonEmptyStringOrDefault(genderIdentity, defaultFieldValue)),
-        govFrontendSummaryListRow(
-          cardContent.sexualOrientationLabel,
-          nonEmptyStringOrDefault(sexualOrientation, defaultFieldValue),
-        ),
-        govFrontendSummaryListRow(
-          cardContent.transgenderLabel,
-          nonEmptyStringOrDefault(transgender, defaultFieldValue),
-        ),
       ],
     }
   }

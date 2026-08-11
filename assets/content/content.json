@@ -108,10 +108,7 @@
       "heading": "Equality monitoring",
       "ethnicityLabel": "Ethnicity",
       "religionLabel": "Religion or belief",
-      "sexLabel": "Sex",
-      "genderLabel": "Gender identity",
-      "sexualOrientationLabel": "Sexual orientation",
-      "transgenderLabel": "Transgender"
+      "sexLabel": "Sex"
     },
     "contactDetailsCard": {
       "heading": "Contact details",
@@ -636,10 +633,7 @@
       "nationalityLabel": "Nationality",
       "ethnicityLabel": "Ethnicity",
       "religionLabel": "Religion or belief",
-      "sexLabel": "Sex",
-      "genderLabel": "Gender identity",
-      "sexualOrientationLabel": "Sexual orientation",
-      "transgenderLabel": "Transgender"
+      "sexLabel": "Sex"
     },
     "contactDetailsCard": {
       "heading": "Contact details",
