@@ -5,6 +5,7 @@ import {
   CaseWorkerDto,
   ConfirmPersonDetailsBffDto,
   CommunitySupportRiskDto,
+  ReferralCriminogenicNeedsDto,
 } from '@community-support-api'
 import ReferralController from './referralController'
 import ReferralService from '../services/referralService'
@@ -17,6 +18,7 @@ import ConfirmationPresenter from './confirmation/confirmationPresenter'
 import RiskSummaryPresenter from './riskSummary/RiskSummaryPresenter'
 import EditRiskSummaryPresenter from './editRiskSummary/EditRiskSummaryPresenter'
 import ConfirmPersonalDetailsPresenter from './confirmPersonalDetails/ConfirmPersonalDetailsPresenter'
+import PersonNeedsPresenter, { personNeedsFormData } from './personNeeds/PersonNeedsPresenter'
 
 jest.mock('../services/referralService')
 jest.mock('../middleware/formValidationMiddleware')
@@ -26,6 +28,7 @@ jest.mock('./confirmation/confirmationPresenter')
 jest.mock('./riskSummary/RiskSummaryPresenter')
 jest.mock('./editRiskSummary/EditRiskSummaryPresenter')
 jest.mock('./confirmPersonalDetails/ConfirmPersonalDetailsPresenter')
+jest.mock('./personNeeds/PersonNeedsPresenter')
 
 describe('ReferralController', () => {
   let referralService: jest.Mocked<ReferralService>
@@ -44,6 +47,7 @@ describe('ReferralController', () => {
       getPersonalDetails: jest.fn(),
       getRoshRisksByReferralId: jest.fn(),
       saveRiskInformation: jest.fn(),
+      getPersonNeeds: jest.fn(),
     } as unknown as jest.Mocked<ReferralService>
     personService = {
       getPersonByIdentifier: jest.fn(),
@@ -56,6 +60,7 @@ describe('ReferralController', () => {
     RiskSummaryPresenter.prototype.renderPage = jest.fn()
     EditRiskSummaryPresenter.prototype.renderPage = jest.fn()
     ConfirmPersonalDetailsPresenter.prototype.renderPage = jest.fn()
+    PersonNeedsPresenter.prototype.renderPage = jest.fn()
 
     req = {
       params: { id: 'referral123' },
@@ -556,6 +561,113 @@ describe('ReferralController', () => {
       await expect(referralController.submitEditRiskSummary(req, res)).rejects.toThrow('error saving risk information')
 
       expect(res.redirect).not.toHaveBeenCalledWith('/referral/task-list/view-risk-summary')
+    })
+  })
+
+  describe('showPersonNeeds', () => {
+    beforeEach(() => {
+      delete req.session
+    })
+    it('should redirect to find a person when there is no draft referral in session', async () => {
+      req = { session: {}, body: {} } as unknown as Request
+
+      await referralController.showPersonNeeds(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('/referral/new/find-a-person')
+    })
+
+    it('should render the person needs page with a blank form the first time', async () => {
+      req = {
+        session: {
+          draftReferralId: 'referral-uuid-1',
+          referralCreationDetails: {
+            personDetails: {
+              firstName: 'Alex',
+              lastName: 'Smith',
+            },
+          },
+        },
+      } as unknown as Request
+      referralService.getPersonNeeds.mockRejectedValue('Person Needs not found')
+
+      const expectedPageData = {
+        referralId: 'referral-uuid-1',
+        refereeName: { firstName: 'Alex', middleName: undefined, lastName: 'Smith' },
+      } as unknown as personNeedsFormData
+
+      await referralController.showPersonNeeds(req, res)
+
+      expect(referralService.getPersonNeeds).toHaveBeenCalledWith('referral-uuid-1', 'user1')
+      expect(PersonNeedsPresenter).toHaveBeenCalledWith(expectedPageData, undefined)
+      expect(PersonNeedsPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+    })
+
+    it('should render the person needs page with form data from the back end', async () => {
+      req = {
+        session: {
+          draftReferralId: 'referral-uuid-1',
+          referralCreationDetails: {},
+        },
+      } as unknown as Request
+      const mockPersonNeeds = {
+        id: 'uuid-1',
+        referralId: 'referral-uuid-1',
+        refereeName: { firstName: 'Alex', lastName: 'Smith' },
+        hasAccommodationNeeds: true,
+        accommodationDetails: 'accommodation details',
+      } as ReferralCriminogenicNeedsDto
+      referralService.getPersonNeeds.mockResolvedValue(mockPersonNeeds)
+
+      await referralController.showPersonNeeds(req, res)
+
+      expect(referralService.getPersonNeeds).toHaveBeenCalledWith('referral-uuid-1', 'user1')
+      expect(PersonNeedsPresenter).toHaveBeenCalledWith(mockPersonNeeds, undefined)
+      expect(PersonNeedsPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+    })
+
+    it('should render the person needs page with form data from the session and not call the back end', async () => {
+      req = {
+        session: {
+          draftReferralId: 'referral-uuid-1',
+          referralCreationDetails: {
+            personDetails: {
+              firstName: 'Alex',
+              lastName: 'Smith',
+            },
+            personNeeds: {
+              personNeedsCheckboxes: ['employment'],
+              employmentInput: 'employment details',
+            },
+          },
+        },
+      } as unknown as Request
+
+      const expectedPageData = {
+        referralId: 'referral-uuid-1',
+        refereeName: { firstName: 'Alex', middleName: undefined, lastName: 'Smith' },
+        hasAccommodationNeeds: false,
+        accommodationDetails: undefined,
+        hasEmploymentEducationNeeds: true,
+        employmentEducationDetails: 'employment details',
+        hasFinancialNeeds: false,
+        financialDetails: undefined,
+        hasPersonalRelationshipsCommunityNeeds: false,
+        personalRelationshipsCommunityDetails: undefined,
+        hasDrugUseNeeds: false,
+        drugUseDetails: undefined,
+        hasAlcoholUseNeeds: false,
+        alcoholUseDetails: undefined,
+        hasHealthWellbeingNeeds: false,
+        healthWellbeingDetails: undefined,
+        hasThinkingBehavioursAttitudeNeeds: false,
+        thinkingBehavioursAttitudeDetails: undefined,
+      } as unknown as personNeedsFormData
+
+      await referralController.showPersonNeeds(req, res)
+
+      expect(referralService.getPersonNeeds).not.toHaveBeenCalled()
+      expect(PersonNeedsPresenter).toHaveBeenCalledWith(expectedPageData, undefined)
+      expect(PersonNeedsPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
     })
   })
 })
