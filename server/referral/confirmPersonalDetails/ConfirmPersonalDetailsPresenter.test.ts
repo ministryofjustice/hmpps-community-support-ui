@@ -72,9 +72,6 @@ describe('ConfirmPersonalDetailsPresenter', () => {
           ethnicityLabel: 'Ethnicity',
           religionLabel: 'Religion or belief',
           sexLabel: 'Sex',
-          genderLabel: 'Gender identity',
-          sexualOrientationLabel: 'Sexual orientation',
-          transgenderLabel: 'Transgender',
         },
         contactDetailsCard: {
           heading: 'Contact details',
@@ -124,8 +121,8 @@ describe('ConfirmPersonalDetailsPresenter', () => {
     // check equality details
     const { equality } = viewModel
     expect(equality.card.title.text).toBe('Equality monitoring')
-    expect(equality.rows).toHaveLength(7)
-    const [nationalityRow, ethnicityRow, religionRow, sexRow, genderRow, orientationRow, transRow] = equality.rows
+    expect(equality.rows).toHaveLength(4)
+    const [nationalityRow, ethnicityRow, religionRow, sexRow] = equality.rows
     expect(nationalityRow.key.text).toBe('Nationality')
     expect(nationalityRow.value.text).toBe('British, French')
     expect(ethnicityRow.key.text).toBe('Ethnicity')
@@ -134,12 +131,9 @@ describe('ConfirmPersonalDetailsPresenter', () => {
     expect(religionRow.value.text).toBe('Christian')
     expect(sexRow.key.text).toBe('Sex')
     expect(sexRow.value.text).toBe('Male')
-    expect(genderRow.key.text).toBe('Gender identity')
-    expect(genderRow.value.text).toBe('Male')
-    expect(orientationRow.key.text).toBe('Sexual orientation')
-    expect(orientationRow.value.text).toBe('Hetrosexual')
-    expect(transRow.key.text).toBe('Transgender')
-    expect(transRow.value.text).toBe('No')
+    expect(equality.rows.map(row => row.key.text)).not.toEqual(
+      expect.arrayContaining(['Gender identity', 'Sexual orientation', 'Transgender']),
+    )
 
     // check contact details
     const { contact } = viewModel

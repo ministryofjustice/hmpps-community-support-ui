@@ -28,9 +28,6 @@ export default referralDetailsContentFactory.define(({ transientParams }) => ({
     ethnicityLabel: 'Ethnicity',
     religionLabel: 'Religion or belief',
     sexLabel: 'Sex',
-    genderLabel: 'Gender identity',
-    sexualOrientationLabel: 'Sexual orientation',
-    transgenderLabel: 'Transgender',
   },
   contactDetailsCard: {
     heading: 'Contact details',

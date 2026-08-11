@@ -89,7 +89,7 @@ test.describe('Referral Details Page as a Delius User', () => {
         expect(summary.title).toHaveText('Equality monitoring')
       })
       await test.step('summary has required number of rows', () => {
-        expect(summary.rows).toHaveLength(6)
+        expect(summary.rows).toHaveLength(3)
       })
       await test.step('First row should be the ethnicity field', () => {
         const row = summary.rows[0]
@@ -106,20 +106,10 @@ test.describe('Referral Details Page as a Delius User', () => {
         expect(row.key).toHaveText('Sex')
         expect(row.value).toHaveText(referralDetailsPageMockData.equalityDetailsTableData.sex)
       })
-      await test.step('Fourth row should be the gender identity field', () => {
-        const row = summary.rows[3]
-        expect(row.key).toHaveText('Gender identity')
-        expect(row.value).toHaveText(referralDetailsPageMockData.equalityDetailsTableData.genderIdentity)
-      })
-      await test.step('Fifth row should be the sexual orientation field', () => {
-        const row = summary.rows[4]
-        expect(row.key).toHaveText('Sexual orientation')
-        expect(row.value).toHaveText(referralDetailsPageMockData.equalityDetailsTableData.sexualOrientation)
-      })
-      await test.step('Sixth row should be the transgender field', () => {
-        const row = summary.rows[5]
-        expect(row.key).toHaveText('Transgender')
-        expect(row.value).toHaveText(referralDetailsPageMockData.equalityDetailsTableData.transgender)
+      await test.step('Hidden Gender Identity, Transgender status, and Sexual Orientation fields should not be displayed', async () => {
+        await expect(page.getByText('Gender identity', { exact: true })).toHaveCount(0)
+        await expect(page.getByText('Sexual orientation', { exact: true })).toHaveCount(0)
+        await expect(page.getByText('Transgender', { exact: true })).toHaveCount(0)
       })
     })
     await test.step('contact details summary', async () => {

@@ -125,6 +125,9 @@ test.describe('Task List Journey', () => {
     })
     await test.step('confirm personal details page', async () => {
       await expect(page.getByRole('heading', { name: 'Confirm personal details' })).toBeVisible()
+      await expect(page.getByText('Gender identity', { exact: true })).toHaveCount(0)
+      await expect(page.getByText('Sexual orientation', { exact: true })).toHaveCount(0)
+      await expect(page.getByText('Transgender', { exact: true })).toHaveCount(0)
       await page.getByRole('button', { name: 'Continue' }).click()
     })
     await test.step('return to task list', async () => {

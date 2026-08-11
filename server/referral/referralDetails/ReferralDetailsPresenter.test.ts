@@ -112,33 +112,6 @@ describe('ReferralDetailsPresenter', () => {
           },
           actions: null,
         },
-        {
-          key: {
-            text: 'Gender identity',
-          },
-          value: {
-            text: 'Male',
-          },
-          actions: null,
-        },
-        {
-          key: {
-            text: 'Sexual orientation',
-          },
-          value: {
-            text: 'Hetrosexual',
-          },
-          actions: null,
-        },
-        {
-          key: {
-            text: 'Transgender',
-          },
-          value: {
-            text: 'No',
-          },
-          actions: null,
-        },
       ],
     },
     contact: {
@@ -273,7 +246,7 @@ describe('ReferralDetailsPresenter', () => {
         religionOrBelief: 'Christian',
         sex: 'Male',
         genderIdentity: 'Male',
-        sexualOrientation: 'Hetrosexual',
+        sexualOrientation: 'Heterosexual',
         transgender: 'No',
       },
       contactDetailsTableData: {

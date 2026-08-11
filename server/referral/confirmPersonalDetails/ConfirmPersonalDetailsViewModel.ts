@@ -22,9 +22,6 @@ export interface EqualityMonitoringCard {
   ethnicityLabel: string
   religionLabel: string
   sexLabel: string
-  genderLabel: string
-  sexualOrientationLabel: string
-  transgenderLabel: string
 }
 
 export interface ContactDetailsCard {
