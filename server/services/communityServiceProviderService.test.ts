@@ -15,7 +15,7 @@ describe('CommunityServiceProvider service tests', () => {
 
   describe('getCommunityServiceProviders', () => {
     it('should return community service providers data from API client', async () => {
-      const mockCommunityServiceProviderData: CommunitySupportServicesProvider = {
+      const mockCommunityServiceProviderData = {
         communitySupportServices: [
           {
             id: 'service1',
@@ -34,7 +34,7 @@ describe('CommunityServiceProvider service tests', () => {
             pdus: ['PDU2'],
           },
         ],
-      }
+      } as CommunitySupportServicesProvider
       communitySupportApiClient.getCommunitySupportServiceProviders.mockResolvedValue(mockCommunityServiceProviderData)
       const result = await communityServiceProviderService.getCommunityServiceProviders('personDetails123', 'user1')
       expect(result).toBe(mockCommunityServiceProviderData)

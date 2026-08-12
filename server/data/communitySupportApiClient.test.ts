@@ -55,7 +55,7 @@ describe('CommunitySupportApiClient tests', () => {
   })
   describe('getCommunitySupportServiceProviders tests', () => {
     it('should return a community support service providers on a 200 response', () => {
-      const mockCommunityServiceProviderData: CommunitySupportServicesProvider = {
+      const mockCommunityServiceProviderData = {
         communitySupportServices: [
           {
             id: 'service1',
@@ -74,7 +74,7 @@ describe('CommunitySupportApiClient tests', () => {
             pdus: ['PDU2'],
           },
         ],
-      }
+      } as CommunitySupportServicesProvider
       nock('http://localhost:8080', {
         reqheaders: { authorization: 'Bearer dummy-token' },
       })
