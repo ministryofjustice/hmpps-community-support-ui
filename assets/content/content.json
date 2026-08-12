@@ -590,6 +590,10 @@
           "addSupportNeeds": {
             "text": "Add details of any additional support needs",
             "href": "/referral/task-list/additional-support-needs"
+          },
+          "additionalReferralInformation": {
+            "text": "Additional referral information",
+            "href": "/referral/task-list/additional-referral-information"
           }
         }
       },

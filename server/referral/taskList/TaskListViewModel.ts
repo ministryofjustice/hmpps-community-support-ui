@@ -13,6 +13,7 @@ export interface TaskListContent {
       checkRiskInformation: { text: string; href: string }
       selectPersonNeeds: { text: string; href: string }
       addSupportNeeds: { text: string; href: string }
+      additionalReferralInformation: { text: string; href: string }
     }
   }
   contactDetails: {

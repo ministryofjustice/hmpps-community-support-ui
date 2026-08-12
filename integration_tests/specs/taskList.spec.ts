@@ -53,6 +53,11 @@ test.describe('Task List Journey', () => {
         statusText: 'Incomplete',
         tag: 'govuk-tag--blue',
       },
+      addAdditionalInformationCompleted: {
+        completed: false,
+        statusText: 'Incomplete',
+        tag: 'govuk-tag--blue',
+      },
     })
     await page.goto(HomePage.url())
     await login(page)
@@ -158,6 +163,11 @@ test.describe('Task List Journey', () => {
           statusText: '',
           tag: undefined,
         },
+        addAdditionalInformationCompleted: {
+          completed: false,
+          statusText: '',
+          tag: undefined,
+        },
       })
       await TaskListPage.verifyOnPage(page)
     })
@@ -211,6 +221,7 @@ test.describe('Task List Journey', () => {
         tag: undefined,
       },
       addDetailsOfMainPointOfContactCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+      addAdditionalInformationCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
     })
     await page.goto('/referral/task-list')
     const taskListPom = await TaskListPage.verifyOnPage(page)
@@ -234,6 +245,7 @@ test.describe('Task List Journey', () => {
         tag: undefined,
       },
       addDetailsOfMainPointOfContactCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+      addAdditionalInformationCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
     })
     await communitySupport.stubGetAdditionalSupportNeeds(referralId, {
       refereeName: { firstName: 'Alex', lastName: 'Rivers' },

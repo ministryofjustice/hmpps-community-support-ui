@@ -514,6 +514,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/bff/draft-referral/community-service-provider/{providerId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get area confirmation details for a community service provider by ID */
+    get: operations['getAreaConfirmationDetails']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/bff/draft-referral/additional-support-needs/{referralId}': {
     parameters: {
       query?: never
@@ -957,7 +974,9 @@ export interface components {
       checkRiskInformationCompleted: components['schemas']['TaskListStatusItem']
       selectThePersonsNeedsCompleted: components['schemas']['TaskListStatusItem']
       addDetailsOfAnyAdditionalSupportNeedsCompleted: components['schemas']['TaskListStatusItem']
+      addAdditionalInformationCompleted: components['schemas']['TaskListStatusItem']
       addDetailsOfMainPointOfContactCompleted: components['schemas']['TaskListStatusItem']
+      selectAnAreaForReferralCompleted: components['schemas']['TaskListStatusItem']
     }
     ActionPlanSummaryDto: {
       personDetails: components['schemas']['ActionPlanSummaryPersonDetails']
@@ -1001,9 +1020,9 @@ export interface components {
       name: string
       providerName: string
       description: string
+      pdus: string[]
     }
     CommunitySupportServicesDto: {
-      personId: string
       communitySupportServices: components['schemas']['CommunitySupportServiceDto'][]
     }
     ErrorResponse: {
@@ -1045,9 +1064,6 @@ export interface components {
       ethnicity?: string | null
       religionOrBelief?: string | null
       sex: string
-      genderIdentity: string
-      sexualOrientation: string
-      transgender: string
     }
     PersonDetailsTableDataDto: {
       name: string
@@ -1117,9 +1133,6 @@ export interface components {
       preferredLanguage?: string | null
       neurodiverseConditions?: string | null
       religionOrBelief?: string | null
-      transgender?: string | null
-      sexualOrientation?: string | null
-      genderIdentity?: string | null
       nationalities: string[]
       interestToImmigration?: boolean | null
       address?: string | null
@@ -1187,6 +1200,11 @@ export interface components {
       summary?: components['schemas']['ArnsRiskRoshSummaryDto'] | null
       additionalInformation?: string | null
     }
+    AreaConfirmationBffResponseDto: {
+      contractArea: string
+      deliveryPartner: string
+      associatedPdus: string[]
+    }
     ConfirmPersonDetailsBffDto: {
       /** Format: uuid */
       id: string
@@ -1218,12 +1236,9 @@ export interface components {
     }
     ConfirmPersonalDetailsEqualityMonitoring: {
       ethnicity: string
-      genderIdentity: string
       nationalities: string[]
       religionOrBelief: string
       sex: string
-      sexualOrientation: string
-      transgender: string
     }
     ConfirmPersonalPersonalDetails: {
       firstName: string
@@ -1867,9 +1882,7 @@ export interface operations {
   }
   getServices: {
     parameters: {
-      query: {
-        personDetailsId: string
-      }
+      query?: never
       header?: never
       path?: never
       cookie?: never
@@ -2265,6 +2278,37 @@ export interface operations {
         }
       }
       /** @description Referral, or the Referral's Person, not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getAreaConfirmationDetails: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        providerId: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Community service provider found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['AreaConfirmationBffResponseDto']
+        }
+      }
+      /** @description Community service provider not found */
       404: {
         headers: {
           [name: string]: unknown
