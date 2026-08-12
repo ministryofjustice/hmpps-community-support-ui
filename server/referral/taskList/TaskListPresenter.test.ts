@@ -16,6 +16,7 @@ describe('TaskListPresenter - Page Rendering', () => {
       },
       addDetailsOfMainPointOfContactCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
       addAdditionalInformationCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+      selectAnAreaForReferralCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
     }
     const presenter = new TaskListPresenter(taskListState, 'referralId')
     const content = TaskListContent.build()
