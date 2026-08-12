@@ -245,9 +245,6 @@ describe('ReferralDetailsPresenter', () => {
         ethnicity: 'White British',
         religionOrBelief: 'Christian',
         sex: 'Male',
-        genderIdentity: 'Male',
-        sexualOrientation: 'Heterosexual',
-        transgender: 'No',
       },
       contactDetailsTableData: {
         phoneNumber: '01234 567 890',

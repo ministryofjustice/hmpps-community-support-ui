@@ -97,12 +97,9 @@ test.describe('Task List Journey', () => {
       },
       equalityMonitoring: {
         ethnicity: 'White',
-        genderIdentity: 'Male',
         nationalities: ['British'],
         religionOrBelief: 'Christian',
         sex: 'Male',
-        sexualOrientation: 'Hetrosexual',
-        transgender: 'yes',
       },
       contactDetails: {
         phoneNumber: '',
