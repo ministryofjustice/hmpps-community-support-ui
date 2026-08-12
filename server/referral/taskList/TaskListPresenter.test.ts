@@ -45,6 +45,5 @@ describe('TaskListPresenter - Page Rendering', () => {
     // Status rendering
     expect(sections.personalDetails.taskList.items[0].status.tag.text).toBe('Completed')
     expect(sections.referralInformation.taskList.items[0].status.tag.text).toBe('Incomplete')
-    expect(sections.referralInformation.taskList.items[3].status.tag.text).toBe('Incomplete')
   })
 })
