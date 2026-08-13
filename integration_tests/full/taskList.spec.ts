@@ -26,6 +26,7 @@ test.describe('Task List Page', () => {
       selectThePersonsNeedsCompleted: incompleteStatus,
       addDetailsOfAnyAdditionalSupportNeedsCompleted: incompleteStatus,
       addDetailsOfMainPointOfContactCompleted: incompleteStatus,
+      addAdditionalInformationCompleted: incompleteStatus,
     })
     await page.goto(TaskListPage.url())
     const taskListPage = await TaskListPage.verifyOnPage(page)
@@ -54,6 +55,7 @@ test.describe('Task List Page', () => {
       selectThePersonsNeedsCompleted: incompleteStatus,
       addDetailsOfAnyAdditionalSupportNeedsCompleted: incompleteStatus,
       addDetailsOfMainPointOfContactCompleted: incompleteStatus,
+      addAdditionalInformationCompleted: incompleteStatus,
     })
     await page.goto(TaskListPage.url())
     const taskListPage = await TaskListPage.verifyOnPage(page)
@@ -82,6 +84,7 @@ test.describe('Task List Page', () => {
       selectThePersonsNeedsCompleted: completedStatus,
       addDetailsOfAnyAdditionalSupportNeedsCompleted: completedStatus,
       addDetailsOfMainPointOfContactCompleted: completedStatus,
+      addAdditionalInformationCompleted: completedStatus,
     })
     await page.goto(TaskListPage.url())
     const taskListPage = await TaskListPage.verifyOnPage(page)
@@ -106,6 +109,7 @@ test.describe('Task List Page', () => {
       selectThePersonsNeedsCompleted: incompleteStatus,
       addDetailsOfAnyAdditionalSupportNeedsCompleted: incompleteStatus,
       addDetailsOfMainPointOfContactCompleted: incompleteStatus,
+      addAdditionalInformationCompleted: incompleteStatus,
     })
     await page.goto(TaskListPage.url())
     const taskListPage = await TaskListPage.verifyOnPage(page)
@@ -126,6 +130,7 @@ test.describe('Task List Page', () => {
       selectThePersonsNeedsCompleted: incompleteStatus,
       addDetailsOfAnyAdditionalSupportNeedsCompleted: incompleteStatus,
       addDetailsOfMainPointOfContactCompleted: incompleteStatus,
+      addAdditionalInformationCompleted: incompleteStatus,
     })
     await communitySupport.stubGetAdditionalSupportNeeds(referralId, {
       refereeName: { firstName: 'Alex', lastName: 'Rivers' },
@@ -157,6 +162,7 @@ test.describe('Task List Page', () => {
       selectThePersonsNeedsCompleted: incompleteStatus,
       addDetailsOfAnyAdditionalSupportNeedsCompleted: completedStatus,
       addDetailsOfMainPointOfContactCompleted: incompleteStatus,
+      addAdditionalInformationCompleted: incompleteStatus,
     })
     await page.goto(TaskListPage.url())
     const taskListPage = await TaskListPage.verifyOnPage(page)
@@ -176,6 +182,7 @@ test.describe('Task List Page', () => {
       selectThePersonsNeedsCompleted: incompleteStatus,
       addDetailsOfAnyAdditionalSupportNeedsCompleted: completedStatus,
       addDetailsOfMainPointOfContactCompleted: incompleteStatus,
+      addAdditionalInformationCompleted: incompleteStatus,
     })
     await communitySupport.stubGetAdditionalSupportNeeds(referralId, {
       refereeName: { firstName: 'Alex', lastName: 'Rivers' },

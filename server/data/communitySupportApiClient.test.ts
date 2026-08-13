@@ -56,10 +56,23 @@ describe('CommunitySupportApiClient tests', () => {
   describe('getCommunitySupportServiceProviders tests', () => {
     it('should return a community support service providers on a 200 response', () => {
       const mockCommunityServiceProviderData = {
-        personId: 'personDetails123',
         communitySupportServices: [
-          { id: 'service1', region: 'Region 1', name: 'Service 1' },
-          { id: 'service2', region: 'Region 2', name: 'Service 2' },
+          {
+            id: 'service1',
+            region: 'Region 1',
+            name: 'Service 1',
+            providerName: 'Provider 1',
+            description: 'Description 1',
+            pdus: ['PDU1'],
+          },
+          {
+            id: 'service2',
+            region: 'Region 2',
+            name: 'Service 2',
+            providerName: 'Provider 2',
+            description: 'Description 2',
+            pdus: ['PDU2'],
+          },
         ],
       } as CommunitySupportServicesProvider
       nock('http://localhost:8080', {

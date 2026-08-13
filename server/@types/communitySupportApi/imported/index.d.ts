@@ -463,6 +463,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/bff/draft-referral/{referralId}/community-service-provider/{providerId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get area confirmation details for a community service provider by ID */
+    get: operations['getAreaConfirmationDetails']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/bff/draft-referral/risk-information/{referralId}': {
     parameters: {
       query?: never
@@ -957,7 +974,9 @@ export interface components {
       checkRiskInformationCompleted: components['schemas']['TaskListStatusItem']
       selectThePersonsNeedsCompleted: components['schemas']['TaskListStatusItem']
       addDetailsOfAnyAdditionalSupportNeedsCompleted: components['schemas']['TaskListStatusItem']
+      addAdditionalInformationCompleted: components['schemas']['TaskListStatusItem']
       addDetailsOfMainPointOfContactCompleted: components['schemas']['TaskListStatusItem']
+      selectAnAreaForReferralCompleted: components['schemas']['TaskListStatusItem']
     }
     ActionPlanSummaryDto: {
       personDetails: components['schemas']['ActionPlanSummaryPersonDetails']
@@ -995,16 +1014,23 @@ export interface components {
       dateOfBirth: string
       sex?: string | null
     }
-    CommunitySupportServiceDto: {
-      id: string
-      region: string
-      name: string
-      providerName: string
-      description: string
+    Pageable: {
+      /** Format: int32 */
+      page?: number
+      /** Format: int32 */
+      size?: number
+      sort?: string[]
     }
-    CommunitySupportServicesDto: {
-      personId: string
-      communitySupportServices: components['schemas']['CommunitySupportServiceDto'][]
+    PageResponse: {
+      content: unknown[]
+      /** Format: int32 */
+      page: number
+      /** Format: int32 */
+      size: number
+      /** Format: int64 */
+      totalElements: number
+      /** Format: int32 */
+      totalPages: number
     }
     ErrorResponse: {
       /**
@@ -1141,6 +1167,13 @@ export interface components {
       prisonNumbers: string[]
       additionalDetails?: components['schemas']['PersonAdditionalDetails'] | null
     }
+    AreaConfirmationBffResponseDto: {
+      contractArea: string
+      deliveryPartner: string
+      associatedPdus: string[]
+      crn: string
+      dateOfBirth: string
+    }
     ArnsRiskConcernsToSelfDto: {
       suicide?: components['schemas']['ArnsRiskDto'] | null
       selfHarm?: components['schemas']['ArnsRiskDto'] | null
@@ -1227,13 +1260,6 @@ export interface components {
       preferredLanguage: string
       currentCircumstances: components['schemas']['ConfirmPersonalDetailsCurrentCircumstances']
       disabilities: components['schemas']['ConfirmPersonalDetailsDisabilities']
-    }
-    Pageable: {
-      /** Format: int32 */
-      page?: number
-      /** Format: int32 */
-      size?: number
-      sort?: string[]
     }
     ReferralCaseListDto: {
       /** Format: uuid */
@@ -1859,7 +1885,7 @@ export interface operations {
   getServices: {
     parameters: {
       query: {
-        personDetailsId: string
+        pageable: components['schemas']['Pageable']
       }
       header?: never
       path?: never
@@ -1867,13 +1893,13 @@ export interface operations {
     }
     requestBody?: never
     responses: {
-      /** @description List of community support services */
+      /** @description Paginated list of community support services */
       200: {
         headers: {
           [name: string]: unknown
         }
         content: {
-          'application/json': components['schemas']['CommunitySupportServicesDto']
+          'application/json': components['schemas']['PageResponse']
         }
       }
       /** @description The request was unauthorised */
@@ -2163,6 +2189,38 @@ export interface operations {
         }
       }
       /** @description ICS feedback not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getAreaConfirmationDetails: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+        providerId: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Community service provider found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['AreaConfirmationBffResponseDto']
+        }
+      }
+      /** @description Community service provider not found */
       404: {
         headers: {
           [name: string]: unknown

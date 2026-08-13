@@ -15,6 +15,8 @@ describe('TaskListPresenter - Page Rendering', () => {
         tag: 'govuk-tag--blue',
       },
       addDetailsOfMainPointOfContactCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+      addAdditionalInformationCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+      selectAnAreaForReferralCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
     }
     const presenter = new TaskListPresenter(taskListState, 'referralId')
     const content = TaskListContent.build()
@@ -33,7 +35,7 @@ describe('TaskListPresenter - Page Rendering', () => {
     expect(sections.personalDetails.taskList.items).toHaveLength(1)
 
     expect(sections.referralInformation.title).toBe('Referral information')
-    expect(sections.referralInformation.taskList.items).toHaveLength(3)
+    expect(sections.referralInformation.taskList.items).toHaveLength(4)
 
     expect(sections.contactDetails.title).toBe('Referral contact details')
     expect(sections.checkAnswers.title).toBe('Check answers and submit')

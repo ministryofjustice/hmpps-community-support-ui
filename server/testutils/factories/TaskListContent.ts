@@ -27,6 +27,10 @@ export default TaskListContentFactory.define(({ transientParams }) => ({
           text: 'Add details of any additional support needs',
           href: '/referral/new/add-support-needs',
         },
+        additionalReferralInformation: {
+          text: 'Additional referral information',
+          href: '/referral/new/additional-referral-information',
+        },
       },
     },
     contactDetails: {
