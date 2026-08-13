@@ -20,9 +20,6 @@ export function referralPageData(
       ethnicity: 'White British',
       religionOrBelief: 'Chistian',
       sex: 'Male',
-      genderIdentity: 'Male',
-      sexualOrientation: 'Hetrosexual',
-      transgender: 'No',
     },
     contactDetailsTableData: {
       phoneNumber: '01234567890',
