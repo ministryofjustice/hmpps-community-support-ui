@@ -123,6 +123,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/referral/{referralId}/service-end-date': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    /** Update service end date page data */
+    patch: operations['updateServiceEndDatePage']
+    trace?: never
+  }
   '/draft-referral/person-needs/{referralId}': {
     parameters: {
       query?: never
@@ -200,6 +217,23 @@ export interface paths {
     }
     /** Get task list status */
     get: operations['getTaskListStatus']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/service-end-date-page/{caseIdentifier}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get service end date page data */
+    get: operations['getServiceEndDatePage']
     put?: never
     post?: never
     delete?: never
@@ -866,6 +900,15 @@ export interface components {
       sessionCommunications?: string[] | null
       personFirstName: string
     }
+    ServiceEndDatePageDto: {
+      /**
+       * Format: date-time
+       * @description The target service completion date for the referral
+       */
+      target_service_completion_date?: string
+      /** @description The reason the target service completion date was set */
+      target_service_completion_reason?: string
+    }
     CriminogenicNeedsRequest: {
       hasAccommodationNeeds?: boolean | null
       accommodationDetails?: string | null
@@ -1014,23 +1057,18 @@ export interface components {
       dateOfBirth: string
       sex?: string | null
     }
-    Pageable: {
-      /** Format: int32 */
-      page?: number
-      /** Format: int32 */
-      size?: number
-      sort?: string[]
+    CommunitySupportServiceDto: {
+      id: string
+      region: string
+      name: string
+      providerName: string
+      description: string
+      pdus: string[]
     }
-    PageResponse: {
-      content: unknown[]
-      /** Format: int32 */
-      page: number
-      /** Format: int32 */
-      size: number
-      /** Format: int64 */
-      totalElements: number
-      /** Format: int32 */
-      totalPages: number
+    CommunitySupportServicesDto: {
+      communitySupportServices: {
+        [key: string]: components['schemas']['CommunitySupportServiceDto'][]
+      }
     }
     ErrorResponse: {
       /**
@@ -1260,6 +1298,13 @@ export interface components {
       preferredLanguage: string
       currentCircumstances: components['schemas']['ConfirmPersonalDetailsCurrentCircumstances']
       disabilities: components['schemas']['ConfirmPersonalDetailsDisabilities']
+    }
+    Pageable: {
+      /** Format: int32 */
+      page?: number
+      /** Format: int32 */
+      size?: number
+      sort?: string[]
     }
     ReferralCaseListDto: {
       /** Format: uuid */
@@ -1564,6 +1609,41 @@ export interface operations {
       }
     }
   }
+  updateServiceEndDatePage: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ServiceEndDatePageDto']
+      }
+    }
+    responses: {
+      /** @description Service end date details updated */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ServiceEndDatePageDto']
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
   updateCriminogenicNeeds: {
     parameters: {
       query?: never
@@ -1726,6 +1806,37 @@ export interface operations {
       }
     }
   }
+  getServiceEndDatePage: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        caseIdentifier: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Service end date details found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ServiceEndDatePageDto']
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
   getActionPlanSummary: {
     parameters: {
       query?: never
@@ -1884,22 +1995,20 @@ export interface operations {
   }
   getServices: {
     parameters: {
-      query: {
-        pageable: components['schemas']['Pageable']
-      }
+      query?: never
       header?: never
       path?: never
       cookie?: never
     }
     requestBody?: never
     responses: {
-      /** @description Paginated list of community support services */
+      /** @description List of community support services */
       200: {
         headers: {
           [name: string]: unknown
         }
         content: {
-          'application/json': components['schemas']['PageResponse']
+          'application/json': components['schemas']['CommunitySupportServicesDto']
         }
       }
       /** @description The request was unauthorised */
