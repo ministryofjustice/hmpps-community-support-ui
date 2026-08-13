@@ -1045,9 +1045,6 @@ export interface components {
       ethnicity?: string | null
       religionOrBelief?: string | null
       sex: string
-      genderIdentity: string
-      sexualOrientation: string
-      transgender: string
     }
     PersonDetailsTableDataDto: {
       name: string
@@ -1117,9 +1114,6 @@ export interface components {
       preferredLanguage?: string | null
       neurodiverseConditions?: string | null
       religionOrBelief?: string | null
-      transgender?: string | null
-      sexualOrientation?: string | null
-      genderIdentity?: string | null
       nationalities: string[]
       interestToImmigration?: boolean | null
       address?: string | null
@@ -1218,12 +1212,9 @@ export interface components {
     }
     ConfirmPersonalDetailsEqualityMonitoring: {
       ethnicity: string
-      genderIdentity: string
       nationalities: string[]
       religionOrBelief: string
       sex: string
-      sexualOrientation: string
-      transgender: string
     }
     ConfirmPersonalPersonalDetails: {
       firstName: string

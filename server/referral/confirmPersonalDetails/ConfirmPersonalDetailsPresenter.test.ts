@@ -31,9 +31,6 @@ describe('ConfirmPersonalDetailsPresenter', () => {
       ethnicity: 'White European',
       religionOrBelief: 'Christian',
       sex: 'Male',
-      genderIdentity: 'Male',
-      sexualOrientation: 'Hetrosexual',
-      transgender: 'No',
     },
     contactDetails: {
       phoneNumber: '0123456789',
