@@ -15,26 +15,30 @@ describe('CommunityServiceProvider service tests', () => {
 
   describe('getCommunityServiceProviders', () => {
     it('should return community service providers data from API client', async () => {
-      const mockCommunityServiceProviderData = {
-        communitySupportServices: [
-          {
-            id: 'service1',
-            region: 'Region 1',
-            name: 'Service 1',
-            providerName: 'Provider 1',
-            description: 'Description 1',
-            pdus: ['PDU1'],
-          },
-          {
-            id: 'service2',
-            region: 'Region 2',
-            name: 'Service 2',
-            providerName: 'Provider 2',
-            description: 'Description 2',
-            pdus: ['PDU2'],
-          },
-        ],
-      } as CommunitySupportServicesProvider
+      const mockCommunityServiceProviderData: CommunitySupportServicesProvider = {
+        communitySupportServices: {
+          region1: [
+            {
+              id: 'service1',
+              region: 'Region 1',
+              name: 'Service 1',
+              providerName: 'Provider 1',
+              description: 'Description 1',
+              pdus: ['PDU1'],
+            },
+          ],
+          region2: [
+            {
+              id: 'service2',
+              region: 'Region 2',
+              name: 'Service 2',
+              providerName: 'Provider 2',
+              description: 'Description 2',
+              pdus: ['PDU2'],
+            },
+          ],
+        },
+      }
       communitySupportApiClient.getCommunitySupportServiceProviders.mockResolvedValue(mockCommunityServiceProviderData)
       const result = await communityServiceProviderService.getCommunityServiceProviders('personDetails123', 'user1')
       expect(result).toBe(mockCommunityServiceProviderData)
