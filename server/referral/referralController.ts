@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import { ReferralUserAssignmentsResponse, AssignmentFailureDto } from '@community-support-api'
+import { ReferralUserAssignmentsResponse, AssignmentFailureDto, ServiceEndDatePageDto } from '@community-support-api'
 import ReferralService from '../services/referralService'
 import PersonService from '../services/personService'
 import ConfirmationPresenter from './confirmation/confirmationPresenter'
@@ -22,6 +22,7 @@ import PersonNeedsPresenter, { personNeedsFormData } from './personNeeds/PersonN
 import buildPersonNeedsRequest, { PersonNeeds } from './personNeeds/buildPersonNeedsRequest'
 import { validateRequestBodyAgainstSchema } from '../validation/validationUtils'
 import { PersonNeedsSchema } from '../validation/PersonNeedsFormData'
+import ServiceEndDatePagePresenter from './serviceEndDate/ServiceEndDatePagePresenter'
 
 export default class ReferralController {
   private static readonly CRN_REGEX = /^[A-Za-z]\d{6}$/
@@ -503,5 +504,45 @@ export default class ReferralController {
       delete req.session.referralCreationDetails.personNeeds
       return res.redirect('/referral/task-list')
     })
+  }
+
+  async showServiceEndDatePage(req: Request, res: Response) {
+    // Render form with empty/default values
+    // The API doesn't support GET on this endpoint, so we initialize with empty data
+
+    const emptyData: ServiceEndDatePageDto = {
+      target_service_completion_date: undefined,
+
+      target_service_completion_reason: undefined,
+    }
+    const presenter = new ServiceEndDatePagePresenter(emptyData)
+    return presenter.renderPage(res)
+  }
+
+  async updateServiceEndDatePage(req: Request, res: Response) {
+    const { username } = res.locals.user
+    const referralId = req.session?.draftReferralId
+
+    if (referralId) {
+      try {
+        // eslint-disable-next-line camelcase
+        const { target_service_completion_date, target_service_completion_reason } = req.body
+
+        const updateData: ServiceEndDatePageDto = {
+          // eslint-disable-next-line camelcase
+          target_service_completion_date,
+          // eslint-disable-next-line camelcase
+          target_service_completion_reason,
+        }
+
+        await this.referralService.updateServiceEndDatePage(referralId, updateData, username)
+        return res.redirect('/referral/task-list')
+      } catch (e) {
+        logger.error(e)
+        req.flash('serviceEndDateError', 'Something has gone wrong updating the service end date')
+        return res.redirect('/referral/task-list/service-end-date')
+      }
+    }
+    return res.redirect('/referral/task-list')
   }
 }

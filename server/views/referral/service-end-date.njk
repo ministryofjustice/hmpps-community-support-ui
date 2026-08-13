@@ -1,0 +1,67 @@
+{% extends "../partials/layout.njk" %}
+
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block pageTitle %}{{ pageTitle }}{% endblock %}
+
+{% block content %}
+  <div class="govuk-width-container">
+    {{ govukBackLink({
+      text: "Back",
+      href: backLink.href
+    }) }}
+
+    <div class="govuk-main-wrapper">
+      <form method="POST">
+        <div class="govuk-form-group">
+          <h1 class="govuk-heading-l">{{ pageHeader }}</h1>
+          
+          {% if hint %}
+            <p class="govuk-body">{{ hint }}</p>
+          {% endif %}
+
+          {{ govukInput({
+            label: {
+              text: dateLabel,
+              classes: "govuk-label--m"
+            },
+            hint: {
+              text: "For example, 31 12 2026"
+            },
+            id: "target-service-completion-date",
+            name: "target_service_completion_date",
+            type: "date",
+            value: targetServiceCompletionDate,
+            attributes: {
+              "test-id": "target-service-completion-date"
+            }
+          }) }}
+
+          {{ govukTextarea({
+            label: {
+              text: reasonLabel,
+              classes: "govuk-label--m"
+            },
+            hint: {
+              text: reasonHint
+            },
+            id: "target-service-completion-reason",
+            name: "target_service_completion_reason",
+            value: targetServiceCompletionReason,
+            rows: 5,
+            attributes: {
+              "test-id": "target-service-completion-reason"
+            }
+          }) }}
+        </div>
+
+        {{ govukButton({
+          text: "Continue"
+        }) }}
+      </form>
+    </div>
+  </div>
+{% endblock %}

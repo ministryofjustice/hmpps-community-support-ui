@@ -593,7 +593,7 @@
           },
           "additionalReferralInformation": {
             "text": "Additional referral information",
-            "href": "/referral/task-list/additional-referral-information"
+            "href": "/referral/task-list/service-end-date"
           }
         }
       },
@@ -820,5 +820,15 @@
     },
     "submitButton": "Save and continue",
     "backLink": "/referral/task-list"
+  },
+  "/referral/task-list/service-end-date": {
+    "pageTitle": "Set service end date",
+    "pageHeader": "Set the target service completion date",
+    "hint": "This is the date by which the service should be completed.",
+    "dateLabel": "Target service completion date",
+    "reasonLabel": "Reason for this date",
+    "reasonHint": "Explain why this date was chosen",
+    "backLink": "/referral/task-list",
+    "continueButton": "Continue"
   }
 }

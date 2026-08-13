@@ -190,6 +190,10 @@ export default function routes({
 
   post('/referral/task-list/select-person-needs', (req, res) => referralController.recordPersonNeeds(req, res))
 
+  get('/referral/task-list/service-end-date', (req, res) => referralController.showServiceEndDatePage(req, res))
+
+  post('/referral/task-list/service-end-date', (req, res) => referralController.updateServiceEndDatePage(req, res))
+
   get('/referral/:id', (req, res, next) => referralController.showReferralPage(req, res, next))
 
   return router
