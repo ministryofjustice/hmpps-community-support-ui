@@ -4,2469 +4,2578 @@
  */
 
 export interface paths {
-  '/referral/{caseReference}/ics': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    /** Change an ICS appointment for a referral */
-    put: operations['changeIcsAppointment']
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/draft-referral/risk-information/{referralId}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    /** Save draft OASys risk information for a referral */
-    put: operations['saveRiskInformation']
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/{referralId}/submit-a-referral': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** Submit a referral */
-    post: operations['submitReferral']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/referral': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** Create a referral */
-    post: operations['createReferral']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/referral/{identifier}/assign': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** Assign case workers to a referral */
-    post: operations['assignCaseWorkers']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/referral/{caseReference}/ics/{icsId}/feedback': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** Submit feedback for an ICS appointment */
-    post: operations['submitIcsFeedback']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/referral/{caseIdentifier}/ics': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** Book an ICS appointment for a referral */
-    post: operations['createIcsAppointment']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/draft-referral/person-needs/{referralId}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    /** Update criminogenic needs for a referral */
-    patch: operations['updateCriminogenicNeeds']
-    trace?: never
-  }
-  '/draft-referral/needs-interpreter/{referralId}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    /** Update the Interpreter Needs information for a Draft Referral */
-    patch: operations['updateNeedsInterpreter']
-    trace?: never
-  }
-  '/draft-referral/community-service-provider/{referralId}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    /** Update the Community Service Provider for a Draft Referral */
-    patch: operations['updateCommunityServiceProvider']
-    trace?: never
-  }
-  '/draft-referral/additional-support-needs/{referralId}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    /** Update the Additional Support Needs information for a Draft Referral */
-    patch: operations['updateAdditionalSupportNeeds']
-    trace?: never
-  }
-  '/bff/task-list-status/{referralId}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get task list status */
-    get: operations['getTaskListStatus']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/bff/referral/{referralReference}/action-plan': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get the Action Plan summary information associated with a Referral */
-    get: operations['getActionPlanSummary']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/bff/referral/{caseReference}/ics_appointment_feedback_details': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get ICS feedback session details */
-    get: operations['getIcsFeedbackSession']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/bff/referral/{caseReference}/ics': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get all ICS appointments for a referral */
-    get: operations['getIcsAppointments']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/bff/referral/{caseReference}/ics/{icsId}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get a single ICS appointment by ID */
-    get: operations['getIcsAppointment']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/bff/referral/check-referral-information/{caseIdentifier}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get check-referral-information page data */
-    get: operations['getReferralAndPersonInformation']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/bff/referral-select-a-service': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get community support services for referral select-a-service */
-    get: operations['getServices']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/bff/referral-information/{caseIdentifier}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get referral information */
-    get: operations['getReferralInformation']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/bff/referral-details/{referralId}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get a referral by ID */
-    get: operations['getReferral']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/bff/referral-details/{referralIdentifier}/progress': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get referral progress page data */
-    get: operations['getReferralProgressDetails']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/bff/referral-details/{caseReference}/ics': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get ICS Details */
-    get: operations['getICSDetails']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/bff/referral-details-page/{caseIdentifier}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get referral details page data */
-    get: operations['getReferralDetailsPage']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/bff/referral-assignments/{identifier}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get assigned case workers of a referral */
-    get: operations['getAssignedCaseWorkers']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/bff/reference-data/probation-offices': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get all Probation Offices Information */
-    get: operations['getProbationOffices']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/bff/person/{personIdentifier}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Find a person by an identifier i.e Prison Number or CRN */
-    get: operations['getPersonDetails']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/bff/ics-feedback/{icsFeedbackId}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get a single ICS feedback record by its ID */
-    get: operations['getIcsFeedback']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/bff/draft-referral/{referralId}/community-service-provider/{providerId}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get area confirmation details for a community service provider by ID */
-    get: operations['getAreaConfirmationDetails']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/bff/draft-referral/risk-information/{referralId}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get ROSH risks for a referral */
-    get: operations['getRoshRisksByReferralId']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/bff/draft-referral/person-needs/{referralId}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get criminogenic needs for a referral */
-    get: operations['getPersonCriminogenicNeeds']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/bff/draft-referral/needs-interpreter/{referralId}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get interpreter needs page data */
-    get: operations['getNeedsInterpreterPage']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/bff/draft-referral/additional-support-needs/{referralId}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get additional support needs page data */
-    get: operations['getAdditionalSupportNeedsPage']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/bff/confirm-person-details/{referralId}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get the details necessary to Confirm a Person's Detail in the Referral flow */
-    get: operations['getReferralPersonDetails']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/bff/case-list/unassigned': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get unassigned referrals for a community service provider */
-    get: operations['getUnassignedCases']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/bff/case-list/in-progress': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get in-progress referrals for a community service provider */
-    get: operations['getInProgressCases']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
+    "/referral/{caseReference}/ics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Change an ICS appointment for a referral */
+        put: operations["changeIcsAppointment"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/draft-referral/risk-information/{referralId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Save draft OASys risk information for a referral */
+        put: operations["saveRiskInformation"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/{referralId}/submit-a-referral": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Submit a referral */
+        post: operations["submitReferral"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/referral": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create a referral */
+        post: operations["createReferral"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/referral/{identifier}/assign": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Assign case workers to a referral */
+        post: operations["assignCaseWorkers"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/referral/{caseReference}/ics/{icsId}/feedback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Submit feedback for an ICS appointment */
+        post: operations["submitIcsFeedback"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/referral/{caseIdentifier}/ics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Book an ICS appointment for a referral */
+        post: operations["createIcsAppointment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/referral/{referralId}/service-end-date": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update service end date page data */
+        patch: operations["updateServiceEndDatePage"];
+        trace?: never;
+    };
+    "/draft-referral/person-needs/{referralId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update criminogenic needs for a referral */
+        patch: operations["updateCriminogenicNeeds"];
+        trace?: never;
+    };
+    "/draft-referral/needs-interpreter/{referralId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update the Interpreter Needs information for a Draft Referral */
+        patch: operations["updateNeedsInterpreter"];
+        trace?: never;
+    };
+    "/draft-referral/community-service-provider/{referralId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update the Community Service Provider for a Draft Referral */
+        patch: operations["updateCommunityServiceProvider"];
+        trace?: never;
+    };
+    "/draft-referral/additional-support-needs/{referralId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update the Additional Support Needs information for a Draft Referral */
+        patch: operations["updateAdditionalSupportNeeds"];
+        trace?: never;
+    };
+    "/bff/task-list-status/{referralId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get task list status */
+        get: operations["getTaskListStatus"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/service-end-date-page/{caseIdentifier}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get service end date page data */
+        get: operations["getServiceEndDatePage"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/referral/{referralReference}/action-plan": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get the Action Plan summary information associated with a Referral */
+        get: operations["getActionPlanSummary"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/referral/{caseReference}/ics_appointment_feedback_details": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get ICS feedback session details */
+        get: operations["getIcsFeedbackSession"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/referral/{caseReference}/ics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get all ICS appointments for a referral */
+        get: operations["getIcsAppointments"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/referral/{caseReference}/ics/{icsId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get a single ICS appointment by ID */
+        get: operations["getIcsAppointment"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/referral/check-referral-information/{caseIdentifier}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get check-referral-information page data */
+        get: operations["getReferralAndPersonInformation"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/referral-select-a-service": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get community support services for referral select-a-service */
+        get: operations["getServices"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/referral-information/{caseIdentifier}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get referral information */
+        get: operations["getReferralInformation"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/referral-details/{referralId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get a referral by ID */
+        get: operations["getReferral"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/referral-details/{referralIdentifier}/progress": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get referral progress page data */
+        get: operations["getReferralProgressDetails"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/referral-details/{caseReference}/ics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get ICS Details */
+        get: operations["getICSDetails"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/referral-details-page/{caseIdentifier}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get referral details page data */
+        get: operations["getReferralDetailsPage"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/referral-assignments/{identifier}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get assigned case workers of a referral */
+        get: operations["getAssignedCaseWorkers"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/reference-data/probation-offices": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get all Probation Offices Information */
+        get: operations["getProbationOffices"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/person/{personIdentifier}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Find a person by an identifier i.e Prison Number or CRN */
+        get: operations["getPersonDetails"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/ics-feedback/{icsFeedbackId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get a single ICS feedback record by its ID */
+        get: operations["getIcsFeedback"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/draft-referral/{referralId}/community-service-provider/{providerId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get area confirmation details for a community service provider by ID */
+        get: operations["getAreaConfirmationDetails"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/draft-referral/risk-information/{referralId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get ROSH risks for a referral */
+        get: operations["getRoshRisksByReferralId"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/draft-referral/person-needs/{referralId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get criminogenic needs for a referral */
+        get: operations["getPersonCriminogenicNeeds"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/draft-referral/needs-interpreter/{referralId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get interpreter needs page data */
+        get: operations["getNeedsInterpreterPage"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/draft-referral/additional-support-needs/{referralId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get additional support needs page data */
+        get: operations["getAdditionalSupportNeedsPage"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/confirm-person-details/{referralId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get the details necessary to Confirm a Person's Detail in the Referral flow */
+        get: operations["getReferralPersonDetails"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/case-list/unassigned": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get unassigned referrals for a community service provider */
+        get: operations["getUnassignedCases"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/case-list/in-progress": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get in-progress referrals for a community service provider */
+        get: operations["getInProgressCases"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
-export type webhooks = Record<string, never>
+export type webhooks = Record<string, never>;
 export interface components {
-  schemas: {
-    AppointmentTimeRequest: {
-      /** Format: int32 */
-      hour: number
-      /** Format: int32 */
-      minute?: number | null
-      amPm: string
-    }
-    ChangeAppointmentDetails: {
-      /** @enum {string|null} */
-      changeRequestedBy?: 'DELIVERY_PARTNER' | 'PROBATION_PRACTITIONER' | 'REFERRAL_USER' | null
-      reasonForChange?: string | null
-    }
-    CreateAppointmentRequest: {
-      /** Format: date */
-      date: string
-      time: components['schemas']['AppointmentTimeRequest']
-      sessionMethodRequest: components['schemas']['SessionMethodRequest']
-      sessionCommunication: string[]
-      changeAppointmentDetails?: components['schemas']['ChangeAppointmentDetails'] | null
-    }
-    SessionMethodRequest: {
-      /** @enum {string} */
-      type: 'PHONE' | 'VIDEO' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION'
-      additionalDetails?: string | null
-      pdu?: string | null
-      addressLine1?: string | null
-      addressLine2?: string | null
-      townOrCity?: string | null
-      county?: string | null
-      postcode?: string | null
-    }
-    AppointmentIcsResponse: {
-      /** Format: uuid */
-      appointmentIcsId: string
-      /** Format: uuid */
-      appointmentId: string
-      /** Format: uuid */
-      referralId: string
-      caseReference?: string | null
-      /** @enum {string} */
-      appointmentType: 'ICS'
-      /** Format: date */
-      appointmentDate: string
-      appointmentTime: components['schemas']['AppointmentTimeResponse']
-      /** @enum {string} */
-      appointmentStatus: 'SCHEDULED' | 'NEEDS_FEEDBACK' | 'COMPLETED' | 'CHANGED' | 'DID_NOT_ATTEND' | 'DID_NOT_HAPPEN'
-      sessionMethod: components['schemas']['SessionMethod']
-      sessionCommunications: string[]
-      referralFirstName: string
-      referralLastName: string
-      /** Format: date-time */
-      createdAt: string
-      changeAppointmentDetails?: components['schemas']['ChangeAppointmentDetails'] | null
-    }
-    AppointmentTimeResponse: {
-      /** Format: int32 */
-      hour: number
-      /** Format: int32 */
-      minute: number
-      amPm: string
-    }
-    InPersonAppointment: Omit<WithRequired<components['schemas']['SessionMethod'], 'type'>, 'appointmentCategory'> & {
-      probationOfficeName?: string | null
-      addressLine1?: string | null
-      addressLine2?: string | null
-      townOrCity?: string | null
-      county?: string | null
-      postcode?: string | null
-    } & {
-      /**
-       * @description discriminator enum property added by openapi-typescript
-       * @enum {string}
-       */
-      appointmentCategory: 'IN_PERSON'
-    } & {
-      /**
-       * @description discriminator enum property added by openapi-typescript
-       * @enum {string}
-       */
-      appointmentCategory: 'IN_PERSON'
-    }
-    SessionMethod: {
-      type: string
-      appointmentCategory: string
-    } & (components['schemas']['VirtualAppointment'] | components['schemas']['InPersonAppointment'])
-    VirtualAppointment: Omit<WithRequired<components['schemas']['SessionMethod'], 'type'>, 'appointmentCategory'> & {
-      whyNotInPersonReason?: string | null
-    } & {
-      /**
-       * @description discriminator enum property added by openapi-typescript
-       * @enum {string}
-       */
-      appointmentCategory: 'VIRTUAL'
-    } & {
-      /**
-       * @description discriminator enum property added by openapi-typescript
-       * @enum {string}
-       */
-      appointmentCategory: 'VIRTUAL'
-    }
-    CommunitySupportRiskInformationDto: {
-      riskSummaryWhoIsAtRisk?: string | null
-      riskSummaryNatureOfRisk?: string | null
-      riskSummaryRiskImminence?: string | null
-      riskToSelfSuicide?: string | null
-      riskToSelfSelfHarm?: string | null
-      riskToSelfHostelSetting?: string | null
-      riskToSelfVulnerability?: string | null
-      additionalInformation?: string | null
-    }
-    SubmitReferralResponseDto: {
-      /** Format: uuid */
-      referralId: string
-      /** Format: uuid */
-      personId: string
-      referenceNumber?: string | null
-    }
-    CreateReferralRequest: {
-      personIdentifier: string
-      urgency?: boolean | null
-    }
-    ReferralInformationDto: {
-      /** Format: uuid */
-      personId: string
-      /** Format: uuid */
-      referralId: string
-      /** Format: date */
-      referralDate: string
-      firstName?: string | null
-      lastName?: string | null
-      sex?: string | null
-      personIdentifier: string
-      /** Format: uuid */
-      communityServiceProviderId?: string | null
-      communityServiceProviderName?: string | null
-      region?: string | null
-      referenceNumber?: string | null
-      deliveryPartner?: string | null
-    }
-    AssignCaseWorkersRequest: {
-      emails: string[]
-    }
-    AssignCaseWorkersResult: {
-      success: boolean
-      message: string
-      succeededList?: components['schemas']['CaseWorkerDto'][] | null
-      failureList?: components['schemas']['AssignmentFailureDto'][] | null
-    }
-    AssignmentFailureDto: {
-      emailAddress: string
-      reason: string
-    }
-    CaseWorkerDto: {
-      /** @enum {string} */
-      userType: 'INTERNAL' | 'EXTERNAL'
-      /** Format: uuid */
-      userId?: string | null
-      fullName?: string | null
-      emailAddress: string
-    }
-    CreateIcsFeedbackRequest: {
-      record: components['schemas']['RecordSessionRequest']
-      sessionDetails?: components['schemas']['SessionDetailsRequest'] | null
-      sessionFeedback?: components['schemas']['SessionFeedbackRequest'] | null
-      issuesAndConcerns?: components['schemas']['IssuesAndConcernsRequest'] | null
-      nextSteps?: components['schemas']['NextStepsRequest'] | null
-    }
-    IssuesAndConcernsRequest: {
-      identified?: string | null
-      notifyProbationPractitioner?: boolean | null
-    }
-    NextStepsRequest: {
-      plannedForNextSession?: string | null
-      actionsBeforeNextSession?: string | null
-    }
-    RecordSessionRequest: {
-      didSessionHappen: boolean
-      howSessionTookPlace?: components['schemas']['SessionMethodRequest'] | null
-      didPersonAttend?: boolean | null
-      sessionNotHappenReason?: components['schemas']['SessionNotHappenReasonRequest'] | null
-      noAttendanceInformation?: string | null
-    }
-    SessionDetailsRequest: {
-      wasPersonLate?: boolean | null
-      lateReason?: string | null
-      duration?: components['schemas']['SessionDurationRequest'] | null
-    }
-    SessionDurationRequest: {
-      /** Format: int32 */
-      hours: number
-      /** Format: int32 */
-      minutes?: number | null
-    }
-    SessionFeedbackRequest: {
-      whatHappened?: string | null
-      behaviour?: string | null
-      strengthsIdentified?: string | null
-    }
-    SessionNotHappenReasonRequest: {
-      /** @enum {string} */
-      reason: 'SERVICE_PROVIDER_ISSUE' | 'REFERRAL_COULD_NOT_TAKE_PART' | 'REFERRAL_DID_NOT_COMPLY'
-      details?: string | null
-    }
-    AppointmentDelivery: {
-      /** Format: uuid */
-      id: string
-      /** @enum {string} */
-      method: 'PHONE_CALL' | 'VIDEO_CALL' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION'
-      methodDetails?: string | null
-      addressLine1?: string | null
-      addressLine2?: string | null
-      townOrCity?: string | null
-      county?: string | null
-      postcode?: string | null
-    }
-    /** @description ICS appointment session feedback */
-    AppointmentIcsFeedbackResponse: {
-      /** Format: uuid */
-      id: string
-      /** Format: uuid */
-      appointmentIcsId: string
-      recordSessionDidSessionHappen: boolean
-      recordSessionHowSessionTookPlace?: string | null
-      recordSessionNotInPersonReason?: string | null
-      recordSessionPdu?: string | null
-      recordSessionAddressLine1?: string | null
-      recordSessionAddressLine2?: string | null
-      recordSessionTownOrCity?: string | null
-      recordSessionCounty?: string | null
-      recordSessionPostcode?: string | null
-      recordSessionDidPersonAttend?: boolean | null
-      recordSessionNotHappenReason?: string | null
-      recordSessionNotHappenReasonDetails?: string | null
-      recordSessionNoAttendanceInformation?: string | null
-      sessionDetailsWasPersonLate?: boolean | null
-      sessionDetailsLateReason?: string | null
-      sessionDetailsDuration?: string | null
-      sessionFeedbackWhatHappened?: string | null
-      sessionFeedbackBehaviour?: string | null
-      sessionFeedbackStrengthsIdentified?: string | null
-      issuesOrConcernsIdentified?: string | null
-      issuesOrConcernsNotifyProbationPractitioner?: boolean | null
-      nextStepsPlannedForNextSession?: string | null
-      nextStepsActionsBeforeNextSession?: string | null
-      sessionFeedbackAppointmentDetails?: components['schemas']['SessionFeedbackAppointmentDetailsDto'] | null
-      /** Format: date-time */
-      createdAt: string
-      /** Format: uuid */
-      createdBy?: string | null
-    }
-    CaseWorkerSummaryDto: {
-      fullName?: string | null
-      emailAddress: string
-    }
-    SessionFeedbackAppointmentDetailsDto: {
-      currentCaseworkers: components['schemas']['CaseWorkerSummaryDto'][]
-      feedbackSubmittedBy: components['schemas']['CaseWorkerSummaryDto']
-      /** Format: date-time */
-      startDateTime: string
-      appointmentDeliveryDetails?: components['schemas']['AppointmentDelivery'] | null
-      sessionCommunications?: string[] | null
-      personFirstName: string
-    }
-    CriminogenicNeedsRequest: {
-      hasAccommodationNeeds?: boolean | null
-      accommodationDetails?: string | null
-      hasEmploymentEducationNeeds?: boolean | null
-      employmentEducationDetails?: string | null
-      hasFinancialNeeds?: boolean | null
-      financialDetails?: string | null
-      hasPersonalRelationshipsCommunityNeeds?: boolean | null
-      personalRelationshipsCommunityDetails?: string | null
-      hasDrugUseNeeds?: boolean | null
-      drugUseDetails?: string | null
-      hasAlcoholUseNeeds?: boolean | null
-      alcoholUseDetails?: string | null
-      hasHealthWellbeingNeeds?: boolean | null
-      healthWellbeingDetails?: string | null
-      hasThinkingBehavioursAttitudeNeeds?: boolean | null
-      thinkingBehavioursAttitudeDetails?: string | null
-    }
-    RefereeNameDto: {
-      firstName: string
-      middleName?: string | null
-      lastName: string
-    }
-    ReferralCriminogenicNeedsDto: {
-      /** Format: uuid */
-      id: string
-      /** Format: uuid */
-      referralId: string
-      refereeName: components['schemas']['RefereeNameDto']
-      hasAccommodationNeeds?: boolean | null
-      accommodationDetails?: string | null
-      hasEmploymentEducationNeeds?: boolean | null
-      employmentEducationDetails?: string | null
-      hasFinancialNeeds?: boolean | null
-      financialDetails?: string | null
-      hasPersonalRelationshipsCommunityNeeds?: boolean | null
-      personalRelationshipsCommunityDetails?: string | null
-      hasDrugUseNeeds?: boolean | null
-      drugUseDetails?: string | null
-      hasAlcoholUseNeeds?: boolean | null
-      alcoholUseDetails?: string | null
-      hasHealthWellbeingNeeds?: boolean | null
-      healthWellbeingDetails?: string | null
-      hasThinkingBehavioursAttitudeNeeds?: boolean | null
-      thinkingBehavioursAttitudeDetails?: string | null
-      /** Format: date-time */
-      updatedAt: string
-      /** Format: uuid */
-      updatedBy: string
-    }
-    NeedsInterpreterRequest: {
-      needsInterpreter?: boolean | null
-      language?: string | null
-    }
-    NeedsInterpreterBffResponseDto: {
-      refereeName: components['schemas']['RefereeNameDto']
-      language?: components['schemas']['Selection'] | null
-      needsInterpreter?: boolean | null
-    }
-    Selection: {
-      selected: boolean
-      value?: string | null
-    }
-    CommunityServiceProviderRequest: {
-      /** Format: uuid */
-      communityServiceProviderId: string
-    }
-    CommunityServiceProviderBffResponseDto: {
-      /** Format: uuid */
-      referralId: string
-      /** Format: uuid */
-      communityServiceProviderId: string
-      communityServiceProviderName: string
-    }
-    AdditionalSupportNeedsRequest: {
-      physicalHealth?: string | null
-      mentalEmotionalHealth?: string | null
-      neurodiversity?: string | null
-      locationTravel?: string | null
-      caringResponsibilities?: string | null
-      employmentResponsibilities?: string | null
-      diversity?: string | null
-      anythingElse?: string | null
-      needsAdditionalSupport?: boolean | null
-    }
-    AdditionalSupportNeedsBffResponseDto: {
-      refereeName: components['schemas']['RefereeNameDto']
-      physicalHealth: components['schemas']['Selection']
-      mentalEmotionalHealth: components['schemas']['Selection']
-      neurodiversity: components['schemas']['Selection']
-      locationTravel: components['schemas']['Selection']
-      caringResponsibilities: components['schemas']['Selection']
-      employmentResponsibilities: components['schemas']['Selection']
-      diversity: components['schemas']['Selection']
-      anythingElse: components['schemas']['Selection']
-      needsAdditionalSupport?: boolean | null
-    }
-    TaskListStatusItem: {
-      completed: boolean
-      statusText: string
-      tag?: string | null
-    }
-    TaskListStatusResponseDto: {
-      fullName: string
-      confirmPersonalDetailsCompleted: components['schemas']['TaskListStatusItem']
-      checkRiskInformationCompleted: components['schemas']['TaskListStatusItem']
-      selectThePersonsNeedsCompleted: components['schemas']['TaskListStatusItem']
-      addDetailsOfAnyAdditionalSupportNeedsCompleted: components['schemas']['TaskListStatusItem']
-      addAdditionalInformationCompleted: components['schemas']['TaskListStatusItem']
-      addDetailsOfMainPointOfContactCompleted: components['schemas']['TaskListStatusItem']
-      selectAnAreaForReferralCompleted: components['schemas']['TaskListStatusItem']
-    }
-    ActionPlanSummaryDto: {
-      personDetails: components['schemas']['ActionPlanSummaryPersonDetails']
-      needs: components['schemas']['ActionPlanSummaryNeed'][]
-    }
-    ActionPlanSummaryNeed: {
-      /** Format: uuid */
-      id: string
-      label: string
-      outcomes: string[]
-    }
-    ActionPlanSummaryPersonDetails: {
-      fullName: string
-    }
-    AppointmentDetailsDto: {
-      /** @enum {string|null} */
-      method?: 'PHONE_CALL' | 'VIDEO_CALL' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION' | null
-      date?: string | null
-      time?: string | null
-    }
-    IcsFeedbackSessionDto: {
-      fullName: string
-      appointmentDetails?: components['schemas']['AppointmentDetailsDto'] | null
-      otherAppointmentMethods?: string[] | null
-    }
-    CheckReferralInformationDto: {
-      /** Format: uuid */
-      referralId: string
-      communityServiceProviderName?: string | null
-      region?: string | null
-      deliveryPartner?: string | null
-      personIdentifier?: string | null
-      prisonNumbers: string[]
-      fullName: string
-      dateOfBirth: string
-      sex?: string | null
-    }
-    Pageable: {
-      /** Format: int32 */
-      page?: number
-      /** Format: int32 */
-      size?: number
-      sort?: string[]
-    }
-    PageResponse: {
-      content: unknown[]
-      /** Format: int32 */
-      page: number
-      /** Format: int32 */
-      size: number
-      /** Format: int64 */
-      totalElements: number
-      /** Format: int32 */
-      totalPages: number
-    }
-    ErrorResponse: {
-      /**
-       * Format: int32
-       * @description The HTTP status code returned by the server
-       * @example 404
-       */
-      status: number
-      /**
-       * Format: int32
-       * @description An application-specific error code
-       * @example 404
-       */
-      errorCode?: number | null
-      /**
-       * @description A human readable message for the error
-       * @example Referral Not found
-       */
-      userMessage?: string | null
-      /**
-       * @description A developer friendly message for the error
-       * @example null
-       */
-      developerMessage?: string | null
-      /**
-       * @description Additional information about the error
-       * @example null
-       */
-      moreInfo?: string | null
-    }
-    ContactDetailsTableDataDto: {
-      phoneNumber?: string | null
-      mobileNumber?: string | null
-      email?: string | null
-      address?: string | null
-    }
-    EqualityDetailsTableDataDto: {
-      ethnicity?: string | null
-      religionOrBelief?: string | null
-      sex: string
-    }
-    PersonDetailsTableDataDto: {
-      name: string
-      crn: string
-      dateOfBirth: string
-      preferredLanguage: string
-      disabilities: string
-    }
-    ReferralDetailsBffResponseDto: {
-      /** Format: uuid */
-      id: string
-      referenceNumber?: string | null
-      /** Format: date-time */
-      createdDate: string
-      /** Format: date-time */
-      targetServiceCompletionDate?: string | null
-      targetServiceCompletionDateReason?: string | null
-      personDetailsTableData: components['schemas']['PersonDetailsTableDataDto']
-      equalityDetailsTableData: components['schemas']['EqualityDetailsTableDataDto']
-      contactDetailsTableData: components['schemas']['ContactDetailsTableDataDto']
-      referralDetailsTableData: components['schemas']['ReferralDetailsTableDataDto']
-    }
-    ReferralDetailsTableDataDto: {
-      referralDate: string
-      assignedTo: components['schemas']['CaseWorkerDto'][]
-    }
-    ActionPlanStatus: {
-      submitted: boolean
-      statusText: string
-      tag?: string | null
-    }
-    ActionPlanStatusDto: {
-      /** Format: uuid */
-      actionPlanId: string
-      status: components['schemas']['ActionPlanStatus']
-    }
-    ReferralAppointmentHistoryDto: {
-      /** Format: uuid */
-      appointmentIcsId: string
-      /** @enum {string} */
-      type: 'ICS'
-      /** Format: date-time */
-      dateTime: string
-      /** @enum {string} */
-      status: 'SCHEDULED' | 'NEEDS_FEEDBACK' | 'COMPLETED' | 'CHANGED' | 'DID_NOT_ATTEND' | 'DID_NOT_HAPPEN'
-      /** Format: uuid */
-      icsFeedbackId?: string | null
-    }
-    ReferralProgressDto: {
-      /** Format: uuid */
-      referralId: string
-      fullName: string
-      appointments: components['schemas']['ReferralAppointmentHistoryDto'][]
-      actionPlanStatus: components['schemas']['ActionPlanStatusDto']
-    }
-    ProbationOffice: {
-      /** Format: int32 */
-      probationOfficeId: number
-      name: string
-      address: string
-      probationRegionId: string
-      govUkUrl?: string | null
-      deliusCRSLocationId?: string | null
-    }
-    PersonAdditionalDetails: {
-      ethnicity?: string | null
-      preferredLanguage?: string | null
-      neurodiverseConditions?: string | null
-      religionOrBelief?: string | null
-      nationalities: string[]
-      interestToImmigration?: boolean | null
-      address?: string | null
-      addressType?: string | null
-      addressTypeVerified: boolean
-      /** Format: date */
-      addressStartDate?: string | null
-      addressNotes?: string | null
-      noFixedAbode?: boolean | null
-      phoneNumber?: string | null
-      mobileNumber?: string | null
-      emailAddress?: string | null
-      disability?: boolean | null
-    }
-    PersonDto: {
-      /** Format: uuid */
-      id: string
-      personIdentifier?: string | null
-      title?: string | null
-      firstName: string
-      middleNames?: string | null
-      lastName: string
-      dateOfBirth: string
-      sex?: string | null
-      prisonNumbers: string[]
-      additionalDetails?: components['schemas']['PersonAdditionalDetails'] | null
-    }
-    AreaConfirmationBffResponseDto: {
-      contractArea: string
-      deliveryPartner: string
-      associatedPdus: string[]
-      crn: string
-      dateOfBirth: string
-    }
-    ArnsRiskConcernsToSelfDto: {
-      suicide?: components['schemas']['ArnsRiskDto'] | null
-      selfHarm?: components['schemas']['ArnsRiskDto'] | null
-      custody?: components['schemas']['ArnsRiskDto'] | null
-      hostelSetting?: components['schemas']['ArnsRiskDto'] | null
-      vulnerability?: components['schemas']['ArnsRiskDto'] | null
-    }
-    ArnsRiskDto: {
-      risk?: string
-      previous?: string
-      previousConcernsText?: string
-      current?: string
-      currentConcernsText?: string
-    }
-    ArnsRiskRoshSummaryDto: {
-      whoIsAtRisk?: string | null
-      natureOfRisk?: string | null
-      riskImminence?: string | null
-      riskIncreaseFactors?: string | null
-      riskMitigationFactors?: string | null
-      analysisOfRiskFactors?: string | null
-      riskInCommunity: {
-        [key: string]: string[]
-      }
-      riskInCustody: {
-        [key: string]: string[]
-      }
-      overallRiskLevel?: string | null
-    }
-    CommunitySupportRiskDto: {
-      firstName: string
-      lastName: string
-      crn: string
-      dateOfBirth: string
-      assessmentWithin12Months: boolean
-      assessedOn?: string | null
-      riskToSelf?: components['schemas']['ArnsRiskConcernsToSelfDto'] | null
-      summary?: components['schemas']['ArnsRiskRoshSummaryDto'] | null
-      additionalInformation?: string | null
-    }
-    ConfirmPersonDetailsBffDto: {
-      /** Format: uuid */
-      id: string
-      personalDetails: components['schemas']['ConfirmPersonalPersonalDetails']
-      equalityMonitoring: components['schemas']['ConfirmPersonalDetailsEqualityMonitoring']
-      contactDetails: components['schemas']['ConfirmPersonalDetailsContact']
-    }
-    ConfirmPersonDetailsContactAddress: {
-      updatedAt: string
-      value: string
-      type: string
-      startAt: string
-      notes: string
-      noFixedAbode: boolean
-    }
-    ConfirmPersonalDetailsContact: {
-      phoneNumber: string
-      mobileNumber: string
-      emailAddress: string
-      address: components['schemas']['ConfirmPersonDetailsContactAddress']
-    }
-    ConfirmPersonalDetailsCurrentCircumstances: {
-      updatedAt: string
-      value: string
-    }
-    ConfirmPersonalDetailsDisabilities: {
-      updatedAt: string
-      allDisabilities: string
-    }
-    ConfirmPersonalDetailsEqualityMonitoring: {
-      ethnicity: string
-      nationalities: string[]
-      religionOrBelief: string
-      sex: string
-    }
-    ConfirmPersonalPersonalDetails: {
-      firstName: string
-      middleNames: string
-      lastName: string
-      crn: string
-      prisonNumbers: string[]
-      /** Format: date */
-      dateOfBirth: string
-      preferredLanguage: string
-      currentCircumstances: components['schemas']['ConfirmPersonalDetailsCurrentCircumstances']
-      disabilities: components['schemas']['ConfirmPersonalDetailsDisabilities']
-    }
-    ReferralCaseListDto: {
-      /** Format: uuid */
-      referralId: string
-      referenceNumber: string
-      personName: string
-      personIdentifier: string
-      date: string
-      caseWorkers: string[]
-    }
-  }
-  responses: never
-  parameters: never
-  requestBodies: never
-  headers: never
-  pathItems: never
+    schemas: {
+        AppointmentTimeRequest: {
+            /** Format: int32 */
+            hour: number;
+            /** Format: int32 */
+            minute?: number | null;
+            amPm: string;
+        };
+        ChangeAppointmentDetails: {
+            /** @enum {string|null} */
+            changeRequestedBy?: "DELIVERY_PARTNER" | "PROBATION_PRACTITIONER" | "REFERRAL_USER" | null;
+            reasonForChange?: string | null;
+        };
+        CreateAppointmentRequest: {
+            /** Format: date */
+            date: string;
+            time: components["schemas"]["AppointmentTimeRequest"];
+            sessionMethodRequest: components["schemas"]["SessionMethodRequest"];
+            sessionCommunication: string[];
+            changeAppointmentDetails?: components["schemas"]["ChangeAppointmentDetails"] | null;
+        };
+        SessionMethodRequest: {
+            /** @enum {string} */
+            type: "PHONE" | "VIDEO" | "IN_PERSON_PROBATION_OFFICE" | "IN_PERSON_OTHER_LOCATION";
+            additionalDetails?: string | null;
+            pdu?: string | null;
+            addressLine1?: string | null;
+            addressLine2?: string | null;
+            townOrCity?: string | null;
+            county?: string | null;
+            postcode?: string | null;
+        };
+        AppointmentIcsResponse: {
+            /** Format: uuid */
+            appointmentIcsId: string;
+            /** Format: uuid */
+            appointmentId: string;
+            /** Format: uuid */
+            referralId: string;
+            caseReference?: string | null;
+            /** @enum {string} */
+            appointmentType: "ICS";
+            /** Format: date */
+            appointmentDate: string;
+            appointmentTime: components["schemas"]["AppointmentTimeResponse"];
+            /** @enum {string} */
+            appointmentStatus: "SCHEDULED" | "NEEDS_FEEDBACK" | "COMPLETED" | "CHANGED" | "DID_NOT_ATTEND" | "DID_NOT_HAPPEN";
+            sessionMethod: components["schemas"]["SessionMethod"];
+            sessionCommunications: string[];
+            referralFirstName: string;
+            referralLastName: string;
+            /** Format: date-time */
+            createdAt: string;
+            changeAppointmentDetails?: components["schemas"]["ChangeAppointmentDetails"] | null;
+        };
+        AppointmentTimeResponse: {
+            /** Format: int32 */
+            hour: number;
+            /** Format: int32 */
+            minute: number;
+            amPm: string;
+        };
+        InPersonAppointment: Omit<WithRequired<components["schemas"]["SessionMethod"], "type">, "appointmentCategory"> & {
+            probationOfficeName?: string | null;
+            addressLine1?: string | null;
+            addressLine2?: string | null;
+            townOrCity?: string | null;
+            county?: string | null;
+            postcode?: string | null;
+        } & {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            appointmentCategory: "IN_PERSON";
+        } & {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            appointmentCategory: "IN_PERSON";
+        };
+        SessionMethod: {
+            type: string;
+            appointmentCategory: string;
+        } & (components["schemas"]["VirtualAppointment"] | components["schemas"]["InPersonAppointment"]);
+        VirtualAppointment: Omit<WithRequired<components["schemas"]["SessionMethod"], "type">, "appointmentCategory"> & {
+            whyNotInPersonReason?: string | null;
+        } & {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            appointmentCategory: "VIRTUAL";
+        } & {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            appointmentCategory: "VIRTUAL";
+        };
+        CommunitySupportRiskInformationDto: {
+            riskSummaryWhoIsAtRisk?: string | null;
+            riskSummaryNatureOfRisk?: string | null;
+            riskSummaryRiskImminence?: string | null;
+            riskToSelfSuicide?: string | null;
+            riskToSelfSelfHarm?: string | null;
+            riskToSelfHostelSetting?: string | null;
+            riskToSelfVulnerability?: string | null;
+            additionalInformation?: string | null;
+        };
+        SubmitReferralResponseDto: {
+            /** Format: uuid */
+            referralId: string;
+            /** Format: uuid */
+            personId: string;
+            referenceNumber?: string | null;
+        };
+        CreateReferralRequest: {
+            personIdentifier: string;
+            urgency?: boolean | null;
+        };
+        ReferralInformationDto: {
+            /** Format: uuid */
+            personId: string;
+            /** Format: uuid */
+            referralId: string;
+            /** Format: date */
+            referralDate: string;
+            firstName?: string | null;
+            lastName?: string | null;
+            sex?: string | null;
+            personIdentifier: string;
+            /** Format: uuid */
+            communityServiceProviderId?: string | null;
+            communityServiceProviderName?: string | null;
+            region?: string | null;
+            referenceNumber?: string | null;
+            deliveryPartner?: string | null;
+        };
+        AssignCaseWorkersRequest: {
+            emails: string[];
+        };
+        AssignCaseWorkersResult: {
+            success: boolean;
+            message: string;
+            succeededList?: components["schemas"]["CaseWorkerDto"][] | null;
+            failureList?: components["schemas"]["AssignmentFailureDto"][] | null;
+        };
+        AssignmentFailureDto: {
+            emailAddress: string;
+            reason: string;
+        };
+        CaseWorkerDto: {
+            /** @enum {string} */
+            userType: "INTERNAL" | "EXTERNAL";
+            /** Format: uuid */
+            userId?: string | null;
+            fullName?: string | null;
+            emailAddress: string;
+        };
+        CreateIcsFeedbackRequest: {
+            record: components["schemas"]["RecordSessionRequest"];
+            sessionDetails?: components["schemas"]["SessionDetailsRequest"] | null;
+            sessionFeedback?: components["schemas"]["SessionFeedbackRequest"] | null;
+            issuesAndConcerns?: components["schemas"]["IssuesAndConcernsRequest"] | null;
+            nextSteps?: components["schemas"]["NextStepsRequest"] | null;
+        };
+        IssuesAndConcernsRequest: {
+            identified?: string | null;
+            notifyProbationPractitioner?: boolean | null;
+        };
+        NextStepsRequest: {
+            plannedForNextSession?: string | null;
+            actionsBeforeNextSession?: string | null;
+        };
+        RecordSessionRequest: {
+            didSessionHappen: boolean;
+            howSessionTookPlace?: components["schemas"]["SessionMethodRequest"] | null;
+            didPersonAttend?: boolean | null;
+            sessionNotHappenReason?: components["schemas"]["SessionNotHappenReasonRequest"] | null;
+            noAttendanceInformation?: string | null;
+        };
+        SessionDetailsRequest: {
+            wasPersonLate?: boolean | null;
+            lateReason?: string | null;
+            duration?: components["schemas"]["SessionDurationRequest"] | null;
+        };
+        SessionDurationRequest: {
+            /** Format: int32 */
+            hours: number;
+            /** Format: int32 */
+            minutes?: number | null;
+        };
+        SessionFeedbackRequest: {
+            whatHappened?: string | null;
+            behaviour?: string | null;
+            strengthsIdentified?: string | null;
+        };
+        SessionNotHappenReasonRequest: {
+            /** @enum {string} */
+            reason: "SERVICE_PROVIDER_ISSUE" | "REFERRAL_COULD_NOT_TAKE_PART" | "REFERRAL_DID_NOT_COMPLY";
+            details?: string | null;
+        };
+        AppointmentDelivery: {
+            /** Format: uuid */
+            id: string;
+            /** @enum {string} */
+            method: "PHONE_CALL" | "VIDEO_CALL" | "IN_PERSON_PROBATION_OFFICE" | "IN_PERSON_OTHER_LOCATION";
+            methodDetails?: string | null;
+            addressLine1?: string | null;
+            addressLine2?: string | null;
+            townOrCity?: string | null;
+            county?: string | null;
+            postcode?: string | null;
+        };
+        /** @description ICS appointment session feedback */
+        AppointmentIcsFeedbackResponse: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            appointmentIcsId: string;
+            recordSessionDidSessionHappen: boolean;
+            recordSessionHowSessionTookPlace?: string | null;
+            recordSessionNotInPersonReason?: string | null;
+            recordSessionPdu?: string | null;
+            recordSessionAddressLine1?: string | null;
+            recordSessionAddressLine2?: string | null;
+            recordSessionTownOrCity?: string | null;
+            recordSessionCounty?: string | null;
+            recordSessionPostcode?: string | null;
+            recordSessionDidPersonAttend?: boolean | null;
+            recordSessionNotHappenReason?: string | null;
+            recordSessionNotHappenReasonDetails?: string | null;
+            recordSessionNoAttendanceInformation?: string | null;
+            sessionDetailsWasPersonLate?: boolean | null;
+            sessionDetailsLateReason?: string | null;
+            sessionDetailsDuration?: string | null;
+            sessionFeedbackWhatHappened?: string | null;
+            sessionFeedbackBehaviour?: string | null;
+            sessionFeedbackStrengthsIdentified?: string | null;
+            issuesOrConcernsIdentified?: string | null;
+            issuesOrConcernsNotifyProbationPractitioner?: boolean | null;
+            nextStepsPlannedForNextSession?: string | null;
+            nextStepsActionsBeforeNextSession?: string | null;
+            sessionFeedbackAppointmentDetails?: components["schemas"]["SessionFeedbackAppointmentDetailsDto"] | null;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: uuid */
+            createdBy?: string | null;
+        };
+        CaseWorkerSummaryDto: {
+            fullName?: string | null;
+            emailAddress: string;
+        };
+        SessionFeedbackAppointmentDetailsDto: {
+            currentCaseworkers: components["schemas"]["CaseWorkerSummaryDto"][];
+            feedbackSubmittedBy: components["schemas"]["CaseWorkerSummaryDto"];
+            /** Format: date-time */
+            startDateTime: string;
+            appointmentDeliveryDetails?: components["schemas"]["AppointmentDelivery"] | null;
+            sessionCommunications?: string[] | null;
+            personFirstName: string;
+        };
+        ServiceEndDatePageDto: {
+            /**
+             * Format: date-time
+             * @description The target service completion date for the referral
+             */
+            target_service_completion_date?: string;
+            /** @description The reason the target service completion date was set */
+            target_service_completion_reason?: string;
+        };
+        CriminogenicNeedsRequest: {
+            hasAccommodationNeeds?: boolean | null;
+            accommodationDetails?: string | null;
+            hasEmploymentEducationNeeds?: boolean | null;
+            employmentEducationDetails?: string | null;
+            hasFinancialNeeds?: boolean | null;
+            financialDetails?: string | null;
+            hasPersonalRelationshipsCommunityNeeds?: boolean | null;
+            personalRelationshipsCommunityDetails?: string | null;
+            hasDrugUseNeeds?: boolean | null;
+            drugUseDetails?: string | null;
+            hasAlcoholUseNeeds?: boolean | null;
+            alcoholUseDetails?: string | null;
+            hasHealthWellbeingNeeds?: boolean | null;
+            healthWellbeingDetails?: string | null;
+            hasThinkingBehavioursAttitudeNeeds?: boolean | null;
+            thinkingBehavioursAttitudeDetails?: string | null;
+        };
+        RefereeNameDto: {
+            firstName: string;
+            middleName?: string | null;
+            lastName: string;
+        };
+        ReferralCriminogenicNeedsDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            referralId: string;
+            refereeName: components["schemas"]["RefereeNameDto"];
+            hasAccommodationNeeds?: boolean | null;
+            accommodationDetails?: string | null;
+            hasEmploymentEducationNeeds?: boolean | null;
+            employmentEducationDetails?: string | null;
+            hasFinancialNeeds?: boolean | null;
+            financialDetails?: string | null;
+            hasPersonalRelationshipsCommunityNeeds?: boolean | null;
+            personalRelationshipsCommunityDetails?: string | null;
+            hasDrugUseNeeds?: boolean | null;
+            drugUseDetails?: string | null;
+            hasAlcoholUseNeeds?: boolean | null;
+            alcoholUseDetails?: string | null;
+            hasHealthWellbeingNeeds?: boolean | null;
+            healthWellbeingDetails?: string | null;
+            hasThinkingBehavioursAttitudeNeeds?: boolean | null;
+            thinkingBehavioursAttitudeDetails?: string | null;
+            /** Format: date-time */
+            updatedAt: string;
+            /** Format: uuid */
+            updatedBy: string;
+        };
+        NeedsInterpreterRequest: {
+            needsInterpreter?: boolean | null;
+            language?: string | null;
+        };
+        NeedsInterpreterBffResponseDto: {
+            refereeName: components["schemas"]["RefereeNameDto"];
+            language?: components["schemas"]["Selection"] | null;
+            needsInterpreter?: boolean | null;
+        };
+        Selection: {
+            selected: boolean;
+            value?: string | null;
+        };
+        CommunityServiceProviderRequest: {
+            /** Format: uuid */
+            communityServiceProviderId: string;
+        };
+        CommunityServiceProviderBffResponseDto: {
+            /** Format: uuid */
+            referralId: string;
+            /** Format: uuid */
+            communityServiceProviderId: string;
+            communityServiceProviderName: string;
+        };
+        AdditionalSupportNeedsRequest: {
+            physicalHealth?: string | null;
+            mentalEmotionalHealth?: string | null;
+            neurodiversity?: string | null;
+            locationTravel?: string | null;
+            caringResponsibilities?: string | null;
+            employmentResponsibilities?: string | null;
+            diversity?: string | null;
+            anythingElse?: string | null;
+            needsAdditionalSupport?: boolean | null;
+        };
+        AdditionalSupportNeedsBffResponseDto: {
+            refereeName: components["schemas"]["RefereeNameDto"];
+            physicalHealth: components["schemas"]["Selection"];
+            mentalEmotionalHealth: components["schemas"]["Selection"];
+            neurodiversity: components["schemas"]["Selection"];
+            locationTravel: components["schemas"]["Selection"];
+            caringResponsibilities: components["schemas"]["Selection"];
+            employmentResponsibilities: components["schemas"]["Selection"];
+            diversity: components["schemas"]["Selection"];
+            anythingElse: components["schemas"]["Selection"];
+            needsAdditionalSupport?: boolean | null;
+        };
+        TaskListStatusItem: {
+            completed: boolean;
+            statusText: string;
+            tag?: string | null;
+        };
+        TaskListStatusResponseDto: {
+            fullName: string;
+            confirmPersonalDetailsCompleted: components["schemas"]["TaskListStatusItem"];
+            checkRiskInformationCompleted: components["schemas"]["TaskListStatusItem"];
+            selectThePersonsNeedsCompleted: components["schemas"]["TaskListStatusItem"];
+            addDetailsOfAnyAdditionalSupportNeedsCompleted: components["schemas"]["TaskListStatusItem"];
+            addAdditionalInformationCompleted: components["schemas"]["TaskListStatusItem"];
+            addDetailsOfMainPointOfContactCompleted: components["schemas"]["TaskListStatusItem"];
+            selectAnAreaForReferralCompleted: components["schemas"]["TaskListStatusItem"];
+        };
+        ActionPlanSummaryDto: {
+            personDetails: components["schemas"]["ActionPlanSummaryPersonDetails"];
+            needs: components["schemas"]["ActionPlanSummaryNeed"][];
+        };
+        ActionPlanSummaryNeed: {
+            /** Format: uuid */
+            id: string;
+            label: string;
+            outcomes: string[];
+        };
+        ActionPlanSummaryPersonDetails: {
+            fullName: string;
+        };
+        AppointmentDetailsDto: {
+            /** @enum {string|null} */
+            method?: "PHONE_CALL" | "VIDEO_CALL" | "IN_PERSON_PROBATION_OFFICE" | "IN_PERSON_OTHER_LOCATION" | null;
+            date?: string | null;
+            time?: string | null;
+        };
+        IcsFeedbackSessionDto: {
+            fullName: string;
+            appointmentDetails?: components["schemas"]["AppointmentDetailsDto"] | null;
+            otherAppointmentMethods?: string[] | null;
+        };
+        CheckReferralInformationDto: {
+            /** Format: uuid */
+            referralId: string;
+            communityServiceProviderName?: string | null;
+            region?: string | null;
+            deliveryPartner?: string | null;
+            personIdentifier?: string | null;
+            prisonNumbers: string[];
+            fullName: string;
+            dateOfBirth: string;
+            sex?: string | null;
+        };
+        CommunitySupportServiceDto: {
+            id: string;
+            region: string;
+            name: string;
+            providerName: string;
+            description: string;
+            pdus: string[];
+        };
+        CommunitySupportServicesDto: {
+            communitySupportServices: {
+                [key: string]: components["schemas"]["CommunitySupportServiceDto"][];
+            };
+        };
+        ErrorResponse: {
+            /**
+             * Format: int32
+             * @description The HTTP status code returned by the server
+             * @example 404
+             */
+            status: number;
+            /**
+             * Format: int32
+             * @description An application-specific error code
+             * @example 404
+             */
+            errorCode?: number | null;
+            /**
+             * @description A human readable message for the error
+             * @example Referral Not found
+             */
+            userMessage?: string | null;
+            /**
+             * @description A developer friendly message for the error
+             * @example null
+             */
+            developerMessage?: string | null;
+            /**
+             * @description Additional information about the error
+             * @example null
+             */
+            moreInfo?: string | null;
+        };
+        ContactDetailsTableDataDto: {
+            phoneNumber?: string | null;
+            mobileNumber?: string | null;
+            email?: string | null;
+            address?: string | null;
+        };
+        EqualityDetailsTableDataDto: {
+            ethnicity?: string | null;
+            religionOrBelief?: string | null;
+            sex: string;
+        };
+        PersonDetailsTableDataDto: {
+            name: string;
+            crn: string;
+            dateOfBirth: string;
+            preferredLanguage: string;
+            disabilities: string;
+        };
+        ReferralDetailsBffResponseDto: {
+            /** Format: uuid */
+            id: string;
+            referenceNumber?: string | null;
+            /** Format: date-time */
+            createdDate: string;
+            /** Format: date-time */
+            targetServiceCompletionDate?: string | null;
+            targetServiceCompletionDateReason?: string | null;
+            personDetailsTableData: components["schemas"]["PersonDetailsTableDataDto"];
+            equalityDetailsTableData: components["schemas"]["EqualityDetailsTableDataDto"];
+            contactDetailsTableData: components["schemas"]["ContactDetailsTableDataDto"];
+            referralDetailsTableData: components["schemas"]["ReferralDetailsTableDataDto"];
+        };
+        ReferralDetailsTableDataDto: {
+            referralDate: string;
+            assignedTo: components["schemas"]["CaseWorkerDto"][];
+        };
+        ActionPlanStatus: {
+            submitted: boolean;
+            statusText: string;
+            tag?: string | null;
+        };
+        ActionPlanStatusDto: {
+            /** Format: uuid */
+            actionPlanId: string;
+            status: components["schemas"]["ActionPlanStatus"];
+        };
+        ReferralAppointmentHistoryDto: {
+            /** Format: uuid */
+            appointmentIcsId: string;
+            /** @enum {string} */
+            type: "ICS";
+            /** Format: date-time */
+            dateTime: string;
+            /** @enum {string} */
+            status: "SCHEDULED" | "NEEDS_FEEDBACK" | "COMPLETED" | "CHANGED" | "DID_NOT_ATTEND" | "DID_NOT_HAPPEN";
+            /** Format: uuid */
+            icsFeedbackId?: string | null;
+        };
+        ReferralProgressDto: {
+            /** Format: uuid */
+            referralId: string;
+            fullName: string;
+            appointments: components["schemas"]["ReferralAppointmentHistoryDto"][];
+            actionPlanStatus: components["schemas"]["ActionPlanStatusDto"];
+        };
+        ProbationOffice: {
+            /** Format: int32 */
+            probationOfficeId: number;
+            name: string;
+            address: string;
+            probationRegionId: string;
+            govUkUrl?: string | null;
+            deliusCRSLocationId?: string | null;
+        };
+        PersonAdditionalDetails: {
+            ethnicity?: string | null;
+            preferredLanguage?: string | null;
+            neurodiverseConditions?: string | null;
+            religionOrBelief?: string | null;
+            nationalities: string[];
+            interestToImmigration?: boolean | null;
+            address?: string | null;
+            addressType?: string | null;
+            addressTypeVerified: boolean;
+            /** Format: date */
+            addressStartDate?: string | null;
+            addressNotes?: string | null;
+            noFixedAbode?: boolean | null;
+            phoneNumber?: string | null;
+            mobileNumber?: string | null;
+            emailAddress?: string | null;
+            disability?: boolean | null;
+        };
+        PersonDto: {
+            /** Format: uuid */
+            id: string;
+            personIdentifier?: string | null;
+            title?: string | null;
+            firstName: string;
+            middleNames?: string | null;
+            lastName: string;
+            dateOfBirth: string;
+            sex?: string | null;
+            prisonNumbers: string[];
+            additionalDetails?: components["schemas"]["PersonAdditionalDetails"] | null;
+        };
+        AreaConfirmationBffResponseDto: {
+            contractArea: string;
+            deliveryPartner: string;
+            associatedPdus: string[];
+            crn: string;
+            dateOfBirth: string;
+        };
+        ArnsRiskConcernsToSelfDto: {
+            suicide?: components["schemas"]["ArnsRiskDto"] | null;
+            selfHarm?: components["schemas"]["ArnsRiskDto"] | null;
+            custody?: components["schemas"]["ArnsRiskDto"] | null;
+            hostelSetting?: components["schemas"]["ArnsRiskDto"] | null;
+            vulnerability?: components["schemas"]["ArnsRiskDto"] | null;
+        };
+        ArnsRiskDto: {
+            risk?: string;
+            previous?: string;
+            previousConcernsText?: string;
+            current?: string;
+            currentConcernsText?: string;
+        };
+        ArnsRiskRoshSummaryDto: {
+            whoIsAtRisk?: string | null;
+            natureOfRisk?: string | null;
+            riskImminence?: string | null;
+            riskIncreaseFactors?: string | null;
+            riskMitigationFactors?: string | null;
+            analysisOfRiskFactors?: string | null;
+            riskInCommunity: {
+                [key: string]: string[];
+            };
+            riskInCustody: {
+                [key: string]: string[];
+            };
+            overallRiskLevel?: string | null;
+        };
+        CommunitySupportRiskDto: {
+            firstName: string;
+            lastName: string;
+            crn: string;
+            dateOfBirth: string;
+            assessmentWithin12Months: boolean;
+            assessedOn?: string | null;
+            riskToSelf?: components["schemas"]["ArnsRiskConcernsToSelfDto"] | null;
+            summary?: components["schemas"]["ArnsRiskRoshSummaryDto"] | null;
+            additionalInformation?: string | null;
+        };
+        ConfirmPersonDetailsBffDto: {
+            /** Format: uuid */
+            id: string;
+            personalDetails: components["schemas"]["ConfirmPersonalPersonalDetails"];
+            equalityMonitoring: components["schemas"]["ConfirmPersonalDetailsEqualityMonitoring"];
+            contactDetails: components["schemas"]["ConfirmPersonalDetailsContact"];
+        };
+        ConfirmPersonDetailsContactAddress: {
+            updatedAt: string;
+            value: string;
+            type: string;
+            startAt: string;
+            notes: string;
+            noFixedAbode: boolean;
+        };
+        ConfirmPersonalDetailsContact: {
+            phoneNumber: string;
+            mobileNumber: string;
+            emailAddress: string;
+            address: components["schemas"]["ConfirmPersonDetailsContactAddress"];
+        };
+        ConfirmPersonalDetailsCurrentCircumstances: {
+            updatedAt: string;
+            value: string;
+        };
+        ConfirmPersonalDetailsDisabilities: {
+            updatedAt: string;
+            allDisabilities: string;
+        };
+        ConfirmPersonalDetailsEqualityMonitoring: {
+            ethnicity: string;
+            nationalities: string[];
+            religionOrBelief: string;
+            sex: string;
+        };
+        ConfirmPersonalPersonalDetails: {
+            firstName: string;
+            middleNames: string;
+            lastName: string;
+            crn: string;
+            prisonNumbers: string[];
+            /** Format: date */
+            dateOfBirth: string;
+            preferredLanguage: string;
+            currentCircumstances: components["schemas"]["ConfirmPersonalDetailsCurrentCircumstances"];
+            disabilities: components["schemas"]["ConfirmPersonalDetailsDisabilities"];
+        };
+        Pageable: {
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            size?: number;
+            sort?: string[];
+        };
+        ReferralCaseListDto: {
+            /** Format: uuid */
+            referralId: string;
+            referenceNumber: string;
+            personName: string;
+            personIdentifier: string;
+            date: string;
+            caseWorkers: string[];
+        };
+    };
+    responses: never;
+    parameters: never;
+    requestBodies: never;
+    headers: never;
+    pathItems: never;
 }
-export type $defs = Record<string, never>
+export type $defs = Record<string, never>;
 export interface operations {
-  changeIcsAppointment: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        caseReference: string
-      }
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['CreateAppointmentRequest']
-      }
-    }
-    responses: {
-      /** @description Appointment changed successfully */
-      201: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['AppointmentIcsResponse']
-        }
-      }
-      /** @description Invalid request body */
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-      /** @description Referral not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-      /** @description The ICS id does not match the latest ICS record */
-      409: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  saveRiskInformation: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        referralId: string
-      }
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['CommunitySupportRiskInformationDto']
-      }
-    }
-    responses: {
-      /** @description Save Risk information */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['CommunitySupportRiskInformationDto']
-        }
-      }
-      /** @description Referral not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  submitReferral: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        referralId: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Referral submitted */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['SubmitReferralResponseDto']
-        }
-      }
-      /** @description Referral not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  createReferral: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['CreateReferralRequest']
-      }
-    }
-    responses: {
-      /** @description Referral created */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ReferralInformationDto']
-        }
-      }
-    }
-  }
-  assignCaseWorkers: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        identifier: string
-      }
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['AssignCaseWorkersRequest']
-      }
-    }
-    responses: {
-      /** @description Assign case workers to a referral */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['AssignCaseWorkersResult']
-        }
-      }
-      /** @description Failed to assign case worker(s) */
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['AssignCaseWorkersResult']
-        }
-      }
-      /** @description Referral not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  submitIcsFeedback: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        caseReference: string
-        icsId: string
-      }
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['CreateIcsFeedbackRequest']
-      }
-    }
-    responses: {
-      /** @description ICS Appointment feedback submitted successfully */
-      201: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['AppointmentIcsFeedbackResponse']
-        }
-      }
-      /** @description Invalid request body */
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-      /** @description Referral or ICS appointment not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-      /** @description ICS feedback already exists for this appointment */
-      409: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  createIcsAppointment: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        caseIdentifier: string
-      }
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['CreateAppointmentRequest']
-      }
-    }
-    responses: {
-      /** @description Appointment created successfully */
-      201: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['AppointmentIcsResponse']
-        }
-      }
-      /** @description Invalid request body */
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-      /** @description Referral not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  updateCriminogenicNeeds: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        referralId: string
-      }
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['CriminogenicNeedsRequest']
-      }
-    }
-    responses: {
-      /** @description Criminogenic needs information updated */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ReferralCriminogenicNeedsDto']
-        }
-      }
-      /** @description Referral not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  updateNeedsInterpreter: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        referralId: string
-      }
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['NeedsInterpreterRequest']
-      }
-    }
-    responses: {
-      /** @description Interpreter needs information updated */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['NeedsInterpreterBffResponseDto']
-        }
-      }
-      /** @description Referral not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  updateCommunityServiceProvider: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        referralId: string
-      }
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['CommunityServiceProviderRequest']
-      }
-    }
-    responses: {
-      /** @description Community Service Provider updated */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['CommunityServiceProviderBffResponseDto']
-        }
-      }
-      /** @description Referral, or the Community Service Provider, not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  updateAdditionalSupportNeeds: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        referralId: string
-      }
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['AdditionalSupportNeedsRequest']
-      }
-    }
-    responses: {
-      /** @description Additional support needs information updated */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['AdditionalSupportNeedsBffResponseDto']
-        }
-      }
-      /** @description Referral not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  getTaskListStatus: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        referralId: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Task list status found */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['TaskListStatusResponseDto']
-        }
-      }
-    }
-  }
-  getActionPlanSummary: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        referralReference: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Action Plan, and Referral, found - data returned */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ActionPlanSummaryDto']
-        }
-      }
-      /** @description Referral not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  getIcsFeedbackSession: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        caseReference: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description ICS feedback session details found */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['IcsFeedbackSessionDto']
-        }
-      }
-      /** @description ICS feedback session details not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  getIcsAppointments: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        caseReference: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description List of ICS appointments */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['AppointmentIcsResponse'][]
-        }
-      }
-      /** @description Referral not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  getIcsAppointment: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        caseReference: string
-        icsId: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description ICS appointment found */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['AppointmentIcsResponse']
-        }
-      }
-      /** @description Appointment not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  getReferralAndPersonInformation: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        caseIdentifier: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Referral information found */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['CheckReferralInformationDto']
-        }
-      }
-      /** @description Referral not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  getServices: {
-    parameters: {
-      query: {
-        pageable: components['schemas']['Pageable']
-      }
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Paginated list of community support services */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['PageResponse']
-        }
-      }
-      /** @description The request was unauthorised */
-      401: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          '*/*': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Forbidden. The client is not authorised to access to select a referral service. */
-      403: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          '*/*': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  getReferralInformation: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        caseIdentifier: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Referral information found */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ReferralInformationDto']
-        }
-      }
-      /** @description Referral not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  getReferral: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        referralId: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Referral found */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ReferralDetailsBffResponseDto']
-        }
-      }
-      /** @description Referral not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  getReferralProgressDetails: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        referralIdentifier: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Referral progress details */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ReferralProgressDto'][]
-        }
-      }
-      /** @description Referral not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  getICSDetails: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        caseReference: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description ICS details found */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['AppointmentIcsResponse'][]
-        }
-      }
-      /** @description ICS details not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  getReferralDetailsPage: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        caseIdentifier: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Referral Details found */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ReferralDetailsBffResponseDto']
-        }
-      }
-      /** @description Referral not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  getAssignedCaseWorkers: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        identifier: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Assignments found */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['CaseWorkerDto'][]
-        }
-      }
-      /** @description Referral not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  getProbationOffices: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Returns the list of Probation Offices Information. */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ProbationOffice'][]
-        }
-      }
-      /** @description Failed to retrieve Probation Offices Information */
-      500: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  getPersonDetails: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        personIdentifier: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Person found */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['PersonDto']
-        }
-      }
-      /** @description Person not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  getIcsFeedback: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        icsFeedbackId: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description ICS feedback found */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['AppointmentIcsFeedbackResponse']
-        }
-      }
-      /** @description ICS feedback not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  getAreaConfirmationDetails: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        referralId: string
-        providerId: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Community service provider found */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['AreaConfirmationBffResponseDto']
-        }
-      }
-      /** @description Community service provider not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  getRoshRisksByReferralId: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        referralId: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description ROSH risks found */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['CommunitySupportRiskDto']
-        }
-      }
-      /** @description Referral not found, or ROSH risks not found for the referral's CRN */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  getPersonCriminogenicNeeds: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        referralId: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Referral criminogenic needs data found */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ReferralCriminogenicNeedsDto']
-        }
-      }
-      /** @description Referral criminogenic needs data not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  getNeedsInterpreterPage: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        referralId: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Interpreter needs data found */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['NeedsInterpreterBffResponseDto']
-        }
-      }
-      /** @description Referral, or the Referral's Person, not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  getAdditionalSupportNeedsPage: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        referralId: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Additional support needs data found */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['AdditionalSupportNeedsBffResponseDto']
-        }
-      }
-      /** @description Referral, or the Referral's Person, not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  getReferralPersonDetails: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        referralId: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Person details found */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-      /** @description Person details not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ConfirmPersonDetailsBffDto']
-        }
-      }
-    }
-  }
-  getUnassignedCases: {
-    parameters: {
-      query: {
-        pageable: components['schemas']['Pageable']
-      }
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description List of unassigned referrals for the provider */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ReferralCaseListDto'][]
-        }
-      }
-      /** @description The request was unauthorised */
-      401: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          '*/*': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Forbidden. The client is not authorised to access the case list. */
-      403: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          '*/*': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
-  getInProgressCases: {
-    parameters: {
-      query: {
-        pageable: components['schemas']['Pageable']
-      }
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description List of in-progress referrals for the provider */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ReferralCaseListDto'][]
-        }
-      }
-      /** @description The request was unauthorised */
-      401: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          '*/*': components['schemas']['ErrorResponse']
-        }
-      }
-      /** @description Forbidden. The client is not authorised to access the case list. */
-      403: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          '*/*': components['schemas']['ErrorResponse']
-        }
-      }
-    }
-  }
+    changeIcsAppointment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                caseReference: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateAppointmentRequest"];
+            };
+        };
+        responses: {
+            /** @description Appointment changed successfully */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AppointmentIcsResponse"];
+                };
+            };
+            /** @description Invalid request body */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Referral not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description The ICS id does not match the latest ICS record */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    saveRiskInformation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                referralId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CommunitySupportRiskInformationDto"];
+            };
+        };
+        responses: {
+            /** @description Save Risk information */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CommunitySupportRiskInformationDto"];
+                };
+            };
+            /** @description Referral not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    submitReferral: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                referralId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Referral submitted */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SubmitReferralResponseDto"];
+                };
+            };
+            /** @description Referral not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    createReferral: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateReferralRequest"];
+            };
+        };
+        responses: {
+            /** @description Referral created */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReferralInformationDto"];
+                };
+            };
+        };
+    };
+    assignCaseWorkers: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                identifier: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AssignCaseWorkersRequest"];
+            };
+        };
+        responses: {
+            /** @description Assign case workers to a referral */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssignCaseWorkersResult"];
+                };
+            };
+            /** @description Failed to assign case worker(s) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssignCaseWorkersResult"];
+                };
+            };
+            /** @description Referral not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    submitIcsFeedback: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                caseReference: string;
+                icsId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateIcsFeedbackRequest"];
+            };
+        };
+        responses: {
+            /** @description ICS Appointment feedback submitted successfully */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AppointmentIcsFeedbackResponse"];
+                };
+            };
+            /** @description Invalid request body */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Referral or ICS appointment not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description ICS feedback already exists for this appointment */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    createIcsAppointment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                caseIdentifier: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateAppointmentRequest"];
+            };
+        };
+        responses: {
+            /** @description Appointment created successfully */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AppointmentIcsResponse"];
+                };
+            };
+            /** @description Invalid request body */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Referral not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    updateServiceEndDatePage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                referralId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ServiceEndDatePageDto"];
+            };
+        };
+        responses: {
+            /** @description Service end date details updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ServiceEndDatePageDto"];
+                };
+            };
+            /** @description Referral not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    updateCriminogenicNeeds: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                referralId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CriminogenicNeedsRequest"];
+            };
+        };
+        responses: {
+            /** @description Criminogenic needs information updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReferralCriminogenicNeedsDto"];
+                };
+            };
+            /** @description Referral not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    updateNeedsInterpreter: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                referralId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NeedsInterpreterRequest"];
+            };
+        };
+        responses: {
+            /** @description Interpreter needs information updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NeedsInterpreterBffResponseDto"];
+                };
+            };
+            /** @description Referral not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    updateCommunityServiceProvider: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                referralId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CommunityServiceProviderRequest"];
+            };
+        };
+        responses: {
+            /** @description Community Service Provider updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CommunityServiceProviderBffResponseDto"];
+                };
+            };
+            /** @description Referral, or the Community Service Provider, not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    updateAdditionalSupportNeeds: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                referralId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AdditionalSupportNeedsRequest"];
+            };
+        };
+        responses: {
+            /** @description Additional support needs information updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdditionalSupportNeedsBffResponseDto"];
+                };
+            };
+            /** @description Referral not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    getTaskListStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                referralId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Task list status found */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TaskListStatusResponseDto"];
+                };
+            };
+        };
+    };
+    getServiceEndDatePage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                caseIdentifier: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Service end date details found */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ServiceEndDatePageDto"];
+                };
+            };
+            /** @description Referral not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    getActionPlanSummary: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                referralReference: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Action Plan, and Referral, found - data returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActionPlanSummaryDto"];
+                };
+            };
+            /** @description Referral not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    getIcsFeedbackSession: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                caseReference: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description ICS feedback session details found */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IcsFeedbackSessionDto"];
+                };
+            };
+            /** @description ICS feedback session details not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    getIcsAppointments: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                caseReference: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of ICS appointments */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AppointmentIcsResponse"][];
+                };
+            };
+            /** @description Referral not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    getIcsAppointment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                caseReference: string;
+                icsId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description ICS appointment found */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AppointmentIcsResponse"];
+                };
+            };
+            /** @description Appointment not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    getReferralAndPersonInformation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                caseIdentifier: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Referral information found */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CheckReferralInformationDto"];
+                };
+            };
+            /** @description Referral not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    getServices: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of community support services */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CommunitySupportServicesDto"];
+                };
+            };
+            /** @description The request was unauthorised */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden. The client is not authorised to access to select a referral service. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getReferralInformation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                caseIdentifier: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Referral information found */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReferralInformationDto"];
+                };
+            };
+            /** @description Referral not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    getReferral: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                referralId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Referral found */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReferralDetailsBffResponseDto"];
+                };
+            };
+            /** @description Referral not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    getReferralProgressDetails: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                referralIdentifier: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Referral progress details */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReferralProgressDto"][];
+                };
+            };
+            /** @description Referral not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    getICSDetails: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                caseReference: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description ICS details found */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AppointmentIcsResponse"][];
+                };
+            };
+            /** @description ICS details not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    getReferralDetailsPage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                caseIdentifier: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Referral Details found */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReferralDetailsBffResponseDto"];
+                };
+            };
+            /** @description Referral not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    getAssignedCaseWorkers: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                identifier: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Assignments found */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CaseWorkerDto"][];
+                };
+            };
+            /** @description Referral not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    getProbationOffices: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Returns the list of Probation Offices Information. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProbationOffice"][];
+                };
+            };
+            /** @description Failed to retrieve Probation Offices Information */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    getPersonDetails: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                personIdentifier: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Person found */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PersonDto"];
+                };
+            };
+            /** @description Person not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    getIcsFeedback: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                icsFeedbackId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description ICS feedback found */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AppointmentIcsFeedbackResponse"];
+                };
+            };
+            /** @description ICS feedback not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    getAreaConfirmationDetails: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                referralId: string;
+                providerId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Community service provider found */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AreaConfirmationBffResponseDto"];
+                };
+            };
+            /** @description Community service provider not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    getRoshRisksByReferralId: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                referralId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description ROSH risks found */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CommunitySupportRiskDto"];
+                };
+            };
+            /** @description Referral not found, or ROSH risks not found for the referral's CRN */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    getPersonCriminogenicNeeds: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                referralId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Referral criminogenic needs data found */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReferralCriminogenicNeedsDto"];
+                };
+            };
+            /** @description Referral criminogenic needs data not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    getNeedsInterpreterPage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                referralId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Interpreter needs data found */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NeedsInterpreterBffResponseDto"];
+                };
+            };
+            /** @description Referral, or the Referral's Person, not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    getAdditionalSupportNeedsPage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                referralId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Additional support needs data found */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdditionalSupportNeedsBffResponseDto"];
+                };
+            };
+            /** @description Referral, or the Referral's Person, not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    getReferralPersonDetails: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                referralId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Person details found */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Person details not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConfirmPersonDetailsBffDto"];
+                };
+            };
+        };
+    };
+    getUnassignedCases: {
+        parameters: {
+            query: {
+                pageable: components["schemas"]["Pageable"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of unassigned referrals for the provider */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReferralCaseListDto"][];
+                };
+            };
+            /** @description The request was unauthorised */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden. The client is not authorised to access the case list. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getInProgressCases: {
+        parameters: {
+            query: {
+                pageable: components["schemas"]["Pageable"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of in-progress referrals for the provider */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReferralCaseListDto"][];
+                };
+            };
+            /** @description The request was unauthorised */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden. The client is not authorised to access the case list. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
 }
 type WithRequired<T, K extends keyof T> = T & {
-  [P in K]-?: T[P]
-}
+    [P in K]-?: T[P];
+};
