@@ -129,6 +129,8 @@ test.describe('FindPerson', () => {
       selectThePersonsNeedsCompleted: incompleteStatus,
       addDetailsOfAnyAdditionalSupportNeedsCompleted: incompleteStatus,
       addDetailsOfMainPointOfContactCompleted: incompleteStatus,
+      addAdditionalInformationCompleted: incompleteStatus,
+      selectAnAreaForReferralCompleted: incompleteStatus,
     })
 
     await page.goto('/referral/new/find-a-person')
