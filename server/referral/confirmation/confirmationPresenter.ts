@@ -17,7 +17,10 @@ export default class ConfirmationPresenter extends PresenterBase<
     const content = this.buildStaticContent(res)
     const viewModel = {} as ReferralConfirmationViewModel
     viewModel.staticContent = content
-    viewModel.startAReferralLink = '/referral/new/find-a-person'
+    viewModel.startNewReferralLink = content.startNewReferralLink
+    viewModel.startNewReferralButtonText = content.startNewReferralButtonText
+    viewModel.backToCommunityHomeLink = content.backToCommunityHomeLink
+    viewModel.backToCommunityHomeLinkText = content.backToCommunityHomeLinkText
     viewModel.panel = this.buildPanel(content.pageHeader, content.referenceNumberIntro, this.referral.referenceNumber)
     return viewModel
   }
