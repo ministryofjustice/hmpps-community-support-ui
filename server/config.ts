@@ -97,4 +97,5 @@ export default {
   ingressUrl: get('INGRESS_URL', 'http://localhost:3000', requiredInProduction),
   environmentName: get('ENVIRONMENT_NAME', ''),
   allowedRoles: ['ROLE_COMMUNITY_SUPPORT_REFERRER', 'ROLE_COMMUNITY_SUPPORT_PROVIDER', 'ROLE_PROBATION'],
+  maxBodySize: get('MAX_BODY_SIZE', '2mb'),
 }
