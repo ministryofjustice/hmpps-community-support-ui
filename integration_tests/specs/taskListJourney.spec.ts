@@ -25,6 +25,7 @@ test.describe('Task List E2E Journey Regression', () => {
     addDetailsOfAnyAdditionalSupportNeedsCompleted: incompleteStatus,
     addDetailsOfMainPointOfContactCompleted: incompleteStatus,
     addAdditionalInformationCompleted: incompleteStatus,
+    selectAnAreaForReferralCompleted: incompleteStatus,
   }
 
   const supportNeedsStubData = {
