@@ -30,7 +30,11 @@
   },
   "/referral/:id/confirmation": {
     "pageHeader": "The referral has been sent",
-    "referenceNumberIntro": "Your reference number"
+    "referenceNumberIntro": "Your reference number",
+    "startNewReferralLink": "/referral/new/find-a-person",
+    "startNewReferralButtonText": "Start a new referral",
+    "backToCommunityHomeLinkText": "Back to Community Support Homepage",
+    "backToCommunityHomeLink": "/"
   },
   "/unassigned-cases": {
     "pageHeader": "Cases",

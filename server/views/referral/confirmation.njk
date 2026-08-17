@@ -1,6 +1,7 @@
 {% extends "../partials/layout.njk" %}
 
 {% from "govuk/components/panel/macro.njk" import govukPanel %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
 
 
 {% set pageTitle = applicationName + " - Referral Confirmation page" %}
@@ -11,6 +12,12 @@
   {{ govukPanel(panel) }}
 
   <p class="govuk-body">
-  <a href="{{ startAReferralLink }}">Start a new referral</a></p>`
+    <div class="govuk-button-group">
+      {{ govukButton({
+        text: startNewReferralButtonText,
+        href: startNewReferralLink
+      }) }}
+      <a href="{{ backToCommunityHomeLink }}" class="govuk-link">{{ backToCommunityHomeLinkText }}</a>
+    </div>
   </p>
 {% endblock %}
