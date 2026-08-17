@@ -126,11 +126,11 @@ test.describe('FindPerson', () => {
       fullName: 'Alex River',
       confirmPersonalDetailsCompleted: incompleteStatus,
       checkRiskInformationCompleted: incompleteStatus,
-      selectAnAreaForReferralCompleted: incompleteStatus,
       selectThePersonsNeedsCompleted: incompleteStatus,
       addDetailsOfAnyAdditionalSupportNeedsCompleted: incompleteStatus,
-      addAdditionalInformationCompleted: incompleteStatus,
       addDetailsOfMainPointOfContactCompleted: incompleteStatus,
+      addAdditionalInformationCompleted: incompleteStatus,
+      selectAnAreaForReferralCompleted: incompleteStatus,
     })
 
     await page.goto('/referral/new/find-a-person')
