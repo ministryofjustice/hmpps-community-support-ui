@@ -1,0 +1,25 @@
+{% extends "../partials/layout.njk" %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = "Make a referral - [Service name]" %}
+{% set mainClasses = "govuk-body" %}
+
+{% block contentBody %}
+
+
+<div class="govuk-grid-row">
+  {{ govukBackLink(content.backLinkArgs) }}
+  <span class="govuk-caption-l"> {{ content.pageCaption}}</span>
+  <h1 class="govuk-heading-xl">
+    {{ content.heading }}
+  </h1>
+  <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
+  <form method="post" novalidate>
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    {{ govukRadios(content.radioArgs) }}
+    {{ govukButton(content.buttonArgs) }}
+  </form>
+</div>
+{% endblock %}

@@ -26,6 +26,9 @@ export default function routes({
 
   const post = (path: string, handler: RequestHandler): Router => router.post(path, asyncMiddleware(handler))
 
+  const getOrPost = (path: string, handler: RequestHandler) =>
+    router.route(path).get(asyncMiddleware(handler)).post(asyncMiddleware(handler))
+
   const referralController = new ReferralController(referralService, personService)
   const caseListController = new CaseListController(caseListService)
   const appointmentController = new AppointmentController(referralService, appointmentService, referenceDataService)
@@ -189,6 +192,8 @@ export default function routes({
   get('/referral/task-list/select-person-needs', (req, res) => referralController.showPersonNeeds(req, res))
 
   post('/referral/task-list/select-person-needs', (req, res) => referralController.recordPersonNeeds(req, res))
+
+  getOrPost('/referral/task-list/select-an-area-for-referral', (req, res) => referralController.showSelectArea(req, res))
 
   get('/referral/:id', (req, res, next) => referralController.showReferralPage(req, res, next))
 
