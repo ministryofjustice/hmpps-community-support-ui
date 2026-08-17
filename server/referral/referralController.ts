@@ -517,6 +517,7 @@ export default class ReferralController {
 
     if (req.method === 'POST') {
       return validateRequestBodyAgainstSchema(SelectAreaSchema, req, res, async () => {
+        //TODO add value to session and pass to next page
         return res.redirect('/referral/task-list')
       })
     }
