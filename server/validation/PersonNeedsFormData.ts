@@ -1,7 +1,10 @@
 import { z } from 'zod'
 
+const MAX_CHAR = 65000
+
 const NOTHING_SELECTED_ERROR = { error: 'You must select at least one need for this referral' }
 const EMPTY_DETAILS = 'Enter details about the {{ name }} needs'
+const TOO_MANY_CHAR = `Details about the {{ name }} needs must be ${MAX_CHAR} characters or less`
 
 const formatError = (error: string, val: string): string => {
   return error.replace('{{ name }}', val)
@@ -10,14 +13,14 @@ const formatError = (error: string, val: string): string => {
 export const PersonNeedsSchema = z
   .object({
     personNeedsCheckboxes: z.union([z.array(z.string()), z.string()], NOTHING_SELECTED_ERROR),
-    accommodationInput: z.string(),
-    employmentInput: z.string(),
-    financesInput: z.string(),
-    relationshipsInput: z.string(),
-    drugUseInput: z.string(),
-    alcoholUseInput: z.string(),
-    healthInput: z.string(),
-    thinkingInput: z.string(),
+    accommodationInput: z.string().max(MAX_CHAR, formatError(TOO_MANY_CHAR, 'accommodation')),
+    employmentInput: z.string().max(MAX_CHAR, formatError(TOO_MANY_CHAR, 'employment and education')),
+    financesInput: z.string().max(MAX_CHAR, formatError(TOO_MANY_CHAR, 'finances')),
+    relationshipsInput: z.string().max(MAX_CHAR, formatError(TOO_MANY_CHAR, 'personal relationships and community')),
+    drugUseInput: z.string().max(MAX_CHAR, formatError(TOO_MANY_CHAR, 'drug use')),
+    alcoholUseInput: z.string().max(MAX_CHAR, formatError(TOO_MANY_CHAR, 'alcohol use')),
+    healthInput: z.string().max(MAX_CHAR, formatError(TOO_MANY_CHAR, 'health and wellbeing')),
+    thinkingInput: z.string().max(MAX_CHAR, formatError(TOO_MANY_CHAR, 'thinking, behaviours and attitudes')),
   })
   .superRefine((val, ctx) => {
     if (val.personNeedsCheckboxes.includes('accommodation') && !val.accommodationInput) {
