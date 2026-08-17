@@ -1,21 +1,14 @@
 import { randomUUID } from 'node:crypto'
 import { test, expect } from '@playwright/test'
+import { addDays, subDays } from 'date-fns'
 import communitySupport from '../mockApis/communitySupport'
 import { getMatchingRequests } from '../mockApis/wiremock'
 import { login, resetStubs, seedSessionRiskSummary } from '../testUtils'
 import TaskListPage from '../pages/TaskListPage'
 
-const tomorrow = () => {
-  const d = new Date()
-  d.setDate(d.getDate() + 1)
-  return d
-}
+const tomorrow = () => addDays(new Date(), 1)
 
-const yesterday = () => {
-  const d = new Date()
-  d.setDate(d.getDate() - 1)
-  return d
-}
+const yesterday = () => subDays(new Date(), 1)
 
 test.describe('Service End Date Page', () => {
   const referralId = randomUUID()
