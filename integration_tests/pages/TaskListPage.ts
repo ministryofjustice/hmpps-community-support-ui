@@ -51,6 +51,10 @@ export default class TaskListPage extends AbstractPage {
     return this.referralInformationSection.getByRole('link', { name: 'Add details of any additional support needs' })
   }
 
+  get additionalReferralInformationTask() {
+    return this.referralInformationSection.getByRole('link', { name: 'Additional referral information' })
+  }
+
   get addContactDetailsTask() {
     return this.contactDetailsSection.getByRole('link', { name: 'Add details of main point of contact' })
   }
@@ -75,6 +79,10 @@ export default class TaskListPage extends AbstractPage {
     await this.addSupportNeedsTask.click()
   }
 
+  async clickAdditionalReferralInformationTask() {
+    await this.additionalReferralInformationTask.click()
+  }
+
   async clickConfirmPersonalDetailsTask() {
     await this.confirmPersonalDetailsTask.click()
   }
@@ -97,6 +105,7 @@ export default class TaskListPage extends AbstractPage {
     await expect(taskListPage.checkRiskInformationTask).toBeVisible()
     await expect(taskListPage.selectPersonNeedsTask).toBeVisible()
     await expect(taskListPage.addSupportNeedsTask).toBeVisible()
+    await expect(taskListPage.additionalReferralInformationTask).toBeVisible()
     await expect(taskListPage.contactDetailsSection).toBeVisible()
     await expect(taskListPage.addContactDetailsTask).toBeVisible()
     await expect(taskListPage.checkAnswersSection).toBeVisible()

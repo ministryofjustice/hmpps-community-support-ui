@@ -5,10 +5,18 @@ export interface ServiceEndDatePageContent {
   pageHeader: string
   hint: string
   dateLabel: string
+  dateHint?: string
   reasonLabel: string
   reasonHint: string
   backLink: string
   continueButton: string
+}
+
+export interface ServiceEndDateFormValues {
+  day?: string
+  month?: string
+  year?: string
+  reason?: string
 }
 
 export interface ServiceEndDatePageViewModel {
@@ -16,9 +24,10 @@ export interface ServiceEndDatePageViewModel {
   pageHeader: string
   hint: string
   dateLabel: string
+  dateHint?: string
   reasonLabel: string
   reasonHint: string
+  continueButton: string
   backLink: GovukFrontendBackLink
-  targetServiceCompletionDate?: string
-  targetServiceCompletionReason?: string
+  formValues: ServiceEndDateFormValues
 }

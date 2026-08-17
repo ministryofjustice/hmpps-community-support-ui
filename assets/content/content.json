@@ -823,12 +823,13 @@
   },
   "/referral/task-list/service-end-date": {
     "pageTitle": "Set service end date",
-    "pageHeader": "Set the target service completion date",
+    "pageHeader": "What date does the service need to be completed by?",
     "hint": "This is the date by which the service should be completed.",
-    "dateLabel": "Target service completion date",
-    "reasonLabel": "Reason for this date",
+    "dateLabel": "Date",
+    "dateHint": "For example, 31 3 2027",
+    "reasonLabel": "Why does it need to be completed by this date?",
     "reasonHint": "Explain why this date was chosen",
     "backLink": "/referral/task-list",
-    "continueButton": "Continue"
+    "continueButton": "Save and continue"
   }
 }

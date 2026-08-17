@@ -189,8 +189,8 @@ export default class CommunitySupportApiClient extends RestClient {
     )
   }
 
-  getServiceEndDatePage(referralId: string, username: string): Promise<ServiceEndDatePageDto> {
-    return this.get({ path: `/referral/${referralId}/service-end-date` }, asSystem(username))
+  getServiceEndDatePage(caseIdentifier: string, username: string): Promise<ServiceEndDatePageDto> {
+    return this.get({ path: `/bff/service-end-date-page/${caseIdentifier}` }, asSystem(username))
   }
 
   updateServiceEndDatePage(

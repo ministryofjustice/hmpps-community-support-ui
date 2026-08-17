@@ -23,6 +23,15 @@ import buildPersonNeedsRequest, { PersonNeeds } from './personNeeds/buildPersonN
 import { validateRequestBodyAgainstSchema } from '../validation/validationUtils'
 import { PersonNeedsSchema } from '../validation/PersonNeedsFormData'
 import ServiceEndDatePagePresenter from './serviceEndDate/ServiceEndDatePagePresenter'
+import { ServiceEndDateFormData, ServiceEndDateSchema } from '../validation/ServiceEndDateFormData'
+
+const buildDateStringFromForm = (form: ServiceEndDateFormData): string => {
+  const day = Number.parseInt(form['target_service_completion_date-day'], 10)
+  const month = Number.parseInt(form['target_service_completion_date-month'], 10)
+  const year = Number.parseInt(form['target_service_completion_date-year'], 10)
+
+  return new Date(year, month - 1, day).toISOString()
+}
 
 export default class ReferralController {
   private static readonly CRN_REGEX = /^[A-Za-z]\d{6}$/
@@ -507,15 +516,37 @@ export default class ReferralController {
   }
 
   async showServiceEndDatePage(req: Request, res: Response) {
-    // Render form with empty/default values
-    // The API doesn't support GET on this endpoint, so we initialize with empty data
+    const { username } = res.locals.user
+    const referralId = req.session?.draftReferralId
+    const formData = req.session.serviceEndDateForm
+    const validationErrors = res.locals.errors
+    delete req.session.serviceEndDateForm
 
-    const emptyData: ServiceEndDatePageDto = {
+    let data: ServiceEndDatePageDto = {
       target_service_completion_date: undefined,
-
       target_service_completion_reason: undefined,
     }
-    const presenter = new ServiceEndDatePagePresenter(emptyData)
+
+    if (referralId) {
+      try {
+        data = await this.referralService.getServiceEndDatePage(referralId, username)
+      } catch (error) {
+        logger.info(`No existing service end date found for referral ${referralId}`)
+      }
+    }
+
+    res.locals.errors = validationErrors
+    const presenter = new ServiceEndDatePagePresenter(
+      data,
+      formData
+        ? {
+            day: formData.target_service_completion_date_day,
+            month: formData.target_service_completion_date_month,
+            year: formData.target_service_completion_date_year,
+            reason: formData.target_service_completion_reason,
+          }
+        : undefined,
+    )
     return presenter.renderPage(res)
   }
 
@@ -523,26 +554,32 @@ export default class ReferralController {
     const { username } = res.locals.user
     const referralId = req.session?.draftReferralId
 
-    if (referralId) {
-      try {
-        // eslint-disable-next-line camelcase
-        const { target_service_completion_date, target_service_completion_reason } = req.body
+    if (!referralId) {
+      return res.redirect('/referral/task-list')
+    }
 
+    req.session.serviceEndDateForm = {
+      target_service_completion_date_day: req.body['target_service_completion_date-day'],
+      target_service_completion_date_month: req.body['target_service_completion_date-month'],
+      target_service_completion_date_year: req.body['target_service_completion_date-year'],
+      target_service_completion_reason: req.body.target_service_completion_reason,
+    }
+
+    return validateRequestBodyAgainstSchema(ServiceEndDateSchema, req, res, async (form: ServiceEndDateFormData) => {
+      try {
         const updateData: ServiceEndDatePageDto = {
-          // eslint-disable-next-line camelcase
-          target_service_completion_date,
-          // eslint-disable-next-line camelcase
-          target_service_completion_reason,
+          target_service_completion_date: buildDateStringFromForm(form),
+          target_service_completion_reason: form.target_service_completion_reason.trim(),
         }
 
         await this.referralService.updateServiceEndDatePage(referralId, updateData, username)
+        delete req.session.serviceEndDateForm
         return res.redirect('/referral/task-list')
       } catch (e) {
         logger.error(e)
         req.flash('serviceEndDateError', 'Something has gone wrong updating the service end date')
         return res.redirect('/referral/task-list/service-end-date')
       }
-    }
-    return res.redirect('/referral/task-list')
+    })
   }
 }

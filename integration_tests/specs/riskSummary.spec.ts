@@ -67,6 +67,8 @@ test.describe('Risk Summary Page', () => {
       tag: 'govuk-tag--blue',
     },
     addDetailsOfMainPointOfContactCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+    addAdditionalInformationCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+    selectAnAreaForReferralCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
   }
 
   test.beforeEach(async ({ page }) => {
