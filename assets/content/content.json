@@ -834,6 +834,7 @@
     "reasonLabel": "Why does it need to be completed by this date?",
     "reasonHint": "Explain why this date was chosen",
     "backLink": "/referral/task-list",
-    "continueButton": "Save and continue"
+    "continueButton": "Save and continue",
+    "updateError": "Something has gone wrong updating the service end date"
   }
 }

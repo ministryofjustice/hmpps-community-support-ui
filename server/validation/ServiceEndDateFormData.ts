@@ -13,15 +13,15 @@ const parseDatePart = (value: string): number | undefined => {
 
 export const ServiceEndDateSchema = z
   .object({
-    'target_service_completion_date-day': z.string(),
-    'target_service_completion_date-month': z.string(),
-    'target_service_completion_date-year': z.string(),
-    target_service_completion_reason: z.string(),
+    'target_service_completion_date-day': z.string().trim(),
+    'target_service_completion_date-month': z.string().trim(),
+    'target_service_completion_date-year': z.string().trim(),
+    target_service_completion_reason: z.string().trim().min(1, { error: REASON_REQUIRED_MESSAGE }),
   })
   .superRefine((data, ctx) => {
-    const day = data['target_service_completion_date-day'].trim()
-    const month = data['target_service_completion_date-month'].trim()
-    const year = data['target_service_completion_date-year'].trim()
+    const day = data['target_service_completion_date-day']
+    const month = data['target_service_completion_date-month']
+    const year = data['target_service_completion_date-year']
 
     const allDatePartsEmpty = day === '' && month === '' && year === ''
     if (allDatePartsEmpty) {
@@ -52,14 +52,6 @@ export const ServiceEndDateSchema = z
         code: 'custom',
         path: ['target_service_completion_date'],
         message: DATE_BEFORE_TODAY_MESSAGE,
-      })
-    }
-
-    if (data.target_service_completion_reason.trim() === '') {
-      ctx.addIssue({
-        code: 'custom',
-        path: ['target_service_completion_reason'],
-        message: REASON_REQUIRED_MESSAGE,
       })
     }
   })

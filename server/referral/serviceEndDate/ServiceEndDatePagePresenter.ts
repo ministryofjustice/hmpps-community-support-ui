@@ -11,31 +11,22 @@ const toFormValues = (
   targetServiceCompletionDate?: string,
   targetServiceCompletionReason?: string,
 ): ServiceEndDateFormValues => {
-  if (!targetServiceCompletionDate) {
-    return {
-      day: undefined,
-      month: undefined,
-      year: undefined,
-      reason: targetServiceCompletionReason,
-    }
-  }
-
   const parsedDate = new Date(targetServiceCompletionDate)
-  if (Number.isNaN(parsedDate.valueOf())) {
-    return {
-      day: undefined,
-      month: undefined,
-      year: undefined,
-      reason: targetServiceCompletionReason,
-    }
-  }
-
-  return {
-    day: String(parsedDate.getDate()),
-    month: String(parsedDate.getMonth() + 1),
-    year: String(parsedDate.getFullYear()),
-    reason: targetServiceCompletionReason,
-  }
+  const formValues =
+    !targetServiceCompletionDate || Number.isNaN(parsedDate.valueOf())
+      ? {
+          day: undefined,
+          month: undefined,
+          year: undefined,
+          reason: targetServiceCompletionReason,
+        }
+      : {
+          day: String(parsedDate.getDate()),
+          month: String(parsedDate.getMonth() + 1),
+          year: String(parsedDate.getFullYear()),
+          reason: targetServiceCompletionReason,
+        }
+  return formValues
 }
 
 export default class ServiceEndDatePagePresenter extends PresenterBase<

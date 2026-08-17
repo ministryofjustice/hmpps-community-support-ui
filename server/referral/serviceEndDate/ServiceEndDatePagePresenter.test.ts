@@ -2,25 +2,29 @@ import { Response } from 'express'
 import ServiceEndDatePagePresenter from './ServiceEndDatePagePresenter'
 import { ServiceEndDatePageContent } from './ServiceEndDatePageModel'
 
+const buildContent = (): ServiceEndDatePageContent => ({
+  pageTitle: 'Service End Date',
+  pageHeader: 'What date does the service need to be completed by?',
+  hint: 'This is the date by which the service should be completed.',
+  dateLabel: 'Date',
+  dateHint: 'For example, 31 3 2027',
+  reasonLabel: 'Why does it need to be completed by this date?',
+  reasonHint: 'Explain why this date was chosen',
+  backLink: '/referral/task-list',
+  continueButton: 'Save and continue',
+})
+
+const buildResponse = (content: ServiceEndDatePageContent): Response =>
+  ({
+    locals: {
+      content,
+    },
+  }) as unknown as Response
+
 describe('ServiceEndDatePagePresenter', () => {
   test('should build view model with page content and data', () => {
-    const content: ServiceEndDatePageContent = {
-      pageTitle: 'Service End Date',
-      pageHeader: 'What date does the service need to be completed by?',
-      hint: 'This is the date by which the service should be completed.',
-      dateLabel: 'Date',
-      dateHint: 'For example, 31 3 2027',
-      reasonLabel: 'Why does it need to be completed by this date?',
-      reasonHint: 'Explain why this date was chosen',
-      backLink: '/referral/task-list',
-      continueButton: 'Save and continue',
-    }
-
-    const res = {
-      locals: {
-        content,
-      },
-    } as unknown as Response
+    const content = buildContent()
+    const res = buildResponse(content)
 
     const data = {
       target_service_completion_date: '2026-12-31',
@@ -46,23 +50,8 @@ describe('ServiceEndDatePagePresenter', () => {
   })
 
   test('should handle missing optional data fields', () => {
-    const content: ServiceEndDatePageContent = {
-      pageTitle: 'Service End Date',
-      pageHeader: 'What date does the service need to be completed by?',
-      hint: 'This is the date by which the service should be completed.',
-      dateLabel: 'Date',
-      dateHint: 'For example, 31 3 2027',
-      reasonLabel: 'Why does it need to be completed by this date?',
-      reasonHint: 'Explain why this date was chosen',
-      backLink: '/referral/task-list',
-      continueButton: 'Save and continue',
-    }
-
-    const res = {
-      locals: {
-        content,
-      },
-    } as unknown as Response
+    const content = buildContent()
+    const res = buildResponse(content)
 
     const data = {}
 
@@ -75,24 +64,9 @@ describe('ServiceEndDatePagePresenter', () => {
     expect(viewModel.formValues.reason).toBeUndefined()
   })
 
-  test('should prioritize explicit form values when provided', () => {
-    const content: ServiceEndDatePageContent = {
-      pageTitle: 'Service End Date',
-      pageHeader: 'What date does the service need to be completed by?',
-      hint: 'This is the date by which the service should be completed.',
-      dateLabel: 'Date',
-      dateHint: 'For example, 31 3 2027',
-      reasonLabel: 'Why does it need to be completed by this date?',
-      reasonHint: 'Explain why this date was chosen',
-      backLink: '/referral/task-list',
-      continueButton: 'Save and continue',
-    }
-
-    const res = {
-      locals: {
-        content,
-      },
-    } as unknown as Response
+  test('should prioritize explicit form values when provided so these can be highlighted as erroneous', () => {
+    const content = buildContent()
+    const res = buildResponse(content)
 
     const presenter = new ServiceEndDatePagePresenter(
       {

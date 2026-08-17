@@ -577,7 +577,10 @@ export default class ReferralController {
         return res.redirect('/referral/task-list')
       } catch (e) {
         logger.error(e)
-        req.flash('serviceEndDateError', 'Something has gone wrong updating the service end date')
+        const updateErrorMessage =
+          (res.locals.content as Record<string, string>)?.updateError ||
+          'Something has gone wrong updating the service end date'
+        req.flash('serviceEndDateError', updateErrorMessage)
         return res.redirect('/referral/task-list/service-end-date')
       }
     })

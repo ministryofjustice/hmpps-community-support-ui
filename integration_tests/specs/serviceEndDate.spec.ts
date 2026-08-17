@@ -1,14 +1,17 @@
 import { randomUUID } from 'node:crypto'
 import { test, expect } from '@playwright/test'
-import { addDays, subDays } from 'date-fns'
+import { addMonths, subDays } from 'date-fns'
 import communitySupport from '../mockApis/communitySupport'
 import { getMatchingRequests } from '../mockApis/wiremock'
 import { login, resetStubs, seedSessionRiskSummary } from '../testUtils'
 import TaskListPage from '../pages/TaskListPage'
+import ServiceEndDatePage from '../pages/ServiceEndDatePage'
 
-const tomorrow = () => addDays(new Date(), 1)
+const DEFAULT_REASON = 'Target date agreed with provider'
 
 const yesterday = () => subDays(new Date(), 1)
+
+const sixMonthsFromToday = () => addMonths(new Date(), 6)
 
 test.describe('Service End Date Page', () => {
   const referralId = randomUUID()
@@ -39,92 +42,91 @@ test.describe('Service End Date Page', () => {
     const taskListPage = await TaskListPage.verifyOnPage(page)
 
     await taskListPage.clickAdditionalReferralInformationTask()
-    await expect(page).toHaveURL('/referral/task-list/service-end-date')
+    const serviceEndDatePage = await ServiceEndDatePage.verifyOnPage(page)
+    await expect(page).toHaveURL(ServiceEndDatePage.url())
 
-    await page.getByRole('link', { name: 'Back', exact: true }).click()
+    await serviceEndDatePage.clickBackLink()
     await expect(page).toHaveURL('/referral/task-list')
   })
 
   test('AC3 AC4 AC5 and AC6: should render heading hint date inputs and reason field', async ({ page }) => {
-    await page.goto('/referral/task-list/service-end-date')
+    await page.goto(ServiceEndDatePage.url())
+    const serviceEndDatePage = await ServiceEndDatePage.verifyOnPage(page)
 
-    await expect(
-      page.getByRole('heading', { name: 'What date does the service need to be completed by?' }),
-    ).toBeVisible()
+    await expect(serviceEndDatePage.header).toBeVisible()
     await expect(page.getByText('This is the date by which the service should be completed.')).toBeVisible()
-    await expect(page.getByLabel('Day')).toBeVisible()
-    await expect(page.getByLabel('Month')).toBeVisible()
-    await expect(page.getByLabel('Year')).toBeVisible()
-    await expect(page.getByLabel('Why does it need to be completed by this date?')).toBeVisible()
+    await expect(serviceEndDatePage.dayInput).toBeVisible()
+    await expect(serviceEndDatePage.monthInput).toBeVisible()
+    await expect(serviceEndDatePage.yearInput).toBeVisible()
+    await expect(serviceEndDatePage.reasonInput).toBeVisible()
   })
 
   test('AC5.1: should show invalid date error for impossible date', async ({ page }) => {
-    await page.goto('/referral/task-list/service-end-date')
+    await page.goto(ServiceEndDatePage.url())
+    const serviceEndDatePage = await ServiceEndDatePage.verifyOnPage(page)
 
-    const date = tomorrow()
-    await page.getByLabel('Day').fill('31')
-    await page.getByLabel('Month').fill('2')
-    await page.getByLabel('Year').fill(String(date.getFullYear()))
-    await page.getByLabel('Why does it need to be completed by this date?').fill('Target date agreed with provider')
-    await page.getByRole('button', { name: 'Save and continue' }).click()
+    const date = sixMonthsFromToday()
+    await serviceEndDatePage.dayInput.fill('31')
+    await serviceEndDatePage.monthInput.fill('2')
+    await serviceEndDatePage.yearInput.fill(String(date.getFullYear()))
+    await serviceEndDatePage.reasonInput.fill(DEFAULT_REASON)
+    await serviceEndDatePage.clickSaveAndContinue()
 
-    await expect(page.locator('[data-testid="error-messages"]')).toContainText('Enter a real date')
+    await expect(page).toHaveURL(ServiceEndDatePage.url())
+    await expect(serviceEndDatePage.errorMessages).toContainText('Enter a real date')
   })
 
   test('AC5.2: should show error when date is before today', async ({ page }) => {
-    await page.goto('/referral/task-list/service-end-date')
+    await page.goto(ServiceEndDatePage.url())
+    const serviceEndDatePage = await ServiceEndDatePage.verifyOnPage(page)
 
-    const date = yesterday()
-    await page.getByLabel('Day').fill(String(date.getDate()))
-    await page.getByLabel('Month').fill(String(date.getMonth()))
-    await page.getByLabel('Year').fill(String(date.getFullYear()))
-    await page.getByLabel('Why does it need to be completed by this date?').fill('Target date agreed with provider')
-    await page.getByRole('button', { name: 'Save and continue' }).click()
+    await serviceEndDatePage.fillTargetCompletionDate(yesterday())
+    await serviceEndDatePage.reasonInput.fill(DEFAULT_REASON)
+    await serviceEndDatePage.clickSaveAndContinue()
 
-    await expect(page.locator('[data-testid="error-messages"]')).toContainText(
+    await expect(page).toHaveURL(ServiceEndDatePage.url())
+    await expect(serviceEndDatePage.errorMessages).toContainText(
       'The date the service needs to be completed by must be today or later',
     )
   })
 
   test('AC5.3: should show error when date is blank', async ({ page }) => {
-    await page.goto('/referral/task-list/service-end-date')
+    await page.goto(ServiceEndDatePage.url())
+    const serviceEndDatePage = await ServiceEndDatePage.verifyOnPage(page)
 
-    await page.getByLabel('Why does it need to be completed by this date?').fill('Target date agreed with provider')
-    await page.getByRole('button', { name: 'Save and continue' }).click()
+    await serviceEndDatePage.reasonInput.fill(DEFAULT_REASON)
+    await serviceEndDatePage.clickSaveAndContinue()
 
-    await expect(page.locator('[data-testid="error-messages"]')).toContainText(
-      'Enter the date the service needs to be completed by',
-    )
+    await expect(page).toHaveURL(ServiceEndDatePage.url())
+    await expect(serviceEndDatePage.errorMessages).toContainText('Enter the date the service needs to be completed by')
   })
 
   test('AC7: should show error when reason is blank', async ({ page }) => {
-    await page.goto('/referral/task-list/service-end-date')
+    await page.goto(ServiceEndDatePage.url())
+    const serviceEndDatePage = await ServiceEndDatePage.verifyOnPage(page)
 
-    const date = tomorrow()
-    await page.getByLabel('Day').fill(String(date.getDate()))
-    await page.getByLabel('Month').fill(String(date.getMonth() + 1))
-    await page.getByLabel('Year').fill(String(date.getFullYear()))
-    await page.getByRole('button', { name: 'Save and continue' }).click()
+    await serviceEndDatePage.fillTargetCompletionDateSixMonthsFromToday()
+    await serviceEndDatePage.clickSaveAndContinue()
 
-    await expect(page.locator('[data-testid="error-messages"]')).toContainText(
-      'Enter why it needs to be completed by this date',
-    )
+    await expect(page).toHaveURL(ServiceEndDatePage.url())
+    await expect(serviceEndDatePage.errorMessages).toContainText('Enter why it needs to be completed by this date')
   })
 
   test('AC8: should save valid data and return to task list', async ({ page }) => {
+    const validSubmissionReason = 'Unique valid submission reason for AC8'
+    const validDate = sixMonthsFromToday()
+
     await communitySupport.stubUpdateServiceEndDatePage(referralId, {
-      target_service_completion_date: '2027-01-01T00:00:00.000Z',
-      target_service_completion_reason: 'Target date agreed with provider',
+      target_service_completion_date: validDate.toISOString(),
+      target_service_completion_reason: validSubmissionReason,
     })
 
-    await page.goto('/referral/task-list/service-end-date')
+    await page.goto(ServiceEndDatePage.url())
+    const serviceEndDatePage = await ServiceEndDatePage.verifyOnPage(page)
 
-    const date = tomorrow()
-    await page.getByLabel('Day').fill(String(date.getDate()))
-    await page.getByLabel('Month').fill(String(date.getMonth() + 1))
-    await page.getByLabel('Year').fill(String(date.getFullYear()))
-    await page.getByLabel('Why does it need to be completed by this date?').fill('Target date agreed with provider')
-    await page.getByRole('button', { name: 'Save and continue' }).click()
+    await serviceEndDatePage.fillTargetCompletionDateSixMonthsFromToday()
+    await serviceEndDatePage.reasonInput.fill(validSubmissionReason)
+    await serviceEndDatePage.clickSaveAndContinue()
 
     await expect(page).toHaveURL('/referral/task-list')
 
@@ -135,21 +137,24 @@ test.describe('Service End Date Page', () => {
 
     const [savedRequest] = matchingRequests.body.requests
     expect(JSON.parse(savedRequest.body)).toMatchObject({
-      target_service_completion_reason: 'Target date agreed with provider',
+      target_service_completion_reason: validSubmissionReason,
     })
   })
 
   test('should repopulate saved target completion date and reason when revisiting the page', async ({ page }) => {
+    const savedDate = sixMonthsFromToday()
+
     await communitySupport.stubGetServiceEndDatePage(referralId, {
-      target_service_completion_date: '2027-03-31T00:00:00.000Z',
+      target_service_completion_date: savedDate.toISOString(),
       target_service_completion_reason: 'Existing saved reason',
     })
 
-    await page.goto('/referral/task-list/service-end-date')
+    await page.goto(ServiceEndDatePage.url())
+    const serviceEndDatePage = await ServiceEndDatePage.verifyOnPage(page)
 
-    await expect(page.getByLabel('Day')).toHaveValue('31')
-    await expect(page.getByLabel('Month')).toHaveValue('3')
-    await expect(page.getByLabel('Year')).toHaveValue('2027')
-    await expect(page.getByLabel('Why does it need to be completed by this date?')).toHaveValue('Existing saved reason')
+    await expect(serviceEndDatePage.dayInput).toHaveValue(String(savedDate.getDate()))
+    await expect(serviceEndDatePage.monthInput).toHaveValue(String(savedDate.getMonth() + 1))
+    await expect(serviceEndDatePage.yearInput).toHaveValue(String(savedDate.getFullYear()))
+    await expect(serviceEndDatePage.reasonInput).toHaveValue('Existing saved reason')
   })
 })
