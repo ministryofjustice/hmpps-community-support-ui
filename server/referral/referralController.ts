@@ -467,7 +467,7 @@ export default class ReferralController {
         pageData.drugUseDetails = req.session.referralCreationDetails.personNeeds?.drugUseInput
         pageData.hasAlcoholUseNeeds =
           req.session.referralCreationDetails.personNeeds?.personNeedsCheckboxes.includes('alcoholUse')
-        pageData.alcoholUseDetails = req.session.referralCreationDetails.personNeeds?.alcoholUseDetails
+        pageData.alcoholUseDetails = req.session.referralCreationDetails.personNeeds?.alcoholUseInput
         pageData.hasHealthWellbeingNeeds =
           req.session.referralCreationDetails.personNeeds?.personNeedsCheckboxes.includes('health')
         pageData.healthWellbeingDetails = req.session.referralCreationDetails.personNeeds?.healthInput
