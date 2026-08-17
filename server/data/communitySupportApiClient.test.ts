@@ -13,6 +13,9 @@ import type {
   CommunitySupportRiskInformationDto,
   CommunitySupportRiskDto,
   ActionPlanSummaryDto,
+  AreaConfirmationBffResponseDto,
+  CommunityServiceProviderRequest,
+  CommunityServiceProviderBffResponseDto,
 } from '@community-support-api'
 import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import { AgentConfig, ApiConfig } from '@ministryofjustice/hmpps-rest-client'
@@ -61,8 +64,8 @@ describe('CommunitySupportApiClient tests', () => {
             {
               id: 'service1',
               region: 'Region 1',
-              name: 'Service 1',
               area: 'Area 1',
+              name: 'Service 1',
               providerName: 'Provider 1',
               description: 'Description 1',
               pdus: ['PDU1'],
@@ -72,8 +75,8 @@ describe('CommunitySupportApiClient tests', () => {
             {
               id: 'service2',
               region: 'Region 2',
-              name: 'Service 2',
               area: 'Area 2',
+              name: 'Service 2',
               providerName: 'Provider 2',
               description: 'Description 2',
               pdus: ['PDU2'],
@@ -388,6 +391,51 @@ describe('CommunitySupportApiClient tests', () => {
       const result = communitySupportApiClient.getRoshRisksByReferralId('referral-id-123', 'user1')
 
       expect(result).resolves.toEqual(riskDto)
+    })
+  })
+
+  describe('getCommunityServiceProviderDetails tests', () => {
+    it('should return community service provider details on a 200 response', () => {
+      const providerDetails: AreaConfirmationBffResponseDto = {
+        deliveryPartner: 'Ingeus UK Limited',
+        contractArea: 'Avon and Somerset, Gloucestershire, Wiltshire.',
+        associatedPdus: ['Bath and North Somerset', 'Bristol and South Gloucestershire', 'Gloucestershire'],
+        crn: 'X123456',
+        dateOfBirth: '1975-02-20',
+      }
+      nock('http://localhost:8080', {
+        reqheaders: { authorization: 'Bearer dummy-token' },
+      })
+        .get('/bff/draft-referral/referral-id-123/community-service-provider/provider-id-123')
+        .reply(200, providerDetails)
+
+      const result = communitySupportApiClient.getCommunityServiceProviderDetails(
+        'referral-id-123',
+        'provider-id-123',
+        'user1',
+      )
+
+      expect(result).resolves.toEqual(providerDetails)
+    })
+  })
+
+  describe('saveCommunityServiceProvider tests', () => {
+    it('should save the selected community service provider on a 200 response', async () => {
+      const request: CommunityServiceProviderRequest = { communityServiceProviderId: 'provider-id-123' }
+      const response: CommunityServiceProviderBffResponseDto = {
+        referralId: 'referral-id-123',
+        communityServiceProviderId: 'provider-id-123',
+        communityServiceProviderName: 'Ingeus UK Limited',
+      }
+      nock('http://localhost:8080', {
+        reqheaders: { authorization: 'Bearer dummy-token' },
+      })
+        .patch('/draft-referral/community-service-provider/referral-id-123', request)
+        .reply(200, response)
+
+      const result = await communitySupportApiClient.saveCommunityServiceProvider('referral-id-123', request, 'user1')
+
+      expect(result).toEqual(response)
     })
   })
 })

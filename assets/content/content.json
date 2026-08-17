@@ -749,6 +749,19 @@
       "label": "Additional information"
     }
   },
+  "/referral/task-list/confirm-an-area-for-referral/:id": {
+    "backLink": "/referral/task-list",
+    "crnLabel": "CRN",
+    "dateOfBirthLabel": "Date of birth",
+    "defaultFieldValue": "Not available",
+    "cardHeading": "Start a Community Support referral",
+    "deliveryPartnerLabel": "Delivery partner",
+    "areaCoveredLabel": "Area covered",
+    "pdusLabel": "PDUs in this area",
+    "buttonText": "Save and continue",
+    "selectDifferentAreaText": "Select a different area",
+    "selectDifferentAreaHref": "/referral/task-list/select-an-area-for-referral"
+  },
   "/referral/task-list/additional-support-needs": {
     "header": "What does {{ firstName }} need support with to attend or take part in sessions?",
     "hint": "Select all that apply.",

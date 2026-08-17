@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import { ReferralUserAssignmentsResponse, AssignmentFailureDto, ServiceEndDatePageDto } from '@community-support-api'
 import ReferralService from '../services/referralService'
 import PersonService from '../services/personService'
+import CommunityServiceProviderService from '../services/communityServiceProviderService'
 import ConfirmationPresenter from './confirmation/confirmationPresenter'
 import FoundPersonPresenter from './foundPerson/foundPersonPresenter'
 import logger from '../../logger'
@@ -26,6 +27,7 @@ import ServiceEndDatePagePresenter from './serviceEndDate/ServiceEndDatePagePres
 import { ServiceEndDateFormData, ServiceEndDateSchema } from '../validation/ServiceEndDateFormData'
 import SelectAreaPresenter from './selectArea/SelectAreaPresenter'
 import { SelectAreaSchema } from '../validation/SelectAreaFormData'
+import ConfirmAnAreaForReferralPresenter from './confirmAnAreaForReferral/ConfirmAnAreaForReferralPresenter'
 
 const buildDateStringFromForm = (form: ServiceEndDateFormData): string => {
   const day = Number.parseInt(form['target_service_completion_date-day'], 10)
@@ -43,6 +45,7 @@ export default class ReferralController {
   constructor(
     private readonly referralService: ReferralService,
     private readonly personService: PersonService,
+    private readonly communityServiceProviderService: CommunityServiceProviderService,
   ) {}
 
   private static isValidPersonIdentifier(personIdentifier: string): boolean {
@@ -399,6 +402,38 @@ export default class ReferralController {
     const riskInformation = buildRiskInformationRequestFromForm(req.body)
     await this.referralService.saveRiskInformation(draftReferralKey, riskInformation, username)
     return res.redirect('/referral/task-list/view-risk-summary')
+  }
+
+  async showConfirmAnAreaForReferral(req: Request, res: Response) {
+    const { username } = res.locals.user
+    const draftReferralKey = req.session?.draftReferralId
+    const { providerId } = req.params as { providerId: string }
+    const personDetails = req.session?.referralCreationDetails?.personDetails
+
+    if (!draftReferralKey || !personDetails) {
+      return res.redirect('/referral/new/find-a-person')
+    }
+
+    const providerDetails = await this.communityServiceProviderService.getCommunityServiceProviderDetails(
+      draftReferralKey,
+      providerId,
+      username,
+    )
+    const presenter = new ConfirmAnAreaForReferralPresenter(providerDetails, personDetails, providerId)
+    return presenter.renderPage(res)
+  }
+
+  async submitConfirmAnAreaForReferral(req: Request, res: Response): Promise<void> {
+    const { username } = res.locals.user
+    const draftReferralKey = req.session?.draftReferralId
+    const { providerId } = req.params as { providerId: string }
+
+    if (!draftReferralKey) {
+      return res.redirect('/referral/new/find-a-person')
+    }
+
+    await this.communityServiceProviderService.saveCommunityServiceProvider(draftReferralKey, providerId, username)
+    return res.redirect('/referral/task-list')
   }
 
   async communityServiceProviderPage(req: Request, res: Response) {

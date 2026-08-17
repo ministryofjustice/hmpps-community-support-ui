@@ -18,6 +18,7 @@ export default function routes({
   caseListService,
   appointmentService,
   referenceDataService,
+  communityServiceProviderService,
 }: Services): Router {
   const router = Router()
   const get = (path: string | string[], handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
@@ -26,6 +27,7 @@ export default function routes({
 
   const post = (path: string, handler: RequestHandler): Router => router.post(path, asyncMiddleware(handler))
 
+  const referralController = new ReferralController(referralService, personService, communityServiceProviderService)
   const getOrPost = (path: string, handler: RequestHandler) =>
     router.route(path).get(asyncMiddleware(handler)).post(asyncMiddleware(handler))
 
@@ -180,6 +182,14 @@ export default function routes({
   get('/referral/task-list/edit-risk-summary', (req, res) => referralController.showEditRiskSummary(req, res))
 
   post('/referral/task-list/edit-risk-summary', (req, res) => referralController.submitEditRiskSummary(req, res))
+
+  get('/referral/task-list/confirm-an-area-for-referral/:providerId', (req, res) =>
+    referralController.showConfirmAnAreaForReferral(req, res),
+  )
+
+  post('/referral/task-list/confirm-an-area-for-referral/:providerId', (req, res) =>
+    referralController.submitConfirmAnAreaForReferral(req, res),
+  )
 
   post('/referral/task-list/confirm-personal-details', (req, res) =>
     referralController.confirmPersonalDetails(req, res),
