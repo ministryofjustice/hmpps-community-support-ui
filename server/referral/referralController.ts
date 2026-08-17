@@ -530,7 +530,7 @@ export default class ReferralController {
     if (referralId) {
       try {
         data = await this.referralService.getServiceEndDatePage(referralId, username)
-      } catch (error) {
+      } catch {
         logger.info(`No existing service end date found for referral ${referralId}`)
       }
     }
