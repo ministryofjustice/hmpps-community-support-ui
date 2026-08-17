@@ -61,9 +61,10 @@ test.describe('Service End Date Page', () => {
   test('AC5.1: should show invalid date error for impossible date', async ({ page }) => {
     await page.goto('/referral/task-list/service-end-date')
 
+    const date = tomorrow()
     await page.getByLabel('Day').fill('31')
     await page.getByLabel('Month').fill('2')
-    await page.getByLabel('Year').fill('2027')
+    await page.getByLabel('Year').fill(String(date.getFullYear()))
     await page.getByLabel('Why does it need to be completed by this date?').fill('Target date agreed with provider')
     await page.getByRole('button', { name: 'Save and continue' }).click()
 
@@ -75,7 +76,7 @@ test.describe('Service End Date Page', () => {
 
     const date = yesterday()
     await page.getByLabel('Day').fill(String(date.getDate()))
-    await page.getByLabel('Month').fill(String(date.getMonth() + 1))
+    await page.getByLabel('Month').fill(String(date.getMonth()))
     await page.getByLabel('Year').fill(String(date.getFullYear()))
     await page.getByLabel('Why does it need to be completed by this date?').fill('Target date agreed with provider')
     await page.getByRole('button', { name: 'Save and continue' }).click()
