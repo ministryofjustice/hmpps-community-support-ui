@@ -54,7 +54,7 @@ export default class SelectAreaPresenter extends PresenterBase<SelectAreaViewMod
     const radioItems: GovukFrontendRadiosItem[] = []
     Object.entries(this.locations.communitySupportServices).forEach(([region, areas]) => {
       radioItems.push({
-        divider: `${region}`,
+        divider: region,
         value: '',
       })
       areas.forEach(area => {
@@ -76,7 +76,7 @@ export default class SelectAreaPresenter extends PresenterBase<SelectAreaViewMod
       fieldset: {
         legend: {
           text: content.areaLabel,
-          isPageHeading: true,
+          isPageHeading: false,
           classes: 'govuk-fieldset__legend--l',
         },
       },

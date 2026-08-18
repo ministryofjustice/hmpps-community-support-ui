@@ -1,4 +1,4 @@
-import { GovukFrontendBackLink, GovukFrontendRadios } from '@govuk-frontend'
+import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendRadios } from '@govuk-frontend'
 
 export interface SelectAreaContent {
   buttonText: string
@@ -13,4 +13,5 @@ export interface SelectAreaViewModel {
   pageCaption: string
   radioArgs: GovukFrontendRadios
   backLinkArgs: GovukFrontendBackLink
+  buttonArgs: GovukFrontendButton
 }

@@ -693,9 +693,12 @@ describe('ReferralController', () => {
     }
     const mockPersonDetails = {
       firstName: 'Alex',
-      lastName: 'Smith',
-      personIdentifier: 'X123',
-      dateOfBirth: '1990-01-01',
+      lastName: 'River',
+      personIdentifier: 'X123456',
+      prisonNumbers: ['A1234BC'],
+      sex: 'Male',
+      id: 'ID123',
+      dateOfBirth: '20 Feb 1975 (51 years old)',
     }
 
     it('should redirect to find a person when there is no draft referral in session', async () => {
