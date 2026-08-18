@@ -193,7 +193,9 @@ export default function routes({
 
   post('/referral/task-list/select-person-needs', (req, res) => referralController.recordPersonNeeds(req, res))
 
-  getOrPost('/referral/task-list/select-an-area-for-referral', (req, res) => referralController.showSelectArea(req, res))
+  getOrPost('/referral/task-list/select-an-area-for-referral', (req, res) =>
+    referralController.showSelectArea(req, res),
+  )
 
   get('/referral/:id', (req, res, next) => referralController.showReferralPage(req, res, next))
 

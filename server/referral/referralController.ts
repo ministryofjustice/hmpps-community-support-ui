@@ -23,7 +23,7 @@ import buildPersonNeedsRequest, { PersonNeeds } from './personNeeds/buildPersonN
 import { validateRequestBodyAgainstSchema } from '../validation/validationUtils'
 import { PersonNeedsSchema } from '../validation/PersonNeedsFormData'
 import SelectAreaPresenter from './selectArea/SelectAreaPresenter'
-import SelectAreaSchemaFormData, { SelectAreaSchema } from '../validation/SelectAreaFormData'
+import { SelectAreaSchema } from '../validation/SelectAreaFormData'
 
 export default class ReferralController {
   private static readonly CRN_REGEX = /^[A-Za-z]\d{6}$/
@@ -517,13 +517,17 @@ export default class ReferralController {
 
     if (req.method === 'POST') {
       return validateRequestBodyAgainstSchema(SelectAreaSchema, req, res, async () => {
-        //TODO add value to session and pass to next page
+        // TODO add value to session and pass to next page
         return res.redirect('/referral/task-list')
       })
     }
     const validationErrors = res.locals.errors
     const locations = await this.referralService.getCommunitySupportServiceProviders(draftReferralKey, username)
-    const presenter = new SelectAreaPresenter(req.session.referralCreationDetails.personDetails, locations, validationErrors)
+    const presenter = new SelectAreaPresenter(
+      req.session.referralCreationDetails.personDetails,
+      locations,
+      validationErrors,
+    )
     return presenter.renderPage(res)
   }
 }

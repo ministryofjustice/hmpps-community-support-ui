@@ -104,8 +104,10 @@ export default class ReferralService {
     return this.communitySupportApiClient.savePersonNeeds(draftReferralId, personNeeds, username)
   }
 
-  getCommunitySupportServiceProviders(personDetailsId: string,
-                                      username: string) : Promise<CommunitySupportServicesProvider> {
+  getCommunitySupportServiceProviders(
+    personDetailsId: string,
+    username: string,
+  ): Promise<CommunitySupportServicesProvider> {
     return this.communitySupportApiClient.getCommunitySupportServiceProviders(personDetailsId, username)
   }
 }

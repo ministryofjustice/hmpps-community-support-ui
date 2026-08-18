@@ -1,5 +1,4 @@
-import { Response } from 'express';
-import PresenterBase from '../../presenter/presenterBase'
+import { Response } from 'express'
 import { CommunitySupportServicesProvider, Person } from '@community-support-api'
 import {
   GovukFrontendBackLink,
@@ -7,6 +6,7 @@ import {
   GovukFrontendRadios,
   GovukFrontendRadiosItem,
 } from '@govuk-frontend'
+import PresenterBase from '../../presenter/presenterBase'
 import { ErrorMiddlewareErrors } from '../../@types/express'
 import { SelectAreaContent, SelectAreaViewModel } from './SelectAreaViewModel'
 
@@ -14,16 +14,23 @@ export default class SelectAreaPresenter extends PresenterBase<SelectAreaViewMod
   buildViewModel(res: Response) {
     const content = this.buildStaticContent(res)
     return {
-      heading: content.heading.replace('{{ personName }}', `${this.personalDetails.firstName} ${this.personalDetails.lastName}`),
-      pageCaption: content.pageCaption.replace('{{ CRN }}', this.personalDetails.personIdentifier).replace('{{ DOB }}', this.personalDetails.dateOfBirth),
+      heading: content.heading.replace(
+        '{{ personName }}',
+        `${this.personalDetails.firstName} ${this.personalDetails.lastName}`,
+      ),
+      pageCaption: content.pageCaption
+        .replace('{{ CRN }}', this.personalDetails.personIdentifier)
+        .replace('{{ DOB }}', this.personalDetails.dateOfBirth),
       radioArgs: this.buildRadios(content),
       backLinkArgs: this.generateBackLink(content),
       buttonArgs: this.generateButton(content),
     }
   }
+
   getTemplatePath(): string {
     return 'referral/selectArea'
   }
+
   constructor(
     private readonly personalDetails: Person,
     private readonly locations: CommunitySupportServicesProvider,
@@ -35,7 +42,7 @@ export default class SelectAreaPresenter extends PresenterBase<SelectAreaViewMod
   generateBackLink(content: SelectAreaContent): GovukFrontendBackLink {
     return {
       text: content.backLinkText,
-      href:content.backLinkHref
+      href: content.backLinkHref,
     }
   }
 
@@ -44,19 +51,19 @@ export default class SelectAreaPresenter extends PresenterBase<SelectAreaViewMod
   }
 
   generateRadioItems() {
-    let radioItems: GovukFrontendRadiosItem[] = []
+    const radioItems: GovukFrontendRadiosItem[] = []
     Object.entries(this.locations.communitySupportServices).forEach(([region, areas]) => {
-      radioItems.push( {
+      radioItems.push({
         divider: `${region}`,
         value: '',
       })
-      areas.forEach((area) => {
+      areas.forEach(area => {
         radioItems.push({
           value: `${area.id}`,
           text: `${area.area}`,
           hint: {
-            text: `${area.pdus.join(', ')}`
-          }
+            text: `${area.pdus.join(', ')}`,
+          },
         })
       })
     })
@@ -65,18 +72,17 @@ export default class SelectAreaPresenter extends PresenterBase<SelectAreaViewMod
 
   buildRadios(content: SelectAreaContent): GovukFrontendRadios {
     return {
-      name: "selectArea",
+      name: 'selectArea',
       fieldset: {
         legend: {
           text: content.areaLabel,
           isPageHeading: true,
-          classes: "govuk-fieldset__legend--l"
-        }
+          classes: 'govuk-fieldset__legend--l',
+        },
       },
       items: this.generateRadioItems(),
       classes: 'area-radio',
-      errorMessage: this.validationErrors?.messages['selectArea'] ?? null,
+      errorMessage: this.validationErrors?.messages.selectArea ?? null,
     }
   }
-
 }

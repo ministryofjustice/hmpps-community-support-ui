@@ -679,17 +679,24 @@ describe('ReferralController', () => {
     const mockLocations = {
       communitySupportServices: {
         Cleveland: [
-          { id: 'service-1',
+          {
+            id: 'service-1',
             area: 'Cleveland North',
             region: 'Cleveland',
             pdus: ['PDU1'],
             name: 'Community Support Service in Cleveland',
             providerName: 'ProviderName',
             description: 'description',
-          }],
+          },
+        ],
       },
     }
-    const mockPersonDetails = { firstName: 'Alex', lastName: 'Smith', personIdentifier: 'X123', dateOfBirth: '1990-01-01' }
+    const mockPersonDetails = {
+      firstName: 'Alex',
+      lastName: 'Smith',
+      personIdentifier: 'X123',
+      dateOfBirth: '1990-01-01',
+    }
 
     it('should redirect to find a person when there is no draft referral in session', async () => {
       req = { method: 'GET', session: {} } as unknown as Request
