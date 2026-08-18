@@ -20,6 +20,19 @@ export type MojPagination = GovukFrontendPagination & {
   }
 }
 
+export interface MojInterruptionCardAction {
+  text: string
+  href?: string
+  style?: 'button' | 'link'
+  attributes?: Record<string, string>
+}
+
+export interface MojInterruptionCard {
+  heading: string
+  primaryAction: MojInterruptionCardAction
+  secondaryAction?: MojInterruptionCardAction
+}
+
 export interface MojDatePicker {
   id: string
   name: string

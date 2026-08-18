@@ -1,0 +1,35 @@
+{% extends "../partials/layout.njk" %}
+
+{% from "moj/components/interruption-card/macro.njk" import interruptionCard %}
+
+{% set pageTitle = "Start a Community Support referral - Community Support" %}
+{% set mainClasses = "govuk-body" %}
+
+{% block contentBody %}
+  <p class="govuk-body" data-qa="person-summary">
+    <span data-qa="crn">{{ content.crnLabel }}: {{ content.crn }}</span>
+    &nbsp;|&nbsp;
+    <span data-qa="date-of-birth">{{ content.dateOfBirthLabel }}: {{ content.dateOfBirth }}</span>
+  </p>
+
+  <h1 class="govuk-heading-l" data-qa="heading">{{ content.heading }}</h1>
+  <hr class="govuk-section-break govuk-section-break--visible govuk-section-break--m">
+
+  <form method="post" novalidate action="{{ content.submitHref }}">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    {% call interruptionCard(content.card) %}
+      <p class="govuk-body" data-qa="delivery-partner">
+        <strong>{{ content.deliveryPartnerLabel }}:</strong> {{ content.deliveryPartner }}
+      </p>
+      <p class="govuk-body" data-qa="area-covered">
+        <strong>{{ content.areaCoveredLabel }}:</strong> {{ content.areaCovered }}
+      </p>
+      <p class="govuk-body">{{ content.pdusLabel }}:</p>
+      <ul class="govuk-list govuk-list--bullet" data-qa="pdus">
+        {% for pdu in content.pdus %}
+          <li>{{ pdu }}</li>
+        {% endfor %}
+      </ul>
+    {% endcall %}
+  </form>
+{% endblock %}

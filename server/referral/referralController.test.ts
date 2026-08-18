@@ -10,6 +10,7 @@ import {
 import ReferralController from './referralController'
 import ReferralService from '../services/referralService'
 import PersonService from '../services/personService'
+import CommunityServiceProviderService from '../services/communityServiceProviderService'
 import FoundPersonPresenter from './foundPerson/foundPersonPresenter'
 import CheckReferralInformationPresenter from './check-referral-information/checkReferralInformationPresenter'
 import ConfirmationContent from '../testutils/factories/ConfirmationContent'
@@ -19,9 +20,11 @@ import RiskSummaryPresenter from './riskSummary/RiskSummaryPresenter'
 import EditRiskSummaryPresenter from './editRiskSummary/EditRiskSummaryPresenter'
 import ConfirmPersonalDetailsPresenter from './confirmPersonalDetails/ConfirmPersonalDetailsPresenter'
 import PersonNeedsPresenter, { personNeedsFormData } from './personNeeds/PersonNeedsPresenter'
+import ConfirmAnAreaForReferralPresenter from './confirmAnAreaForReferral/ConfirmAnAreaForReferralPresenter'
 import SelectAreaPresenter from './selectArea/SelectAreaPresenter'
 
 jest.mock('../services/referralService')
+jest.mock('../services/communityServiceProviderService')
 jest.mock('../middleware/formValidationMiddleware')
 jest.mock('../referral/foundPerson/foundPersonPresenter')
 jest.mock('../referral/check-referral-information/checkReferralInformationPresenter')
@@ -31,10 +34,12 @@ jest.mock('./editRiskSummary/EditRiskSummaryPresenter')
 jest.mock('./confirmPersonalDetails/ConfirmPersonalDetailsPresenter')
 jest.mock('./personNeeds/PersonNeedsPresenter')
 jest.mock('./selectArea/SelectAreaPresenter')
+jest.mock('./confirmAnAreaForReferral/ConfirmAnAreaForReferralPresenter')
 
 describe('ReferralController', () => {
   let referralService: jest.Mocked<ReferralService>
   let personService: jest.Mocked<PersonService>
+  let communityServiceProviderService: jest.Mocked<CommunityServiceProviderService>
   let referralController: ReferralController
   let req: Request
   let res: Response
@@ -55,7 +60,11 @@ describe('ReferralController', () => {
     personService = {
       getPersonByIdentifier: jest.fn(),
     } as unknown as jest.Mocked<PersonService>
-    referralController = new ReferralController(referralService, personService)
+    communityServiceProviderService = {
+      getCommunityServiceProviderDetails: jest.fn(),
+      saveCommunityServiceProvider: jest.fn(),
+    } as unknown as jest.Mocked<CommunityServiceProviderService>
+    referralController = new ReferralController(referralService, personService, communityServiceProviderService)
 
     FoundPersonPresenter.prototype.renderPage = jest.fn()
     CheckReferralInformationPresenter.prototype.renderPage = jest.fn()
@@ -64,6 +73,7 @@ describe('ReferralController', () => {
     EditRiskSummaryPresenter.prototype.renderPage = jest.fn()
     ConfirmPersonalDetailsPresenter.prototype.renderPage = jest.fn()
     PersonNeedsPresenter.prototype.renderPage = jest.fn()
+    ConfirmAnAreaForReferralPresenter.prototype.renderPage = jest.fn()
     SelectAreaPresenter.prototype.renderPage = jest.fn()
 
     req = {
@@ -672,6 +682,117 @@ describe('ReferralController', () => {
       expect(referralService.getPersonNeeds).not.toHaveBeenCalled()
       expect(PersonNeedsPresenter).toHaveBeenCalledWith(expectedPageData, undefined)
       expect(PersonNeedsPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+    })
+  })
+
+  describe('showConfirmAnAreaForReferral', () => {
+    it('should redirect to find a person page when there is no draft referral in session', async () => {
+      req = {
+        session: { referralCreationDetails: { personDetails: { firstName: 'Alex', lastName: 'River' } } },
+        params: { providerId: 'provider-id-123' },
+      } as unknown as Request
+
+      await referralController.showConfirmAnAreaForReferral(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('/referral/new/find-a-person')
+      expect(communityServiceProviderService.getCommunityServiceProviderDetails).not.toHaveBeenCalled()
+    })
+
+    it('should redirect to find a person page when there is no person in session', async () => {
+      req = {
+        session: { draftReferralId: 'referral-uuid-1' },
+        params: { providerId: 'provider-id-123' },
+      } as unknown as Request
+
+      await referralController.showConfirmAnAreaForReferral(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('/referral/new/find-a-person')
+      expect(communityServiceProviderService.getCommunityServiceProviderDetails).not.toHaveBeenCalled()
+    })
+
+    it('should render the confirm an area for referral page using the provider details and the person details from session', async () => {
+      const personDetails = { firstName: 'Alex', lastName: 'River', dateOfBirth: '1975-02-20' }
+      req = {
+        session: { draftReferralId: 'referral-uuid-1', referralCreationDetails: { personDetails } },
+        params: { providerId: 'provider-id-123' },
+      } as unknown as Request
+      const providerDetails = {
+        deliveryPartner: 'Ingeus UK Limited',
+        contractArea: 'Avon and Somerset, Gloucestershire, Wiltshire.',
+        associatedPdus: ['Bath and North Somerset'],
+        crn: 'X123456',
+        dateOfBirth: '1975-02-20',
+      }
+      communityServiceProviderService.getCommunityServiceProviderDetails.mockResolvedValue(providerDetails)
+
+      await referralController.showConfirmAnAreaForReferral(req, res)
+
+      expect(communityServiceProviderService.getCommunityServiceProviderDetails).toHaveBeenCalledWith(
+        'referral-uuid-1',
+        'provider-id-123',
+        'user1',
+      )
+      expect(referralService.getPersonalDetails).not.toHaveBeenCalled()
+      expect(ConfirmAnAreaForReferralPresenter).toHaveBeenCalledWith(providerDetails, personDetails, 'provider-id-123')
+      expect(ConfirmAnAreaForReferralPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+    })
+
+    it('should propagate the error when the provider details cannot be retrieved', async () => {
+      req = {
+        session: {
+          draftReferralId: 'referral-uuid-1',
+          referralCreationDetails: { personDetails: { firstName: 'Alex', lastName: 'River' } },
+        },
+        params: { providerId: 'provider-id-123' },
+      } as unknown as Request
+      communityServiceProviderService.getCommunityServiceProviderDetails.mockRejectedValue(
+        new Error('error retrieving provider details'),
+      )
+
+      await expect(referralController.showConfirmAnAreaForReferral(req, res)).rejects.toThrow(
+        'error retrieving provider details',
+      )
+
+      expect(ConfirmAnAreaForReferralPresenter.prototype.renderPage).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('submitConfirmAnAreaForReferral', () => {
+    it('should redirect to find a person page when there is no draft referral in session', async () => {
+      req = { session: {}, params: { providerId: 'provider-id-123' } } as unknown as Request
+
+      await referralController.submitConfirmAnAreaForReferral(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('/referral/new/find-a-person')
+      expect(communityServiceProviderService.saveCommunityServiceProvider).not.toHaveBeenCalled()
+    })
+
+    it('should save the selected provider and redirect to the task list', async () => {
+      req = {
+        session: { draftReferralId: 'referral-uuid-1' },
+        params: { providerId: 'provider-id-123' },
+      } as unknown as Request
+
+      await referralController.submitConfirmAnAreaForReferral(req, res)
+
+      expect(communityServiceProviderService.saveCommunityServiceProvider).toHaveBeenCalledWith(
+        'referral-uuid-1',
+        'provider-id-123',
+        'user1',
+      )
+      expect(res.redirect).toHaveBeenCalledWith('/referral/task-list')
+    })
+
+    it('should propagate the error when saving the selected provider fails', async () => {
+      req = {
+        session: { draftReferralId: 'referral-uuid-1' },
+        params: { providerId: 'provider-id-123' },
+      } as unknown as Request
+      communityServiceProviderService.saveCommunityServiceProvider.mockRejectedValue(new Error('error saving provider'))
+
+      await expect(referralController.submitConfirmAnAreaForReferral(req, res)).rejects.toThrow('error saving provider')
+
+      expect(res.redirect).not.toHaveBeenCalledWith('/referral/task-list')
     })
   })
 

@@ -13,6 +13,8 @@ import {
   SubmitReferralResponse,
   TaskListStatusDto,
   CaseWorkerDto,
+  AreaConfirmationBffResponseDto,
+  CommunityServiceProviderBffResponseDto,
 } from '@community-support-api'
 import { stubFor } from './wiremock'
 import { duplicateData } from '../testUtils'
@@ -627,6 +629,41 @@ export default {
         status: httpStatus,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: data,
+        transformers: ['response-template'],
+      },
+    }),
+  stubGetAreaConfirmationDetails: (
+    referralId: string,
+    providerId: string,
+    areaConfirmationDetails: AreaConfirmationBffResponseDto,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: `/community-support/bff/draft-referral/${referralId}/community-service-provider/${providerId}`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: areaConfirmationDetails,
+        transformers: ['response-template'],
+      },
+    }),
+  stubSaveCommunityServiceProvider: (
+    referralId: string,
+    response: CommunityServiceProviderBffResponseDto,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'PATCH',
+        urlPathPattern: `/community-support/draft-referral/community-service-provider/${referralId}`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: response,
         transformers: ['response-template'],
       },
     }),

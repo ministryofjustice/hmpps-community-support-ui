@@ -8,15 +8,15 @@ describe('TaskListPresenter - Page Rendering', () => {
       fullName: 'John Smith',
       confirmPersonalDetailsCompleted: { completed: true, statusText: 'Completed', tag: 'govuk-tag--green' },
       checkRiskInformationCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+      selectAnAreaForReferralCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
       selectThePersonsNeedsCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
       addDetailsOfAnyAdditionalSupportNeedsCompleted: {
         completed: false,
         statusText: 'Incomplete',
         tag: 'govuk-tag--blue',
       },
-      addDetailsOfMainPointOfContactCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
       addAdditionalInformationCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-      selectAnAreaForReferralCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+      addDetailsOfMainPointOfContactCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
     }
     const presenter = new TaskListPresenter(taskListState, 'referralId')
     const content = TaskListContent.build()

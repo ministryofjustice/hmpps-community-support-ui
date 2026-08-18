@@ -46,6 +46,9 @@ type CommunitySupportRiskInformationDto = components['schemas']['CommunitySuppor
 type ReferralCriminogenicNeedsDto = components['schemas']['ReferralCriminogenicNeedsDto']
 type CriminogenicNeedsRequest = components['schemas']['CriminogenicNeedsRequest']
 type ReferralServiceDaysDto = components['schemas']['ReferralServiceDaysDto']
+type AreaConfirmationBffResponseDto = components['schemas']['AreaConfirmationBffResponseDto']
+type CommunityServiceProviderRequest = components['schemas']['CommunityServiceProviderRequest']
+type CommunityServiceProviderBffResponseDto = components['schemas']['CommunityServiceProviderBffResponseDto']
 
 export type {
   Referral,
@@ -93,4 +96,7 @@ export type {
   ReferralCriminogenicNeedsDto,
   CriminogenicNeedsRequest,
   ReferralServiceDaysDto,
+  AreaConfirmationBffResponseDto,
+  CommunityServiceProviderRequest,
+  CommunityServiceProviderBffResponseDto,
 }
