@@ -19,6 +19,7 @@ import RiskSummaryPresenter from './riskSummary/RiskSummaryPresenter'
 import EditRiskSummaryPresenter from './editRiskSummary/EditRiskSummaryPresenter'
 import ConfirmPersonalDetailsPresenter from './confirmPersonalDetails/ConfirmPersonalDetailsPresenter'
 import PersonNeedsPresenter, { personNeedsFormData } from './personNeeds/PersonNeedsPresenter'
+import SelectAreaPresenter from './selectArea/SelectAreaPresenter'
 
 jest.mock('../services/referralService')
 jest.mock('../middleware/formValidationMiddleware')
@@ -29,6 +30,7 @@ jest.mock('./riskSummary/RiskSummaryPresenter')
 jest.mock('./editRiskSummary/EditRiskSummaryPresenter')
 jest.mock('./confirmPersonalDetails/ConfirmPersonalDetailsPresenter')
 jest.mock('./personNeeds/PersonNeedsPresenter')
+jest.mock('./selectArea/SelectAreaPresenter')
 
 describe('ReferralController', () => {
   let referralService: jest.Mocked<ReferralService>
@@ -48,6 +50,7 @@ describe('ReferralController', () => {
       getRoshRisksByReferralId: jest.fn(),
       saveRiskInformation: jest.fn(),
       getPersonNeeds: jest.fn(),
+      getCommunitySupportServiceProviders: jest.fn(),
     } as unknown as jest.Mocked<ReferralService>
     personService = {
       getPersonByIdentifier: jest.fn(),
@@ -61,6 +64,7 @@ describe('ReferralController', () => {
     EditRiskSummaryPresenter.prototype.renderPage = jest.fn()
     ConfirmPersonalDetailsPresenter.prototype.renderPage = jest.fn()
     PersonNeedsPresenter.prototype.renderPage = jest.fn()
+    SelectAreaPresenter.prototype.renderPage = jest.fn()
 
     req = {
       params: { id: 'referral123' },
@@ -668,6 +672,106 @@ describe('ReferralController', () => {
       expect(referralService.getPersonNeeds).not.toHaveBeenCalled()
       expect(PersonNeedsPresenter).toHaveBeenCalledWith(expectedPageData, undefined)
       expect(PersonNeedsPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+    })
+  })
+
+  describe('showSelectArea', () => {
+    const mockLocations = {
+      communitySupportServices: {
+        Cleveland: [
+          {
+            id: 'service-1',
+            area: 'Cleveland North',
+            region: 'Cleveland',
+            pdus: ['PDU1'],
+            name: 'Community Support Service in Cleveland',
+            providerName: 'ProviderName',
+            description: 'description',
+          },
+        ],
+      },
+    }
+    const mockPersonDetails = {
+      firstName: 'Alex',
+      lastName: 'River',
+      personIdentifier: 'X123456',
+      prisonNumbers: ['A1234BC'],
+      sex: 'Male',
+      id: 'ID123',
+      dateOfBirth: '20 Feb 1975 (51 years old)',
+    }
+
+    it('should redirect to find a person when there is no draft referral in session', async () => {
+      req = { method: 'GET', session: {} } as unknown as Request
+
+      await referralController.showSelectArea(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('/referral/new/find-a-person')
+    })
+
+    it('should render the select area page on a GET request', async () => {
+      req = {
+        method: 'GET',
+        session: {
+          draftReferralId: 'referral-uuid-1',
+          referralCreationDetails: { personDetails: mockPersonDetails },
+        },
+      } as unknown as Request
+      res = { ...res, locals: { user: { username: 'user1' }, errors: undefined } } as unknown as Response
+      referralService.getCommunitySupportServiceProviders.mockResolvedValue(mockLocations)
+
+      await referralController.showSelectArea(req, res)
+
+      expect(referralService.getCommunitySupportServiceProviders).toHaveBeenCalledWith('referral-uuid-1', 'user1')
+      expect(SelectAreaPresenter).toHaveBeenCalledWith(mockPersonDetails, mockLocations, undefined)
+      expect(SelectAreaPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+    })
+
+    it('should pass validation errors to presenter on GET after failed POST', async () => {
+      const validationErrors = {
+        list: [{ href: '#selectArea', text: 'Select an area for the referral' }],
+        messages: { selectArea: { text: 'Select an area for the referral' } },
+      }
+      req = {
+        method: 'GET',
+        session: {
+          draftReferralId: 'referral-uuid-1',
+          referralCreationDetails: { personDetails: mockPersonDetails },
+        },
+      } as unknown as Request
+      res = { ...res, locals: { user: { username: 'user1' }, errors: validationErrors } } as unknown as Response
+      referralService.getCommunitySupportServiceProviders.mockResolvedValue(mockLocations)
+
+      await referralController.showSelectArea(req, res)
+
+      expect(SelectAreaPresenter).toHaveBeenCalledWith(
+        mockPersonDetails,
+        mockLocations,
+        expect.objectContaining({
+          list: expect.arrayContaining([
+            expect.objectContaining({ href: '#selectArea', text: 'Select an area for the referral' }),
+          ]),
+          messages: expect.objectContaining({
+            selectArea: { text: 'Select an area for the referral' },
+          }),
+        }),
+      )
+      expect(SelectAreaPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+    })
+
+    it('should redirect to task list on a valid POST', async () => {
+      req = {
+        method: 'POST',
+        body: { selectArea: 'service-1' },
+        session: {
+          draftReferralId: 'referral-uuid-1',
+          referralCreationDetails: { personDetails: mockPersonDetails },
+        },
+      } as unknown as Request
+
+      await referralController.showSelectArea(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('/referral/task-list')
     })
   })
 })

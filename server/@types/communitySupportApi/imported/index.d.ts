@@ -225,7 +225,7 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/bff/service-end-date-page/{caseIdentifier}': {
+  '/bff/service-end-date-page/{referralId}': {
     parameters: {
       query?: never
       header?: never
@@ -1060,6 +1060,7 @@ export interface components {
     CommunitySupportServiceDto: {
       id: string
       region: string
+      area: string
       name: string
       providerName: string
       description: string
@@ -1811,7 +1812,7 @@ export interface operations {
       query?: never
       header?: never
       path: {
-        caseIdentifier: string
+        referralId: string
       }
       cookie?: never
     }

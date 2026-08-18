@@ -14,6 +14,7 @@ export interface TaskListContent {
       selectPersonNeeds: { text: string; href: string }
       addSupportNeeds: { text: string; href: string }
       additionalReferralInformation: { text: string; href: string }
+      selectArea: { text: string; href: string }
     }
   }
   contactDetails: {

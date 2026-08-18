@@ -22,6 +22,8 @@ import PersonNeedsPresenter, { personNeedsFormData } from './personNeeds/PersonN
 import buildPersonNeedsRequest, { PersonNeeds } from './personNeeds/buildPersonNeedsRequest'
 import { validateRequestBodyAgainstSchema } from '../validation/validationUtils'
 import { PersonNeedsSchema } from '../validation/PersonNeedsFormData'
+import SelectAreaPresenter from './selectArea/SelectAreaPresenter'
+import { SelectAreaSchema } from '../validation/SelectAreaFormData'
 
 export default class ReferralController {
   private static readonly CRN_REGEX = /^[A-Za-z]\d{6}$/
@@ -503,5 +505,29 @@ export default class ReferralController {
       delete req.session.referralCreationDetails.personNeeds
       return res.redirect('/referral/task-list')
     })
+  }
+
+  async showSelectArea(req: Request, res: Response) {
+    const { username } = res.locals.user
+    const draftReferralKey = req.session?.draftReferralId
+
+    if (!draftReferralKey) {
+      return res.redirect('/referral/new/find-a-person')
+    }
+
+    if (req.method === 'POST') {
+      return validateRequestBodyAgainstSchema(SelectAreaSchema, req, res, async () => {
+        // TODO add value to session and pass to next page
+        return res.redirect('/referral/task-list')
+      })
+    }
+    const validationErrors = res.locals.errors
+    const locations = await this.referralService.getCommunitySupportServiceProviders(draftReferralKey, username)
+    const presenter = new SelectAreaPresenter(
+      req.session.referralCreationDetails.personDetails,
+      locations,
+      validationErrors,
+    )
+    return presenter.renderPage(res)
   }
 }

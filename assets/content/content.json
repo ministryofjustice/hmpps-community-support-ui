@@ -598,6 +598,10 @@
           "additionalReferralInformation": {
             "text": "Additional referral information",
             "href": "/referral/task-list/additional-referral-information"
+          },
+          "selectArea": {
+            "text": "Select the area for the referral",
+            "href": "/referral/task-list/select-an-area-for-referral"
           }
         }
       },
@@ -824,5 +828,13 @@
     },
     "submitButton": "Save and continue",
     "backLink": "/referral/task-list"
+  },
+  "/referral/task-list/select-an-area-for-referral": {
+    "areaLabel": "Select the area you want to make a referral to",
+    "backLinkText": "Back",
+    "backLinkHref" : "/referral/task-list",
+    "buttonText": "Continue",
+    "heading": "{{ personName }}",
+    "pageCaption": "CRN: {{ CRN }} | Date of birth: {{ DOB }}"
   }
 }

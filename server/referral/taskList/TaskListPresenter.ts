@@ -19,6 +19,7 @@ const getTaskListStatus = (data: TaskListStatusDto) => {
     supportNeeds: getStatusTag(data.addDetailsOfAnyAdditionalSupportNeedsCompleted),
     contactDetails: getStatusTag(data.addDetailsOfMainPointOfContactCompleted),
     additionalReferralInformation: getStatusTag(data.addAdditionalInformationCompleted),
+    selectAnAreaForReferral: getStatusTag(data.selectAnAreaForReferralCompleted),
     checkAnswers: getStatusTag(null),
   }
 }
@@ -69,6 +70,11 @@ export default class TaskListPresenter extends PresenterBase<TaskListViewModel, 
               title: { text: content.referralInformation.subTasks.additionalReferralInformation.text },
               href: content.referralInformation.subTasks.additionalReferralInformation.href,
               status: status.additionalReferralInformation,
+            },
+            {
+              title: { text: content.referralInformation.subTasks.selectArea.text },
+              href: content.referralInformation.subTasks.selectArea.href,
+              status: status.selectAnAreaForReferral,
             },
           ],
         },

@@ -10,6 +10,7 @@ import {
   NeedsInterpreterBffResponseDto,
   CommunitySupportRiskDto,
   CommunitySupportRiskInformationDto,
+  type CommunitySupportServicesProvider,
   type ReferralCriminogenicNeedsDto,
   type CriminogenicNeedsRequest,
   ActionPlanSummaryDto,
@@ -101,5 +102,12 @@ export default class ReferralService {
     username: string,
   ): Promise<ReferralCriminogenicNeedsDto> {
     return this.communitySupportApiClient.savePersonNeeds(draftReferralId, personNeeds, username)
+  }
+
+  getCommunitySupportServiceProviders(
+    personDetailsId: string,
+    username: string,
+  ): Promise<CommunitySupportServicesProvider> {
+    return this.communitySupportApiClient.getCommunitySupportServiceProviders(personDetailsId, username)
   }
 }
