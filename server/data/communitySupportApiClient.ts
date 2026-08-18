@@ -29,6 +29,9 @@ import type {
   ReferralCriminogenicNeedsDto,
   CriminogenicNeedsRequest,
   ActionPlanSummaryDto,
+  AreaConfirmationBffResponseDto,
+  CommunityServiceProviderRequest,
+  CommunityServiceProviderBffResponseDto,
   ServiceEndDatePageDto,
 } from '@community-support-api'
 import config from '../config'
@@ -185,6 +188,28 @@ export default class CommunitySupportApiClient extends RestClient {
   ): Promise<ReferralCriminogenicNeedsDto> {
     return this.patch(
       { path: `/draft-referral/person-needs/${draftReferralId}`, data: personNeeds },
+      asSystem(username),
+    )
+  }
+
+  getCommunityServiceProviderDetails(
+    referralId: string,
+    providerId: string,
+    username: string,
+  ): Promise<AreaConfirmationBffResponseDto> {
+    return this.get(
+      { path: `/bff/draft-referral/${referralId}/community-service-provider/${providerId}` },
+      asSystem(username),
+    )
+  }
+
+  saveCommunityServiceProvider(
+    referralId: string,
+    request: CommunityServiceProviderRequest,
+    username: string,
+  ): Promise<CommunityServiceProviderBffResponseDto> {
+    return this.patch(
+      { path: `/draft-referral/community-service-provider/${referralId}`, data: request },
       asSystem(username),
     )
   }
