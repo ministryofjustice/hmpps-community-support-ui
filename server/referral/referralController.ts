@@ -587,6 +587,7 @@ export default class ReferralController {
       }
     })
   }
+
   async showSelectArea(req: Request, res: Response) {
     const { username } = res.locals.user
     const draftReferralKey = req.session?.draftReferralId
