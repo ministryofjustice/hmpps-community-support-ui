@@ -44,6 +44,8 @@ const content = {
   backLinkText: 'Back',
   backLinkHref: '/referral/task-list',
   buttonText: 'Save and continue',
+  heading: 'Referral for {{ personName }}',
+  pageCaption: 'CRN: {{ CRN }} | Date of birth: {{ DOB }}',
 }
 
 const res = {
@@ -67,7 +69,7 @@ describe('SelectAreaPresenter', () => {
     it('builds heading from person name', () => {
       const presenter = new SelectAreaPresenter(personalDetails, locations)
       const viewModel = presenter.buildViewModel(res)
-      expect(viewModel.heading).toBe('Alex River')
+      expect(viewModel.heading).toBe('Referral for Alex River')
     })
 
     it('builds pageCaption from CRN and date of birth', () => {
