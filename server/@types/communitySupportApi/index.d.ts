@@ -45,6 +45,7 @@ type ArnsRiskRoshSummaryDto = components['schemas']['ArnsRiskRoshSummaryDto']
 type CommunitySupportRiskInformationDto = components['schemas']['CommunitySupportRiskInformationDto']
 type ReferralCriminogenicNeedsDto = components['schemas']['ReferralCriminogenicNeedsDto']
 type CriminogenicNeedsRequest = components['schemas']['CriminogenicNeedsRequest']
+type ReferralServiceDaysDto = components['schemas']['ReferralServiceDaysDto']
 
 export type {
   Referral,
@@ -91,4 +92,5 @@ export type {
   CommunitySupportRiskInformationDto,
   ReferralCriminogenicNeedsDto,
   CriminogenicNeedsRequest,
+  ReferralServiceDaysDto,
 }
