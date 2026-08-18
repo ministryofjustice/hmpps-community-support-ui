@@ -744,7 +744,18 @@ describe('ReferralController', () => {
 
       await referralController.showSelectArea(req, res)
 
-      expect(SelectAreaPresenter).toHaveBeenCalledWith(mockPersonDetails, mockLocations, validationErrors)
+      expect(SelectAreaPresenter).toHaveBeenCalledWith(
+        mockPersonDetails,
+        mockLocations,
+        expect.objectContaining({
+          list: expect.arrayContaining([
+            expect.objectContaining({ href: '#selectArea', text: 'Select an area for the referral' }),
+          ]),
+          messages: expect.objectContaining({
+            selectArea: { text: 'Select an area for the referral' },
+          }),
+        }),
+      )
       expect(SelectAreaPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
     })
 
