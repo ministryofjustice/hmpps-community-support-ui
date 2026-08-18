@@ -139,14 +139,14 @@ test.describe('Task List Page', () => {
     })
     await communitySupport.stubGetAdditionalSupportNeeds(referralId, {
       refereeName: { firstName: 'Alex', lastName: 'Rivers' },
-      physicalHealth: { selected: false, value: null },
-      mentalEmotionalHealth: { selected: false, value: null },
-      neurodiversity: { selected: false, value: null },
-      locationTravel: { selected: false, value: null },
-      caringResponsibilities: { selected: false, value: null },
-      employmentResponsibilities: { selected: false, value: null },
-      diversity: { selected: false, value: null },
-      anythingElse: { selected: false, value: null },
+      physicalHealth: { selected: 'Unanswered' },
+      mentalEmotionalHealth: { selected: 'Unanswered' },
+      neurodiversity: { selected: 'Unanswered' },
+      locationTravel: { selected: 'Unanswered' },
+      caringResponsibilities: { selected: 'Unanswered' },
+      employmentResponsibilities: { selected: 'Unanswered' },
+      diversity: { selected: 'Unanswered' },
+      anythingElse: { selected: 'Unanswered' },
       needsAdditionalSupport: null,
     })
     await page.goto(TaskListPage.url())
@@ -193,14 +193,14 @@ test.describe('Task List Page', () => {
     })
     await communitySupport.stubGetAdditionalSupportNeeds(referralId, {
       refereeName: { firstName: 'Alex', lastName: 'Rivers' },
-      physicalHealth: { selected: false, value: null },
-      mentalEmotionalHealth: { selected: false, value: null },
-      neurodiversity: { selected: false, value: null },
-      locationTravel: { selected: false, value: null },
-      caringResponsibilities: { selected: false, value: null },
-      employmentResponsibilities: { selected: false, value: null },
-      diversity: { selected: false, value: null },
-      anythingElse: { selected: false, value: null },
+      physicalHealth: { selected: 'Unanswered' },
+      mentalEmotionalHealth: { selected: 'Unanswered' },
+      neurodiversity: { selected: 'Unanswered' },
+      locationTravel: { selected: 'Unanswered' },
+      caringResponsibilities: { selected: 'Unanswered' },
+      employmentResponsibilities: { selected: 'Unanswered' },
+      diversity: { selected: 'Unanswered' },
+      anythingElse: { selected: 'Unanswered' },
       needsAdditionalSupport: null,
     })
     await page.goto(TaskListPage.url())

@@ -26,6 +26,7 @@ describe('CommunityServiceProvider service tests', () => {
               providerName: 'Provider 1',
               description: 'Description 1',
               pdus: ['PDU1'],
+              area: '',
             },
           ],
           region2: [
@@ -37,6 +38,7 @@ describe('CommunityServiceProvider service tests', () => {
               providerName: 'Provider 2',
               description: 'Description 2',
               pdus: ['PDU2'],
+              area: '',
             },
           ],
         },

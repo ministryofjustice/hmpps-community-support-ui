@@ -66,36 +66,28 @@ describe('AdditionalSupportNeedsPresenter', () => {
       refereeName: { firstName: 'Alex', lastName: 'River' },
       needsAdditionalSupport: false,
       physicalHealth: {
-        selected: false,
-        value: '',
+        selected: 'No',
       },
       mentalEmotionalHealth: {
-        selected: false,
-        value: '',
+        selected: 'No',
       },
       neurodiversity: {
-        selected: false,
-        value: '',
+        selected: 'No',
       },
       locationTravel: {
-        selected: false,
-        value: '',
+        selected: 'No',
       },
       caringResponsibilities: {
-        selected: false,
-        value: '',
+        selected: 'No',
       },
       employmentResponsibilities: {
-        selected: false,
-        value: '',
+        selected: 'No',
       },
       diversity: {
-        selected: false,
-        value: '',
+        selected: 'No',
       },
       anythingElse: {
-        selected: false,
-        value: '',
+        selected: 'No',
       },
     }
     const presenter = new AdditionalSuportNeedsPresenter(dto)

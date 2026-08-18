@@ -1,9 +1,11 @@
 import { Response } from 'express'
-import { NeedsInterpreterBffResponseDto, Selection } from '@community-support-api'
+import { NeedsInterpreterBffResponseDto } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
 import { NeedsAnInterpreterContent, NeedsAnInterpreterViewModel } from './NeedsAnInterpreterModel'
 import { GovukFrontendRadiosWithConditional } from '../../@types/govukFrontend/derived'
 import { buildInput } from '../../utils/utils'
+
+type LanguageSelection = NeedsInterpreterBffResponseDto['language']
 
 const buildConditional = (content: NeedsAnInterpreterContent, name: string, value: string | null): string =>
   buildInput({
@@ -14,7 +16,7 @@ const buildConditional = (content: NeedsAnInterpreterContent, name: string, valu
 
 const buildRadios = (
   content: NeedsAnInterpreterContent,
-  selection: Selection,
+  selection: LanguageSelection,
   name: string,
 ): GovukFrontendRadiosWithConditional => {
   return {
@@ -30,12 +32,12 @@ const buildRadios = (
       {
         value: content.yesOptionLabel,
         text: content.yesOptionLabel,
-        checked: selection.selected,
-        conditional: { html: buildConditional(content, name, selection.value) },
+        checked: selection.selected === 'Yes',
+        conditional: { html: buildConditional(content, name, selection.selected === 'Yes' ? selection.value : '') },
       },
       {
         value: content.noOptionLabel,
-        checked: !selection.selected,
+        checked: selection.selected === 'No',
         text: content.noOptionLabel,
       },
     ],
