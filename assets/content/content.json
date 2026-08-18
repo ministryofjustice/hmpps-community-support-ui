@@ -597,7 +597,7 @@
           },
           "additionalReferralInformation": {
             "text": "Additional referral information",
-            "href": "/referral/task-list/additional-referral-information"
+            "href": "/referral/task-list/service-end-date"
           },
           "selectArea": {
             "text": "Select the area for the referral",
@@ -828,6 +828,18 @@
     },
     "submitButton": "Save and continue",
     "backLink": "/referral/task-list"
+  },
+  "/referral/task-list/service-end-date": {
+    "pageTitle": "Set service end date",
+    "pageHeader": "What date does the service need to be completed by?",
+    "hint": "This is the date by which the service should be completed.",
+    "dateLabel": "Date",
+    "dateHint": "For example, 31 3 2027",
+    "reasonLabel": "Why does it need to be completed by this date?",
+    "reasonHint": "Explain why this date was chosen",
+    "backLink": "/referral/task-list",
+    "continueButton": "Save and continue",
+    "updateError": "Something has gone wrong updating the service end date"
   },
   "/referral/task-list/select-an-area-for-referral": {
     "areaLabel": "Select the area you want to make a referral to",

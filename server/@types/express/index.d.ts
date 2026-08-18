@@ -36,6 +36,12 @@ export declare module 'express-session' {
     ChangeAppointmentDetails: ChangeAppointmentDetails
     referralInformation: ReferralInformationDto
     pending: Record<string, string>
+    serviceEndDateForm: {
+      target_service_completion_date_day?: string
+      target_service_completion_date_month?: string
+      target_service_completion_date_year?: string
+      target_service_completion_reason?: string
+    }
     referralProgressBanner?: ReferralProgressBannerContent
     icsFeedbackSubmission: IcsFeedbackSubmission & { caseReferenceId: string }
     draftReferralId: string

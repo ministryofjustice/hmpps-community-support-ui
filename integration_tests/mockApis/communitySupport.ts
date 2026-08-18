@@ -38,6 +38,27 @@ export interface ReferralProgress {
   actionPlanStatus: components['schemas']['ActionPlanStatusDto']
 }
 
+type TaskListStatusStub = Pick<TaskListStatusDto, 'fullName'> & Partial<Omit<TaskListStatusDto, 'fullName'>>
+
+const incompleteTaskStatus = {
+  completed: false,
+  statusText: 'Incomplete',
+  tag: 'govuk-tag--blue',
+}
+
+const buildTaskListStatus = (taskListStatus: TaskListStatusStub): TaskListStatusDto => ({
+  fullName: taskListStatus.fullName,
+  confirmPersonalDetailsCompleted: taskListStatus.confirmPersonalDetailsCompleted ?? incompleteTaskStatus,
+  checkRiskInformationCompleted: taskListStatus.checkRiskInformationCompleted ?? incompleteTaskStatus,
+  selectThePersonsNeedsCompleted: taskListStatus.selectThePersonsNeedsCompleted ?? incompleteTaskStatus,
+  addDetailsOfAnyAdditionalSupportNeedsCompleted:
+    taskListStatus.addDetailsOfAnyAdditionalSupportNeedsCompleted ?? incompleteTaskStatus,
+  addDetailsOfMainPointOfContactCompleted:
+    taskListStatus.addDetailsOfMainPointOfContactCompleted ?? incompleteTaskStatus,
+  addAdditionalInformationCompleted: taskListStatus.addAdditionalInformationCompleted ?? incompleteTaskStatus,
+  selectAnAreaForReferralCompleted: taskListStatus.selectAnAreaForReferralCompleted ?? incompleteTaskStatus,
+})
+
 export default {
   stubPing: (httpStatus = 200): SuperAgentRequest =>
     stubFor({
@@ -524,7 +545,11 @@ export default {
         transformers: ['response-template'],
       },
     }),
-  stubGetTaskListStatus: (referralId: string, taskListStatus: TaskListStatusDto, httpStatus = 200): SuperAgentRequest =>
+  stubGetTaskListStatus: (
+    referralId: string,
+    taskListStatus: TaskListStatusStub,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'GET',
@@ -533,7 +558,7 @@ export default {
       response: {
         status: httpStatus,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: taskListStatus,
+        jsonBody: buildTaskListStatus(taskListStatus),
         transformers: ['response-template'],
       },
     }),
@@ -602,6 +627,40 @@ export default {
         status: httpStatus,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: data,
+        transformers: ['response-template'],
+      },
+    }),
+  stubGetServiceEndDatePage: (
+    referralId: string,
+    response: Record<string, unknown>,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: `/community-support/bff/service-end-date-page/${referralId}`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: response,
+        transformers: ['response-template'],
+      },
+    }),
+  stubUpdateServiceEndDatePage: (
+    referralId: string,
+    response: Record<string, unknown>,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'PATCH',
+        urlPathPattern: `/community-support/referral/${referralId}/service-end-date`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: response,
         transformers: ['response-template'],
       },
     }),

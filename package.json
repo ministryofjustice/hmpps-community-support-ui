@@ -22,6 +22,8 @@
     "security_audit": "npx audit-ci --config audit-ci.json",
     "int-test": "npx playwright test",
     "int-test-all": "npx playwright test -c playwright.config.all.ts",
+    "int-test:no-report-open": "PLAYWRIGHT_HTML_OPEN=never npx playwright test",
+    "int-test-all:no-report-open": "PLAYWRIGHT_HTML_OPEN=never npx playwright test -c playwright.config.all.ts",
     "int-test-ui": "npx playwright test --ui",
     "int-test-init": "npx playwright install",
     "int-test-init:ci": "npx playwright install",

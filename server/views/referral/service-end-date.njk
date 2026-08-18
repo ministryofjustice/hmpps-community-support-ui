@@ -1,0 +1,72 @@
+{% extends "../partials/layout.njk" %}
+
+{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = content.pageTitle %}
+{% set mainClasses = "govuk-body" %}
+
+{% block contentBody %}
+  <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
+  {% if content.hint %}
+    <p class="govuk-body">{{ content.hint }}</p>
+  {% endif %}
+
+  <form method="post">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    {{ govukDateInput({
+      id: "target_service_completion_date",
+      namePrefix: "target_service_completion_date",
+      fieldset: {
+        legend: {
+          text: content.dateLabel,
+          classes: "govuk-fieldset__legend--m"
+        }
+      },
+      hint: {
+        text: content.dateHint
+      },
+      errorMessage: errors.messages.target_service_completion_date,
+      items: [
+        {
+          name: "day",
+          classes: "govuk-input--width-2",
+          value: content.formValues.day
+        },
+        {
+          name: "month",
+          classes: "govuk-input--width-2",
+          value: content.formValues.month
+        },
+        {
+          name: "year",
+          classes: "govuk-input--width-4",
+          value: content.formValues.year
+        }
+      ]
+    }) }}
+
+    {{ govukTextarea({
+      label: {
+        text: content.reasonLabel,
+        classes: "govuk-label--m"
+      },
+      hint: {
+        text: content.reasonHint
+      },
+      id: "target_service_completion_reason",
+      name: "target_service_completion_reason",
+      value: content.formValues.reason,
+      errorMessage: errors.messages.target_service_completion_reason,
+      rows: 5,
+      attributes: {
+        "data-testid": "target-service-completion-reason"
+      }
+    }) }}
+
+    {{ govukButton({
+      text: content.continueButton
+    }) }}
+  </form>
+{% endblock %}

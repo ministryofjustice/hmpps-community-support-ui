@@ -29,6 +29,7 @@ import type {
   ReferralCriminogenicNeedsDto,
   CriminogenicNeedsRequest,
   ActionPlanSummaryDto,
+  ServiceEndDatePageDto,
 } from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
@@ -186,5 +187,17 @@ export default class CommunitySupportApiClient extends RestClient {
       { path: `/draft-referral/person-needs/${draftReferralId}`, data: personNeeds },
       asSystem(username),
     )
+  }
+
+  getServiceEndDatePage(caseIdentifier: string, username: string): Promise<ServiceEndDatePageDto> {
+    return this.get({ path: `/bff/service-end-date-page/${caseIdentifier}` }, asSystem(username))
+  }
+
+  updateServiceEndDatePage(
+    referralId: string,
+    data: ServiceEndDatePageDto,
+    username: string,
+  ): Promise<ServiceEndDatePageDto> {
+    return this.patch({ path: `/referral/${referralId}/service-end-date`, data }, asSystem(username))
   }
 }
