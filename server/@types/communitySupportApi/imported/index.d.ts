@@ -965,13 +965,22 @@ export interface components {
     }
     NeedsInterpreterBffResponseDto: {
       refereeName: components['schemas']['RefereeNameDto']
-      language?: components['schemas']['Selection'] | null
-      needsInterpreter?: boolean | null
+      language: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
     }
+    No: {
+      selected: 'No'
+    } & Omit<WithRequired<components['schemas']['Selection'], 'selected'>, 'selected'>
     Selection: {
-      selected: boolean
-      value?: string | null
+      selected?: boolean | null
     }
+    Unanswered: {
+      selected: 'Unanswered'
+    } & Omit<WithRequired<components['schemas']['Selection'], 'selected'>, 'selected'>
+    Yes: {
+      selected: 'Yes'
+    } & (Omit<WithRequired<components['schemas']['Selection'], 'selected'>, 'selected'> & {
+      value: string
+    })
     CommunityServiceProviderRequest: {
       /** Format: uuid */
       communityServiceProviderId: string
@@ -996,14 +1005,23 @@ export interface components {
     }
     AdditionalSupportNeedsBffResponseDto: {
       refereeName: components['schemas']['RefereeNameDto']
-      physicalHealth: components['schemas']['Selection']
-      mentalEmotionalHealth: components['schemas']['Selection']
-      neurodiversity: components['schemas']['Selection']
-      locationTravel: components['schemas']['Selection']
-      caringResponsibilities: components['schemas']['Selection']
-      employmentResponsibilities: components['schemas']['Selection']
-      diversity: components['schemas']['Selection']
-      anythingElse: components['schemas']['Selection']
+      physicalHealth: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
+      mentalEmotionalHealth:
+        | components['schemas']['No']
+        | components['schemas']['Unanswered']
+        | components['schemas']['Yes']
+      neurodiversity: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
+      locationTravel: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
+      caringResponsibilities:
+        | components['schemas']['No']
+        | components['schemas']['Unanswered']
+        | components['schemas']['Yes']
+      employmentResponsibilities:
+        | components['schemas']['No']
+        | components['schemas']['Unanswered']
+        | components['schemas']['Yes']
+      diversity: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
+      anythingElse: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       needsAdditionalSupport?: boolean | null
     }
     TaskListStatusItem: {
