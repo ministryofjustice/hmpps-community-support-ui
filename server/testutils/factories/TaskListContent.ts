@@ -31,6 +31,10 @@ export default TaskListContentFactory.define(({ transientParams }) => ({
           text: 'Additional referral information',
           href: '/referral/new/additional-referral-information',
         },
+        selectArea: {
+          text: 'Select the area for the referral',
+          href: '/referral/task-list/select-an-area-for-referral',
+        },
       },
     },
     contactDetails: {

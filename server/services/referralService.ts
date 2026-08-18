@@ -10,6 +10,7 @@ import {
   NeedsInterpreterBffResponseDto,
   CommunitySupportRiskDto,
   CommunitySupportRiskInformationDto,
+  type CommunitySupportServicesProvider,
   type ReferralCriminogenicNeedsDto,
   type CriminogenicNeedsRequest,
   ActionPlanSummaryDto,
@@ -114,5 +115,11 @@ export default class ReferralService {
     username: string,
   ): Promise<ServiceEndDatePageDto> {
     return this.communitySupportApiClient.updateServiceEndDatePage(referralId, data, username)
+  }
+  getCommunitySupportServiceProviders(
+    personDetailsId: string,
+    username: string,
+  ): Promise<CommunitySupportServicesProvider> {
+    return this.communitySupportApiClient.getCommunitySupportServiceProviders(personDetailsId, username)
   }
 }

@@ -24,6 +24,8 @@ import { validateRequestBodyAgainstSchema } from '../validation/validationUtils'
 import { PersonNeedsSchema } from '../validation/PersonNeedsFormData'
 import ServiceEndDatePagePresenter from './serviceEndDate/ServiceEndDatePagePresenter'
 import { ServiceEndDateFormData, ServiceEndDateSchema } from '../validation/ServiceEndDateFormData'
+import SelectAreaPresenter from './selectArea/SelectAreaPresenter'
+import { SelectAreaSchema } from '../validation/SelectAreaFormData'
 
 const buildDateStringFromForm = (form: ServiceEndDateFormData): string => {
   const day = Number.parseInt(form['target_service_completion_date-day'], 10)
@@ -584,5 +586,28 @@ export default class ReferralController {
         return res.redirect('/referral/task-list/service-end-date')
       }
     })
+  }
+  async showSelectArea(req: Request, res: Response) {
+    const { username } = res.locals.user
+    const draftReferralKey = req.session?.draftReferralId
+
+    if (!draftReferralKey) {
+      return res.redirect('/referral/new/find-a-person')
+    }
+
+    if (req.method === 'POST') {
+      return validateRequestBodyAgainstSchema(SelectAreaSchema, req, res, async () => {
+        // TODO add value to session and pass to next page
+        return res.redirect('/referral/task-list')
+      })
+    }
+    const validationErrors = res.locals.errors
+    const locations = await this.referralService.getCommunitySupportServiceProviders(draftReferralKey, username)
+    const presenter = new SelectAreaPresenter(
+      req.session.referralCreationDetails.personDetails,
+      locations,
+      validationErrors,
+    )
+    return presenter.renderPage(res)
   }
 }

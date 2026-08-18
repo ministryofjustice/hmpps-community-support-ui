@@ -836,5 +836,13 @@
     "backLink": "/referral/task-list",
     "continueButton": "Save and continue",
     "updateError": "Something has gone wrong updating the service end date"
+  },
+  "/referral/task-list/select-an-area-for-referral": {
+    "areaLabel": "Select the area you want to make a referral to",
+    "backLinkText": "Back",
+    "backLinkHref" : "/referral/task-list",
+    "buttonText": "Continue",
+    "heading": "{{ personName }}",
+    "pageCaption": "CRN: {{ CRN }} | Date of birth: {{ DOB }}"
   }
 }

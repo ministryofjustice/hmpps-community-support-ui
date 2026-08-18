@@ -35,7 +35,7 @@ describe('TaskListPresenter - Page Rendering', () => {
     expect(sections.personalDetails.taskList.items).toHaveLength(1)
 
     expect(sections.referralInformation.title).toBe('Referral information')
-    expect(sections.referralInformation.taskList.items).toHaveLength(4)
+    expect(sections.referralInformation.taskList.items).toHaveLength(5)
 
     expect(sections.contactDetails.title).toBe('Referral contact details')
     expect(sections.checkAnswers.title).toBe('Check answers and submit')
