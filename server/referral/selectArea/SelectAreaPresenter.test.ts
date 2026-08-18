@@ -119,6 +119,18 @@ describe('SelectAreaPresenter', () => {
       const viewModel = presenter.buildViewModel(res)
       expect(viewModel.radioArgs.fieldset.legend.text).toBe('Select the area you want to make a referral to')
     })
+
+    it('sets no checked value when no provider was previously selected', () => {
+      const presenter = new SelectAreaPresenter(personalDetails, locations)
+      const viewModel = presenter.buildViewModel(res)
+      expect(viewModel.radioArgs.value).toBeNull()
+    })
+
+    it('pre-selects the radio matching the previously selected provider id', () => {
+      const presenter = new SelectAreaPresenter(personalDetails, locations, undefined, 'service-2')
+      const viewModel = presenter.buildViewModel(res)
+      expect(viewModel.radioArgs.value).toBe('service-2')
+    })
   })
 
   describe('validation errors', () => {

@@ -181,11 +181,11 @@ export default function routes({
 
   post('/referral/task-list/edit-risk-summary', (req, res) => referralController.submitEditRiskSummary(req, res))
 
-  get('/referral/task-list/confirm-an-area-for-referral/:providerId', (req, res) =>
+  get('/referral/task-list/confirm-an-area-for-referral', (req, res) =>
     referralController.showConfirmAnAreaForReferral(req, res),
   )
 
-  post('/referral/task-list/confirm-an-area-for-referral/:providerId', (req, res) =>
+  post('/referral/task-list/confirm-an-area-for-referral', (req, res) =>
     referralController.submitConfirmAnAreaForReferral(req, res),
   )
 

@@ -35,6 +35,7 @@ export default class SelectAreaPresenter extends PresenterBase<SelectAreaViewMod
     private readonly personalDetails: Person,
     private readonly locations: CommunitySupportServicesProvider,
     private readonly validationErrors?: ErrorMiddlewareErrors,
+    private readonly selectedProviderId?: string,
   ) {
     super()
   }
@@ -81,6 +82,7 @@ export default class SelectAreaPresenter extends PresenterBase<SelectAreaViewMod
         },
       },
       items: this.generateRadioItems(),
+      value: this.selectedProviderId ?? null,
       classes: 'area-radio',
       errorMessage: this.validationErrors?.messages.selectArea ?? null,
     }

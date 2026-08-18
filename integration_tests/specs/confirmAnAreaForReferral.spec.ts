@@ -1,6 +1,5 @@
 import { test, expect } from '@playwright/test'
 import { randomUUID } from 'node:crypto'
-import { differenceInYears, format } from 'date-fns'
 import { AreaConfirmationBffResponseDto, CommunityServiceProviderBffResponseDto } from '@community-support-api'
 import { login, resetStubs, seedSessionRiskSummary, seedSessionCreateReferralDetails } from '../testUtils'
 import communitySupport from '../mockApis/communitySupport'
@@ -13,14 +12,14 @@ test.describe('Confirm An Area For Referral Page', () => {
   const mockProviderId = randomUUID()
   const mockCrn = 'X123456'
   const mockDateOfBirth = '1975-02-20'
-  const age = differenceInYears(new Date(), new Date(mockDateOfBirth))
-  const formattedDateOfBirth = format(new Date(mockDateOfBirth), 'd MMMM yyyy')
+  const mockFormattedDateOfBirth = '20 Feb 1975 (51 years old)'
 
   const mockPersonDetails = {
     firstName: 'Alex',
     middleNames: '',
     lastName: 'River',
-    dateOfBirth: mockDateOfBirth,
+    personIdentifier: mockCrn,
+    dateOfBirth: mockFormattedDateOfBirth,
     prisonNumbers: [],
   }
 
@@ -47,15 +46,18 @@ test.describe('Confirm An Area For Referral Page', () => {
     await seedSessionCreateReferralDetails(page, { referralCreationDetails: { personDetails: mockPersonDetails } })
   })
 
+  const selectProviderInSession = (page: Parameters<typeof seedSessionRiskSummary>[0]) =>
+    seedSessionRiskSummary(page, mockReferralId, undefined, mockProviderId)
+
   test('should display the delivery partner, area covered, PDUs and person summary', async ({ page }) => {
-    await page.goto(ConfirmAnAreaForReferralPage.url(mockProviderId))
+    await selectProviderInSession(page)
+    await page.goto(ConfirmAnAreaForReferralPage.url())
     const confirmAnAreaForReferralPage = await ConfirmAnAreaForReferralPage.verifyOnPage(page)
 
     await expect(confirmAnAreaForReferralPage.heading).toHaveText('Alex River')
     await expect(confirmAnAreaForReferralPage.cardHeading).toHaveText('Start a Community Support referral')
-    await expect(confirmAnAreaForReferralPage.crn).toHaveText(`CRN: ${mockCrn}`)
-    await expect(confirmAnAreaForReferralPage.dateOfBirth).toHaveText(
-      `Date of birth: ${formattedDateOfBirth} (${age} years old)`,
+    await expect(confirmAnAreaForReferralPage.pageCaption).toHaveText(
+      `CRN: ${mockCrn} | Date of birth: ${mockFormattedDateOfBirth}`,
     )
     await expect(confirmAnAreaForReferralPage.deliveryPartner).toContainText('Ingeus UK Limited')
     await expect(confirmAnAreaForReferralPage.areaCovered).toContainText(
@@ -66,7 +68,8 @@ test.describe('Confirm An Area For Referral Page', () => {
   })
 
   test('should link to select a different area', async ({ page }) => {
-    await page.goto(ConfirmAnAreaForReferralPage.url(mockProviderId))
+    await selectProviderInSession(page)
+    await page.goto(ConfirmAnAreaForReferralPage.url())
     const confirmAnAreaForReferralPage = await ConfirmAnAreaForReferralPage.verifyOnPage(page)
 
     await expect(confirmAnAreaForReferralPage.selectDifferentAreaLink).toHaveAttribute(
@@ -97,7 +100,8 @@ test.describe('Confirm An Area For Referral Page', () => {
       addDetailsOfMainPointOfContactCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
     })
 
-    await page.goto(ConfirmAnAreaForReferralPage.url(mockProviderId))
+    await selectProviderInSession(page)
+    await page.goto(ConfirmAnAreaForReferralPage.url())
     const confirmAnAreaForReferralPage = await ConfirmAnAreaForReferralPage.verifyOnPage(page)
 
     await confirmAnAreaForReferralPage.saveAndContinueButton.click()
@@ -112,6 +116,12 @@ test.describe('Confirm An Area For Referral Page', () => {
     expect(JSON.parse(savedRequest.body)).toEqual({ communityServiceProviderId: mockProviderId })
   })
 
+  test('should redirect to select an area for referral when no provider has been selected', async ({ page }) => {
+    await page.goto(ConfirmAnAreaForReferralPage.url())
+
+    await expect(page).toHaveURL(/\/referral\/task-list\/select-an-area-for-referral$/)
+  })
+
   test('should show an error page when the area confirmation details cannot be retrieved', async ({ page }) => {
     await communitySupport.stubGetAreaConfirmationDetails(
       mockReferralId,
@@ -119,8 +129,9 @@ test.describe('Confirm An Area For Referral Page', () => {
       mockAreaConfirmationDetails,
       500,
     )
+    await selectProviderInSession(page)
 
-    const response = await page.goto(ConfirmAnAreaForReferralPage.url(mockProviderId))
+    const response = await page.goto(ConfirmAnAreaForReferralPage.url())
 
     expect(response?.status()).toBe(500)
     await ErrorPage.verifyOnSPage(page)
@@ -132,15 +143,15 @@ test.describe('Confirm An Area For Referral Page', () => {
       {} as CommunityServiceProviderBffResponseDto,
       500,
     )
+    await selectProviderInSession(page)
 
-    await page.goto(ConfirmAnAreaForReferralPage.url(mockProviderId))
+    await page.goto(ConfirmAnAreaForReferralPage.url())
     const confirmAnAreaForReferralPage = await ConfirmAnAreaForReferralPage.verifyOnPage(page)
 
     const [response] = await Promise.all([
       page.waitForResponse(
         resp =>
-          resp.url().endsWith(`/referral/task-list/confirm-an-area-for-referral/${mockProviderId}`) &&
-          resp.request().method() === 'POST',
+          resp.url().endsWith('/referral/task-list/confirm-an-area-for-referral') && resp.request().method() === 'POST',
       ),
       confirmAnAreaForReferralPage.saveAndContinueButton.click(),
     ])
