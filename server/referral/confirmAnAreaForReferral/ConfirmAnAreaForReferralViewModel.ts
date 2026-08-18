@@ -3,8 +3,7 @@ import { MojInterruptionCard } from '@moj-frontend'
 
 export interface ConfirmAnAreaForReferralContent {
   backLink: string
-  crnLabel: string
-  dateOfBirthLabel: string
+  pageCaption: string
   defaultFieldValue: string
   cardHeading: string
   deliveryPartnerLabel: string
@@ -18,10 +17,7 @@ export interface ConfirmAnAreaForReferralContent {
 export interface ConfirmAnAreaForReferralViewModel {
   backLink: GovukFrontendBackLink
   heading: string
-  crnLabel: string
-  crn: string
-  dateOfBirthLabel: string
-  dateOfBirth: string
+  pageCaption: string
   submitHref: string
   card: MojInterruptionCard
   deliveryPartnerLabel: string

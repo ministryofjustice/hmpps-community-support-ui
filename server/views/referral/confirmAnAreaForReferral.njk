@@ -6,12 +6,7 @@
 {% set mainClasses = "govuk-body" %}
 
 {% block contentBody %}
-  <p class="govuk-body" data-qa="person-summary">
-    <span data-qa="crn">{{ content.crnLabel }}: {{ content.crn }}</span>
-    &nbsp;|&nbsp;
-    <span data-qa="date-of-birth">{{ content.dateOfBirthLabel }}: {{ content.dateOfBirth }}</span>
-  </p>
-
+  <span class="govuk-caption-l" data-qa="person-summary">{{ content.pageCaption }}</span>
   <h1 class="govuk-heading-l" data-qa="heading">{{ content.heading }}</h1>
   <hr class="govuk-section-break govuk-section-break--visible govuk-section-break--m">
 

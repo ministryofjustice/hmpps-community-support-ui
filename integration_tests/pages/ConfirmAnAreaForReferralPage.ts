@@ -6,9 +6,7 @@ export default class ConfirmAnAreaForReferralPage extends AbstractPage {
 
   readonly cardHeading: Locator
 
-  readonly crn: Locator
-
-  readonly dateOfBirth: Locator
+  readonly pageCaption: Locator
 
   readonly deliveryPartner: Locator
 
@@ -24,8 +22,7 @@ export default class ConfirmAnAreaForReferralPage extends AbstractPage {
     super(page)
     this.heading = page.getByTestId('heading')
     this.cardHeading = page.locator('h1.moj-interruption-card__heading')
-    this.crn = page.getByTestId('crn')
-    this.dateOfBirth = page.getByTestId('date-of-birth')
+    this.pageCaption = page.getByTestId('person-summary')
     this.deliveryPartner = page.getByTestId('delivery-partner')
     this.areaCovered = page.getByTestId('area-covered')
     this.pdus = page.getByTestId('pdus')
@@ -33,8 +30,8 @@ export default class ConfirmAnAreaForReferralPage extends AbstractPage {
     this.selectDifferentAreaLink = page.getByRole('link', { name: 'Select a different area' })
   }
 
-  static url(providerId: string): string {
-    return `/referral/task-list/confirm-an-area-for-referral/${providerId}`
+  static url(): string {
+    return '/referral/task-list/confirm-an-area-for-referral'
   }
 
   static async verifyOnPage(page: Page): Promise<ConfirmAnAreaForReferralPage> {

@@ -1,8 +1,6 @@
 import { Response } from 'express'
-import { differenceInYears } from 'date-fns'
 import { Person, AreaConfirmationBffResponseDto } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
-import dateFormat from '../../utils/dateFormat'
 import { ConfirmAnAreaForReferralContent, ConfirmAnAreaForReferralViewModel } from './ConfirmAnAreaForReferralViewModel'
 
 const nonEmptyStringOrDefault = (str: string | undefined | null, defaultValue: string): string =>
@@ -15,7 +13,6 @@ export default class ConfirmAnAreaForReferralPresenter extends PresenterBase<
   constructor(
     private readonly providerDetails: AreaConfirmationBffResponseDto,
     private readonly personDetails: Person,
-    private readonly providerId: string,
   ) {
     super()
   }
@@ -27,18 +24,14 @@ export default class ConfirmAnAreaForReferralPresenter extends PresenterBase<
 
   buildViewModel(res: Response): ConfirmAnAreaForReferralViewModel {
     const content = this.buildStaticContent(res)
-    const { crn, dateOfBirth } = this.providerDetails
-    const dobDate = new Date(dateOfBirth)
-    const age = differenceInYears(new Date(), dobDate)
+    const crn = nonEmptyStringOrDefault(this.personDetails.personIdentifier, content.defaultFieldValue)
+    const dateOfBirth = nonEmptyStringOrDefault(this.personDetails.dateOfBirth, content.defaultFieldValue)
 
     return {
       backLink: { href: content.backLink },
       heading: this.getFullName(),
-      crnLabel: content.crnLabel,
-      crn: nonEmptyStringOrDefault(crn, content.defaultFieldValue),
-      dateOfBirthLabel: content.dateOfBirthLabel,
-      dateOfBirth: `${dateFormat(dobDate)} (${age} years old)`,
-      submitHref: `/referral/task-list/confirm-an-area-for-referral/${this.providerId}`,
+      pageCaption: content.pageCaption.replace('{{ CRN }}', crn).replace('{{ DOB }}', dateOfBirth),
+      submitHref: '/referral/task-list/confirm-an-area-for-referral',
       card: {
         heading: content.cardHeading,
         primaryAction: { text: content.buttonText },

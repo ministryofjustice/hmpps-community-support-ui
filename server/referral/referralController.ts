@@ -407,11 +407,15 @@ export default class ReferralController {
   async showConfirmAnAreaForReferral(req: Request, res: Response) {
     const { username } = res.locals.user
     const draftReferralKey = req.session?.draftReferralId
-    const { providerId } = req.params as { providerId: string }
+    const providerId = req.session?.selectedProviderId
     const personDetails = req.session?.referralCreationDetails?.personDetails
 
     if (!draftReferralKey || !personDetails) {
       return res.redirect('/referral/new/find-a-person')
+    }
+
+    if (!providerId) {
+      return res.redirect('/referral/task-list/select-an-area-for-referral')
     }
 
     const providerDetails = await this.communityServiceProviderService.getCommunityServiceProviderDetails(
@@ -419,17 +423,21 @@ export default class ReferralController {
       providerId,
       username,
     )
-    const presenter = new ConfirmAnAreaForReferralPresenter(providerDetails, personDetails, providerId)
+    const presenter = new ConfirmAnAreaForReferralPresenter(providerDetails, personDetails)
     return presenter.renderPage(res)
   }
 
   async submitConfirmAnAreaForReferral(req: Request, res: Response): Promise<void> {
     const { username } = res.locals.user
     const draftReferralKey = req.session?.draftReferralId
-    const { providerId } = req.params as { providerId: string }
+    const providerId = req.session?.selectedProviderId
 
     if (!draftReferralKey) {
       return res.redirect('/referral/new/find-a-person')
+    }
+
+    if (!providerId) {
+      return res.redirect('/referral/task-list/select-an-area-for-referral')
     }
 
     await this.communityServiceProviderService.saveCommunityServiceProvider(draftReferralKey, providerId, username)
@@ -632,9 +640,9 @@ export default class ReferralController {
     }
 
     if (req.method === 'POST') {
-      return validateRequestBodyAgainstSchema(SelectAreaSchema, req, res, async () => {
-        // TODO add value to session and pass to next page
-        return res.redirect('/referral/task-list')
+      return validateRequestBodyAgainstSchema(SelectAreaSchema, req, res, async form => {
+        req.session.selectedProviderId = form.selectArea
+        return res.redirect('/referral/task-list/confirm-an-area-for-referral')
       })
     }
     const validationErrors = res.locals.errors
@@ -643,6 +651,7 @@ export default class ReferralController {
       req.session.referralCreationDetails.personDetails,
       locations,
       validationErrors,
+      req.session.selectedProviderId,
     )
     return presenter.renderPage(res)
   }

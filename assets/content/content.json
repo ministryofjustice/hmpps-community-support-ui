@@ -749,10 +749,9 @@
       "label": "Additional information"
     }
   },
-  "/referral/task-list/confirm-an-area-for-referral/:id": {
-    "backLink": "/referral/task-list",
-    "crnLabel": "CRN",
-    "dateOfBirthLabel": "Date of birth",
+  "/referral/task-list/confirm-an-area-for-referral": {
+    "backLink": "/referral/task-list/select-an-area-for-referral",
+    "pageCaption": "CRN: {{ CRN }} | Date of birth: {{ DOB }}",
     "defaultFieldValue": "Not available",
     "cardHeading": "Start a Community Support referral",
     "deliveryPartnerLabel": "Delivery partner",
@@ -857,7 +856,7 @@
   "/referral/task-list/select-an-area-for-referral": {
     "areaLabel": "Select the area you want to make a referral to",
     "backLinkText": "Back",
-    "backLinkHref" : "/referral/task-list",
+    "backLinkHref": "/referral/task-list",
     "buttonText": "Continue",
     "heading": "{{ personName }}",
     "pageCaption": "CRN: {{ CRN }} | Date of birth: {{ DOB }}"

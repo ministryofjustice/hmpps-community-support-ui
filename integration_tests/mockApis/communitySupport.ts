@@ -15,6 +15,7 @@ import {
   CaseWorkerDto,
   AreaConfirmationBffResponseDto,
   CommunityServiceProviderBffResponseDto,
+  CommunitySupportServicesProvider,
 } from '@community-support-api'
 import { stubFor } from './wiremock'
 import { duplicateData } from '../testUtils'
@@ -148,6 +149,21 @@ export default {
             },
           ],
         },
+      },
+    }),
+  stubGetCommunitySupportServiceProviders: (
+    communitySupportServices: CommunitySupportServicesProvider['communitySupportServices'],
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: '/community-support/bff/referral-select-a-service',
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: { communitySupportServices },
       },
     }),
   stubCreateReferral: (

@@ -89,6 +89,9 @@ export default function createApp(services: Services): express.Application {
       if (req.body.personId) {
         req.session.personId = req.body.personId
       }
+      if (req.body.selectedProviderId) {
+        req.session.selectedProviderId = req.body.selectedProviderId
+      }
       res.sendStatus(200)
     })
   }

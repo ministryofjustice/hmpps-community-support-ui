@@ -46,6 +46,7 @@ export declare module 'express-session' {
     icsFeedbackSubmission: IcsFeedbackSubmission & { caseReferenceId: string }
     draftReferralId: string
     personId: string
+    selectedProviderId: string
   }
 }
 

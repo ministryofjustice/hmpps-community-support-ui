@@ -688,8 +688,10 @@ describe('ReferralController', () => {
   describe('showConfirmAnAreaForReferral', () => {
     it('should redirect to find a person page when there is no draft referral in session', async () => {
       req = {
-        session: { referralCreationDetails: { personDetails: { firstName: 'Alex', lastName: 'River' } } },
-        params: { providerId: 'provider-id-123' },
+        session: {
+          selectedProviderId: 'provider-id-123',
+          referralCreationDetails: { personDetails: { firstName: 'Alex', lastName: 'River' } },
+        },
       } as unknown as Request
 
       await referralController.showConfirmAnAreaForReferral(req, res)
@@ -700,8 +702,7 @@ describe('ReferralController', () => {
 
     it('should redirect to find a person page when there is no person in session', async () => {
       req = {
-        session: { draftReferralId: 'referral-uuid-1' },
-        params: { providerId: 'provider-id-123' },
+        session: { draftReferralId: 'referral-uuid-1', selectedProviderId: 'provider-id-123' },
       } as unknown as Request
 
       await referralController.showConfirmAnAreaForReferral(req, res)
@@ -710,11 +711,28 @@ describe('ReferralController', () => {
       expect(communityServiceProviderService.getCommunityServiceProviderDetails).not.toHaveBeenCalled()
     })
 
+    it('should redirect to select an area for referral when there is no selected provider in session', async () => {
+      req = {
+        session: {
+          draftReferralId: 'referral-uuid-1',
+          referralCreationDetails: { personDetails: { firstName: 'Alex', lastName: 'River' } },
+        },
+      } as unknown as Request
+
+      await referralController.showConfirmAnAreaForReferral(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('/referral/task-list/select-an-area-for-referral')
+      expect(communityServiceProviderService.getCommunityServiceProviderDetails).not.toHaveBeenCalled()
+    })
+
     it('should render the confirm an area for referral page using the provider details and the person details from session', async () => {
       const personDetails = { firstName: 'Alex', lastName: 'River', dateOfBirth: '1975-02-20' }
       req = {
-        session: { draftReferralId: 'referral-uuid-1', referralCreationDetails: { personDetails } },
-        params: { providerId: 'provider-id-123' },
+        session: {
+          draftReferralId: 'referral-uuid-1',
+          selectedProviderId: 'provider-id-123',
+          referralCreationDetails: { personDetails },
+        },
       } as unknown as Request
       const providerDetails = {
         deliveryPartner: 'Ingeus UK Limited',
@@ -733,7 +751,7 @@ describe('ReferralController', () => {
         'user1',
       )
       expect(referralService.getPersonalDetails).not.toHaveBeenCalled()
-      expect(ConfirmAnAreaForReferralPresenter).toHaveBeenCalledWith(providerDetails, personDetails, 'provider-id-123')
+      expect(ConfirmAnAreaForReferralPresenter).toHaveBeenCalledWith(providerDetails, personDetails)
       expect(ConfirmAnAreaForReferralPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
     })
 
@@ -741,9 +759,9 @@ describe('ReferralController', () => {
       req = {
         session: {
           draftReferralId: 'referral-uuid-1',
+          selectedProviderId: 'provider-id-123',
           referralCreationDetails: { personDetails: { firstName: 'Alex', lastName: 'River' } },
         },
-        params: { providerId: 'provider-id-123' },
       } as unknown as Request
       communityServiceProviderService.getCommunityServiceProviderDetails.mockRejectedValue(
         new Error('error retrieving provider details'),
@@ -759,7 +777,7 @@ describe('ReferralController', () => {
 
   describe('submitConfirmAnAreaForReferral', () => {
     it('should redirect to find a person page when there is no draft referral in session', async () => {
-      req = { session: {}, params: { providerId: 'provider-id-123' } } as unknown as Request
+      req = { session: { selectedProviderId: 'provider-id-123' } } as unknown as Request
 
       await referralController.submitConfirmAnAreaForReferral(req, res)
 
@@ -767,10 +785,18 @@ describe('ReferralController', () => {
       expect(communityServiceProviderService.saveCommunityServiceProvider).not.toHaveBeenCalled()
     })
 
+    it('should redirect to select an area for referral when there is no selected provider in session', async () => {
+      req = { session: { draftReferralId: 'referral-uuid-1' } } as unknown as Request
+
+      await referralController.submitConfirmAnAreaForReferral(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('/referral/task-list/select-an-area-for-referral')
+      expect(communityServiceProviderService.saveCommunityServiceProvider).not.toHaveBeenCalled()
+    })
+
     it('should save the selected provider and redirect to the task list', async () => {
       req = {
-        session: { draftReferralId: 'referral-uuid-1' },
-        params: { providerId: 'provider-id-123' },
+        session: { draftReferralId: 'referral-uuid-1', selectedProviderId: 'provider-id-123' },
       } as unknown as Request
 
       await referralController.submitConfirmAnAreaForReferral(req, res)
@@ -785,8 +811,7 @@ describe('ReferralController', () => {
 
     it('should propagate the error when saving the selected provider fails', async () => {
       req = {
-        session: { draftReferralId: 'referral-uuid-1' },
-        params: { providerId: 'provider-id-123' },
+        session: { draftReferralId: 'referral-uuid-1', selectedProviderId: 'provider-id-123' },
       } as unknown as Request
       communityServiceProviderService.saveCommunityServiceProvider.mockRejectedValue(new Error('error saving provider'))
 
@@ -844,7 +869,25 @@ describe('ReferralController', () => {
       await referralController.showSelectArea(req, res)
 
       expect(referralService.getCommunitySupportServiceProviders).toHaveBeenCalledWith('referral-uuid-1', 'user1')
-      expect(SelectAreaPresenter).toHaveBeenCalledWith(mockPersonDetails, mockLocations, undefined)
+      expect(SelectAreaPresenter).toHaveBeenCalledWith(mockPersonDetails, mockLocations, undefined, undefined)
+      expect(SelectAreaPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+    })
+
+    it('should pass the previously selected provider from session to the presenter', async () => {
+      req = {
+        method: 'GET',
+        session: {
+          draftReferralId: 'referral-uuid-1',
+          selectedProviderId: 'service-1',
+          referralCreationDetails: { personDetails: mockPersonDetails },
+        },
+      } as unknown as Request
+      res = { ...res, locals: { user: { username: 'user1' }, errors: undefined } } as unknown as Response
+      referralService.getCommunitySupportServiceProviders.mockResolvedValue(mockLocations)
+
+      await referralController.showSelectArea(req, res)
+
+      expect(SelectAreaPresenter).toHaveBeenCalledWith(mockPersonDetails, mockLocations, undefined, 'service-1')
       expect(SelectAreaPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
     })
 
@@ -876,23 +919,26 @@ describe('ReferralController', () => {
             selectArea: { text: 'Select an area for the referral' },
           }),
         }),
+        undefined,
       )
       expect(SelectAreaPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
     })
 
-    it('should redirect to task list on a valid POST', async () => {
+    it('should store the selected provider in session and redirect to the confirm an area page on a valid POST', async () => {
+      const session: Record<string, unknown> = {
+        draftReferralId: 'referral-uuid-1',
+        referralCreationDetails: { personDetails: mockPersonDetails },
+      }
       req = {
         method: 'POST',
         body: { selectArea: 'service-1' },
-        session: {
-          draftReferralId: 'referral-uuid-1',
-          referralCreationDetails: { personDetails: mockPersonDetails },
-        },
+        session,
       } as unknown as Request
 
       await referralController.showSelectArea(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith('/referral/task-list')
+      expect(session.selectedProviderId).toBe('service-1')
+      expect(res.redirect).toHaveBeenCalledWith('/referral/task-list/confirm-an-area-for-referral')
     })
   })
 })

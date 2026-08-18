@@ -2,8 +2,6 @@ import { Response } from 'express'
 import { Person, AreaConfirmationBffResponseDto } from '@community-support-api'
 import ConfirmAnAreaForReferralPresenter from './ConfirmAnAreaForReferralPresenter'
 
-jest.useFakeTimers().setSystemTime(new Date('2026-07-15'))
-
 describe('ConfirmAnAreaForReferralPresenter', () => {
   const providerDetails: AreaConfirmationBffResponseDto = {
     deliveryPartner: 'Ingeus UK Limited',
@@ -18,7 +16,8 @@ describe('ConfirmAnAreaForReferralPresenter', () => {
     firstName: 'Alex',
     middleNames: '',
     lastName: 'River',
-    dateOfBirth: '1980-01-01',
+    personIdentifier: 'X123456',
+    dateOfBirth: '20 Feb 1975 (51 years old)',
     prisonNumbers: [],
   } as unknown as Person
 
@@ -26,8 +25,7 @@ describe('ConfirmAnAreaForReferralPresenter', () => {
     locals: {
       content: {
         backLink: '/referral/task-list',
-        crnLabel: 'CRN',
-        dateOfBirthLabel: 'Date of birth',
+        pageCaption: 'CRN: {{ CRN }} | Date of birth: {{ DOB }}',
         defaultFieldValue: 'Not available',
         cardHeading: 'Start a Community Support referral',
         deliveryPartnerLabel: 'Delivery partner',
@@ -41,15 +39,13 @@ describe('ConfirmAnAreaForReferralPresenter', () => {
   } as unknown as Response
 
   test('builds correct view model', () => {
-    const presenter = new ConfirmAnAreaForReferralPresenter(providerDetails, personDetails, 'provider-id-123')
+    const presenter = new ConfirmAnAreaForReferralPresenter(providerDetails, personDetails)
     const viewModel = presenter.buildViewModel(res)
 
     expect(viewModel.backLink.href).toBe('/referral/task-list')
     expect(viewModel.heading).toBe('Alex River')
-    expect(viewModel.crn).toBe('X123456')
-    expect(viewModel.dateOfBirth).toBe('20 February 1975 (51 years old)')
-    expect(viewModel.dateOfBirth).not.toContain(personDetails.dateOfBirth.slice(0, 4))
-    expect(viewModel.submitHref).toBe('/referral/task-list/confirm-an-area-for-referral/provider-id-123')
+    expect(viewModel.pageCaption).toBe('CRN: X123456 | Date of birth: 20 Feb 1975 (51 years old)')
+    expect(viewModel.submitHref).toBe('/referral/task-list/confirm-an-area-for-referral')
 
     expect(viewModel.card).toEqual({
       heading: 'Start a Community Support referral',
@@ -70,7 +66,6 @@ describe('ConfirmAnAreaForReferralPresenter', () => {
     const presenter = new ConfirmAnAreaForReferralPresenter(
       { deliveryPartner: '', contractArea: '', associatedPdus: undefined, crn: 'X123456', dateOfBirth: '1975-02-20' },
       personDetails,
-      'provider-id-123',
     )
 
     const viewModel = presenter.buildViewModel(res)
@@ -78,5 +73,17 @@ describe('ConfirmAnAreaForReferralPresenter', () => {
     expect(viewModel.deliveryPartner).toBe('Not available')
     expect(viewModel.areaCovered).toBe('Not available')
     expect(viewModel.pdus).toEqual([])
+  })
+
+  test('falls back to default values when person identifier or date of birth are missing', () => {
+    const presenter = new ConfirmAnAreaForReferralPresenter(providerDetails, {
+      ...personDetails,
+      personIdentifier: null,
+      dateOfBirth: '',
+    } as unknown as Person)
+
+    const viewModel = presenter.buildViewModel(res)
+
+    expect(viewModel.pageCaption).toBe('CRN: Not available | Date of birth: Not available')
   })
 })
