@@ -30,8 +30,6 @@ export default function routes({
   const referralController = new ReferralController(referralService, personService, communityServiceProviderService)
   const getOrPost = (path: string, handler: RequestHandler) =>
     router.route(path).get(asyncMiddleware(handler)).post(asyncMiddleware(handler))
-
-  const referralController = new ReferralController(referralService, personService)
   const caseListController = new CaseListController(caseListService)
   const appointmentController = new AppointmentController(referralService, appointmentService, referenceDataService)
   const icsFeedbackController = new IcsFeedbackController(appointmentService)
