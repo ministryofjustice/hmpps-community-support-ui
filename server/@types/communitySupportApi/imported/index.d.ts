@@ -140,6 +140,23 @@ export interface paths {
     patch: operations['updateServiceEndDatePage']
     trace?: never
   }
+  '/draft-referral/{referralId}/service-days': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    /** Update service days page data */
+    patch: operations['updateServiceDaysPage']
+    trace?: never
+  }
   '/draft-referral/person-needs/{referralId}': {
     parameters: {
       query?: never
@@ -234,6 +251,23 @@ export interface paths {
     }
     /** Get service end date page data */
     get: operations['getServiceEndDatePage']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/service-days-page/{referralId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get service days page data */
+    get: operations['getServiceDaysPage']
     put?: never
     post?: never
     delete?: never
@@ -909,6 +943,13 @@ export interface components {
       /** @description The reason the target service completion date was set */
       target_service_completion_reason?: string
     }
+    ServiceDaysPageDto: {
+      /**
+       * Format: int32
+       * @description The number of service days allocated to the referral
+       */
+      service_days?: number
+    }
     CriminogenicNeedsRequest: {
       hasAccommodationNeeds?: boolean | null
       accommodationDetails?: string | null
@@ -1142,6 +1183,8 @@ export interface components {
       referenceNumber?: string | null
       /** Format: date-time */
       createdDate: string
+      /** Format: int32 */
+      serviceDays?: number | null
       /** Format: date-time */
       targetServiceCompletionDate?: string | null
       targetServiceCompletionDateReason?: string | null
@@ -1663,6 +1706,41 @@ export interface operations {
       }
     }
   }
+  updateServiceDaysPage: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ServiceDaysPageDto']
+      }
+    }
+    responses: {
+      /** @description Service days details updated */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ServiceDaysPageDto']
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
   updateCriminogenicNeeds: {
     parameters: {
       query?: never
@@ -1843,6 +1921,37 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['ServiceEndDatePageDto']
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getServiceDaysPage: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Service days details found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ServiceDaysPageDto']
         }
       }
       /** @description Referral not found */
