@@ -11,8 +11,7 @@ import { GovukFrontendCheckboxesWithConditional, WithConditional } from '../../@
 import { buildTextarea, not } from '../../utils/utils'
 import { ErrorMiddlewareErrors } from '../../@types/express'
 
-type BackendDataType = Omit<AdditionalSupportNeedsDto, 'needsAdditionalSupport'>
-type FieldData = Omit<BackendDataType, 'refereeName'>
+type FieldData = Omit<AdditionalSupportNeedsDto, 'refereeName' | 'needsAdditionalSupport'>
 type TriState = boolean | null
 
 const lookup: Record<string, keyof FieldData> = {

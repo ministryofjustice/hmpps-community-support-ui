@@ -49,6 +49,7 @@ export default class DraftReferralController {
           additionalSupportNeeds.refereeName.firstName,
         )
         const resolvedData = additionalSupportNeedsResolver(postBodyData, additionalSupportNeeds)
+        console.log('resolved :', JSON.stringify(resolvedData, null, 2))
         const presenter = new AdditionalSuportNeedsPresenter(resolvedData, validationErrors)
         return presenter.renderPage(res)
       } catch (e) {
