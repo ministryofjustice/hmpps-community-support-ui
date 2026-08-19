@@ -619,7 +619,7 @@ export default class ReferralController {
 
         await this.referralService.updateServiceEndDatePage(referralId, updateData, username)
         delete req.session.serviceEndDateForm
-        return res.redirect('/referral/task-list')
+        return res.redirect('/referral/task-list/service-days')
       } catch (e) {
         logger.error(e)
         const updateErrorMessage =

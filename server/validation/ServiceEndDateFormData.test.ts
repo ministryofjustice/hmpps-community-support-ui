@@ -34,7 +34,7 @@ describe('ServiceEndDateSchema', () => {
     })
 
     expect(result.success).toBe(false)
-    expect(result.error?.issues[0].message).toBe('Enter a real date')
+    expect(result.error?.issues[0].message).toBe('Enter a date in the correct format')
   })
 
   test('rejects date before today', () => {
@@ -49,7 +49,7 @@ describe('ServiceEndDateSchema', () => {
     })
 
     expect(result.success).toBe(false)
-    expect(result.error?.issues[0].message).toBe('The date the service needs to be completed by must be today or later')
+    expect(result.error?.issues[0].message).toBe('The date the service needs to be completed by must be in the future')
   })
 
   test('rejects blank reason', () => {

@@ -2,8 +2,8 @@ import { z } from 'zod'
 import { isBefore, isExists, startOfDay } from 'date-fns'
 
 const DATE_REQUIRED_MESSAGE = 'Enter the date the service needs to be completed by'
-const DATE_INVALID_MESSAGE = 'Enter a real date'
-const DATE_BEFORE_TODAY_MESSAGE = 'The date the service needs to be completed by must be today or later'
+const DATE_INVALID_MESSAGE = 'Enter a date in the correct format'
+const DATE_BEFORE_TODAY_MESSAGE = 'The date the service needs to be completed by must be in the future'
 const REASON_REQUIRED_MESSAGE = 'Enter why it needs to be completed by this date'
 
 const parseDatePart = (value: string): number | undefined => {
