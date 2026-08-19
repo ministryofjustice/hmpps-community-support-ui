@@ -1,6 +1,9 @@
 import type { Response } from 'express'
+import { GlobalContent } from '../../assets/content/GlobalContent'
 
-export default abstract class PresenterBase<PageViewModel, StaticContentType> {
+export default abstract class PresenterBase<
+  PageViewModel, 
+  StaticContentType extends Record<string, any> = GlobalContent> {
   constructor() {}
 
   protected abstract buildViewModel(res: Response): PageViewModel
