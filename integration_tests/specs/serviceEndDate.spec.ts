@@ -73,7 +73,7 @@ test.describe('Service End Date Page', () => {
     await serviceEndDatePage.clickSaveAndContinue()
 
     await expect(page).toHaveURL(ServiceEndDatePage.url())
-    await expect(serviceEndDatePage.errorMessages).toContainText('Enter a real date')
+    await expect(serviceEndDatePage.errorMessages).toContainText('Enter a date in the correct format')
   })
 
   test('AC5.2: should show error when date is before today', async ({ page }) => {
@@ -86,7 +86,7 @@ test.describe('Service End Date Page', () => {
 
     await expect(page).toHaveURL(ServiceEndDatePage.url())
     await expect(serviceEndDatePage.errorMessages).toContainText(
-      'The date the service needs to be completed by must be today or later',
+      'The date the service needs to be completed by must be in the future',
     )
   })
 
@@ -128,7 +128,7 @@ test.describe('Service End Date Page', () => {
     await serviceEndDatePage.reasonInput.fill(validSubmissionReason)
     await serviceEndDatePage.clickSaveAndContinue()
 
-    await expect(page).toHaveURL('/referral/task-list')
+    await expect(page).toHaveURL('/referral/task-list/service-days')
 
     const matchingRequests = await getMatchingRequests({
       method: 'PATCH',
