@@ -15,8 +15,10 @@ import {
   type CriminogenicNeedsRequest,
   ActionPlanSummaryDto,
   ServiceEndDatePageDto,
+  AdditionalSupportNeedsRequest,
 } from '@community-support-api'
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
+import { NeedsAnInterpreterFormData } from '../validation/NeedsAnInterpreterFormDataSchema'
 
 export default class ReferralService {
   constructor(private readonly communitySupportApiClient: CommunitySupportApiClient) {}
@@ -122,5 +124,13 @@ export default class ReferralService {
     username: string,
   ): Promise<CommunitySupportServicesProvider> {
     return this.communitySupportApiClient.getCommunitySupportServiceProviders(personDetailsId, username)
+  }
+
+  submitAdditionalSupportNeeds(data: AdditionalSupportNeedsRequest, referralId: string, username: string) {
+    return this.communitySupportApiClient.submitAdditionalSupportNeeds(data, referralId, username)
+  }
+
+  submitNeedsAnInterpreter(body: NeedsAnInterpreterFormData, draftReferalId: string, username: string) {
+    return this.communitySupportApiClient.submitNeedsAnInterpreter(body, draftReferalId, username)
   }
 }

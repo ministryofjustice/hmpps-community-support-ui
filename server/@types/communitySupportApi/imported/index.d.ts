@@ -1010,16 +1010,16 @@ export interface components {
     }
     No: {
       selected: 'No'
-    } & Omit<WithRequired<components['schemas']['Selection'], 'selected'>, 'selected'>
+    } & Omit<components['schemas']['Selection'], 'selected'>
     Selection: {
-      selected?: boolean | null
+      selected: string
     }
     Unanswered: {
       selected: 'Unanswered'
-    } & Omit<WithRequired<components['schemas']['Selection'], 'selected'>, 'selected'>
+    } & Omit<components['schemas']['Selection'], 'selected'>
     Yes: {
       selected: 'Yes'
-    } & (Omit<WithRequired<components['schemas']['Selection'], 'selected'>, 'selected'> & {
+    } & (Omit<components['schemas']['Selection'], 'selected'> & {
       value: string
     })
     CommunityServiceProviderRequest: {

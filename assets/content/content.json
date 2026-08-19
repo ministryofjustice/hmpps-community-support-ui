@@ -52,8 +52,17 @@
         "href": "/cases-in-progress"
       }
     ],
-    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
-    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
+    "unassignedColumnHeaders": [
+      "Name",
+      "CRN/prison number",
+      "Date received"
+    ],
+    "inProgressColumnHeaders": [
+      "Name",
+      "CRN/prison number",
+      "Assigned to",
+      "Date received"
+    ],
     "noCasesMessage": "There are no {0} cases to view."
   },
   "/cases-in-progress": {
@@ -72,8 +81,17 @@
         "href": "/cases-in-progress"
       }
     ],
-    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
-    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
+    "unassignedColumnHeaders": [
+      "Name",
+      "CRN/prison number",
+      "Date received"
+    ],
+    "inProgressColumnHeaders": [
+      "Name",
+      "CRN/prison number",
+      "Assigned to",
+      "Date received"
+    ],
     "noCasesMessage": "There are no {0} cases to view."
   },
   "/referral-details/:id": {
@@ -179,8 +197,15 @@
         "href": "/change-log"
       }
     ],
-    "progressActiveColumnHeaders": ["Date and time", "Status", "Action"],
-    "progressInactiveColumnHeaders": ["Status", "Action"],
+    "progressActiveColumnHeaders": [
+      "Date and time",
+      "Status",
+      "Action"
+    ],
+    "progressInactiveColumnHeaders": [
+      "Status",
+      "Action"
+    ],
     "historySummary": "View ICS history"
   },
   "/referral/:id/action-plan": {
@@ -761,6 +786,30 @@
     "selectDifferentAreaText": "Select a different area",
     "selectDifferentAreaHref": "/referral/task-list/select-an-area-for-referral"
   },
+  "/referral/task-list/select-person-needs": {
+    "pageHeader": "Select what needs the referral should focus on",
+    "hint": "Select all that apply.",
+    "checkboxes": {
+      "accommodationLabel": "Accommodation",
+      "accommodationHint": "Give details about {{ firstName }}'s accommodation needs",
+      "employmentLabel": "Employment and education",
+      "employmentHint": "Give details about {{ firstName }}'s employment and education needs",
+      "financesLabel": "Finances",
+      "financesHint": "Give details about {{ firstName }}'s finance needs",
+      "relationshipsLabel": "Personal relationships and community",
+      "relationshipsHint": "Give details about {{ firstName }}'s personal relationships and community needs",
+      "drugUseLabel": "Drug use",
+      "drugUseHint": "Give details about {{ firstName }}'s drug use needs",
+      "alcoholUseLabel": "Alcohol use",
+      "alcoholUseHint": "Give details about {{ firstName }}'s alcohol use needs",
+      "healthLabel": "Health and wellbeing",
+      "healthHint": "Give details about {{ firstName }}'s health and wellbeing needs",
+      "thinkingLabel": "Thinking, behaviours and attitudes",
+      "thinkingHint": "Give details about {{ firstName }}'s thinking, behaviours and attitudes needs"
+    },
+    "submitButton": "Save and continue",
+    "backLink": "/referral/task-list"
+  },
   "/referral/task-list/additional-support-needs": {
     "header": "What does {{ firstName }} need support with to attend or take part in sessions?",
     "hint": "Select all that apply.",
@@ -772,7 +821,7 @@
       },
       {
         "label": "Mental or emotional health",
-        "hint": "For example, depression, anxiety, behavioural issues and learning difficulties.",
+        "hint": "For example, depression, anxiety, behavioural issues or learning difficulties.",
         "detailsLabel": "Give details of any mental or emotional health issues and how the delivery partner can support {{ firstName }}"
       },
       {
@@ -806,15 +855,16 @@
         "detailsLabel": "Give details of any other needs and how the delivery partner can support {{ firstName }}"
       }
     ],
-    "defaultItemLabel": "{{ firstName }} does not need any additional support"
+    "defaultItemLabel": "{{ firstName }} does not need any additional support",
+    "button": "Save and continue",
+    "backlink": "/referral/task-list"
   },
   "/referral/task-list/needs-an-interpreter": {
-    "pageHeader": "Dose {{ name }} need an interpreter?",
-    "radioHeader": "What language does {{ name }} need ",
+    "pageHeader": "Does {{ name }} need an interpreter?",
     "yesOptionLabel": "Yes",
     "yesCoditional": "What language does {{ name }} need an interpreter for?",
     "noOptionLabel": "No",
-    "button": "Save and Continue",
+    "button": "Save and continue",
     "backlink": "/referral/task-list/additional-support-needs"
   },
   "/referral/task-list/select-person-needs": {

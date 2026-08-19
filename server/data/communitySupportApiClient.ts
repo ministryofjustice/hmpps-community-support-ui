@@ -32,6 +32,8 @@ import type {
   AreaConfirmationBffResponseDto,
   CommunityServiceProviderRequest,
   CommunityServiceProviderBffResponseDto,
+  AdditionalSupportNeedsRequest,
+  NeedsInterpreterRequest,
   ServiceEndDatePageDto,
 } from '@community-support-api'
 import config from '../config'
@@ -224,5 +226,13 @@ export default class CommunitySupportApiClient extends RestClient {
     username: string,
   ): Promise<ServiceEndDatePageDto> {
     return this.patch({ path: `/referral/${referralId}/service-end-date`, data }, asSystem(username))
+  }
+
+  submitAdditionalSupportNeeds(data: AdditionalSupportNeedsRequest, referralId: string, username: string) {
+    return this.patch({ path: `/draft-referral/additional-support-needs/${referralId}`, data }, asSystem(username))
+  }
+
+  submitNeedsAnInterpreter(data: NeedsInterpreterRequest, draftReferalId: string, username: string) {
+    return this.patch({ path: `/draft-referral/needs-interpreter/${draftReferalId}`, data }, asSystem(username))
   }
 }

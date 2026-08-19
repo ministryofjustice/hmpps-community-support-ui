@@ -51,5 +51,7 @@ export const validateRequestBodyAgainstSchema = <Schema extends ZodType>(
           req.flash(`${field}Error`, `${errorMessage}`)
         }
       })
+      const formData = Object.fromEntries(Object.entries(req.body).filter(([key]) => key !== '_csrf'))
+      req.flash('value', JSON.stringify(formData))
       return res.redirect(req.url)
     })

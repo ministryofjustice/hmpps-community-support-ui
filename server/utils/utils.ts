@@ -88,14 +88,28 @@ export const buildInput = ({ name, label, value, hint, errorMessage, spellcheck 
     </div>`
 }
 
-export const buildTextarea = ({ name, label, value, hint, errorMessage, spellcheck }: GovukFrontendTextarea) => {
+export const buildTextarea = ({
+  name,
+  label,
+  value,
+  hint,
+  errorMessage,
+  spellcheck,
+  attributes,
+  rows,
+}: GovukFrontendTextarea) => {
+  const attributesText = attributes
+    ? `${Object.entries(attributes)
+        .map(([attribute, attributeValue]) => `${attribute}="${attributeValue}"`)
+        .join(' ')}`
+    : ''
   return `<div class="govuk-form-group">
     <h1 class="govuk-label-wrapper">
       ${buildLabel(name, label)}
     </h1>
     ${hint ? buildHint(hint) : ''}
     ${errorMessage ? buildInputErrors(name, errorMessage) : ''}
-    <textarea class="govuk-textarea" id="${name}" name="${name}" type="text" rows="5" spellcheck="${spellcheck || false}" >${escapeHtml(value) || ''}</textarea>
+    <textarea class="govuk-textarea" id="${name}" name="${name}" rows="${rows}" spellcheck="${spellcheck || false}" ${attributesText}>${escapeHtml(value) || ''}</textarea>
   </div>`
 }
 
@@ -109,3 +123,6 @@ ${items.map(({ value, text, selected }) => `<option value="${value}" ${selected 
   </select>
 </div>`
 }
+
+export type TriState = boolean | null
+export const not = (state: TriState): TriState => (state === null ? null : !state)
