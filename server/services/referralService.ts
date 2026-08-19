@@ -21,7 +21,7 @@ import CommunitySupportApiClient from '../data/communitySupportApiClient'
 import { NeedsAnInterpreterFormData } from '../validation/NeedsAnInterpreterFormDataSchema'
 
 export default class ReferralService {
-  constructor(private readonly communitySupportApiClient: CommunitySupportApiClient) { }
+  constructor(private readonly communitySupportApiClient: CommunitySupportApiClient) {}
 
   getCaseDetailsByCaseIdentifier(caseIdentifier: string, username: string): Promise<ReferralDetailsResponseDto> {
     return this.communitySupportApiClient.getCaseDetailsById(caseIdentifier, username)
