@@ -86,6 +86,7 @@ export type {
   ConfirmPersonDetailsBffDto,
   AdditionalSupportNeedsDto,
   ServiceEndDatePageDto,
+  ServiceDaysPageDto,
   NeedsInterpreterBffResponseDto,
   Selection,
   CommunitySupportRiskDto,
