@@ -636,9 +636,9 @@ export default class ReferralController {
   async showServiceDaysPage(req: Request, res: Response) {
     const { username } = res.locals.user
     const referralId = req.session?.draftReferralId
-    const formData = req.session.serviceDaysForm
+    const postFormDataRaw = req.flash('value').at(0)
+    const formData = JSON.parse(postFormDataRaw || '{}')
     const validationErrors = res.locals.errors
-    delete req.session.serviceDaysForm
 
     if (!referralId) {
       return res.redirect('/referral/task-list')
@@ -646,14 +646,10 @@ export default class ReferralController {
 
     try {
       const data = await this.referralService.getServiceDaysPage(referralId, username)
-      res.locals.errors = validationErrors
       const presenter = new ServiceDaysPagePresenter(
         data,
-        formData
-          ? {
-              serviceDays: formData.service_days,
-            }
-          : undefined,
+        validationErrors,
+        formData 
       )
       return presenter.renderPage(res)
     } catch (error) {
@@ -671,18 +667,13 @@ export default class ReferralController {
       return res.redirect('/referral/task-list')
     }
 
-    req.session.serviceDaysForm = {
-      service_days: req.body.service_days,
-    }
-
     return validateRequestBodyAgainstSchema(ServiceDaysSchema, req, res, async (form: ServiceDaysFormData) => {
       try {
         const updateData = {
-          service_days: form.service_days,
+          service_days: form.serviceDays,
         }
 
         await this.referralService.updateServiceDaysPage(referralId, updateData, username)
-        delete req.session.serviceDaysForm
         return res.redirect('/referral/task-list/check-offence')
       } catch (e) {
         logger.error(e)

@@ -5,7 +5,7 @@ const SERVICE_DAYS_INVALID_MESSAGE = 'The number of days you will use for this s
 const SERVICE_DAYS_OUT_OF_RANGE_MESSAGE = 'Number of days must be between 1 and 99'
 
 export const ServiceDaysSchema = z.object({
-  service_days: z
+  serviceDays: z
     .string()
     .nonempty({ error: SERVICE_DAYS_REQUIRED_MESSAGE })
     .regex(/^[0-9]*$/, { error: SERVICE_DAYS_INVALID_MESSAGE })

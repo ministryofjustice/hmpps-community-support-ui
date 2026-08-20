@@ -2,10 +2,12 @@ import { Response } from 'express'
 import { ServiceDaysPageDto } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
 import { ServiceDaysPageViewModel, ServiceDaysPageContent } from './ServiceDaysPageModel'
+import { ErrorMiddlewareErrors } from '../../@types/express'
 
 export default class ServiceDaysPagePresenter extends PresenterBase<ServiceDaysPageViewModel, ServiceDaysPageContent> {
   constructor(
     private readonly data: ServiceDaysPageDto,
+    private readonly validationErrors: ErrorMiddlewareErrors,
     private readonly formData?: { serviceDays?: string },
   ) {
     super()
@@ -35,15 +37,15 @@ export default class ServiceDaysPagePresenter extends PresenterBase<ServiceDaysP
         text: content.continueButton,
       },
       input: {
-        id: 'service_days',
-        name: 'service_days',
+        id: 'serviceDays',
+        name: 'serviceDays',
         type: 'text',
         classes: 'govuk-input--width-2',
         value: serviceDays ? serviceDays.toString() : '',
         label: {
           text: content.label,
         },
-        errorMessage: res.locals.errors?.messages?.service_days,
+        errorMessage: this.validationErrors.messages['serviceDays'] ?? null,
         attributes: {
           'data-testid': 'service-days-input',
         },

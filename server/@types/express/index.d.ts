@@ -42,9 +42,6 @@ export declare module 'express-session' {
       target_service_completion_date_year?: string
       target_service_completion_reason?: string
     }
-    serviceDaysForm: {
-      service_days?: string
-    }
     referralProgressBanner?: ReferralProgressBannerContent
     icsFeedbackSubmission: IcsFeedbackSubmission & { caseReferenceId: string }
     draftReferralId: string
