@@ -28,8 +28,6 @@ export default class ServiceDaysPagePresenter extends PresenterBase<ServiceDaysP
       pageTitle: content.pageTitle,
       pageHeader: content.pageHeader,
       hint: content.hint,
-      label: content.label,
-      continueButton: content.continueButton,
       backLink: {
         href: content.backLink,
       },
@@ -47,7 +45,6 @@ export default class ServiceDaysPagePresenter extends PresenterBase<ServiceDaysP
         },
         errorMessage: res.locals.errors?.messages?.service_days,
       },
-      serviceDays,
     }
   }
 }
