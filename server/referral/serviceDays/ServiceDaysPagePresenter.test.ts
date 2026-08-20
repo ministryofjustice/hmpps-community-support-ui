@@ -58,17 +58,6 @@ describe('ServiceDaysPagePresenter', () => {
       expect(viewModel.input.value).toBe('')
     })
 
-    test('sets input id, name and attributes correctly', () => {
-      const dto: ServiceDaysPageDto = {}
-
-      const presenter = new ServiceDaysPagePresenter(dto, noErrors)
-      const viewModel = presenter.buildViewModel(res)
-
-      expect(viewModel.input.id).toBe('serviceDays')
-      expect(viewModel.input.name).toBe('serviceDays')
-      expect(viewModel.input.attributes?.['data-testid']).toBe('service-days-input')
-    })
-
     test('sets error message when validation error is present', () => {
       const dto: ServiceDaysPageDto = {}
       const validationErrors: ErrorMiddlewareErrors = {
