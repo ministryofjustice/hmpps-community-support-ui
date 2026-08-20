@@ -10,7 +10,7 @@ import IcsFeedbackController from '../appointment/icsFeedbackController'
 import asyncMiddleware from '../middleware/asyncMiddleware'
 import LandingController from '../landing/landingController'
 import ActionPlanController from '../referral/actionPlan/actionPlanController'
-import DraftReferralController from '../referral/DraftReferralController'
+import DraftReferralController from '../referral/draftReferralController'
 
 export default function routes({
   auditService,
@@ -211,13 +211,13 @@ export default function routes({
 
   post('/referral/task-list/select-person-needs', (req, res) => referralController.recordPersonNeeds(req, res))
 
-  get('/referral/task-list/service-end-date', (req, res) => referralController.showServiceEndDatePage(req, res))
+  get('/referral/task-list/service-end-date', (req, res) => draftReferralController.showServiceEndDatePage(req, res))
 
-  post('/referral/task-list/service-end-date', (req, res) => referralController.updateServiceEndDatePage(req, res))
+  post('/referral/task-list/service-end-date', (req, res) => draftReferralController.updateServiceEndDatePage(req, res))
 
-  get('/referral/task-list/service-days', (req, res) => referralController.showServiceDaysPage(req, res))
+  get('/referral/task-list/service-days', (req, res) => draftReferralController.showServiceDaysPage(req, res))
 
-  post('/referral/task-list/service-days', (req, res) => referralController.updateServiceDaysPage(req, res))
+  post('/referral/task-list/service-days', (req, res) => draftReferralController.updateServiceDaysPage(req, res))
 
   getOrPost('/referral/task-list/select-an-area-for-referral', (req, res) =>
     referralController.showSelectArea(req, res),
