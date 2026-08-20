@@ -22,7 +22,7 @@ export default class ServiceDaysPagePresenter extends PresenterBase<ServiceDaysP
     return content as ServiceDaysPageContent
   }
 
-  protected buildViewModel(res: Response): ServiceDaysPageViewModel {
+  buildViewModel(res: Response): ServiceDaysPageViewModel {
     const content = this.buildStaticContent(res)
     const serviceDays = this.formData?.serviceDays ?? this.data.service_days
 
