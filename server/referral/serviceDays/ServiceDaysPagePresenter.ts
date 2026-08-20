@@ -31,8 +31,21 @@ export default class ServiceDaysPagePresenter extends PresenterBase<ServiceDaysP
       label: content.label,
       continueButton: content.continueButton,
       backLink: {
-        text: 'Back',
         href: content.backLink,
+      },
+      button: {
+        text: content.continueButton,
+      },
+      input: {
+        id: 'service_days',
+        name: 'service_days',
+        type: 'text',
+        classes: 'govuk-input--width-2',
+        value: serviceDays ? serviceDays.toString() : '',
+        label: {
+          text: content.label,
+        },
+        errorMessage: res.locals.errors?.messages?.service_days,
       },
       serviceDays,
     }

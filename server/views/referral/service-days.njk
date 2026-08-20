@@ -6,30 +6,12 @@
 {% block contentBody %}
   <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
 
-  {% if content.hint %}
-    <p class="govuk-body">{{ content.hint }}</p>
-  {% endif %}
+  <p class="govuk-body">{{ content.hint }}</p>
 
   <form method="POST" action="/referral/task-list/service-days">
     <input type="hidden" name="_csrf" value="{{csrfToken}}">
-    {{ govukInput({
-      label: {
-        text: content.label
-      },
-      id: "service_days",
-      name: "service_days",
-      type: "text",
-      value: content.serviceDays,
-      errorMessage: errors.messages.service_days,
-      classes: "govuk-input--width-2",
-      attributes: {
-        min: "1"
-      }
-    }) }}
+    {{ govukInput(content.input) }}
 
-    {{ govukButton({
-      text: content.continueButton,
-      type: "submit"
-    }) }}
+    {{ govukButton(content.button) }}
   </form>
 {% endblock %}

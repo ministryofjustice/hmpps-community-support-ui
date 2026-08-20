@@ -1,4 +1,4 @@
-import { GovukFrontendBackLink } from '@govuk-frontend'
+import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendInput } from '@govuk-frontend'
 
 export interface ServiceDaysPageContent {
   pageTitle: string
@@ -16,5 +16,7 @@ export interface ServiceDaysPageViewModel {
   label?: string
   continueButton: string
   backLink: GovukFrontendBackLink
+  button: GovukFrontendButton
+  input: GovukFrontendInput,
   serviceDays?: number | string
 }
