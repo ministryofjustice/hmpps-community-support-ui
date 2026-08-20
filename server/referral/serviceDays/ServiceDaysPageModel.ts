@@ -12,7 +12,7 @@ export interface ServiceDaysPageContent {
 export interface ServiceDaysPageViewModel {
   pageTitle: string
   pageHeader: string
-  hint: string
+  bodyText1: string
   backLink: GovukFrontendBackLink
   button: GovukFrontendButton
   input: GovukFrontendInput

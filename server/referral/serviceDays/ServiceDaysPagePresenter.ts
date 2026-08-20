@@ -29,7 +29,7 @@ export default class ServiceDaysPagePresenter extends PresenterBase<ServiceDaysP
     return {
       pageTitle: content.pageTitle,
       pageHeader: content.pageHeader,
-      hint: content.hint,
+      bodyText1: content.bodyText1,
       backLink: {
         href: content.backLink,
       },
@@ -43,7 +43,7 @@ export default class ServiceDaysPagePresenter extends PresenterBase<ServiceDaysP
         classes: 'govuk-input--width-2',
         value: serviceDays ? serviceDays.toString() : '',
         label: {
-          text: content.label,
+          text: content.bodyText2,
         },
         errorMessage: this.validationErrors.messages['serviceDays'] ?? null,
         attributes: {

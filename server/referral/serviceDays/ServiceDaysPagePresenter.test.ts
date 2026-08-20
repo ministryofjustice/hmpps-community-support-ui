@@ -5,6 +5,16 @@ import { ErrorMiddlewareErrors } from '../../@types/express'
 import loadContentData from '../../testutils/loadContentData'
 
 const content = loadContentData('/referral/task-list/service-days')
+const pageContent = {
+    pageTitle: 'How many days will you use for this service?  - Community Support',
+    h2: 'How many days will you use for this service?',
+    bodyText1: 'Enter the maximum number of days you want to use for this service. Any unused days will be given back. For community orders or suspended sentences, consider how many RAR days to allocate.',
+    bodyText2: 'Sessions delivered in the community are enforceable.',
+    continueButton: 'Save and continue',
+}
+const errorMessage = {
+  nothingEntered: 'Enter the number of days you will use for this service',
+} as const
 
 describe('ServiceDaysPagePresenter', () => {
   describe('buildViewModel', () => {
@@ -22,11 +32,12 @@ describe('ServiceDaysPagePresenter', () => {
       const presenter = new ServiceDaysPagePresenter(dto, noErrors)
       const viewModel = presenter.buildViewModel(res)
 
-      expect(viewModel.pageTitle).toBe(content.pageTitle)
-      expect(viewModel.pageHeader).toBe(content.pageHeader)
-      expect(viewModel.hint).toBe(content.hint)
+      expect(viewModel.pageTitle).toBe(pageContent.pageTitle)
+      expect(viewModel.pageHeader).toBe(pageContent.h2)
+      expect(viewModel.bodyText1).toBe(pageContent.bodyText1)
       expect(viewModel.backLink.href).toBe(content.backLink)
-      expect(viewModel.button.text).toBe(content.continueButton)
+      expect(viewModel.button.text).toBe(pageContent.continueButton)
+      expect(viewModel.input.label.text).toBe(pageContent.bodyText2)
       expect(viewModel.input.value).toBe('20')
       expect(viewModel.input.errorMessage).toBeNull()
     })
@@ -43,7 +54,7 @@ describe('ServiceDaysPagePresenter', () => {
     test('renders empty input when DTO has no service_days and no form data', () => {
       const dto: ServiceDaysPageDto = {}
 
-      const presenter = new ServiceDaysPagePresenter(dto, noErrors)
+      const presenter = new ServiceDaysPagePresenter(dto, noErrors, undefined)
       const viewModel = presenter.buildViewModel(res)
 
       expect(viewModel.input.value).toBe('')
@@ -62,13 +73,13 @@ describe('ServiceDaysPagePresenter', () => {
       const dto: ServiceDaysPageDto = {}
       const validationErrors: ErrorMiddlewareErrors = {
         list: [],
-        messages: { serviceDays: { text: 'Enter the number of days you will use for this service' } },
+        messages: { serviceDays: { text: errorMessage.nothingEntered } },
       }
 
       const presenter = new ServiceDaysPagePresenter(dto, validationErrors)
       const viewModel = presenter.buildViewModel(res)
 
-      expect(viewModel.input.errorMessage).toEqual({ text: 'Enter the number of days you will use for this service' })
+      expect(viewModel.input.errorMessage).toEqual({ text: errorMessage.nothingEntered })
     })
   })
 

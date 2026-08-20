@@ -856,12 +856,12 @@
     "updateError": "Something has gone wrong updating the service end date"
   },
   "/referral/task-list/service-days": {
-    "pageTitle": "How many days will you use for this service?",
+    "pageTitle": "How many days will you use for this service?  - Community Support",
     "pageHeader": "How many days will you use for this service?",
-    "hint": "Enter the maximum number of days you want to use for this service. Any unused days will be given back. For community orders or suspended sentences, consider how many RAR days to allocate.",
-    "label": "Sessions delivered in the community are enforceable.",
+    "bodyText1": "Enter the maximum number of days you want to use for this service. Any unused days will be given back. For community orders or suspended sentences, consider how many RAR days to allocate.",
+    "bodyText2": "Sessions delivered in the community are enforceable.",
     "backLink": "/referral/task-list/service-end-date",
-    "continueButton": "Save and continue "
+    "continueButton": "Save and continue"
   },
   "/referral/task-list/select-an-area-for-referral": {
     "areaLabel": "Select the area you want to make a referral to",
