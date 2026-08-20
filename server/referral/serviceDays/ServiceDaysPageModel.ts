@@ -15,5 +15,5 @@ export interface ServiceDaysPageViewModel {
   hint: string
   backLink: GovukFrontendBackLink
   button: GovukFrontendButton
-  input: GovukFrontendInput,
+  input: GovukFrontendInput
 }

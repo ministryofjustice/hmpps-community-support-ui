@@ -44,6 +44,9 @@ export default class ServiceDaysPagePresenter extends PresenterBase<ServiceDaysP
           text: content.label,
         },
         errorMessage: res.locals.errors?.messages?.service_days,
+        attributes: {
+          'data-testid': 'service-days-input',
+        },
       },
     }
   }

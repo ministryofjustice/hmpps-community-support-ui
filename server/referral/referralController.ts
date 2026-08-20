@@ -678,12 +678,12 @@ export default class ReferralController {
     return validateRequestBodyAgainstSchema(ServiceDaysSchema, req, res, async (form: ServiceDaysFormData) => {
       try {
         const updateData = {
-          service_days: Number.parseInt(form.service_days, 10),
+          service_days: form.service_days,
         }
 
         await this.referralService.updateServiceDaysPage(referralId, updateData, username)
         delete req.session.serviceDaysForm
-        return res.redirect('/referral/task-list')
+        return res.redirect('/referral/task-list/check-offence')
       } catch (e) {
         logger.error(e)
         const updateErrorMessage =
