@@ -71,6 +71,6 @@ export declare global {
   }
 }
 interface ErrorMiddlewareErrors {
-  list: Array<GovukFrontendErrorSummaryErrorListElement>
+  list: GovukFrontendErrorSummaryErrorListElement[]
   messages: Record<string, GovukFrontendErrorMessage>
 }

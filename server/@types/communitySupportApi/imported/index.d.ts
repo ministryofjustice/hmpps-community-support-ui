@@ -293,6 +293,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/bff/referral/{referralReference}/action-plan/needs': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get the needs with questions for an action plan */
+    get: operations['getActionPlanNeeds']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/bff/referral/{caseReference}/ics_appointment_feedback_details': {
     parameters: {
       query?: never
@@ -523,6 +540,23 @@ export interface paths {
     }
     /** Get a single ICS feedback record by its ID */
     get: operations['getIcsFeedback']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/draft-referral/{referralId}/offence-sentence': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get Offence and Sentence information for a draft referral */
+    get: operations['getOffenceAndSentenceInfo']
     put?: never
     post?: never
     delete?: never
@@ -1010,16 +1044,16 @@ export interface components {
     }
     No: {
       selected: 'No'
-    } & Omit<WithRequired<components['schemas']['Selection'], 'selected'>, 'selected'>
+    } & Omit<components['schemas']['Selection'], 'selected'>
     Selection: {
-      selected?: boolean | null
+      selected: string
     }
     Unanswered: {
       selected: 'Unanswered'
-    } & Omit<WithRequired<components['schemas']['Selection'], 'selected'>, 'selected'>
+    } & Omit<components['schemas']['Selection'], 'selected'>
     Yes: {
       selected: 'Yes'
-    } & (Omit<WithRequired<components['schemas']['Selection'], 'selected'>, 'selected'> & {
+    } & (Omit<components['schemas']['Selection'], 'selected'> & {
       value: string
     })
     CommunityServiceProviderRequest: {
@@ -1092,6 +1126,21 @@ export interface components {
     }
     ActionPlanSummaryPersonDetails: {
       fullName: string
+    }
+    ActionPlanNeedsResponse: {
+      needs: components['schemas']['NeedDto'][]
+    }
+    NeedDto: {
+      /** Format: uuid */
+      id: string
+      label: string
+      questions: components['schemas']['QuestionDto'][]
+    }
+    QuestionDto: {
+      /** Format: uuid */
+      id: string
+      label: string
+      answerType: string
     }
     AppointmentDetailsDto: {
       /** @enum {string|null} */
@@ -1266,6 +1315,20 @@ export interface components {
       sex?: string | null
       prisonNumbers: string[]
       additionalDetails?: components['schemas']['PersonAdditionalDetails'] | null
+    }
+    OffenceSentenceDto: {
+      offence?: string | null
+      offenceSubCategory?: string | null
+      outcome?: string | null
+      /** Format: date */
+      sentenceEndDate?: string | null
+      /** Format: date */
+      expectedReleaseDate?: string | null
+    }
+    OffenceSentenceInfoBffResponseDto: {
+      firstName: string
+      lastName: string
+      offenceSentenceInfo: components['schemas']['OffenceSentenceDto']
     }
     AreaConfirmationBffResponseDto: {
       contractArea: string
@@ -1996,6 +2059,37 @@ export interface operations {
       }
     }
   }
+  getActionPlanNeeds: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralReference: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Needs with questions returned */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ActionPlanNeedsResponse']
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
   getIcsFeedbackSession: {
     parameters: {
       query?: never
@@ -2426,6 +2520,37 @@ export interface operations {
         }
       }
       /** @description ICS feedback not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getOffenceAndSentenceInfo: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Offence and Sentence information found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['OffenceSentenceInfoBffResponseDto']
+        }
+      }
+      /** @description Offence and Sentence information not found */
       404: {
         headers: {
           [name: string]: unknown

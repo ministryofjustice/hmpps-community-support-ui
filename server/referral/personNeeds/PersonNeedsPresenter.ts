@@ -40,6 +40,7 @@ export default class PersonNeedsPresenter extends PresenterBase<PersonNeedsViewM
           label: {
             text: content.checkboxes[`${name}Hint`].replace('{{ firstName }}', this.data.refereeName.firstName),
           },
+          rows: '5',
         }),
       },
     }

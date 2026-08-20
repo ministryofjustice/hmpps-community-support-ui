@@ -37,7 +37,6 @@ type AdditionalSupportNeedsDto = components['schemas']['AdditionalSupportNeedsBf
 type ServiceEndDatePageDto = components['schemas']['ServiceEndDatePageDto']
 type ServiceDaysPageDto = components['schemas']['ServiceDaysPageDto']
 type NeedsInterpreterBffResponseDto = components['schemas']['NeedsInterpreterBffResponseDto']
-type Selection = components['schemas']['Selection']
 type CommunitySupportRiskDto = components['schemas']['CommunitySupportRiskDto']
 type ActionPlanSummaryDto = components['schemas']['ActionPlanSummaryDto']
 type ArnsRiskConcernsToSelfDto = components['schemas']['ArnsRiskConcernsToSelfDto']
@@ -50,6 +49,10 @@ type ReferralServiceDaysDto = components['schemas']['ReferralServiceDaysDto']
 type AreaConfirmationBffResponseDto = components['schemas']['AreaConfirmationBffResponseDto']
 type CommunityServiceProviderRequest = components['schemas']['CommunityServiceProviderRequest']
 type CommunityServiceProviderBffResponseDto = components['schemas']['CommunityServiceProviderBffResponseDto']
+type AdditionalSupportNeedsRequest = components['schemas']['AdditionalSupportNeedsRequest']
+type NeedsInterpreterRequest = components['schemas']['NeedsInterpreterRequest']
+
+type Selection = components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
 
 export type {
   Referral,
@@ -101,4 +104,6 @@ export type {
   AreaConfirmationBffResponseDto,
   CommunityServiceProviderRequest,
   CommunityServiceProviderBffResponseDto,
+  AdditionalSupportNeedsRequest,
+  NeedsInterpreterRequest,
 }

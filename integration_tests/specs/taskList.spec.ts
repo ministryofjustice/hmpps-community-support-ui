@@ -6,6 +6,9 @@ import { referralInformationTaskList } from '../mockData/referralInformationData
 import TaskListPage from '../pages/TaskListPage'
 import HomePage from '../pages/homePage'
 import FindPersonPage from '../pages/findPersonPage'
+import ConfirmPersonalDetailsPage from '../pages/ConfirmPersonalDetailsPage'
+import AdditionalSupportNeedsPage from '../pages/AdditionalSupportNeedsPage'
+import NeedsAnInterpreterPage from '../pages/NeedsAnInterpreterPage'
 
 // These tests will have to move to end to end testing
 
@@ -80,7 +83,7 @@ test.describe('Task List Journey', () => {
         await page.getByRole('button', { name: 'Continue' }).click()
       })
       await test.step('confirm task list page', async () => {
-        await expect(page.getByRole('heading', { name: 'Make a referral' })).toBeVisible()
+        await TaskListPage.verifyOnPage(page)
       })
     })
   })
@@ -131,11 +134,11 @@ test.describe('Task List Journey', () => {
       await taskListPom.clickPersonalDetailsTask()
     })
     await test.step('confirm personal details page', async () => {
-      await expect(page.getByRole('heading', { name: 'Confirm personal details' })).toBeVisible()
+      const pom = await ConfirmPersonalDetailsPage.verifyOnPage(page)
       await expect(page.getByText('Gender identity', { exact: true })).toHaveCount(0)
       await expect(page.getByText('Sexual orientation', { exact: true })).toHaveCount(0)
       await expect(page.getByText('Transgender', { exact: true })).toHaveCount(0)
-      await page.getByRole('button', { name: 'Continue' }).click()
+      await pom.clickContinue()
     })
     await test.step('return to task list', async () => {
       await communitySupport.stubGetTaskListStatus(referralId, {
@@ -287,6 +290,241 @@ test.describe('Task List Journey', () => {
       'Add details of any additional support needs',
       'Completed',
     )
+  })
+  test.describe('Additional support needs journey', () => {
+    test.beforeEach(async () => {
+      await communitySupport.stubGetAdditionalSupportNeeds(referralId, {
+        refereeName: { firstName: 'Alex', lastName: 'Rivers' },
+        physicalHealth: { selected: 'Unanswered' },
+        mentalEmotionalHealth: { selected: 'Unanswered' },
+        neurodiversity: { selected: 'Unanswered' },
+        locationTravel: { selected: 'Unanswered' },
+        caringResponsibilities: { selected: 'Unanswered' },
+        employmentResponsibilities: { selected: 'Unanswered' },
+        diversity: { selected: 'Unanswered' },
+        anythingElse: { selected: 'Unanswered' },
+        needsAdditionalSupport: null,
+      })
+      await communitySupport.stubSubmitAdditionalSupportNeeds(referralId)
+      await communitySupport.stubGetNeedsAnInterpreter(referralId, {
+        refereeName: { firstName: 'Alex', lastName: 'Rivers' },
+        language: { selected: 'No' },
+      })
+      await communitySupport.stubSubmitNeedsAnInterpreter(referralId)
+    })
+    test('Additional support needs journey happy path', async ({ page }) => {
+      await test.step('select Additional Support Needs', async () => {
+        const pom = await TaskListPage.verifyOnPage(page)
+        await pom.clickAddSupportNeedsTask()
+      })
+      await test.step('fill additional support needs', async () => {
+        const pom = await AdditionalSupportNeedsPage.verifyOnPage(page, 'Alex', 'Rivers')
+        await pom.select('Physical health')
+        await pom.fill(
+          'Physical health',
+          'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.',
+        )
+        await pom.select('Mental or emotional health')
+        await pom.fill(
+          'Mental or emotional health',
+          'Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu.',
+        )
+        await pom.select('Neurodiversity')
+        await pom.fill(
+          'Neurodiversity',
+          'n enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt.',
+        )
+        await pom.select('Location and travel')
+        await pom.fill(
+          'Location and travel',
+          'Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim.',
+        )
+        await pom.select('Caring responsibilities')
+        await pom.fill(
+          'Caring responsibilities',
+          'Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi.',
+        )
+        await pom.select('Employment responsibilities')
+        await pom.fill(
+          'Employment responsibilities',
+          'Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.',
+        )
+        await pom.select('Diversity')
+        await pom.fill(
+          'Diversity',
+          'Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt.',
+        )
+        await pom.select('Anything else')
+        await pom.fill(
+          'Anything else',
+          'Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc.',
+        )
+        await pom.clickSaveAndContinue()
+      })
+      await test.step('fill in needs an interpreter', async () => {
+        const pom = await NeedsAnInterpreterPage.verifyOnPage(page, 'Alex')
+        await pom.select('Yes')
+        await pom.fill('Chinese (Mandarin)')
+        await pom.clickSaveAndContinue()
+      })
+      await test.step('back to task list', async () => {
+        await TaskListPage.verifyOnPage(page)
+      })
+    })
+    test('Additional support needs journey unhappy path missing additional needs text', async ({ page }) => {
+      await test.step('select Additional Support Needs', async () => {
+        const pom = await TaskListPage.verifyOnPage(page)
+        await pom.clickAddSupportNeedsTask()
+      })
+      await test.step('fill additional support needs', async () => {
+        const pom = await AdditionalSupportNeedsPage.verifyOnPage(page, 'Alex', 'Rivers')
+        await pom.select('Physical health')
+        await pom.fill(
+          'Physical health',
+          'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.',
+        )
+        await pom.select('Mental or emotional health')
+        await pom.fill(
+          'Mental or emotional health',
+          'Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu.',
+        )
+        await pom.select('Neurodiversity')
+        await pom.select('Location and travel')
+        await pom.fill(
+          'Location and travel',
+          'Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim.',
+        )
+        await pom.select('Caring responsibilities')
+        await pom.fill(
+          'Caring responsibilities',
+          'Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi.',
+        )
+        await pom.select('Employment responsibilities')
+        await pom.fill(
+          'Employment responsibilities',
+          'Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.',
+        )
+        await pom.select('Diversity')
+        await pom.fill(
+          'Diversity',
+          'Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt.',
+        )
+        await pom.select('Anything else')
+        await pom.fill(
+          'Anything else',
+          'Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc.',
+        )
+        await pom.clickSaveAndContinue()
+      })
+      await test.step('error banner', async () => {
+        const pom = await AdditionalSupportNeedsPage.verifyOnPage(page, 'Alex', 'Rivers')
+        await expect(pom.errorSummary).toBeVisible()
+        await test.step('physical health checkbox is checked', async () => {
+          const checkbox = pom.checkboxes.getItem('Physical health')
+          expect(checkbox).toBeDefined()
+          await expect(checkbox!.input).toBeChecked()
+        })
+        await test.step('mental health checkbox is checked', async () => {
+          const checkbox = pom.checkboxes.getItem('Mental or emotional health')
+          expect(checkbox).toBeDefined()
+          await expect(checkbox!.input).toBeChecked()
+        })
+        await test.step('neurodiversity checkbox is checked', async () => {
+          const checkbox = pom.checkboxes.getItem('Neurodiversity')
+          expect(checkbox).toBeDefined()
+          await expect(checkbox!.input).toBeChecked()
+        })
+        await test.step('location and travel checkbox is checked', async () => {
+          const checkbox = pom.checkboxes.getItem('Location and travel')
+          expect(checkbox).toBeDefined()
+          await expect(checkbox!.input).toBeChecked()
+        })
+        await test.step('caring responsibilities checkbox is checked', async () => {
+          const checkbox = pom.checkboxes.getItem('Caring responsibilities')
+          expect(checkbox).toBeDefined()
+          await expect(checkbox!.input).toBeChecked()
+        })
+        await test.step('employment responsibilities checkbox is checked', async () => {
+          const checkbox = pom.checkboxes.getItem('Employment responsibilities')
+          expect(checkbox).toBeDefined()
+          await expect(checkbox!.input).toBeChecked()
+        })
+        await test.step('diversity checkbox is checked', async () => {
+          const checkbox = pom.checkboxes.getItem('Diversity')
+          expect(checkbox).toBeDefined()
+          await expect(checkbox!.input).toBeChecked()
+        })
+        await test.step('anything else checkbox is checked', async () => {
+          const checkbox = pom.checkboxes.getItem('Anything else')
+          expect(checkbox).toBeDefined()
+          await expect(checkbox!.input).toBeChecked()
+        })
+      })
+    })
+    test('Additional support needs journey unhappy path missing language', async ({ page }) => {
+      await test.step('select Additional Support Needs', async () => {
+        const pom = await TaskListPage.verifyOnPage(page)
+        await pom.clickAddSupportNeedsTask()
+      })
+      await test.step('fill additional support needs', async () => {
+        const pom = await AdditionalSupportNeedsPage.verifyOnPage(page, 'Alex', 'Rivers')
+        await pom.select('Physical health')
+        await pom.fill(
+          'Physical health',
+          'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.',
+        )
+        await pom.select('Mental or emotional health')
+        await pom.fill(
+          'Mental or emotional health',
+          'Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu.',
+        )
+        await pom.select('Neurodiversity')
+        await pom.fill(
+          'Neurodiversity',
+          'n enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt.',
+        )
+        await pom.select('Location and travel')
+        await pom.fill(
+          'Location and travel',
+          'Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim.',
+        )
+        await pom.select('Caring responsibilities')
+        await pom.fill(
+          'Caring responsibilities',
+          'Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi.',
+        )
+        await pom.select('Employment responsibilities')
+        await pom.fill(
+          'Employment responsibilities',
+          'Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.',
+        )
+        await pom.select('Diversity')
+        await pom.fill(
+          'Diversity',
+          'Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt.',
+        )
+        await pom.select('Anything else')
+        await pom.fill(
+          'Anything else',
+          'Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc.',
+        )
+        await pom.clickSaveAndContinue()
+      })
+      await test.step('fill in needs an interpreter', async () => {
+        const pom = await NeedsAnInterpreterPage.verifyOnPage(page, 'Alex')
+        await pom.select('Yes')
+        await pom.clickSaveAndContinue()
+      })
+      await test.step('page shows errors', async () => {
+        const pom = await NeedsAnInterpreterPage.verifyOnPage(page, 'Alex')
+        await expect(pom.errorBanner).toBeVisible()
+        await test.step('yes radio is checked', async () => {
+          const yesRadio = pom.radios.getItem('Yes')
+          expect(yesRadio).toBeDefined()
+          await expect(yesRadio!.input).toBeChecked()
+        })
+      })
+    })
   })
 })
 

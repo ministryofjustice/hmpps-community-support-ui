@@ -10,6 +10,7 @@ import IcsFeedbackController from '../appointment/icsFeedbackController'
 import asyncMiddleware from '../middleware/asyncMiddleware'
 import LandingController from '../landing/landingController'
 import ActionPlanController from '../referral/actionPlan/actionPlanController'
+import DraftReferralController from '../referral/DraftReferralController'
 
 export default function routes({
   auditService,
@@ -30,6 +31,7 @@ export default function routes({
   const referralController = new ReferralController(referralService, personService, communityServiceProviderService)
   const getOrPost = (path: string, handler: RequestHandler) =>
     router.route(path).get(asyncMiddleware(handler)).post(asyncMiddleware(handler))
+  const draftReferralController = new DraftReferralController(referralService)
   const caseListController = new CaseListController(caseListService)
   const appointmentController = new AppointmentController(referralService, appointmentService, referenceDataService)
   const icsFeedbackController = new IcsFeedbackController(appointmentService)
@@ -168,10 +170,18 @@ export default function routes({
   )
 
   get('/referral/task-list/additional-support-needs', (req, res) =>
-    referralController.showAdditionalSupportNeeds(req, res),
+    draftReferralController.showAdditionalSupportNeeds(req, res),
   )
 
-  get('/referral/task-list/needs-an-interpreter', (req, res) => referralController.showNeedsAnInterpreter(req, res))
+  post('/referral/task-list/additional-support-needs', (req, res) =>
+    draftReferralController.additionalSupportNeeds(req, res),
+  )
+
+  get('/referral/task-list/needs-an-interpreter', (req, res) =>
+    draftReferralController.showNeedsAnInterpreter(req, res),
+  )
+
+  post('/referral/task-list/needs-an-interpreter', (req, res) => draftReferralController.needsAnInterpreter(req, res))
 
   get('/referral/task-list/view-risk-summary', (req, res) => referralController.showRiskSummary(req, res))
 

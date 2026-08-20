@@ -10,11 +10,9 @@ import ReferralDetailsPresenter from './referralDetails/ReferralDetailsPresenter
 import ReferralProgressPresenter from './progress/referralProgressPresenter'
 import { ErrorMiddlewareErrors } from '../@types/express'
 import ConfirmPersonalDetailsPresenter from './confirmPersonalDetails/ConfirmPersonalDetailsPresenter'
-import AdditionalSuportNeedsPresenter from './additionalSupportNeeds/AdditionalSupportNeedsPresenter'
 import ReferralCreationDetails from './referralDetails/ReferralCreationDetails'
 import TaskListPresenter from './taskList/TaskListPresenter'
 import CheckReferralInformationPresenter from './check-referral-information/checkReferralInformationPresenter'
-import NeedsAnInterpreterPresenter from './needsAnInterpreter/NeedsAnInterpreterPresenter'
 import RiskSummaryPresenter from './riskSummary/RiskSummaryPresenter'
 import buildRiskInformationRequest from './riskSummary/buildRiskInformationRequest'
 import EditRiskSummaryPresenter from './editRiskSummary/EditRiskSummaryPresenter'
@@ -338,23 +336,6 @@ export default class ReferralController {
     return res.redirect('/referral/new/find-a-person')
   }
 
-  async showAdditionalSupportNeeds(req: Request, res: Response) {
-    const { username } = res.locals.user
-    const draftReferralId = req.session?.draftReferralId
-    if (draftReferralId) {
-      try {
-        const additionalSupportNeeds = await this.referralService.getAdditionalSupportNeeds(draftReferralId, username)
-        const presenter = new AdditionalSuportNeedsPresenter(additionalSupportNeeds)
-        return presenter.renderPage(res)
-      } catch (e) {
-        logger.error(e)
-        req.flash('confirmPersonalDetailsError', 'something has gone wrong')
-        return res.redirect('/referral/new/find-a-person')
-      }
-    }
-    return res.redirect('/referral/new/find-a-person')
-  }
-
   async showRiskSummary(req: Request, res: Response) {
     const { username } = res.locals.user
     const draftReferralKey = req.session?.draftReferralId
@@ -459,22 +440,6 @@ export default class ReferralController {
     } catch (e) {
       logger.error(e)
       res.redirect('/referral/new/find-a-person')
-    }
-  }
-
-  async showNeedsAnInterpreter(req: Request, res: Response) {
-    const { username } = res.locals.user
-    const draftReferralId = req.session?.draftReferralId
-    if (!draftReferralId) {
-      return res.redirect('/referral/new/find-a-person')
-    }
-    try {
-      const pageData = await this.referralService.getNeedsInterpreterPageData(draftReferralId, username)
-      const presenter = new NeedsAnInterpreterPresenter(pageData)
-      return presenter.renderPage(res)
-    } catch (e) {
-      logger.error(e)
-      return res.redirect('/referral/new/find-person')
     }
   }
 
