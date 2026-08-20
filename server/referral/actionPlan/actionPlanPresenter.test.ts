@@ -16,7 +16,7 @@ describe('ActionPlanPresenter', () => {
     const presenter = new ActionPlanPresenter(actionPlanSummary, 'AB1234CD')
     const res = {
       locals: {
-        content: globalContent['/referral/:id/action-plan/needs'],
+        content: globalContent['/referral/:id/action-plan'],
       },
       render: jest.fn(),
     } as unknown as Response
