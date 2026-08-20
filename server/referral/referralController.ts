@@ -25,6 +25,8 @@ import { validateRequestBodyAgainstSchema } from '../validation/validationUtils'
 import { PersonNeedsSchema } from '../validation/PersonNeedsFormData'
 import ServiceEndDatePagePresenter from './serviceEndDate/ServiceEndDatePagePresenter'
 import { ServiceEndDateFormData, ServiceEndDateSchema } from '../validation/ServiceEndDateFormData'
+import ServiceDaysPagePresenter from './serviceDays/ServiceDaysPagePresenter'
+import { ServiceDaysFormData, ServiceDaysSchema } from '../validation/ServiceDaysFormData'
 import SelectAreaPresenter from './selectArea/SelectAreaPresenter'
 import { SelectAreaSchema } from '../validation/SelectAreaFormData'
 import ConfirmAnAreaForReferralPresenter from './confirmAnAreaForReferral/ConfirmAnAreaForReferralPresenter'
@@ -627,6 +629,68 @@ export default class ReferralController {
           'Something has gone wrong updating the service end date'
         req.flash('serviceEndDateError', updateErrorMessage)
         return res.redirect('/referral/task-list/service-end-date')
+      }
+    })
+  }
+
+  async showServiceDaysPage(req: Request, res: Response) {
+    const { username } = res.locals.user
+    const referralId = req.session?.draftReferralId
+    const formData = req.session.serviceDaysForm
+    const validationErrors = res.locals.errors
+    delete req.session.serviceDaysForm
+
+    if (!referralId) {
+      return res.redirect('/referral/task-list')
+    }
+
+    try {
+      const data = await this.referralService.getServiceDaysPage(referralId, username)
+      res.locals.errors = validationErrors
+      const presenter = new ServiceDaysPagePresenter(
+        data,
+        formData
+          ? {
+              serviceDays: formData.service_days,
+            }
+          : undefined,
+      )
+      return presenter.renderPage(res)
+    } catch (error) {
+      logger.error('Error retrieving service days page:', error)
+      req.flash('serviceDaysError', 'Failed to load service days page')
+      return res.redirect('/referral/task-list')
+    }
+  }
+
+  async updateServiceDaysPage(req: Request, res: Response) {
+    const { username } = res.locals.user
+    const referralId = req.session?.draftReferralId
+
+    if (!referralId) {
+      return res.redirect('/referral/task-list')
+    }
+
+    req.session.serviceDaysForm = {
+      service_days: req.body.service_days,
+    }
+
+    return validateRequestBodyAgainstSchema(ServiceDaysSchema, req, res, async (form: ServiceDaysFormData) => {
+      try {
+        const updateData = {
+          service_days: Number.parseInt(form.service_days, 10),
+        }
+
+        await this.referralService.updateServiceDaysPage(referralId, updateData, username)
+        delete req.session.serviceDaysForm
+        return res.redirect('/referral/task-list')
+      } catch (e) {
+        logger.error(e)
+        const updateErrorMessage =
+          (res.locals.content as Record<string, string>)?.updateError ||
+          'Something has gone wrong updating the service days'
+        req.flash('serviceDaysError', updateErrorMessage)
+        return res.redirect('/referral/task-list/service-days')
       }
     })
   }

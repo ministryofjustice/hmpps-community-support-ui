@@ -1,0 +1,35 @@
+{% extends "../partials/layout.njk" %}
+
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block contentBody %}
+  <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
+
+  {% if content.hint %}
+    <p class="govuk-body">{{ content.hint }}</p>
+  {% endif %}
+
+  <form method="POST" action="/referral/task-list/service-days">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    {{ govukInput({
+      label: {
+        text: content.label
+      },
+      id: "service_days",
+      name: "service_days",
+      type: "text",
+      value: content.serviceDays,
+      errorMessage: errors.messages.service_days,
+      classes: "govuk-input--width-2",
+      attributes: {
+        min: "1"
+      }
+    }) }}
+
+    {{ govukButton({
+      text: content.continueButton,
+      type: "submit"
+    }) }}
+  </form>
+{% endblock %}

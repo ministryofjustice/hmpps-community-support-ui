@@ -205,6 +205,10 @@ export default function routes({
 
   post('/referral/task-list/service-end-date', (req, res) => referralController.updateServiceEndDatePage(req, res))
 
+  get('/referral/task-list/service-days', (req, res) => referralController.showServiceDaysPage(req, res))
+
+  post('/referral/task-list/service-days', (req, res) => referralController.updateServiceDaysPage(req, res))
+
   getOrPost('/referral/task-list/select-an-area-for-referral', (req, res) =>
     referralController.showSelectArea(req, res),
   )

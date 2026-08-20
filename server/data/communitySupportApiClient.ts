@@ -33,6 +33,7 @@ import type {
   CommunityServiceProviderRequest,
   CommunityServiceProviderBffResponseDto,
   ServiceEndDatePageDto,
+  ServiceDaysPageDto,
 } from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
@@ -224,5 +225,13 @@ export default class CommunitySupportApiClient extends RestClient {
     username: string,
   ): Promise<ServiceEndDatePageDto> {
     return this.patch({ path: `/referral/${referralId}/service-end-date`, data }, asSystem(username))
+  }
+
+  getServiceDaysPage(caseIdentifier: string, username: string): Promise<ServiceDaysPageDto> {
+    return this.get({ path: `/bff/service-days-page/${caseIdentifier}` }, asSystem(username))
+  }
+
+  updateServiceDaysPage(referralId: string, data: ServiceDaysPageDto, username: string): Promise<ServiceDaysPageDto> {
+    return this.patch({ path: `/draft-referral/${referralId}/service-days`, data }, asSystem(username))
   }
 }

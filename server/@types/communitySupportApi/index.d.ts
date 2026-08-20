@@ -35,6 +35,7 @@ type TaskListStatusItem = components['schemas']['TaskListStatusItem']
 type ConfirmPersonDetailsBffDto = components['schemas']['ConfirmPersonDetailsBffDto']
 type AdditionalSupportNeedsDto = components['schemas']['AdditionalSupportNeedsBffResponseDto']
 type ServiceEndDatePageDto = components['schemas']['ServiceEndDatePageDto']
+type ServiceDaysPageDto = components['schemas']['ServiceDaysPageDto']
 type NeedsInterpreterBffResponseDto = components['schemas']['NeedsInterpreterBffResponseDto']
 type Selection = components['schemas']['Selection']
 type CommunitySupportRiskDto = components['schemas']['CommunitySupportRiskDto']
@@ -85,6 +86,7 @@ export type {
   ConfirmPersonDetailsBffDto,
   AdditionalSupportNeedsDto,
   ServiceEndDatePageDto,
+  ServiceDaysPageDto,
   NeedsInterpreterBffResponseDto,
   Selection,
   CommunitySupportRiskDto,
