@@ -89,8 +89,9 @@ seeded in HMPPS Auth's `auth-db` (`hmpps-community-support-ui-1` and
 ### Creating local test users with custom roles
 
 Once any of the stacks above is up, `script/local-user-setup` creates a fully working local
-HMPPS Auth user (password set, no email step required) with whichever roles you need,
-entirely offline (no GOV.UK Notify/real Delius/Nomis dependency):
+HMPPS Auth user (password set, no email step required) with whichever roles you need and
+the `INT_SP_ACHIEVE` provider access group required by the Community
+Support API case list, entirely offline (no GOV.UK Notify/real Delius/Nomis dependency):
 
 ```bash
 script/local-user-setup [email] [ROLE1,ROLE2,...]
