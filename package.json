@@ -16,6 +16,7 @@
     "start:dev:api-feature": "script/start-dev-api-feature",
     "lint": "eslint . --cache --max-warnings 0",
     "lint-fix": "eslint . --cache --max-warnings 0 --fix",
+    "lint:staged": "lint-staged",
     "typecheck": "tsc && tsc -p integration_tests",
     "test": "jest",
     "test:ci": "jest --runInBand",

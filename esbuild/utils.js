@@ -1,4 +1,3 @@
-// eslint-disable-next-line max-classes-per-file
 const childProcess = require('node:child_process')
 const { styleText } = require('node:util')
 
@@ -29,7 +28,7 @@ function createPrefixedLineWriter(label, color, writeFn) {
   const prefix = makePrefix(label, color)
 
   // Extract ANSI codes from a string
-  // eslint-disable-next-line no-control-regex
+
   const ansiRegex = /\u001b\[[0-9;]*m/g
 
   function write(data) {
