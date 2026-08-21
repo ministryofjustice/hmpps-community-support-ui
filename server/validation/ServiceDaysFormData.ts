@@ -11,7 +11,7 @@ export const ServiceDaysSchema = z.object({
     .regex(/^[0-9]*$/, { error: SERVICE_DAYS_INVALID_MESSAGE })
     .transform(x => parseInt(x, 10))
     .refine(x => x > 0, { error: SERVICE_DAYS_OUT_OF_RANGE_MESSAGE })
-    .refine(x => x < 50, { error: SERVICE_DAYS_OUT_OF_RANGE_MESSAGE }),
+    .refine(x => x < 100, { error: SERVICE_DAYS_OUT_OF_RANGE_MESSAGE }),
 })
 
 export type ServiceDaysFormData = z.infer<typeof ServiceDaysSchema>

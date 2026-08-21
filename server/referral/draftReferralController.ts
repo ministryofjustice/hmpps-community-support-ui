@@ -26,6 +26,7 @@ const additionalSupportNeedsURL = '/referral/task-list/additional-support-needs'
 const needsInterpreterURL = '/referral/task-list/needs-an-interpreter' as const
 const serviceEndDateURL = '/referral/task-list/service-end-date' as const
 const serviceDaysURL = '/referral/task-list/service-days' as const
+const checkOffenceURL = '/referral/task-list/check-offence' as const
 
 const additionalSupportNeedsBodyLookup: Record<string, keyof AdditionalSupportNeedsRequest> = {
   Anything: 'anythingElse',
@@ -240,7 +241,7 @@ export default class DraftReferralController {
     const referralId = req.session?.draftReferralId
 
     if (!referralId) {
-      return res.redirect('/referral/task-list')
+      return res.redirect(taskListURL)
     }
 
     return validateRequestBodyAgainstSchema(ServiceDaysSchema, req, res, async (form: ServiceDaysFormData) => {
@@ -250,7 +251,7 @@ export default class DraftReferralController {
         }
 
         await this.referralService.updateServiceDaysPage(referralId, updateData, username)
-        return res.redirect('/referral/task-list/check-offence')
+        return res.redirect(checkOffenceURL)
       } catch (e) {
         logger.error(e)
         const updateErrorMessage =

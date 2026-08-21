@@ -6,7 +6,7 @@
 {% block contentBody %}
   <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
 
-  <p class="govuk-body">{{ content.hint }}</p>
+  <p class="govuk-body">{{ content.bodyText1 }}</p>
 
   <form method="POST" action="/referral/task-list/service-days">
     <input type="hidden" name="_csrf" value="{{csrfToken}}">
