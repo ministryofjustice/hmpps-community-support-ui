@@ -1140,7 +1140,8 @@ export interface components {
       /** Format: uuid */
       id: string
       label: string
-      answerType: string
+      /** @enum {string} */
+      answerType: 'TEXTAREA' | 'RADIO' | 'CHECKBOX'
     }
     AppointmentDetailsDto: {
       /** @enum {string|null} */
