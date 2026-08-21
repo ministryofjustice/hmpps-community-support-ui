@@ -581,9 +581,8 @@ test.describe('Task List Journey', () => {
         const serviceEndDatePage = await ServiceEndDatePage.verifyOnPage(page)
         await serviceEndDatePage.fillTargetCompletionDateSixMonthsFromToday()
         await serviceEndDatePage.clickSaveAndContinue()
-
       })
-      
+
       await test.step('page shows errors', async () => {
         const serviceEndDatePage = await ServiceEndDatePage.verifyOnPage(page)
         await expect(serviceEndDatePage.errorMessages).toBeVisible()
