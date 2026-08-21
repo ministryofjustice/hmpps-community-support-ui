@@ -25,6 +25,7 @@ describe('ConfirmAnAreaForReferralPresenter', () => {
     locals: {
       content: {
         backLink: '/referral/task-list',
+        pageTitle: 'Make a referral to {{ areaName }} – Community Support',
         pageCaption: 'CRN: {{ CRN }} | Date of birth: {{ DOB }}',
         defaultFieldValue: 'Not available',
         cardHeading: 'Start a Community Support referral',
@@ -43,6 +44,9 @@ describe('ConfirmAnAreaForReferralPresenter', () => {
     const viewModel = presenter.buildViewModel(res)
 
     expect(viewModel.backLink.href).toBe('/referral/task-list')
+    expect(viewModel.pageTitle).toBe(
+      'Make a referral to Avon and Somerset, Gloucestershire, Wiltshire. – Community Support',
+    )
     expect(viewModel.heading).toBe('Alex River')
     expect(viewModel.pageCaption).toBe('CRN: X123456 | Date of birth: 20 Feb 1975 (51 years old)')
     expect(viewModel.submitHref).toBe('/referral/task-list/confirm-an-area-for-referral')
@@ -73,6 +77,7 @@ describe('ConfirmAnAreaForReferralPresenter', () => {
     expect(viewModel.deliveryPartner).toBe('Not available')
     expect(viewModel.areaCovered).toBe('Not available')
     expect(viewModel.pdus).toEqual([])
+    expect(viewModel.pageTitle).toBe('Make a referral to Not available – Community Support')
   })
 
   test('falls back to default values when person identifier or date of birth are missing', () => {
