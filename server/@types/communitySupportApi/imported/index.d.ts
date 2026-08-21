@@ -157,6 +157,23 @@ export interface paths {
     patch: operations['updateServiceDaysPage']
     trace?: never
   }
+  '/draft-referral/{referralId}/offence-sentence': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    /** Update the Offence and Sentence information for a Draft Referral */
+    patch: operations['updateOffenceSentenceDetails']
+    trace?: never
+  }
   '/draft-referral/person-needs/{referralId}': {
     parameters: {
       query?: never
@@ -285,6 +302,23 @@ export interface paths {
     }
     /** Get the Action Plan summary information associated with a Referral */
     get: operations['getActionPlanSummary']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/referral/{referralReference}/action-plan/session-delivery-details': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get the session delivery details with questions and saved answers for an action plan */
+    get: operations['getSessionDeliveryDetails']
     put?: never
     post?: never
     delete?: never
@@ -556,7 +590,7 @@ export interface paths {
       cookie?: never
     }
     /** Get Offence and Sentence information for a draft referral */
-    get: operations['getOffenceAndSentenceInfo']
+    get: operations['getOffenceSentenceDetails']
     put?: never
     post?: never
     delete?: never
@@ -984,6 +1018,33 @@ export interface components {
        */
       service_days?: number
     }
+    UpdateOffenceSentenceRequest: {
+      offence?: string | null
+      offenceSubCategory?: string | null
+      outcome?: string | null
+      /** Format: date */
+      sentenceEndDate?: string | null
+      /** Format: date */
+      expectedReleaseDate?: string | null
+      hasLicenceConditionsOrZones?: boolean | null
+      licenceConditionsOrZonesDetails?: string | null
+    }
+    OffenceSentenceDto: {
+      offence?: string | null
+      offenceSubCategory?: string | null
+      outcome?: string | null
+      /** Format: date */
+      sentenceEndDate?: string | null
+      /** Format: date */
+      expectedReleaseDate?: string | null
+      hasLicenceConditionsOrZones?: boolean | null
+      licenceConditionsOrZonesDetails?: string | null
+    }
+    OffenceSentenceInfoBffResponseDto: {
+      firstName: string
+      lastName: string
+      offenceSentenceInfo: components['schemas']['OffenceSentenceDto']
+    }
     CriminogenicNeedsRequest: {
       hasAccommodationNeeds?: boolean | null
       accommodationDetails?: string | null
@@ -1126,6 +1187,34 @@ export interface components {
     }
     ActionPlanSummaryPersonDetails: {
       fullName: string
+    }
+    ActionPlanSessionDeliveryDetailsResponse: {
+      questions: components['schemas']['SessionDeliveryQuestion'][]
+    }
+    QuestionChoice: {
+      value: string
+      label: string
+      /** Format: int32 */
+      displayOrder: number
+      displayAdditionalDetailsOnSelect: boolean
+      additionalDetailsLabel?: string | null
+    }
+    SavedResponse: {
+      value: string
+      additionalDetails?: string | null
+    }
+    SessionDeliveryQuestion: {
+      /** Format: uuid */
+      id: string
+      /** Format: int32 */
+      displayOrder: number
+      label: string
+      /** @enum {string} */
+      answerType: 'TEXTAREA' | 'RADIO' | 'CHECKBOX'
+      /** Format: int32 */
+      maximumNumberOfResponses: number
+      choices?: components['schemas']['QuestionChoice'][] | null
+      savedResponses: components['schemas']['SavedResponse'][]
     }
     ActionPlanNeedsResponse: {
       needs: components['schemas']['NeedDto'][]
@@ -1285,6 +1374,12 @@ export interface components {
       govUkUrl?: string | null
       deliusCRSLocationId?: string | null
     }
+    Disability: {
+      type?: string | null
+      description?: string | null
+      /** Format: date-time */
+      updatedAt?: string | null
+    }
     PersonAdditionalDetails: {
       ethnicity?: string | null
       preferredLanguage?: string | null
@@ -1304,6 +1399,22 @@ export interface components {
       emailAddress?: string | null
       disability?: boolean | null
     }
+    PersonCircumstance: {
+      type?: string | null
+      description?: string | null
+      subType?: string | null
+      subDescription?: string | null
+      /** Format: date-time */
+      updatedAt?: string | null
+    }
+    PersonDetailsAndCircumstances: {
+      preferredLanguage?: string | null
+      personCircumstances: components['schemas']['PersonCircumstance'][]
+      disabilities: components['schemas']['Disability'][]
+      offenderPersonalityDisorder?: string | null
+      ofHomeOfficeInterest?: boolean | null
+      homeOfficeInterestNotes?: string | null
+    }
     PersonDto: {
       /** Format: uuid */
       id: string
@@ -1316,20 +1427,7 @@ export interface components {
       sex?: string | null
       prisonNumbers: string[]
       additionalDetails?: components['schemas']['PersonAdditionalDetails'] | null
-    }
-    OffenceSentenceDto: {
-      offence?: string | null
-      offenceSubCategory?: string | null
-      outcome?: string | null
-      /** Format: date */
-      sentenceEndDate?: string | null
-      /** Format: date */
-      expectedReleaseDate?: string | null
-    }
-    OffenceSentenceInfoBffResponseDto: {
-      firstName: string
-      lastName: string
-      offenceSentenceInfo: components['schemas']['OffenceSentenceDto']
+      personDetailsAndCircumstances?: components['schemas']['PersonDetailsAndCircumstances'] | null
     }
     AreaConfirmationBffResponseDto: {
       contractArea: string
@@ -1805,6 +1903,41 @@ export interface operations {
       }
     }
   }
+  updateOffenceSentenceDetails: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateOffenceSentenceRequest']
+      }
+    }
+    responses: {
+      /** @description Offence and Sentence information updated */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['OffenceSentenceInfoBffResponseDto']
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
   updateCriminogenicNeeds: {
     parameters: {
       query?: never
@@ -2047,6 +2180,37 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['ActionPlanSummaryDto']
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getSessionDeliveryDetails: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralReference: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Session delivery details with questions and saved answered returned */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ActionPlanSessionDeliveryDetailsResponse']
         }
       }
       /** @description Referral not found */
@@ -2531,7 +2695,7 @@ export interface operations {
       }
     }
   }
-  getOffenceAndSentenceInfo: {
+  getOffenceSentenceDetails: {
     parameters: {
       query?: never
       header?: never
