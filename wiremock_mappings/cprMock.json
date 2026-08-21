@@ -27,10 +27,6 @@
             "code": "M",
             "description": "Male"
           },
-          "sexualOrientation": {
-            "code": "HET",
-            "description": "Heterosexual"
-          },
           "religion": {
             "code": "NONE",
             "description": "None"
@@ -125,10 +121,6 @@
           "sex": {
             "code": "M",
             "description": "Male"
-          },
-          "sexualOrientation": {
-            "code": "HET",
-            "description": "Heterosexual"
           },
           "religion": {
             "code": "CHR",

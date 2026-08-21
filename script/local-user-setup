@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 #
-# script/local-user-setup: Creates/updates a local hmpps-auth test user with custom roles,
-# entirely offline (no GOV.UK Notify, no dev-hosted hmpps-auth). Safe to re-run (idempotent).
+# script/local-user-setup: Creates/updates a local hmpps-auth test user with custom roles
+# and provider access, entirely offline (no GOV.UK Notify, no dev-hosted hmpps-auth).
+# Safe to re-run (idempotent).
 #
 # Requires the local stack to already be up - any of docker-compose.yml,
 # docker-compose-localapi.yml or docker-compose-api-ghcr.yml - with hmpps-auth and
@@ -21,14 +22,16 @@
 #   1. Signs in as the seeded admin user (AUTH_ADM/password123456) via the real
 #      authorization_code flow and obtains a bearer token.
 #   2. Creates any missing custom roles via manage-users-api (ignores 409 conflicts).
-#   3. Creates the external user via manage-users-api if it doesn't already exist
+#   3. Creates the provider access group required by Community Support API case lists.
+#   4. Creates the external user via manage-users-api if it doesn't already exist
 #      (the API call itself will report an HTTP 500 due to an unavoidable real
 #      GOV.UK Notify call in upstream manage-users-api - the user record is still
 #      created successfully beforehand, so this is expected and safe to ignore).
-#   4. Directly patches the user's password/verified/password_expiry in auth-db so
+#   5. Directly patches the user's password/verified/password_expiry in auth-db so
 #      it's immediately usable without an email link (mirrors how AUTH_ADM is seeded).
-#   5. Assigns the requested roles to the user (also may 500 for the same Notify
+#   6. Assigns the requested roles to the user (also may 500 for the same Notify
 #      reason on the *first* role assigned - ignored; roles are verified afterwards).
+#   7. Assigns the user to the provider access group.
 #
 # After running, sign in at http://localhost:8090/auth/sign-in (or via the UI) with
 # the username/password above. On first login you'll hit a one-off "verify your
@@ -71,6 +74,8 @@ MANAGE_USERS_URL="http://localhost:8096"
 CLIENT_ID="hmpps-community-support-ui-1"
 CLIENT_SECRET="clientsecret"
 CALLBACK="http://localhost:3000/sign-in/callback"
+SERVICE_PROVIDER_GROUP="INT_SP_ACHIEVE"
+SERVICE_PROVIDER_GROUP_NAME="Intervention Provider - Achieve"
 
 COOKIES="$(mktemp)"
 trap 'rm -f "$COOKIES"' EXIT
@@ -140,7 +145,22 @@ for ROLE in "${ROLES[@]}"; do
 done
 rm -f /tmp/local-user-setup-role.json
 
-# --- 3. Create the external user (ignore the expected Notify-related 500) ---
+# --- 3. Create provider access group (ignore already-exists conflicts) ---
+STATUS=$(curl -s -o /tmp/local-user-setup-group.json -w '%{http_code}' -X POST "$MANAGE_USERS_URL/groups" \
+  -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+  -d "{\"groupCode\":\"$SERVICE_PROVIDER_GROUP\",\"groupName\":\"$SERVICE_PROVIDER_GROUP_NAME\"}")
+if [[ "$STATUS" == "200" ]]; then
+  log "Created provider access group $SERVICE_PROVIDER_GROUP"
+elif [[ "$STATUS" == "409" ]]; then
+  log "Provider access group $SERVICE_PROVIDER_GROUP already exists, skipping"
+else
+  log "ERROR: unexpected status $STATUS creating provider access group $SERVICE_PROVIDER_GROUP ($(cat /tmp/local-user-setup-group.json))"
+  rm -f /tmp/local-user-setup-group.json
+  exit 1
+fi
+rm -f /tmp/local-user-setup-group.json
+
+# --- 4. Create the external user (ignore the expected Notify-related 500) ---
 FIRST_NAME="Local"
 LAST_NAME="Tester"
 curl -s -o /dev/null -X POST "$MANAGE_USERS_URL/externalusers/create" \
@@ -148,7 +168,7 @@ curl -s -o /dev/null -X POST "$MANAGE_USERS_URL/externalusers/create" \
   -d "{\"email\":\"$USERNAME\",\"firstName\":\"$FIRST_NAME\",\"lastName\":\"$LAST_NAME\"}" || true
 log "Requested creation of user $USERNAME (a 500 here is expected/harmless - see script header)"
 
-# --- 4. Patch password/verified/password_expiry directly in auth-db ---
+# --- 5. Patch password/verified/password_expiry directly in auth-db ---
 log "Patching password + expiry for $USERNAME directly in auth-db..."
 docker exec -i "$AUTH_DB_CONTAINER" psql -U admin -d auth-db -v ON_ERROR_STOP=1 -c "
   UPDATE users
@@ -166,7 +186,7 @@ if [[ -z "$USER_ID" ]]; then
 fi
 log "User $USERNAME has user_id=$USER_ID"
 
-# --- 5. Assign roles ---
+# --- 6. Assign roles ---
 for ROLE in "${ROLES[@]}"; do
   curl -s -o /dev/null -X PUT "$MANAGE_USERS_URL/externalusers/$USER_ID/roles/$ROLE" \
     -H "Authorization: Bearer $TOKEN" || true
@@ -175,6 +195,36 @@ done
 ASSIGNED_ROLES=$(curl -sf "$MANAGE_USERS_URL/externalusers/$USER_ID/roles" -H "Authorization: Bearer $TOKEN" \
   | python3 -c "import json,sys; print(', '.join(r['roleCode'] for r in json.load(sys.stdin)))")
 log "Roles now assigned to $USERNAME: $ASSIGNED_ROLES"
+
+# --- 7. Assign provider access group ---
+STATUS=$(curl -s -o /tmp/local-user-setup-user-group.json -w '%{http_code}' -X PUT \
+  "$MANAGE_USERS_URL/externalusers/$USER_ID/groups/$SERVICE_PROVIDER_GROUP" \
+  -H "Authorization: Bearer $TOKEN")
+if [[ "$STATUS" == "204" ]]; then
+  log "Assigned provider access group $SERVICE_PROVIDER_GROUP to $USERNAME"
+elif [[ "$STATUS" == "409" ]]; then
+  log "Provider access group $SERVICE_PROVIDER_GROUP is already assigned to $USERNAME"
+elif [[ "$STATUS" == "400" ]] && grep -q 'reason: exists' /tmp/local-user-setup-user-group.json; then
+  log "Provider access group $SERVICE_PROVIDER_GROUP is already assigned to $USERNAME"
+else
+  log "ERROR: unexpected status $STATUS assigning provider access group $SERVICE_PROVIDER_GROUP ($(cat /tmp/local-user-setup-user-group.json))"
+  rm -f /tmp/local-user-setup-user-group.json
+  exit 1
+fi
+rm -f /tmp/local-user-setup-user-group.json
+
+ASSIGNED_GROUPS=$(curl -sf "$MANAGE_USERS_URL/externalusers/$USER_ID/groups" -H "Authorization: Bearer $TOKEN")
+if ! echo "$ASSIGNED_GROUPS" | python3 -c "
+import json, sys
+group_code = sys.argv[1]
+groups = json.load(sys.stdin)
+if not any(group['groupCode'] == group_code for group in groups):
+    sys.exit(f'Provider access group {group_code} was not assigned')
+" "$SERVICE_PROVIDER_GROUP"; then
+  log "ERROR: provider access group assignment could not be verified"
+  exit 1
+fi
+log "Provider access group now assigned to $USERNAME: $SERVICE_PROVIDER_GROUP"
 
 echo
 log "Done. Sign in with:"
