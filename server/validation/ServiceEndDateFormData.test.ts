@@ -80,7 +80,6 @@ describe('ServiceEndDateSchema', () => {
     expect(result.error?.issues[0].message).toBe('The date the service needs to be completed by must be in the future')
   })
 
-
   test('rejects blank reason', () => {
     const result = ServiceEndDateSchema.safeParse({
       ...validPayload,
