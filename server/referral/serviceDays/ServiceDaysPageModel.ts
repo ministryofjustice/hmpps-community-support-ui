@@ -3,8 +3,8 @@ import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendInput } from '
 export interface ServiceDaysPageContent {
   pageTitle: string
   pageHeader: string
-  hint: string
-  label: string
+  bodyText1: string
+  bodyText2: string
   backLink: string
   continueButton: string
 }

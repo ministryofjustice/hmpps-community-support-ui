@@ -53,6 +53,10 @@ export default class ServiceEndDatePage extends AbstractPage {
     await this.saveAndContinueButton.click()
   }
 
+  async fillReason(value: string) {
+    await this.reasonInput.fill(value)
+  }
+
   async fillTargetCompletionDate(date: Date) {
     await this.dayInput.fill(String(date.getDate()))
     // we add one because getMonth returns a zero-based month index (0 for January, 1 for February, etc.)

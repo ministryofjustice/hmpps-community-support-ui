@@ -45,7 +45,7 @@ export default class ServiceDaysPagePresenter extends PresenterBase<ServiceDaysP
         label: {
           text: content.bodyText2,
         },
-        errorMessage: this.validationErrors.messages['serviceDays'] ?? null,
+        errorMessage: this.validationErrors.messages.serviceDays ?? null,
         attributes: {
           'data-testid': 'service-days-input',
         },

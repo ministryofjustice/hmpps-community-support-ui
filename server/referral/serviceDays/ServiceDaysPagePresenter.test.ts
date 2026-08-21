@@ -6,11 +6,12 @@ import loadContentData from '../../testutils/loadContentData'
 
 const content = loadContentData('/referral/task-list/service-days')
 const pageContent = {
-    pageTitle: 'How many days will you use for this service?  - Community Support',
-    h2: 'How many days will you use for this service?',
-    bodyText1: 'Enter the maximum number of days you want to use for this service. Any unused days will be given back. For community orders or suspended sentences, consider how many RAR days to allocate.',
-    bodyText2: 'Sessions delivered in the community are enforceable.',
-    continueButton: 'Save and continue',
+  pageTitle: 'How many days will you use for this service?  - Community Support',
+  h2: 'How many days will you use for this service?',
+  bodyText1:
+    'Enter the maximum number of days you want to use for this service. Any unused days will be given back. For community orders or suspended sentences, consider how many RAR days to allocate.',
+  bodyText2: 'Sessions delivered in the community are enforceable.',
+  continueButton: 'Save and continue',
 }
 const errorMessage = {
   nothingEntered: 'Enter the number of days you will use for this service',

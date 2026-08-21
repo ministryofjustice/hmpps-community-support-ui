@@ -140,7 +140,7 @@ export default class DraftReferralController {
     return res.redirect(findAPersonURL)
   }
 
-    async showServiceEndDatePage(req: Request, res: Response) {
+  async showServiceEndDatePage(req: Request, res: Response) {
     const { username } = res.locals.user
     const referralId = req.session?.draftReferralId
     const formData = req.session.serviceEndDateForm
@@ -224,11 +224,7 @@ export default class DraftReferralController {
 
     try {
       const data = await this.referralService.getServiceDaysPage(referralId, username)
-      const presenter = new ServiceDaysPagePresenter(
-        data,
-        validationErrors,
-        formData 
-      )
+      const presenter = new ServiceDaysPagePresenter(data, validationErrors, formData)
       return presenter.renderPage(res)
     } catch (error) {
       logger.error('Error retrieving service days page:', error)
@@ -264,4 +260,3 @@ export default class DraftReferralController {
     })
   }
 }
-
