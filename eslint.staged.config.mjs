@@ -23,4 +23,10 @@ export default defineConfig([
       ],
     },
   },
+  {
+    files: ['eslint*.config.mjs'],
+    rules: {
+      'import/no-extraneous-dependencies': 'off',
+    },
+  },
 ])
