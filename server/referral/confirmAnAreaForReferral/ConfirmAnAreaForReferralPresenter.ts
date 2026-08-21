@@ -26,9 +26,11 @@ export default class ConfirmAnAreaForReferralPresenter extends PresenterBase<
     const content = this.buildStaticContent(res)
     const crn = nonEmptyStringOrDefault(this.personDetails.personIdentifier, content.defaultFieldValue)
     const dateOfBirth = nonEmptyStringOrDefault(this.personDetails.dateOfBirth, content.defaultFieldValue)
+    const areaCovered = nonEmptyStringOrDefault(this.providerDetails.contractArea, content.defaultFieldValue)
 
     return {
       backLink: { href: content.backLink },
+      pageTitle: content.pageTitle.replace('{{ areaName }}', areaCovered),
       heading: this.getFullName(),
       pageCaption: content.pageCaption.replace('{{ CRN }}', crn).replace('{{ DOB }}', dateOfBirth),
       submitHref: '/referral/task-list/confirm-an-area-for-referral',
@@ -44,7 +46,7 @@ export default class ConfirmAnAreaForReferralPresenter extends PresenterBase<
       deliveryPartnerLabel: content.deliveryPartnerLabel,
       deliveryPartner: nonEmptyStringOrDefault(this.providerDetails.deliveryPartner, content.defaultFieldValue),
       areaCoveredLabel: content.areaCoveredLabel,
-      areaCovered: nonEmptyStringOrDefault(this.providerDetails.contractArea, content.defaultFieldValue),
+      areaCovered,
       pdusLabel: content.pdusLabel,
       pdus: this.providerDetails.associatedPdus ?? [],
     }
