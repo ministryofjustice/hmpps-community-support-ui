@@ -184,7 +184,14 @@
     "historySummary": "View ICS history"
   },
   "/referral/:id/action-plan": {
-    "pageHeader": "Action plan for {{ fullName }}"
+    "pageHeader": "Action plan for {{ fullName }}",
+    "stepNameRowTitle": "Step name",
+    "needsRowTitle": "Needs",
+    "needsRowStatus": "Status",
+    "needsRowLinkText": "Complete"
+  },
+  "/referral/:id/action-plan/needs": {
+    "pageHeader": "Needs"
   },
   "/ics-feedback/:id/did-session-take-place": {
     "submitButtonText": "Continue",
