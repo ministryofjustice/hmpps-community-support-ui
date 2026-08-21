@@ -24,6 +24,8 @@ const findAPersonURL = '/referral/new/find-a-person' as const
 const taskListURL = '/referral/task-list' as const
 const additionalSupportNeedsURL = '/referral/task-list/additional-support-needs' as const
 const needsInterpreterURL = '/referral/task-list/needs-an-interpreter' as const
+const serviceEndDateURL = '/referral/task-list/service-end-date' as const
+const serviceDaysURL = '/referral/task-list/service-days' as const
 
 const additionalSupportNeedsBodyLookup: Record<string, keyof AdditionalSupportNeedsRequest> = {
   Anything: 'anythingElse',
@@ -180,7 +182,7 @@ export default class DraftReferralController {
     const referralId = req.session?.draftReferralId
 
     if (!referralId) {
-      return res.redirect('/referral/task-list')
+      return res.redirect(taskListURL)
     }
 
     req.session.serviceEndDateForm = {
@@ -199,14 +201,14 @@ export default class DraftReferralController {
 
         await this.referralService.updateServiceEndDatePage(referralId, updateData, username)
         delete req.session.serviceEndDateForm
-        return res.redirect('/referral/task-list/service-days')
+        return res.redirect(serviceDaysURL)
       } catch (e) {
         logger.error(e)
         const updateErrorMessage =
           (res.locals.content as Record<string, string>)?.updateError ||
           'Something has gone wrong updating the service end date'
         req.flash('serviceEndDateError', updateErrorMessage)
-        return res.redirect('/referral/task-list/service-end-date')
+        return res.redirect(serviceEndDateURL)
       }
     })
   }
@@ -219,7 +221,7 @@ export default class DraftReferralController {
     const validationErrors = res.locals.errors
 
     if (!referralId) {
-      return res.redirect('/referral/task-list')
+      return res.redirect(taskListURL)
     }
 
     try {
@@ -229,7 +231,7 @@ export default class DraftReferralController {
     } catch (error) {
       logger.error('Error retrieving service days page:', error)
       req.flash('serviceDaysError', 'Failed to load service days page')
-      return res.redirect('/referral/task-list')
+      return res.redirect(taskListURL)
     }
   }
 
@@ -255,7 +257,7 @@ export default class DraftReferralController {
           (res.locals.content as Record<string, string>)?.updateError ||
           'Something has gone wrong updating the service days'
         req.flash('serviceDaysError', updateErrorMessage)
-        return res.redirect('/referral/task-list/service-days')
+        return res.redirect(serviceDaysURL)
       }
     })
   }

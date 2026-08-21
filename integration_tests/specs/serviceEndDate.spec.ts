@@ -112,7 +112,7 @@ test.describe('Service End Date Page', () => {
     await expect(serviceEndDatePage.errorMessages).toContainText('Enter why it needs to be completed by this date')
   })
 
-  test('AC8: should save valid data and return to task list', async ({ page }) => {
+  test('AC8: should save valid data and got service days page', async ({ page }) => {
     const validSubmissionReason = 'Unique valid submission reason for AC8'
     const validDate = sixMonthsFromToday()
 
@@ -120,6 +120,7 @@ test.describe('Service End Date Page', () => {
       target_service_completion_date: validDate.toISOString(),
       target_service_completion_reason: validSubmissionReason,
     })
+    await communitySupport.stubGetServiceDaysPage(referralId, {})
 
     await page.goto(ServiceEndDatePage.url())
     const serviceEndDatePage = await ServiceEndDatePage.verifyOnPage(page)
