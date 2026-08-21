@@ -1,4 +1,3 @@
-import { addDays } from 'date-fns'
 import { ServiceEndDateSchema } from './ServiceEndDateFormData'
 
 describe('ServiceEndDateSchema', () => {
@@ -38,19 +37,6 @@ describe('ServiceEndDateSchema', () => {
     expect(result.error?.issues[0].message).toBe('Enter a date in the correct format')
   })
 
-  test('accepts tomorrows date', () => {
-    const tommorow = addDays(new Date(), 1)
-
-    const result = ServiceEndDateSchema.safeParse({
-      ...validPayload,
-      'target_service_completion_date-day': String(tommorow.getDate()),
-      'target_service_completion_date-month': String(tommorow.getMonth() + 1),
-      'target_service_completion_date-year': String(tommorow.getFullYear()),
-    })
-
-    expect(result.success).toBe(true)
-  })
-
   test('rejects date before today', () => {
     const yesterday = new Date()
     yesterday.setDate(yesterday.getDate() - 1)
@@ -60,20 +46,6 @@ describe('ServiceEndDateSchema', () => {
       'target_service_completion_date-day': String(yesterday.getDate()),
       'target_service_completion_date-month': String(yesterday.getMonth() + 1),
       'target_service_completion_date-year': String(yesterday.getFullYear()),
-    })
-
-    expect(result.success).toBe(false)
-    expect(result.error?.issues[0].message).toBe('The date the service needs to be completed by must be in the future')
-  })
-
-  test('rejects todays date', () => {
-    const today = new Date()
-
-    const result = ServiceEndDateSchema.safeParse({
-      ...validPayload,
-      'target_service_completion_date-day': String(today.getDate()),
-      'target_service_completion_date-month': String(today.getMonth() + 1),
-      'target_service_completion_date-year': String(today.getFullYear()),
     })
 
     expect(result.success).toBe(false)

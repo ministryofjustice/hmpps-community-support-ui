@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { isBefore, isExists, startOfDay } from 'date-fns'
+import { isBefore, isExists, startOfDay, addDays } from 'date-fns'
 
 const DATE_REQUIRED_MESSAGE = 'Enter the date the service needs to be completed by'
 const DATE_INVALID_MESSAGE = 'Enter a date in the correct format'
@@ -47,7 +47,8 @@ export const ServiceEndDateSchema = z
     }
 
     const targetDate = startOfDay(new Date(parsedYear, parsedMonth - 1, parsedDay))
-    if (isBefore(targetDate, startOfDay(new Date()))) {
+    const tomorrow = addDays(new Date(), 1)
+    if (isBefore(targetDate, startOfDay(tomorrow))) {
       ctx.addIssue({
         code: 'custom',
         path: ['target_service_completion_date'],

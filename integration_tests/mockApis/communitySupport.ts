@@ -17,6 +17,7 @@ import {
   CommunityServiceProviderBffResponseDto,
   CommunitySupportServicesProvider,
   NeedsInterpreterBffResponseDto,
+  ServiceDaysPageDto,
 } from '@community-support-api'
 import { stubFor } from './wiremock'
 import { duplicateData } from '../testUtils'
@@ -710,6 +711,32 @@ export default {
       request: {
         method: 'PATCH',
         urlPathPattern: `/community-support/referral/${referralId}/service-end-date`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: response,
+        transformers: ['response-template'],
+      },
+    }),
+  stubGetServiceDaysPage: (referralId: string, response: ServiceDaysPageDto, httpStatus = 200): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: `/community-support/bff/service-days-page/${referralId}`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: response,
+        transformers: ['response-template'],
+      },
+    }),
+  stubUpdateServiceDaysPage: (referralId: string, response: ServiceDaysPageDto, httpStatus = 200): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'PATCH',
+        urlPathPattern: `/community-support/draft-referral/${referralId}/service-days`,
       },
       response: {
         status: httpStatus,

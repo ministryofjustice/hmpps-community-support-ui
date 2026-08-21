@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test'
 import { randomUUID } from 'node:crypto'
+import { addMonths } from 'date-fns'
 import { login, resetStubs } from '../testUtils'
 import communitySupport from '../mockApis/communitySupport'
 import { referralInformationTaskList } from '../mockData/referralInformationData'
@@ -9,6 +10,8 @@ import FindPersonPage from '../pages/findPersonPage'
 import ConfirmPersonalDetailsPage from '../pages/ConfirmPersonalDetailsPage'
 import AdditionalSupportNeedsPage from '../pages/AdditionalSupportNeedsPage'
 import NeedsAnInterpreterPage from '../pages/NeedsAnInterpreterPage'
+import ServiceEndDatePage from '../pages/ServiceEndDatePage'
+import ServiceDaysPage from '../pages/ServiceDaysPage'
 
 // These tests will have to move to end to end testing
 
@@ -523,6 +526,90 @@ test.describe('Task List Journey', () => {
           expect(yesRadio).toBeDefined()
           await expect(yesRadio!.input).toBeChecked()
         })
+      })
+    })
+  })
+
+  test.describe('Additional information journey', () => {
+    test.beforeEach(async () => {
+      await communitySupport.stubGetServiceEndDatePage(referralId, {
+        target_service_completion_date: null,
+        target_service_completion_reason: null,
+      })
+      const validSubmissionReason = 'Unique valid submission reason for AC8'
+      const validDate = addMonths(new Date(), 6)
+
+      await communitySupport.stubUpdateServiceEndDatePage(referralId, {
+        target_service_completion_date: validDate.toISOString(),
+        target_service_completion_reason: validSubmissionReason,
+      })
+      await communitySupport.stubGetServiceDaysPage(referralId, {})
+      await communitySupport.stubUpdateServiceDaysPage(referralId, {
+        service_days: 10,
+      })
+    })
+
+    test('Happy path', async ({ page }) => {
+      await test.step('Navigate to service end date', async () => {
+        const taskListPage = await TaskListPage.verifyOnPage(page)
+        await taskListPage.clickAdditionalReferralInformationTask()
+      })
+
+      await test.step('Complete service end date form', async () => {
+        const serviceEndDatePage = await ServiceEndDatePage.verifyOnPage(page)
+        await serviceEndDatePage.fillTargetCompletionDateSixMonthsFromToday()
+        await serviceEndDatePage.fillReason('reason')
+        await serviceEndDatePage.clickSaveAndContinue()
+      })
+
+      await test.step('Complete service days form', async () => {
+        const serviceDaysPage = await ServiceDaysPage.verifyOnPage(page)
+        await serviceDaysPage.fillServiceDays('10')
+        await serviceDaysPage.clickSaveAndContinue()
+      })
+
+      await test.step('TODO check offence and sentence information', async () => {})
+    })
+
+    test('Unhappy path service end date', async ({ page }) => {
+      await test.step('Navigate to service end date', async () => {
+        const taskListPage = await TaskListPage.verifyOnPage(page)
+        await taskListPage.clickAdditionalReferralInformationTask()
+      })
+
+      await test.step('Complete service end date form', async () => {
+        const serviceEndDatePage = await ServiceEndDatePage.verifyOnPage(page)
+        await serviceEndDatePage.fillTargetCompletionDateSixMonthsFromToday()
+        await serviceEndDatePage.clickSaveAndContinue()
+      })
+
+      await test.step('page shows errors', async () => {
+        const serviceEndDatePage = await ServiceEndDatePage.verifyOnPage(page)
+        await expect(serviceEndDatePage.errorMessages).toBeVisible()
+      })
+    })
+
+    test('Unhappy path service days', async ({ page }) => {
+      await test.step('Navigate to service end date', async () => {
+        const taskListPage = await TaskListPage.verifyOnPage(page)
+        await taskListPage.clickAdditionalReferralInformationTask()
+      })
+
+      await test.step('Complete service end date form', async () => {
+        const serviceEndDatePage = await ServiceEndDatePage.verifyOnPage(page)
+        await serviceEndDatePage.fillTargetCompletionDateSixMonthsFromToday()
+        await serviceEndDatePage.fillReason('reason')
+        await serviceEndDatePage.clickSaveAndContinue()
+      })
+
+      await test.step('Complete service days form', async () => {
+        const serviceDaysPage = await ServiceDaysPage.verifyOnPage(page)
+        await serviceDaysPage.clickSaveAndContinue()
+      })
+
+      await test.step('page shows errors', async () => {
+        const serviceDaysPage = await ServiceDaysPage.verifyOnPage(page)
+        await expect(serviceDaysPage.errorMessages).toBeVisible()
       })
     })
   })

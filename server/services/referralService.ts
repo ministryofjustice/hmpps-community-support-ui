@@ -15,6 +15,7 @@ import {
   type CriminogenicNeedsRequest,
   ActionPlanSummaryDto,
   ServiceEndDatePageDto,
+  ServiceDaysPageDto,
   AdditionalSupportNeedsRequest,
 } from '@community-support-api'
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
@@ -109,6 +110,14 @@ export default class ReferralService {
 
   getServiceEndDatePage(referralId: string, username: string): Promise<ServiceEndDatePageDto> {
     return this.communitySupportApiClient.getServiceEndDatePage(referralId, username)
+  }
+
+  getServiceDaysPage(referralId: string, username: string): Promise<ServiceDaysPageDto> {
+    return this.communitySupportApiClient.getServiceDaysPage(referralId, username)
+  }
+
+  updateServiceDaysPage(referralId: string, data: ServiceDaysPageDto, username: string): Promise<ServiceDaysPageDto> {
+    return this.communitySupportApiClient.updateServiceDaysPage(referralId, data, username)
   }
 
   updateServiceEndDatePage(

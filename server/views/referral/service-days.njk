@@ -1,0 +1,17 @@
+{% extends "../partials/layout.njk" %}
+
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block contentBody %}
+  <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
+
+  <p class="govuk-body">{{ content.bodyText1 }}</p>
+
+  <form method="POST" action="/referral/task-list/service-days">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    {{ govukInput(content.input) }}
+
+    {{ govukButton(content.button) }}
+  </form>
+{% endblock %}
