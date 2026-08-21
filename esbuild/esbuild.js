@@ -1,4 +1,5 @@
-const { ESBuildManager, ServerManager, getEnvFile } = require('./utils')
+const { ESBuildManager, getEnvFile } = require('./utils')
+const ServerManager = require('./serverManager')
 
 function main() {
   const args = process.argv
