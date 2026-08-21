@@ -3,14 +3,15 @@ import { type RequestHandler, Router } from 'express'
 import type { Services } from '../services'
 import { Page } from '../services/auditService'
 
-import ReferralController from '../referral/referralController'
-import CaseListController from '../caseList/caseListController'
-import AppointmentController from '../appointment/appointmentController'
-import IcsFeedbackController from '../appointment/icsFeedbackController'
-import asyncMiddleware from '../middleware/asyncMiddleware'
-import LandingController from '../landing/landingController'
 import ActionPlanController from '../referral/actionPlan/actionPlanController'
+import AppointmentController from '../appointment/appointmentController'
+import asyncMiddleware from '../middleware/asyncMiddleware'
+import CaseListController from '../caseList/caseListController'
 import DraftReferralController from '../referral/DraftReferralController'
+import IcsFeedbackController from '../appointment/icsFeedbackController'
+import LandingController from '../landing/landingController'
+import NeedsController from '../referral/actionPlan/needs/needsController'
+import ReferralController from '../referral/referralController'
 
 export default function routes({
   auditService,
@@ -37,6 +38,7 @@ export default function routes({
   const icsFeedbackController = new IcsFeedbackController(appointmentService)
   const landingController = new LandingController()
   const actionPlanController = new ActionPlanController(referralService)
+  const needsController = new NeedsController()
 
   router.get('/', async (req, res, next) => {
     await auditService.logPageView(Page.INDEX_PAGE, { who: res.locals.user.username, correlationId: req.id })
@@ -206,6 +208,8 @@ export default function routes({
   get('/referral/task-list', (req, res) => referralController.showTaskList(req, res))
 
   get('/referral/:id/action-plan', (req, res) => actionPlanController.showActionPlanPage(req, res))
+
+  get('/referral/:id/action-plan/needs', (req, res) => needsController.showNeedsPage(req, res))
 
   get('/referral/task-list/select-person-needs', (req, res) => referralController.showPersonNeeds(req, res))
 

@@ -1,8 +1,11 @@
 {% extends "../partials/layout.njk" %}
 
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
 {% set pageTitle = "Action plan – " + applicationName %}
 {% set mainClasses = "govuk-body" %}
 
 {% block contentBody %}
   <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
+  {{ govukSummaryList(content.needsSummary) }}
 {% endblock %}
