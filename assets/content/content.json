@@ -851,7 +851,7 @@
     "backlink": "/referral/task-list/additional-support-needs"
   },
   "/referral/task-list/service-end-date": {
-    "pageTitle": "Set service end date",
+    "pageTitle": "What date does the service need to be completed by?  - Community Support",
     "pageHeader": "What date does the service need to be completed by?",
     "hint": "This is the date by which the service should be completed.",
     "dateLabel": "Date",
