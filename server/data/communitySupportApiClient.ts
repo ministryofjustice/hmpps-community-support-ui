@@ -39,10 +39,13 @@ import type {
   ProbationPractitionerDetails,
   UpdateProbationPractitionerDetailsRequest,
   CheckDraftReferralDetailsDto,
+  AdditionalInformationForTheDeliveryPartner,
+  Selection,
 } from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
 import { PagedResponse } from '../@types/communitySupportApi/derived'
+import { AdditionalInformationForTheDeliveryPartnerFormData } from '../validation/AdditionalInformationForTheDeliveryPartnerFormData'
 
 export default class CommunitySupportApiClient extends RestClient {
   constructor(authenticationClient: AuthenticationClient, apiConfig: ApiConfig = null) {
@@ -259,6 +262,23 @@ export default class CommunitySupportApiClient extends RestClient {
   submitPPDetails(draftReferalId: string, username: string, ppDetails: UpdateProbationPractitionerDetailsRequest) {
     return this.patch(
       { path: `/draft-referral/${draftReferalId}/probation-practitioner-details`, data: ppDetails },
+      asSystem(username),
+    )
+  }
+
+  getAdditionalInformationForDeliveryPartner(
+    draftReferalId: string,
+    username: string,
+  ): Promise<AdditionalInformationForTheDeliveryPartner> {
+    return this.get(
+      { path: `/bff/draft-referral/additional-information-for-the-delivery-partner/${draftReferalId}` },
+      asSystem(username),
+    )
+  }
+
+  submitAdditionalInformationForDeliveryPartner(data: Selection, draftReferalId: string, username: string) {
+    return this.patch(
+      { path: `/draft-referral/additional-information-for-the-delivery-partner/${draftReferalId}`, data },
       asSystem(username),
     )
   }

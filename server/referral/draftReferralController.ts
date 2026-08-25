@@ -20,6 +20,11 @@ import ServiceDaysPagePresenter from './serviceDays/ServiceDaysPagePresenter'
 import { ServiceEndDateSchema, ServiceEndDateFormData } from '../validation/ServiceEndDateFormData'
 import ServiceEndDatePagePresenter from './serviceEndDate/ServiceEndDatePagePresenter'
 import CheckReferralInformationPresenter from './check-referral-information/checkReferralInformationPresenter'
+import AdditionalInformationForTheDeliveryPartnerPresenter from './additionalInformationForTheDeliveryPartner /AdditionalInformationForTheDeliveryPartnerPresenter'
+import {
+  AdditionalInformationForTheDeliveryPartnerFormData,
+  AdditionalInformationForTheDeliveryPartnerFormDataSchema,
+} from '../validation/AdditionalInformationForTheDeliveryPartnerFormData'
 
 const findAPersonURL = '/referral/new/find-a-person' as const
 const taskListURL = '/referral/task-list' as const
@@ -49,7 +54,7 @@ const buildDateStringFromForm = (form: ServiceEndDateFormData): string => {
 }
 
 export default class DraftReferralController {
-  constructor(private readonly referralService: ReferralService) {}
+  constructor(private readonly referralService: ReferralService) { }
 
   async showAdditionalSupportNeeds(req: Request, res: Response) {
     const { username } = res.locals.user
@@ -169,11 +174,11 @@ export default class DraftReferralController {
       data,
       formData
         ? {
-            day: formData.target_service_completion_date_day,
-            month: formData.target_service_completion_date_month,
-            year: formData.target_service_completion_date_year,
-            reason: formData.target_service_completion_reason,
-          }
+          day: formData.target_service_completion_date_day,
+          month: formData.target_service_completion_date_month,
+          year: formData.target_service_completion_date_year,
+          reason: formData.target_service_completion_reason,
+        }
         : undefined,
     )
     return presenter.renderPage(res)
@@ -298,5 +303,49 @@ export default class DraftReferralController {
       logger.error('Error in submitting a referral:', error)
       throw error
     }
+  }
+
+  async showAdditionalInformationForDeliveryPartner(req: Request, res: Response) {
+    const { username } = res.locals.user
+    const draftReferalId = req.session?.draftReferralId
+    if (!draftReferalId) {
+      return res.redirect(findAPersonURL)
+    }
+    try {
+      const pageData = await this.referralService.getAdditionalInformationForDeliveryPartner(draftReferalId, username)
+      const validationErrors: ErrorMiddlewareErrors = formatDynamicErrorMessages(
+        res.locals.errors,
+        '{{ firstname }}',
+        pageData.refereeName.firstName,
+      )
+      const presenter = new AdditionalInformationForTheDeliveryPartnerPresenter(pageData, validationErrors)
+      return presenter.renderPage(res)
+    } catch (e) {
+      logger.error(e)
+      return res.redirect(findAPersonURL)
+    }
+  }
+
+  async additionalInformationForDeliveryPartner(req: Request, res: Response) {
+    const { username } = res.locals.user
+    const draftReferalId = req.session?.draftReferralId
+    if (draftReferalId) {
+      try {
+        const schema = AdditionalInformationForTheDeliveryPartnerFormDataSchema
+        return validateRequestBodyAgainstSchema(
+          schema,
+          req,
+          res,
+          async (data: AdditionalInformationForTheDeliveryPartnerFormData) => {
+            await this.referralService.submitAdditionalInformationForDeliveryPartner(data, draftReferalId, username)
+            return res.redirect(taskListURL)
+          },
+        )
+      } catch (e) {
+        logger.error(e)
+        return res.redirect(findAPersonURL)
+      }
+    }
+    return res.redirect(findAPersonURL)
   }
 }
