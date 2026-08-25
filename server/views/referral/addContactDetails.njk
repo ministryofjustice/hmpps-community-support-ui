@@ -1,0 +1,50 @@
+{% extends "../partials/layout.njk" %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+
+{% set pageTitle = "Make a referral - [Service name]" %}
+{% set mainClasses = "govuk-body" %}
+
+{% block contentBody %}
+
+<script src="/assets/accessible-autocomplete.min.js"></script>
+
+<div class="govuk-grid-row">
+  {{ govukBackLink(content.backLinkArgs) }}
+  <span class="govuk-caption-l"> {{ content.pageCaption}}</span>
+  <h1 class="govuk-heading-xl">
+    {{ content.heading }}
+  </h1>
+  <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
+  <h2>{{ content.subHeading }}</h2>
+  {% call govukInsetText({ classes: "guidance-panel" }) %}
+    <p>{{ content.insetText }}</p>
+  {% endcall %}
+  <form method="post" novalidate>
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    {{ govukInput(content.nameInputArgs) }}
+    {{ govukInput(content.emailInputArgs) }}
+    {{ govukInput(content.jobRoleInputArgs) }}
+    {{ govukInput(content.phoneNumberInputArgs) }}
+    {{ govukSelect(content.pduSelectArgs) }}
+    {{ govukSelect(content.probationOfficeSelectArgs) }}
+    {{ govukInput(content.teamPhoneNumberInputArgs) }}
+    {{ govukButton(content.buttonArgs) }}
+  </form>
+</div>
+
+<script nonce="{{ cspNonce }}">
+  accessibleAutocomplete.enhanceSelectElement({
+    defaultValue: '',
+    selectElement: document.querySelector('#pdu')
+  })
+  accessibleAutocomplete.enhanceSelectElement({
+    defaultValue: '',
+    selectElement: document.querySelector('#probationOffice')
+  })
+</script>
+{% endblock %}

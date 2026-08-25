@@ -877,5 +877,22 @@
     "buttonText": "Continue",
     "heading": "{{ personName }}",
     "pageCaption": "CRN: {{ CRN }} | Date of birth: {{ DOB }}"
+  },
+  "/referral/new/add-contact-details": {
+    "backLinkText": "Back",
+    "backLinkHref" : "/referral/task-list",
+    "buttonText": "Save and continue",
+    "heading": "{{ personName }}",
+    "pageCaption": "CRN: {{ CRN }} | Date of birth: {{ DOB }}",
+    "subHeading": "Add details of the main point of contact",
+    "nameInputLabel": "Name",
+    "emailAddressInputLabel": "Email address",
+    "jobRoleInputLabel": "Job role (optional)",
+    "phoneNumberInputLabel": "Phone number (optional)",
+    "pduInputLabel": "PDU",
+    "probationOfficeInputLabel": "Probation office (optional)",
+    "teamPhoneNumberInputLabel":"Team phone number (optional)",
+    "hintText": "Start typing and choose from list",
+    "insetText": "These contact details will be sent to the delivery partner for the referral. They should also be updated in NDelius."
   }
 }

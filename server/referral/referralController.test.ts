@@ -22,6 +22,7 @@ import ConfirmPersonalDetailsPresenter from './confirmPersonalDetails/ConfirmPer
 import PersonNeedsPresenter, { personNeedsFormData } from './personNeeds/PersonNeedsPresenter'
 import ConfirmAnAreaForReferralPresenter from './confirmAnAreaForReferral/ConfirmAnAreaForReferralPresenter'
 import SelectAreaPresenter from './selectArea/SelectAreaPresenter'
+import AddContactDetailsPresenter from './addContactDetails/addContactDetailsPresenter'
 
 jest.mock('../services/referralService')
 jest.mock('../services/communityServiceProviderService')
@@ -35,6 +36,7 @@ jest.mock('./confirmPersonalDetails/ConfirmPersonalDetailsPresenter')
 jest.mock('./personNeeds/PersonNeedsPresenter')
 jest.mock('./selectArea/SelectAreaPresenter')
 jest.mock('./confirmAnAreaForReferral/ConfirmAnAreaForReferralPresenter')
+jest.mock('./addContactDetails/addContactDetailsPresenter')
 
 describe('ReferralController', () => {
   let referralService: jest.Mocked<ReferralService>
@@ -56,6 +58,7 @@ describe('ReferralController', () => {
       saveRiskInformation: jest.fn(),
       getPersonNeeds: jest.fn(),
       getCommunitySupportServiceProviders: jest.fn(),
+      getProbationOffices: jest.fn(),
     } as unknown as jest.Mocked<ReferralService>
     personService = {
       getPersonByIdentifier: jest.fn(),
@@ -75,6 +78,7 @@ describe('ReferralController', () => {
     PersonNeedsPresenter.prototype.renderPage = jest.fn()
     ConfirmAnAreaForReferralPresenter.prototype.renderPage = jest.fn()
     SelectAreaPresenter.prototype.renderPage = jest.fn()
+    AddContactDetailsPresenter.prototype.renderPage = jest.fn()
 
     req = {
       params: { id: 'referral123' },
@@ -939,6 +943,155 @@ describe('ReferralController', () => {
 
       expect(session.selectedProviderId).toBe('service-1')
       expect(res.redirect).toHaveBeenCalledWith('/referral/task-list/confirm-an-area-for-referral')
+    })
+  })
+
+  describe('showAddContactDetails', () => {
+    const mockProbationOffices = [
+      {
+        probationOfficeId: 1,
+        name: 'London Probation Office',
+        address: '123 Main St',
+        probationRegionId: '1',
+      },
+      {
+        probationOfficeId: 2,
+        name: 'Manchester Probation Office',
+        address: '456 High St',
+        probationRegionId: '2',
+      },
+    ]
+    const mockPersonDetails = {
+      firstName: 'Alex',
+      lastName: 'River',
+      personIdentifier: 'X123456',
+      prisonNumbers: ['A1234BC'],
+      sex: 'Male',
+      id: 'ID123',
+      dateOfBirth: '20 Feb 1975 (51 years old)',
+    }
+
+    it('should redirect to find a person when there is no draft referral in session', async () => {
+      req = { method: 'GET', flash: jest.fn().mockReturnValue([]), session: {} } as unknown as Request
+
+      await referralController.showAddContactDetails(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('/referral/new/find-a-person')
+      expect(referralService.getProbationOffices).not.toHaveBeenCalled()
+    })
+
+    it('should render the add contact details page on a GET request', async () => {
+      req = {
+        method: 'GET',
+        body: {},
+        flash: jest.fn().mockReturnValue([]),
+        session: {
+          draftReferralId: 'referral-uuid-1',
+          referralCreationDetails: { personDetails: mockPersonDetails },
+        },
+      } as unknown as Request
+      res = { ...res, locals: { user: { username: 'user1' }, errors: undefined } } as unknown as Response
+      referralService.getProbationOffices.mockResolvedValue(mockProbationOffices)
+
+      await referralController.showAddContactDetails(req, res)
+
+      expect(referralService.getProbationOffices).toHaveBeenCalledWith('user1')
+      expect(AddContactDetailsPresenter).toHaveBeenCalledWith(mockPersonDetails, mockProbationOffices, undefined, {})
+      expect(AddContactDetailsPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+    })
+
+    it('should pass validation errors to presenter on GET after failed POST', async () => {
+      const validationErrors = {
+        list: [{ href: '#name', text: 'Enter a name' }],
+        messages: { name: { text: 'Enter a name' } },
+      }
+      req = {
+        method: 'GET',
+        body: {},
+        flash: jest.fn().mockReturnValue([]),
+        session: {
+          draftReferralId: 'referral-uuid-1',
+          referralCreationDetails: { personDetails: mockPersonDetails },
+        },
+      } as unknown as Request
+      res = { ...res, locals: { user: { username: 'user1' }, errors: validationErrors } } as unknown as Response
+      referralService.getProbationOffices.mockResolvedValue(mockProbationOffices)
+
+      await referralController.showAddContactDetails(req, res)
+
+      expect(AddContactDetailsPresenter).toHaveBeenCalledWith(
+        mockPersonDetails,
+        mockProbationOffices,
+        expect.objectContaining({
+          list: expect.arrayContaining([expect.objectContaining({ href: '#name', text: 'Enter a name' })]),
+          messages: expect.objectContaining({
+            name: { text: 'Enter a name' },
+          }),
+        }),
+        {},
+      )
+      expect(AddContactDetailsPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+    })
+
+    it('should retrieve and use flash data when validation fails', async () => {
+      const flashData = JSON.stringify({ name: 'John Doe', email: 'john@example.com' })
+      req = {
+        method: 'GET',
+        body: {},
+        flash: jest.fn().mockReturnValue([flashData]),
+        session: {
+          draftReferralId: 'referral-uuid-1',
+          referralCreationDetails: { personDetails: mockPersonDetails },
+        },
+      } as unknown as Request
+      res = { ...res, locals: { user: { username: 'user1' }, errors: undefined } } as unknown as Response
+      referralService.getProbationOffices.mockResolvedValue(mockProbationOffices)
+
+      await referralController.showAddContactDetails(req, res)
+
+      expect(req.flash).toHaveBeenCalledWith('value')
+      expect(AddContactDetailsPresenter).toHaveBeenCalledWith(mockPersonDetails, mockProbationOffices, undefined, {
+        name: 'John Doe',
+        email: 'john@example.com',
+      })
+      expect(AddContactDetailsPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+    })
+
+    it('should call validation schema on POST request', async () => {
+      req = {
+        method: 'POST',
+        body: { name: 'John Doe', email: 'john@example.com' },
+        flash: jest.fn().mockReturnValue([]),
+        session: {
+          draftReferralId: 'referral-uuid-1',
+          referralCreationDetails: { personDetails: mockPersonDetails },
+        },
+      } as unknown as Request
+
+      await referralController.showAddContactDetails(req, res)
+
+      expect(referralService.getProbationOffices).not.toHaveBeenCalled()
+      expect(AddContactDetailsPresenter.prototype.renderPage).not.toHaveBeenCalled()
+    })
+
+    it('should propagate the error when probation offices cannot be retrieved', async () => {
+      req = {
+        method: 'GET',
+        body: {},
+        flash: jest.fn().mockReturnValue([]),
+        session: {
+          draftReferralId: 'referral-uuid-1',
+          referralCreationDetails: { personDetails: mockPersonDetails },
+        },
+      } as unknown as Request
+      res = { ...res, locals: { user: { username: 'user1' }, errors: undefined } } as unknown as Response
+      referralService.getProbationOffices.mockRejectedValue(new Error('error retrieving probation offices'))
+
+      await expect(referralController.showAddContactDetails(req, res)).rejects.toThrow(
+        'error retrieving probation offices',
+      )
+
+      expect(AddContactDetailsPresenter.prototype.renderPage).not.toHaveBeenCalled()
     })
   })
 })

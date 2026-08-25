@@ -227,6 +227,8 @@ export default function routes({
     referralController.showSelectArea(req, res),
   )
 
+  getOrPost('/referral/new/add-contact-details', (req, res) => referralController.showAddContactDetails(req, res))
+
   get('/referral/:id', (req, res, next) => referralController.showReferralPage(req, res, next))
 
   return router

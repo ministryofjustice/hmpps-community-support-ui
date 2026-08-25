@@ -17,6 +17,7 @@ import {
   ServiceEndDatePageDto,
   ServiceDaysPageDto,
   AdditionalSupportNeedsRequest,
+  type ProbationOffice,
 } from '@community-support-api'
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
 import { NeedsAnInterpreterFormData } from '../validation/NeedsAnInterpreterFormDataSchema'
@@ -141,5 +142,9 @@ export default class ReferralService {
 
   submitNeedsAnInterpreter(body: NeedsAnInterpreterFormData, draftReferalId: string, username: string) {
     return this.communitySupportApiClient.submitNeedsAnInterpreter(body, draftReferalId, username)
+  }
+
+  getProbationOffices(username: string): Promise<ProbationOffice[]> {
+    return this.communitySupportApiClient.getProbationOffices(username)
   }
 }

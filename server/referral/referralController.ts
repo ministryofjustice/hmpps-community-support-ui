@@ -23,7 +23,9 @@ import { validateRequestBodyAgainstSchema } from '../validation/validationUtils'
 import { PersonNeedsSchema } from '../validation/PersonNeedsFormData'
 import SelectAreaPresenter from './selectArea/SelectAreaPresenter'
 import { SelectAreaSchema } from '../validation/SelectAreaFormData'
+import AddContactDetailsPresenter from './addContactDetails/addContactDetailsPresenter'
 import ConfirmAnAreaForReferralPresenter from './confirmAnAreaForReferral/ConfirmAnAreaForReferralPresenter'
+import { AddContactDetailsSchema } from '../validation/AddContactDetailsFormData'
 
 export default class ReferralController {
   private static readonly CRN_REGEX = /^[A-Za-z]\d{6}$/
@@ -536,6 +538,33 @@ export default class ReferralController {
       locations,
       validationErrors,
       req.session.selectedProviderId,
+    )
+    return presenter.renderPage(res)
+  }
+
+  async showAddContactDetails(req: Request, res: Response) {
+    const { username } = res.locals.user
+    const draftReferralKey = req.session?.draftReferralId
+    const flashData = req.flash('value')
+    const userInputData = flashData.length > 0 ? JSON.parse(flashData[0]) : req.body
+
+    if (!draftReferralKey) {
+      return res.redirect('/referral/new/find-a-person')
+    }
+
+    if (req.method === 'POST') {
+      return validateRequestBodyAgainstSchema(AddContactDetailsSchema, req, res, async form => {
+        console.log(form)
+      })
+    }
+    const validationErrors = res.locals.errors
+    const probationOffices = await this.referralService.getProbationOffices(username)
+
+    const presenter = new AddContactDetailsPresenter(
+      req.session.referralCreationDetails.personDetails,
+      probationOffices,
+      validationErrors,
+      userInputData,
     )
     return presenter.renderPage(res)
   }
