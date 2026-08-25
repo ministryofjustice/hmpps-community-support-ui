@@ -851,7 +851,7 @@
     "backlink": "/referral/task-list/additional-support-needs"
   },
   "/referral/task-list/service-end-date": {
-    "pageTitle": "Set service end date",
+    "pageTitle": "What date does the service need to be completed by? - Community Support",
     "pageHeader": "What date does the service need to be completed by?",
     "hint": "This is the date by which the service should be completed.",
     "dateLabel": "Date",
@@ -863,7 +863,7 @@
     "updateError": "Something has gone wrong updating the service end date"
   },
   "/referral/task-list/service-days": {
-    "pageTitle": "How many days will you use for this service?  - Community Support",
+    "pageTitle": "How many days will you use for this service? - Community Support",
     "pageHeader": "How many days will you use for this service?",
     "bodyText1": "Enter the maximum number of days you want to use for this service. Any unused days will be given back. For community orders or suspended sentences, consider how many RAR days to allocate.",
     "bodyText2": "Sessions delivered in the community are enforceable.",
