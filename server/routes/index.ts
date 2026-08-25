@@ -223,6 +223,10 @@ export default function routes({
 
   post('/referral/task-list/service-days', (req, res) => draftReferralController.updateServiceDaysPage(req, res))
 
+  get('/referral/task-list/additional-information-for-delivery-partner', (req, res) =>
+    draftReferralController.showAdditionalInformationForDeliveryPartner(req, res),
+  )
+
   getOrPost('/referral/task-list/select-an-area-for-referral', (req, res) =>
     referralController.showSelectArea(req, res),
   )

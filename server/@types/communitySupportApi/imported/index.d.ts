@@ -174,6 +174,23 @@ export interface paths {
     patch: operations['updateOffenceSentenceDetails']
     trace?: never
   }
+  '/draft-referral/{referralId}/offence-sentence': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    /** Update the Offence and Sentence information for a Draft Referral */
+    patch: operations['updateOffenceSentenceDetails']
+    trace?: never
+  }
   '/draft-referral/person-needs/{referralId}': {
     parameters: {
       query?: never
@@ -240,6 +257,23 @@ export interface paths {
     head?: never
     /** Update the Additional Support Needs information for a Draft Referral */
     patch: operations['updateAdditionalSupportNeeds']
+    trace?: never
+  }
+  '/draft-referral/additional-information-for-the-delivery-partner/{referralId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    /** Update additional information for the delivery partner for a referral */
+    patch: operations['updateAdditionalInformationForTheDeliveryPartner']
     trace?: never
   }
   '/bff/task-list-status/{referralId}': {
@@ -735,6 +769,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/bff/draft-referral/additional-information-for-the-delivery-partner/{referralId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get additional information for the delivery partner for a draft referral */
+    get: operations['getAdditionalInformationForTheDeliveryPartner']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/bff/confirm-person-details/{referralId}': {
     parameters: {
       query?: never
@@ -1156,16 +1207,16 @@ export interface components {
     }
     No: {
       selected: 'No'
-    } & Omit<components['schemas']['Selection'], 'selected'>
-    Selection: {
+    } & Omit<components['schemas']['SelectionDto'], 'selected'>
+    SelectionDto: {
       selected: string
     }
     Unanswered: {
       selected: 'Unanswered'
-    } & Omit<components['schemas']['Selection'], 'selected'>
+    } & Omit<components['schemas']['SelectionDto'], 'selected'>
     Yes: {
       selected: 'Yes'
-    } & (Omit<components['schemas']['Selection'], 'selected'> & {
+    } & (Omit<components['schemas']['SelectionDto'], 'selected'> & {
       value: string
     })
     CommunityServiceProviderRequest: {
@@ -1194,19 +1245,19 @@ export interface components {
       refereeName: components['schemas']['RefereeNameDto']
       physicalHealth: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       mentalEmotionalHealth:
-        | components['schemas']['No']
-        | components['schemas']['Unanswered']
-        | components['schemas']['Yes']
+      | components['schemas']['No']
+      | components['schemas']['Unanswered']
+      | components['schemas']['Yes']
       neurodiversity: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       locationTravel: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       caringResponsibilities:
-        | components['schemas']['No']
-        | components['schemas']['Unanswered']
-        | components['schemas']['Yes']
+      | components['schemas']['No']
+      | components['schemas']['Unanswered']
+      | components['schemas']['Yes']
       employmentResponsibilities:
-        | components['schemas']['No']
-        | components['schemas']['Unanswered']
-        | components['schemas']['Yes']
+      | components['schemas']['No']
+      | components['schemas']['Unanswered']
+      | components['schemas']['Yes']
       diversity: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       anythingElse: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       needsAdditionalSupport?: boolean | null
@@ -1478,15 +1529,20 @@ export interface components {
       sex?: string | null
       prisonNumbers: string[]
       additionalDetails?: components['schemas']['PersonAdditionalDetails'] | null
-      personDetailsAndCircumstances?: components['schemas']['PersonDetailsAndCircumstances'] | null
     }
-    ProbationPractitionerDetailsBffResponseDto: {
-      name: string
-      jobRole?: string | null
-      emailAddress?: string | null
-      pdu?: string | null
-      probationOffice?: string | null
-      teamPhoneNumber?: string | null
+    OffenceSentenceDto: {
+      offence?: string | null
+      offenceSubCategory?: string | null
+      outcome?: string | null
+      /** Format: date */
+      sentenceEndDate?: string | null
+      /** Format: date */
+      expectedReleaseDate?: string | null
+    }
+    OffenceSentenceInfoBffResponseDto: {
+      firstName: string
+      lastName: string
+      offenceSentenceInfo: components['schemas']['OffenceSentenceDto']
     }
     AreaConfirmationBffResponseDto: {
       contractArea: string
@@ -1533,92 +1589,6 @@ export interface components {
       assessedOn?: string | null
       riskToSelf?: components['schemas']['ArnsRiskConcernsToSelfDto'] | null
       summary?: components['schemas']['ArnsRiskRoshSummaryDto'] | null
-      additionalInformation?: string | null
-    }
-    CheckDraftReferralDetailsBffResponseDto: {
-      /** Format: uuid */
-      id: string
-      referenceNumber?: string | null
-      /** Format: date-time */
-      createdDate: string
-      personDetailsTableData: components['schemas']['DraftPersonDetailsTableDataDto']
-      equalityDetailsTableData: components['schemas']['DraftEqualityDetailsTableDataDto']
-      additionalInformationDetailsTableData: components['schemas']['DraftAdditionalInformationDetailsTableDataDto']
-      contactDetailsTableData: components['schemas']['DraftContactDetailsTableDataDto']
-      riskInformationDetailsTableData: components['schemas']['DraftRiskInformationDetailsTableDataDto']
-      additionalSupportNeedsDetailsTableData: components['schemas']['DraftAdditionalSupportNeedsDetailsTableDataDto']
-      personNeedsDetailsTableData: components['schemas']['DraftPersonNeedsDetailsTableDataDto']
-      referralAreaTableData: components['schemas']['DraftReferralAreaTableDataDto']
-      mainPocDetailsTableData: components['schemas']['DraftMainPOCDetailsTableDataDto']
-    }
-    DraftAdditionalInformationDetailsTableDataDto: {
-      homeOfficeInterest?: string | null
-      offenderPersonalityDisorderPathway?: string | null
-    }
-    DraftAdditionalSupportNeedsDetailsTableDataDto: {
-      physicalHealth?: string | null
-      mentalOrEmotionalHealth?: string | null
-      neurodiversity?: string | null
-      locationAndTravel?: string | null
-      caringResponsibilities?: string | null
-      employmentResponsibilities?: string | null
-      diversity?: string | null
-      anyOtherNeeds?: string | null
-      needsInterpreter?: boolean | null
-      interpreterLanguage?: string | null
-    }
-    DraftContactDetailsTableDataDto: {
-      phoneNumber?: string | null
-      mobileNumber?: string | null
-      email?: string | null
-      address?: string | null
-    }
-    DraftEqualityDetailsTableDataDto: {
-      ethnicity?: string | null
-      religionOrBelief?: string | null
-      sex: string
-    }
-    DraftMainPOCDetailsTableDataDto: {
-      areTheseDetailsCorrect?: boolean | null
-      name?: string | null
-      jobRole?: string | null
-      email?: string | null
-      phoneNumber?: string | null
-      pdu?: string | null
-      isProbationOfficer?: boolean | null
-      teamPhoneNumber?: string | null
-    }
-    DraftPersonDetailsTableDataDto: {
-      name: components['schemas']['RefereeNameDto']
-      crn: string
-      dateOfBirth: string
-      preferredLanguage: string
-      disabilities: string
-      prisonNumbers?: string | null
-      currentCircumstances: string
-    }
-    DraftPersonNeedsDetailsTableDataDto: {
-      hasAccommodationNeeds?: boolean | null
-      accommodationDetails?: string | null
-      employmentAndEducation?: string | null
-      financialDetails?: string | null
-      personalRelationshipsCommunityDetails?: string | null
-      drugUseDetails?: string | null
-      alcoholUseDetails?: string | null
-      healthWellbeingDetails?: string | null
-      thinkingBehavioursAttitudeDetails?: string | null
-    }
-    DraftReferralAreaTableDataDto: {
-      area?: string | null
-    }
-    DraftRiskInformationDetailsTableDataDto: {
-      whoIsAtRisk?: string | null
-      natureOfRisk?: string | null
-      riskImminence?: string | null
-      riskOfSelfHarm?: string | null
-      riskOfSuicide?: string | null
-      riskToSelfHostelSetting?: string | null
-      riskToSelfVulnerability?: string | null
       additionalInformation?: string | null
     }
     ConfirmPersonDetailsBffDto: {
@@ -2211,6 +2181,42 @@ export interface operations {
         content: {
           'application/json': components['schemas']['AdditionalSupportNeedsBffResponseDto']
         }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  updateAdditionalInformationForTheDeliveryPartner: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json':
+        | components['schemas']['No']
+        | components['schemas']['Unanswered']
+        | components['schemas']['Yes']
+      }
+    }
+    responses: {
+      /** @description Additional information for the delivery partner updated */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
       }
       /** @description Referral not found */
       404: {
@@ -2869,38 +2875,7 @@ export interface operations {
       }
     }
   }
-  getProbationPractitionerDetails: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        referralId: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Probation Practitioner details found */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ProbationPractitionerDetailsBffResponseDto']
-        }
-      }
-      /** @description Referral, or the Referral's Person, not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  getOffenceSentenceDetails: {
+  getOffenceAndSentenceInfo: {
     parameters: {
       query?: never
       header?: never
@@ -3108,6 +3083,37 @@ export interface operations {
         }
       }
       /** @description Referral, or the Referral's Person, not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getAdditionalInformationForTheDeliveryPartner: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description additional information found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['AdditionalInformationForTheDeliveryPartnerBffResponseDto']
+        }
+      }
+      /** @description additional information not found */
       404: {
         headers: {
           [name: string]: unknown

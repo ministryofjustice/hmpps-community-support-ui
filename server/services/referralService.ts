@@ -142,4 +142,8 @@ export default class ReferralService {
   submitNeedsAnInterpreter(body: NeedsAnInterpreterFormData, draftReferalId: string, username: string) {
     return this.communitySupportApiClient.submitNeedsAnInterpreter(body, draftReferalId, username)
   }
+
+  getAdditionalInformationForDeliveryPartner(draftReferalId: string, username: string) {
+    return this.communitySupportApiClient.getAdditionalInformationForDeliveryPartner(draftReferalId, username)
+  }
 }

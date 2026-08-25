@@ -53,6 +53,9 @@ type AdditionalSupportNeedsRequest = components['schemas']['AdditionalSupportNee
 type NeedsInterpreterRequest = components['schemas']['NeedsInterpreterRequest']
 type CheckDraftReferralDetailsDto = components['schemas']['CheckDraftReferralDetailsBffResponseDto']
 
+type AdditionalInformationForTheDeliveryPartner =
+  components['schemas']['AdditionalInformationForTheDeliveryPartnerBffResponseDto']
+
 type Selection = components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
 
 export type {
@@ -108,4 +111,5 @@ export type {
   CommunityServiceProviderBffResponseDto,
   AdditionalSupportNeedsRequest,
   NeedsInterpreterRequest,
+  AdditionalInformationForTheDeliveryPartner,
 }
