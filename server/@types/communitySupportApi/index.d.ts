@@ -37,6 +37,7 @@ type AdditionalSupportNeedsDto = components['schemas']['AdditionalSupportNeedsBf
 type ServiceEndDatePageDto = components['schemas']['ServiceEndDatePageDto']
 type ServiceDaysPageDto = components['schemas']['ServiceDaysPageDto']
 type NeedsInterpreterBffResponseDto = components['schemas']['NeedsInterpreterBffResponseDto']
+type CheckDraftReferralDetailsDto = components['schemas']['CheckDraftReferralDetailsBffResponseDto']
 type CommunitySupportRiskDto = components['schemas']['CommunitySupportRiskDto']
 type ActionPlanSummaryDto = components['schemas']['ActionPlanSummaryDto']
 type ArnsRiskConcernsToSelfDto = components['schemas']['ArnsRiskConcernsToSelfDto']
@@ -91,6 +92,7 @@ export type {
   ServiceEndDatePageDto,
   ServiceDaysPageDto,
   NeedsInterpreterBffResponseDto,
+  CheckDraftReferralDetailsDto,
   Selection,
   CommunitySupportRiskDto,
   ActionPlanSummaryDto,
