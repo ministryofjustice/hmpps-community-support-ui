@@ -53,7 +53,6 @@ type AdditionalSupportNeedsRequest = components['schemas']['AdditionalSupportNee
 type NeedsInterpreterRequest = components['schemas']['NeedsInterpreterRequest']
 type CheckDraftReferralDetailsDto = components['schemas']['CheckDraftReferralDetailsBffResponseDto']
 
-
 type Selection = components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
 
 export type {
