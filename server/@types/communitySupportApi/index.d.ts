@@ -51,6 +51,7 @@ type CommunityServiceProviderRequest = components['schemas']['CommunityServicePr
 type CommunityServiceProviderBffResponseDto = components['schemas']['CommunityServiceProviderBffResponseDto']
 type AdditionalSupportNeedsRequest = components['schemas']['AdditionalSupportNeedsRequest']
 type NeedsInterpreterRequest = components['schemas']['NeedsInterpreterRequest']
+type CheckDraftReferralDetailsDto = components['schemas']['CheckDraftReferralDetailsBffResponseDto']
 
 type Selection = components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
 
@@ -91,6 +92,7 @@ export type {
   ServiceEndDatePageDto,
   ServiceDaysPageDto,
   NeedsInterpreterBffResponseDto,
+  CheckDraftReferralDetailsDto,
   Selection,
   CommunitySupportRiskDto,
   ActionPlanSummaryDto,
