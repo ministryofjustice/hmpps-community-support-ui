@@ -43,7 +43,10 @@ export interface ReferralProgress {
   actionPlanStatus: components['schemas']['ActionPlanStatusDto']
 }
 
-type TaskListStatusStub = Pick<TaskListStatusDto, 'fullName'> & Partial<Omit<TaskListStatusDto, 'fullName'>>
+type TaskListStatusStub = Pick<TaskListStatusDto, 'fullName'> &
+  Partial<{
+    [K in keyof Omit<TaskListStatusDto, 'fullName'>]: Omit<TaskListStatusDto, 'fullName'>[K] | null
+  }>
 
 const incompleteTaskStatus = {
   completed: false,
