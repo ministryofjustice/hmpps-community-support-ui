@@ -34,7 +34,7 @@ describe('FoundPersonPresenter', () => {
 
       const renderData = (res.render as jest.Mock).mock.calls[0][1] as { content: FoundPersonViewModel }
 
-      expect(renderData.content.personSummary.rows).toHaveLength(4)
+      expect(renderData.content.personSummary.rows).toHaveLength(7)
       expect(renderData.content.personSummary.rows[0]).toMatchObject({
         key: { text: 'Name' },
         value: { text: 'Alex River' },
@@ -44,10 +44,31 @@ describe('FoundPersonPresenter', () => {
         value: { text: 'X123456' },
       })
       expect(renderData.content.personSummary.rows[2]).toMatchObject({
+        key: { text: 'Current location' },
+        value: { text: 'Not available' },
+      })
+      expect(renderData.content.personSummary.rows[3]).toMatchObject({
         key: { text: 'Date of birth' },
         value: { text: '20 Feb 1975 (51 years old)' },
       })
-      expect(renderData.content.personSummary.rows[3]).toMatchObject({ key: { text: 'Sex' }, value: { text: 'Male' } })
+      expect(renderData.content.personSummary.rows[4]).toMatchObject({
+        key: { text: 'Preferred language' },
+        value: { text: 'Not available' },
+      })
+      expect(renderData.content.personSummary.rows[5]).toMatchObject({
+        key: {
+          html:
+            '<b>Current circumstances</b>\n' +
+            '<div class="govuk-hint govuk-!-font-size-16">Last updated: Not available</div>',
+        },
+        value: { html: 'Not available' },
+      })
+      expect(renderData.content.personSummary.rows[6]).toMatchObject({
+        key: {
+          html: '<b>Disabilities</b>\n<div class="govuk-hint govuk-!-font-size-16">Last updated: Not available</div>',
+        },
+        value: { html: 'Not available' },
+      })
       expect(renderData.content.backLink).toEqual({ href: '/referral/new/find-a-person' })
       expect(renderData.content.staticContent.enterDifferentIdentifierLinkText).toBe(
         'Enter a different CRN or prison number',
@@ -76,7 +97,7 @@ describe('FoundPersonPresenter', () => {
 
       const renderData = (res.render as jest.Mock).mock.calls[0][1] as { content: FoundPersonViewModel }
 
-      expect(renderData.content.personSummary.rows).toHaveLength(4)
+      expect(renderData.content.personSummary.rows).toHaveLength(7)
       expect(renderData.content.personSummary.rows[1]).toMatchObject({
         key: { text: 'Prison number' },
         value: { text: 'A1234BC, B1234CD, C1234DE' },
@@ -99,8 +120,8 @@ describe('FoundPersonPresenter', () => {
 
       const renderData = (res.render as jest.Mock).mock.calls[0][1] as { content: FoundPersonViewModel }
 
-      expect(renderData.content.personSummary.rows).toHaveLength(3)
-      expect(renderData.content.personSummary.rows[1]).toMatchObject({
+      expect(renderData.content.personSummary.rows).toHaveLength(6)
+      expect(renderData.content.personSummary.rows[2]).toMatchObject({
         key: { text: 'Date of birth' },
         value: { text: '20 Feb 1975 (51 years old)' },
       })
