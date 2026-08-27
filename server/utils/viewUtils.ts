@@ -3,8 +3,9 @@ import {
   GovukFrontendSummaryList,
   GovukFrontendSummaryListRow,
   GovukFrontendSummaryListRowActionsItem,
+  GovukFrontendSummaryListRowKey,
   GovukFrontendSummaryListRowValue,
-} from '../@types/govukFrontend'
+} from '@govuk-frontend'
 
 const environment = new nunjucks.Environment()
 
@@ -14,20 +15,20 @@ export const newlineToHtmlBreak = (val: unknown): unknown =>
   typeof val !== 'string' ? val : environment.getFilter('nl2br')(val)
 
 export const govFrontendSummaryListRow = (
-  key: string,
+  key: string | GovukFrontendSummaryListRowKey,
   value: GovukFrontendSummaryListRowValue | string,
   actions: Array<GovukFrontendSummaryListRowActionsItem> = null,
 ): GovukFrontendSummaryListRow => {
   if (typeof value === 'string' && (value.includes('<a') || value.includes('<p'))) {
     return {
-      key: { text: key },
+      key: typeof key === 'string' ? { text: key } : key,
       value: { html: value },
       actions: actions && actions.length > 0 ? { items: actions } : null,
     }
   }
 
   return {
-    key: { text: key },
+    key: typeof key === 'string' ? { text: key } : key,
     value: typeof value === 'string' ? { text: value } : value,
     actions: actions && actions.length > 0 ? { items: actions } : null,
   }
@@ -36,8 +37,10 @@ export const govFrontendSummaryListRow = (
 export const govFrontendSummaryList = (
   summaryListItems: GovukFrontendSummaryListRow[],
   options: { showBorders: boolean } = { showBorders: true },
+  title?: string,
   attributes?: GovukFrontendSummaryList['attributes'],
 ): GovukFrontendSummaryList => ({
+  card: title ? { title: { text: title } } : undefined,
   classes: options.showBorders
     ? 'govuk-summary-list refer-and-monitor__intervention-summary-list'
     : 'govuk-summary-list--no-border refer-and-monitor__intervention-summary-list',

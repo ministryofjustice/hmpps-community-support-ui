@@ -9,6 +9,11 @@
 {% block contentBody %}
   <h1 class="govuk-heading-l">{{content.staticContent.pageHeader}}</h1>
     {{ govukSummaryList(content.personSummary) }}
+    {{ govukSummaryList(content.equalityMonitoring) }}
+    {% if content.additionalInformation %}
+      {{ govukSummaryList(content.additionalInformation) }}
+    {% endif %}
+    {{ govukSummaryList(content.contactDetails) }}
     <form method="post" novalidate action="{{ content.staticContent.continueButtonLink }}">
       <input type="hidden" name="_csrf" value="{{csrfToken}}">
       <div class="govuk-button-group">
