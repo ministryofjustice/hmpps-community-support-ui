@@ -10,7 +10,6 @@ import ReferralDetailsPresenter from './referralDetails/ReferralDetailsPresenter
 import ReferralProgressPresenter from './progress/referralProgressPresenter'
 import { ErrorMiddlewareErrors } from '../@types/express'
 import ConfirmPersonalDetailsPresenter from './confirmPersonalDetails/ConfirmPersonalDetailsPresenter'
-import ReferralCreationDetails from './referralDetails/ReferralCreationDetails'
 import TaskListPresenter from './taskList/TaskListPresenter'
 import CheckReferralInformationPresenter from './check-referral-information/checkReferralInformationPresenter'
 import RiskSummaryPresenter from './riskSummary/RiskSummaryPresenter'
@@ -115,21 +114,15 @@ export default class ReferralController {
 
   async checkReferralInformation(req: Request, res: Response): Promise<void> {
     const { username } = res.locals.user
-    const referralId = req.params.id as string
-    const referralCreationDetails: ReferralCreationDetails = req.session ? req.session.referralCreationDetails : null
+    const { draftReferralId } = req.session
 
-    if (!referralCreationDetails || !referralCreationDetails.personDetails) {
+    if (!draftReferralId) {
       return res.redirect('/referral/new/find-a-person')
     }
 
     try {
-      const referralInformation = await this.referralService.getReferralInformation(referralId, username)
-
-      req.session.referralCreationDetails.referralInformation = referralInformation
-      const presenter = new CheckReferralInformationPresenter(
-        referralInformation,
-        referralCreationDetails.personDetails,
-      )
+      const draftReferralDetails = await this.referralService.getCheckDraftReferralDetails(draftReferralId, username)
+      const presenter = new CheckReferralInformationPresenter(draftReferralDetails)
       return presenter.renderPage(res)
     } catch (error) {
       logger.error('Error retrieving referral:', error)

@@ -59,7 +59,7 @@ export default function routes({
 
   get('/referral/:id/confirmation', (req, res) => referralController.viewConfirmation(req, res))
 
-  get('/referral/check-referral-information/:id', (req, res) => referralController.checkReferralInformation(req, res))
+  get('/referral/check-referral-information', (req, res) => referralController.checkReferralInformation(req, res))
 
   post('/referral/:referralId/submit-referral-information', (req, res, next) =>
     referralController.submitReferralInformation(req, res, next),

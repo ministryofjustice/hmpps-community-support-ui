@@ -36,6 +36,7 @@ import type {
   NeedsInterpreterRequest,
   ServiceEndDatePageDto,
   ServiceDaysPageDto,
+  CheckDraftReferralDetailsDto,
 } from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
@@ -67,6 +68,10 @@ export default class CommunitySupportApiClient extends RestClient {
 
   async createReferral(referralData: CreateReferralRequest, username: string): Promise<ReferralInformation> {
     return this.post({ path: '/referral', data: referralData }, asSystem(username))
+  }
+
+  getCheckDraftReferralDetails(referralId: string, username: string): Promise<CheckDraftReferralDetailsDto> {
+    return this.get({ path: `/bff/draft-referral/check-draft-referral-details/${referralId}` }, asSystem(username))
   }
 
   async submitReferralById(referralId: string, username: string): Promise<SubmitReferralResponse> {

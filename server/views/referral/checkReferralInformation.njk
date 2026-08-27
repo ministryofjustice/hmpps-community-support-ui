@@ -3,21 +3,32 @@
 
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 
-{% set pageTitle = applicationName + " - Referral" %}
+{% set pageTitle = content.pageTitle %}
 {% set mainClasses = "govuk-body" %}
 
 {% block content %}
+<div class="govuk-grid-row">
+  <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">
+    {{ content.pageHeader }}
+  </h1>
+  <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
 
-<h1 class="govuk-heading-xl">{{ content.pageHeader }}</h1>
+  <h2 class="govuk-heading-l govuk-!-margin-bottom-4">
+    {{ content.pageSubHeader }}
+  </h2>
+
+  <h3 class="govuk-heading-m govuk-!-margin-top-8">{{ content.personalDetailsHeader }}</h3>
     {{ govukSummaryList(content.personalDetailsSummary) }}
+
+  <h3 class="govuk-heading-m govuk-!-margin-top-8">{{ content.referralDetailsHeader }}</h3>
     {{ govukSummaryList(content.referralDetailsSummary) }}
+
+  <h3 class="govuk-heading-m govuk-!-margin-top-8">{{ content.referralContactDetailsHeader }}</h3>
 
     <form method="post" action="{{ content.submitHref }}">
     <input type="hidden" name="_csrf" value="{{csrfToken}}">
-    {{ govukButton({
-        text: content.submitButtonText,
-        classes: "govuk-!-margin-top-6"
-    }) }}
-    </form>
 
+    {{ govukButton(content.submitButton) }}
+    </form>
+</div>
 {% endblock %}
