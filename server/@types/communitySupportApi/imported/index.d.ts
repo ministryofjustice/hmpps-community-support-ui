@@ -1361,13 +1361,11 @@ export interface components {
       sex: string
     }
     PersonDetailsTableDataDto: {
-      name: components['schemas']['RefereeNameDto']
+      name: string
       crn: string
       dateOfBirth: string
       preferredLanguage: string
       disabilities: string
-      prisonNumbers?: string | null
-      currentCircumstances: string
     }
     ReferralDetailsBffResponseDto: {
       /** Format: uuid */
@@ -1537,11 +1535,27 @@ export interface components {
       summary?: components['schemas']['ArnsRiskRoshSummaryDto'] | null
       additionalInformation?: string | null
     }
-    AdditionalInformationDetailsTableDataDto: {
+    CheckDraftReferralDetailsBffResponseDto: {
+      /** Format: uuid */
+      id: string
+      referenceNumber?: string | null
+      /** Format: date-time */
+      createdDate: string
+      personDetailsTableData: components['schemas']['DraftPersonDetailsTableDataDto']
+      equalityDetailsTableData: components['schemas']['DraftEqualityDetailsTableDataDto']
+      additionalInformationDetailsTableData: components['schemas']['DraftAdditionalInformationDetailsTableDataDto']
+      contactDetailsTableData: components['schemas']['DraftContactDetailsTableDataDto']
+      riskInformationDetailsTableData: components['schemas']['DraftRiskInformationDetailsTableDataDto']
+      additionalSupportNeedsDetailsTableData: components['schemas']['DraftAdditionalSupportNeedsDetailsTableDataDto']
+      personNeedsDetailsTableData: components['schemas']['DraftPersonNeedsDetailsTableDataDto']
+      referralAreaTableData: components['schemas']['DraftReferralAreaTableDataDto']
+      mainPocDetailsTableData: components['schemas']['DraftMainPOCDetailsTableDataDto']
+    }
+    DraftAdditionalInformationDetailsTableDataDto: {
       homeOfficeInterest?: string | null
       offenderPersonalityDisorderPathway?: string | null
     }
-    AdditionalSupportNeedsDetailsTableDataDto: {
+    DraftAdditionalSupportNeedsDetailsTableDataDto: {
       physicalHealth?: string | null
       mentalOrEmotionalHealth?: string | null
       neurodiversity?: string | null
@@ -1553,23 +1567,18 @@ export interface components {
       needsInterpreter?: boolean | null
       interpreterLanguage?: string | null
     }
-    CheckDraftReferralDetailsBffResponseDto: {
-      /** Format: uuid */
-      id: string
-      referenceNumber?: string | null
-      /** Format: date-time */
-      createdDate: string
-      personDetailsTableData: components['schemas']['PersonDetailsTableDataDto']
-      equalityDetailsTableData: components['schemas']['EqualityDetailsTableDataDto']
-      additionalInformationDetailsTableData: components['schemas']['AdditionalInformationDetailsTableDataDto']
-      contactDetailsTableData: components['schemas']['ContactDetailsTableDataDto']
-      riskInformationDetailsTableData: components['schemas']['RiskInformationDetailsTableDataDto']
-      additionalSupportNeedsDetailsTableData: components['schemas']['AdditionalSupportNeedsDetailsTableDataDto']
-      personNeedsDetailsTableData: components['schemas']['PersonNeedsDetailsTableDataDto']
-      referralAreaTableData: components['schemas']['ReferralAreaTableDataDto']
-      mainPocDetailsTableData: components['schemas']['MainPOCDetailsTableDataDto']
+    DraftContactDetailsTableDataDto: {
+      phoneNumber?: string | null
+      mobileNumber?: string | null
+      email?: string | null
+      address?: string | null
     }
-    MainPOCDetailsTableDataDto: {
+    DraftEqualityDetailsTableDataDto: {
+      ethnicity?: string | null
+      religionOrBelief?: string | null
+      sex: string
+    }
+    DraftMainPOCDetailsTableDataDto: {
       areTheseDetailsCorrect?: boolean | null
       name?: string | null
       jobRole?: string | null
@@ -1579,7 +1588,16 @@ export interface components {
       isProbationOfficer?: boolean | null
       teamPhoneNumber?: string | null
     }
-    PersonNeedsDetailsTableDataDto: {
+    DraftPersonDetailsTableDataDto: {
+      name: components['schemas']['RefereeNameDto']
+      crn: string
+      dateOfBirth: string
+      preferredLanguage: string
+      disabilities: string
+      prisonNumbers?: string | null
+      currentCircumstances: string
+    }
+    DraftPersonNeedsDetailsTableDataDto: {
       hasAccommodationNeeds?: boolean | null
       accommodationDetails?: string | null
       employmentAndEducation?: string | null
@@ -1590,10 +1608,10 @@ export interface components {
       healthWellbeingDetails?: string | null
       thinkingBehavioursAttitudeDetails?: string | null
     }
-    ReferralAreaTableDataDto: {
+    DraftReferralAreaTableDataDto: {
       area?: string | null
     }
-    RiskInformationDetailsTableDataDto: {
+    DraftRiskInformationDetailsTableDataDto: {
       whoIsAtRisk?: string | null
       natureOfRisk?: string | null
       riskImminence?: string | null

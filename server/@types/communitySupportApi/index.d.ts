@@ -37,7 +37,6 @@ type AdditionalSupportNeedsDto = components['schemas']['AdditionalSupportNeedsBf
 type ServiceEndDatePageDto = components['schemas']['ServiceEndDatePageDto']
 type ServiceDaysPageDto = components['schemas']['ServiceDaysPageDto']
 type NeedsInterpreterBffResponseDto = components['schemas']['NeedsInterpreterBffResponseDto']
-type CheckDraftReferralDetailsDto = components['schemas']['CheckDraftReferralDetailsBffResponseDto']
 type CommunitySupportRiskDto = components['schemas']['CommunitySupportRiskDto']
 type ActionPlanSummaryDto = components['schemas']['ActionPlanSummaryDto']
 type ArnsRiskConcernsToSelfDto = components['schemas']['ArnsRiskConcernsToSelfDto']
@@ -52,6 +51,8 @@ type CommunityServiceProviderRequest = components['schemas']['CommunityServicePr
 type CommunityServiceProviderBffResponseDto = components['schemas']['CommunityServiceProviderBffResponseDto']
 type AdditionalSupportNeedsRequest = components['schemas']['AdditionalSupportNeedsRequest']
 type NeedsInterpreterRequest = components['schemas']['NeedsInterpreterRequest']
+type CheckDraftReferralDetailsDto = components['schemas']['CheckDraftReferralDetailsBffResponseDto']
+
 
 type Selection = components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
 
