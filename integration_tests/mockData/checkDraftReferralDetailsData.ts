@@ -1,6 +1,6 @@
 import type { CheckDraftReferralDetailsDto } from '@community-support-api'
 
-export const checkDraftReferralDetails: CheckDraftReferralDetailsDto = {
+const checkDraftReferralDetails: CheckDraftReferralDetailsDto = {
   id: 'referral-uuid-1',
   referenceNumber: 'REF123456',
   createdDate: '2026-02-10T11:23:00.780Z',
@@ -25,3 +25,5 @@ export const checkDraftReferralDetails: CheckDraftReferralDetailsDto = {
   referralAreaTableData: { area: 'London' },
   mainPocDetailsTableData: {},
 }
+
+export default checkDraftReferralDetails

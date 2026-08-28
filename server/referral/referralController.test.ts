@@ -1,7 +1,6 @@
 import { Request, Response } from 'express'
 import {
   Person,
-  ReferralInformation,
   CaseWorkerDto,
   ConfirmPersonDetailsBffDto,
   CommunitySupportRiskDto,
@@ -209,9 +208,7 @@ describe('ReferralController', () => {
       await referralController.checkReferralInformation(req, res)
 
       expect(referralService.getCheckDraftReferralDetails).toHaveBeenCalledWith('referral123', 'user1')
-      expect(CheckReferralInformationPresenter).toHaveBeenCalledWith(
-        mockDraftReferralDetails,
-      )
+      expect(CheckReferralInformationPresenter).toHaveBeenCalledWith(mockDraftReferralDetails)
       expect(CheckReferralInformationPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
     })
   })
