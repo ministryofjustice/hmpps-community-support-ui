@@ -6,6 +6,7 @@ import {
   ConfirmPersonDetailsBffDto,
   CommunitySupportRiskDto,
   ReferralCriminogenicNeedsDto,
+  CheckDraftReferralDetailsDto,
 } from '@community-support-api'
 import ReferralController from './referralController'
 import ReferralService from '../services/referralService'
@@ -51,6 +52,7 @@ describe('ReferralController', () => {
       createReferral: jest.fn(),
       getReferralUserAssignments: jest.fn(),
       getReferralInformation: jest.fn(),
+      getCheckDraftReferralDetails: jest.fn(),
       getPersonalDetails: jest.fn(),
       getRoshRisksByReferralId: jest.fn(),
       saveRiskInformation: jest.fn(),
@@ -198,42 +200,19 @@ describe('ReferralController', () => {
       await referralController.checkReferralInformation(req, res)
       expect(res.redirect).toHaveBeenCalledWith('/referral/new/find-a-person')
     })
-    test.skip('should create referral and render check referral information page', async () => {
-      req.session.referralCreationDetails = {
-        personIdentifier: 'CRN123',
-        personDetails: {
-          id: 'person123',
-          personIdentifier: 'CRN123',
-          firstName: 'Test',
-          lastName: 'User',
-          dateOfBirth: '1/1/1990',
-        } as Person,
-      }
-      req.params.id = 'referral123'
+    test('should render check referral information page using the stored draft referral ID', async () => {
+      req.session = { draftReferralId: 'referral123' } as typeof req.session
       res.locals.content = CheckReferralInformationContent.build()
-      const mockReferralInformation = {} as ReferralInformation
-      referralService.getReferralInformation.mockResolvedValue(mockReferralInformation)
+      const mockDraftReferralDetails = {} as CheckDraftReferralDetailsDto
+      referralService.getCheckDraftReferralDetails.mockResolvedValue(mockDraftReferralDetails)
 
       await referralController.checkReferralInformation(req, res)
 
-      expect(referralService.getReferralInformation).toHaveBeenCalledWith('referral123', 'user1')
+      expect(referralService.getCheckDraftReferralDetails).toHaveBeenCalledWith('referral123', 'user1')
       expect(CheckReferralInformationPresenter).toHaveBeenCalledWith(
-        mockReferralInformation,
-        // req.session.referralCreationDetails.personDetails,
+        mockDraftReferralDetails,
       )
       expect(CheckReferralInformationPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
-    })
-
-    test.skip('should flash error and redirect to find a person page if referral information not exist', async () => {
-      req.session.referralCreationDetails = {}
-      referralService.getReferralInformation.mockRejectedValue(new Error('Referral retrieving failed'))
-
-      await referralController.checkReferralInformation(req, res)
-      expect(req.flash).toHaveBeenCalledWith(
-        'Retrieving referral',
-        'An unexpected error when retrieving a referral. Please try again.',
-      )
-      expect(res.redirect).toHaveBeenCalledWith('/referral/new/find-a-person')
     })
   })
   describe('viewConfirmation', () => {

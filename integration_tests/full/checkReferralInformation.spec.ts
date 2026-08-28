@@ -1,8 +1,9 @@
 import { test, expect } from '@playwright/test'
 import { randomUUID } from 'node:crypto'
-import { login, resetStubs, seedSessionCreateReferralDetails } from '../testUtils'
+import { login, resetStubs, seedSessionCreateReferralDetails, seedSessionRiskSummary } from '../testUtils'
 import communitySupport from '../mockApis/communitySupport'
 import { referralInformationTaskList } from '../mockData/referralInformationData'
+import { checkDraftReferralDetails } from '../mockData/checkDraftReferralDetailsData'
 import TaskListPage from '../pages/TaskListPage'
 import FindPersonPage from '../pages/findPersonPage'
 import CheckReferralInformationPage from '../pages/checkReferralInformationPage'
@@ -38,6 +39,7 @@ test.describe('Check Referral Information Page', () => {
     personId: mockPersonId,
     referenceNumber: 'REF123456',
   }
+  const mockCheckDraftReferralDetails = { ...checkDraftReferralDetails, id: mockReferralId }
 
   test.beforeEach(async ({ page }) => {
     await resetStubs()
@@ -45,13 +47,14 @@ test.describe('Check Referral Information Page', () => {
     await page.goto('/')
     await login(page)
     await seedSessionCreateReferralDetails(page, { referralCreationDetails: mockReferralDetailsInCommunity })
+    await seedSessionRiskSummary(page, mockReferralId, mockPersonId)
     await page.goto(TaskListPage.url())
   })
 
   test('should display CRN and DOB on check referral information', async ({ page }) => {
-    await communitySupport.stubGetReferralInformation(200, mockReferralId, referralInformationTaskList)
+    await communitySupport.stubGetCheckDraftReferralDetails(mockReferralId, mockCheckDraftReferralDetails)
 
-    await page.goto(CheckReferralInformationPage.url(mockReferralId))
+    await page.goto(CheckReferralInformationPage.url())
 
     const checkReferralInformationPage = await CheckReferralInformationPage.verifyOnPage(page)
 
@@ -72,9 +75,16 @@ test.describe('Check Referral Information Page', () => {
     page,
   }) => {
     await seedSessionCreateReferralDetails(page, { referralCreationDetails: mockReferralDetailsInPrison })
-    await communitySupport.stubGetReferralInformation(200, mockReferralId, referralInformationTaskList)
+    await communitySupport.stubGetCheckDraftReferralDetails(mockReferralId, {
+      ...mockCheckDraftReferralDetails,
+      personDetailsTableData: {
+        ...mockCheckDraftReferralDetails.personDetailsTableData,
+        crn: '',
+        prisonNumbers: 'A1234BC, B1234CD, C1234DE',
+      },
+    })
 
-    await page.goto(CheckReferralInformationPage.url(mockReferralId))
+    await page.goto(CheckReferralInformationPage.url())
 
     const checkReferralInformationPage = await CheckReferralInformationPage.verifyOnPage(page)
 
@@ -95,9 +105,9 @@ test.describe('Check Referral Information Page', () => {
 
   test('should link back to find person from check referral information page', async ({ page }) => {
     await seedSessionCreateReferralDetails(page, { referralCreationDetails: mockReferralDetailsInCommunity })
-    await communitySupport.stubGetReferralInformation(200, mockReferralId, referralInformationTaskList)
+    await communitySupport.stubGetCheckDraftReferralDetails(mockReferralId, mockCheckDraftReferralDetails)
 
-    await page.goto(CheckReferralInformationPage.url(mockReferralId))
+    await page.goto(CheckReferralInformationPage.url())
 
     await CheckReferralInformationPage.verifyOnPage(page)
     await page.getByRole('link', { name: 'Back', exact: true }).click()
@@ -107,10 +117,10 @@ test.describe('Check Referral Information Page', () => {
 
   test('should display confirmation page if referral submission was successful', async ({ page }) => {
     await communitySupport.stubGetReferral()
-    await communitySupport.stubGetReferralInformation(200, mockReferralId, referralInformationTaskList)
+    await communitySupport.stubGetCheckDraftReferralDetails(mockReferralId, mockCheckDraftReferralDetails)
     await communitySupport.stubSubmitReferral(mockReferralId, mockSubmitReferralResponse, 200)
 
-    await page.goto(CheckReferralInformationPage.url(mockReferralId))
+    await page.goto(CheckReferralInformationPage.url())
 
     await CheckReferralInformationPage.verifyOnPage(page)
 
@@ -122,10 +132,10 @@ test.describe('Check Referral Information Page', () => {
 
   test('should display confirmation page if referral was already submitted', async ({ page }) => {
     await communitySupport.stubGetReferral()
-    await communitySupport.stubGetReferralInformation(200, mockReferralId, referralInformationTaskList)
+    await communitySupport.stubGetCheckDraftReferralDetails(mockReferralId, mockCheckDraftReferralDetails)
     await communitySupport.stubSubmitReferral(mockReferralId, mockSubmitReferralResponse, 409)
 
-    await page.goto(CheckReferralInformationPage.url(mockReferralId))
+    await page.goto(CheckReferralInformationPage.url())
 
     await CheckReferralInformationPage.verifyOnPage(page)
 
@@ -137,10 +147,10 @@ test.describe('Check Referral Information Page', () => {
 
   test('should display system error page if internal error was encountered during the submission', async ({ page }) => {
     await communitySupport.stubGetReferral()
-    await communitySupport.stubGetReferralInformation(200, mockReferralId, referralInformationTaskList)
+    await communitySupport.stubGetCheckDraftReferralDetails(mockReferralId, mockCheckDraftReferralDetails)
     await communitySupport.stubSubmitReferral(mockReferralId, mockSubmitReferralResponse, 500)
 
-    await page.goto(CheckReferralInformationPage.url(mockReferralId))
+    await page.goto(CheckReferralInformationPage.url())
 
     const checkReferralInformationPage = await CheckReferralInformationPage.verifyOnPage(page)
 
@@ -161,10 +171,10 @@ test.describe('Check Referral Information Page', () => {
 
   test('should display default error page if other error was encountered during the submission', async ({ page }) => {
     await communitySupport.stubGetReferral()
-    await communitySupport.stubGetReferralInformation(200, mockReferralId, referralInformationTaskList)
+    await communitySupport.stubGetCheckDraftReferralDetails(mockReferralId, mockCheckDraftReferralDetails)
     await communitySupport.stubSubmitReferral(mockReferralId, mockSubmitReferralResponse, 403)
 
-    await page.goto(CheckReferralInformationPage.url(mockReferralId))
+    await page.goto(CheckReferralInformationPage.url())
 
     const checkReferralInformationPage = await CheckReferralInformationPage.verifyOnPage(page)
 
