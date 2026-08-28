@@ -103,7 +103,7 @@ test.describe('Check Referral Information Page', () => {
     await expect(checkReferralInformationPage.personalDetailsSummary.rows[3].value).toHaveText('Male')
   })
 
-  test('should link back to find person from check referral information page', async ({ page }) => {
+  test('should link back to task list from check referral information page', async ({ page }) => {
     await seedSessionCreateReferralDetails(page, { referralCreationDetails: mockReferralDetailsInCommunity })
     await communitySupport.stubGetCheckDraftReferralDetails(mockReferralId, mockCheckDraftReferralDetails)
 
@@ -112,7 +112,7 @@ test.describe('Check Referral Information Page', () => {
     await CheckReferralInformationPage.verifyOnPage(page)
     await page.getByRole('link', { name: 'Back', exact: true }).click()
 
-    await FindPersonPage.verifyOnPage(page)
+    await TaskListPage.verifyOnPage(page)
   })
 
   test('should display confirmation page if referral submission was successful', async ({ page }) => {
