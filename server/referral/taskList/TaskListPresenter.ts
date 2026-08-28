@@ -15,19 +15,6 @@ const completedStatusTag: GovukFrontendTaskListItemStatus = {
   tag: { text: 'Completed', classes: 'govuk-tag--green' },
 }
 
-const getCheckAnswersStatusTag = (data: TaskListStatusDto): GovukFrontendTaskListItemStatus => {
-  // Statuses for tasks that can be completed. Update as journeys are implemented.
-  const statuses = [
-    data.selectThePersonsNeedsCompleted,
-    data.addDetailsOfAnyAdditionalSupportNeedsCompleted,
-    data.selectAnAreaForReferralCompleted,
-  ]
-
-  return statuses.every(status => status?.completed)
-    ? { tag: { text: 'Not Started', classes: 'govuk-tag--grey' } }
-    : { text: 'Cannot start yet' }
-}
-
 const getTaskListStatus = (data: TaskListStatusDto) => {
   return {
     // Personal details is treated as completed in the UI regardless of backend completion records.
@@ -38,7 +25,7 @@ const getTaskListStatus = (data: TaskListStatusDto) => {
     contactDetails: getStatusTag(data.addDetailsOfMainPointOfContactCompleted),
     additionalReferralInformation: getStatusTag(data.addAdditionalInformationCompleted),
     selectAnAreaForReferral: getStatusTag(data.selectAnAreaForReferralCompleted),
-    checkAnswers: getCheckAnswersStatusTag(data),
+    checkAnswers: getStatusTag(null),
   }
 }
 
@@ -115,7 +102,7 @@ export default class TaskListPresenter extends PresenterBase<TaskListViewModel, 
           items: [
             {
               title: { text: content.checkAnswers.subTasks.checkAnswersAndSubmit.text },
-              href: content.checkAnswers.subTasks.checkAnswersAndSubmit.href.replace('{{ id }}', this.referralId),
+              href: content.checkAnswers.subTasks.checkAnswersAndSubmit.href,
               status: status.checkAnswers,
             },
           ],
