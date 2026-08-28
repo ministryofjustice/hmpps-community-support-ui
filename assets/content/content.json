@@ -990,6 +990,29 @@
     "backLink": "/referral/task-list/service-end-date",
     "continueButton": "Save and continue"
   },
+  "/referral/task-list/offence-sentence": {
+    "pageTitle": "Check offence and sentence information - Community Support",
+    "crnLabel": "CRN",
+    "dateOfBirthLabel": "Date of birth",
+    "pageSubHeader": "Check offence and sentence information",
+    "bodyText": "This is the offence associated with this referral.",
+    "offenceSentenceCard": {
+      "heading": "Offence and sentence information",
+      "offenceLabel": "Offence",
+      "offenceSubCategoryLabel": "Offence subcategory",
+      "outcomeLabel": "Outcome",
+      "sentenceEndDateLabel": "Sentence end date",
+      "expectedReleaseDateLabel": "Expected release date"
+    },
+    "hasLicenceConditionsOrZonesLabel": "Are there any licence conditions or exclusion zones the delivery partner should know about?",
+    "yesOptionLabel": "Yes",
+    "licenceConditionsOrZonesDetailsLabel": "Give details of all relevant licence conditions or exclusion zones",
+    "noOptionLabel": "No",
+    "notAvailableText": "Not available",
+    "backLink": "/referral/task-list/service-days",
+    "continueButton": "Save and continue",
+    "submitHref": "/referral/task-list/offence-sentence"
+  },
   "/referral/task-list/select-an-area-for-referral": {
     "areaLabel": "Select the area you want to make a referral to",
     "backLinkText": "Back",
