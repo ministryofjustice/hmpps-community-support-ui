@@ -31,6 +31,7 @@ test.describe('Check Referral Information Page', () => {
   test.beforeEach(async ({ page }) => {
     await resetStubs()
     await communitySupport.stubCreateReferral(referralInformationTaskList)
+    await communitySupport.stubGetTaskListStatus(mockReferralId, { fullName: 'Alex River' })
     await page.goto('/')
     await login(page)
     await seedSessionCreateReferralDetails(page, { referralCreationDetails: mockReferralDetailsInCommunity })
