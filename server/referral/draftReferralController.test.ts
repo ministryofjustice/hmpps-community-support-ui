@@ -57,7 +57,7 @@ describe('DraftReferralController', () => {
 
   describe('submitReferralInformation', () => {
     it('should redirect to the confirmation page after submitting the referral', async () => {
-      referralService.submitReferralById.mockResolvedValue({ referralId: 'submitted123' })
+      referralService.submitReferralById.mockResolvedValue({ referralId: 'submitted123', personId: 'person123' })
 
       await draftReferralController.submitReferralInformation(req, res)
 
