@@ -59,10 +59,10 @@ export default function routes({
 
   get('/referral/:id/confirmation', (req, res) => referralController.viewConfirmation(req, res))
 
-  get('/referral/check-referral-information', (req, res) => referralController.checkReferralInformation(req, res))
+  get('/referral/check-referral-information', (req, res) => draftReferralController.checkReferralInformation(req, res))
 
-  post('/referral/:referralId/submit-referral-information', (req, res, next) =>
-    referralController.submitReferralInformation(req, res, next),
+  post('/referral/:referralId/submit-referral-information', (req, res) =>
+    draftReferralController.submitReferralInformation(req, res),
   )
 
   get('/unassigned-cases', (req, res) => caseListController.showCaseList(req, res))
