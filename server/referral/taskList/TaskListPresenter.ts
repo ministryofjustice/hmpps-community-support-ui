@@ -11,9 +11,14 @@ const getStatusTag = (status: TaskListStatusItem | null): GovukFrontendTaskListI
   return { tag: { text: status.statusText, classes: status.tag } }
 }
 
+const completedStatusTag: GovukFrontendTaskListItemStatus = {
+  tag: { text: 'Completed', classes: 'govuk-tag--green' },
+}
+
 const getTaskListStatus = (data: TaskListStatusDto) => {
   return {
-    personalDetails: getStatusTag(data.confirmPersonalDetailsCompleted),
+    // Personal details is treated as completed in the UI regardless of backend completion records.
+    personalDetails: completedStatusTag,
     riskInformation: getStatusTag(data.checkRiskInformationCompleted),
     personNeeds: getStatusTag(data.selectThePersonsNeedsCompleted),
     supportNeeds: getStatusTag(data.addDetailsOfAnyAdditionalSupportNeedsCompleted),

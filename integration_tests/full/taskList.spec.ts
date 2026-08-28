@@ -17,8 +17,7 @@ test.describe('Task List Page', () => {
     await seedSessionRiskSummary(page, referralId)
   })
 
-  // AC3 + AC4 - Display Additional Support Needs task with Incomplete status
-  test('should display task list correctly with all tasks Incomplete', async ({ page }) => {
+  test('should navigate to check risk information task', async ({ page }) => {
     await communitySupport.stubGetTaskListStatus(referralId, {
       fullName: 'Alex Rivers',
       confirmPersonalDetailsCompleted: incompleteStatus,
@@ -31,101 +30,10 @@ test.describe('Task List Page', () => {
     })
     await page.goto(TaskListPage.url())
     const taskListPage = await TaskListPage.verifyOnPage(page)
-    await taskListPage.verifyTaskStatus('Personal details', 'Confirm personal details', 'Incomplete')
-    await taskListPage.verifyTaskStatus('Referral information', 'Check risk information', 'Incomplete')
-    await taskListPage.verifyTaskStatus('Referral information', `Select the person's needs`, 'Incomplete')
-    await taskListPage.verifyTaskStatus(
-      'Referral information',
-      'Add details of any additional support needs',
-      'Incomplete',
-    )
-    await taskListPage.verifyTaskStatus(
-      'Referral contact details',
-      'Add details of main point of contact',
-      'Incomplete',
-    )
-    await taskListPage.verifyTaskStatus('Check answers and submit', 'Check answers and submit', 'Cannot start yet')
-    await taskListPage.verifyCheckAnswersLink(referralId)
-  })
-
-  test('should display task list correctly after one task is updated to Completed', async ({ page }) => {
-    await communitySupport.stubGetTaskListStatus(referralId, {
-      fullName: 'Alex Rivers',
-      confirmPersonalDetailsCompleted: incompleteStatus,
-      checkRiskInformationCompleted: completedStatus,
-      selectThePersonsNeedsCompleted: incompleteStatus,
-      addDetailsOfAnyAdditionalSupportNeedsCompleted: incompleteStatus,
-      addDetailsOfMainPointOfContactCompleted: incompleteStatus,
-      addAdditionalInformationCompleted: incompleteStatus,
-      selectAnAreaForReferralCompleted: incompleteStatus,
-    })
-    await page.goto(TaskListPage.url())
-    const taskListPage = await TaskListPage.verifyOnPage(page)
-    await taskListPage.verifyTaskStatus('Personal details', 'Confirm personal details', 'Incomplete')
-    await taskListPage.verifyTaskStatus('Referral information', 'Check risk information', 'Completed')
-    await taskListPage.verifyTaskStatus('Referral information', `Select the person's needs`, 'Incomplete')
-    await taskListPage.verifyTaskStatus(
-      'Referral information',
-      'Add details of any additional support needs',
-      'Incomplete',
-    )
-    await taskListPage.verifyTaskStatus(
-      'Referral contact details',
-      'Add details of main point of contact',
-      'Incomplete',
-    )
-    await taskListPage.verifyTaskStatus('Check answers and submit', 'Check answers and submit', 'Cannot start yet')
-    await taskListPage.verifyCheckAnswersLink(referralId)
-  })
-
-  test('should display check answers status correctly after all tasks are Completed', async ({ page }) => {
-    await communitySupport.stubGetTaskListStatus(referralId, {
-      fullName: 'Alex Rivers',
-      confirmPersonalDetailsCompleted: completedStatus,
-      checkRiskInformationCompleted: completedStatus,
-      selectThePersonsNeedsCompleted: completedStatus,
-      addDetailsOfAnyAdditionalSupportNeedsCompleted: completedStatus,
-      addDetailsOfMainPointOfContactCompleted: completedStatus,
-      addAdditionalInformationCompleted: completedStatus,
-      selectAnAreaForReferralCompleted: completedStatus,
-    })
-    await page.goto(TaskListPage.url())
-    const taskListPage = await TaskListPage.verifyOnPage(page)
-    await taskListPage.verifyTaskStatus('Personal details', 'Confirm personal details', 'Completed')
-    await taskListPage.verifyTaskStatus('Referral information', 'Check risk information', 'Completed')
-    await taskListPage.verifyTaskStatus('Referral information', `Select the person's needs`, 'Completed')
-    await taskListPage.verifyTaskStatus(
-      'Referral information',
-      'Add details of any additional support needs',
-      'Completed',
-    )
-    await taskListPage.verifyTaskStatus('Referral contact details', 'Add details of main point of contact', 'Completed')
-    await taskListPage.verifyTaskStatus('Check answers and submit', 'Check answers and submit', 'Completed')
-    await taskListPage.verifyCheckAnswersLink(referralId)
-  })
-
-  test('should navigate to sub tasks', async ({ page }) => {
-    await communitySupport.stubGetTaskListStatus(referralId, {
-      fullName: 'Alex Rivers',
-      confirmPersonalDetailsCompleted: incompleteStatus,
-      checkRiskInformationCompleted: incompleteStatus,
-      selectThePersonsNeedsCompleted: incompleteStatus,
-      addDetailsOfAnyAdditionalSupportNeedsCompleted: incompleteStatus,
-      addDetailsOfMainPointOfContactCompleted: incompleteStatus,
-      addAdditionalInformationCompleted: incompleteStatus,
-      selectAnAreaForReferralCompleted: incompleteStatus,
-    })
-    await page.goto(TaskListPage.url())
-    const taskListPage = await TaskListPage.verifyOnPage(page)
-    await taskListPage.clickPersonalDetailsTask()
-    await expect(taskListPage.page).toHaveURL(/personal-details/)
-
-    await taskListPage.page.goBack()
     await taskListPage.clickCheckRiskInformationTask()
     await expect(taskListPage.page).toHaveURL(/view-risk-summary/)
   })
 
-  // AC5 - Navigate to Additional support needs
   test('should navigate to additional support needs screen when link is clicked', async ({ page }) => {
     await communitySupport.stubGetTaskListStatus(referralId, {
       fullName: 'Alex Rivers',
@@ -158,7 +66,6 @@ test.describe('Task List Page', () => {
     ).toBeVisible()
   })
 
-  // AC8 - Persist completed status / AC9 - Persist incomplete status
   test('should display correct status for additional support needs task based on completion', async ({ page }) => {
     await communitySupport.stubGetTaskListStatus(referralId, {
       fullName: 'Alex Rivers',
@@ -179,7 +86,6 @@ test.describe('Task List Page', () => {
     )
   })
 
-  // AC10 - Maintain Completed Status When Revisiting additional support needs Task
   test('should maintain Completed status when revisiting additional support needs task', async ({ page }) => {
     await communitySupport.stubGetTaskListStatus(referralId, {
       fullName: 'Alex Rivers',

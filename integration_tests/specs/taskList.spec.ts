@@ -134,6 +134,7 @@ test.describe('Task List Journey', () => {
 
     await test.step('select confirm personal details task', async () => {
       const taskListPom = await TaskListPage.verifyOnPage(page)
+      await taskListPom.verifyTaskStatus('Personal details', 'Confirm personal details', 'Completed')
       await taskListPom.clickPersonalDetailsTask()
     })
     await test.step('confirm personal details page', async () => {
