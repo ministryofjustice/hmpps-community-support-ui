@@ -242,6 +242,23 @@ export interface paths {
     patch: operations['updateAdditionalSupportNeeds']
     trace?: never
   }
+  '/draft-referral/additional-information-for-the-delivery-partner/{referralId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    /** Update additional information for the delivery partner for a referral */
+    patch: operations['updateAdditionalInformationForTheDeliveryPartner']
+    trace?: never
+  }
   '/bff/task-list-status/{referralId}': {
     parameters: {
       query?: never
@@ -735,6 +752,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/bff/draft-referral/additional-information-for-the-delivery-partner/{referralId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get additional information for the delivery partner for a draft referral */
+    get: operations['getAdditionalInformationForTheDeliveryPartner']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/bff/confirm-person-details/{referralId}': {
     parameters: {
       query?: never
@@ -1156,16 +1190,16 @@ export interface components {
     }
     No: {
       selected: 'No'
-    } & Omit<components['schemas']['Selection'], 'selected'>
-    Selection: {
+    } & Omit<components['schemas']['SelectionDto'], 'selected'>
+    SelectionDto: {
       selected: string
     }
     Unanswered: {
       selected: 'Unanswered'
-    } & Omit<components['schemas']['Selection'], 'selected'>
+    } & Omit<components['schemas']['SelectionDto'], 'selected'>
     Yes: {
       selected: 'Yes'
-    } & (Omit<components['schemas']['Selection'], 'selected'> & {
+    } & (Omit<components['schemas']['SelectionDto'], 'selected'> & {
       value: string
     })
     CommunityServiceProviderRequest: {
@@ -1210,6 +1244,10 @@ export interface components {
       diversity: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       anythingElse: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       needsAdditionalSupport?: boolean | null
+    }
+    AdditionalInformationForTheDeliveryPartnerBffResponseDto: {
+      refereeName: components['schemas']['RefereeNameDto']
+      details: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
     }
     TaskListStatusItem: {
       completed: boolean
@@ -2223,6 +2261,44 @@ export interface operations {
       }
     }
   }
+  updateAdditionalInformationForTheDeliveryPartner: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json':
+          | components['schemas']['No']
+          | components['schemas']['Unanswered']
+          | components['schemas']['Yes']
+      }
+    }
+    responses: {
+      /** @description Additional information for the delivery partner updated */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': components['schemas']['AdditionalInformationForTheDeliveryPartnerBffResponseDto']
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
   getTaskListStatus: {
     parameters: {
       query?: never
@@ -3108,6 +3184,37 @@ export interface operations {
         }
       }
       /** @description Referral, or the Referral's Person, not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getAdditionalInformationForTheDeliveryPartner: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description additional information found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['AdditionalInformationForTheDeliveryPartnerBffResponseDto']
+        }
+      }
+      /** @description additional information not found */
       404: {
         headers: {
           [name: string]: unknown

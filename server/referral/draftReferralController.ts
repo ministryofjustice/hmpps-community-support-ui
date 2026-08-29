@@ -19,6 +19,7 @@ import { ServiceDaysFormData, ServiceDaysSchema } from '../validation/ServiceDay
 import ServiceDaysPagePresenter from './serviceDays/ServiceDaysPagePresenter'
 import { ServiceEndDateSchema, ServiceEndDateFormData } from '../validation/ServiceEndDateFormData'
 import ServiceEndDatePagePresenter from './serviceEndDate/ServiceEndDatePagePresenter'
+import AdditionalInformationForTheDeliveryPartnerPresenter from './additionalInformationForTheDeliveryPartner /AdditionalInformationForTheDeliveryPartnerPresenter'
 
 const findAPersonURL = '/referral/new/find-a-person' as const
 const taskListURL = '/referral/task-list' as const
@@ -261,5 +262,26 @@ export default class DraftReferralController {
         return res.redirect(serviceDaysURL)
       }
     })
+  }
+
+  async showAdditionalInformationForDeliveryPartner(req: Request, res: Response) {
+    const { username } = res.locals.user
+    const draftReferalId = req.session?.draftReferralId
+    if (!draftReferalId) {
+      return res.redirect(findAPersonURL)
+    }
+    try {
+      const pageData = await this.referralService.getAdditionalInformationForDeliveryPartner(draftReferalId, username)
+      const validationErrors: ErrorMiddlewareErrors = formatDynamicErrorMessages(
+        res.locals.errors,
+        '{{ firstname }}',
+        pageData.refereeName.firstName,
+      )
+      const presenter = new AdditionalInformationForTheDeliveryPartnerPresenter(pageData, validationErrors)
+      return presenter.renderPage(res)
+    } catch (e) {
+      logger.error(e)
+      return res.redirect(findAPersonURL)
+    }
   }
 }

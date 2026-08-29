@@ -36,6 +36,7 @@ import type {
   NeedsInterpreterRequest,
   ServiceEndDatePageDto,
   ServiceDaysPageDto,
+  AdditionalInformationForTheDeliveryPartner,
 } from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
@@ -243,5 +244,15 @@ export default class CommunitySupportApiClient extends RestClient {
 
   submitNeedsAnInterpreter(data: NeedsInterpreterRequest, draftReferalId: string, username: string) {
     return this.patch({ path: `/draft-referral/needs-interpreter/${draftReferalId}`, data }, asSystem(username))
+  }
+
+  getAdditionalInformationForDeliveryPartner(
+    draftReferalId: string,
+    username: string,
+  ): Promise<AdditionalInformationForTheDeliveryPartner> {
+    return this.get(
+      { path: `/bff/draft-referral/additional-information-for-the-delivery-partner/${draftReferalId}` },
+      asSystem(username),
+    )
   }
 }
