@@ -157,6 +157,23 @@ export interface paths {
     patch: operations['updateServiceDaysPage']
     trace?: never
   }
+  '/draft-referral/{referralId}/probation-practitioner-details': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    /** Save the Probation Practitioner details for a Draft Referral */
+    patch: operations['updateProbationPractitionerDetails']
+    trace?: never
+  }
   '/draft-referral/{referralId}/offence-sentence': {
     parameters: {
       query?: never
@@ -1069,6 +1086,22 @@ export interface components {
        */
       service_days?: number
     }
+    UpdateProbationPractitionerDetailsRequest: {
+      name: string
+      jobRole?: string | null
+      emailAddress?: string | null
+      pdu?: string | null
+      probationOffice?: string | null
+      teamPhoneNumber?: string | null
+    }
+    ProbationPractitionerDetailsBffResponseDto: {
+      name: string
+      jobRole?: string | null
+      emailAddress?: string | null
+      pdu?: string | null
+      probationOffice?: string | null
+      teamPhoneNumber?: string | null
+    }
     UpdateOffenceSentenceRequest: {
       offence?: string | null
       offenceSubCategory?: string | null
@@ -1450,17 +1483,9 @@ export interface components {
       emailAddress?: string | null
       disability?: boolean | null
     }
-    PersonCircumstance: {
-      type?: string | null
-      description?: string | null
-      subType?: string | null
-      subDescription?: string | null
-      /** Format: date-time */
-      updatedAt?: string | null
-    }
     PersonDetailsAndCircumstances: {
       preferredLanguage?: string | null
-      personCircumstances: components['schemas']['PersonCircumstance'][]
+      personalCircumstances: components['schemas']['PersonalCircumstance'][]
       disabilities: components['schemas']['Disability'][]
       offenderPersonalityDisorder?: string | null
       ofHomeOfficeInterest?: boolean | null
@@ -1480,13 +1505,13 @@ export interface components {
       additionalDetails?: components['schemas']['PersonAdditionalDetails'] | null
       personDetailsAndCircumstances?: components['schemas']['PersonDetailsAndCircumstances'] | null
     }
-    ProbationPractitionerDetailsBffResponseDto: {
-      name: string
-      jobRole?: string | null
-      emailAddress?: string | null
-      pdu?: string | null
-      probationOffice?: string | null
-      teamPhoneNumber?: string | null
+    PersonalCircumstance: {
+      type?: string | null
+      description?: string | null
+      subType?: string | null
+      subDescription?: string | null
+      /** Format: date-time */
+      updatedAt?: string | null
     }
     AreaConfirmationBffResponseDto: {
       contractArea: string
@@ -2035,6 +2060,41 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['ServiceDaysPageDto']
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  updateProbationPractitionerDetails: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateProbationPractitionerDetailsRequest']
+      }
+    }
+    responses: {
+      /** @description Probation Practitioner details saved */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ProbationPractitionerDetailsBffResponseDto']
         }
       }
       /** @description Referral not found */

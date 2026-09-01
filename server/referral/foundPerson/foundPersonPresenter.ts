@@ -6,6 +6,7 @@ import { FoundPersonContent, FoundPersonViewModel } from './foundPersonViewModel
 import ViewUtils from '../../utils/viewUtils'
 import { resolveIdentifierRow } from '../personIdentifierUtils'
 import { components } from '../../@types/communitySupportApi/imported'
+import isIdentifierACrn from '../../utils/isIdentifierACrn'
 
 const resolveName = (person: Person): string =>
   [person.firstName, person.middleNames, person.lastName].filter(Boolean).join(' ')
@@ -18,8 +19,25 @@ const getLatestUpdatedAt = (list: { updatedAt?: string }[]): string => {
   }
 }
 
-const formatPersonCircumstances = (list: components['schemas']['PersonCircumstance'][]): string => {
-  if (list && list.length > 0) return list.map(c => `<div>${c.type}: ${c.description}</div>`).join('')
+const formatPersonalCircumstances = (list: components['schemas']['PersonalCircumstance'][]): string => {
+  // Order of circumstance types for sorting
+  enum circumstanceType {
+    Relationship,
+    Employment,
+    Dependants,
+  }
+
+  if (list && list.length > 0) {
+    return list
+      .filter(c => Object.values(circumstanceType).includes(c.description))
+      .sort(
+        (a, b) =>
+          circumstanceType[a.description as keyof typeof circumstanceType] -
+          circumstanceType[b.description as keyof typeof circumstanceType],
+      )
+      .map(c => `<div>${c.description}: ${c.subDescription}</div>`)
+      .join('')
+  }
   return 'Not available'
 }
 
@@ -69,7 +87,7 @@ export default class FoundPersonPresenter extends PresenterBase<FoundPersonViewM
     const identifierRow = resolveIdentifierRow(foundPerson)
 
     const currentCircumstancesLastUpdated = getLatestUpdatedAt(
-      foundPerson.personDetailsAndCircumstances?.personCircumstances,
+      foundPerson.personDetailsAndCircumstances?.personalCircumstances,
     )
     const disabilitiesLastUpdated = getLatestUpdatedAt(foundPerson.personDetailsAndCircumstances?.disabilities)
 
@@ -90,7 +108,7 @@ export default class FoundPersonPresenter extends PresenterBase<FoundPersonViewM
         {
           html: `<b>Current circumstances</b>\n<div class="govuk-hint govuk-!-font-size-16">Last updated: ${currentCircumstancesLastUpdated}</div>`,
         },
-        { html: formatPersonCircumstances(foundPerson.personDetailsAndCircumstances?.personCircumstances) },
+        { html: formatPersonalCircumstances(foundPerson.personDetailsAndCircumstances?.personalCircumstances) },
       ),
       ViewUtils.summaryListRow(
         {
@@ -104,7 +122,10 @@ export default class FoundPersonPresenter extends PresenterBase<FoundPersonViewM
     })
 
     const equalityMonitoringItems = [
-      ViewUtils.summaryListRow('Nationality', foundPerson.additionalDetails?.nationalities?.at(0) || 'Not available'),
+      ViewUtils.summaryListRow(
+        'Nationality',
+        foundPerson.additionalDetails?.nationalities?.join(', ') || 'Not available',
+      ),
       ViewUtils.summaryListRow('Ethnicity', foundPerson.additionalDetails?.ethnicity || 'Not available'),
       ViewUtils.summaryListRow('Religion or belief', foundPerson.additionalDetails?.religionOrBelief || 'No religion'),
       ViewUtils.summaryListRow('Sex', foundPerson.sex || ''),
@@ -118,10 +139,9 @@ export default class FoundPersonPresenter extends PresenterBase<FoundPersonViewM
 
     const additionalInformationItems = [
       foundPerson.personDetailsAndCircumstances?.ofHomeOfficeInterest
-        ? ViewUtils.summaryListRow(
-            'Home Office Interest',
-            formatHomeOfficeInterest(foundPerson.personDetailsAndCircumstances?.homeOfficeInterestNotes),
-          )
+        ? ViewUtils.summaryListRow('Home Office Interest', {
+            html: formatHomeOfficeInterest(foundPerson.personDetailsAndCircumstances?.homeOfficeInterestNotes),
+          })
         : null,
       foundPerson.personDetailsAndCircumstances?.offenderPersonalityDisorder
         ? ViewUtils.summaryListRow(
@@ -139,13 +159,14 @@ export default class FoundPersonPresenter extends PresenterBase<FoundPersonViewM
       )
     }
 
+    const inCustody = !isIdentifierACrn(foundPerson.personIdentifier)
     const contactDetailsItems = [
       ViewUtils.summaryListRow('Phone number', foundPerson.additionalDetails?.phoneNumber || 'Not available'),
       ViewUtils.summaryListRow('Mobile number', foundPerson.additionalDetails?.mobileNumber || 'Not available'),
       ViewUtils.summaryListRow('Email address', foundPerson.additionalDetails?.emailAddress || 'Not available'),
       ViewUtils.summaryListRow(
         {
-          html: `<b>Main address</b>\n<div class="govuk-hint govuk-!-font-size-16">Last updated: Not available</div>`,
+          html: `<b>${inCustody ? 'Last known' : 'Main'} address</b>\n<div class="govuk-hint govuk-!-font-size-16">Last updated: Not available</div>`,
         },
         {
           html: formatAddress(
