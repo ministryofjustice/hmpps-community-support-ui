@@ -83,16 +83,8 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
   private buildReferralDetailsSummary(): GovukFrontendSummaryList {
     const summary = [
       {
-        key: { text: 'Community Support Service' },
-        value: { text: '' },
-      },
-      {
         key: { text: 'Location' },
         value: { text: this.draftReferralDetails.referralAreaTableData.area || '' },
-      },
-      {
-        key: { text: 'Delivery Partner' },
-        value: { text: '' },
       },
     ]
     return {

@@ -266,9 +266,9 @@ export default class DraftReferralController {
 
   async checkReferralInformation(req: Request, res: Response): Promise<void> {
     const { username } = res.locals.user
-    const { draftReferralId } = req.session
+    const referralId = req.session?.draftReferralId
 
-    if (!draftReferralId) {
+    if (!referralId) {
       return res.redirect(findAPersonURL)
     }
 
