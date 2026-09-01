@@ -1,8 +1,13 @@
-import { GovukFrontendBackLink, GovukFrontendSummaryList } from '@govuk-frontend'
+import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendSummaryList } from '@govuk-frontend'
 
 export type CheckReferralInformationViewModel = {
+  pageTitle: string
   pageHeader: string
-  submitButtonText: string
+  pageSubHeader: string
+  personalDetailsHeader: string
+  referralDetailsHeader: string
+  referralContactDetailsHeader: string
+  submitButton: GovukFrontendButton
   backLink: GovukFrontendBackLink
   submitHref: string
   personalDetailsSummary: GovukFrontendSummaryList
@@ -10,6 +15,12 @@ export type CheckReferralInformationViewModel = {
 }
 
 export type CheckReferralInformationContent = {
+  pageTitle: string
   pageHeader: string
+  pageSubHeader: string
+  personalDetailsHeader: string
+  referralDetailsHeader: string
+  referralContactDetailsHeader: string
   submitButtonText: string
+  backLink: string
 }

@@ -18,6 +18,7 @@ import {
   CommunitySupportServicesProvider,
   NeedsInterpreterBffResponseDto,
   ServiceDaysPageDto,
+  CheckDraftReferralDetailsDto,
 } from '@community-support-api'
 import { stubFor } from './wiremock'
 import { duplicateData } from '../testUtils'
@@ -518,6 +519,24 @@ export default {
         status: httpStatus,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: referralInformation,
+        transformers: ['response-template'],
+      },
+    }),
+
+  stubGetCheckDraftReferralDetails: (
+    referralId: string,
+    draftReferralDetails: CheckDraftReferralDetailsDto,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: `/community-support/bff/draft-referral/check-draft-referral-details/${referralId}`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: draftReferralDetails,
         transformers: ['response-template'],
       },
     }),

@@ -19,6 +19,7 @@ import { ServiceDaysFormData, ServiceDaysSchema } from '../validation/ServiceDay
 import ServiceDaysPagePresenter from './serviceDays/ServiceDaysPagePresenter'
 import { ServiceEndDateSchema, ServiceEndDateFormData } from '../validation/ServiceEndDateFormData'
 import ServiceEndDatePagePresenter from './serviceEndDate/ServiceEndDatePagePresenter'
+import CheckReferralInformationPresenter from './check-referral-information/checkReferralInformationPresenter'
 
 const findAPersonURL = '/referral/new/find-a-person' as const
 const taskListURL = '/referral/task-list' as const
@@ -261,5 +262,41 @@ export default class DraftReferralController {
         return res.redirect(serviceDaysURL)
       }
     })
+  }
+
+  async checkReferralInformation(req: Request, res: Response): Promise<void> {
+    const { username } = res.locals.user
+    const draftReferralId = req.session?.draftReferralId
+
+    if (!draftReferralId) {
+      return res.redirect(findAPersonURL)
+    }
+
+    try {
+      const draftReferralDetails = await this.referralService.getCheckDraftReferralDetails(draftReferralId, username)
+      const presenter = new CheckReferralInformationPresenter(draftReferralDetails)
+      return presenter.renderPage(res)
+    } catch (error) {
+      logger.error('Error retrieving referral:', error)
+      req.flash('Retrieving referral', 'An unexpected error when retrieving a referral. Please try again.')
+      return res.redirect(findAPersonURL)
+    }
+  }
+
+  async submitReferralInformation(req: Request, res: Response): Promise<void> {
+    const { username } = res.locals.user
+    const { referralId } = req.params as { referralId: string }
+
+    try {
+      const submitReferralResponse = await this.referralService.submitReferralById(referralId, username)
+      return res.redirect(`/referral/${submitReferralResponse.referralId}/confirmation`)
+    } catch (error) {
+      if (error.responseStatus === 409) {
+        logger.info('Referral already submitted')
+        return res.redirect(`/referral/${referralId}/confirmation`)
+      }
+      logger.error('Error in submitting a referral:', error)
+      throw error
+    }
   }
 }

@@ -102,7 +102,7 @@ export default class TaskListPresenter extends PresenterBase<TaskListViewModel, 
           items: [
             {
               title: { text: content.checkAnswers.subTasks.checkAnswersAndSubmit.text },
-              href: content.checkAnswers.subTasks.checkAnswersAndSubmit.href.replace('{{ id }}', this.referralId),
+              href: content.checkAnswers.subTasks.checkAnswersAndSubmit.href,
               status: status.checkAnswers,
             },
           ],
