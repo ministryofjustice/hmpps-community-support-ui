@@ -17,6 +17,7 @@ import {
   ServiceEndDatePageDto,
   ServiceDaysPageDto,
   AdditionalSupportNeedsRequest,
+  CheckDraftReferralDetailsDto,
 } from '@community-support-api'
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
 import { NeedsAnInterpreterFormData } from '../validation/NeedsAnInterpreterFormDataSchema'
@@ -34,6 +35,10 @@ export default class ReferralService {
 
   createReferral(referralData: CreateReferralRequest, username: string): Promise<ReferralInformation> {
     return this.communitySupportApiClient.createReferral(referralData, username)
+  }
+
+  getCheckDraftReferralDetails(referralId: string, username: string): Promise<CheckDraftReferralDetailsDto> {
+    return this.communitySupportApiClient.getCheckDraftReferralDetails(referralId, username)
   }
 
   submitReferralById(referralId: string, username: string) {

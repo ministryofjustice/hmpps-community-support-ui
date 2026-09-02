@@ -1,33 +1,36 @@
-import { Person, ReferralInformation } from '@community-support-api'
+import { CheckDraftReferralDetailsDto } from '@community-support-api'
 import { GovukFrontendSummaryList } from '@govuk-frontend'
 import { Response } from 'express'
 import PresenterBase from '../../presenter/presenterBase'
 import { CheckReferralInformationContent, CheckReferralInformationViewModel } from './checkReferralInformationViewModel'
-import { resolveIdentifierRow } from '../personIdentifierUtils'
+import { IdentifierRow } from '../personIdentifierUtils'
 
-const resolveName = (person: Person): string =>
-  [person.firstName, person.middleNames, person.lastName].filter(Boolean).join(' ')
+const resolveName = (name: { firstName: string; middleName?: string | null; lastName: string }): string =>
+  [name.firstName, name.middleName, name.lastName].filter(Boolean).join(' ')
 
 export default class CheckReferralInformationPresenter extends PresenterBase<
   CheckReferralInformationViewModel,
   CheckReferralInformationContent
 > {
-  constructor(
-    private readonly referralInformation: ReferralInformation,
-    private readonly personDetails: Person,
-  ) {
+  constructor(private readonly draftReferralDetails: CheckDraftReferralDetailsDto) {
     super()
   }
 
   buildViewModel(res: Response): CheckReferralInformationViewModel {
     const viewModel = {} as CheckReferralInformationViewModel
     const content = this.buildStaticContent(res)
-    viewModel.pageHeader = content.pageHeader
-    viewModel.submitButtonText = content.submitButtonText
+    viewModel.pageTitle = content.pageTitle
+    viewModel.pageHeader = resolveName(this.draftReferralDetails.personDetailsTableData.name)
+    viewModel.pageSubHeader = content.pageSubHeader
+    viewModel.personalDetailsHeader = `About ${this.draftReferralDetails.personDetailsTableData.name.firstName}`
     viewModel.personalDetailsSummary = this.buildPersonalDetailsSummary()
+    viewModel.referralDetailsHeader = content.referralDetailsHeader
     viewModel.referralDetailsSummary = this.buildReferralDetailsSummary()
-    viewModel.backLink = { href: '/referral/new/find-a-person' }
-    viewModel.submitHref = `/referral/${this.referralInformation.referralId}/submit-referral-information`
+    viewModel.referralContactDetailsHeader = content.referralContactDetailsHeader
+    viewModel.backLink = { href: content.backLink }
+    viewModel.submitButton = { text: content.submitButtonText, classes: 'govuk-!-margin-top-6' }
+
+    viewModel.submitHref = `/referral/${this.draftReferralDetails.id}/submit-referral-information`
     return viewModel
   }
 
@@ -36,13 +39,18 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
   }
 
   private buildPersonalDetailsSummary(): GovukFrontendSummaryList {
-    const { personDetails } = this
-    const identifierRow = resolveIdentifierRow(personDetails)
+    const { personDetailsTableData } = this.draftReferralDetails
+    let identifierRow: IdentifierRow | null = null
+    if (personDetailsTableData.crn) {
+      identifierRow = { label: 'CRN', value: personDetailsTableData.crn }
+    } else if (personDetailsTableData.prisonNumbers) {
+      identifierRow = { label: 'Prison number', value: personDetailsTableData.prisonNumbers }
+    }
 
     const summary = [
       {
         key: { text: 'Name' },
-        value: { text: resolveName(personDetails) },
+        value: { text: resolveName(personDetailsTableData.name) },
       },
       ...(identifierRow
         ? [
@@ -54,11 +62,11 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
         : []),
       {
         key: { text: 'Date of birth' },
-        value: { text: personDetails.dateOfBirth || '' },
+        value: { text: personDetailsTableData.dateOfBirth || '' },
       },
       {
         key: { text: 'Sex' },
-        value: { text: personDetails.sex || '' },
+        value: { text: this.draftReferralDetails.equalityDetailsTableData.sex || '' },
       },
     ]
     return {
@@ -75,16 +83,8 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
   private buildReferralDetailsSummary(): GovukFrontendSummaryList {
     const summary = [
       {
-        key: { text: 'Community Support Service' },
-        value: { text: this.referralInformation.communityServiceProviderName },
-      },
-      {
         key: { text: 'Location' },
-        value: { text: this.referralInformation.region },
-      },
-      {
-        key: { text: 'Delivery Partner' },
-        value: { text: this.referralInformation.deliveryPartner },
+        value: { text: this.draftReferralDetails.referralAreaTableData.area || '' },
       },
     ]
     return {

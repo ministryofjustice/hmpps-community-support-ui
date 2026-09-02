@@ -24,8 +24,14 @@
     "enterDifferentIdentifierLinkText": "Enter a different CRN or prison number",
     "enterDifferentIdentifierLinkHref": "/referral/new/find-a-person"
   },
-  "/referral/check-referral-information/:id": {
-    "pageHeader": "Check referral information",
+  "/referral/check-referral-information": {
+    "pageTitle": "Check details and submit referral – Community Support",
+    "pageHeader": "{{ fullName }}",
+    "pageSubHeader": "Check details and submit referral",
+    "personalDetailsHeader": "About {{ firstName }}",
+    "referralDetailsHeader": "Referral information",
+    "referralContactDetailsHeader": "Referral contact details",
+    "backLink": "/referral/task-list",
     "submitButtonText": "Submit referral"
   },
   "/referral/:id/confirmation": {
@@ -626,7 +632,7 @@
         "subTasks": {
           "checkAnswersAndSubmit": {
             "text": "Check answers and submit",
-            "href": "/referral/check-referral-information/{{ id }}"
+            "href": "/referral/check-referral-information"
           }
         }
       }

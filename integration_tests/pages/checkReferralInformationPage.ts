@@ -19,8 +19,8 @@ export default class CheckReferralInformationPage extends AbstractPage {
     this.referralDetailsSummary = referralDetailsSummary
   }
 
-  static url(referralId: string): string {
-    return `/referral/check-referral-information/${referralId}`
+  static url(): string {
+    return '/referral/check-referral-information'
   }
 
   static async verifyOnPage(page: Page): Promise<CheckReferralInformationPage> {
