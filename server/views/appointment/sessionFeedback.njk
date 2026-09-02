@@ -13,7 +13,9 @@
   {% if content.form %}
     <form method="post" action="{{ content.submitHref }}">
       <input type="hidden" name="_csrf" value="{{csrfToken}}">
-      {{ govukTextarea(content.form.textarea) }}
+      {{ govukTextarea(content.form.whatDidYouDoTextarea) }}
+      {{ govukTextarea(content.form.behaviourTextarea) }}
+      {{ govukTextarea(content.form.strengthsIdentifiedTextarea) }}
       {{ govukButton(content.form.button) }}
     </form>
   {% endif %}

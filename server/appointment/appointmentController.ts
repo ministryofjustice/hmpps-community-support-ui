@@ -495,8 +495,9 @@ class AppointmentController {
     }
 
     const { icsFeedbackSubmission } = req.session
+    res.locals.errors = formatDynamicErrorMessages(res.locals.errors, '{{ firstname }}', icsAppointment.referralFirstName)
 
-    const presenter = new SessionFeedbackPresenter(caseRefId.toString(), icsFeedbackSubmission)
+    const presenter = new SessionFeedbackPresenter(caseRefId.toString(), icsFeedbackSubmission, icsAppointment.referralFirstName)
     presenter.renderPage(res)
 
     return Promise.resolve()
@@ -524,6 +525,8 @@ class AppointmentController {
       ...icsFeedbackSubmission,
       sessionFeedback: {
         whatHappened: req.body.whatDidYouDo || '',
+        behaviour: req.body.behaviour || '',
+        strengthsIdentified: req.body.strengthsIdentified || '',
       },
       caseReferenceId: caseRefId,
     }

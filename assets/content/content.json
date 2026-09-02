@@ -266,12 +266,31 @@
   "/ics-feedback/:id/session-feedback": {
     "pageHeader": "Session feedback",
     "feedbackForm": {
-      "textarea": {
+      "whatDidYouDoTextarea": {
         "id": "whatDidYouDo",
         "name": "whatDidYouDo",
         "label": "What did you do in the session?",
         "hint": "Give details about what you did, anything that was achieved and what came out of the session.",
-        "error": "Enter what you did in the session",
+        "nothingEnteredError": "Enter what you did in the session",
+        "tooManyCharactersError": "What you did in the session must be {{ maxCharacters }} characters or less",
+        "rows": "5"
+      },
+      "behaviourTextarea": {
+        "id": "behaviour",
+        "name": "behaviour",
+        "label": "What was {{ firstname }}’s engagement like during the session?",
+        "hint": "Give details about how engaged they seemed and if there was any progress or positive change.",
+        "nothingEnteredError": "Enter what {{ firstname }}’s engagement was like during the session",
+        "tooManyCharactersError": "Details about {{ firstname }}’s engagement during the session must be {{ maxCharacters}} characters or less",
+        "rows": "5"
+      },
+      "strengthsIdentifiedTextarea": {
+        "id": "strengthsIdentified",
+        "name": "strengthsIdentified",
+        "label": "What strengths did you identify?",
+        "hint": "Give details of any skills, experience and capabilities that can support the delivery of the service.",
+        "nothingEnteredError": "Enter what strengths you identified",
+        "tooManyCharactersError": "Strengths you identified must be {{ maxCharacters }} characters or less",
         "rows": "5"
       },
       "submitButtonText": "Continue"
