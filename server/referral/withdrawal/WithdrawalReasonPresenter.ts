@@ -69,15 +69,19 @@ export default class WithdrawalReasonPresenter extends PresenterBase<
     errorMessage?: GovukFrontendErrorMessage,
   ): string {
     const errorText = selected ? errorMessage?.text : undefined
+    const textareaId = additionalInformationField(reason)
+    const hintId = `${textareaId}-hint`
+    const errorId = `${textareaId}-error`
     const errorHtml = errorText
-      ? `<p id="additionalInformationError" class="govuk-error-message"><span class="govuk-visually-hidden">Error:</span> ${errorText}</p>`
+      ? `<p id="${errorId}" class="govuk-error-message"><span class="govuk-visually-hidden">Error:</span> ${errorText}</p>`
       : ''
     const value = selected ? (escapeHtml(this.formData?.additionalInformation) ?? '') : ''
+    const ariaDescribedBy = `${hintId}${errorText ? ` ${errorId}` : ''}`
     return `<div class="govuk-form-group${errorText ? ' govuk-form-group--error' : ''}">
-      <label class="govuk-label govuk-label--m" for="additionalInformation-${reason}">${content.additionalInformationLabel}</label>
-      <div id="additionalInformation-${reason}-hint" class="govuk-hint">${content.additionalInformationHint}</div>
+      <label class="govuk-label govuk-label--m" for="${textareaId}">${content.additionalInformationLabel}</label>
+      <div id="${hintId}" class="govuk-hint">${content.additionalInformationHint}</div>
       ${errorHtml}
-      <textarea class="govuk-textarea" id="${additionalInformationField(reason)}" name="${additionalInformationField(reason)}" rows="5" aria-describedby="additionalInformation-${reason}-hint${errorText ? ' additionalInformationError' : ''}">${value}</textarea>
+      <textarea class="govuk-textarea" id="${textareaId}" name="${textareaId}" rows="5" aria-describedby="${ariaDescribedBy}">${value}</textarea>
     </div>`
   }
 
