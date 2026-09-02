@@ -31,7 +31,7 @@ export default class WithdrawalReasonPage extends AbstractPage {
       await ErrorSummary.create(page.locator('[data-testid="error-messages"]')),
       page.locator('h2.govuk-heading-s'),
       page.locator('input[name="withdrawalReason"]'),
-      page.locator('textarea[name="additionalInformation"]'),
+      page.locator('.govuk-radios__conditional textarea'),
       page.locator('.govuk-radios__conditional--visible .govuk-error-message'),
       page.getByRole('button', { name: 'Continue', exact: true }),
     )
