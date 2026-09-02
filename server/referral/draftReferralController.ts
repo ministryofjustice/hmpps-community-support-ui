@@ -284,4 +284,8 @@ export default class DraftReferralController {
       return res.redirect(findAPersonURL)
     }
   }
+
+  additionalInformationForDeliveryPartner(req: Request, res: Response) {
+    res.json(req.body)
+  }
 }

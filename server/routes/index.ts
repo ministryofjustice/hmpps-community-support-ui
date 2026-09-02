@@ -227,6 +227,10 @@ export default function routes({
     draftReferralController.showAdditionalInformationForDeliveryPartner(req, res),
   )
 
+  post('/referral/task-list/additional-information-for-delivery-partner', (req, res) =>
+    draftReferralController.additionalInformationForDeliveryPartner(req, res),
+  )
+
   getOrPost('/referral/task-list/select-an-area-for-referral', (req, res) =>
     referralController.showSelectArea(req, res),
   )
