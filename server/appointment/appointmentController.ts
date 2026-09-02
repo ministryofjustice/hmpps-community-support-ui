@@ -542,7 +542,7 @@ class AppointmentController {
     req.session.icsFeedbackSubmission = savedIcsFeedbackSubmission
 
     validateRequestBodyAgainstSchema(SessionFeedbackFormDataSchema, req, res, () => {
-      res.redirect(`/ics-feedback/${caseRefId}/check-answers`)
+      res.redirect(`/ics-feedback/${caseRefId}/issues-or-concerns`)
     })
   }
 

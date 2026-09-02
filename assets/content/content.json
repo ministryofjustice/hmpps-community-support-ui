@@ -264,6 +264,7 @@
     "backLink": "/progress/{{ id }}"
   },
   "/ics-feedback/:id/session-feedback": {
+    "pageTitle": "Session feedback – ICS feedback – Community Support ",
     "pageHeader": "Session feedback",
     "feedbackForm": {
       "whatDidYouDoTextarea": {

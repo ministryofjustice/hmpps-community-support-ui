@@ -18,6 +18,7 @@ export interface SessionFeedbackFormViewModel {
 
 export interface SessionFeedbackViewModel {
   errorSummary?: GovukFrontendErrorSummary
+  pageTitle: string
   pageHeader: string
   description?: string
   label: string
@@ -44,6 +45,7 @@ interface TextareaContent {
 }
 
 export interface SessionFeedbackContent {
+  pageTitle: string
   pageHeader: string
   description?: string
   label: string
@@ -105,6 +107,7 @@ export default class SessionFeedbackPresenter extends PresenterBase<SessionFeedb
   buildViewModel(res: Response): SessionFeedbackViewModel {
     const content = this.buildStaticContent(res)
     return {
+      pageTitle: content.pageTitle,
       pageHeader: content.pageHeader,
       description: content.description,
       label: content.label,
