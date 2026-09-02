@@ -12,6 +12,14 @@ export default class IcsFeedbackSessionFeedbackPage extends AbstractPage {
 
   readonly whatDidYouDoLabel: Locator
 
+  readonly behaviourInput: Locator
+
+  readonly behaviourLabel: Locator
+
+  readonly strengthsIdentifiedInput: Locator
+
+  readonly strengthsIdentifiedLabel: Locator
+
   readonly continueButton: Locator
 
   static url(caseRefId: string): string {
@@ -25,6 +33,14 @@ export default class IcsFeedbackSessionFeedbackPage extends AbstractPage {
     this.backLink = page.getByRole('link', { name: 'Back', exact: true })
     this.whatDidYouDoInput = page.locator('textarea[name="whatDidYouDo"]')
     this.whatDidYouDoLabel = page.locator('label[for="whatDidYouDo"]', { hasText: 'What did you do in the session?' })
+    this.behaviourInput = page.locator('textarea[name="behaviour"]')
+    this.behaviourLabel = page.locator('label[for="behaviour"]', {
+      hasText: 'What was John’s engagement like during the session?',
+    })
+    this.strengthsIdentifiedInput = page.locator('textarea[name="strengthsIdentified"]')
+    this.strengthsIdentifiedLabel = page.locator('label[for="strengthsIdentified"]', {
+      hasText: 'What strengths did you identify?',
+    })
     this.continueButton = page.getByRole('button', { name: 'Continue' })
   }
 
@@ -33,6 +49,10 @@ export default class IcsFeedbackSessionFeedbackPage extends AbstractPage {
     await expect(sessionFeedbackPage.header).toBeVisible()
     await expect(sessionFeedbackPage.whatDidYouDoLabel).toBeVisible()
     await expect(sessionFeedbackPage.whatDidYouDoInput).toBeVisible()
+    await expect(sessionFeedbackPage.behaviourLabel).toBeVisible()
+    await expect(sessionFeedbackPage.behaviourInput).toBeVisible()
+    await expect(sessionFeedbackPage.strengthsIdentifiedLabel).toBeVisible()
+    await expect(sessionFeedbackPage.strengthsIdentifiedInput).toBeVisible()
     await expect(sessionFeedbackPage.continueButton).toBeVisible()
     return sessionFeedbackPage
   }

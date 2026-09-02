@@ -50,12 +50,15 @@ test.describe('Session Feedback Page', () => {
     await IcsFeedbackSessionFeedbackPage.verifyOnPage(page)
   })
 
-  test('AC3 - Empty field error message', async ({ page }) => {
+  test('AC3 - Validation error messages', async ({ page }) => {
     await seedSessionWithIcsFeedback(page, mockIcsFeedbackSubmission)
     await page.goto(SESSION_FEEDBACK_URL)
     const sessionFeedbackPage = await IcsFeedbackSessionFeedbackPage.verifyOnPage(page)
-    await test.step('submit', async () => {
+
+    await test.step('submit empty fields', async () => {
       await sessionFeedbackPage.whatDidYouDoInput.fill('')
+      await sessionFeedbackPage.behaviourInput.fill('')
+      await sessionFeedbackPage.strengthsIdentifiedInput.fill('')
       await sessionFeedbackPage.continueButton.click()
     })
     await IcsFeedbackSessionFeedbackPage.verifyFieldErrorOnPage(
@@ -63,21 +66,38 @@ test.describe('Session Feedback Page', () => {
       'whatDidYouDo',
       'Enter what you did in the session',
     )
-  })
+    await IcsFeedbackSessionFeedbackPage.verifyFieldErrorOnPage(
+      page,
+      'behaviour',
+      'Enter what John’s engagement was like during the session',
+    )
+    await IcsFeedbackSessionFeedbackPage.verifyFieldErrorOnPage(
+      page,
+      'strengthsIdentified',
+      'Enter what strengths you identified',
+    )
 
-  test('AC4 - Too many characters error message', async ({ page }) => {
-    await seedSessionWithIcsFeedback(page, mockIcsFeedbackSubmission)
-    await page.goto(SESSION_FEEDBACK_URL)
-    const sessionFeedbackPage = await IcsFeedbackSessionFeedbackPage.verifyOnPage(page)
     const tooLongText = 'x'.repeat(3001)
-    await test.step('submit', async () => {
+    await test.step('submit fields over character limit', async () => {
       await sessionFeedbackPage.whatDidYouDoInput.fill(tooLongText)
+      await sessionFeedbackPage.behaviourInput.fill(tooLongText)
+      await sessionFeedbackPage.strengthsIdentifiedInput.fill(tooLongText)
       await sessionFeedbackPage.continueButton.click()
     })
     await IcsFeedbackSessionFeedbackPage.verifyFieldErrorOnPage(
       page,
       'whatDidYouDo',
       'What you did in the session must be 3000 characters or less ',
+    )
+    await IcsFeedbackSessionFeedbackPage.verifyFieldErrorOnPage(
+      page,
+      'behaviour',
+      'Details about John’s engagement during the session must be 3000 characters or less ',
+    )
+    await IcsFeedbackSessionFeedbackPage.verifyFieldErrorOnPage(
+      page,
+      'strengthsIdentified',
+      'Strengths you identified must be 3000 characters or less ',
     )
   })
 
@@ -99,6 +119,8 @@ test.describe('Session Feedback Page', () => {
     const sessionFeedbackPage = await IcsFeedbackSessionFeedbackPage.verifyOnPage(page)
     await test.step('submit', async () => {
       await sessionFeedbackPage.whatDidYouDoInput.fill('Some feedback information')
+      await sessionFeedbackPage.behaviourInput.fill('Engaged well throughout the session')
+      await sessionFeedbackPage.strengthsIdentifiedInput.fill('Strong family support')
       await sessionFeedbackPage.continueButton.click()
     })
     await test.step('should be on check your answers page', async () => {

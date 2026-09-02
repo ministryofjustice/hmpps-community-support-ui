@@ -495,9 +495,17 @@ class AppointmentController {
     }
 
     const { icsFeedbackSubmission } = req.session
-    res.locals.errors = formatDynamicErrorMessages(res.locals.errors, '{{ firstname }}', icsAppointment.referralFirstName)
+    res.locals.errors = formatDynamicErrorMessages(
+      res.locals.errors,
+      '{{ firstname }}',
+      icsAppointment.referralFirstName,
+    )
 
-    const presenter = new SessionFeedbackPresenter(caseRefId.toString(), icsFeedbackSubmission, icsAppointment.referralFirstName)
+    const presenter = new SessionFeedbackPresenter(
+      caseRefId.toString(),
+      icsFeedbackSubmission,
+      icsAppointment.referralFirstName,
+    )
     presenter.renderPage(res)
 
     return Promise.resolve()
