@@ -43,7 +43,10 @@ export default class WithdrawalReasonPresenter extends PresenterBase<
   private buildReasonGroups(content: WithdrawalReasonContent): WithdrawalReasonViewModel['reasonGroups'] {
     return content.groups.map((group, groupIndex) => ({
       heading: group.heading,
+      radios: {
+        name: 'withdrawalReason',
         idPrefix: groupIndex === 0 ? 'withdrawalReason' : `withdrawalReason-${groupIndex}`,
+        items: group.reasons.map(
           (reason): GovukFrontendRadiosItemWithConditional => ({
             value: reason.value,
             text: reason.text,
