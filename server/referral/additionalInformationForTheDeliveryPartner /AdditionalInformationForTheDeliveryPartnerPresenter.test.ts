@@ -35,9 +35,9 @@ const errorMessage = {
   nothingEntered: `Enter details of anything else the delivery partner should know`,
 } as const
 
-const content = loadContentData('/referral/task-list/needs-an-interpreter')
+const content = loadContentData('/referral/task-list/additional-information-for-the-delivery-partner')
 
-describe('NeedsAnInterpreterPresenter', () => {
+describe('AdditionalInformationForTheDeliveryPartnerPresenter', () => {
   describe('buildViewModel', () => {
     const res = {
       locals: {
@@ -45,10 +45,10 @@ describe('NeedsAnInterpreterPresenter', () => {
       },
     } as unknown as Response
 
-    test.skip('buildViewModel creates radios with empty conditional text when no language is selected', () => {
+    test.skip('buildViewModel creates radios with empty conditional text when no information is given', () => {
       const dto: AdditionalInformationForTheDeliveryPartner = {
         refereeName: { firstName: 'Alex', lastName: 'River' },
-        details: { selected: 'Yes', value: '' },
+        details: { selected: 'Unanswered' },
       }
 
       const presenter = new AdditionalInformationForTheDeliveryPartnerPresenter(dto, { list: [], messages: {} })
