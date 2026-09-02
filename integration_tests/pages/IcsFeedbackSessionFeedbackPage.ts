@@ -10,6 +10,8 @@ export default class IcsFeedbackSessionFeedbackPage extends AbstractPage {
 
   readonly whatDidYouDoInput: Locator
 
+  readonly whatDidYouDoLabel: Locator
+
   readonly continueButton: Locator
 
   static url(caseRefId: string): string {
@@ -22,12 +24,14 @@ export default class IcsFeedbackSessionFeedbackPage extends AbstractPage {
     this.errorHeader = page.locator('h2', { hasText: 'There is a problem' })
     this.backLink = page.getByRole('link', { name: 'Back', exact: true })
     this.whatDidYouDoInput = page.locator('textarea[name="whatDidYouDo"]')
+    this.whatDidYouDoLabel = page.locator('label[for="whatDidYouDo"]', { hasText: 'What did you do in the session?' })
     this.continueButton = page.getByRole('button', { name: 'Continue' })
   }
 
   static async verifyOnPage(page: Page): Promise<IcsFeedbackSessionFeedbackPage> {
     const sessionFeedbackPage = new IcsFeedbackSessionFeedbackPage(page)
     await expect(sessionFeedbackPage.header).toBeVisible()
+    await expect(sessionFeedbackPage.whatDidYouDoLabel).toBeVisible()
     await expect(sessionFeedbackPage.whatDidYouDoInput).toBeVisible()
     await expect(sessionFeedbackPage.continueButton).toBeVisible()
     return sessionFeedbackPage

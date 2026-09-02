@@ -62,7 +62,7 @@ export default class SessionFeedbackPresenter extends PresenterBase<SessionFeedb
       textarea: {
         id: content.textarea.id,
         name: content.textarea.name,
-        label: {},
+        label: { text: content.textarea.label, classes: 'govuk-label--m' },
         hint: { text: content.textarea.hint },
         value: fieldData,
         rows: content.textarea.rows,
