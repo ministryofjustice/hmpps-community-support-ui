@@ -47,6 +47,8 @@ export interface ReferralDetailsContent {
   referralDetailsCard: ReferralDetailsCard
   subNavTitle: string
   subNavItems: MojSubNavigationItem[]
+  // TODO - Remove once we have a decision on the entry point for withdrawing referrals
+  withdrawReferralLinkText: string
 }
 
 export type AssignmentSuccessBanner = {

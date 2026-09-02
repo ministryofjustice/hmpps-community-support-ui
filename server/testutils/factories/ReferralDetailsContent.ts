@@ -15,6 +15,7 @@ export default referralDetailsContentFactory.define(({ transientParams }) => ({
   backLink: '/unassigned-cases',
   defaultFieldValue: 'Not available',
   successBannerHeading: 'Case assigned',
+  withdrawReferralLinkText: 'Withdraw referral',
   personalDetailsCard: {
     heading: 'Personal details',
     nameLabel: 'Name',
