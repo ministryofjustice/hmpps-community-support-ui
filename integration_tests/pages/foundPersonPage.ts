@@ -39,11 +39,17 @@ export default class FindPersonPage extends AbstractPage {
   private constructor(
     page: Page,
     readonly personSummary: SummaryList,
+    readonly equalityMonitoring: SummaryList,
+    readonly additionalInformation: SummaryList,
+    readonly contactDetails: SummaryList,
   ) {
     super(page)
     this.header = page.getByRole('heading', { name: 'Confirm this is the correct person for referral' })
     this.backLink = page.getByRole('link', { name: 'Back', exact: true })
     this.personSummary = personSummary
+    this.equalityMonitoring = equalityMonitoring
+    this.additionalInformation = additionalInformation
+    this.contactDetails = contactDetails
     this.enterDifferentIdentifierLink = page.getByRole('link', {
       name: 'Enter a different CRN or prison number',
       exact: true,
@@ -55,7 +61,16 @@ export default class FindPersonPage extends AbstractPage {
 
   static async verifyOnPage(page: Page): Promise<FindPersonPage> {
     const personSummary = await SummaryList.create(page.locator('[data-testid="personsummary"]'))
-    const findPersonPage = new FindPersonPage(page, personSummary)
+    const equalityMonitoring = await SummaryList.create(page.locator('[data-testid="equalityMonitoring"]'))
+    const additionalInformation = await SummaryList.create(page.locator('[data-testid="additionalInformation"]'))
+    const contactDetails = await SummaryList.create(page.locator('[data-testid="contactDetails"]'))
+    const findPersonPage = new FindPersonPage(
+      page,
+      personSummary,
+      equalityMonitoring,
+      additionalInformation,
+      contactDetails,
+    )
     await expect(findPersonPage.header).toBeVisible()
     await expect(findPersonPage.backLink).toBeVisible()
     await expect(findPersonPage.continueButton).toBeVisible()
