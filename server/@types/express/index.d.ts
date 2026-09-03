@@ -9,6 +9,7 @@ import { HmppsUser } from '../../interfaces/hmppsUser'
 import { ChangeAppointmentDetails } from '../../appointment/change-ics-details-reason/ChangeAppointmentDetails'
 import { ReferralProgressBannerContent } from '../../referral/progress/ReferralProgressBannerContent'
 import { ReferralCreationDetails } from '../../referral/referralDetails/ReferralCreationDetails'
+import { WithdrawalFormData } from '../../referral/withdrawal/WithdrawalFormData'
 
 export interface HowSessionTookPlace {
   type: 'PHONE' | 'VIDEO' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION'
@@ -47,6 +48,7 @@ export declare module 'express-session' {
     draftReferralId: string
     personId: string
     selectedProviderId: string
+    withdrawalReferrals: Record<string, WithdrawalFormData>
   }
 }
 

@@ -26,7 +26,7 @@ import { ReferralProgressBannerContent } from '../referral/progress/ReferralProg
 import AppointmentValidator from './AppointmentValidator'
 import { IcsFeedbackHowSessionTookPlaceFormData } from './ics-feedback/icsFeedbackHowSessionTookPlaceViewModel'
 import { getChangeRequesterType } from './change-ics-details-reason/ChangeAppointmentDetails'
-import { SessionFeedbackFormDataSchema } from '../validation/SessionFeedbackFormData'
+import { SessionFeedbackFormContent, SessionFeedbackFormDataSchemaBuilder } from '../validation/SessionFeedbackFormData'
 import ViewChangeSessionDetailsPresenter from './view-change-session-details/ViewChangeSessionDetailsPresenter'
 import RecordSessionDetailsPresenter from './record-ics/RecordSessionDetailsPresenter'
 import { RecordSessionDetailsFormDataSchema } from '../validation/RecordSessionDetailsFormData'
@@ -495,8 +495,17 @@ class AppointmentController {
     }
 
     const { icsFeedbackSubmission } = req.session
+    res.locals.errors = formatDynamicErrorMessages(
+      res.locals.errors,
+      '{{ firstname }}',
+      icsAppointment.referralFirstName,
+    )
 
-    const presenter = new SessionFeedbackPresenter(caseRefId.toString(), icsFeedbackSubmission)
+    const presenter = new SessionFeedbackPresenter(
+      caseRefId.toString(),
+      icsFeedbackSubmission,
+      icsAppointment.referralFirstName,
+    )
     presenter.renderPage(res)
 
     return Promise.resolve()
@@ -524,14 +533,17 @@ class AppointmentController {
       ...icsFeedbackSubmission,
       sessionFeedback: {
         whatHappened: req.body.whatDidYouDo || '',
+        behaviour: req.body.behaviour || '',
+        strengthsIdentified: req.body.strengthsIdentified || '',
       },
       caseReferenceId: caseRefId,
     }
 
     req.session.icsFeedbackSubmission = savedIcsFeedbackSubmission
 
-    validateRequestBodyAgainstSchema(SessionFeedbackFormDataSchema, req, res, () => {
-      res.redirect(`/ics-feedback/${caseRefId}/check-answers`)
+    const { feedbackForm } = res.locals.content as { feedbackForm: SessionFeedbackFormContent }
+    validateRequestBodyAgainstSchema(SessionFeedbackFormDataSchemaBuilder(feedbackForm), req, res, () => {
+      res.redirect(`/ics-feedback/${caseRefId}/issues-or-concerns`)
     })
   }
 
