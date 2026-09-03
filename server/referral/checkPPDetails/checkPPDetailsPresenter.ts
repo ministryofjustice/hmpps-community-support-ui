@@ -1,14 +1,14 @@
-import PresenterBase from '../../presenter/presenterBase'
-import { CheckPPDetailsContent, CheckPPDetailsViewModel } from './checkPPDetailsViewModel'
 import { Response } from 'express'
 import { Person, ProbationPractitionerDetails } from '@community-support-api'
-import { ErrorMiddlewareErrors } from '../../@types/express'
 import {
   GovukFrontendBackLink,
   GovukFrontendButton,
   GovukFrontendRadios,
   GovukFrontendSummaryList,
 } from '@govuk-frontend'
+import PresenterBase from '../../presenter/presenterBase'
+import { CheckPPDetailsContent, CheckPPDetailsViewModel } from './checkPPDetailsViewModel'
+import { ErrorMiddlewareErrors } from '../../@types/express'
 
 export default class CheckPPDetailsPresenter extends PresenterBase<CheckPPDetailsViewModel, CheckPPDetailsContent> {
   buildViewModel(res: Response) {
@@ -26,7 +26,7 @@ export default class CheckPPDetailsPresenter extends PresenterBase<CheckPPDetail
       buttonArgs: this.generateButton(content),
       insetText: content.insetText,
       summaryListArgs: this.generateSummaryList(content),
-      radioArgs: this.generateRadioButtons(content)
+      radioArgs: this.generateRadioButtons(content),
     }
   }
 
@@ -53,89 +53,88 @@ export default class CheckPPDetailsPresenter extends PresenterBase<CheckPPDetail
     return { text: content.buttonText, preventDoubleClick: true }
   }
 
-  generateSummaryList(content: CheckPPDetailsContent):GovukFrontendSummaryList {
+  generateSummaryList(content: CheckPPDetailsContent): GovukFrontendSummaryList {
     const ppDetails = this.probationPractitionerDetails
     return {
       card: {
         title: {
-          text: "Contact details"
-        }
+          text: 'Contact details',
+        },
       },
       rows: [
         {
           key: {
-            text: content.nameLabel
+            text: content.nameLabel,
           },
           value: {
-            text: ppDetails.name ? ppDetails.name : 'Not available'
+            text: ppDetails.name ? ppDetails.name : 'Not available',
           },
         },
         {
           key: {
-            text: content.jobRoleLabel
+            text: content.jobRoleLabel,
           },
           value: {
-            text: ppDetails.jobRole ? ppDetails.jobRole : 'Not available'
+            text: ppDetails.jobRole ? ppDetails.jobRole : 'Not available',
           },
         },
         {
           key: {
-            text: content.emailAddressLabel
+            text: content.emailAddressLabel,
           },
           value: {
-            text: ppDetails.emailAddress ? ppDetails.emailAddress : 'Not available'
+            text: ppDetails.emailAddress ? ppDetails.emailAddress : 'Not available',
           },
         },
         {
           key: {
-            text: content.pduLabel
+            text: content.pduLabel,
           },
           value: {
-            text: ppDetails.pdu ? ppDetails.pdu : 'Not available'
+            text: ppDetails.pdu ? ppDetails.pdu : 'Not available',
           },
         },
         {
           key: {
-            text: content.probationOfficeLabel
+            text: content.probationOfficeLabel,
           },
           value: {
-            text: ppDetails.probationOffice ? ppDetails.probationOffice : 'Not available'
+            text: ppDetails.probationOffice ? ppDetails.probationOffice : 'Not available',
           },
         },
         {
           key: {
-            text: content.teamPhoneNumberLabel
+            text: content.teamPhoneNumberLabel,
           },
           value: {
-            text: ppDetails.teamPhoneNumber ? ppDetails.teamPhoneNumber : 'Not available'
+            text: ppDetails.teamPhoneNumber ? ppDetails.teamPhoneNumber : 'Not available',
           },
-        }
-      ]
+        },
+      ],
     }
   }
 
-  generateRadioButtons(content: CheckPPDetailsContent):GovukFrontendRadios {
+  generateRadioButtons(content: CheckPPDetailsContent): GovukFrontendRadios {
     return {
-      name: "detailsCorrect",
+      name: 'detailsCorrect',
       fieldset: {
         legend: {
           text: content.radioQuestion,
-            isPageHeading: false,
-            classes: "govuk-fieldset__legend--m"
-        }
+          isPageHeading: false,
+          classes: 'govuk-fieldset__legend--m',
+        },
       },
       errorMessage: this.validationErrors?.messages.detailsCorrect ?? null,
       items: [
         {
-          value: "true",
-          text: content.radioYes
+          value: 'true',
+          text: content.radioYes,
         },
         {
-          value: "false",
-          text: content.radioNo
-        }
-      ]
+          value: 'false',
+          text: content.radioNo,
+        },
+      ],
     }
   }
-
 }

@@ -78,7 +78,7 @@ describe('TaskListPresenter - Page Rendering', () => {
       const response = { locals: { content } } as unknown as Response
       const viewModel = presenter.buildViewModel(response)
 
-      const items = viewModel.taskListItemsBySection.contactDetails.taskList.items
+      const { items } = viewModel.taskListItemsBySection.contactDetails.taskList
       expect(items).toHaveLength(1)
       expect(items[0].title.text).toBe(`Check probation practitioner's details`)
       expect(items[0].href).toBe('/referral/task-list/check-probation-practitioner-details')
@@ -94,11 +94,10 @@ describe('TaskListPresenter - Page Rendering', () => {
       const response = { locals: { content } } as unknown as Response
       const viewModel = presenter.buildViewModel(response)
 
-      const items = viewModel.taskListItemsBySection.contactDetails.taskList.items
+      const { items } = viewModel.taskListItemsBySection.contactDetails.taskList
       expect(items).toHaveLength(1)
       expect(items[0].title.text).toBe('Add details of main point of contact')
       expect(items[0].href).toBe('/referral/new/add-contact-details')
     })
   })
 })
-

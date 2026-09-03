@@ -988,7 +988,7 @@ describe('ReferralController', () => {
       expect(CheckPPDetailsPresenter.prototype.renderPage).not.toHaveBeenCalled()
     })
 
-    it('should not submit PP details or redirect when details are not correct', async () => {
+    it('should not submit PP details when details are not correct', async () => {
       req = {
         method: 'POST',
         body: { detailsCorrect: 'false' },
@@ -1003,7 +1003,9 @@ describe('ReferralController', () => {
       await referralController.showCheckPPDetails(req, res)
 
       expect(referralService.submitPPDetails).not.toHaveBeenCalled()
-      expect(res.redirect).not.toHaveBeenCalled()
+      // TODO: this currently redirects to the task list as an interim measure until the
+      // "add/edit PP details" page is built in a follow-up PR - update this once that lands.
+      expect(res.redirect).toHaveBeenCalledWith('/referral/task-list')
     })
 
     it('should propagate the error when the PP details cannot be retrieved', async () => {

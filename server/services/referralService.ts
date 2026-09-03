@@ -150,18 +150,11 @@ export default class ReferralService {
     return this.communitySupportApiClient.submitNeedsAnInterpreter(body, draftReferalId, username)
   }
 
-  getPPDetails(
-    referralId: string,
-    username: string,
-  ): Promise<ProbationPractitionerDetails> {
+  getPPDetails(referralId: string, username: string): Promise<ProbationPractitionerDetails> {
     return this.communitySupportApiClient.getPPDetails(referralId, username)
   }
 
-  submitPPDetails(
-    referralId: string,
-    username: string,
-    ppDetails: UpdateProbationPractitionerDetailsRequest,
-  ) {
+  submitPPDetails(referralId: string, username: string, ppDetails: UpdateProbationPractitionerDetailsRequest) {
     return this.communitySupportApiClient.submitPPDetails(referralId, username, ppDetails)
   }
 }

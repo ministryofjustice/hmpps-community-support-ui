@@ -23,7 +23,7 @@ import SelectAreaPresenter from './selectArea/SelectAreaPresenter'
 import { SelectAreaSchema } from '../validation/SelectAreaFormData'
 import ConfirmAnAreaForReferralPresenter from './confirmAnAreaForReferral/ConfirmAnAreaForReferralPresenter'
 import CheckPPDetailsPresenter from './checkPPDetails/checkPPDetailsPresenter'
-import CheckPPDetailsFormData, { CheckPPDetailsSchema } from '../validation/CheckPPDetailsFormData'
+import { CheckPPDetailsSchema } from '../validation/CheckPPDetailsFormData'
 
 export default class ReferralController {
   private static readonly CRN_REGEX = /^[A-Za-z]\d{6}$/
@@ -508,15 +508,15 @@ export default class ReferralController {
 
     if (req.method === 'POST') {
       return validateRequestBodyAgainstSchema(CheckPPDetailsSchema, req, res, async form => {
-        if(form.detailsCorrect === 'true') {
-          let ppDetailsToSend = probationPractitionerDetails
+        if (form.detailsCorrect === 'true') {
+          const ppDetailsToSend = probationPractitionerDetails
           ppDetailsToSend.ppDetailsFoundAndCorrect = true
           await this.referralService.submitPPDetails(draftReferralKey, username, ppDetailsToSend)
           return res.redirect('/referral/task-list')
         }
-        else {
-          //Next PR to redirect to add PP details page
-        }
+
+        // Next PR to redirect to add PP details page
+        return res.redirect('/referral/task-list')
       })
     }
     const validationErrors = res.locals.errors
