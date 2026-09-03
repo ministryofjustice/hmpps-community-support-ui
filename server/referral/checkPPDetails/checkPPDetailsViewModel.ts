@@ -4,25 +4,9 @@ import {
   GovukFrontendRadios,
   GovukFrontendSummaryList,
 } from '@govuk-frontend'
+import { GlobalContent } from '../../../assets/content/GlobalContent'
 
-export interface CheckPPDetailsContent {
-  heading: string
-  pageCaption: string
-  subHeading: string
-  backLinkText: string
-  backLinkHref: string
-  buttonText: string
-  insetText: string
-  nameLabel: string
-  emailAddressLabel: string
-  jobRoleLabel: string
-  pduLabel: string
-  probationOfficeLabel: string
-  teamPhoneNumberLabel: string
-  radioQuestion: string
-  radioYes: string
-  radioNo: string
-}
+export type CheckPPDetailsContent = GlobalContent['/referral/task-list/check-probation-practitioner-details']
 
 export interface CheckPPDetailsViewModel {
   heading: string

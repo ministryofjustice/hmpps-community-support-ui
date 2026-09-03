@@ -911,9 +911,9 @@ describe('ReferralController', () => {
       dateOfBirth: '20 Feb 1975 (51 years old)',
     }
     const mockPPDetails = {
-      name: 'Natalie Wood',
+      name: 'Fake PP',
       jobRole: 'Probation Practitioner',
-      emailAddress: 'natalie.wood@example.com',
+      emailAddress: 'fake.pp@example.com',
       pdu: 'Northumberland',
     }
 
