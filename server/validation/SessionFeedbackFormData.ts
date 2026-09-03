@@ -16,7 +16,7 @@ export const SessionFeedbackFormDataSchema = z.object({
   behaviour: z
     .string()
     .min(1, { message: behaviourTextarea.nothingEnteredError })
-    .max(3000, {
+    .max(maxCharacters, {
       message: behaviourTextarea.tooManyCharactersError.replace('{{ maxCharacters}}', maxCharacters.toString()),
     }),
   strengthsIdentified: z

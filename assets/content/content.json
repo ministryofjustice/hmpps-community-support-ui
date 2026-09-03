@@ -264,7 +264,7 @@
     "backLink": "/progress/{{ id }}"
   },
   "/ics-feedback/:id/session-feedback": {
-    "pageTitle": "Session feedback – ICS feedback – Community Support ",
+    "pageTitle": "Session feedback – ICS feedback – Community Support",
     "pageHeader": "Session feedback",
     "feedbackForm": {
       "whatDidYouDoTextarea": {
@@ -282,7 +282,7 @@
         "label": "What was {{ firstname }}’s engagement like during the session?",
         "hint": "Give details about how engaged they seemed and if there was any progress or positive change.",
         "nothingEnteredError": "Enter what {{ firstname }}’s engagement was like during the session",
-        "tooManyCharactersError": "Details about {{ firstname }}’s engagement during the session must be {{ maxCharacters}} characters or less",
+        "tooManyCharactersError": "Details about {{ firstname }}’s engagement during the session must be {{ maxCharacters }} characters or less",
         "rows": "5"
       },
       "strengthsIdentifiedTextarea": {

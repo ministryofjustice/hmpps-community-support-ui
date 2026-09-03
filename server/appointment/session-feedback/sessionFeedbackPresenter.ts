@@ -40,7 +40,6 @@ interface TextareaContent {
   name: string
   label: string
   hint: string
-  error: string
   rows?: string
 }
 
