@@ -26,7 +26,10 @@ import { ReferralProgressBannerContent } from '../referral/progress/ReferralProg
 import AppointmentValidator from './AppointmentValidator'
 import { IcsFeedbackHowSessionTookPlaceFormData } from './ics-feedback/icsFeedbackHowSessionTookPlaceViewModel'
 import { getChangeRequesterType } from './change-ics-details-reason/ChangeAppointmentDetails'
-import { SessionFeedbackFormDataSchema } from '../validation/SessionFeedbackFormData'
+import {
+  SessionFeedbackFormContent,
+  SessionFeedbackFormDataSchemaBuilder,
+} from '../validation/SessionFeedbackFormData'
 import ViewChangeSessionDetailsPresenter from './view-change-session-details/ViewChangeSessionDetailsPresenter'
 import RecordSessionDetailsPresenter from './record-ics/RecordSessionDetailsPresenter'
 import { RecordSessionDetailsFormDataSchema } from '../validation/RecordSessionDetailsFormData'
@@ -541,7 +544,8 @@ class AppointmentController {
 
     req.session.icsFeedbackSubmission = savedIcsFeedbackSubmission
 
-    validateRequestBodyAgainstSchema(SessionFeedbackFormDataSchema, req, res, () => {
+    const { feedbackForm } = res.locals.content as { feedbackForm: SessionFeedbackFormContent }
+    validateRequestBodyAgainstSchema(SessionFeedbackFormDataSchemaBuilder(feedbackForm), req, res, () => {
       res.redirect(`/ics-feedback/${caseRefId}/issues-or-concerns`)
     })
   }
