@@ -3,22 +3,26 @@ import { TaskListStatusDto } from '@community-support-api'
 import TaskListPresenter from './TaskListPresenter'
 import TaskListContent from '../../testutils/factories/TaskListContent'
 
+const baseTaskListState: TaskListStatusDto = {
+  fullName: 'John Smith',
+  confirmPersonalDetailsCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+  checkRiskInformationCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+  selectAnAreaForReferralCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+  selectThePersonsNeedsCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+  addDetailsOfAnyAdditionalSupportNeedsCompleted: {
+    completed: false,
+    statusText: 'Incomplete',
+    tag: 'govuk-tag--blue',
+  },
+  addAdditionalInformationCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+  addDetailsOfMainPointOfContactCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+  checkProbationPractitionerDetailsCompleted: null,
+  addMainPointOfContactCompleted: null,
+}
+
 describe('TaskListPresenter - Page Rendering', () => {
   test('always renders confirm personal details as completed when backend returns incomplete', () => {
-    const taskListState: TaskListStatusDto = {
-      fullName: 'John Smith',
-      confirmPersonalDetailsCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-      checkRiskInformationCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-      selectAnAreaForReferralCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-      selectThePersonsNeedsCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-      addDetailsOfAnyAdditionalSupportNeedsCompleted: {
-        completed: false,
-        statusText: 'Incomplete',
-        tag: 'govuk-tag--blue',
-      },
-      addAdditionalInformationCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-      addDetailsOfMainPointOfContactCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-    }
+    const taskListState: TaskListStatusDto = { ...baseTaskListState }
     const presenter = new TaskListPresenter(taskListState, 'referralId')
     const content = TaskListContent.build()
     const response = { locals: { content } } as unknown as Response
@@ -51,18 +55,8 @@ describe('TaskListPresenter - Page Rendering', () => {
 
   test('renders confirm personal details as completed when backend completion record is missing', () => {
     const taskListState: TaskListStatusDto = {
-      fullName: 'John Smith',
+      ...baseTaskListState,
       confirmPersonalDetailsCompleted: null,
-      checkRiskInformationCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-      selectAnAreaForReferralCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-      selectThePersonsNeedsCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-      addDetailsOfAnyAdditionalSupportNeedsCompleted: {
-        completed: false,
-        statusText: 'Incomplete',
-        tag: 'govuk-tag--blue',
-      },
-      addAdditionalInformationCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-      addDetailsOfMainPointOfContactCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
     }
 
     const presenter = new TaskListPresenter(taskListState, 'referralId')
@@ -71,5 +65,39 @@ describe('TaskListPresenter - Page Rendering', () => {
     const viewModel = presenter.buildViewModel(response)
 
     expect(viewModel.taskListItemsBySection.personalDetails.taskList.items[0].status.tag.text).toBe('Completed')
+  })
+
+  describe('contact details section', () => {
+    test('shows the check probation practitioner details task when the main point of contact has not been added', () => {
+      const taskListState: TaskListStatusDto = {
+        ...baseTaskListState,
+        addMainPointOfContactCompleted: null,
+      }
+      const presenter = new TaskListPresenter(taskListState, 'referralId')
+      const content = TaskListContent.build()
+      const response = { locals: { content } } as unknown as Response
+      const viewModel = presenter.buildViewModel(response)
+
+      const { items } = viewModel.taskListItemsBySection.contactDetails.taskList
+      expect(items).toHaveLength(1)
+      expect(items[0].title.text).toBe(`Check probation practitioner's details`)
+      expect(items[0].href).toBe('/referral/task-list/check-probation-practitioner-details')
+    })
+
+    test('shows the add contact details task when the main point of contact has been added', () => {
+      const taskListState: TaskListStatusDto = {
+        ...baseTaskListState,
+        addMainPointOfContactCompleted: { completed: true, statusText: 'Completed', tag: 'govuk-tag--green' },
+      }
+      const presenter = new TaskListPresenter(taskListState, 'referralId')
+      const content = TaskListContent.build()
+      const response = { locals: { content } } as unknown as Response
+      const viewModel = presenter.buildViewModel(response)
+
+      const { items } = viewModel.taskListItemsBySection.contactDetails.taskList
+      expect(items).toHaveLength(1)
+      expect(items[0].title.text).toBe('Add details of main point of contact')
+      expect(items[0].href).toBe('/referral/new/add-contact-details')
+    })
   })
 })
