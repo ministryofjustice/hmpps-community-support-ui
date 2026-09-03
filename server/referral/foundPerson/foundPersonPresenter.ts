@@ -34,7 +34,7 @@ const formatPersonalCircumstances = (list: components['schemas']['PersonalCircum
           circumstanceType[a.description as keyof typeof circumstanceType] -
           circumstanceType[b.description as keyof typeof circumstanceType],
       )
-      .map(c => ViewUtils.escape(`<div>${c.description}: ${c.subDescription || 'Not available'}</div>`))
+      .map(c => `<div>${ViewUtils.escape(c.description)}: ${ViewUtils.escape(c.subDescription) || 'Not available'}</div>`)
       .join('')
   }
   return 'Not available'
@@ -47,7 +47,7 @@ const formatDisabilities = (list: components['schemas']['Disability'][]): string
 
 const formatHomeOfficeInterest = (notes?: string): string => {
   if (notes) {
-    return `<div>Yes</div><br/><div>${notes}</div>`
+    return `<div>Yes</div><br/><div>${ViewUtils.escape(notes)}</div>`
   }
   return 'Yes'
 }
@@ -139,9 +139,7 @@ export default class FoundPersonPresenter extends PresenterBase<FoundPersonViewM
     const additionalInformationItems = [
       foundPerson.personDetailsAndCircumstances?.ofHomeOfficeInterest
         ? ViewUtils.summaryListRow('Home Office Interest', {
-            html: ViewUtils.escape(
-              formatHomeOfficeInterest(foundPerson.personDetailsAndCircumstances?.homeOfficeInterestNotes),
-            ),
+            html: formatHomeOfficeInterest(foundPerson.personDetailsAndCircumstances?.homeOfficeInterestNotes),
           })
         : null,
       foundPerson.personDetailsAndCircumstances?.offenderPersonalityDisorder
