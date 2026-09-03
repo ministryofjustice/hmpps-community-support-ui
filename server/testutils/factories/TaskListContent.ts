@@ -41,6 +41,10 @@ export default TaskListContentFactory.define(({ transientParams }) => ({
       title: 'Referral contact details',
       subTasks: {
         addContactDetails: { text: 'Add details of main point of contact', href: '/referral/new/add-contact-details' },
+        checkPPDetails: {
+          text: `Check probation practitioner's details`,
+          href: '/referral/task-list/check-probation-practitioner-details',
+        },
       },
     },
     checkAnswers: {

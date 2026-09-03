@@ -624,6 +624,10 @@
           "addContactDetails": {
             "text": "Add details of main point of contact",
             "href": "/referral/new/add-contact-details"
+          },
+          "checkPPDetails": {
+            "text": "Check probation practitioner's details",
+            "href": "/referral/task-list/check-probation-practitioner-details"
           }
         }
       },
@@ -883,5 +887,24 @@
     "buttonText": "Continue",
     "heading": "{{ personName }}",
     "pageCaption": "CRN: {{ CRN }} | Date of birth: {{ DOB }}"
+  },
+  "/referral/task-list/check-probation-practitioner-details": {
+    "backLinkText": "Back",
+    "backLinkHref": "/referral/task-list",
+    "buttonText": "Save and continue",
+    "heading": "{{ personName }}",
+    "pageCaption": "CRN: {{ CRN }} | Date of birth: {{ DOB }}",
+    "subHeading": "Check probation practitioner's details",
+    "insetText": "These contact details will be sent to the delivery partner. They should also be updated in NDelius.",
+    "nameLabel": "Name",
+    "emailAddressLabel": "Email address",
+    "jobRoleLabel": "Job role",
+    "phoneNumberLabel": "Phone number",
+    "pduLabel": "PDU",
+    "probationOfficeLabel": "Probation office",
+    "teamPhoneNumberLabel":"Team phone number",
+    "radioQuestion": "Are these details correct?",
+    "radioYes": "Yes",
+    "radioNo": "No"
   }
 }

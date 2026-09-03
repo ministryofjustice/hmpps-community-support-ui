@@ -36,6 +36,8 @@ import type {
   NeedsInterpreterRequest,
   ServiceEndDatePageDto,
   ServiceDaysPageDto,
+  ProbationPractitionerDetails,
+  UpdateProbationPractitionerDetailsRequest,
   CheckDraftReferralDetailsDto,
 } from '@community-support-api'
 import config from '../config'
@@ -248,5 +250,19 @@ export default class CommunitySupportApiClient extends RestClient {
 
   submitNeedsAnInterpreter(data: NeedsInterpreterRequest, draftReferalId: string, username: string) {
     return this.patch({ path: `/draft-referral/needs-interpreter/${draftReferalId}`, data }, asSystem(username))
+  }
+
+  getPPDetails(
+    referralId: string,
+    username: string,
+  ): Promise<ProbationPractitionerDetails> {
+    return this.get(
+      { path: `/bff/draft-referral/${referralId}/probation-practitioner-details` },
+      asSystem(username),
+    )
+  }
+
+  submitPPDetails(draftReferalId: string, username: string, ppDetails: UpdateProbationPractitionerDetailsRequest) {
+    return this.patch({ path: `/draft-referral/${draftReferalId}/probation-practitioner-details`, data: ppDetails }, asSystem(username))
   }
 }

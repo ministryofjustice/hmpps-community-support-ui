@@ -19,6 +19,7 @@ import ConfirmPersonalDetailsPresenter from './confirmPersonalDetails/ConfirmPer
 import PersonNeedsPresenter, { personNeedsFormData } from './personNeeds/PersonNeedsPresenter'
 import ConfirmAnAreaForReferralPresenter from './confirmAnAreaForReferral/ConfirmAnAreaForReferralPresenter'
 import SelectAreaPresenter from './selectArea/SelectAreaPresenter'
+import CheckPPDetailsPresenter from './checkPPDetails/checkPPDetailsPresenter'
 
 jest.mock('../services/referralService')
 jest.mock('../services/communityServiceProviderService')
@@ -31,6 +32,7 @@ jest.mock('./confirmPersonalDetails/ConfirmPersonalDetailsPresenter')
 jest.mock('./personNeeds/PersonNeedsPresenter')
 jest.mock('./selectArea/SelectAreaPresenter')
 jest.mock('./confirmAnAreaForReferral/ConfirmAnAreaForReferralPresenter')
+jest.mock('./checkPPDetails/checkPPDetailsPresenter')
 
 describe('ReferralController', () => {
   let referralService: jest.Mocked<ReferralService>
@@ -53,6 +55,8 @@ describe('ReferralController', () => {
       saveRiskInformation: jest.fn(),
       getPersonNeeds: jest.fn(),
       getCommunitySupportServiceProviders: jest.fn(),
+      getPPDetails: jest.fn(),
+      submitPPDetails: jest.fn(),
     } as unknown as jest.Mocked<ReferralService>
     personService = {
       getPersonByIdentifier: jest.fn(),
@@ -71,6 +75,7 @@ describe('ReferralController', () => {
     PersonNeedsPresenter.prototype.renderPage = jest.fn()
     ConfirmAnAreaForReferralPresenter.prototype.renderPage = jest.fn()
     SelectAreaPresenter.prototype.renderPage = jest.fn()
+    CheckPPDetailsPresenter.prototype.renderPage = jest.fn()
 
     req = {
       params: { id: 'referral123' },
@@ -892,6 +897,128 @@ describe('ReferralController', () => {
 
       expect(session.selectedProviderId).toBe('service-1')
       expect(res.redirect).toHaveBeenCalledWith('/referral/task-list/confirm-an-area-for-referral')
+    })
+  })
+
+  describe('showCheckPPDetails', () => {
+    const mockPersonDetails = {
+      firstName: 'Alex',
+      lastName: 'River',
+      personIdentifier: 'X123456',
+      prisonNumbers: ['A1234BC'],
+      sex: 'Male',
+      id: 'ID123',
+      dateOfBirth: '20 Feb 1975 (51 years old)',
+    }
+    const mockPPDetails = {
+      name: 'Natalie Wood',
+      jobRole: 'Probation Practitioner',
+      emailAddress: 'natalie.wood@example.com',
+      pdu: 'Northumberland',
+    }
+
+    it('should redirect to find a person when there is no draft referral in session', async () => {
+      req = { method: 'GET', session: {} } as unknown as Request
+
+      await referralController.showCheckPPDetails(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('/referral/new/find-a-person')
+      expect(referralService.getPPDetails).not.toHaveBeenCalled()
+    })
+
+    it('should render the check PP details page on a GET request', async () => {
+      req = {
+        method: 'GET',
+        session: {
+          draftReferralId: 'referral-uuid-1',
+          referralCreationDetails: { personDetails: mockPersonDetails },
+        },
+      } as unknown as Request
+      res = { ...res, locals: { user: { username: 'user1' }, errors: undefined } } as unknown as Response
+      referralService.getPPDetails.mockResolvedValue(mockPPDetails)
+
+      await referralController.showCheckPPDetails(req, res)
+
+      expect(referralService.getPPDetails).toHaveBeenCalledWith('referral-uuid-1', 'user1')
+      expect(CheckPPDetailsPresenter).toHaveBeenCalledWith(mockPersonDetails, mockPPDetails, undefined)
+      expect(CheckPPDetailsPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+    })
+
+    it('should pass validation errors to presenter on GET after failed POST', async () => {
+      const validationErrors = {
+        list: [{ href: '#detailsCorrect', text: 'Select yes if these details are correct' }],
+        messages: { detailsCorrect: { text: 'Select yes if these details are correct' } },
+      }
+      req = {
+        method: 'GET',
+        session: {
+          draftReferralId: 'referral-uuid-1',
+          referralCreationDetails: { personDetails: mockPersonDetails },
+        },
+      } as unknown as Request
+      res = { ...res, locals: { user: { username: 'user1' }, errors: validationErrors } } as unknown as Response
+      referralService.getPPDetails.mockResolvedValue(mockPPDetails)
+
+      await referralController.showCheckPPDetails(req, res)
+
+      expect(CheckPPDetailsPresenter).toHaveBeenCalledWith(mockPersonDetails, mockPPDetails, validationErrors)
+      expect(CheckPPDetailsPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+    })
+
+    it('should confirm the PP details and redirect to the task list when details are correct', async () => {
+      req = {
+        method: 'POST',
+        body: { detailsCorrect: 'true' },
+        flash: jest.fn(),
+        session: {
+          draftReferralId: 'referral-uuid-1',
+          referralCreationDetails: { personDetails: mockPersonDetails },
+        },
+      } as unknown as Request
+      referralService.getPPDetails.mockResolvedValue({ ...mockPPDetails })
+
+      await referralController.showCheckPPDetails(req, res)
+
+      expect(referralService.submitPPDetails).toHaveBeenCalledWith(
+        'referral-uuid-1',
+        'user1',
+        expect.objectContaining({ ...mockPPDetails, ppDetailsFoundAndCorrect: true }),
+      )
+      expect(res.redirect).toHaveBeenCalledWith('/referral/task-list')
+      expect(CheckPPDetailsPresenter.prototype.renderPage).not.toHaveBeenCalled()
+    })
+
+    it('should not submit PP details or redirect when details are not correct', async () => {
+      req = {
+        method: 'POST',
+        body: { detailsCorrect: 'false' },
+        flash: jest.fn(),
+        session: {
+          draftReferralId: 'referral-uuid-1',
+          referralCreationDetails: { personDetails: mockPersonDetails },
+        },
+      } as unknown as Request
+      referralService.getPPDetails.mockResolvedValue({ ...mockPPDetails })
+
+      await referralController.showCheckPPDetails(req, res)
+
+      expect(referralService.submitPPDetails).not.toHaveBeenCalled()
+      expect(res.redirect).not.toHaveBeenCalled()
+    })
+
+    it('should propagate the error when the PP details cannot be retrieved', async () => {
+      req = {
+        method: 'GET',
+        session: {
+          draftReferralId: 'referral-uuid-1',
+          referralCreationDetails: { personDetails: mockPersonDetails },
+        },
+      } as unknown as Request
+      referralService.getPPDetails.mockRejectedValue(new Error('error retrieving PP details'))
+
+      await expect(referralController.showCheckPPDetails(req, res)).rejects.toThrow('error retrieving PP details')
+
+      expect(CheckPPDetailsPresenter.prototype.renderPage).not.toHaveBeenCalled()
     })
   })
 })

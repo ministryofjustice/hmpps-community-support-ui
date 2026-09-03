@@ -227,6 +227,10 @@ export default function routes({
     referralController.showSelectArea(req, res),
   )
 
+  getOrPost('/referral/task-list/check-probation-practitioner-details', (req, res) =>
+    referralController.showCheckPPDetails(req, res),
+  )
+
   get('/referral/:id', (req, res, next) => referralController.showReferralPage(req, res, next))
 
   return router

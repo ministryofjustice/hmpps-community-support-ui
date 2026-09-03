@@ -21,6 +21,7 @@ export interface TaskListContent {
     title: string
     subTasks: {
       addContactDetails: { text: string; href: string }
+      checkPPDetails: { text: string; href: string }
     }
   }
   checkAnswers: {

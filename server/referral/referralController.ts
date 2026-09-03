@@ -22,6 +22,8 @@ import { PersonNeedsSchema } from '../validation/PersonNeedsFormData'
 import SelectAreaPresenter from './selectArea/SelectAreaPresenter'
 import { SelectAreaSchema } from '../validation/SelectAreaFormData'
 import ConfirmAnAreaForReferralPresenter from './confirmAnAreaForReferral/ConfirmAnAreaForReferralPresenter'
+import CheckPPDetailsPresenter from './checkPPDetails/checkPPDetailsPresenter'
+import CheckPPDetailsFormData, { CheckPPDetailsSchema } from '../validation/CheckPPDetailsFormData'
 
 export default class ReferralController {
   private static readonly CRN_REGEX = /^[A-Za-z]\d{6}$/
@@ -491,6 +493,37 @@ export default class ReferralController {
       locations,
       validationErrors,
       req.session.selectedProviderId,
+    )
+    return presenter.renderPage(res)
+  }
+
+  async showCheckPPDetails(req: Request, res: Response) {
+    const { username } = res.locals.user
+    const draftReferralKey = req.session?.draftReferralId
+
+    if (!draftReferralKey) {
+      return res.redirect('/referral/new/find-a-person')
+    }
+    const probationPractitionerDetails = await this.referralService.getPPDetails(draftReferralKey, username)
+
+    if (req.method === 'POST') {
+      return validateRequestBodyAgainstSchema(CheckPPDetailsSchema, req, res, async form => {
+        if(form.detailsCorrect === 'true') {
+          let ppDetailsToSend = probationPractitionerDetails
+          ppDetailsToSend.ppDetailsFoundAndCorrect = true
+          await this.referralService.submitPPDetails(draftReferralKey, username, ppDetailsToSend)
+          return res.redirect('/referral/task-list')
+        }
+        else {
+          //Next PR to redirect to add PP details page
+        }
+      })
+    }
+    const validationErrors = res.locals.errors
+    const presenter = new CheckPPDetailsPresenter(
+      req.session.referralCreationDetails.personDetails,
+      probationPractitionerDetails,
+      validationErrors,
     )
     return presenter.renderPage(res)
   }
