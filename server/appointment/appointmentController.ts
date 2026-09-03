@@ -26,10 +26,7 @@ import { ReferralProgressBannerContent } from '../referral/progress/ReferralProg
 import AppointmentValidator from './AppointmentValidator'
 import { IcsFeedbackHowSessionTookPlaceFormData } from './ics-feedback/icsFeedbackHowSessionTookPlaceViewModel'
 import { getChangeRequesterType } from './change-ics-details-reason/ChangeAppointmentDetails'
-import {
-  SessionFeedbackFormContent,
-  SessionFeedbackFormDataSchemaBuilder,
-} from '../validation/SessionFeedbackFormData'
+import { SessionFeedbackFormContent, SessionFeedbackFormDataSchemaBuilder } from '../validation/SessionFeedbackFormData'
 import ViewChangeSessionDetailsPresenter from './view-change-session-details/ViewChangeSessionDetailsPresenter'
 import RecordSessionDetailsPresenter from './record-ics/RecordSessionDetailsPresenter'
 import { RecordSessionDetailsFormDataSchema } from '../validation/RecordSessionDetailsFormData'
