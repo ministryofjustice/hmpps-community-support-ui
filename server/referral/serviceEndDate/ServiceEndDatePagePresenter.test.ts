@@ -3,7 +3,7 @@ import ServiceEndDatePagePresenter from './ServiceEndDatePagePresenter'
 import { ServiceEndDatePageContent } from './ServiceEndDatePageModel'
 
 const buildContent = (): ServiceEndDatePageContent => ({
-  pageTitle: 'Service End Date',
+  pageTitle: 'What date does the service need to be completed by? - Community Support',
   pageHeader: 'What date does the service need to be completed by?',
   hint: 'This is the date by which the service should be completed.',
   dateLabel: 'Date',
@@ -34,7 +34,7 @@ describe('ServiceEndDatePagePresenter', () => {
     const presenter = new ServiceEndDatePagePresenter(data)
     const viewModel = presenter.buildViewModel(res)
 
-    expect(viewModel.pageTitle).toBe('Service End Date')
+    expect(viewModel.pageTitle).toBe('What date does the service need to be completed by? - Community Support')
     expect(viewModel.pageHeader).toBe('What date does the service need to be completed by?')
     expect(viewModel.hint).toBe('This is the date by which the service should be completed.')
     expect(viewModel.dateLabel).toBe('Date')

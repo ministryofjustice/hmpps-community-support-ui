@@ -36,6 +36,9 @@ import type {
   NeedsInterpreterRequest,
   ServiceEndDatePageDto,
   ServiceDaysPageDto,
+  ProbationPractitionerDetails,
+  UpdateProbationPractitionerDetailsRequest,
+  CheckDraftReferralDetailsDto,
 } from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
@@ -67,6 +70,10 @@ export default class CommunitySupportApiClient extends RestClient {
 
   async createReferral(referralData: CreateReferralRequest, username: string): Promise<ReferralInformation> {
     return this.post({ path: '/referral', data: referralData }, asSystem(username))
+  }
+
+  getCheckDraftReferralDetails(referralId: string, username: string): Promise<CheckDraftReferralDetailsDto> {
+    return this.get({ path: `/bff/draft-referral/check-draft-referral-details/${referralId}` }, asSystem(username))
   }
 
   async submitReferralById(referralId: string, username: string): Promise<SubmitReferralResponse> {
@@ -243,5 +250,16 @@ export default class CommunitySupportApiClient extends RestClient {
 
   submitNeedsAnInterpreter(data: NeedsInterpreterRequest, draftReferalId: string, username: string) {
     return this.patch({ path: `/draft-referral/needs-interpreter/${draftReferalId}`, data }, asSystem(username))
+  }
+
+  getPPDetails(referralId: string, username: string): Promise<ProbationPractitionerDetails> {
+    return this.get({ path: `/bff/draft-referral/${referralId}/probation-practitioner-details` }, asSystem(username))
+  }
+
+  submitPPDetails(draftReferalId: string, username: string, ppDetails: UpdateProbationPractitionerDetailsRequest) {
+    return this.patch(
+      { path: `/draft-referral/${draftReferalId}/probation-practitioner-details`, data: ppDetails },
+      asSystem(username),
+    )
   }
 }

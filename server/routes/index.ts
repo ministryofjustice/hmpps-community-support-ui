@@ -12,6 +12,7 @@ import IcsFeedbackController from '../appointment/icsFeedbackController'
 import LandingController from '../landing/landingController'
 import NeedsController from '../referral/actionPlan/needs/needsController'
 import ReferralController from '../referral/referralController'
+import WithdrawalController from '../referral/withdrawal/withdrawalController'
 
 export default function routes({
   auditService,
@@ -21,6 +22,7 @@ export default function routes({
   appointmentService,
   referenceDataService,
   communityServiceProviderService,
+  withdrawalService,
 }: Services): Router {
   const router = Router()
   const get = (path: string | string[], handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
@@ -39,6 +41,7 @@ export default function routes({
   const landingController = new LandingController()
   const actionPlanController = new ActionPlanController(referralService)
   const needsController = new NeedsController()
+  const withdrawalController = new WithdrawalController(referralService, withdrawalService)
 
   router.get('/', async (req, res, next) => {
     await auditService.logPageView(Page.INDEX_PAGE, { who: res.locals.user.username, correlationId: req.id })
@@ -59,10 +62,10 @@ export default function routes({
 
   get('/referral/:id/confirmation', (req, res) => referralController.viewConfirmation(req, res))
 
-  get('/referral/check-referral-information/:id', (req, res) => referralController.checkReferralInformation(req, res))
+  get('/referral/check-referral-information', (req, res) => draftReferralController.checkReferralInformation(req, res))
 
-  post('/referral/:referralId/submit-referral-information', (req, res, next) =>
-    referralController.submitReferralInformation(req, res, next),
+  post('/referral/:referralId/submit-referral-information', (req, res) =>
+    draftReferralController.submitReferralInformation(req, res),
   )
 
   get('/unassigned-cases', (req, res) => caseListController.showCaseList(req, res))
@@ -211,6 +214,18 @@ export default function routes({
 
   get('/referral/:id/action-plan/needs', (req, res) => needsController.showNeedsPage(req, res))
 
+  get('/referral/:referralIdentifier/withdraw', (req, res) => withdrawalController.showReason(req, res))
+
+  post('/referral/:referralIdentifier/withdraw', (req, res) => withdrawalController.submitReason(req, res))
+
+  get('/referral/:referralIdentifier/withdraw/confirmation', (req, res) =>
+    withdrawalController.showConfirmation(req, res),
+  )
+
+  post('/referral/:referralIdentifier/withdraw/confirmation', (req, res) =>
+    withdrawalController.submitConfirmation(req, res),
+  )
+
   get('/referral/task-list/select-person-needs', (req, res) => referralController.showPersonNeeds(req, res))
 
   post('/referral/task-list/select-person-needs', (req, res) => referralController.recordPersonNeeds(req, res))
@@ -225,6 +240,10 @@ export default function routes({
 
   getOrPost('/referral/task-list/select-an-area-for-referral', (req, res) =>
     referralController.showSelectArea(req, res),
+  )
+
+  getOrPost('/referral/task-list/check-probation-practitioner-details', (req, res) =>
+    referralController.showCheckPPDetails(req, res),
   )
 
   getOrPost('/referral/new/add-contact-details', (req, res) => referralController.showAddContactDetails(req, res))

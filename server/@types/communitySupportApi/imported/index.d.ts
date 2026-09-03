@@ -157,6 +157,23 @@ export interface paths {
     patch: operations['updateServiceDaysPage']
     trace?: never
   }
+  '/draft-referral/{referralId}/probation-practitioner-details': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    /** Save the Probation Practitioner details for a Draft Referral */
+    patch: operations['updateProbationPractitionerDetails']
+    trace?: never
+  }
   '/draft-referral/{referralId}/offence-sentence': {
     parameters: {
       query?: never
@@ -548,6 +565,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/bff/reference-data/pdus': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get all Probation Delivery Unit (PDU) names */
+    get: operations['getPdus']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/bff/person/{personIdentifier}': {
     parameters: {
       query?: never
@@ -574,6 +608,23 @@ export interface paths {
     }
     /** Get a single ICS feedback record by its ID */
     get: operations['getIcsFeedback']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/draft-referral/{referralId}/probation-practitioner-details': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get Probation Practitioner details for a draft referral */
+    get: operations['getProbationPractitionerDetails']
     put?: never
     post?: never
     delete?: never
@@ -659,6 +710,23 @@ export interface paths {
     }
     /** Get interpreter needs page data */
     get: operations['getNeedsInterpreterPage']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/draft-referral/check-draft-referral-details/{referralId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get check draft referral details page data */
+    get: operations['getCheckDraftReferralDetails']
     put?: never
     post?: never
     delete?: never
@@ -1018,6 +1086,24 @@ export interface components {
        */
       service_days?: number
     }
+    UpdateProbationPractitionerDetailsRequest: {
+      name: string
+      jobRole?: string | null
+      emailAddress?: string | null
+      pdu?: string | null
+      probationOffice?: string | null
+      teamPhoneNumber?: string | null
+      ppDetailsFoundAndCorrect?: boolean | null
+    }
+    ProbationPractitionerDetailsBffResponseDto: {
+      name: string
+      jobRole?: string | null
+      emailAddress?: string | null
+      pdu?: string | null
+      probationOffice?: string | null
+      teamPhoneNumber?: string | null
+      ppDetailsFoundAndCorrect?: boolean | null
+    }
     UpdateOffenceSentenceRequest: {
       offence?: string | null
       offenceSubCategory?: string | null
@@ -1174,6 +1260,8 @@ export interface components {
       addAdditionalInformationCompleted: components['schemas']['TaskListStatusItem']
       addDetailsOfMainPointOfContactCompleted: components['schemas']['TaskListStatusItem']
       selectAnAreaForReferralCompleted: components['schemas']['TaskListStatusItem']
+      checkProbationPractitionerDetailsCompleted?: components['schemas']['TaskListStatusItem'] | null
+      addMainPointOfContactCompleted?: components['schemas']['TaskListStatusItem'] | null
     }
     ActionPlanSummaryDto: {
       personDetails: components['schemas']['ActionPlanSummaryPersonDetails']
@@ -1399,17 +1487,9 @@ export interface components {
       emailAddress?: string | null
       disability?: boolean | null
     }
-    PersonCircumstance: {
-      type?: string | null
-      description?: string | null
-      subType?: string | null
-      subDescription?: string | null
-      /** Format: date-time */
-      updatedAt?: string | null
-    }
     PersonDetailsAndCircumstances: {
       preferredLanguage?: string | null
-      personCircumstances: components['schemas']['PersonCircumstance'][]
+      personalCircumstances: components['schemas']['PersonalCircumstance'][]
       disabilities: components['schemas']['Disability'][]
       offenderPersonalityDisorder?: string | null
       ofHomeOfficeInterest?: boolean | null
@@ -1428,6 +1508,14 @@ export interface components {
       prisonNumbers: string[]
       additionalDetails?: components['schemas']['PersonAdditionalDetails'] | null
       personDetailsAndCircumstances?: components['schemas']['PersonDetailsAndCircumstances'] | null
+    }
+    PersonalCircumstance: {
+      type?: string | null
+      description?: string | null
+      subType?: string | null
+      subDescription?: string | null
+      /** Format: date-time */
+      updatedAt?: string | null
     }
     AreaConfirmationBffResponseDto: {
       contractArea: string
@@ -1474,6 +1562,92 @@ export interface components {
       assessedOn?: string | null
       riskToSelf?: components['schemas']['ArnsRiskConcernsToSelfDto'] | null
       summary?: components['schemas']['ArnsRiskRoshSummaryDto'] | null
+      additionalInformation?: string | null
+    }
+    CheckDraftReferralDetailsBffResponseDto: {
+      /** Format: uuid */
+      id: string
+      referenceNumber?: string | null
+      /** Format: date-time */
+      createdDate: string
+      personDetailsTableData: components['schemas']['DraftPersonDetailsTableDataDto']
+      equalityDetailsTableData: components['schemas']['DraftEqualityDetailsTableDataDto']
+      additionalInformationDetailsTableData: components['schemas']['DraftAdditionalInformationDetailsTableDataDto']
+      contactDetailsTableData: components['schemas']['DraftContactDetailsTableDataDto']
+      riskInformationDetailsTableData: components['schemas']['DraftRiskInformationDetailsTableDataDto']
+      additionalSupportNeedsDetailsTableData: components['schemas']['DraftAdditionalSupportNeedsDetailsTableDataDto']
+      personNeedsDetailsTableData: components['schemas']['DraftPersonNeedsDetailsTableDataDto']
+      referralAreaTableData: components['schemas']['DraftReferralAreaTableDataDto']
+      mainPocDetailsTableData: components['schemas']['DraftMainPOCDetailsTableDataDto']
+    }
+    DraftAdditionalInformationDetailsTableDataDto: {
+      homeOfficeInterest?: string | null
+      offenderPersonalityDisorderPathway?: string | null
+    }
+    DraftAdditionalSupportNeedsDetailsTableDataDto: {
+      physicalHealth?: string | null
+      mentalOrEmotionalHealth?: string | null
+      neurodiversity?: string | null
+      locationAndTravel?: string | null
+      caringResponsibilities?: string | null
+      employmentResponsibilities?: string | null
+      diversity?: string | null
+      anyOtherNeeds?: string | null
+      needsInterpreter?: boolean | null
+      interpreterLanguage?: string | null
+    }
+    DraftContactDetailsTableDataDto: {
+      phoneNumber?: string | null
+      mobileNumber?: string | null
+      email?: string | null
+      address?: string | null
+    }
+    DraftEqualityDetailsTableDataDto: {
+      ethnicity?: string | null
+      religionOrBelief?: string | null
+      sex: string
+    }
+    DraftMainPOCDetailsTableDataDto: {
+      areTheseDetailsCorrect?: boolean | null
+      name?: string | null
+      jobRole?: string | null
+      email?: string | null
+      phoneNumber?: string | null
+      pdu?: string | null
+      isProbationOfficer?: boolean | null
+      teamPhoneNumber?: string | null
+    }
+    DraftPersonDetailsTableDataDto: {
+      name: components['schemas']['RefereeNameDto']
+      crn: string
+      dateOfBirth: string
+      preferredLanguage: string
+      disabilities: string
+      prisonNumbers?: string | null
+      currentCircumstances: string
+    }
+    DraftPersonNeedsDetailsTableDataDto: {
+      hasAccommodationNeeds?: boolean | null
+      accommodationDetails?: string | null
+      employmentAndEducation?: string | null
+      financialDetails?: string | null
+      personalRelationshipsCommunityDetails?: string | null
+      drugUseDetails?: string | null
+      alcoholUseDetails?: string | null
+      healthWellbeingDetails?: string | null
+      thinkingBehavioursAttitudeDetails?: string | null
+    }
+    DraftReferralAreaTableDataDto: {
+      area?: string | null
+    }
+    DraftRiskInformationDetailsTableDataDto: {
+      whoIsAtRisk?: string | null
+      natureOfRisk?: string | null
+      riskImminence?: string | null
+      riskOfSelfHarm?: string | null
+      riskOfSuicide?: string | null
+      riskToSelfHostelSetting?: string | null
+      riskToSelfVulnerability?: string | null
       additionalInformation?: string | null
     }
     ConfirmPersonDetailsBffDto: {
@@ -1890,6 +2064,41 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['ServiceDaysPageDto']
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  updateProbationPractitionerDetails: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateProbationPractitionerDetailsRequest']
+      }
+    }
+    responses: {
+      /** @description Probation Practitioner details saved */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ProbationPractitionerDetailsBffResponseDto']
         }
       }
       /** @description Referral not found */
@@ -2633,6 +2842,35 @@ export interface operations {
       }
     }
   }
+  getPdus: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Returns the list of Probation Delivery Unit names. */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': string[]
+        }
+      }
+      /** @description Failed to retrieve Probation Delivery Unit names */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
   getPersonDetails: {
     parameters: {
       query?: never
@@ -2685,6 +2923,37 @@ export interface operations {
         }
       }
       /** @description ICS feedback not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getProbationPractitionerDetails: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Probation Practitioner details found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ProbationPractitionerDetailsBffResponseDto']
+        }
+      }
+      /** @description Referral, or the Referral's Person, not found */
       404: {
         headers: {
           [name: string]: unknown
@@ -2841,6 +3110,37 @@ export interface operations {
         }
       }
       /** @description Referral, or the Referral's Person, not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getCheckDraftReferralDetails: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Check draft referral details found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['CheckDraftReferralDetailsBffResponseDto']
+        }
+      }
+      /** @description Referral not found */
       404: {
         headers: {
           [name: string]: unknown

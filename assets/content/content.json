@@ -24,8 +24,14 @@
     "enterDifferentIdentifierLinkText": "Enter a different CRN or prison number",
     "enterDifferentIdentifierLinkHref": "/referral/new/find-a-person"
   },
-  "/referral/check-referral-information/:id": {
-    "pageHeader": "Check referral information",
+  "/referral/check-referral-information": {
+    "pageTitle": "Check details and submit referral – Community Support",
+    "pageHeader": "{{ fullName }}",
+    "pageSubHeader": "Check details and submit referral",
+    "personalDetailsHeader": "About {{ firstName }}",
+    "referralDetailsHeader": "Referral information",
+    "referralContactDetailsHeader": "Referral contact details",
+    "backLink": "/referral/task-list",
     "submitButtonText": "Submit referral"
   },
   "/referral/:id/confirmation": {
@@ -82,6 +88,7 @@
     "backLink": "/unassigned-cases",
     "defaultFieldValue": "Not available",
     "successBannerHeading": "Case assigned",
+    "withdrawReferralLinkText": "Withdraw referral",
     "subNavTitle": "Sub navigation",
     "subNavItems": [
       {
@@ -150,6 +157,51 @@
       "change": "/referral/{{ id }}/ics-change-details",
       "back": "/progress/{{ id }}"
     }
+  },
+  "/referral/:id/withdraw": {
+    "pageHeader": "Why are you withdrawing {{ name }}'s referral?",
+    "hint": "Select one reason.",
+    "additionalInformationLabel": "Provide additional information",
+    "additionalInformationHint": "Include information relevant to the reason you selected.",
+    "continueButtonText": "Continue",
+    "groups": [
+      {
+        "heading": "Problem with referral",
+        "reasons": [
+          { "value": "INELIGIBLE_REFERRAL", "text": "Ineligible referral" },
+          { "value": "MISTAKEN_OR_DUPLICATE_REFERRAL", "text": "Mistaken or duplicate referral" }
+        ]
+      },
+      {
+        "heading": "User related",
+        "reasons": [
+          { "value": "NOT_ENGAGED", "text": "Not engaged" },
+          { "value": "NEEDS_MET_THROUGH_ANOTHER_ROUTE", "text": "Needs met through another route" },
+          { "value": "USER_DIED", "text": "User died" },
+          { "value": "WORK_CARING_COMMITMENTS_OR_SICKNESS", "text": "Work, caring commitments, or sickness" }
+        ]
+      },
+      {
+        "heading": "Sentence / custody related",
+        "reasons": [
+          { "value": "ACQUITTED_ON_APPEAL", "text": "Acquitted on appeal" },
+          { "value": "RETURNED_TO_CUSTODY", "text": "Returned to custody" },
+          { "value": "SENTENCE_REVOKED", "text": "Sentence revoked" },
+          { "value": "SENTENCE_EXPIRED", "text": "Sentence expired" }
+        ]
+      },
+      {
+        "heading": "Other",
+        "reasons": [{ "value": "OTHER_CHANGE_OF_CIRCUMSTANCE", "text": "Any other change of circumstance" }]
+      }
+    ]
+  },
+  "/referral/:id/withdraw/confirmation": {
+    "pageHeader": "Withdraw {{ name }}'s referral",
+    "question": "Are you sure you want to withdraw this referral?",
+    "yesText": "Yes",
+    "noText": "No",
+    "continueButtonText": "Continue"
   },
   "/referral/:id/appointment/confirm-ics": {
     "pageHeader": "Check the details before scheduling the ICS",
@@ -618,6 +670,10 @@
           "addContactDetails": {
             "text": "Add details of main point of contact",
             "href": "/referral/new/add-contact-details"
+          },
+          "checkPPDetails": {
+            "text": "Check probation practitioner's details",
+            "href": "/referral/task-list/check-probation-practitioner-details"
           }
         }
       },
@@ -626,7 +682,7 @@
         "subTasks": {
           "checkAnswersAndSubmit": {
             "text": "Check answers and submit",
-            "href": "/referral/check-referral-information/{{ id }}"
+            "href": "/referral/check-referral-information"
           }
         }
       }
@@ -851,7 +907,7 @@
     "backlink": "/referral/task-list/additional-support-needs"
   },
   "/referral/task-list/service-end-date": {
-    "pageTitle": "Set service end date",
+    "pageTitle": "What date does the service need to be completed by? - Community Support",
     "pageHeader": "What date does the service need to be completed by?",
     "hint": "This is the date by which the service should be completed.",
     "dateLabel": "Date",
@@ -863,7 +919,7 @@
     "updateError": "Something has gone wrong updating the service end date"
   },
   "/referral/task-list/service-days": {
-    "pageTitle": "How many days will you use for this service?  - Community Support",
+    "pageTitle": "How many days will you use for this service? - Community Support",
     "pageHeader": "How many days will you use for this service?",
     "bodyText1": "Enter the maximum number of days you want to use for this service. Any unused days will be given back. For community orders or suspended sentences, consider how many RAR days to allocate.",
     "bodyText2": "Sessions delivered in the community are enforceable.",
@@ -877,6 +933,24 @@
     "buttonText": "Continue",
     "heading": "{{ personName }}",
     "pageCaption": "CRN: {{ CRN }} | Date of birth: {{ DOB }}"
+  },
+  "/referral/task-list/check-probation-practitioner-details": {
+    "backLinkText": "Back",
+    "backLinkHref": "/referral/task-list",
+    "buttonText": "Save and continue",
+    "heading": "{{ personName }}",
+    "pageCaption": "CRN: {{ CRN }} | Date of birth: {{ DOB }}",
+    "subHeading": "Check probation practitioner's details",
+    "insetText": "These contact details will be sent to the delivery partner. They should also be updated in NDelius.",
+    "nameLabel": "Name",
+    "emailAddressLabel": "Email address",
+    "jobRoleLabel": "Job role",
+    "pduLabel": "PDU",
+    "probationOfficeLabel": "Probation office",
+    "teamPhoneNumberLabel":"Team phone number",
+    "radioQuestion": "Are these details correct?",
+    "radioYes": "Yes",
+    "radioNo": "No"
   },
   "/referral/new/add-contact-details": {
     "backLinkText": "Back",

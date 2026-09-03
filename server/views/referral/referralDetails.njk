@@ -30,4 +30,7 @@
   {{ govukSummaryList(content.equality) }}
   {{ govukSummaryList(content.contact) }}
   {{ govukSummaryList(content.referral) }}
+  <p class="govuk-body">
+    <a href="{{ content.withdrawReferralHref }}" class="govuk-link">{{ content.withdrawReferralLinkText }}</a>
+  </p>
 {% endblock %}

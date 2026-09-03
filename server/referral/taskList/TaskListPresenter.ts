@@ -11,13 +11,19 @@ const getStatusTag = (status: TaskListStatusItem | null): GovukFrontendTaskListI
   return { tag: { text: status.statusText, classes: status.tag } }
 }
 
+const completedStatusTag: GovukFrontendTaskListItemStatus = {
+  tag: { text: 'Completed', classes: 'govuk-tag--green' },
+}
+
 const getTaskListStatus = (data: TaskListStatusDto) => {
   return {
-    personalDetails: getStatusTag(data.confirmPersonalDetailsCompleted),
+    // Personal details is treated as completed in the UI regardless of backend completion records.
+    personalDetails: completedStatusTag,
     riskInformation: getStatusTag(data.checkRiskInformationCompleted),
     personNeeds: getStatusTag(data.selectThePersonsNeedsCompleted),
     supportNeeds: getStatusTag(data.addDetailsOfAnyAdditionalSupportNeedsCompleted),
     contactDetails: getStatusTag(data.addDetailsOfMainPointOfContactCompleted),
+    checkPPDetails: getStatusTag(data.checkProbationPractitionerDetailsCompleted),
     additionalReferralInformation: getStatusTag(data.addAdditionalInformationCompleted),
     selectAnAreaForReferral: getStatusTag(data.selectAnAreaForReferralCompleted),
     checkAnswers: getStatusTag(null),
@@ -83,11 +89,17 @@ export default class TaskListPresenter extends PresenterBase<TaskListViewModel, 
         title: content.contactDetails.title,
         taskList: {
           items: [
-            {
-              title: { text: content.contactDetails.subTasks.addContactDetails.text },
-              href: content.contactDetails.subTasks.addContactDetails.href,
-              status: status.contactDetails,
-            },
+            this.data.addMainPointOfContactCompleted === null
+              ? {
+                  title: { text: content.contactDetails.subTasks.checkPPDetails.text },
+                  href: content.contactDetails.subTasks.checkPPDetails.href,
+                  status: status.checkPPDetails,
+                }
+              : {
+                  title: { text: content.contactDetails.subTasks.addContactDetails.text },
+                  href: content.contactDetails.subTasks.addContactDetails.href,
+                  status: status.contactDetails,
+                },
           ],
         },
       },
@@ -97,7 +109,7 @@ export default class TaskListPresenter extends PresenterBase<TaskListViewModel, 
           items: [
             {
               title: { text: content.checkAnswers.subTasks.checkAnswersAndSubmit.text },
-              href: content.checkAnswers.subTasks.checkAnswersAndSubmit.href.replace('{{ id }}', this.referralId),
+              href: content.checkAnswers.subTasks.checkAnswersAndSubmit.href,
               status: status.checkAnswers,
             },
           ],

@@ -10,9 +10,7 @@ import ReferralDetailsPresenter from './referralDetails/ReferralDetailsPresenter
 import ReferralProgressPresenter from './progress/referralProgressPresenter'
 import { ErrorMiddlewareErrors } from '../@types/express'
 import ConfirmPersonalDetailsPresenter from './confirmPersonalDetails/ConfirmPersonalDetailsPresenter'
-import ReferralCreationDetails from './referralDetails/ReferralCreationDetails'
 import TaskListPresenter from './taskList/TaskListPresenter'
-import CheckReferralInformationPresenter from './check-referral-information/checkReferralInformationPresenter'
 import RiskSummaryPresenter from './riskSummary/RiskSummaryPresenter'
 import buildRiskInformationRequest from './riskSummary/buildRiskInformationRequest'
 import EditRiskSummaryPresenter from './editRiskSummary/EditRiskSummaryPresenter'
@@ -25,6 +23,8 @@ import SelectAreaPresenter from './selectArea/SelectAreaPresenter'
 import { SelectAreaSchema } from '../validation/SelectAreaFormData'
 import AddContactDetailsPresenter from './addContactDetails/addContactDetailsPresenter'
 import ConfirmAnAreaForReferralPresenter from './confirmAnAreaForReferral/ConfirmAnAreaForReferralPresenter'
+import CheckPPDetailsPresenter from './checkPPDetails/checkPPDetailsPresenter'
+import { CheckPPDetailsSchema } from '../validation/CheckPPDetailsFormData'
 import { AddContactDetailsSchema } from '../validation/AddContactDetailsFormData'
 
 export default class ReferralController {
@@ -113,49 +113,6 @@ export default class ReferralController {
     const presenter = new ConfirmationPresenter(referral)
 
     return presenter.renderPage(res)
-  }
-
-  async checkReferralInformation(req: Request, res: Response): Promise<void> {
-    const { username } = res.locals.user
-    const referralId = req.params.id as string
-    const referralCreationDetails: ReferralCreationDetails = req.session ? req.session.referralCreationDetails : null
-
-    if (!referralCreationDetails || !referralCreationDetails.personDetails) {
-      return res.redirect('/referral/new/find-a-person')
-    }
-
-    try {
-      const referralInformation = await this.referralService.getReferralInformation(referralId, username)
-
-      req.session.referralCreationDetails.referralInformation = referralInformation
-      const presenter = new CheckReferralInformationPresenter(
-        referralInformation,
-        referralCreationDetails.personDetails,
-      )
-      return presenter.renderPage(res)
-    } catch (error) {
-      logger.error('Error retrieving referral:', error)
-      req.flash('Retrieving referral', 'An unexpected error when retrieving a referral. Please try again.')
-      return res.redirect('/referral/new/find-a-person')
-    }
-  }
-
-  async submitReferralInformation(req: Request, res: Response, next: NextFunction): Promise<void> {
-    const { username } = res.locals.user
-    const { referralId } = req.params as { referralId: string }
-
-    try {
-      const submitReferralResponse = await this.referralService.submitReferralById(referralId, username)
-      return res.redirect(`/referral/${submitReferralResponse.referralId}/confirmation`)
-    } catch (error) {
-      if (error.responseStatus === 409) {
-        logger.info('Referral already submitted')
-        return res.redirect(`/referral/${referralId}/confirmation`)
-      }
-      // no special error handling at this moment
-      logger.error('Error in submitting a referral:', error)
-      throw error
-    }
   }
 
   async showAssignCaseWorkersPage(req: Request, res: Response) {
@@ -538,6 +495,36 @@ export default class ReferralController {
       locations,
       validationErrors,
       req.session.selectedProviderId,
+    )
+    return presenter.renderPage(res)
+  }
+
+  async showCheckPPDetails(req: Request, res: Response) {
+    const { username } = res.locals.user
+    const draftReferralKey = req.session?.draftReferralId
+
+    if (!draftReferralKey) {
+      return res.redirect('/referral/new/find-a-person')
+    }
+    const probationPractitionerDetails = await this.referralService.getPPDetails(draftReferralKey, username)
+
+    if (req.method === 'POST') {
+      return validateRequestBodyAgainstSchema(CheckPPDetailsSchema, req, res, async form => {
+        if (form.detailsCorrect === 'true') {
+          const ppDetailsToSend = { ...probationPractitionerDetails, ppDetailsFoundAndCorrect: true }
+          await this.referralService.submitPPDetails(draftReferralKey, username, ppDetailsToSend)
+          return res.redirect('/referral/task-list')
+        }
+
+        // Next PR to redirect to add PP details page
+        return res.redirect('/referral/task-list')
+      })
+    }
+    const validationErrors = res.locals.errors
+    const presenter = new CheckPPDetailsPresenter(
+      req.session.referralCreationDetails.personDetails,
+      probationPractitionerDetails,
+      validationErrors,
     )
     return presenter.renderPage(res)
   }
