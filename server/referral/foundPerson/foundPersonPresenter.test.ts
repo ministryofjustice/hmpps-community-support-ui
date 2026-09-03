@@ -48,22 +48,15 @@ describe('FoundPersonPresenter', () => {
         key: { text: 'Preferred language' },
         value: { text: 'English' },
       })
-      expect(renderData.content.personSummary.rows[5].key.html)
-        .toContain('Current circumstances')
-      expect(renderData.content.personSummary.rows[5].key.html)
-        .toContain('Last updated: 3 January 2020')
-      expect(renderData.content.personSummary.rows[5].value.html)
-        .toContain('Relationship: Married / Civil Partnership')
+      expect(renderData.content.personSummary.rows[5].key.html).toContain('Current circumstances')
+      expect(renderData.content.personSummary.rows[5].key.html).toContain('Last updated: 3 January 2020')
+      expect(renderData.content.personSummary.rows[5].value.html).toContain('Relationship: Married / Civil Partnership')
       expect(renderData.content.personSummary.rows[5].value.html).toContain('Employment: Full Time Employed')
-      expect(renderData.content.personSummary.rows[5].value.html)
-        .toContain('Dependants: Has Dependants')
+      expect(renderData.content.personSummary.rows[5].value.html).toContain('Dependants: Has Dependants')
 
-      expect(renderData.content.personSummary.rows[6].key.html)
-        .toContain('Disabilities')
-      expect(renderData.content.personSummary.rows[6].key.html)
-        .toContain('Last updated: 4 January 2020')
-      expect(renderData.content.personSummary.rows[6].value.html)
-        .toContain('Neurodiverse conditions')
+      expect(renderData.content.personSummary.rows[6].key.html).toContain('Disabilities')
+      expect(renderData.content.personSummary.rows[6].key.html).toContain('Last updated: 4 January 2020')
+      expect(renderData.content.personSummary.rows[6].value.html).toContain('Neurodiverse conditions')
 
       expect(renderData.content.equalityMonitoring.rows).toHaveLength(4)
       expect(renderData.content.equalityMonitoring.card.title.text).toEqual('Equality monitoring')
@@ -86,12 +79,9 @@ describe('FoundPersonPresenter', () => {
 
       expect(renderData.content.additionalInformation.rows).toHaveLength(2)
       expect(renderData.content.additionalInformation.card.title.text).toEqual('Additional information')
-      expect(renderData.content.additionalInformation.rows[0].key.text)
-        .toEqual('Home Office Interest')
-      expect(renderData.content.additionalInformation.rows[0].value.html)
-        .toContain('Yes')
-      expect(renderData.content.additionalInformation.rows[0].value.html)
-        .toContain('Claiming asylum from Iran')
+      expect(renderData.content.additionalInformation.rows[0].key.text).toEqual('Home Office Interest')
+      expect(renderData.content.additionalInformation.rows[0].value.html).toContain('Yes')
+      expect(renderData.content.additionalInformation.rows[0].value.html).toContain('Claiming asylum from Iran')
 
       expect(renderData.content.additionalInformation.rows[1]).toMatchObject({
         key: { text: 'Offender personality disorder (OPD) pathway' },
@@ -245,12 +235,9 @@ describe('FoundPersonPresenter', () => {
       const renderData = (res.render as jest.Mock).mock.calls[0][1] as { content: FoundPersonViewModel }
 
       expect(renderData.content.additionalInformation.rows).toHaveLength(1)
-      expect(renderData.content.additionalInformation.rows[0].key.text)
-        .toEqual('Home Office Interest')
-      expect(renderData.content.additionalInformation.rows[0].value.html)
-        .toContain('Yes')
-      expect(renderData.content.additionalInformation.rows[0].value.html)
-        .toContain('Claiming asylum from Iran')
+      expect(renderData.content.additionalInformation.rows[0].key.text).toEqual('Home Office Interest')
+      expect(renderData.content.additionalInformation.rows[0].value.html).toContain('Yes')
+      expect(renderData.content.additionalInformation.rows[0].value.html).toContain('Claiming asylum from Iran')
     })
 
     it('should not render home office interest row if not present', () => {
@@ -298,19 +285,17 @@ describe('FoundPersonPresenter', () => {
 
       const renderData = (res.render as jest.Mock).mock.calls[0][1] as { content: FoundPersonViewModel }
 
-      expect(renderData.content.contactDetails.rows[3].key.html)
-        .toContain('Last known address')
-      expect(renderData.content.contactDetails.rows[3].key.html)
-        .toContain('Last updated: Not available')
-      expect(renderData.content.contactDetails.rows[3].value.html)
-        .toContain('Derwent Centre, 1 Stuart Street, Derby, DE1 2EQ')
+      expect(renderData.content.contactDetails.rows[3].key.html).toContain('Last known address')
+      expect(renderData.content.contactDetails.rows[3].key.html).toContain('Last updated: Not available')
+      expect(renderData.content.contactDetails.rows[3].value.html).toContain(
+        'Derwent Centre, 1 Stuart Street, Derby, DE1 2EQ',
+      )
       expect(renderData.content.contactDetails.rows[3].value.html).toContain('Type of address')
       expect(renderData.content.contactDetails.rows[3].value.html).toContain('Main residence')
       expect(renderData.content.contactDetails.rows[3].value.html).toContain('Start date')
       expect(renderData.content.contactDetails.rows[3].value.html).toContain('1 January 2026')
       expect(renderData.content.contactDetails.rows[3].value.html).toContain('Notes')
-      expect(renderData.content.contactDetails.rows[3].value.html)
-        .toContain('No notes')
+      expect(renderData.content.contactDetails.rows[3].value.html).toContain('No notes')
     })
   })
 })

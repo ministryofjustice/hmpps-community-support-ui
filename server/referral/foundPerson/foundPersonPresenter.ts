@@ -34,7 +34,9 @@ const formatPersonalCircumstances = (list: components['schemas']['PersonalCircum
           circumstanceType[a.description as keyof typeof circumstanceType] -
           circumstanceType[b.description as keyof typeof circumstanceType],
       )
-      .map(c => `<div>${ViewUtils.escape(c.description)}: ${ViewUtils.escape(c.subDescription) || 'Not available'}</div>`)
+      .map(
+        c => `<div>${ViewUtils.escape(c.description)}: ${ViewUtils.escape(c.subDescription) || 'Not available'}</div>`,
+      )
       .join('')
   }
   return 'Not available'
