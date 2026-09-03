@@ -18,7 +18,7 @@ const getLatestUpdatedAt = (list: { updatedAt?: string }[]): string => {
   }
 }
 
-const formatPersonCircumstances = (list: components['schemas']['PersonCircumstance'][]): string => {
+const formatPersonCircumstances = (list: components['schemas']['PersonalCircumstance'][]): string => {
   if (list && list.length > 0) return list.map(c => `<div>${c.type}: ${c.description}</div>`).join('')
   return 'Not available'
 }
@@ -69,7 +69,7 @@ export default class FoundPersonPresenter extends PresenterBase<FoundPersonViewM
     const identifierRow = resolveIdentifierRow(foundPerson)
 
     const currentCircumstancesLastUpdated = getLatestUpdatedAt(
-      foundPerson.personDetailsAndCircumstances?.personCircumstances,
+      foundPerson.personDetailsAndCircumstances?.personalCircumstances,
     )
     const disabilitiesLastUpdated = getLatestUpdatedAt(foundPerson.personDetailsAndCircumstances?.disabilities)
 
@@ -90,7 +90,7 @@ export default class FoundPersonPresenter extends PresenterBase<FoundPersonViewM
         {
           html: `<b>Current circumstances</b>\n<div class="govuk-hint govuk-!-font-size-16">Last updated: ${currentCircumstancesLastUpdated}</div>`,
         },
-        { html: formatPersonCircumstances(foundPerson.personDetailsAndCircumstances?.personCircumstances) },
+        { html: formatPersonCircumstances(foundPerson.personDetailsAndCircumstances?.personalCircumstances) },
       ),
       ViewUtils.summaryListRow(
         {

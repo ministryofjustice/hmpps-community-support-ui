@@ -88,6 +88,7 @@
     "backLink": "/unassigned-cases",
     "defaultFieldValue": "Not available",
     "successBannerHeading": "Case assigned",
+    "withdrawReferralLinkText": "Withdraw referral",
     "subNavTitle": "Sub navigation",
     "subNavItems": [
       {
@@ -156,6 +157,51 @@
       "change": "/referral/{{ id }}/ics-change-details",
       "back": "/progress/{{ id }}"
     }
+  },
+  "/referral/:id/withdraw": {
+    "pageHeader": "Why are you withdrawing {{ name }}'s referral?",
+    "hint": "Select one reason.",
+    "additionalInformationLabel": "Provide additional information",
+    "additionalInformationHint": "Include information relevant to the reason you selected.",
+    "continueButtonText": "Continue",
+    "groups": [
+      {
+        "heading": "Problem with referral",
+        "reasons": [
+          { "value": "INELIGIBLE_REFERRAL", "text": "Ineligible referral" },
+          { "value": "MISTAKEN_OR_DUPLICATE_REFERRAL", "text": "Mistaken or duplicate referral" }
+        ]
+      },
+      {
+        "heading": "User related",
+        "reasons": [
+          { "value": "NOT_ENGAGED", "text": "Not engaged" },
+          { "value": "NEEDS_MET_THROUGH_ANOTHER_ROUTE", "text": "Needs met through another route" },
+          { "value": "USER_DIED", "text": "User died" },
+          { "value": "WORK_CARING_COMMITMENTS_OR_SICKNESS", "text": "Work, caring commitments, or sickness" }
+        ]
+      },
+      {
+        "heading": "Sentence / custody related",
+        "reasons": [
+          { "value": "ACQUITTED_ON_APPEAL", "text": "Acquitted on appeal" },
+          { "value": "RETURNED_TO_CUSTODY", "text": "Returned to custody" },
+          { "value": "SENTENCE_REVOKED", "text": "Sentence revoked" },
+          { "value": "SENTENCE_EXPIRED", "text": "Sentence expired" }
+        ]
+      },
+      {
+        "heading": "Other",
+        "reasons": [{ "value": "OTHER_CHANGE_OF_CIRCUMSTANCE", "text": "Any other change of circumstance" }]
+      }
+    ]
+  },
+  "/referral/:id/withdraw/confirmation": {
+    "pageHeader": "Withdraw {{ name }}'s referral",
+    "question": "Are you sure you want to withdraw this referral?",
+    "yesText": "Yes",
+    "noText": "No",
+    "continueButtonText": "Continue"
   },
   "/referral/:id/appointment/confirm-ics": {
     "pageHeader": "Check the details before scheduling the ICS",
@@ -644,6 +690,10 @@
           "addContactDetails": {
             "text": "Add details of main point of contact",
             "href": "/referral/new/add-contact-details"
+          },
+          "checkPPDetails": {
+            "text": "Check probation practitioner's details",
+            "href": "/referral/task-list/check-probation-practitioner-details"
           }
         }
       },
@@ -903,5 +953,23 @@
     "buttonText": "Continue",
     "heading": "{{ personName }}",
     "pageCaption": "CRN: {{ CRN }} | Date of birth: {{ DOB }}"
+  },
+  "/referral/task-list/check-probation-practitioner-details": {
+    "backLinkText": "Back",
+    "backLinkHref": "/referral/task-list",
+    "buttonText": "Save and continue",
+    "heading": "{{ personName }}",
+    "pageCaption": "CRN: {{ CRN }} | Date of birth: {{ DOB }}",
+    "subHeading": "Check probation practitioner's details",
+    "insetText": "These contact details will be sent to the delivery partner. They should also be updated in NDelius.",
+    "nameLabel": "Name",
+    "emailAddressLabel": "Email address",
+    "jobRoleLabel": "Job role",
+    "pduLabel": "PDU",
+    "probationOfficeLabel": "Probation office",
+    "teamPhoneNumberLabel":"Team phone number",
+    "radioQuestion": "Are these details correct?",
+    "radioYes": "Yes",
+    "radioNo": "No"
   }
 }

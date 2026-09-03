@@ -1,3 +1,5 @@
+$guidance-panel-background-colour: #eaf4f9;
+
 .govuk-select {
   min-width: 4.5em;
 }
@@ -9,4 +11,9 @@
     text-align: left;
     width: 100%;
   }
+}
+
+.guidance-panel {
+  border-left-color: govuk-colour('blue');
+  background-color: $guidance-panel-background-colour;
 }
