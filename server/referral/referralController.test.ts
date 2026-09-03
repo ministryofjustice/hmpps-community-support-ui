@@ -1003,8 +1003,7 @@ describe('ReferralController', () => {
       await referralController.showCheckPPDetails(req, res)
 
       expect(referralService.submitPPDetails).not.toHaveBeenCalled()
-      // TODO: this currently redirects to the task list as an interim measure until the
-      // "add/edit PP details" page is built in a follow-up PR - update this once that lands.
+      // TODO: this currently redirects to the task list in following PR will redirect to the add contact page
       expect(res.redirect).toHaveBeenCalledWith('/referral/task-list')
     })
 
