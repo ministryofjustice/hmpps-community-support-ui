@@ -41,7 +41,7 @@ test.describe('Session Feedback Page', () => {
   test('AC1 - Session feedback', async ({ page }) => {
     await seedSessionWithIcsFeedback(page, mockIcsFeedbackSubmission)
     await page.goto(SESSION_FEEDBACK_URL)
-    await expect(page).toHaveTitle('Session feedback – ICS feedback - [service name]')
+    await expect(page).toHaveTitle('Session feedback – ICS feedback – Community Support')
   })
 
   test('AC2 - Providing details of what happened in the session', async ({ page }) => {
