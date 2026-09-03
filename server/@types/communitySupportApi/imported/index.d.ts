@@ -123,6 +123,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/referral/{referralReference}/action-plan/session-delivery-details': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    /** Save and update answers for session delivery details */
+    patch: operations['patchSessionDeliveryDetails']
+    trace?: never
+  }
   '/referral/{referralId}/service-end-date': {
     parameters: {
       query?: never
@@ -1070,6 +1087,46 @@ export interface components {
       sessionCommunications?: string[] | null
       personFirstName: string
     }
+    ActionPlanSessionDeliveryDetailsRequest: {
+      answers: components['schemas']['SessionDeliveryDetailsQuestionAnswers'][]
+    }
+    SessionDeliveryDetailsQuestionAnswer: {
+      value: string
+      additionalDetails?: string | null
+    }
+    SessionDeliveryDetailsQuestionAnswers: {
+      /** Format: uuid */
+      questionId: string
+      incomingAnswerDetails: components['schemas']['SessionDeliveryDetailsQuestionAnswer'][]
+    }
+    ActionPlanSessionDeliveryDetailsResponse: {
+      questions: components['schemas']['SessionDeliveryQuestion'][]
+    }
+    QuestionChoice: {
+      value: string
+      label: string
+      /** Format: int32 */
+      displayOrder: number
+      displayAdditionalDetailsOnSelect: boolean
+      additionalDetailsLabel?: string | null
+    }
+    SavedResponse: {
+      value: string
+      additionalDetails?: string | null
+    }
+    SessionDeliveryQuestion: {
+      /** Format: uuid */
+      id: string
+      /** Format: int32 */
+      displayOrder: number
+      label: string
+      /** @enum {string} */
+      answerType: 'TEXTAREA' | 'RADIO' | 'CHECKBOX'
+      /** Format: int32 */
+      maximumNumberOfResponses: number
+      choices?: components['schemas']['QuestionChoice'][] | null
+      savedResponses: components['schemas']['SavedResponse'][]
+    }
     ServiceEndDatePageDto: {
       /**
        * Format: date-time
@@ -1093,6 +1150,7 @@ export interface components {
       pdu?: string | null
       probationOffice?: string | null
       teamPhoneNumber?: string | null
+      ppDetailsFoundAndCorrect?: boolean | null
     }
     ProbationPractitionerDetailsBffResponseDto: {
       name: string
@@ -1101,6 +1159,7 @@ export interface components {
       pdu?: string | null
       probationOffice?: string | null
       teamPhoneNumber?: string | null
+      ppDetailsFoundAndCorrect?: boolean | null
     }
     UpdateOffenceSentenceRequest: {
       offence?: string | null
@@ -1258,6 +1317,8 @@ export interface components {
       addAdditionalInformationCompleted: components['schemas']['TaskListStatusItem']
       addDetailsOfMainPointOfContactCompleted: components['schemas']['TaskListStatusItem']
       selectAnAreaForReferralCompleted: components['schemas']['TaskListStatusItem']
+      checkProbationPractitionerDetailsCompleted?: components['schemas']['TaskListStatusItem'] | null
+      addMainPointOfContactCompleted?: components['schemas']['TaskListStatusItem'] | null
     }
     ActionPlanSummaryDto: {
       personDetails: components['schemas']['ActionPlanSummaryPersonDetails']
@@ -1271,34 +1332,6 @@ export interface components {
     }
     ActionPlanSummaryPersonDetails: {
       fullName: string
-    }
-    ActionPlanSessionDeliveryDetailsResponse: {
-      questions: components['schemas']['SessionDeliveryQuestion'][]
-    }
-    QuestionChoice: {
-      value: string
-      label: string
-      /** Format: int32 */
-      displayOrder: number
-      displayAdditionalDetailsOnSelect: boolean
-      additionalDetailsLabel?: string | null
-    }
-    SavedResponse: {
-      value: string
-      additionalDetails?: string | null
-    }
-    SessionDeliveryQuestion: {
-      /** Format: uuid */
-      id: string
-      /** Format: int32 */
-      displayOrder: number
-      label: string
-      /** @enum {string} */
-      answerType: 'TEXTAREA' | 'RADIO' | 'CHECKBOX'
-      /** Format: int32 */
-      maximumNumberOfResponses: number
-      choices?: components['schemas']['QuestionChoice'][] | null
-      savedResponses: components['schemas']['SavedResponse'][]
     }
     ActionPlanNeedsResponse: {
       needs: components['schemas']['NeedDto'][]
@@ -1984,6 +2017,50 @@ export interface operations {
         }
       }
       /** @description Invalid request body */
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  patchSessionDeliveryDetails: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralReference: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ActionPlanSessionDeliveryDetailsRequest']
+      }
+    }
+    responses: {
+      /** @description Session delivery details answers saved */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ActionPlanSessionDeliveryDetailsResponse']
+        }
+      }
+      /** @description Validation failure */
       400: {
         headers: {
           [name: string]: unknown
