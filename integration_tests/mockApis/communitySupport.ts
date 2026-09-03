@@ -100,7 +100,7 @@ export default {
           dateOfBirth: '20 Feb 1975 (51 years old)',
           sex: 'Male',
           additionalDetails: {
-            ethnicity: 'White: British/English/Welsh/Scotting/Northern Irish',
+            ethnicity: 'White: British/English/Welsh/Scottish/Northern Irish',
             preferredLanguage: 'English',
             neurodiverseConditions: 'N/A',
             religionOrBelief: 'No religion',

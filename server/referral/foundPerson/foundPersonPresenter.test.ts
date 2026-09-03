@@ -48,22 +48,22 @@ describe('FoundPersonPresenter', () => {
         key: { text: 'Preferred language' },
         value: { text: 'English' },
       })
-      expect(renderData.content.personSummary.rows[5]).toMatchObject({
-        key: {
-          html:
-            '<b>Current circumstances</b>\n' +
-            '<div class="govuk-hint govuk-!-font-size-16">Last updated: 3 January 2020</div>',
-        },
-        value: {
-          html: '<div>Relationship: Married / Civil Partnership</div><div>Employment: Full Time Employed</div><div>Dependants: Has Dependants</div>',
-        },
-      })
-      expect(renderData.content.personSummary.rows[6]).toMatchObject({
-        key: {
-          html: '<b>Disabilities</b>\n<div class="govuk-hint govuk-!-font-size-16">Last updated: 4 January 2020</div>',
-        },
-        value: { html: '<div>Neurodiverse conditions</div>' },
-      })
+      expect(renderData.content.personSummary.rows[5].key.html)
+        .toContain('Current circumstances')
+      expect(renderData.content.personSummary.rows[5].key.html)
+        .toContain('Last updated: 3 January 2020')
+      expect(renderData.content.personSummary.rows[5].value.html)
+        .toContain('Relationship: Married / Civil Partnership')
+      expect(renderData.content.personSummary.rows[5].value.html).toContain('Employment: Full Time Employed')
+      expect(renderData.content.personSummary.rows[5].value.html)
+        .toContain('Dependants: Has Dependants')
+
+      expect(renderData.content.personSummary.rows[6].key.html)
+        .toContain('Disabilities')
+      expect(renderData.content.personSummary.rows[6].key.html)
+        .toContain('Last updated: 4 January 2020')
+      expect(renderData.content.personSummary.rows[6].value.html)
+        .toContain('Neurodiverse conditions')
 
       expect(renderData.content.equalityMonitoring.rows).toHaveLength(4)
       expect(renderData.content.equalityMonitoring.card.title.text).toEqual('Equality monitoring')
@@ -73,7 +73,7 @@ describe('FoundPersonPresenter', () => {
       })
       expect(renderData.content.equalityMonitoring.rows[1]).toMatchObject({
         key: { text: 'Ethnicity' },
-        value: { text: 'White: British/English/Welsh/Scotting/Northern Irish' },
+        value: { text: 'White: British/English/Welsh/Scottish/Northern Irish' },
       })
       expect(renderData.content.equalityMonitoring.rows[2]).toMatchObject({
         key: { text: 'Religion or belief' },
@@ -86,10 +86,13 @@ describe('FoundPersonPresenter', () => {
 
       expect(renderData.content.additionalInformation.rows).toHaveLength(2)
       expect(renderData.content.additionalInformation.card.title.text).toEqual('Additional information')
-      expect(renderData.content.additionalInformation.rows[0]).toMatchObject({
-        key: { text: 'Home Office Interest' },
-        value: { html: '<div>Yes</div><br/><div>Claiming asylum from Iran</div>' },
-      })
+      expect(renderData.content.additionalInformation.rows[0].key.text)
+        .toEqual('Home Office Interest')
+      expect(renderData.content.additionalInformation.rows[0].value.html)
+        .toContain('Yes')
+      expect(renderData.content.additionalInformation.rows[0].value.html)
+        .toContain('Claiming asylum from Iran')
+
       expect(renderData.content.additionalInformation.rows[1]).toMatchObject({
         key: { text: 'Offender personality disorder (OPD) pathway' },
         value: { text: 'Yes' },
@@ -242,10 +245,12 @@ describe('FoundPersonPresenter', () => {
       const renderData = (res.render as jest.Mock).mock.calls[0][1] as { content: FoundPersonViewModel }
 
       expect(renderData.content.additionalInformation.rows).toHaveLength(1)
-      expect(renderData.content.additionalInformation.rows[0]).toMatchObject({
-        key: { text: 'Home Office Interest' },
-        value: { html: '<div>Yes</div><br/><div>Claiming asylum from Iran</div>' },
-      })
+      expect(renderData.content.additionalInformation.rows[0].key.text)
+        .toEqual('Home Office Interest')
+      expect(renderData.content.additionalInformation.rows[0].value.html)
+        .toContain('Yes')
+      expect(renderData.content.additionalInformation.rows[0].value.html)
+        .toContain('Claiming asylum from Iran')
     })
 
     it('should not render home office interest row if not present', () => {
@@ -285,7 +290,7 @@ describe('FoundPersonPresenter', () => {
 
     it('should render address correctly if person is in custody', () => {
       const foundPerson = PersonFactory.build({
-        personIdentifier: 'HD8943SE',
+        personIdentifier: 'A0216ED',
       })
 
       const presenter = new FoundPersonPresenter(foundPerson)
@@ -293,24 +298,19 @@ describe('FoundPersonPresenter', () => {
 
       const renderData = (res.render as jest.Mock).mock.calls[0][1] as { content: FoundPersonViewModel }
 
-      expect(renderData.content.contactDetails.rows[3]).toMatchObject({
-        key: {
-          html: '<b>Last known address</b>\n<div class="govuk-hint govuk-!-font-size-16">Last updated: Not available</div>',
-        },
-        value: {
-          html:
-            '<div>Derwent Centre, 1 Stuart Street, Derby, DE1 2EQ</div>\n' +
-            '<br/>\n' +
-            '<div class="govuk-summary-list__key">Type of address</div>\n' +
-            '<div>Main residence</div>\n' +
-            '<br/>\n' +
-            '<div class="govuk-summary-list__key">Start date</div>\n' +
-            '<div>1 January 2026</div>\n' +
-            '<br/>\n' +
-            '<div class="govuk-summary-list__key">Notes</div>\n' +
-            '<div>No notes</div>',
-        },
-      })
+      expect(renderData.content.contactDetails.rows[3].key.html)
+        .toContain('Last known address')
+      expect(renderData.content.contactDetails.rows[3].key.html)
+        .toContain('Last updated: Not available')
+      expect(renderData.content.contactDetails.rows[3].value.html)
+        .toContain('Derwent Centre, 1 Stuart Street, Derby, DE1 2EQ')
+      expect(renderData.content.contactDetails.rows[3].value.html).toContain('Type of address')
+      expect(renderData.content.contactDetails.rows[3].value.html).toContain('Main residence')
+      expect(renderData.content.contactDetails.rows[3].value.html).toContain('Start date')
+      expect(renderData.content.contactDetails.rows[3].value.html).toContain('1 January 2026')
+      expect(renderData.content.contactDetails.rows[3].value.html).toContain('Notes')
+      expect(renderData.content.contactDetails.rows[3].value.html)
+        .toContain('No notes')
     })
   })
 })

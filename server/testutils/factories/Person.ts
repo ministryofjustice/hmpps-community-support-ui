@@ -14,7 +14,7 @@ export default PersonFactory.define(({ transientParams }) => ({
   sex: transientParams.sex || 'Male',
   prisonNumbers: transientParams.prisonNumbers || ['A1234BC'],
   additionalDetails: transientParams.additionalDetails || {
-    ethnicity: 'White: British/English/Welsh/Scotting/Northern Irish',
+    ethnicity: 'White: British/English/Welsh/Scottish/Northern Irish',
     preferredLanguage: 'English',
     neurodiverseConditions: 'N/A',
     religionOrBelief: 'No religion',

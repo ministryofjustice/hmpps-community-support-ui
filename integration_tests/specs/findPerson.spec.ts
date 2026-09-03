@@ -69,7 +69,7 @@ test.describe('FindPerson', () => {
     await expect(foundPersonPage.equalityMonitoring.rows[0].value).toHaveText('Argentine, Brazilian')
     await expect(foundPersonPage.equalityMonitoring.rows[1].key).toHaveText('Ethnicity')
     await expect(foundPersonPage.equalityMonitoring.rows[1].value).toHaveText(
-      'White: British/English/Welsh/Scotting/Northern Irish',
+      'White: British/English/Welsh/Scottish/Northern Irish',
     )
     await expect(foundPersonPage.equalityMonitoring.rows[2].key).toHaveText('Religion or belief')
     await expect(foundPersonPage.equalityMonitoring.rows[2].value).toHaveText('No religion')
