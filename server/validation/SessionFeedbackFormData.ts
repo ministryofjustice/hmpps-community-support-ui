@@ -23,7 +23,10 @@ export const SessionFeedbackFormDataSchema = z.object({
     .string()
     .min(1, { message: strengthsIdentifiedTextarea.nothingEnteredError })
     .max(maxCharacters, {
-      message: strengthsIdentifiedTextarea.tooManyCharactersError.replace('{{ maxCharacters }}', maxCharacters.toString()),
+      message: strengthsIdentifiedTextarea.tooManyCharactersError.replace(
+        '{{ maxCharacters }}',
+        maxCharacters.toString(),
+      ),
     }),
 })
 
