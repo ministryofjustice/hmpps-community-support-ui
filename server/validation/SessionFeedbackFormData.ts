@@ -1,20 +1,30 @@
 import { z } from 'zod'
+import { globalContent } from '../../assets/content/GlobalContent'
+
+const { whatDidYouDoTextarea, behaviourTextarea, strengthsIdentifiedTextarea } =
+  globalContent['/ics-feedback/:id/session-feedback'].feedbackForm
+
+const maxCharacters = 3000
 
 export const SessionFeedbackFormDataSchema = z.object({
   whatDidYouDo: z
     .string()
-    .min(1, { message: 'Enter what you did in the session' })
-    .max(3000, { message: 'What you did in the session must be 3000 characters or less' }),
+    .min(1, { message: whatDidYouDoTextarea.nothingEnteredError })
+    .max(maxCharacters, {
+      message: whatDidYouDoTextarea.tooManyCharactersError.replace('{{ maxCharacters }}', maxCharacters.toString()),
+    }),
   behaviour: z
     .string()
-    .min(1, { message: 'Enter what {{ firstname }}’s engagement was like during the session' })
+    .min(1, { message: behaviourTextarea.nothingEnteredError })
     .max(3000, {
-      message: 'Details about {{ firstname }}’s engagement during the session must be 3000 characters or less',
+      message: behaviourTextarea.tooManyCharactersError.replace('{{ maxCharacters}}', maxCharacters.toString()),
     }),
   strengthsIdentified: z
     .string()
-    .min(1, { message: 'Enter what strengths you identified' })
-    .max(3000, { message: 'Strengths you identified must be 3000 characters or less' }),
+    .min(1, { message: strengthsIdentifiedTextarea.nothingEnteredError })
+    .max(maxCharacters, {
+      message: strengthsIdentifiedTextarea.tooManyCharactersError.replace('{{ maxCharacters }}', maxCharacters.toString()),
+    }),
 })
 
 export type SessionFeedbackFormData = z.infer<typeof SessionFeedbackFormDataSchema>
