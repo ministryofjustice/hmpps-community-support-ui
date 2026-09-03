@@ -9,7 +9,7 @@ import IcsFeedbackSessionDetailsPage from '../pages/IcsFeedbackSessionDetailsPag
 const CASE_REFERENCE = 'AB1234CD'
 const SESSION_FEEDBACK_URL = `/ics-feedback/${CASE_REFERENCE}/session-feedback`
 const SESSION_DETAILS_URL = IcsFeedbackSessionDetailsPage.url(CASE_REFERENCE)
-const CHECK_ANSWERS_URL = `/ics-feedback/${CASE_REFERENCE}/check-answers`
+const ISSUES_OR_CONCERNS_URL = `/ics-feedback/${CASE_REFERENCE}/issues-or-concerns`
 
 const REFERRAL_ID = randomUUID()
 const ICS_ID = randomUUID()
@@ -123,8 +123,8 @@ test.describe('Session Feedback Page', () => {
       await sessionFeedbackPage.strengthsIdentifiedInput.fill('Strong family support')
       await sessionFeedbackPage.continueButton.click()
     })
-    await test.step('should be on check your answers page', async () => {
-      await expect(page).toHaveURL(CHECK_ANSWERS_URL)
+    await test.step('should be on issues or concerns page', async () => {
+      await expect(page).toHaveURL(ISSUES_OR_CONCERNS_URL)
     })
   })
 })
