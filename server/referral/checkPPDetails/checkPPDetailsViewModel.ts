@@ -16,7 +16,6 @@ export interface CheckPPDetailsContent {
   nameLabel: string
   emailAddressLabel: string
   jobRoleLabel: string
-  phoneNumberLabel: string
   pduLabel: string
   probationOfficeLabel: string
   teamPhoneNumberLabel: string

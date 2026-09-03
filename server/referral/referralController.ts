@@ -509,8 +509,7 @@ export default class ReferralController {
     if (req.method === 'POST') {
       return validateRequestBodyAgainstSchema(CheckPPDetailsSchema, req, res, async form => {
         if (form.detailsCorrect === 'true') {
-          const ppDetailsToSend = probationPractitionerDetails
-          ppDetailsToSend.ppDetailsFoundAndCorrect = true
+          const ppDetailsToSend = { ...probationPractitionerDetails, ppDetailsFoundAndCorrect: true }
           await this.referralService.submitPPDetails(draftReferralKey, username, ppDetailsToSend)
           return res.redirect('/referral/task-list')
         }
