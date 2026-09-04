@@ -41,6 +41,7 @@ import type {
 import config from '../config'
 import logger from '../../logger'
 import { PagedResponse } from '../@types/communitySupportApi/derived'
+import { AdditionalInformationForTheDeliveryPartnerFormData } from '../validation/AdditionalInformationForTheDeliveryPartnerFormData'
 
 export default class CommunitySupportApiClient extends RestClient {
   constructor(authenticationClient: AuthenticationClient, apiConfig: ApiConfig = null) {
@@ -252,6 +253,17 @@ export default class CommunitySupportApiClient extends RestClient {
   ): Promise<AdditionalInformationForTheDeliveryPartner> {
     return this.get(
       { path: `/bff/draft-referral/additional-information-for-the-delivery-partner/${draftReferalId}` },
+      asSystem(username),
+    )
+  }
+
+  submitAdditionalInformationForDeliveryPartner(
+    data: AdditionalInformationForTheDeliveryPartnerFormData,
+    draftReferalId: string,
+    username: string,
+  ) {
+    return this.patch(
+      { path: `/draft-referral/additional-information-for-the-delivery-partner/${draftReferalId}`, data },
       asSystem(username),
     )
   }

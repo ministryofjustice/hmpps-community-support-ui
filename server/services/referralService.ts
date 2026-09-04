@@ -20,6 +20,7 @@ import {
 } from '@community-support-api'
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
 import { NeedsAnInterpreterFormData } from '../validation/NeedsAnInterpreterFormDataSchema'
+import { AdditionalInformationForTheDeliveryPartnerFormData } from '../validation/AdditionalInformationForTheDeliveryPartnerFormData'
 
 export default class ReferralService {
   constructor(private readonly communitySupportApiClient: CommunitySupportApiClient) {}
@@ -145,5 +146,13 @@ export default class ReferralService {
 
   getAdditionalInformationForDeliveryPartner(draftReferalId: string, username: string) {
     return this.communitySupportApiClient.getAdditionalInformationForDeliveryPartner(draftReferalId, username)
+  }
+
+  submitAdditionalInformationForDeliveryPartner(
+    data: AdditionalInformationForTheDeliveryPartnerFormData,
+    draftReferalId: string,
+    username: string,
+  ) {
+    return this.communitySupportApiClient.submitAdditionalInformationForDeliveryPartner(data, draftReferalId, username)
   }
 }

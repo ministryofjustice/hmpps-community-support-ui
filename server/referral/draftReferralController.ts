@@ -20,6 +20,10 @@ import ServiceDaysPagePresenter from './serviceDays/ServiceDaysPagePresenter'
 import { ServiceEndDateSchema, ServiceEndDateFormData } from '../validation/ServiceEndDateFormData'
 import ServiceEndDatePagePresenter from './serviceEndDate/ServiceEndDatePagePresenter'
 import AdditionalInformationForTheDeliveryPartnerPresenter from './additionalInformationForTheDeliveryPartner /AdditionalInformationForTheDeliveryPartnerPresenter'
+import {
+  AdditionalInformationForTheDeliveryPartnerFormData,
+  AdditionalInformationForTheDeliveryPartnerFormDataSchema,
+} from '../validation/AdditionalInformationForTheDeliveryPartnerFormData'
 
 const findAPersonURL = '/referral/new/find-a-person' as const
 const taskListURL = '/referral/task-list' as const
@@ -285,7 +289,26 @@ export default class DraftReferralController {
     }
   }
 
-  additionalInformationForDeliveryPartner(req: Request, res: Response) {
-    res.json(req.body)
+  async additionalInformationForDeliveryPartner(req: Request, res: Response) {
+    const { username } = res.locals.user
+    const draftReferalId = req.session?.draftReferralId
+    if (draftReferalId) {
+      try {
+        const schema = AdditionalInformationForTheDeliveryPartnerFormDataSchema
+        return validateRequestBodyAgainstSchema(
+          schema,
+          req,
+          res,
+          async (data: AdditionalInformationForTheDeliveryPartnerFormData) => {
+            await this.referralService.submitAdditionalInformationForDeliveryPartner(data, draftReferalId, username)
+            return res.redirect(taskListURL)
+          },
+        )
+      } catch (e) {
+        logger.error(e)
+        return res.redirect(findAPersonURL)
+      }
+    }
+    return res.redirect(findAPersonURL)
   }
 }
