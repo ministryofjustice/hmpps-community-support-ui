@@ -37,6 +37,7 @@ import type {
   ServiceEndDatePageDto,
   ServiceDaysPageDto,
   AdditionalInformationForTheDeliveryPartner,
+  Selection,
 } from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
@@ -257,11 +258,7 @@ export default class CommunitySupportApiClient extends RestClient {
     )
   }
 
-  submitAdditionalInformationForDeliveryPartner(
-    data: AdditionalInformationForTheDeliveryPartnerFormData,
-    draftReferalId: string,
-    username: string,
-  ) {
+  submitAdditionalInformationForDeliveryPartner(data: Selection, draftReferalId: string, username: string) {
     return this.patch(
       { path: `/draft-referral/additional-information-for-the-delivery-partner/${draftReferalId}`, data },
       asSystem(username),

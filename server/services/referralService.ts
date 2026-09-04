@@ -17,6 +17,7 @@ import {
   ServiceEndDatePageDto,
   ServiceDaysPageDto,
   AdditionalSupportNeedsRequest,
+  Selection,
 } from '@community-support-api'
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
 import { NeedsAnInterpreterFormData } from '../validation/NeedsAnInterpreterFormDataSchema'
@@ -153,6 +154,12 @@ export default class ReferralService {
     draftReferalId: string,
     username: string,
   ) {
-    return this.communitySupportApiClient.submitAdditionalInformationForDeliveryPartner(data, draftReferalId, username)
+    const selection: Selection =
+      data.additionalInformation === 'Yes' ? { selected: 'Yes', value: data.details } : { selected: 'No' }
+    return this.communitySupportApiClient.submitAdditionalInformationForDeliveryPartner(
+      selection,
+      draftReferalId,
+      username,
+    )
   }
 }
