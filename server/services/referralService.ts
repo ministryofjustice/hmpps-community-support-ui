@@ -17,6 +17,8 @@ import {
   ServiceEndDatePageDto,
   ServiceDaysPageDto,
   AdditionalSupportNeedsRequest,
+  type ProbationPractitionerDetails,
+  type UpdateProbationPractitionerDetailsRequest,
   CheckDraftReferralDetailsDto,
 } from '@community-support-api'
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
@@ -146,5 +148,13 @@ export default class ReferralService {
 
   submitNeedsAnInterpreter(body: NeedsAnInterpreterFormData, draftReferalId: string, username: string) {
     return this.communitySupportApiClient.submitNeedsAnInterpreter(body, draftReferalId, username)
+  }
+
+  getPPDetails(referralId: string, username: string): Promise<ProbationPractitionerDetails> {
+    return this.communitySupportApiClient.getPPDetails(referralId, username)
+  }
+
+  submitPPDetails(referralId: string, username: string, ppDetails: UpdateProbationPractitionerDetailsRequest) {
+    return this.communitySupportApiClient.submitPPDetails(referralId, username, ppDetails)
   }
 }

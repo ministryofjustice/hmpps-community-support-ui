@@ -13,6 +13,9 @@ describe('ReferralDetailsPresenter', () => {
   const createBaseExpected = (inputDto: ReferralDetailsResponseDto): ReferralDetailsViewModel => ({
     name: 'John Doe',
     backLink: { href: '/unassigned-cases' },
+    // TODO - Remove once we have a decision on the entry point
+    withdrawReferralHref: '/referral/QD0878DE/withdraw',
+    withdrawReferralLinkText: 'Withdraw referral',
     successBanner: null,
     subNav: {
       label: 'Sub navigation',

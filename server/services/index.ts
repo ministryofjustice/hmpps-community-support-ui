@@ -6,6 +6,7 @@ import ReferenceDataService from './referenceDataService'
 import CommunityServiceProviderService from './communityServiceProviderService'
 import CaseListService from './caseListService'
 import AppointmentService from './AppointmentService'
+import WithdrawalService from './withdrawalService'
 
 export const services = () => {
   const { applicationInfo, hmppsAuditClient, communitySupportApiClient, prisonApiClient } = dataAccess()
@@ -19,6 +20,7 @@ export const services = () => {
     caseListService: new CaseListService(communitySupportApiClient),
     appointmentService: new AppointmentService(communitySupportApiClient),
     referenceDataService: new ReferenceDataService(communitySupportApiClient, prisonApiClient),
+    withdrawalService: new WithdrawalService(),
   }
 }
 

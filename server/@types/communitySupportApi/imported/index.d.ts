@@ -123,6 +123,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/referral/{referralReference}/action-plan/session-delivery-details': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    /** Save and update answers for session delivery details */
+    patch: operations['patchSessionDeliveryDetails']
+    trace?: never
+  }
   '/referral/{referralId}/service-end-date': {
     parameters: {
       query?: never
@@ -155,6 +172,23 @@ export interface paths {
     head?: never
     /** Update service days page data */
     patch: operations['updateServiceDaysPage']
+    trace?: never
+  }
+  '/draft-referral/{referralId}/probation-practitioner-details': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    /** Save the Probation Practitioner details for a Draft Referral */
+    patch: operations['updateProbationPractitionerDetails']
     trace?: never
   }
   '/draft-referral/{referralId}/offence-sentence': {
@@ -1053,6 +1087,46 @@ export interface components {
       sessionCommunications?: string[] | null
       personFirstName: string
     }
+    ActionPlanSessionDeliveryDetailsRequest: {
+      answers: components['schemas']['SessionDeliveryDetailsQuestionAnswers'][]
+    }
+    SessionDeliveryDetailsQuestionAnswer: {
+      value: string
+      additionalDetails?: string | null
+    }
+    SessionDeliveryDetailsQuestionAnswers: {
+      /** Format: uuid */
+      questionId: string
+      incomingAnswerDetails: components['schemas']['SessionDeliveryDetailsQuestionAnswer'][]
+    }
+    ActionPlanSessionDeliveryDetailsResponse: {
+      questions: components['schemas']['SessionDeliveryQuestion'][]
+    }
+    QuestionChoice: {
+      value: string
+      label: string
+      /** Format: int32 */
+      displayOrder: number
+      displayAdditionalDetailsOnSelect: boolean
+      additionalDetailsLabel?: string | null
+    }
+    SavedResponse: {
+      value: string
+      additionalDetails?: string | null
+    }
+    SessionDeliveryQuestion: {
+      /** Format: uuid */
+      id: string
+      /** Format: int32 */
+      displayOrder: number
+      label: string
+      /** @enum {string} */
+      answerType: 'TEXTAREA' | 'RADIO' | 'CHECKBOX'
+      /** Format: int32 */
+      maximumNumberOfResponses: number
+      choices?: components['schemas']['QuestionChoice'][] | null
+      savedResponses: components['schemas']['SavedResponse'][]
+    }
     ServiceEndDatePageDto: {
       /**
        * Format: date-time
@@ -1068,6 +1142,24 @@ export interface components {
        * @description The number of service days allocated to the referral
        */
       service_days?: number
+    }
+    UpdateProbationPractitionerDetailsRequest: {
+      name: string
+      jobRole?: string | null
+      emailAddress?: string | null
+      pdu?: string | null
+      probationOffice?: string | null
+      teamPhoneNumber?: string | null
+      ppDetailsFoundAndCorrect?: boolean | null
+    }
+    ProbationPractitionerDetailsBffResponseDto: {
+      name: string
+      jobRole?: string | null
+      emailAddress?: string | null
+      pdu?: string | null
+      probationOffice?: string | null
+      teamPhoneNumber?: string | null
+      ppDetailsFoundAndCorrect?: boolean | null
     }
     UpdateOffenceSentenceRequest: {
       offence?: string | null
@@ -1225,6 +1317,8 @@ export interface components {
       addAdditionalInformationCompleted: components['schemas']['TaskListStatusItem']
       addDetailsOfMainPointOfContactCompleted: components['schemas']['TaskListStatusItem']
       selectAnAreaForReferralCompleted: components['schemas']['TaskListStatusItem']
+      checkProbationPractitionerDetailsCompleted?: components['schemas']['TaskListStatusItem'] | null
+      addMainPointOfContactCompleted?: components['schemas']['TaskListStatusItem'] | null
     }
     ActionPlanSummaryDto: {
       personDetails: components['schemas']['ActionPlanSummaryPersonDetails']
@@ -1238,34 +1332,6 @@ export interface components {
     }
     ActionPlanSummaryPersonDetails: {
       fullName: string
-    }
-    ActionPlanSessionDeliveryDetailsResponse: {
-      questions: components['schemas']['SessionDeliveryQuestion'][]
-    }
-    QuestionChoice: {
-      value: string
-      label: string
-      /** Format: int32 */
-      displayOrder: number
-      displayAdditionalDetailsOnSelect: boolean
-      additionalDetailsLabel?: string | null
-    }
-    SavedResponse: {
-      value: string
-      additionalDetails?: string | null
-    }
-    SessionDeliveryQuestion: {
-      /** Format: uuid */
-      id: string
-      /** Format: int32 */
-      displayOrder: number
-      label: string
-      /** @enum {string} */
-      answerType: 'TEXTAREA' | 'RADIO' | 'CHECKBOX'
-      /** Format: int32 */
-      maximumNumberOfResponses: number
-      choices?: components['schemas']['QuestionChoice'][] | null
-      savedResponses: components['schemas']['SavedResponse'][]
     }
     ActionPlanNeedsResponse: {
       needs: components['schemas']['NeedDto'][]
@@ -1450,17 +1516,9 @@ export interface components {
       emailAddress?: string | null
       disability?: boolean | null
     }
-    PersonCircumstance: {
-      type?: string | null
-      description?: string | null
-      subType?: string | null
-      subDescription?: string | null
-      /** Format: date-time */
-      updatedAt?: string | null
-    }
     PersonDetailsAndCircumstances: {
       preferredLanguage?: string | null
-      personCircumstances: components['schemas']['PersonCircumstance'][]
+      personalCircumstances: components['schemas']['PersonalCircumstance'][]
       disabilities: components['schemas']['Disability'][]
       offenderPersonalityDisorder?: string | null
       ofHomeOfficeInterest?: boolean | null
@@ -1480,13 +1538,13 @@ export interface components {
       additionalDetails?: components['schemas']['PersonAdditionalDetails'] | null
       personDetailsAndCircumstances?: components['schemas']['PersonDetailsAndCircumstances'] | null
     }
-    ProbationPractitionerDetailsBffResponseDto: {
-      name: string
-      jobRole?: string | null
-      emailAddress?: string | null
-      pdu?: string | null
-      probationOffice?: string | null
-      teamPhoneNumber?: string | null
+    PersonalCircumstance: {
+      type?: string | null
+      description?: string | null
+      subType?: string | null
+      subDescription?: string | null
+      /** Format: date-time */
+      updatedAt?: string | null
     }
     AreaConfirmationBffResponseDto: {
       contractArea: string
@@ -1978,6 +2036,50 @@ export interface operations {
       }
     }
   }
+  patchSessionDeliveryDetails: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralReference: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ActionPlanSessionDeliveryDetailsRequest']
+      }
+    }
+    responses: {
+      /** @description Session delivery details answers saved */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ActionPlanSessionDeliveryDetailsResponse']
+        }
+      }
+      /** @description Validation failure */
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
   updateServiceEndDatePage: {
     parameters: {
       query?: never
@@ -2035,6 +2137,41 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['ServiceDaysPageDto']
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  updateProbationPractitionerDetails: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateProbationPractitionerDetailsRequest']
+      }
+    }
+    responses: {
+      /** @description Probation Practitioner details saved */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ProbationPractitionerDetailsBffResponseDto']
         }
       }
       /** @description Referral not found */
