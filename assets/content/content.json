@@ -877,5 +877,13 @@
     "buttonText": "Continue",
     "heading": "{{ personName }}",
     "pageCaption": "CRN: {{ CRN }} | Date of birth: {{ DOB }}"
+  },
+  "/referral/task-list/additional-information-for-the-delivery-partner": {
+    "pageHeader": "Is there anything else the delivery partner should know about {{ firstName }}?",
+    "yesOptionLabel": "Yes",
+    "yesCoditional": "Give details of anything else the delivery partner should know",
+    "noOptionLabel": "No",
+    "button": "Save and continue",
+    "backlink": "/referral/task-list"
   }
 }

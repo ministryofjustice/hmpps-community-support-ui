@@ -13,18 +13,17 @@ import {
 
 const buildConditional = (
   content: AdditionalInformationForTheDeliveryPartnerContent,
-  name: string,
   value: string | null,
   errorMessage: GovukFrontendErrorMessage | undefined,
 ): string =>
   buildTextarea({
-    name: 'language',
-    label: { text: content.yesCoditional.replace('{{ name }}', name) },
+    name: 'details',
+    label: { text: content.yesCoditional },
     value,
     spellcheck: true,
     rows: '5',
     errorMessage,
-    attributes: { 'data-testid': 'language' },
+    attributes: { 'data-testid': 'details' },
   })
 
 const isYesChecked = (selected: TriState, hasError: boolean): TriState => {
@@ -60,26 +59,26 @@ const buildRadiosWithSelection = (
   messages: Record<string, GovukFrontendErrorMessage>,
 ): GovukFrontendRadiosWithConditional => {
   const yesSelected: TriState = selectionToTriState(selection)
-  const yesHasError: boolean = !!messages.language
+  const yesHasError: boolean = !!messages.details
   const yesChecked = isYesChecked(yesSelected, yesHasError)
-  const languageText = selection.selected === 'Yes' ? selection.value : ''
+  const text = selection.selected === 'Yes' ? selection.value : ''
   return {
-    name: 'needsInterpreter',
+    name: 'additionalInformation',
     fieldset: {
       legend: {
-        text: content.pageHeader.replace('{{ name }}', name),
+        text: content.pageHeader.replace('{{ firstName }}', name),
         isPageHeading: true,
         classes: 'govuk-fieldset__legend--l',
       },
-      attributes: { 'data-testid': 'needs-interpreter-legend' },
+      attributes: { 'data-testid': 'additional-information-legend' },
     },
-    errorMessage: messages.needsInterpreter,
+    errorMessage: messages.additionalInformation,
     items: [
       {
         value: content.yesOptionLabel,
         text: content.yesOptionLabel,
         checked: yesChecked,
-        conditional: { html: buildConditional(content, name, languageText, messages.language) },
+        conditional: { html: buildConditional(content, text, messages.details) },
       },
       {
         value: content.noOptionLabel,
@@ -87,7 +86,7 @@ const buildRadiosWithSelection = (
         text: content.noOptionLabel,
       },
     ],
-    attributes: { 'data-testid': 'needs-interpreter' },
+    attributes: { 'data-testid': 'additional-information' },
   }
 }
 

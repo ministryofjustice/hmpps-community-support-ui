@@ -45,18 +45,18 @@ describe('AdditionalInformationForTheDeliveryPartnerPresenter', () => {
       },
     } as unknown as Response
 
-    test.skip('buildViewModel creates radios with empty conditional text when no information is given', () => {
+    test('buildViewModel creates radios with empty conditional text when no information is given', () => {
       const dto: AdditionalInformationForTheDeliveryPartner = {
-        refereeName: { firstName: 'Alex', lastName: 'River' },
+        refereeName: { firstName, lastName: 'River' },
         details: { selected: 'Unanswered' },
       }
 
       const presenter = new AdditionalInformationForTheDeliveryPartnerPresenter(dto, { list: [], messages: {} })
       const viewModel = presenter.buildViewModel(res)
 
-      expect(viewModel.backLink.href).toBe('/referral/task-list/additional-support-needs')
+      expect(viewModel.backLink.href).toBe('/referral/task-list')
       expect(viewModel.button).toStrictEqual({ text: pageContent.button })
-      expect(viewModel.radios.name).toBe('needsInterpreter')
+      expect(viewModel.radios.name).toBe('additionalInformation')
       expect(viewModel.radios.fieldset.legend.text).toBe(pageContent.h2)
       expect(viewModel.radios.items).toHaveLength(2)
 
@@ -66,7 +66,7 @@ describe('AdditionalInformationForTheDeliveryPartnerPresenter', () => {
       expect(yesRadio.text).toBe(pageContent.radio1.label)
       expect(yesRadio.checked).toBeNull()
       expect(yesRadio.conditional.html).toContain(pageContent.radio1.textareaLabel)
-      expect(yesRadio.conditional.html).toContain('name="language"')
+      expect(yesRadio.conditional.html).toContain('name="details"')
       expect(yesRadio.conditional.html).toContain('></textarea>') // ie empty text area
 
       expect(noRadio.value).toBe(pageContent.radio2.label)
@@ -76,9 +76,9 @@ describe('AdditionalInformationForTheDeliveryPartnerPresenter', () => {
       expect(viewModel.button.text).toBe(pageContent.button)
     })
 
-    test.skip('buildViewModel selects the yes option and preserves the saved language', () => {
+    test('buildViewModel selects the yes option and preserves the saved informaiton', () => {
       const dto: AdditionalInformationForTheDeliveryPartner = {
-        refereeName: { firstName: 'Alex', lastName: 'River' },
+        refereeName: { firstName, lastName: 'River' },
         details: { selected: 'Yes', value: '' },
       }
 
@@ -96,19 +96,19 @@ describe('AdditionalInformationForTheDeliveryPartnerPresenter', () => {
       expect(noRadio).toBeDefined()
 
       expect(yesRadio.checked).toBe(true)
-      expect(yesRadio.conditional.html).toContain('>French</textarea>')
+      expect(yesRadio.conditional.html).toContain('Give details of anything else the delivery partner should know')
       expect(noRadio.checked).toBe(false)
     })
 
-    test.skip('buildViewModel displays the correct error message when nothing is selected', () => {
+    test('buildViewModel displays the correct error message when nothing is selected', () => {
       const dto: AdditionalInformationForTheDeliveryPartner = {
-        refereeName: { firstName: 'Alex', lastName: 'River' },
-        details: { selected: 'Yes', value: '' },
+        refereeName: { firstName, lastName: 'River' },
+        details: { selected: 'Unanswered' },
       }
 
       const validationErrors: ErrorMiddlewareErrors = {
         list: [],
-        messages: { needsInterpreter: { text: errorMessage.nothingEntered } },
+        messages: { additionalInformation: { text: errorMessage.nothingEntered } },
       }
 
       const presenter = new AdditionalInformationForTheDeliveryPartnerPresenter(dto, validationErrors)
@@ -121,15 +121,15 @@ describe('AdditionalInformationForTheDeliveryPartnerPresenter', () => {
       expect(viewModel.radios.errorMessage.text).toBe(errorMessage.nothingEntered)
     })
 
-    test.skip('buildViewModel displays the correct error message when no language is given', () => {
+    test('buildViewModel displays the correct error message when no details are given', () => {
       const dto: AdditionalInformationForTheDeliveryPartner = {
-        refereeName: { firstName: 'Alex', lastName: 'River' },
+        refereeName: { firstName, lastName: 'River' },
         details: { selected: 'Yes', value: '' },
       }
 
       const validationErrors: ErrorMiddlewareErrors = {
         list: [],
-        messages: { language: { text: errorMessage.nothingEntered } },
+        messages: { details: { text: errorMessage.nothingEntered } },
       }
 
       const presenter = new AdditionalInformationForTheDeliveryPartnerPresenter(dto, validationErrors)

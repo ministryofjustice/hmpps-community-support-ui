@@ -1,0 +1,150 @@
+{
+  "mappings": [
+    {
+      "name": "nDelius get personal details and circumstances by CRN",
+      "request": {
+        "method": "GET",
+        "urlPathPattern": "/case/X[0-9]{6}"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "preferredLanguage": {
+            "code": "EN",
+            "description": "English"
+          },
+          "personalCircumstances": [
+            {
+              "type": {
+                "code": "REL",
+                "description": "Relationships"
+              },
+              "subtype": {
+                "code": "REL_SUB",
+                "description": "Relationships sub type"
+              },
+              "updatedAt": "2026-03-12T14:25:00Z"
+            }
+          ],
+          "disabilities": [
+            {
+              "type": {
+                "code": "BLN",
+                "description": "Blind"
+              },
+              "updatedAt": "2026-03-12T14:25:00Z"
+            }
+          ],
+          "offenderPersonalityDisorder": {
+            "status": {
+              "code": "NO",
+              "description": "N/A"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "nDelius personal details and circumstances not found by CRN",
+      "request": {
+        "method": "GET",
+        "urlPathPattern": "/case/Z[0-9]{6}"
+      },
+      "response": {
+        "status": 404,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "status": 404,
+          "error": "Not Found",
+          "message": "Person not found"
+        }
+      }
+    },
+    {
+      "name": "nDelius get home office interest by CRN",
+      "request": {
+        "method": "GET",
+        "urlPathPattern": "/case/X[0-9]{6}/home-office-interest"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "exists": true,
+          "notes": "Is of interest"
+        }
+      }
+    },
+    {
+      "name": "nDelius home office interest not found by CRN",
+      "request": {
+        "method": "GET",
+        "urlPathPattern": "/case/Z[0-9]{6}/home-office-interest"
+      },
+      "response": {
+        "status": 404,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "status": 404,
+          "error": "Not Found",
+          "message": "Person not found"
+        }
+      }
+    },
+    {
+      "name": "nDelius get community manager by CRN",
+      "request": {
+        "method": "GET",
+        "urlPathPattern": "/case/X[0-9]{6}/community-manager"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "crn": "X123456",
+          "communityManager": {
+            "jobRole": "Probation practitioner",
+            "emailAddress": "jane.doe@example.com",
+            "pdu": "Northumberland",
+            "officeName": "Newcastle Office",
+            "name": {
+              "forename": "Jane",
+              "middleName": null,
+              "surname": "Doe"
+            },
+            "teamPhoneNumber": "0123456789"
+          }
+        }
+      }
+    },
+    {
+      "name": "nDelius community manager not found by CRN",
+      "request": {
+        "method": "GET",
+        "urlPathPattern": "/case/Z[0-9]{6}/community-manager"
+      },
+      "response": {
+        "status": 404,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "status": 404,
+          "error": "Not Found",
+          "message": "Person not found"
+        }
+      }
+    }
+  ]
+}
