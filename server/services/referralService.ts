@@ -27,7 +27,7 @@ import { NeedsAnInterpreterFormData } from '../validation/NeedsAnInterpreterForm
 import { AdditionalInformationForTheDeliveryPartnerFormData } from '../validation/AdditionalInformationForTheDeliveryPartnerFormData'
 
 export default class ReferralService {
-  constructor(private readonly communitySupportApiClient: CommunitySupportApiClient) { }
+  constructor(private readonly communitySupportApiClient: CommunitySupportApiClient) {}
 
   getCaseDetailsByCaseIdentifier(caseIdentifier: string, username: string): Promise<ReferralDetailsResponseDto> {
     return this.communitySupportApiClient.getCaseDetailsById(caseIdentifier, username)

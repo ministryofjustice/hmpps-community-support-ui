@@ -45,7 +45,6 @@ import type {
 import config from '../config'
 import logger from '../../logger'
 import { PagedResponse } from '../@types/communitySupportApi/derived'
-import { AdditionalInformationForTheDeliveryPartnerFormData } from '../validation/AdditionalInformationForTheDeliveryPartnerFormData'
 
 export default class CommunitySupportApiClient extends RestClient {
   constructor(authenticationClient: AuthenticationClient, apiConfig: ApiConfig = null) {
