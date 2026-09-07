@@ -43,8 +43,8 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
     let identifierRow: IdentifierRow | null = null
     if (personDetailsTableData.crn) {
       identifierRow = { label: 'CRN', value: personDetailsTableData.crn }
-    } else if (personDetailsTableData.prisonNumbers) {
-      identifierRow = { label: 'Prison number', value: personDetailsTableData.prisonNumbers }
+    } else if (personDetailsTableData.prisonNumber) {
+      identifierRow = { label: 'Prison number', value: personDetailsTableData.prisonNumber }
     }
 
     const summary = [
