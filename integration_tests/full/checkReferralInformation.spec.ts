@@ -81,7 +81,7 @@ test.describe('Check Referral Information Page', () => {
       personDetailsTableData: {
         ...mockCheckDraftReferralDetails.personDetailsTableData,
         crn: '',
-        prisonNumbers: 'A1234BC, B1234CD, C1234DE',
+        prisonNumber: 'A1234BC, B1234CD, C1234DE',
       },
     })
 
