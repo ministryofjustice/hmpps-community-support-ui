@@ -1,7 +1,7 @@
 import { CheckDraftReferralDetailsDto } from '@community-support-api'
 import { GovukFrontendSummaryList } from '@govuk-frontend'
 import { Response } from 'express'
-import { format } from 'date-fns'
+import { format, differenceInYears } from 'date-fns'
 import PresenterBase from '../../presenter/presenterBase'
 import ViewUtils from '../../utils/viewUtils'
 import { components } from '../../@types/communitySupportApi/imported'
@@ -32,21 +32,15 @@ const formatPersonalCircumstances = (
   notAvailable: string,
 ): string => {
   const circumstanceOrder = ['Relationship', 'Employment', 'Dependents']
-  const circumstances = new Map<string, string[]>()
-
-  list.forEach(circumstance => {
-    const subDescription = ViewUtils.escape(circumstance.subDescription) || notAvailable
-    circumstances.set(circumstance.description, [
-      ...(circumstances.get(circumstance.description) || []),
-      subDescription,
-    ])
-  })
 
   return circumstanceOrder
-    .map(
-      description =>
-        `<div>${ViewUtils.escape(description)}: ${(circumstances.get(description) || [notAvailable]).join(', ')}</div>`,
-    )
+    .flatMap(description => {
+      const matches = list.filter(circumstance => circumstance.description === description)
+      if (matches.length === 0) return [`<div>${ViewUtils.escape(description)}: ${notAvailable}</div>`]
+      return matches.map(
+        circumstance => `<div>${ViewUtils.escape(description)}: ${ViewUtils.escape(circumstance.subDescription)}</div>`,
+      )
+    })
     .join('')
 }
 
@@ -57,6 +51,13 @@ const formatDisabilities = (list: components['schemas']['Disability'][], notAvai
 
 const resolveName = (name: { firstName: string; middleName?: string | null; lastName: string }): string =>
   [name.firstName, name.middleName, name.lastName].filter(Boolean).join(' ')
+
+const formatDateOfBirth = (dateOfBirth: string, notAvailable: string): string => {
+  if (!dateOfBirth) return notAvailable
+  const dobDate = new Date(dateOfBirth)
+  const age = differenceInYears(new Date(), dobDate)
+  return `${format(dobDate, 'd MMM yyyy')} (${age} years old)`
+}
 
 export default class CheckReferralInformationPresenter extends PresenterBase<
   CheckReferralInformationViewModel,
@@ -104,51 +105,34 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
     }
 
     const summary = [
-      {
-        key: { text: cardContent.nameLabel },
-        value: { text: resolveName(personDetailsTableData.name) },
-      },
-      ...(identifierRow
-        ? [
-            {
-              key: { text: identifierRow.label },
-              value: { text: identifierRow.value },
-            },
-          ]
-        : []),
-      {
-        key: { text: cardContent.locationLabel },
-        // Current location is not yet returned by the API.
-        value: { text: notAvailable },
-      },
-      {
-        key: { text: cardContent.dobLabel },
-        value: { text: personDetailsTableData.dateOfBirth || '' },
-      },
-      {
-        key: { text: cardContent.languageLabel },
-        value: { text: personDetailsTableData.preferredLanguage || '' },
-      },
-      {
-        key: {
+      ViewUtils.summaryListRow(cardContent.nameLabel, resolveName(personDetailsTableData.name)),
+      ...(identifierRow ? [ViewUtils.summaryListRow(identifierRow.label, identifierRow.value)] : []),
+      ViewUtils.summaryListRow(cardContent.locationLabel, notAvailable),
+      ViewUtils.summaryListRow(
+        cardContent.dobLabel,
+        formatDateOfBirth(personDetailsTableData.dateOfBirth, notAvailable),
+      ),
+      ViewUtils.summaryListRow(cardContent.languageLabel, personDetailsTableData.preferredLanguage || notAvailable),
+      ViewUtils.summaryListRow(
+        {
           html: labelWithLastUpdated(
             cardContent.currentCircumstancesLabel,
             cardContent.lastUpdatedLabel,
             getLatestUpdatedAt(personDetailsTableData.personalCircumstances, notAvailable),
           ),
         },
-        value: { html: formatPersonalCircumstances(personDetailsTableData.personalCircumstances, notAvailable) },
-      },
-      {
-        key: {
+        { html: formatPersonalCircumstances(personDetailsTableData.personalCircumstances, notAvailable) },
+      ),
+      ViewUtils.summaryListRow(
+        {
           html: labelWithLastUpdated(
             cardContent.disabilitiesLabel,
             cardContent.lastUpdatedLabel,
             getLatestUpdatedAt(personDetailsTableData.disabilities, notAvailable),
           ),
         },
-        value: { html: formatDisabilities(personDetailsTableData.disabilities, notAvailable) },
-      },
+        { html: formatDisabilities(personDetailsTableData.disabilities, notAvailable) },
+      ),
     ]
     return {
       card: {
@@ -162,12 +146,7 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
   }
 
   private buildReferralDetailsSummary(): GovukFrontendSummaryList {
-    const summary = [
-      {
-        key: { text: 'Location' },
-        value: { text: this.draftReferralDetails.referralAreaTableData.area || '' },
-      },
-    ]
+    const summary = [ViewUtils.summaryListRow('Location', this.draftReferralDetails.referralAreaTableData.area || '')]
     return {
       card: {
         title: {

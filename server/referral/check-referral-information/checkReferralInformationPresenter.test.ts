@@ -26,7 +26,7 @@ describe('CheckReferralInformationPresenter', () => {
         personDetailsTableData: {
           name: { firstName: 'John', lastName: 'Doe' },
           crn: 'X123456',
-          dateOfBirth: '20 Feb 1975 (51 years old)',
+          dateOfBirth: '1975-02-20',
           preferredLanguage: 'English',
           disabilities: [{ description: 'Dyslexia', updatedAt: '2026-02-03T00:00:00Z' }],
           personalCircumstances: [
@@ -73,7 +73,9 @@ describe('CheckReferralInformationPresenter', () => {
         key: {
           html: '<b>Current circumstances</b>\n<div class="govuk-hint govuk-!-font-size-16">Last updated: 5 January 2026</div>',
         },
-        value: { html: '<div>Employment: Full-time employed</div>' },
+        value: {
+          html: '<div>Relationship: Not available</div><div>Employment: Full-time employed</div><div>Dependents: Not available</div>',
+        },
       })
       expect(renderData.content.personalDetailsSummary.rows[6]).toMatchObject({
         key: {
@@ -98,14 +100,14 @@ describe('CheckReferralInformationPresenter', () => {
       )
     })
 
-    it('should group and order personal circumstances by description', () => {
+    it('should list each personal circumstance in a fixed order', () => {
       const draftReferralDetails = {
         id: 'referralId123',
         createdDate: '2026-02-10T11:23:00.780Z',
         personDetailsTableData: {
           name: { firstName: 'John', lastName: 'Doe' },
           crn: 'X123456',
-          dateOfBirth: '20 Feb 1975 (51 years old)',
+          dateOfBirth: '1975-02-20',
           preferredLanguage: 'English',
           disabilities: [],
           personalCircumstances: [
@@ -139,7 +141,7 @@ describe('CheckReferralInformationPresenter', () => {
 
       expect(renderData.content.personalDetailsSummary.rows[5]).toMatchObject({
         value: {
-          html: '<div>Relationship: Widowed</div><div>Employment: In receipt of state benefit, Retired (not in receipt of a pension)</div><div>Dependents: Has Dependents</div>',
+          html: '<div>Relationship: Widowed</div><div>Employment: In receipt of state benefit</div><div>Employment: Retired (not in receipt of a pension)</div><div>Dependents: Has Dependents</div>',
         },
       })
     })
@@ -151,7 +153,7 @@ describe('CheckReferralInformationPresenter', () => {
         personDetailsTableData: {
           name: { firstName: 'John', lastName: 'Doe' },
           crn: 'X123456',
-          dateOfBirth: '20 Feb 1975 (51 years old)',
+          dateOfBirth: '1975-02-20',
           preferredLanguage: 'English',
           disabilities: [],
           personalCircumstances: [
@@ -187,7 +189,7 @@ describe('CheckReferralInformationPresenter', () => {
           name: { firstName: 'John', lastName: 'Doe' },
           crn: '',
           prisonNumber: 'A1234BC, B1234CD, C1234DE',
-          dateOfBirth: '20 Feb 1975 (51 years old)',
+          dateOfBirth: '1975-02-20',
           preferredLanguage: 'English',
           disabilities: [],
           personalCircumstances: [],
@@ -220,7 +222,7 @@ describe('CheckReferralInformationPresenter', () => {
         personDetailsTableData: {
           name: { firstName: 'John', lastName: 'Doe' },
           crn: '',
-          dateOfBirth: '20 Feb 1975 (51 years old)',
+          dateOfBirth: '1975-02-20',
           preferredLanguage: 'English',
           disabilities: [],
           personalCircumstances: [],

@@ -13,7 +13,7 @@ export default CheckReferralInformationContentFactory.define(({ transientParams 
     heading: 'Personal details',
     nameLabel: 'Name',
     crnLabel: 'CRN',
-    prisonLabel: 'Prison number',
+    prisonNumberLabel: 'Prison number',
     locationLabel: 'Current location',
     dobLabel: 'Date of birth',
     languageLabel: 'Preferred language',
