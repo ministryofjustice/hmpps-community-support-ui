@@ -1,5 +1,5 @@
-import { IssuesOrConcernsContent } from '../../appointment/issues-or-concerns/IssuesOrConcernsViewModel'
 import { Factory } from 'fishery'
+import { IssuesOrConcernsContent } from '../../appointment/issues-or-concerns/IssuesOrConcernsViewModel'
 
 class IcsFeedbackIssuesOrConcernsFactory extends Factory<IssuesOrConcernsContent> {}
 

@@ -69,7 +69,12 @@ describe('IssuesOrConcernsPresenter', () => {
     })
 
     it('has error messages rendering correctly', () => {
-      const presenter = new IssuesOrConcernsPresenter(caseRefId, firstName, {}, { list: [{ text: 'issuesOrConcerns' }], messages: { issuesOrConcerns: 'Test error' } })
+      const presenter = new IssuesOrConcernsPresenter(
+        caseRefId,
+        firstName,
+        {},
+        { list: [{ text: 'issuesOrConcerns' }], messages: { issuesOrConcerns: 'Test error' } },
+      )
       presenter.renderPage(res)
       const renderData = (res.render as jest.Mock).mock.calls[0][1] as { content: IssuesOrConcernsViewModel }
 

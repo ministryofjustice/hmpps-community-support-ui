@@ -27,7 +27,9 @@ describe('IssuesOrConcernsFormData', () => {
     expect(result.error).toBeDefined()
     expect(result.error.issues).toHaveLength(1)
     expect(result.error.issues.at(0).path).toContain('issuesOrConcerns')
-    expect(result.error.issues.at(0).message).toEqual(`Details of issues or concerns must be ${MAX_CHAR} characters or less`)
+    expect(result.error.issues.at(0).message).toEqual(
+      `Details of issues or concerns must be ${MAX_CHAR} characters or less`,
+    )
   })
 
   test("max char validation edge case doesn't throw error", () => {
