@@ -1,9 +1,8 @@
 {% extends "../partials/layout.njk" %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "govuk/components/fieldset/macro.njk" import govukFieldset %}
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
 
-{% set pageTitle = "Session feedback – ICS feedback - [service name]" %}
+{% set pageTitle = content.pageTitle %}
 {% set mainClasses = "govuk-body" %}
 
 {% block contentBody %}
@@ -14,17 +13,10 @@
   {% if content.form %}
     <form method="post" action="{{ content.submitHref }}">
       <input type="hidden" name="_csrf" value="{{csrfToken}}">
-      {% call govukFieldset({
-        classes: "govuk-fieldset",
-        legend: {
-          text: content.label,
-          classes: "govuk-fieldset__legend govuk-fieldset__legend--m",
-          isPageHeading: true
-        }
-      }) %}
-        {{ govukTextarea(content.form.textarea) }}
-        {{ govukButton(content.form.button) }}
-      {% endcall %}
+      {{ govukTextarea(content.form.whatDidYouDoTextarea) }}
+      {{ govukTextarea(content.form.behaviourTextarea) }}
+      {{ govukTextarea(content.form.strengthsIdentifiedTextarea) }}
+      {{ govukButton(content.form.button) }}
     </form>
   {% endif %}
 {% endblock %}

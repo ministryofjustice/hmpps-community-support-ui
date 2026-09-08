@@ -9,8 +9,8 @@ const checkDraftReferralDetails: CheckDraftReferralDetailsDto = {
     crn: 'A123456',
     dateOfBirth: '20 Feb 1975 (51 years old)',
     preferredLanguage: 'English',
-    disabilities: 'None',
-    currentCircumstances: 'None',
+    disabilities: [],
+    personalCircumstances: [],
   },
   equalityDetailsTableData: {
     ethnicity: 'White British',

@@ -19,6 +19,7 @@ import {
   NeedsInterpreterBffResponseDto,
   ServiceDaysPageDto,
   CheckDraftReferralDetailsDto,
+  AdditionalInformationForTheDeliveryPartner,
 } from '@community-support-api'
 import { stubFor } from './wiremock'
 import { duplicateData } from '../testUtils'
@@ -99,7 +100,54 @@ export default {
           lastName: 'River',
           dateOfBirth: '20 Feb 1975 (51 years old)',
           sex: 'Male',
-          additionalDetails: {},
+          additionalDetails: {
+            ethnicity: 'White: British/English/Welsh/Scottish/Northern Irish',
+            preferredLanguage: 'English',
+            neurodiverseConditions: 'N/A',
+            religionOrBelief: 'No religion',
+            nationalities: ['Argentine', 'Brazilian'],
+            interestToImmigration: false,
+            address: 'Derwent Centre, 1 Stuart Street, Derby, DE1 2EQ',
+            addressType: 'Main residence',
+            addressTypeVerified: true,
+            addressStartDate: '1 Jan 2026',
+            addressNotes: 'No notes',
+            noFixedAbode: false,
+            phoneNumber: '01234567890',
+            mobileNumber: '09876543210',
+            emailAddress: 'alex.river@test.com',
+            disability: true,
+          },
+          personDetailsAndCircumstances: {
+            preferredLanguage: 'English',
+            personalCircumstances: [
+              {
+                description: 'Employment',
+                subDescription: 'Full Time Employed',
+                updatedAt: '01/02/2020',
+              },
+              {
+                description: 'Relationship',
+                subDescription: 'Married / Civil Partnership',
+                updatedAt: '01/01/2020',
+              },
+              {
+                description: 'Dependants',
+                subDescription: 'Has Dependants',
+                updatedAt: '01/03/2020',
+              },
+            ],
+            disabilities: [
+              {
+                type: 'NDC',
+                description: 'Neurodiverse conditions',
+                updatedAt: '01/04/2020',
+              },
+            ],
+            offenderPersonalityDisorder: 'Yes',
+            ofHomeOfficeInterest: true,
+            homeOfficeInterestNotes: 'Claiming asylum from Iran',
+          },
         },
         transformers: ['response-template'],
       },
@@ -802,6 +850,36 @@ export default {
       request: {
         method: 'PATCH',
         urlPathPattern: `/community-support/draft-referral/needs-interpreter/${referralId}`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: {},
+        transformers: ['response-template'],
+      },
+    }),
+  stubGetAdditionalInformationForTheDeliveryPartnerPage: (
+    referralId: string,
+    details: AdditionalInformationForTheDeliveryPartner,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: `/community-support/bff/draft-referral/additional-information-for-the-delivery-partner/${referralId}`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: details,
+        transformers: ['response-template'],
+      },
+    }),
+  stubSubmitAdditionalInformationForTheDeliveryPartnerPage: (referralId: string, httpStatus = 200): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'PATCH',
+        urlPathPattern: `/community-support/draft-referral/additional-information-for-the-delivery-partner/${referralId}`,
       },
       response: {
         status: httpStatus,

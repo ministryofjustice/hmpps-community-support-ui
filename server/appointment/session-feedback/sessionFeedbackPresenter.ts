@@ -10,13 +10,15 @@ import PresenterBase from '../../presenter/presenterBase'
 import { FormErrors } from '../../interfaces/formErrors'
 
 export interface SessionFeedbackFormViewModel {
-  label: string
-  textarea: GovukFrontendTextarea
+  whatDidYouDoTextarea: GovukFrontendTextarea
+  behaviourTextarea: GovukFrontendTextarea
+  strengthsIdentifiedTextarea: GovukFrontendTextarea
   button: GovukFrontendButton
 }
 
 export interface SessionFeedbackViewModel {
   errorSummary?: GovukFrontendErrorSummary
+  pageTitle: string
   pageHeader: string
   description?: string
   label: string
@@ -27,18 +29,22 @@ export interface SessionFeedbackViewModel {
 
 interface FormContent {
   label: string
-  textarea: {
-    id: string
-    name: string
-    label: string
-    hint: string
-    error: string
-    rows?: string
-  }
+  whatDidYouDoTextarea: TextareaContent
+  behaviourTextarea: TextareaContent
+  strengthsIdentifiedTextarea: TextareaContent
   submitButtonText: string
 }
 
+interface TextareaContent {
+  id: string
+  name: string
+  label: string
+  hint: string
+  rows?: string
+}
+
 export interface SessionFeedbackContent {
+  pageTitle: string
   pageHeader: string
   description?: string
   label: string
@@ -50,25 +56,49 @@ export default class SessionFeedbackPresenter extends PresenterBase<SessionFeedb
   constructor(
     private readonly caseRefId: string,
     private formData: IcsFeedbackSubmission = null,
+    private readonly firstName: string = '',
   ) {
     super()
   }
 
-  private buildForm(content: FormContent, errors: FormErrors = null): SessionFeedbackFormViewModel | undefined {
-    const fieldError = errors?.messages[content.textarea.name] || errors?.messages[content.textarea.id]
-    const fieldData = this.formData?.sessionFeedback?.whatHappened ?? ''
+  private buildTextarea(
+    content: TextareaContent,
+    value: string = '',
+    errors: FormErrors = null,
+  ): GovukFrontendTextarea {
+    const fieldError = errors?.messages[content.name] || errors?.messages[content.id]
     return {
-      label: content.textarea.label,
-      textarea: {
-        id: content.textarea.id,
-        name: content.textarea.name,
-        label: {},
-        hint: { text: content.textarea.hint },
-        value: fieldData,
-        rows: content.textarea.rows,
-        attributes: { 'data-testid': content.textarea.id },
-        errorMessage: fieldError,
-      },
+      id: content.id,
+      name: content.name,
+      label: { text: content.label, classes: 'govuk-label--m' },
+      hint: { text: content.hint },
+      value,
+      rows: content.rows,
+      attributes: { 'data-testid': content.id },
+      errorMessage: fieldError,
+    }
+  }
+
+  private buildForm(content: FormContent, errors: FormErrors = null): SessionFeedbackFormViewModel | undefined {
+    return {
+      whatDidYouDoTextarea: this.buildTextarea(
+        content.whatDidYouDoTextarea,
+        this.formData?.sessionFeedback?.whatHappened ?? '',
+        errors,
+      ),
+      behaviourTextarea: this.buildTextarea(
+        {
+          ...content.behaviourTextarea,
+          label: content.behaviourTextarea.label.replace('{{ firstname }}', this.firstName),
+        },
+        this.formData?.sessionFeedback?.behaviour ?? '',
+        errors,
+      ),
+      strengthsIdentifiedTextarea: this.buildTextarea(
+        content.strengthsIdentifiedTextarea,
+        this.formData?.sessionFeedback?.strengthsIdentified ?? '',
+        errors,
+      ),
       button: { text: content.submitButtonText },
     }
   }
@@ -76,6 +106,7 @@ export default class SessionFeedbackPresenter extends PresenterBase<SessionFeedb
   buildViewModel(res: Response): SessionFeedbackViewModel {
     const content = this.buildStaticContent(res)
     return {
+      pageTitle: content.pageTitle,
       pageHeader: content.pageHeader,
       description: content.description,
       label: content.label,

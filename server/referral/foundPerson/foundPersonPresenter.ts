@@ -10,7 +10,7 @@ import { components } from '../../@types/communitySupportApi/imported'
 const resolveName = (person: Person): string =>
   [person.firstName, person.middleNames, person.lastName].filter(Boolean).join(' ')
 
-const getLatestUpdatedAt = (list: { updatedAt?: string }[]): string => {
+const getLatestUpdatedAt = (list: { updatedAt?: string }[] = []): string => {
   try {
     return format(new Date(Math.max(...list.map(e => new Date(e.updatedAt)).map(Number))), 'd MMMM yyyy')
   } catch {
@@ -18,8 +18,27 @@ const getLatestUpdatedAt = (list: { updatedAt?: string }[]): string => {
   }
 }
 
-const formatPersonCircumstances = (list: components['schemas']['PersonalCircumstance'][]): string => {
-  if (list && list.length > 0) return list.map(c => `<div>${c.type}: ${c.description}</div>`).join('')
+const formatPersonalCircumstances = (list: components['schemas']['PersonalCircumstance'][]): string => {
+  // Order of circumstance types for sorting
+  enum circumstanceType {
+    Relationship,
+    Employment,
+    Dependants,
+  }
+
+  if (list && list.length > 0) {
+    return list
+      .filter(c => Object.values(circumstanceType).includes(c.description))
+      .sort(
+        (a, b) =>
+          circumstanceType[a.description as keyof typeof circumstanceType] -
+          circumstanceType[b.description as keyof typeof circumstanceType],
+      )
+      .map(
+        c => `<div>${ViewUtils.escape(c.description)}: ${ViewUtils.escape(c.subDescription) || 'Not available'}</div>`,
+      )
+      .join('')
+  }
   return 'Not available'
 }
 
@@ -30,7 +49,7 @@ const formatDisabilities = (list: components['schemas']['Disability'][]): string
 
 const formatHomeOfficeInterest = (notes?: string): string => {
   if (notes) {
-    return `<div>Yes</div><br/><div>${notes}</div>`
+    return `<div>Yes</div><br/><div>${ViewUtils.escape(notes)}</div>`
   }
   return 'Yes'
 }
@@ -90,7 +109,7 @@ export default class FoundPersonPresenter extends PresenterBase<FoundPersonViewM
         {
           html: `<b>Current circumstances</b>\n<div class="govuk-hint govuk-!-font-size-16">Last updated: ${currentCircumstancesLastUpdated}</div>`,
         },
-        { html: formatPersonCircumstances(foundPerson.personDetailsAndCircumstances?.personalCircumstances) },
+        { html: formatPersonalCircumstances(foundPerson.personDetailsAndCircumstances?.personalCircumstances) },
       ),
       ViewUtils.summaryListRow(
         {
@@ -104,7 +123,10 @@ export default class FoundPersonPresenter extends PresenterBase<FoundPersonViewM
     })
 
     const equalityMonitoringItems = [
-      ViewUtils.summaryListRow('Nationality', foundPerson.additionalDetails?.nationalities?.at(0) || 'Not available'),
+      ViewUtils.summaryListRow(
+        'Nationality',
+        foundPerson.additionalDetails?.nationalities?.join(', ') || 'Not available',
+      ),
       ViewUtils.summaryListRow('Ethnicity', foundPerson.additionalDetails?.ethnicity || 'Not available'),
       ViewUtils.summaryListRow('Religion or belief', foundPerson.additionalDetails?.religionOrBelief || 'No religion'),
       ViewUtils.summaryListRow('Sex', foundPerson.sex || ''),
@@ -118,10 +140,9 @@ export default class FoundPersonPresenter extends PresenterBase<FoundPersonViewM
 
     const additionalInformationItems = [
       foundPerson.personDetailsAndCircumstances?.ofHomeOfficeInterest
-        ? ViewUtils.summaryListRow(
-            'Home Office Interest',
-            formatHomeOfficeInterest(foundPerson.personDetailsAndCircumstances?.homeOfficeInterestNotes),
-          )
+        ? ViewUtils.summaryListRow('Home Office Interest', {
+            html: formatHomeOfficeInterest(foundPerson.personDetailsAndCircumstances?.homeOfficeInterestNotes),
+          })
         : null,
       foundPerson.personDetailsAndCircumstances?.offenderPersonalityDisorder
         ? ViewUtils.summaryListRow(
@@ -145,7 +166,7 @@ export default class FoundPersonPresenter extends PresenterBase<FoundPersonViewM
       ViewUtils.summaryListRow('Email address', foundPerson.additionalDetails?.emailAddress || 'Not available'),
       ViewUtils.summaryListRow(
         {
-          html: `<b>Main address</b>\n<div class="govuk-hint govuk-!-font-size-16">Last updated: Not available</div>`,
+          html: `<b>${identifierRow?.label === 'Prison number' ? 'Last known' : 'Main'} address</b>\n<div class="govuk-hint govuk-!-font-size-16">Last updated: Not available</div>`,
         },
         {
           html: formatAddress(

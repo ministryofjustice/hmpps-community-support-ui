@@ -20,6 +20,11 @@ import ServiceDaysPagePresenter from './serviceDays/ServiceDaysPagePresenter'
 import { ServiceEndDateSchema, ServiceEndDateFormData } from '../validation/ServiceEndDateFormData'
 import ServiceEndDatePagePresenter from './serviceEndDate/ServiceEndDatePagePresenter'
 import CheckReferralInformationPresenter from './check-referral-information/checkReferralInformationPresenter'
+import AdditionalInformationForTheDeliveryPartnerPresenter from './additionalInformationForTheDeliveryPartner /AdditionalInformationForTheDeliveryPartnerPresenter'
+import {
+  AdditionalInformationForTheDeliveryPartnerFormData,
+  AdditionalInformationForTheDeliveryPartnerFormDataSchema,
+} from '../validation/AdditionalInformationForTheDeliveryPartnerFormData'
 
 const findAPersonURL = '/referral/new/find-a-person' as const
 const taskListURL = '/referral/task-list' as const
@@ -53,12 +58,12 @@ export default class DraftReferralController {
 
   async showAdditionalSupportNeeds(req: Request, res: Response) {
     const { username } = res.locals.user
-    const draftReferalId = req.session?.draftReferralId
-    if (draftReferalId) {
+    const draftReferralId = req.session?.draftReferralId
+    if (draftReferralId) {
       try {
         const postBodyDataRaw = req.flash('value').at(0)
         const postBodyData = JSON.parse(postBodyDataRaw || '{}')
-        const additionalSupportNeeds = await this.referralService.getAdditionalSupportNeeds(draftReferalId, username)
+        const additionalSupportNeeds = await this.referralService.getAdditionalSupportNeeds(draftReferralId, username)
         const validationErrors: ErrorMiddlewareErrors = formatDynamicErrorMessages(
           res.locals.errors,
           '{{ firstname }}',
@@ -78,10 +83,10 @@ export default class DraftReferralController {
 
   async additionalSupportNeeds(req: Request, res: Response) {
     const { username } = res.locals.user
-    const draftReferalId = req.session?.draftReferralId
-    if (draftReferalId) {
+    const draftReferralId = req.session?.draftReferralId
+    if (draftReferralId) {
       try {
-        const additionalSupportNeeds = await this.referralService.getAdditionalSupportNeeds(draftReferalId, username)
+        const additionalSupportNeeds = await this.referralService.getAdditionalSupportNeeds(draftReferralId, username)
         const schema = AdditionalSuportNeedsFormDataSchemaBuilder(additionalSupportNeeds.refereeName.firstName)
         return validateRequestBodyAgainstSchema(schema, req, res, async (data: AdditionalSuportNeedsFormData) => {
           const needsAdditionalSupport = !data.AdditionalNeeds.includes('none')
@@ -92,7 +97,7 @@ export default class DraftReferralController {
             ]),
           )
           const body = { needsAdditionalSupport, ...selectedData }
-          await this.referralService.submitAdditionalSupportNeeds(body, draftReferalId, username)
+          await this.referralService.submitAdditionalSupportNeeds(body, draftReferralId, username)
           return res.redirect(needsInterpreterURL)
         })
       } catch (e) {
@@ -106,12 +111,12 @@ export default class DraftReferralController {
 
   async showNeedsAnInterpreter(req: Request, res: Response) {
     const { username } = res.locals.user
-    const draftReferalId = req.session?.draftReferralId
-    if (!draftReferalId) {
+    const draftReferralId = req.session?.draftReferralId
+    if (!draftReferralId) {
       return res.redirect(findAPersonURL)
     }
     try {
-      const pageData = await this.referralService.getNeedsInterpreterPageData(draftReferalId, username)
+      const pageData = await this.referralService.getNeedsInterpreterPageData(draftReferralId, username)
       const validationErrors: ErrorMiddlewareErrors = formatDynamicErrorMessages(
         res.locals.errors,
         '{{ firstname }}',
@@ -127,13 +132,13 @@ export default class DraftReferralController {
 
   async needsAnInterpreter(req: Request, res: Response) {
     const { username } = res.locals.user
-    const draftReferalId = req.session?.draftReferralId
-    if (draftReferalId) {
+    const draftReferralId = req.session?.draftReferralId
+    if (draftReferralId) {
       try {
-        const additionalSupportNeeds = await this.referralService.getAdditionalSupportNeeds(draftReferalId, username)
+        const additionalSupportNeeds = await this.referralService.getAdditionalSupportNeeds(draftReferralId, username)
         const schema = NeedsAnInterpreterFormDataSchemaBuilder(additionalSupportNeeds.refereeName.firstName)
         return validateRequestBodyAgainstSchema(schema, req, res, async (data: NeedsAnInterpreterFormData) => {
-          await this.referralService.submitNeedsAnInterpreter(data, draftReferalId, username)
+          await this.referralService.submitNeedsAnInterpreter(data, draftReferralId, username)
           return res.redirect(taskListURL)
         })
       } catch (e) {
@@ -298,5 +303,49 @@ export default class DraftReferralController {
       logger.error('Error in submitting a referral:', error)
       throw error
     }
+  }
+
+  async showAdditionalInformationForDeliveryPartner(req: Request, res: Response) {
+    const { username } = res.locals.user
+    const draftReferralId = req.session?.draftReferralId
+    if (!draftReferralId) {
+      return res.redirect(findAPersonURL)
+    }
+    try {
+      const pageData = await this.referralService.getAdditionalInformationForDeliveryPartner(draftReferralId, username)
+      const validationErrors: ErrorMiddlewareErrors = formatDynamicErrorMessages(
+        res.locals.errors,
+        '{{ firstname }}',
+        pageData.refereeName.firstName,
+      )
+      const presenter = new AdditionalInformationForTheDeliveryPartnerPresenter(pageData, validationErrors)
+      return presenter.renderPage(res)
+    } catch (e) {
+      logger.error(e)
+      return res.redirect(findAPersonURL)
+    }
+  }
+
+  async additionalInformationForDeliveryPartner(req: Request, res: Response) {
+    const { username } = res.locals.user
+    const draftReferralId = req.session?.draftReferralId
+    if (draftReferralId) {
+      try {
+        const schema = AdditionalInformationForTheDeliveryPartnerFormDataSchema
+        return validateRequestBodyAgainstSchema(
+          schema,
+          req,
+          res,
+          async (data: AdditionalInformationForTheDeliveryPartnerFormData) => {
+            await this.referralService.submitAdditionalInformationForDeliveryPartner(data, draftReferralId, username)
+            return res.redirect(taskListURL)
+          },
+        )
+      } catch (e) {
+        logger.error(e)
+        return res.redirect(findAPersonURL)
+      }
+    }
+    return res.redirect(findAPersonURL)
   }
 }

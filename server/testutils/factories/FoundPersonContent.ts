@@ -8,6 +8,8 @@ export default FoundPersonContentFactory.define(({ transientParams }) => ({
   continueButtonText: transientParams.continueButtonText || 'Continue',
   continueButtonLink: transientParams.continueButtonLink || '/referral/task-list',
   backLink: transientParams.backLink || '/referral/new/find-a-person',
+  insetText:
+    transientParams.insetText || 'If this information is out of date or incorrect, you must update it in NDelius',
   enterDifferentIdentifierLinkText:
     transientParams.enterDifferentIdentifierLinkText || 'Enter a different CRN or prison number',
   enterDifferentIdentifierLinkHref: transientParams.enterDifferentIdentifierLinkHref || '/referral/new/find-a-person',
