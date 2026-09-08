@@ -16,5 +16,4 @@ export const AdditionalInformationForTheDeliveryPartnerFormDataSchema = z
     additionalInformation === 'Yes' ? { additionalInformation, details } : { additionalInformation },
   )
 export type AdditionalInformationForTheDeliveryPartnerFormData =
-  | { additionalInformation: 'Yes'; details: string }
-  | { additionalInformation: 'No' }
+  { additionalInformation: 'Yes'; details: string } | { additionalInformation: 'No' }
