@@ -379,6 +379,14 @@
     },
     "backLink": "/ics-feedback/{{ id }}/session-details"
   },
+  "/ics-feedback/:id/issues-or-concerns": {
+    "pageTitle": "Issues or concerns – ICS feedback – Community Support",
+    "pageHeader": "Issues or concerns",
+    "issuesOrConcernsLabel": "What issues or concerns did you identify?",
+    "issuesOrConcernsHint": "Give details of anything that concerned you about {{ firstname }}, or any issues they raised that might impact their engagement in future sessions.",
+    "submitButtonText": "Continue",
+    "backLinkHref": "/ics-feedback/{{ id }}/session-feedback"
+  },
   "/ics-feedback/:id/check-answers": {
     "pageHeader": "Check your answers before submitting feedback",
     "summaryLists": [
