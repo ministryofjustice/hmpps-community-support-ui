@@ -171,8 +171,7 @@ const getPendingFormData = (req: Request) => {
   }
   const { icsFeedbackSubmission } = req.session
   const storedHowSessionTookPlace = icsFeedbackSubmission?.record?.howSessionTookPlace as
-    | HowSessionTookPlace
-    | undefined
+    HowSessionTookPlace | undefined
 
   return loadIcsFeedbackFromSession(
     storedHowSessionTookPlace ? { howSessionTookPlace: storedHowSessionTookPlace } : undefined,
