@@ -148,8 +148,8 @@ export default class ReferralService {
     return this.communitySupportApiClient.submitAdditionalSupportNeeds(data, referralId, username)
   }
 
-  submitNeedsAnInterpreter(body: NeedsAnInterpreterFormData, draftReferalId: string, username: string) {
-    return this.communitySupportApiClient.submitNeedsAnInterpreter(body, draftReferalId, username)
+  submitNeedsAnInterpreter(body: NeedsAnInterpreterFormData, draftReferralId: string, username: string) {
+    return this.communitySupportApiClient.submitNeedsAnInterpreter(body, draftReferralId, username)
   }
 
   getPPDetails(referralId: string, username: string): Promise<ProbationPractitionerDetails> {
@@ -160,20 +160,20 @@ export default class ReferralService {
     return this.communitySupportApiClient.submitPPDetails(referralId, username, ppDetails)
   }
 
-  getAdditionalInformationForDeliveryPartner(draftReferalId: string, username: string) {
-    return this.communitySupportApiClient.getAdditionalInformationForDeliveryPartner(draftReferalId, username)
+  getAdditionalInformationForDeliveryPartner(draftReferralId: string, username: string) {
+    return this.communitySupportApiClient.getAdditionalInformationForDeliveryPartner(draftReferralId, username)
   }
 
   submitAdditionalInformationForDeliveryPartner(
     data: AdditionalInformationForTheDeliveryPartnerFormData,
-    draftReferalId: string,
+    draftReferralId: string,
     username: string,
   ) {
     const selection: Selection =
       data.additionalInformation === 'Yes' ? { selected: 'Yes', value: data.details } : { selected: 'No' }
     return this.communitySupportApiClient.submitAdditionalInformationForDeliveryPartner(
       selection,
-      draftReferalId,
+      draftReferralId,
       username,
     )
   }
