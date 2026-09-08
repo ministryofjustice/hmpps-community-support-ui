@@ -21,6 +21,7 @@
     "continueButtonText": "Continue",
     "continueButtonLink": "/referral/new/confirm-person",
     "backLink": "/referral/new/find-a-person",
+    "insetText": "If this information is out of date or incorrect, you must update it in NDelius",
     "enterDifferentIdentifierLinkText": "Enter a different CRN or prison number",
     "enterDifferentIdentifierLinkHref": "/referral/new/find-a-person"
   },

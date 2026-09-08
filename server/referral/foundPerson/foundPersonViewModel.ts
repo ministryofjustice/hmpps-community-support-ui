@@ -14,6 +14,7 @@ export type FoundPersonContent = {
   continueButtonText: string
   continueButtonLink: string
   backLink: string
+  insetText: string
   enterDifferentIdentifierLinkText: string
   enterDifferentIdentifierLinkHref: string
 }
