@@ -2,9 +2,9 @@ import { Response } from 'express'
 import { ServiceDaysPageDto } from '@community-support-api'
 import ServiceDaysPagePresenter from './ServiceDaysPagePresenter'
 import { ErrorMiddlewareErrors } from '../../@types/express'
-import loadContentData from '../../testutils/loadContentData'
+import loadContentDataForTest from '../../testutils/loadContentDataForTest'
 
-const content = loadContentData('/referral/task-list/service-days')
+const content = loadContentDataForTest('/referral/task-list/service-days')
 const pageContent = {
   pageTitle: 'How many days will you use for this service? - Community Support',
   h2: 'How many days will you use for this service?',
