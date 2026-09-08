@@ -36,7 +36,7 @@ const serviceEndDateURL = '/referral/task-list/service-end-date' as const
 const serviceDaysURL = '/referral/task-list/service-days' as const
 const offenceSentenceURL = '/referral/task-list/offence-sentence' as const
 const additionalInformationForDeliveryPartnerURL =
-  '/referral/task-list/additional-information-for-delivery-partner' as const
+  '/referral/task-list/additional-information-for-the-delivery-partner' as const
 
 const additionalSupportNeedsBodyLookup: Record<string, keyof AdditionalSupportNeedsRequest> = {
   Anything: 'anythingElse',

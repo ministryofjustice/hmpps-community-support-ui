@@ -165,6 +165,10 @@ test.describe('Offence Sentence Page', () => {
   test('saves No selection and redirects to additional information for delivery partner', async ({ page }) => {
     const response = buildResponse({ offenceSentenceInfo: { hasLicenceConditionsOrZones: false } })
     await communitySupport.stubUpdateOffenceSentencePage(referralId, response)
+    await communitySupport.stubGetAdditionalInformationForTheDeliveryPartnerPage(referralId, {
+      refereeName: { firstName: baseResponse.firstName, lastName: baseResponse.lastName },
+      details: { selected: 'Unanswered' },
+    })
     const offenceSentencePage = await goToOffenceSentencePage(
       page,
       buildResponse({ offenceSentenceInfo: { sentenceEndDate: '2026-06-01', expectedReleaseDate: undefined } }),
@@ -173,7 +177,7 @@ test.describe('Offence Sentence Page', () => {
     await offenceSentencePage.selectNo()
     await offenceSentencePage.clickSaveAndContinue()
 
-    await expect(page).toHaveURL('/referral/task-list/additional-information-for-delivery-partner')
+    await expect(page).toHaveURL('/referral/task-list/additional-information-for-the-delivery-partner')
 
     const matchingRequests = await getMatchingRequests({
       method: 'PATCH',
@@ -192,6 +196,10 @@ test.describe('Offence Sentence Page', () => {
   }) => {
     const response = buildResponse({ offenceSentenceInfo: { hasLicenceConditionsOrZones: true } })
     await communitySupport.stubUpdateOffenceSentencePage(referralId, response)
+    await communitySupport.stubGetAdditionalInformationForTheDeliveryPartnerPage(referralId, {
+      refereeName: { firstName: baseResponse.firstName, lastName: baseResponse.lastName },
+      details: { selected: 'Unanswered' },
+    })
     const offenceSentencePage = await goToOffenceSentencePage(
       page,
       buildResponse({ offenceSentenceInfo: { sentenceEndDate: undefined, expectedReleaseDate: '2026-12-15' } }),
@@ -201,7 +209,7 @@ test.describe('Offence Sentence Page', () => {
     await offenceSentencePage.fillDetails('No contact with victim')
     await offenceSentencePage.clickSaveAndContinue()
 
-    await expect(page).toHaveURL('/referral/task-list/additional-information-for-delivery-partner')
+    await expect(page).toHaveURL('/referral/task-list/additional-information-for-the-delivery-partner')
 
     const matchingRequests = await getMatchingRequests({
       method: 'PATCH',

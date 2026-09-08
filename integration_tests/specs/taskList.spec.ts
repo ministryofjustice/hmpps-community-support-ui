@@ -12,6 +12,7 @@ import AdditionalSupportNeedsPage from '../pages/AdditionalSupportNeedsPage'
 import NeedsAnInterpreterPage from '../pages/NeedsAnInterpreterPage'
 import ServiceEndDatePage from '../pages/ServiceEndDatePage'
 import ServiceDaysPage from '../pages/ServiceDaysPage'
+import OffenceSentencePage from '../pages/OffenceSentencePage'
 import AdditionalInformationForTheDeliveryPartnerPage from '../pages/AdditionalInformationForTheDeliveryPartnerPage'
 
 // These tests will have to move to end to end testing
@@ -551,6 +552,33 @@ test.describe('Task List Journey', () => {
       await communitySupport.stubUpdateServiceDaysPage(referralId, {
         service_days: 10,
       })
+      await communitySupport.stubGetOffenceSentencePage(referralId, {
+        firstName,
+        lastName,
+        crn,
+        dateOfBirth: '20 February 1975 (47 years old)',
+        offenceSentenceInfo: {
+          offence: 'Robbery',
+          offenceSubCategory: 'Aggravated robbery',
+          outcome: 'Community order',
+          sentenceEndDate: '2026-06-01',
+          hasLicenceConditionsOrZones: false,
+        },
+      })
+      await communitySupport.stubUpdateOffenceSentencePage(referralId, {
+        firstName,
+        lastName,
+        crn,
+        dateOfBirth: '20 February 1975 (47 years old)',
+        offenceSentenceInfo: {
+          offence: 'Robbery',
+          offenceSubCategory: 'Aggravated robbery',
+          outcome: 'Community order',
+          expectedReleaseDate: '2026-12-15',
+          hasLicenceConditionsOrZones: true,
+          licenceConditionsOrZonesDetails: 'No contact with victim',
+        },
+      })
       await communitySupport.stubGetAdditionalInformationForTheDeliveryPartnerPage(referralId, {
         refereeName: {
           firstName,
@@ -581,7 +609,11 @@ test.describe('Task List Journey', () => {
         await serviceDaysPage.clickSaveAndContinue()
       })
 
-      await test.step.skip('TODO check offence and sentence information', async () => {})
+      await test.step('Complete offence and sentence form', async () => {
+        const offenceSentencePage = await OffenceSentencePage.verifyOnPage(page)
+        await offenceSentencePage.selectNo()
+        await offenceSentencePage.clickSaveAndContinue()
+      })
 
       await test.step('Complete additional information for delivery partner', async () => {
         const pom = await AdditionalInformationForTheDeliveryPartnerPage.verifyOnPage(page, firstName)
