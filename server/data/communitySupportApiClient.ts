@@ -250,34 +250,34 @@ export default class CommunitySupportApiClient extends RestClient {
     return this.patch({ path: `/draft-referral/additional-support-needs/${referralId}`, data }, asSystem(username))
   }
 
-  submitNeedsAnInterpreter(data: NeedsInterpreterRequest, draftReferalId: string, username: string) {
-    return this.patch({ path: `/draft-referral/needs-interpreter/${draftReferalId}`, data }, asSystem(username))
+  submitNeedsAnInterpreter(data: NeedsInterpreterRequest, draftReferralId: string, username: string) {
+    return this.patch({ path: `/draft-referral/needs-interpreter/${draftReferralId}`, data }, asSystem(username))
   }
 
   getPPDetails(referralId: string, username: string): Promise<ProbationPractitionerDetails> {
     return this.get({ path: `/bff/draft-referral/${referralId}/probation-practitioner-details` }, asSystem(username))
   }
 
-  submitPPDetails(draftReferalId: string, username: string, ppDetails: UpdateProbationPractitionerDetailsRequest) {
+  submitPPDetails(draftReferralId: string, username: string, ppDetails: UpdateProbationPractitionerDetailsRequest) {
     return this.patch(
-      { path: `/draft-referral/${draftReferalId}/probation-practitioner-details`, data: ppDetails },
+      { path: `/draft-referral/${draftReferralId}/probation-practitioner-details`, data: ppDetails },
       asSystem(username),
     )
   }
 
   getAdditionalInformationForDeliveryPartner(
-    draftReferalId: string,
+    draftReferralId: string,
     username: string,
   ): Promise<AdditionalInformationForTheDeliveryPartner> {
     return this.get(
-      { path: `/bff/draft-referral/additional-information-for-the-delivery-partner/${draftReferalId}` },
+      { path: `/bff/draft-referral/additional-information-for-the-delivery-partner/${draftReferralId}` },
       asSystem(username),
     )
   }
 
-  submitAdditionalInformationForDeliveryPartner(data: Selection, draftReferalId: string, username: string) {
+  submitAdditionalInformationForDeliveryPartner(data: Selection, draftReferralId: string, username: string) {
     return this.patch(
-      { path: `/draft-referral/additional-information-for-the-delivery-partner/${draftReferalId}`, data },
+      { path: `/draft-referral/additional-information-for-the-delivery-partner/${draftReferralId}`, data },
       asSystem(username),
     )
   }
