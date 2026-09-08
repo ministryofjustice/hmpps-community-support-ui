@@ -9,6 +9,7 @@ import { ErrorMiddlewareErrors } from '../../@types/express'
 import {
   AdditionalInformationForTheDeliveryPartnerContent,
   AdditionalInformationForTheDeliveryPartnerViewModel,
+  Details,
 } from './AdditionalInformationForTheDeliveryPartnerViewModelModel'
 
 const buildConditional = (
@@ -18,7 +19,7 @@ const buildConditional = (
 ): string =>
   buildTextarea({
     name: 'details',
-    label: { text: content.yesCoditional },
+    label: { text: content.yesConditional },
     value,
     spellcheck: true,
     rows: '5',
@@ -55,7 +56,6 @@ const selectionToTriState = (selection: Selection): TriState => {
 const buildRadiosWithSelection = (
   content: AdditionalInformationForTheDeliveryPartnerContent,
   selection: Selection,
-  name: string,
   messages: Record<string, GovukFrontendErrorMessage>,
 ): GovukFrontendRadiosWithConditional => {
   const yesSelected: TriState = selectionToTriState(selection)
@@ -64,14 +64,6 @@ const buildRadiosWithSelection = (
   const text = selection.selected === 'Yes' ? selection.value : ''
   return {
     name: 'additionalInformation',
-    fieldset: {
-      legend: {
-        text: content.pageHeader.replace('{{ firstName }}', name),
-        isPageHeading: true,
-        classes: 'govuk-fieldset__legend--l',
-      },
-      attributes: { 'data-testid': 'additional-information-legend' },
-    },
     errorMessage: messages.additionalInformation,
     items: [
       {
@@ -90,6 +82,12 @@ const buildRadiosWithSelection = (
   }
 }
 
+const buildDetails = (content: AdditionalInformationForTheDeliveryPartnerContent, name: string): Details => ({
+  summary: content.detailsLink,
+  header: content.detailsHeader,
+  items: content.detailsItems.map(item => item.replace('{{ firstName }}', name)),
+})
+
 export default class AdditionalInformationForTheDeliveryPartnerPresenter extends PresenterBase<
   AdditionalInformationForTheDeliveryPartnerViewModel,
   AdditionalInformationForTheDeliveryPartnerContent
@@ -105,10 +103,13 @@ export default class AdditionalInformationForTheDeliveryPartnerPresenter extends
     const content = this.buildStaticContent(res)
     const { firstName } = this.data.refereeName
     return {
+      pageTitle: content.pageTitle,
       backLink: {
         href: content.backlink,
       },
-      radios: buildRadiosWithSelection(content, this.data.details, firstName, this.validationErrors.messages),
+      heading: content.pageHeader.replace('{{ firstName }}', firstName),
+      details: buildDetails(content, firstName),
+      radios: buildRadiosWithSelection(content, this.data.details, this.validationErrors.messages),
       button: {
         text: content.button,
       },
@@ -116,6 +117,6 @@ export default class AdditionalInformationForTheDeliveryPartnerPresenter extends
   }
 
   protected getTemplatePath(): string {
-    return 'referral/needsAnInterpreter'
+    return 'referral/additionalInformationForTheDeliveryPartner'
   }
 }

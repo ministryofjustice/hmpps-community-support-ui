@@ -58,17 +58,8 @@
         "href": "/cases-in-progress"
       }
     ],
-    "unassignedColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Date received"
-    ],
-    "inProgressColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Assigned to",
-      "Date received"
-    ],
+    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
+    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
     "noCasesMessage": "There are no {0} cases to view."
   },
   "/cases-in-progress": {
@@ -87,17 +78,8 @@
         "href": "/cases-in-progress"
       }
     ],
-    "unassignedColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Date received"
-    ],
-    "inProgressColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Assigned to",
-      "Date received"
-    ],
+    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
+    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
     "noCasesMessage": "There are no {0} cases to view."
   },
   "/referral-details/:id": {
@@ -284,15 +266,8 @@
         "href": "/change-log"
       }
     ],
-    "progressActiveColumnHeaders": [
-      "Date and time",
-      "Status",
-      "Action"
-    ],
-    "progressInactiveColumnHeaders": [
-      "Status",
-      "Action"
-    ],
+    "progressActiveColumnHeaders": ["Date and time", "Status", "Action"],
+    "progressInactiveColumnHeaders": ["Status", "Action"],
     "historySummary": "View ICS history"
   },
   "/referral/:id/action-plan": {
@@ -1033,11 +1008,21 @@
     "radioNo": "No"
   },
   "/referral/task-list/additional-information-for-the-delivery-partner": {
+    "pageTitle": "Is there anything else the delivery partner should know? - Community Support",
     "pageHeader": "Is there anything else the delivery partner should know about {{ firstName }}?",
+    "detailsLink": "What you should consider and include",
+    "detailsHeader": "You should consider letting the delivery partner know if:",
+    "detailsItems": [
+      "there are any relevant registration flags on NDelius, for example, sexual or violent offences, racist behaviour or MAPPA",
+      "{{ firstName }} is a victim or perpetrator of domestic abuse or modern slavery",
+      "it is safe to contact {{ firstName }}, and if not, what the preferred contact methods are",
+      "there are any risks to staff, not already mentioned in the referral",
+      "you think there is anything else important they should know"
+    ],
     "yesOptionLabel": "Yes",
-    "yesCoditional": "Give details of anything else the delivery partner should know",
+    "yesConditional": "Give details of anything else the delivery partner should know",
     "noOptionLabel": "No",
     "button": "Save and continue",
-    "backlink": "/referral/task-list"
+    "backlink": "/referral/task-list/service-days"
   }
 }
