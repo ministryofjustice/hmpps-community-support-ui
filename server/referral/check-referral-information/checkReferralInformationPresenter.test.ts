@@ -110,7 +110,11 @@ describe('CheckReferralInformationPresenter', () => {
           disabilities: [],
           personalCircumstances: [
             { description: 'Dependents', subDescription: 'Has Dependents', updatedAt: '2026-01-05T00:00:00Z' },
-            { description: 'Employment', subDescription: 'In receipt of state benefit', updatedAt: '2026-01-05T00:00:00Z' },
+            {
+              description: 'Employment',
+              subDescription: 'In receipt of state benefit',
+              updatedAt: '2026-01-05T00:00:00Z',
+            },
             { description: 'Relationship', subDescription: 'Widowed', updatedAt: '2026-01-05T00:00:00Z' },
             {
               description: 'Employment',

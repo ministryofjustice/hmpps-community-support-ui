@@ -19,7 +19,7 @@ type IdentifierRow = {
 const labelWithLastUpdated = (label: string, lastUpdatedLabel: string, lastUpdated: string): string =>
   `<b>${label}</b>\n<div class="govuk-hint govuk-!-font-size-16">${lastUpdatedLabel}: ${lastUpdated}</div>`
 
-const getLatestUpdatedAt = (list: { updatedAt?: string }[] = [], notAvailable: string): string => {
+const getLatestUpdatedAt = (list: { updatedAt?: string }[], notAvailable: string): string => {
   try {
     return format(new Date(Math.max(...list.map(e => new Date(e.updatedAt)).map(Number))), 'd MMMM yyyy')
   } catch {
@@ -73,7 +73,10 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
     viewModel.pageHeader = resolveName(this.draftReferralDetails.personDetailsTableData.name)
     viewModel.pageSubHeader = content.pageSubHeader
     viewModel.personalDetailsHeader = `About ${this.draftReferralDetails.personDetailsTableData.name.firstName}`
-    viewModel.personalDetailsSummary = this.buildPersonalDetailsSummary(content.personalDetailsCard, content.notAvailable)
+    viewModel.personalDetailsSummary = this.buildPersonalDetailsSummary(
+      content.personalDetailsCard,
+      content.notAvailable,
+    )
     viewModel.referralDetailsHeader = content.referralDetailsHeader
     viewModel.referralDetailsSummary = this.buildReferralDetailsSummary()
     viewModel.referralContactDetailsHeader = content.referralContactDetailsHeader
@@ -88,7 +91,10 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
     return `referral/checkReferralInformation`
   }
 
-  private buildPersonalDetailsSummary(cardContent: PersonalDetailsCard, notAvailable: string): GovukFrontendSummaryList {
+  private buildPersonalDetailsSummary(
+    cardContent: PersonalDetailsCard,
+    notAvailable: string,
+  ): GovukFrontendSummaryList {
     const { personDetailsTableData } = this.draftReferralDetails
     let identifierRow: IdentifierRow | null = null
     if (personDetailsTableData.crn) {
