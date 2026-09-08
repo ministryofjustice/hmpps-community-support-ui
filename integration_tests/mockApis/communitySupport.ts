@@ -19,6 +19,7 @@ import {
   NeedsInterpreterBffResponseDto,
   ServiceDaysPageDto,
   CheckDraftReferralDetailsDto,
+  AdditionalInformationForTheDeliveryPartner,
 } from '@community-support-api'
 import { stubFor } from './wiremock'
 import { duplicateData } from '../testUtils'
@@ -849,6 +850,36 @@ export default {
       request: {
         method: 'PATCH',
         urlPathPattern: `/community-support/draft-referral/needs-interpreter/${referralId}`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: {},
+        transformers: ['response-template'],
+      },
+    }),
+  stubGetAdditionalInformationForTheDeliveryPartnerPage: (
+    referralId: string,
+    details: AdditionalInformationForTheDeliveryPartner,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: `/community-support/bff/draft-referral/additional-information-for-the-delivery-partner/${referralId}`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: details,
+        transformers: ['response-template'],
+      },
+    }),
+  stubSubmitAdditionalInformationForTheDeliveryPartnerPage: (referralId: string, httpStatus = 200): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'PATCH',
+        urlPathPattern: `/community-support/draft-referral/additional-information-for-the-delivery-partner/${referralId}`,
       },
       response: {
         status: httpStatus,

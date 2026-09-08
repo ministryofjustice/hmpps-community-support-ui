@@ -1,0 +1,34 @@
+{% extends "../partials/layout.njk" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+
+{% set pageTitle = content.pageTitle %}
+{% set mainClasses = "govuk-body" %}
+
+{% block contentBody %}
+
+<div class="govuk-grid-row">
+  <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">
+    {{ content.heading }}
+  </h1>
+  {% call govukDetails({
+    summaryText: content.details.summary,
+    attributes: { 'data-testid': 'details-dropdown' }
+  }) %}
+  {{ content.details.header }}
+  <ul>
+    {% for item in content.details.items %}
+    <li>{{ item }}</li>
+    {% endfor %}
+  </ul>
+  {{ content.detailsBody }}
+  {% endcall %}
+  <form method="post" >
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    {{ govukRadios(content.radios) }}
+    {{ govukButton(content.button) }}
+  </form>
+</div>
+{% endblock %}

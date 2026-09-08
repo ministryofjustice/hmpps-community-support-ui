@@ -20,9 +20,11 @@ import {
   type ProbationPractitionerDetails,
   type UpdateProbationPractitionerDetailsRequest,
   CheckDraftReferralDetailsDto,
+  Selection,
 } from '@community-support-api'
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
 import { NeedsAnInterpreterFormData } from '../validation/NeedsAnInterpreterFormDataSchema'
+import { AdditionalInformationForTheDeliveryPartnerFormData } from '../validation/AdditionalInformationForTheDeliveryPartnerFormData'
 
 export default class ReferralService {
   constructor(private readonly communitySupportApiClient: CommunitySupportApiClient) {}
@@ -156,5 +158,23 @@ export default class ReferralService {
 
   submitPPDetails(referralId: string, username: string, ppDetails: UpdateProbationPractitionerDetailsRequest) {
     return this.communitySupportApiClient.submitPPDetails(referralId, username, ppDetails)
+  }
+
+  getAdditionalInformationForDeliveryPartner(draftReferalId: string, username: string) {
+    return this.communitySupportApiClient.getAdditionalInformationForDeliveryPartner(draftReferalId, username)
+  }
+
+  submitAdditionalInformationForDeliveryPartner(
+    data: AdditionalInformationForTheDeliveryPartnerFormData,
+    draftReferalId: string,
+    username: string,
+  ) {
+    const selection: Selection =
+      data.additionalInformation === 'Yes' ? { selected: 'Yes', value: data.details } : { selected: 'No' }
+    return this.communitySupportApiClient.submitAdditionalInformationForDeliveryPartner(
+      selection,
+      draftReferalId,
+      username,
+    )
   }
 }
