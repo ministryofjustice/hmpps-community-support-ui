@@ -98,6 +98,83 @@ describe('CheckReferralInformationPresenter', () => {
       )
     })
 
+    it('should group and order personal circumstances by description', () => {
+      const draftReferralDetails = {
+        id: 'referralId123',
+        createdDate: '2026-02-10T11:23:00.780Z',
+        personDetailsTableData: {
+          name: { firstName: 'John', lastName: 'Doe' },
+          crn: 'X123456',
+          dateOfBirth: '20 Feb 1975 (51 years old)',
+          preferredLanguage: 'English',
+          disabilities: [],
+          personalCircumstances: [
+            { description: 'Dependents', subDescription: 'Has Dependents', updatedAt: '2026-01-05T00:00:00Z' },
+            { description: 'Employment', subDescription: 'In receipt of state benefit', updatedAt: '2026-01-05T00:00:00Z' },
+            { description: 'Relationship', subDescription: 'Widowed', updatedAt: '2026-01-05T00:00:00Z' },
+            {
+              description: 'Employment',
+              subDescription: 'Retired (not in receipt of a pension)',
+              updatedAt: '2026-01-05T00:00:00Z',
+            },
+          ],
+        },
+        equalityDetailsTableData: {},
+        additionalInformationDetailsTableData: {},
+        contactDetailsTableData: {},
+        riskInformationDetailsTableData: {},
+        additionalSupportNeedsDetailsTableData: {},
+        personNeedsDetailsTableData: {},
+        referralAreaTableData: {},
+        mainPocDetailsTableData: {},
+      } as CheckDraftReferralDetailsDto
+
+      new CheckReferralInformationPresenter(draftReferralDetails).renderPage(res)
+
+      const renderData = (res.render as jest.Mock).mock.calls[0][1] as { content: CheckReferralInformationViewModel }
+
+      expect(renderData.content.personalDetailsSummary.rows[5]).toMatchObject({
+        value: {
+          html: '<div>Relationship: Widowed</div><div>Employment: In receipt of state benefit, Retired (not in receipt of a pension)</div><div>Dependents: Has Dependents</div>',
+        },
+      })
+    })
+
+    it('should show unavailable personal circumstance categories', () => {
+      const draftReferralDetails = {
+        id: 'referralId123',
+        createdDate: '2026-02-10T11:23:00.780Z',
+        personDetailsTableData: {
+          name: { firstName: 'John', lastName: 'Doe' },
+          crn: 'X123456',
+          dateOfBirth: '20 Feb 1975 (51 years old)',
+          preferredLanguage: 'English',
+          disabilities: [],
+          personalCircumstances: [
+            { description: 'Employment', subDescription: 'Full-time employed', updatedAt: '2026-01-05T00:00:00Z' },
+          ],
+        },
+        equalityDetailsTableData: {},
+        additionalInformationDetailsTableData: {},
+        contactDetailsTableData: {},
+        riskInformationDetailsTableData: {},
+        additionalSupportNeedsDetailsTableData: {},
+        personNeedsDetailsTableData: {},
+        referralAreaTableData: {},
+        mainPocDetailsTableData: {},
+      } as CheckDraftReferralDetailsDto
+
+      new CheckReferralInformationPresenter(draftReferralDetails).renderPage(res)
+
+      const renderData = (res.render as jest.Mock).mock.calls[0][1] as { content: CheckReferralInformationViewModel }
+
+      expect(renderData.content.personalDetailsSummary.rows[5]).toMatchObject({
+        value: {
+          html: '<div>Relationship: Not available</div><div>Employment: Full-time employed</div><div>Dependents: Not available</div>',
+        },
+      })
+    })
+
     it('should render a prison number when CRN is unavailable', () => {
       const draftReferralDetails = {
         id: 'referralId123',

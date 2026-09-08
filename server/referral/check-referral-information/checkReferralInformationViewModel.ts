@@ -32,6 +32,7 @@ export type CheckReferralInformationContent = {
   pageHeader: string
   pageSubHeader: string
   personalDetailsHeader: string
+  notAvailable: string
   personalDetailsCard: PersonalDetailsCard
   referralDetailsHeader: string
   referralContactDetailsHeader: string

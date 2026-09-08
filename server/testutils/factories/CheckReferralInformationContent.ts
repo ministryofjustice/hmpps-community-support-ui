@@ -8,6 +8,7 @@ export default CheckReferralInformationContentFactory.define(({ transientParams 
   pageHeader: transientParams.pageHeader || 'Check referral information',
   pageSubHeader: transientParams.pageSubHeader || 'Check details and submit referral',
   personalDetailsHeader: transientParams.personalDetailsHeader || 'About John',
+  notAvailable: transientParams.notAvailable || 'Not available',
   personalDetailsCard: transientParams.personalDetailsCard || {
     heading: 'Personal details',
     nameLabel: 'Name',
