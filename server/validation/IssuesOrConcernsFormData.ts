@@ -5,6 +5,7 @@ const MAX_CHAR = 3000
 export const IssuesOrConcernsFormDataSchema = z.object({
   issuesOrConcerns: z
     .string()
+    .trim()
     .max(MAX_CHAR, `Details of issues or concerns must be ${MAX_CHAR} characters or less`)
     .min(1, 'Enter any issues or concerns you identified'),
 })
