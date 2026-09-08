@@ -12,12 +12,15 @@ import AdditionalSupportNeedsPage from '../pages/AdditionalSupportNeedsPage'
 import NeedsAnInterpreterPage from '../pages/NeedsAnInterpreterPage'
 import ServiceEndDatePage from '../pages/ServiceEndDatePage'
 import ServiceDaysPage from '../pages/ServiceDaysPage'
+import AdditionalInformationForTheDeliveryPartnerPage from '../pages/AdditionalInformationForTheDeliveryPartnerPage'
 
 // These tests will have to move to end to end testing
 
 test.describe('Task List Journey', () => {
   const referralId = randomUUID()
-  const crn = 'X320741'
+  const crn = 'X320741' as const
+  const firstName = 'Alex' as const
+  const lastName = 'Rivers' as const
   test.beforeEach(async ({ page }) => {
     await resetStubs()
     await communitySupport.stubGetPerson()
@@ -33,7 +36,7 @@ test.describe('Task List Journey', () => {
       deliveryPartner: '',
     })
     await communitySupport.stubGetTaskListStatus(referralId, {
-      fullName: 'Alex Rivers',
+      fullName: `${firstName} ${lastName}`,
       confirmPersonalDetailsCompleted: {
         completed: false,
         statusText: 'Incomplete',
@@ -548,6 +551,15 @@ test.describe('Task List Journey', () => {
       await communitySupport.stubUpdateServiceDaysPage(referralId, {
         service_days: 10,
       })
+      await communitySupport.stubGetAdditionalInformationForTheDeliveryPartnerPage(referralId, {
+        refereeName: {
+          firstName,
+          middleName: undefined,
+          lastName,
+        },
+        details: { selected: 'Unanswered' },
+      })
+      await communitySupport.stubSubmitAdditionalInformationForTheDeliveryPartnerPage(referralId)
     })
 
     test('Happy path', async ({ page }) => {
@@ -569,7 +581,17 @@ test.describe('Task List Journey', () => {
         await serviceDaysPage.clickSaveAndContinue()
       })
 
-      await test.step('TODO check offence and sentence information', async () => {})
+      await test.step.skip('TODO check offence and sentence information', async () => {})
+
+      await test.step('Complete additional information for delivery partner', async () => {
+        const pom = await AdditionalInformationForTheDeliveryPartnerPage.verifyOnPage(page, firstName)
+        await pom.select('Yes')
+        await pom.fill('Likes tea with two sugars and milk')
+        await pom.clickSaveAndContinue()
+      })
+      await test.step('returned to task list', async () => {
+        await TaskListPage.verifyOnPage(page)
+      })
     })
 
     test('Unhappy path service end date', async ({ page }) => {

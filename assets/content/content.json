@@ -168,31 +168,66 @@
       {
         "heading": "Problem with referral",
         "reasons": [
-          { "value": "INELIGIBLE_REFERRAL", "text": "Ineligible referral" },
-          { "value": "MISTAKEN_OR_DUPLICATE_REFERRAL", "text": "Mistaken or duplicate referral" }
+          {
+            "value": "INELIGIBLE_REFERRAL",
+            "text": "Ineligible referral"
+          },
+          {
+            "value": "MISTAKEN_OR_DUPLICATE_REFERRAL",
+            "text": "Mistaken or duplicate referral"
+          }
         ]
       },
       {
         "heading": "User related",
         "reasons": [
-          { "value": "NOT_ENGAGED", "text": "Not engaged" },
-          { "value": "NEEDS_MET_THROUGH_ANOTHER_ROUTE", "text": "Needs met through another route" },
-          { "value": "USER_DIED", "text": "User died" },
-          { "value": "WORK_CARING_COMMITMENTS_OR_SICKNESS", "text": "Work, caring commitments, or sickness" }
+          {
+            "value": "NOT_ENGAGED",
+            "text": "Not engaged"
+          },
+          {
+            "value": "NEEDS_MET_THROUGH_ANOTHER_ROUTE",
+            "text": "Needs met through another route"
+          },
+          {
+            "value": "USER_DIED",
+            "text": "User died"
+          },
+          {
+            "value": "WORK_CARING_COMMITMENTS_OR_SICKNESS",
+            "text": "Work, caring commitments, or sickness"
+          }
         ]
       },
       {
         "heading": "Sentence / custody related",
         "reasons": [
-          { "value": "ACQUITTED_ON_APPEAL", "text": "Acquitted on appeal" },
-          { "value": "RETURNED_TO_CUSTODY", "text": "Returned to custody" },
-          { "value": "SENTENCE_REVOKED", "text": "Sentence revoked" },
-          { "value": "SENTENCE_EXPIRED", "text": "Sentence expired" }
+          {
+            "value": "ACQUITTED_ON_APPEAL",
+            "text": "Acquitted on appeal"
+          },
+          {
+            "value": "RETURNED_TO_CUSTODY",
+            "text": "Returned to custody"
+          },
+          {
+            "value": "SENTENCE_REVOKED",
+            "text": "Sentence revoked"
+          },
+          {
+            "value": "SENTENCE_EXPIRED",
+            "text": "Sentence expired"
+          }
         ]
       },
       {
         "heading": "Other",
-        "reasons": [{ "value": "OTHER_CHANGE_OF_CIRCUMSTANCE", "text": "Any other change of circumstance" }]
+        "reasons": [
+          {
+            "value": "OTHER_CHANGE_OF_CIRCUMSTANCE",
+            "text": "Any other change of circumstance"
+          }
+        ]
       }
     ]
   },
@@ -967,9 +1002,27 @@
     "jobRoleLabel": "Job role",
     "pduLabel": "PDU",
     "probationOfficeLabel": "Probation office",
-    "teamPhoneNumberLabel":"Team phone number",
+    "teamPhoneNumberLabel": "Team phone number",
     "radioQuestion": "Are these details correct?",
     "radioYes": "Yes",
     "radioNo": "No"
+  },
+  "/referral/task-list/additional-information-for-the-delivery-partner": {
+    "pageTitle": "Is there anything else the delivery partner should know? - Community Support",
+    "pageHeader": "Is there anything else the delivery partner should know about {{ firstName }}?",
+    "detailsLink": "What you should consider and include",
+    "detailsHeader": "You should consider letting the delivery partner know if:",
+    "detailsItems": [
+      "there are any relevant registration flags on NDelius, for example, sexual or violent offences, racist behaviour or MAPPA",
+      "{{ firstName }} is a victim or perpetrator of domestic abuse or modern slavery",
+      "it is safe to contact {{ firstName }}, and if not, what the preferred contact methods are",
+      "there are any risks to staff, not already mentioned in the referral",
+      "you think there is anything else important they should know"
+    ],
+    "yesOptionLabel": "Yes",
+    "yesConditional": "Give details of anything else the delivery partner should know",
+    "noOptionLabel": "No",
+    "button": "Save and continue",
+    "backlink": "/referral/task-list/service-days"
   }
 }
