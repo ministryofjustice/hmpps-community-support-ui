@@ -32,7 +32,7 @@ export default class AdditionalInformationForTheDeliveryPartnerPage extends Abst
       name: `Is there anything else the delivery partner should know about ${firstName}?`,
     })
     const backLink = page.getByRole('link', { name: 'Back', exact: true })
-    const button = page.getByRole('button', { name: 'Save and Continue' })
+    const button = page.getByRole('button', { name: 'Save and continue' })
     const radios = await RadiosWithFieldSet.create(
       page.locator('[data-testid="additional-information"]'),
       page.locator('[data-testid="additional-information-legend"]'),
