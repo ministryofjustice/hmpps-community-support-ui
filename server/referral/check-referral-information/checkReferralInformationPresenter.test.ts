@@ -28,8 +28,10 @@ describe('CheckReferralInformationPresenter', () => {
           crn: 'X123456',
           dateOfBirth: '20 Feb 1975 (51 years old)',
           preferredLanguage: 'English',
-          disabilities: [],
-          personalCircumstances: [],
+          disabilities: [{ description: 'Dyslexia', updatedAt: '2026-02-03T00:00:00Z' }],
+          personalCircumstances: [
+            { description: 'Employment', subDescription: 'Full-time employed', updatedAt: '2026-01-05T00:00:00Z' },
+          ],
         },
         equalityDetailsTableData: { ethnicity: 'White British', religionOrBelief: 'None', sex: 'Male' },
         additionalInformationDetailsTableData: {},
@@ -46,7 +48,7 @@ describe('CheckReferralInformationPresenter', () => {
 
       const renderData = (res.render as jest.Mock).mock.calls[0][1] as { content: CheckReferralInformationViewModel }
 
-      expect(renderData.content.personalDetailsSummary.rows).toHaveLength(4)
+      expect(renderData.content.personalDetailsSummary.rows).toHaveLength(7)
       expect(renderData.content.personalDetailsSummary.rows[0]).toMatchObject({
         key: { text: 'Name' },
         value: { text: 'John Doe' },
@@ -56,12 +58,28 @@ describe('CheckReferralInformationPresenter', () => {
         value: { text: 'X123456' },
       })
       expect(renderData.content.personalDetailsSummary.rows[2]).toMatchObject({
+        key: { text: 'Current location' },
+        value: { text: 'Not available' },
+      })
+      expect(renderData.content.personalDetailsSummary.rows[3]).toMatchObject({
         key: { text: 'Date of birth' },
         value: { text: '20 Feb 1975 (51 years old)' },
       })
-      expect(renderData.content.personalDetailsSummary.rows[3]).toMatchObject({
-        key: { text: 'Sex' },
-        value: { text: 'Male' },
+      expect(renderData.content.personalDetailsSummary.rows[4]).toMatchObject({
+        key: { text: 'Preferred language' },
+        value: { text: 'English' },
+      })
+      expect(renderData.content.personalDetailsSummary.rows[5]).toMatchObject({
+        key: {
+          html: '<b>Current circumstances</b>\n<div class="govuk-hint govuk-!-font-size-16">Last updated: 5 January 2026</div>',
+        },
+        value: { html: '<div>Employment: Full-time employed</div>' },
+      })
+      expect(renderData.content.personalDetailsSummary.rows[6]).toMatchObject({
+        key: {
+          html: '<b>Disabilities</b>\n<div class="govuk-hint govuk-!-font-size-16">Last updated: 3 February 2026</div>',
+        },
+        value: { html: '<div>Dyslexia</div>' },
       })
       expect(renderData.content.pageTitle).toBe('Check details and submit referral')
       expect(renderData.content.pageHeader).toBe('John Doe')
@@ -141,8 +159,12 @@ describe('CheckReferralInformationPresenter', () => {
 
       const renderData = (res.render as jest.Mock).mock.calls[0][1] as { content: CheckReferralInformationViewModel }
 
-      expect(renderData.content.personalDetailsSummary.rows).toHaveLength(3)
+      expect(renderData.content.personalDetailsSummary.rows).toHaveLength(6)
       expect(renderData.content.personalDetailsSummary.rows[1]).toMatchObject({
+        key: { text: 'Current location' },
+        value: { text: 'Not available' },
+      })
+      expect(renderData.content.personalDetailsSummary.rows[2]).toMatchObject({
         key: { text: 'Date of birth' },
         value: { text: '20 Feb 1975 (51 years old)' },
       })
