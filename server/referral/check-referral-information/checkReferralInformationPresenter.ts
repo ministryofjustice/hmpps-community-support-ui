@@ -3,7 +3,7 @@ import { GovukFrontendSummaryList } from '@govuk-frontend'
 import { Response } from 'express'
 import { format, differenceInYears } from 'date-fns'
 import PresenterBase from '../../presenter/presenterBase'
-import ViewUtils from '../../utils/viewUtils'
+import ViewUtils, { govFrontendSummaryListRow } from '../../utils/viewUtils'
 import { components } from '../../@types/communitySupportApi/imported'
 import {
   CheckReferralInformationContent,
@@ -105,15 +105,15 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
     }
 
     const summary = [
-      ViewUtils.summaryListRow(cardContent.nameLabel, resolveName(personDetailsTableData.name)),
-      ...(identifierRow ? [ViewUtils.summaryListRow(identifierRow.label, identifierRow.value)] : []),
-      ViewUtils.summaryListRow(cardContent.locationLabel, notAvailable),
-      ViewUtils.summaryListRow(
+      govFrontendSummaryListRow(cardContent.nameLabel, resolveName(personDetailsTableData.name)),
+      ...(identifierRow ? [govFrontendSummaryListRow(identifierRow.label, identifierRow.value)] : []),
+      govFrontendSummaryListRow(cardContent.locationLabel, notAvailable),
+      govFrontendSummaryListRow(
         cardContent.dobLabel,
         formatDateOfBirth(personDetailsTableData.dateOfBirth, notAvailable),
       ),
-      ViewUtils.summaryListRow(cardContent.languageLabel, personDetailsTableData.preferredLanguage || notAvailable),
-      ViewUtils.summaryListRow(
+      govFrontendSummaryListRow(cardContent.languageLabel, personDetailsTableData.preferredLanguage || notAvailable),
+      govFrontendSummaryListRow(
         {
           html: labelWithLastUpdated(
             cardContent.currentCircumstancesLabel,
@@ -123,7 +123,7 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
         },
         { html: formatPersonalCircumstances(personDetailsTableData.personalCircumstances, notAvailable) },
       ),
-      ViewUtils.summaryListRow(
+      govFrontendSummaryListRow(
         {
           html: labelWithLastUpdated(
             cardContent.disabilitiesLabel,
@@ -146,7 +146,7 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
   }
 
   private buildReferralDetailsSummary(): GovukFrontendSummaryList {
-    const summary = [ViewUtils.summaryListRow('Location', this.draftReferralDetails.referralAreaTableData.area || '')]
+    const summary = [govFrontendSummaryListRow('Location', this.draftReferralDetails.referralAreaTableData.area || '')]
     return {
       card: {
         title: {
