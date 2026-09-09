@@ -911,7 +911,7 @@ describe('ReferralController', () => {
       id: 'ID123',
       dateOfBirth: '20 Feb 1975 (51 years old)',
     }
-    
+
     const mockPPDetails: ProbationPractitionerDetails = {
       name: 'Fake PP',
       jobRole: 'Probation Practitioner',
@@ -919,7 +919,7 @@ describe('ReferralController', () => {
       pdu: {
         id: 'northumberland-id',
         name: 'Northumberland',
-      }
+      },
     }
 
     it('should redirect to find a person when there is no draft referral in session', async () => {
