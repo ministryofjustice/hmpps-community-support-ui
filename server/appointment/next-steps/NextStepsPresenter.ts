@@ -1,7 +1,5 @@
 import { Response } from 'express'
-import {
-  GovukFrontendTextarea,
-} from '@govuk-frontend'
+import { GovukFrontendTextarea } from '@govuk-frontend'
 import { IcsFeedbackSubmission } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
 import { ErrorMiddlewareErrors } from '../../@types/express'
@@ -32,7 +30,7 @@ export default class NextStepsPresenter extends PresenterBase<NextStepsViewModel
       hint: { text: hint },
       value,
       attributes: { 'data-testid': id },
-      errorMessage: error,
+      errorMessage: error ? { text: error } : undefined,
     }
   }
 
