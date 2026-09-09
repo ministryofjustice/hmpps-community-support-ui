@@ -5,6 +5,7 @@ import {
   ConfirmPersonDetailsBffDto,
   CommunitySupportRiskDto,
   ReferralCriminogenicNeedsDto,
+  ProbationPractitionerDetails,
 } from '@community-support-api'
 import ReferralController from './referralController'
 import ReferralService from '../services/referralService'
@@ -910,11 +911,15 @@ describe('ReferralController', () => {
       id: 'ID123',
       dateOfBirth: '20 Feb 1975 (51 years old)',
     }
-    const mockPPDetails = {
+    
+    const mockPPDetails: ProbationPractitionerDetails = {
       name: 'Fake PP',
       jobRole: 'Probation Practitioner',
       emailAddress: 'fake.pp@example.com',
-      pdu: 'Northumberland',
+      pdu: {
+        id: 'northumberland-id',
+        name: 'Northumberland',
+      }
     }
 
     it('should redirect to find a person when there is no draft referral in session', async () => {

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import { ReferralUserAssignmentsResponse, AssignmentFailureDto } from '@community-support-api'
+import { ReferralUserAssignmentsResponse, AssignmentFailureDto, UpdateProbationPractitionerDetailsRequest } from '@community-support-api'
 import ReferralService from '../services/referralService'
 import PersonService from '../services/personService'
 import CommunityServiceProviderService from '../services/communityServiceProviderService'
@@ -509,7 +509,11 @@ export default class ReferralController {
     if (req.method === 'POST') {
       return validateRequestBodyAgainstSchema(CheckPPDetailsSchema, req, res, async form => {
         if (form.detailsCorrect === 'true') {
-          const ppDetailsToSend = { ...probationPractitionerDetails, ppDetailsFoundAndCorrect: true }
+          const ppDetailsToSend: UpdateProbationPractitionerDetailsRequest = { 
+            ...probationPractitionerDetails, 
+            ppDetailsFoundAndCorrect: true,
+            pdu: probationPractitionerDetails?.pdu?.name ?? null,
+          }
           await this.referralService.submitPPDetails(draftReferralKey, username, ppDetailsToSend)
           return res.redirect('/referral/task-list')
         }

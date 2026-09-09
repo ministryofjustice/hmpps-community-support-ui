@@ -91,7 +91,7 @@ export default class CheckPPDetailsPresenter extends PresenterBase<CheckPPDetail
             text: content.pduLabel,
           },
           value: {
-            text: ppDetails.pdu ? ppDetails.pdu : 'Not available',
+            text: ppDetails?.pdu?.name ?? 'Not available',
           },
         },
         {
