@@ -1,8 +1,11 @@
 import z from 'zod'
+import validString from './ValidString'
 
 export const AdditionalInformationForTheDeliveryPartnerFormDataSchema = z
   .object({
-    details: z.string(),
+    details: validString(
+      'Details of anything else the delivery partner should know must be {{ maxCharacters }} characters or less',
+    ),
     additionalInformation: z.enum(['No', 'Yes'], {
       error: `Select yes if there is anything else the delivery partner should know`,
     }),
