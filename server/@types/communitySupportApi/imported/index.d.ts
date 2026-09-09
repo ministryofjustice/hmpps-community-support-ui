@@ -2743,7 +2743,9 @@ export interface operations {
     requestBody: {
       content: {
         'application/json':
-          components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
+          | components['schemas']['No']
+          | components['schemas']['Unanswered']
+          | components['schemas']['Yes']
       }
     }
     responses: {
