@@ -34,12 +34,17 @@ const formatPersonalCircumstances = (
   const circumstanceOrder = ['Relationship', 'Employment', 'Dependents']
 
   return circumstanceOrder
-    .flatMap(description => {
+    .map(description => {
       const matches = list.filter(circumstance => circumstance.description === description)
-      if (matches.length === 0) return [`<div>${ViewUtils.escape(description)}: ${notAvailable}</div>`]
-      return matches.map(
-        circumstance => `<div>${ViewUtils.escape(description)}: ${ViewUtils.escape(circumstance.subDescription)}</div>`,
-      )
+      if (matches.length === 0) return `<div>${ViewUtils.escape(description)}: ${notAvailable}</div>`
+
+      const values = matches
+        .map(m => (m.subDescription ? ViewUtils.escape(m.subDescription) : ''))
+        .filter(Boolean)
+
+      if (values.length === 0) return `<div>${ViewUtils.escape(description)}: ${notAvailable}</div>`
+
+      return `<div>${ViewUtils.escape(description)}: ${values.join(', ')}</div>`
     })
     .join('')
 }

@@ -141,7 +141,7 @@ describe('CheckReferralInformationPresenter', () => {
 
       expect(renderData.content.personalDetailsSummary.rows[5]).toMatchObject({
         value: {
-          html: '<div>Relationship: Widowed</div><div>Employment: In receipt of state benefit</div><div>Employment: Retired (not in receipt of a pension)</div><div>Dependents: Has Dependents</div>',
+          html: '<div>Relationship: Widowed</div><div>Employment: In receipt of state benefit, Retired (not in receipt of a pension)</div><div>Dependents: Has Dependents</div>',
         },
       })
     })

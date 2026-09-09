@@ -74,7 +74,7 @@ test.describe('Check Referral Information Page', () => {
     await expect(checkReferralInformationPage.personalDetailsSummary.rows[4].value).toHaveText('English')
     await expect(checkReferralInformationPage.personalDetailsSummary.rows[5].key).toContainText('Current circumstances')
     await expect(checkReferralInformationPage.personalDetailsSummary.rows[5].value).toContainText(
-      'Employment: Full-time employed',
+      'Employment: Full-time employed, Retired (not in receipt of a pension)',
     )
     await expect(checkReferralInformationPage.personalDetailsSummary.rows[5].value).toContainText(
       'Relationship: Not available',
@@ -120,7 +120,7 @@ test.describe('Check Referral Information Page', () => {
     await expect(checkReferralInformationPage.personalDetailsSummary.rows[4].value).toHaveText('English')
     await expect(checkReferralInformationPage.personalDetailsSummary.rows[5].key).toContainText('Current circumstances')
     await expect(checkReferralInformationPage.personalDetailsSummary.rows[5].value).toContainText(
-      'Employment: Full-time employed',
+      'Employment: Full-time employed, Part-time employed',
     )
     await expect(checkReferralInformationPage.personalDetailsSummary.rows[5].value).toContainText(
       'Relationship: Not available',
