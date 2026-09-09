@@ -1,14 +1,7 @@
 import type { CriminogenicNeedsRequest } from '@community-support-api'
 
 export type checkboxItemNames =
-  | 'accommodation'
-  | 'employment'
-  | 'finances'
-  | 'relationships'
-  | 'drugUse'
-  | 'alcoholUse'
-  | 'health'
-  | 'thinking'
+  'accommodation' | 'employment' | 'finances' | 'relationships' | 'drugUse' | 'alcoholUse' | 'health' | 'thinking'
 
 export type PersonNeeds = {
   personNeedsCheckboxes: checkboxItemNames[]
