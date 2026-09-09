@@ -25,6 +25,8 @@ import {
   AdditionalInformationForTheDeliveryPartnerFormData,
   AdditionalInformationForTheDeliveryPartnerFormDataSchema,
 } from '../validation/AdditionalInformationForTheDeliveryPartnerFormData'
+import OffenceSentencePresenter from './OffenceSentence/OffenceSentencePresenter'
+import { OffenceSentenceFormData, OffenceSentenceSchema } from '../validation/OffenceSentenceFormData'
 
 const findAPersonURL = '/referral/new/find-a-person' as const
 const taskListURL = '/referral/task-list' as const
@@ -32,7 +34,9 @@ const additionalSupportNeedsURL = '/referral/task-list/additional-support-needs'
 const needsInterpreterURL = '/referral/task-list/needs-an-interpreter' as const
 const serviceEndDateURL = '/referral/task-list/service-end-date' as const
 const serviceDaysURL = '/referral/task-list/service-days' as const
-const checkOffenceURL = '/referral/task-list/check-offence' as const
+const offenceSentenceURL = '/referral/task-list/offence-sentence' as const
+const additionalInformationForDeliveryPartnerURL =
+  '/referral/task-list/additional-information-for-the-delivery-partner' as const
 
 const additionalSupportNeedsBodyLookup: Record<string, keyof AdditionalSupportNeedsRequest> = {
   Anything: 'anythingElse',
@@ -257,7 +261,7 @@ export default class DraftReferralController {
         }
 
         await this.referralService.updateServiceDaysPage(referralId, updateData, username)
-        return res.redirect(checkOffenceURL)
+        return res.redirect(offenceSentenceURL)
       } catch (e) {
         logger.error(e)
         const updateErrorMessage =
@@ -265,6 +269,49 @@ export default class DraftReferralController {
           'Something has gone wrong updating the service days'
         req.flash('serviceDaysError', updateErrorMessage)
         return res.redirect(serviceDaysURL)
+      }
+    })
+  }
+
+  async showOffenceSentencePage(req: Request, res: Response) {
+    const { username } = res.locals.user
+    const referralId = req.session?.draftReferralId
+    const postFormDataRaw = req.flash('value').at(0)
+    const formData = JSON.parse(postFormDataRaw || '{}')
+    const validationErrors = res.locals.errors
+
+    if (!referralId) return res.redirect(taskListURL)
+
+    try {
+      const data = await this.referralService.getOffenceSentencePage(referralId, username)
+      const presenter = new OffenceSentencePresenter(data, validationErrors, formData)
+      return presenter.renderPage(res)
+    } catch (error) {
+      logger.error('Error retrieving offence sentence page:', error)
+      req.flash('offenceSentenceError', 'Failed to load offence sentence page')
+      return res.redirect(taskListURL)
+    }
+  }
+
+  async updateOffenceSentencePage(req: Request, res: Response) {
+    const { username } = res.locals.user
+    const referralId = req.session?.draftReferralId
+
+    if (!referralId) {
+      return res.redirect(taskListURL)
+    }
+
+    return validateRequestBodyAgainstSchema(OffenceSentenceSchema, req, res, async (form: OffenceSentenceFormData) => {
+      try {
+        await this.referralService.updateOffenceSentencePage(referralId, form, username)
+        return res.redirect(additionalInformationForDeliveryPartnerURL)
+      } catch (e) {
+        logger.error(e)
+        const updateErrorMessage =
+          (res.locals.content as Record<string, string>)?.updateError ||
+          'Something has gone wrong updating the offence sentence'
+        req.flash('offenceSentenceError', updateErrorMessage)
+        return res.redirect(offenceSentenceURL)
       }
     })
   }

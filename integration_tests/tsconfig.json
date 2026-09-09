@@ -5,7 +5,7 @@
     "lib": ["es5", "dom", "es2015.promise"],
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "typeRoots": ["./server/@types", "./node_modules/@types"],
+    "typeRoots": ["../server/@types", "../node_modules/@types"],
     "paths": {
       "@community-support-api": ["../server/@types/communitySupportApi/index.d.ts"],
       "@govuk-frontend": ["../server/@types/govukFrontend/index.d.ts"],

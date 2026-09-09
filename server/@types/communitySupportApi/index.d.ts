@@ -51,6 +51,8 @@ type CommunityServiceProviderRequest = components['schemas']['CommunityServicePr
 type CommunityServiceProviderBffResponseDto = components['schemas']['CommunityServiceProviderBffResponseDto']
 type AdditionalSupportNeedsRequest = components['schemas']['AdditionalSupportNeedsRequest']
 type NeedsInterpreterRequest = components['schemas']['NeedsInterpreterRequest']
+type OffenceSentenceRequest = components['schemas']['UpdateOffenceSentenceRequest']
+type OffenceSentenceInfoBffResponseDto = components['schemas']['OffenceSentenceInfoBffResponseDto']
 type ProbationPractitionerDetails = components['schemas']['ProbationPractitionerDetailsBffResponseDto']
 type CheckDraftReferralDetailsDto = components['schemas']['CheckDraftReferralDetailsBffResponseDto']
 type UpdateProbationPractitionerDetailsRequest = components['schemas']['UpdateProbationPractitionerDetailsRequest']
@@ -113,6 +115,8 @@ export type {
   CommunityServiceProviderBffResponseDto,
   AdditionalSupportNeedsRequest,
   NeedsInterpreterRequest,
+  OffenceSentenceRequest,
+  OffenceSentenceInfoBffResponseDto,
   ProbationPractitionerDetails,
   UpdateProbationPractitionerDetailsRequest,
   AdditionalInformationForTheDeliveryPartner,

@@ -54,7 +54,7 @@ describe('AdditionalInformationForTheDeliveryPartnerPresenter', () => {
       const presenter = new AdditionalInformationForTheDeliveryPartnerPresenter(dto, { list: [], messages: {} })
       const viewModel = presenter.buildViewModel(res)
 
-      expect(viewModel.backLink.href).toBe('/referral/task-list/service-days')
+      expect(viewModel.backLink.href).toBe('/referral/task-list/offence-sentence')
       expect(viewModel.heading).toBe(pageContent.h2)
       expect(viewModel.button).toStrictEqual({ text: pageContent.button })
       expect(viewModel.radios.name).toBe('additionalInformation')
