@@ -1,35 +1,12 @@
 import { Response } from 'express'
-import loadContentDataForTest from '../../testutils/loadContentDataForTest'
 import OffenceSentencePresenter from './OffenceSentencePresenter'
 import { components } from '../../@types/communitySupportApi/imported'
 import { ErrorMiddlewareErrors } from '../../@types/express'
+import { globalContent } from '../../../assets/content/GlobalContent'
 
 type OffenceSentenceInfoBffResponseDto = components['schemas']['OffenceSentenceInfoBffResponseDto']
 
-const content = loadContentDataForTest('/referral/task-list/offence-sentence')
-const pageContent = {
-  pageTitle: 'Check offence and sentence information - Community Support',
-  crnLabel: 'CRN',
-  dateOfBirthLabel: 'Date of birth',
-  pageSubHeader: 'Check offence and sentence information',
-  bodyText: 'This is the offence associated with this referral.',
-  offenceSentenceCard: {
-    heading: 'Offence and sentence information',
-    offenceLabel: 'Offence',
-    offenceSubCategoryLabel: 'Offence subcategory',
-    outcomeLabel: 'Outcome',
-    sentenceEndDateLabel: 'Sentence end date',
-    expectedReleaseDateLabel: 'Expected release date',
-  },
-  hasLicenceConditionsOrZonesLabel:
-    'Are there any licence conditions or exclusion zones the delivery partner should know about?',
-  yesOptionLabel: 'Yes',
-  licenceConditionsOrZonesDetailsLabel: 'Give details of all relevant licence conditions or exclusion zones',
-  noOptionLabel: 'No',
-  notAvailableText: 'Not available',
-  backLink: '/referral/task-list/service-days',
-  continueButton: 'Save and continue',
-} as const
+const content = globalContent['/referral/task-list/offence-sentence']
 
 const validationErrors: ErrorMiddlewareErrors = { list: [], messages: {} }
 
@@ -71,21 +48,21 @@ describe('OffenceSentencePresenter', () => {
     const presenter = new OffenceSentencePresenter(responseDto, validationErrors)
     const viewModel = presenter.buildViewModel(res)
 
-    expect(viewModel.pageTitle).toBe(pageContent.pageTitle)
+    expect(viewModel.pageTitle).toBe(content.pageTitle)
     expect(viewModel.heading).toBe('Alex Smith')
-    expect(viewModel.crnLabel).toBe(pageContent.crnLabel)
+    expect(viewModel.crnLabel).toBe(content.crnLabel)
     expect(viewModel.crn).toBe('X123456')
-    expect(viewModel.dateOfBirthLabel).toBe(pageContent.dateOfBirthLabel)
+    expect(viewModel.dateOfBirthLabel).toBe(content.dateOfBirthLabel)
     expect(viewModel.dateOfBirth).toBe('20 April 1984 (42 years old)')
-    expect(viewModel.pageSubHeader).toBe(pageContent.pageSubHeader)
-    expect(viewModel.bodyText).toBe(pageContent.bodyText)
-    expect(viewModel.backLink.href).toBe(pageContent.backLink)
-    expect(viewModel.button.text).toBe(pageContent.continueButton)
-    expect(viewModel.offenceSentenceCardHeading).toBe(pageContent.offenceSentenceCard.heading)
+    expect(viewModel.pageSubHeader).toBe(content.pageSubHeader)
+    expect(viewModel.bodyText).toBe(content.bodyText)
+    expect(viewModel.backLink.href).toBe(content.backLink)
+    expect(viewModel.button.text).toBe(content.continueButton)
+    expect(viewModel.offenceSentenceCardHeading).toBe(content.offenceSentenceCard.heading)
 
     const { rows } = viewModel.offenceSentenceSummary
     expect(rows[0].value.text).toBe('Robbery')
-    expect(rows[3].key.text).toBe(pageContent.offenceSentenceCard.sentenceEndDateLabel)
+    expect(rows[3].key.text).toBe(content.offenceSentenceCard.sentenceEndDateLabel)
     expect(rows[3].value.text).toBe('15 December 2025')
     expect(rows).toHaveLength(4)
 
@@ -106,7 +83,7 @@ describe('OffenceSentencePresenter', () => {
     const viewModel = presenter.buildViewModel(res)
 
     const { rows } = viewModel.offenceSentenceSummary
-    expect(rows[3].key.text).toBe(pageContent.offenceSentenceCard.expectedReleaseDateLabel)
+    expect(rows[3].key.text).toBe(content.offenceSentenceCard.expectedReleaseDateLabel)
     expect(rows[3].value.text).toBe('15 December 2025')
     expect(rows).toHaveLength(4)
   })
@@ -123,7 +100,7 @@ describe('OffenceSentencePresenter', () => {
     const viewModel = presenter.buildViewModel(res)
 
     const { rows } = viewModel.offenceSentenceSummary
-    expect(rows[3].key.text).toBe(pageContent.offenceSentenceCard.sentenceEndDateLabel)
+    expect(rows[3].key.text).toBe(content.offenceSentenceCard.sentenceEndDateLabel)
     expect(rows[3].value.text).toBe('15 December 2025')
     expect(rows).toHaveLength(4)
   })
@@ -145,12 +122,12 @@ describe('OffenceSentencePresenter', () => {
     const viewModel = presenter.buildViewModel(res)
 
     const { rows } = viewModel.offenceSentenceSummary
-    expect(rows[0].value.text).toBe(pageContent.notAvailableText)
-    expect(rows[1].value.text).toBe(pageContent.notAvailableText)
-    expect(rows[2].value.text).toBe(pageContent.notAvailableText)
+    expect(rows[0].value.text).toBe(content.notAvailableText)
+    expect(rows[1].value.text).toBe(content.notAvailableText)
+    expect(rows[2].value.text).toBe(content.notAvailableText)
     expect(rows).toHaveLength(3)
-    expect(viewModel.crn).toBe(pageContent.notAvailableText)
-    expect(viewModel.dateOfBirth).toBe(pageContent.notAvailableText)
+    expect(viewModel.crn).toBe(content.notAvailableText)
+    expect(viewModel.dateOfBirth).toBe(content.notAvailableText)
 
     const [yesRadio, noRadio] = viewModel.radios.items
     expect(yesRadio.checked).toBeNull()
