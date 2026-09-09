@@ -5,7 +5,7 @@ import { GlobalContent } from '../../assets/content/GlobalContent'
 
 type ContentPath = keyof GlobalContent
 
-const loadContentDataForTest = (url: ContentPath): Record<string, string> => {
+const loadContentDataForTest = (url: ContentPath): GlobalContent[ContentPath] => {
   const contentFilePath = join(process.cwd(), 'assets', 'content', 'content.json')
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let contentData: Record<string, Record<string, any>> = {}
@@ -16,7 +16,7 @@ const loadContentDataForTest = (url: ContentPath): Record<string, string> => {
   } catch {
     logger.error(`Could not read content file at ${contentFilePath}`)
   }
-  return contentData[url]
+  return contentData[url] as GlobalContent[ContentPath]
 }
 
 export default loadContentDataForTest
