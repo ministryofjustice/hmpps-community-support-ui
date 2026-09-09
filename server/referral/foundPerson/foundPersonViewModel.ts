@@ -1,4 +1,5 @@
 import { GovukFrontendBackLink, GovukFrontendSummaryList } from '@govuk-frontend'
+import { GlobalContent } from '../../../assets/content/GlobalContent'
 
 export type FoundPersonViewModel = {
   staticContent: FoundPersonContent
@@ -9,12 +10,4 @@ export type FoundPersonViewModel = {
   backLink: GovukFrontendBackLink
 }
 
-export type FoundPersonContent = {
-  pageHeader: string
-  continueButtonText: string
-  continueButtonLink: string
-  backLink: string
-  insetText: string
-  enterDifferentIdentifierLinkText: string
-  enterDifferentIdentifierLinkHref: string
-}
+export type FoundPersonContent = GlobalContent['/referral/new/find-a-person']

@@ -1,8 +1,11 @@
 import { readFileSync } from 'fs'
 import { join } from 'path'
 import logger from '../../logger'
+import { GlobalContent } from '../../assets/content/GlobalContent'
 
-const loadContentData = (url: string): Record<string, string> => {
+type ContentPath = keyof GlobalContent
+
+const loadContentDataForTest = (url: ContentPath): Record<string, string> => {
   const contentFilePath = join(process.cwd(), 'assets', 'content', 'content.json')
   let contentData: Record<string, Record<string, string>> = {}
   try {
@@ -13,4 +16,5 @@ const loadContentData = (url: string): Record<string, string> => {
   }
   return contentData[url]
 }
-export default loadContentData
+
+export default loadContentDataForTest

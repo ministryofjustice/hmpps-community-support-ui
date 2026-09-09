@@ -1,7 +1,7 @@
 import { Response } from 'express'
 import { AdditionalInformationForTheDeliveryPartner } from '@community-support-api'
 import { ErrorMiddlewareErrors } from '../../@types/express'
-import loadContentData from '../../testutils/loadContentData'
+import loadContentDataForTest from '../../testutils/loadContentDataForTest'
 import AdditionalInformationForTheDeliveryPartnerPresenter from './AdditionalInformationForTheDeliveryPartnerPresenter'
 
 const firstName = 'Gavin' as const
@@ -35,7 +35,7 @@ const errorMessage = {
   nothingEntered: `Enter details of anything else the delivery partner should know`,
 } as const
 
-const content = loadContentData('/referral/task-list/additional-information-for-the-delivery-partner')
+const content = loadContentDataForTest('/referral/task-list/additional-information-for-the-delivery-partner')
 
 describe('AdditionalInformationForTheDeliveryPartnerPresenter', () => {
   describe('buildViewModel', () => {

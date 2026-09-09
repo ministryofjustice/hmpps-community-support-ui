@@ -5,7 +5,7 @@ import AdditionalSuportNeedsPresenter from './AdditionalSupportNeedsPresenter'
 import { AdditionalSuportNeedsViewModel } from './AdditionalSupportNeedsModel'
 import { ErrorMiddlewareErrors } from '../../@types/express'
 import { WithConditional } from '../../@types/govukFrontend/derived'
-import loadContentData from '../../testutils/loadContentData'
+import loadContentDataForTest from '../../testutils/loadContentDataForTest'
 
 const firstName = 'Alex' as const
 const lastName = 'Rivers' as const
@@ -80,7 +80,7 @@ interface ExpectedItem {
   textareaLabel?: string
 }
 
-const content = loadContentData('/referral/task-list/additional-support-needs')
+const content = loadContentDataForTest('/referral/task-list/additional-support-needs')
 
 describe('AdditionalSupportNeedsPresenter', () => {
   const res = {

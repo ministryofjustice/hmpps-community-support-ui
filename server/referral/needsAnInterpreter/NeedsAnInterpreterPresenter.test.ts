@@ -2,7 +2,7 @@ import { Response } from 'express'
 import { NeedsInterpreterBffResponseDto } from '@community-support-api'
 import NeedsAnInterpreterPresenter from './NeedsAnInterpreterPresenter'
 import { ErrorMiddlewareErrors } from '../../@types/express'
-import loadContentData from '../../testutils/loadContentData'
+import loadContentDataForTest from '../../testutils/loadContentDataForTest'
 
 const firstName = 'Alex' as const
 
@@ -23,7 +23,7 @@ const errorMessage = {
   language: `Enter the language ${firstName} needs an interpreter for`,
 } as const
 
-const content = loadContentData('/referral/task-list/needs-an-interpreter')
+const content = loadContentDataForTest('/referral/task-list/needs-an-interpreter')
 
 describe('NeedsAnInterpreterPresenter', () => {
   describe('buildViewModel', () => {

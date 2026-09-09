@@ -46,21 +46,19 @@ export default class WithdrawalReasonPresenter extends PresenterBase<
       radios: {
         name: 'withdrawalReason',
         idPrefix: groupIndex === 0 ? 'withdrawalReason' : `withdrawalReason-${groupIndex}`,
-        items: group.reasons.map(
-          (reason): GovukFrontendRadiosItemWithConditional => ({
-            value: reason.value,
-            text: reason.text,
-            checked: this.formData?.withdrawalReason === reason.value,
-            conditional: {
-              html: this.buildAdditionalInformationTextarea(
-                content,
-                reason.value,
-                this.formData?.withdrawalReason === reason.value,
-                this.validationErrors?.messages[additionalInformationField(reason.value)],
-              ),
-            },
-          }),
-        ),
+        items: group.reasons.map((reason): GovukFrontendRadiosItemWithConditional => ({
+          value: reason.value,
+          text: reason.text,
+          checked: this.formData?.withdrawalReason === reason.value,
+          conditional: {
+            html: this.buildAdditionalInformationTextarea(
+              content,
+              reason.value,
+              this.formData?.withdrawalReason === reason.value,
+              this.validationErrors?.messages[additionalInformationField(reason.value)],
+            ),
+          },
+        })),
       },
     }))
   }
