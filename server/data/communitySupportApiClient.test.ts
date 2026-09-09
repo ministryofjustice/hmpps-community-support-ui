@@ -16,6 +16,8 @@ import type {
   AreaConfirmationBffResponseDto,
   CommunityServiceProviderRequest,
   CommunityServiceProviderBffResponseDto,
+  OffenceSentenceInfoBffResponseDto,
+  OffenceSentenceRequest,
 } from '@community-support-api'
 import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import { AgentConfig, ApiConfig } from '@ministryofjustice/hmpps-rest-client'
@@ -24,6 +26,8 @@ import CommunitySupportApiClient from './communitySupportApiClient'
 import ReferralProgressFactory from '../testutils/factories/ReferralProgress'
 import ReferralInformationFactory from '../testutils/factories/ReferralInformation'
 import IcsFeedbackResponseFactory from '../testutils/factories/IcsFeedbackSubmissionResponse'
+
+const referralId = '11111111-1111-1111-1111-111111111111'
 
 describe('CommunitySupportApiClient tests', () => {
   let communitySupportApiClient: CommunitySupportApiClient
@@ -436,6 +440,63 @@ describe('CommunitySupportApiClient tests', () => {
       const result = await communitySupportApiClient.saveCommunityServiceProvider('referral-id-123', request, 'user1')
 
       expect(result).toEqual(response)
+    })
+  })
+
+  describe('getOffenceSentencePage tests', () => {
+    it('should return offence sentence page data on a 200 response', () => {
+      const response: OffenceSentenceInfoBffResponseDto = {
+        firstName: 'Alex',
+        lastName: 'Smith',
+        crn: 'X123456',
+        dateOfBirth: '20 April 1984 (42 years old)',
+        offenceSentenceInfo: {
+          offence: 'Robbery',
+          sentenceEndDate: '2026-06-01',
+          hasLicenceConditionsOrZones: true,
+          licenceConditionsOrZonesDetails: 'No contact with victim',
+        },
+      }
+
+      nock('http://localhost:8080', {
+        reqheaders: { authorization: 'Bearer dummy-token' },
+      })
+        .get(`/bff/draft-referral/${referralId}/offence-sentence`)
+        .reply(200, response)
+
+      const result = communitySupportApiClient.getOffenceSentencePage(referralId, 'user1')
+
+      expect(result).resolves.toEqual(response)
+    })
+  })
+
+  describe('updateOffenceSentencePage tests', () => {
+    it('should update offence sentence data on a 200 response', () => {
+      const request: OffenceSentenceRequest = {
+        hasLicenceConditionsOrZones: true,
+        licenceConditionsOrZonesDetails: 'No contact with victim',
+      }
+      const response: OffenceSentenceInfoBffResponseDto = {
+        firstName: 'Alex',
+        lastName: 'Smith',
+        crn: 'X123456',
+        dateOfBirth: '20 April 1984 (42 years old)',
+        offenceSentenceInfo: {
+          offence: 'Robbery',
+          hasLicenceConditionsOrZones: true,
+          licenceConditionsOrZonesDetails: 'No contact with victim',
+        },
+      }
+
+      nock('http://localhost:8080', {
+        reqheaders: { authorization: 'Bearer dummy-token' },
+      })
+        .patch(`/draft-referral/${referralId}/offence-sentence`, request)
+        .reply(200, response)
+
+      const result = communitySupportApiClient.updateOffenceSentencePage(referralId, request, 'user1')
+
+      expect(result).resolves.toEqual(response)
     })
   })
 })

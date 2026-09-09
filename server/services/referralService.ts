@@ -17,6 +17,8 @@ import {
   ServiceEndDatePageDto,
   ServiceDaysPageDto,
   AdditionalSupportNeedsRequest,
+  OffenceSentenceRequest,
+  OffenceSentenceInfoBffResponseDto,
   type ProbationPractitionerDetails,
   type UpdateProbationPractitionerDetailsRequest,
   CheckDraftReferralDetailsDto,
@@ -127,6 +129,18 @@ export default class ReferralService {
 
   updateServiceDaysPage(referralId: string, data: ServiceDaysPageDto, username: string): Promise<ServiceDaysPageDto> {
     return this.communitySupportApiClient.updateServiceDaysPage(referralId, data, username)
+  }
+
+  getOffenceSentencePage(referralId: string, username: string): Promise<OffenceSentenceInfoBffResponseDto> {
+    return this.communitySupportApiClient.getOffenceSentencePage(referralId, username)
+  }
+
+  updateOffenceSentencePage(
+    referralId: string,
+    data: OffenceSentenceRequest,
+    username: string,
+  ): Promise<OffenceSentenceInfoBffResponseDto> {
+    return this.communitySupportApiClient.updateOffenceSentencePage(referralId, data, username)
   }
 
   updateServiceEndDatePage(
