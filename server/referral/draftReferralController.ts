@@ -1,5 +1,9 @@
 import { Request, Response } from 'express'
-import { AdditionalSupportNeedsRequest, ServiceEndDatePageDto } from '@community-support-api'
+import {
+  AdditionalInformationForTheDeliveryPartner,
+  AdditionalSupportNeedsRequest,
+  ServiceEndDatePageDto,
+} from '@community-support-api'
 import ReferralService from '../services/referralService'
 import AdditionalSuportNeedsPresenter from './additionalSupportNeeds/AdditionalSupportNeedsPresenter'
 import { formatDynamicErrorMessages, validateRequestBodyAgainstSchema } from '../validation/validationUtils'
@@ -312,7 +316,12 @@ export default class DraftReferralController {
       return res.redirect(findAPersonURL)
     }
     try {
-      const pageData = await this.referralService.getAdditionalInformationForDeliveryPartner(draftReferralId, username)
+      const postFormDataRaw = req.flash('value').at(0)
+      const formData = JSON.parse(postFormDataRaw || '{}')
+      const bffData = await this.referralService.getAdditionalInformationForDeliveryPartner(draftReferralId, username)
+      const pageData: AdditionalInformationForTheDeliveryPartner = formData.details
+        ? { ...bffData, details: { selected: 'Yes', value: formData.details } }
+        : bffData
       const validationErrors: ErrorMiddlewareErrors = formatDynamicErrorMessages(
         res.locals.errors,
         '{{ firstname }}',
