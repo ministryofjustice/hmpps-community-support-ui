@@ -38,6 +38,8 @@ import WhyDidSessionNotHappenPresenter from './why-did-session-not-happen/WhyDid
 import { WhyDidSessionNotHappenFormDataSchema } from '../validation/WhyDidSessionNotHappenFormData'
 import { IcsFeedbackFormSchema } from '../validation/IcsFeedbackHowSessionTookPlaceFormData'
 import buildScheduleIcsAppointmentFormData from '../validation/ScheduleIcsAppointmentFormData'
+import NextStepsPresenter from './next-steps/NextStepsPresenter'
+import { NextStepsFormDataSchema } from '../validation/NextStepsFormData'
 import ChangeIcsDetailsReasonPresenter from './change-ics-details-reason/ChangeIcsDetailsReasonPresenter'
 import { ChangeIcsDetailsReasonSchema } from '../validation/ChangeIcsDetailsReasonFormData'
 import { saveFormToSession, ScheduledIcsFormDataResolver } from './schedule-ics/ScheduledIcsFormDataResolver'
@@ -171,7 +173,8 @@ const getPendingFormData = (req: Request) => {
   }
   const { icsFeedbackSubmission } = req.session
   const storedHowSessionTookPlace = icsFeedbackSubmission?.record?.howSessionTookPlace as
-    HowSessionTookPlace | undefined
+    | HowSessionTookPlace
+    | undefined
 
   return loadIcsFeedbackFromSession(
     storedHowSessionTookPlace ? { howSessionTookPlace: storedHowSessionTookPlace } : undefined,
@@ -609,6 +612,69 @@ class AppointmentController {
 
     return validateRequestBodyAgainstSchema(IssuesOrConcernsFormDataSchema, req, res, () => {
       res.redirect(`/ics-feedback/${caseRefId}/next-steps`)
+    })
+  }
+
+  async getNextSteps(req: Request, res: Response): Promise<void> {
+    const caseRefId = req.params.caseRefId as string
+    const { username } = res.locals.user
+    const icsAppointment = await this.appointmentService.getICS(caseRefId, username)
+
+    if (!icsAppointment) {
+      logger.info(`Appointment for Case '${caseRefId}' not found for user '${username}'`)
+      req.flash('error', 'Appointment not found.')
+      res.redirect(`/ics-feedback/${caseRefId}/next-steps`)
+      return Promise.resolve()
+    }
+
+    const { icsFeedbackSubmission } = req.session
+    res.locals.errors = formatDynamicErrorMessages(
+      res.locals.errors,
+      '{{ firstname }}',
+      icsAppointment.referralFirstName,
+    )
+
+    const presenter = new NextStepsPresenter(
+      caseRefId.toString(),
+      icsAppointment.referralFirstName,
+      icsFeedbackSubmission?.nextSteps,
+      res.locals.errors,
+    )
+    presenter.renderPage(res)
+
+    return Promise.resolve()
+  }
+
+  async submitNextSteps(req: Request, res: Response): Promise<void> {
+    const caseRefId = req.params.caseRefId as string
+    const { username } = res.locals.user
+    const icsAppointment = await this.appointmentService.getICS(caseRefId, username)
+
+    if (!icsAppointment) {
+      logger.info(`Appointment for Case '${caseRefId}' not found for user '${username}'`)
+      req.flash('error', 'Appointment not found.')
+      res.redirect(`/ics-feedback/${caseRefId}/next-steps`)
+      return Promise.resolve()
+    }
+
+    const { icsFeedbackSubmission } = req.session
+    if (!icsFeedbackSubmission?.record) {
+      logger.warn(`Appointment for Case '${caseRefId}' not found in session`)
+      res.redirect(`/progress/${caseRefId}`)
+      return Promise.resolve()
+    }
+
+    req.session.icsFeedbackSubmission = {
+      ...icsFeedbackSubmission,
+      nextSteps: {
+        plannedForNextSession: req.body.plannedForNextSession,
+        actionsBeforeNextSession: req.body.actionsBeforeNextSession,
+      },
+      caseReferenceId: caseRefId,
+    } as IcsFeedbackSubmission & { caseReferenceId: string }
+
+    return validateRequestBodyAgainstSchema(NextStepsFormDataSchema, req, res, () => {
+      res.redirect(`/ics-feedback/${caseRefId}/check-answers`)
     })
   }
 

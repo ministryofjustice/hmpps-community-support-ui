@@ -130,6 +130,10 @@ export default function routes({
     appointmentController.submitIssuesOrConcerns(req, res),
   )
 
+  get('/ics-feedback/:caseRefId/next-steps', (req, res) => appointmentController.getNextSteps(req, res))
+
+  post('/ics-feedback/:caseRefId/next-steps', (req, res) => appointmentController.submitNextSteps(req, res))
+
   get('/ics-feedback/:caseRefId/session-details', (req, res) => appointmentController.sessionDetails(req, res))
 
   post('/ics-feedback/:caseRefId/session-details', (req, res) => appointmentController.recordSessionDetails(req, res))
