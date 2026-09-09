@@ -54,7 +54,15 @@ export const rawFormDataBuilder = (firstName: string) =>
   })
 
 export type AdditionalNeedsType =
-  'Physical' | 'Mental' | 'Neurodiversity' | 'Location' | 'Caring' | 'Employment' | 'Diversity' | 'Anything' | 'none'
+  | 'Physical'
+  | 'Mental'
+  | 'Neurodiversity'
+  | 'Location'
+  | 'Caring'
+  | 'Employment'
+  | 'Diversity'
+  | 'Anything'
+  | 'none'
 
 export interface AdditionalSuportNeedsFormData {
   AdditionalNeeds: AdditionalNeedsType[]

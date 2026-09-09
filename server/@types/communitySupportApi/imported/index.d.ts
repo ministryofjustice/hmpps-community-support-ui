@@ -1414,13 +1414,19 @@ export interface components {
       refereeName: components['schemas']['RefereeNameDto']
       physicalHealth: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       mentalEmotionalHealth:
-        components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
+        | components['schemas']['No']
+        | components['schemas']['Unanswered']
+        | components['schemas']['Yes']
       neurodiversity: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       locationTravel: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       caringResponsibilities:
-        components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
+        | components['schemas']['No']
+        | components['schemas']['Unanswered']
+        | components['schemas']['Yes']
       employmentResponsibilities:
-        components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
+        | components['schemas']['No']
+        | components['schemas']['Unanswered']
+        | components['schemas']['Yes']
       diversity: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       anythingElse: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       needsAdditionalSupport?: boolean | null
@@ -2587,7 +2593,9 @@ export interface operations {
     requestBody: {
       content: {
         'application/json':
-          components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
+          | components['schemas']['No']
+          | components['schemas']['Unanswered']
+          | components['schemas']['Yes']
       }
     }
     responses: {

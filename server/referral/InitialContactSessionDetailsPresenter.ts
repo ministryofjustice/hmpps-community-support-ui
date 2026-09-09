@@ -61,7 +61,11 @@ const locationFields: string[] = [
 ] as const
 
 type SessionType =
-  'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION' | 'IN_PERSON_PRISON_ESTABLISMENT' | 'PHONE' | 'VIDEO'
+  | 'IN_PERSON_PROBATION_OFFICE'
+  | 'IN_PERSON_OTHER_LOCATION'
+  | 'IN_PERSON_PRISON_ESTABLISMENT'
+  | 'PHONE'
+  | 'VIDEO'
 
 const showSessionType = (sessionType: SessionType): string => {
   switch (sessionType) {
