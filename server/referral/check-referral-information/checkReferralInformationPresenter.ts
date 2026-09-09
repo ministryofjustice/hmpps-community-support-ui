@@ -38,9 +38,7 @@ const formatPersonalCircumstances = (
       const matches = list.filter(circumstance => circumstance.description === description)
       if (matches.length === 0) return `<div>${ViewUtils.escape(description)}: ${notAvailable}</div>`
 
-      const values = matches
-        .map(m => (m.subDescription ? ViewUtils.escape(m.subDescription) : ''))
-        .filter(Boolean)
+      const values = matches.map(m => (m.subDescription ? ViewUtils.escape(m.subDescription) : '')).filter(Boolean)
 
       if (values.length === 0) return `<div>${ViewUtils.escape(description)}: ${notAvailable}</div>`
 
