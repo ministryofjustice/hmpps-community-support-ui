@@ -516,7 +516,7 @@ export default class ReferralController {
           const ppDetailsToSend: UpdateProbationPractitionerDetailsRequest = {
             ...probationPractitionerDetails,
             ppDetailsFoundAndCorrect: true,
-            pdu: probationPractitionerDetails?.pdu?.name ?? null,
+            pduId: probationPractitionerDetails?.pdu?.id ?? null,
           }
           await this.referralService.submitPPDetails(draftReferralKey, username, ppDetailsToSend)
           return res.redirect('/referral/task-list')

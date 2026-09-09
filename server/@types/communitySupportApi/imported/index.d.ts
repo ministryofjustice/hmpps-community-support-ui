@@ -1266,7 +1266,7 @@ export interface components {
       jobRole?: string | null
       emailAddress?: string | null
       /** Format: uuid */
-      pdu?: string | null
+      pduId?: string | null
       probationOffice?: string | null
       teamPhoneNumber?: string | null
       phoneNumber?: string | null
