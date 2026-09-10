@@ -605,7 +605,7 @@ class AppointmentController {
       caseReferenceId: caseRefId,
     } as IcsFeedbackSubmission & { caseReferenceId: string }
 
-    return validateRequestBodyAgainstSchema(IssuesOrConcernsFormDataSchema, req, res, () => {
+    validateRequestBodyAgainstSchema(IssuesOrConcernsFormDataSchema, req, res, () => {
       res.redirect(`/ics-feedback/${caseRefId}/next-steps`)
     })
   }
@@ -666,7 +666,7 @@ class AppointmentController {
       caseReferenceId: caseRefId,
     } as IcsFeedbackSubmission & { caseReferenceId: string }
 
-    return validateRequestBodyAgainstSchema(NextStepsFormDataSchema, req, res, () => {
+    validateRequestBodyAgainstSchema(NextStepsFormDataSchema, req, res, () => {
       res.redirect(`/ics-feedback/${caseRefId}/check-answers`)
     })
   }
