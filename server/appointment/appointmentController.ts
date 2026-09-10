@@ -496,7 +496,7 @@ class AppointmentController {
     if (!icsAppointment) {
       req.flash('error', 'Appointment not found.')
       res.redirect(`/ics-feedback/${caseRefId}/session-feedback`)
-      return Promise.resolve()
+      return
     }
 
     const { icsFeedbackSubmission } = req.session
@@ -512,8 +512,6 @@ class AppointmentController {
       icsAppointment.referralFirstName,
     )
     presenter.renderPage(res)
-
-    return Promise.resolve()
   }
 
   async submitSessionFeedback(req: Request, res: Response): Promise<void> {
@@ -561,7 +559,7 @@ class AppointmentController {
       logger.info(`Appointment for Case '${caseRefId}' not found for user '${username}'`)
       req.flash('error', 'Appointment not found.')
       res.redirect(`/ics-feedback/${caseRefId}/issues-or-concerns`)
-      return Promise.resolve()
+      return
     }
 
     const { icsFeedbackSubmission } = req.session
@@ -578,8 +576,6 @@ class AppointmentController {
       res.locals.errors,
     )
     presenter.renderPage(res)
-
-    return Promise.resolve()
   }
 
   async submitIssuesOrConcerns(req: Request, res: Response): Promise<void> {
@@ -591,14 +587,14 @@ class AppointmentController {
       logger.info(`Appointment for Case '${caseRefId}' not found for user '${username}'`)
       req.flash('error', 'Appointment not found.')
       res.redirect(`/ics-feedback/${caseRefId}/issues-or-concerns`)
-      return Promise.resolve()
+      return
     }
 
     const { icsFeedbackSubmission } = req.session
     if (!icsFeedbackSubmission?.record) {
       logger.warn(`Appointment for Case '${caseRefId}' not found in session`)
       res.redirect(`/progress/${caseRefId}`)
-      return Promise.resolve()
+      return
     }
 
     req.session.icsFeedbackSubmission = {
@@ -623,7 +619,7 @@ class AppointmentController {
       logger.info(`Appointment for Case '${caseRefId}' not found for user '${username}'`)
       req.flash('error', 'Appointment not found.')
       res.redirect(`/ics-feedback/${caseRefId}/next-steps`)
-      return Promise.resolve()
+      return
     }
 
     const { icsFeedbackSubmission } = req.session
@@ -640,8 +636,6 @@ class AppointmentController {
       res.locals.errors,
     )
     presenter.renderPage(res)
-
-    return Promise.resolve()
   }
 
   async submitNextSteps(req: Request, res: Response): Promise<void> {
@@ -653,14 +647,14 @@ class AppointmentController {
       logger.info(`Appointment for Case '${caseRefId}' not found for user '${username}'`)
       req.flash('error', 'Appointment not found.')
       res.redirect(`/ics-feedback/${caseRefId}/next-steps`)
-      return Promise.resolve()
+      return
     }
 
     const { icsFeedbackSubmission } = req.session
     if (!icsFeedbackSubmission?.record) {
       logger.warn(`Appointment for Case '${caseRefId}' not found in session`)
       res.redirect(`/progress/${caseRefId}`)
-      return Promise.resolve()
+      return
     }
 
     req.session.icsFeedbackSubmission = {
