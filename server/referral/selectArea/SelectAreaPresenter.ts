@@ -9,7 +9,7 @@ import {
 import PresenterBase from '../../presenter/presenterBase'
 import { ErrorMiddlewareErrors } from '../../@types/express'
 import { SelectAreaContent, SelectAreaViewModel } from './SelectAreaViewModel'
-import { formatFullName } from '../../utils/presenterFormatters'
+import formatFullName from '../../utils/presenterFormatters'
 
 export default class SelectAreaPresenter extends PresenterBase<SelectAreaViewModel, SelectAreaContent> {
   buildViewModel(res: Response) {

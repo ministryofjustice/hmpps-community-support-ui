@@ -1,4 +1,4 @@
-import { convertToTitleCase, initialiseName } from './utils'
+import { convertToTitleCase, initialiseName, trimOrDefault } from './utils'
 
 describe('convert to title case', () => {
   it.each([
@@ -26,5 +26,15 @@ describe('initialise name', () => {
     ['Double barrelled', 'Robert-John Smith-Jones-Wilson', 'R. Smith-Jones-Wilson'],
   ])('%s initialiseName(%s, %s)', (_: string, a: string, expected: string) => {
     expect(initialiseName(a)).toEqual(expected)
+  })
+})
+
+describe('trimOrDefault', () => {
+  it('returns a trimmed value when present', () => {
+    expect(trimOrDefault('  hello  ', 'Not available')).toBe('hello')
+  })
+
+  it('returns default when value is empty', () => {
+    expect(trimOrDefault('   ', 'Not available')).toBe('Not available')
   })
 })

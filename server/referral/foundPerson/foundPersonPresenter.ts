@@ -6,7 +6,7 @@ import { FoundPersonContent, FoundPersonViewModel } from './foundPersonViewModel
 import ViewUtils from '../../utils/viewUtils'
 import { resolveIdentifierRow } from '../personIdentifierUtils'
 import { components } from '../../@types/communitySupportApi/imported'
-import { formatFullName } from '../../utils/presenterFormatters'
+import formatFullName from '../../utils/presenterFormatters'
 
 const resolveName = (person: Person): string => formatFullName(person.firstName, person.lastName, person.middleNames)
 

@@ -3,7 +3,7 @@ import { GovukFrontendSummaryList } from '@govuk-frontend'
 import { Response } from 'express'
 import { format, differenceInYears } from 'date-fns'
 import PresenterBase from '../../presenter/presenterBase'
-import { formatFullName } from '../../utils/presenterFormatters'
+import formatFullName from '../../utils/presenterFormatters'
 import ViewUtils, { govFrontendSummaryListRow } from '../../utils/viewUtils'
 import { components } from '../../@types/communitySupportApi/imported'
 import {

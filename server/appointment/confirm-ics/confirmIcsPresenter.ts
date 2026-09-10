@@ -6,7 +6,8 @@ import { ConfirmIcsContent, ConfirmIcsViewModel } from './confirmIcsViewModel'
 import { buildIcsSummaryRows, formatAddress } from '../icsDetailsSummaryBuilder'
 import { getChangeRequesterLabel } from '../change-ics-details-reason/ChangeAppointmentDetails'
 import { formatIsoDateOrNull } from '../../utils/dateFormat'
-import { formatFullName, formatTime12Hr } from '../../utils/presenterFormatters'
+import { formatTime12Hr } from '../../utils/timeFormat'
+import formatFullName from '../../utils/presenterFormatters'
 
 export type AdditionalInformation = {
   firstName: string

@@ -7,7 +7,7 @@ import { GovukFrontendCheckboxesWithConditional, WithConditional } from '../../@
 import { buildTextarea } from '../../utils/utils'
 import { ErrorMiddlewareErrors } from '../../@types/express'
 import { checkboxItemNames } from './buildPersonNeedsRequest'
-import { formatFullName } from '../../utils/presenterFormatters'
+import formatFullName from '../../utils/presenterFormatters'
 
 export type personNeedsFormData = Omit<ReferralCriminogenicNeedsDto, 'id' | 'updatedAt' | 'updatedBy'>
 

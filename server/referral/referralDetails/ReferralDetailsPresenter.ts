@@ -13,8 +13,8 @@ import {
   ReferralDetailsCard,
   ReferralDetailsContent,
 } from './ReferralDetailsViewModel'
+import { trimOrDefault } from '../../utils/utils'
 import { govFrontendSummaryListRow, createMailtoLink } from '../../utils/viewUtils'
-import { trimOrDefault } from '../../utils/presenterFormatters'
 
 export interface ReferralDetailsViewModel {
   name: string

@@ -9,7 +9,7 @@ import { booleanToTriState, buildTextarea, not, yesNoSelectionToTriState } from 
 import { formatIsoDateOrNull } from '../../utils/dateFormat'
 import { ErrorMiddlewareErrors } from '../../@types/express'
 import type { OffenceSentenceFormInput } from '../../validation/OffenceSentenceFormData'
-import { formatFullName } from '../../utils/presenterFormatters'
+import formatFullName from '../../utils/presenterFormatters'
 
 const buildConditional = (
   content: OffenceSentencePageContent,

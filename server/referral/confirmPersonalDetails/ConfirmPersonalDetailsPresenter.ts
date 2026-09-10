@@ -11,8 +11,9 @@ import {
   EqualityMonitoringCard,
   PersonalDetailsCard,
 } from './ConfirmPersonalDetailsViewModel'
+import { trimOrDefault } from '../../utils/utils'
 import { govFrontendSummaryListRow } from '../../utils/viewUtils'
-import { formatFullName, trimOrDefault } from '../../utils/presenterFormatters'
+import formatFullName from '../../utils/presenterFormatters'
 
 type ContactAddress = ConfirmPersonDetailsBffDto['contactDetails']['address']
 

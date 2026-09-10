@@ -2,7 +2,8 @@ import { Response } from 'express'
 import { Person, AreaConfirmationBffResponseDto } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
 import { ConfirmAnAreaForReferralContent, ConfirmAnAreaForReferralViewModel } from './ConfirmAnAreaForReferralViewModel'
-import { formatFullName, trimOrDefault } from '../../utils/presenterFormatters'
+import { trimOrDefault } from '../../utils/utils'
+import formatFullName from '../../utils/presenterFormatters'
 
 export default class ConfirmAnAreaForReferralPresenter extends PresenterBase<
   ConfirmAnAreaForReferralViewModel,

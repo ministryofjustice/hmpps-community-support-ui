@@ -4,7 +4,8 @@ import { CommunitySupportRiskDto, ArnsRiskDto } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
 import dateFormat from '../../utils/dateFormat'
 import { RiskSummaryContent, RiskSummaryRow, RiskSummaryRowCard, RiskSummaryViewModel } from './RiskSummaryViewModel'
-import { formatFullName, trimOrDefault } from '../../utils/presenterFormatters'
+import { trimOrDefault } from '../../utils/utils'
+import formatFullName from '../../utils/presenterFormatters'
 
 export default class RiskSummaryPresenter extends PresenterBase<RiskSummaryViewModel, RiskSummaryContent> {
   constructor(

@@ -9,7 +9,8 @@ import {
   EditRiskSummaryFieldContent,
   EditRiskSummaryViewModel,
 } from './EditRiskSummaryViewModel'
-import { formatFullName, trimOrDefault } from '../../utils/presenterFormatters'
+import { trimOrDefault } from '../../utils/utils'
+import formatFullName from '../../utils/presenterFormatters'
 
 export default class EditRiskSummaryPresenter extends PresenterBase<EditRiskSummaryViewModel, EditRiskSummaryContent> {
   constructor(private readonly risk: CommunitySupportRiskDto) {
