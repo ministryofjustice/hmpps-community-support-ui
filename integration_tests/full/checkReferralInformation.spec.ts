@@ -59,17 +59,31 @@ test.describe('Check Referral Information Page', () => {
 
     const checkReferralInformationPage = await CheckReferralInformationPage.verifyOnPage(page)
 
-    expect(checkReferralInformationPage.personalDetailsSummary.rows).toHaveLength(4)
+    expect(checkReferralInformationPage.personalDetailsSummary.rows).toHaveLength(7)
     await expect(checkReferralInformationPage.personalDetailsSummary.rows[0].key).toHaveText('Name')
     await expect(checkReferralInformationPage.personalDetailsSummary.rows[0].value).toHaveText('Alex River')
     await expect(checkReferralInformationPage.personalDetailsSummary.rows[1].key).toHaveText('CRN')
     await expect(checkReferralInformationPage.personalDetailsSummary.rows[1].value).toHaveText('A123456')
-    await expect(checkReferralInformationPage.personalDetailsSummary.rows[2].key).toHaveText('Date of birth')
-    await expect(checkReferralInformationPage.personalDetailsSummary.rows[2].value).toHaveText(
+    await expect(checkReferralInformationPage.personalDetailsSummary.rows[2].key).toHaveText('Current location')
+    await expect(checkReferralInformationPage.personalDetailsSummary.rows[2].value).toHaveText('Not available')
+    await expect(checkReferralInformationPage.personalDetailsSummary.rows[3].key).toHaveText('Date of birth')
+    await expect(checkReferralInformationPage.personalDetailsSummary.rows[3].value).toHaveText(
       '20 Feb 1975 (51 years old)',
     )
-    await expect(checkReferralInformationPage.personalDetailsSummary.rows[3].key).toHaveText('Sex')
-    await expect(checkReferralInformationPage.personalDetailsSummary.rows[3].value).toHaveText('Male')
+    await expect(checkReferralInformationPage.personalDetailsSummary.rows[4].key).toHaveText('Preferred language')
+    await expect(checkReferralInformationPage.personalDetailsSummary.rows[4].value).toHaveText('English')
+    await expect(checkReferralInformationPage.personalDetailsSummary.rows[5].key).toContainText('Current circumstances')
+    await expect(checkReferralInformationPage.personalDetailsSummary.rows[5].value).toContainText(
+      'Employment: Full-time employed, Retired (not in receipt of a pension)',
+    )
+    await expect(checkReferralInformationPage.personalDetailsSummary.rows[5].value).toContainText(
+      'Relationship: Not available',
+    )
+    await expect(checkReferralInformationPage.personalDetailsSummary.rows[5].value).toContainText(
+      'Dependents: Not available',
+    )
+    await expect(checkReferralInformationPage.personalDetailsSummary.rows[6].key).toContainText('Disabilities')
+    await expect(checkReferralInformationPage.personalDetailsSummary.rows[6].value).toHaveText('Dyslexia')
   })
 
   test('should display prison number and DOB on check referral information when searched by prison number', async ({
@@ -89,19 +103,33 @@ test.describe('Check Referral Information Page', () => {
 
     const checkReferralInformationPage = await CheckReferralInformationPage.verifyOnPage(page)
 
-    expect(checkReferralInformationPage.personalDetailsSummary.rows).toHaveLength(4)
+    expect(checkReferralInformationPage.personalDetailsSummary.rows).toHaveLength(7)
     await expect(checkReferralInformationPage.personalDetailsSummary.rows[0].key).toHaveText('Name')
     await expect(checkReferralInformationPage.personalDetailsSummary.rows[0].value).toHaveText('Alex River')
     await expect(checkReferralInformationPage.personalDetailsSummary.rows[1].key).toHaveText('Prison number')
     await expect(checkReferralInformationPage.personalDetailsSummary.rows[1].value).toHaveText(
       'A1234BC, B1234CD, C1234DE',
     )
-    await expect(checkReferralInformationPage.personalDetailsSummary.rows[2].key).toHaveText('Date of birth')
-    await expect(checkReferralInformationPage.personalDetailsSummary.rows[2].value).toHaveText(
+    await expect(checkReferralInformationPage.personalDetailsSummary.rows[2].key).toHaveText('Current location')
+    await expect(checkReferralInformationPage.personalDetailsSummary.rows[2].value).toHaveText('Not available')
+    await expect(checkReferralInformationPage.personalDetailsSummary.rows[3].key).toHaveText('Date of birth')
+    await expect(checkReferralInformationPage.personalDetailsSummary.rows[3].value).toHaveText(
       '20 Feb 1975 (51 years old)',
     )
-    await expect(checkReferralInformationPage.personalDetailsSummary.rows[3].key).toHaveText('Sex')
-    await expect(checkReferralInformationPage.personalDetailsSummary.rows[3].value).toHaveText('Male')
+    await expect(checkReferralInformationPage.personalDetailsSummary.rows[4].key).toHaveText('Preferred language')
+    await expect(checkReferralInformationPage.personalDetailsSummary.rows[4].value).toHaveText('English')
+    await expect(checkReferralInformationPage.personalDetailsSummary.rows[5].key).toContainText('Current circumstances')
+    await expect(checkReferralInformationPage.personalDetailsSummary.rows[5].value).toContainText(
+      'Employment: Full-time employed, Retired (not in receipt of a pension)',
+    )
+    await expect(checkReferralInformationPage.personalDetailsSummary.rows[5].value).toContainText(
+      'Relationship: Not available',
+    )
+    await expect(checkReferralInformationPage.personalDetailsSummary.rows[5].value).toContainText(
+      'Dependents: Not available',
+    )
+    await expect(checkReferralInformationPage.personalDetailsSummary.rows[6].key).toContainText('Disabilities')
+    await expect(checkReferralInformationPage.personalDetailsSummary.rows[6].value).toHaveText('Dyslexia')
   })
 
   test('should link back to task list from check referral information page', async ({ page }) => {
