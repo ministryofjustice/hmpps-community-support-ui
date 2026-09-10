@@ -30,15 +30,6 @@ describe('ActionPlanPresenter', () => {
       {
         key: { text: 'Needs' },
         value: { html: '<strong class="govuk-tag govuk-tag--blue">In progress</strong>' },
-        actions: {
-          items: [
-            {
-              href: '/referral/AB1234CD/action-plan/needs',
-              text: 'Complete',
-              visuallyHiddenText: 'Needs',
-            },
-          ],
-        },
       },
     ])
   })
