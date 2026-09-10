@@ -17,6 +17,8 @@ describe('DraftReferralController', () => {
     referralService = {
       getCheckDraftReferralDetails: jest.fn(),
       submitReferralById: jest.fn(),
+      updateServiceDaysPage: jest.fn(),
+      updateOffenceSentencePage: jest.fn(),
     } as unknown as jest.Mocked<ReferralService>
     draftReferralController = new DraftReferralController(referralService)
 
@@ -24,7 +26,9 @@ describe('DraftReferralController', () => {
 
     req = {
       params: { referralId: 'referral123' },
+      body: {},
       flash: jest.fn(),
+      url: '/referral/task-list/service-days',
       session: {},
     } as unknown as Request
     res = {
@@ -71,6 +75,43 @@ describe('DraftReferralController', () => {
       await draftReferralController.submitReferralInformation(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith('/referral/referral123/confirmation')
+    })
+  })
+
+  describe('updateServiceDaysPage', () => {
+    it('should redirect to offence sentence after saving service days', async () => {
+      req.body = { serviceDays: '12' }
+      req.session.draftReferralId = 'referral123'
+      referralService.updateServiceDaysPage.mockResolvedValue({ service_days: 12 })
+
+      await draftReferralController.updateServiceDaysPage(req, res)
+
+      expect(referralService.updateServiceDaysPage).toHaveBeenCalledWith('referral123', { service_days: 12 }, 'user1')
+      expect(res.redirect).toHaveBeenCalledWith('/referral/task-list/offence-sentence')
+    })
+  })
+
+  describe('updateOffenceSentencePage', () => {
+    it('should redirect to additional information after saving offence sentence', async () => {
+      req.body = {
+        hasLicenceConditionsOrZones: 'Yes',
+        licenceConditionsOrZonesDetails: 'No contact with victim',
+      }
+      req.session.draftReferralId = 'referral123'
+      req.url = '/referral/task-list/offence-sentence'
+      referralService.updateOffenceSentencePage.mockResolvedValue({} as never)
+
+      await draftReferralController.updateOffenceSentencePage(req, res)
+
+      expect(referralService.updateOffenceSentencePage).toHaveBeenCalledWith(
+        'referral123',
+        {
+          hasLicenceConditionsOrZones: true,
+          licenceConditionsOrZonesDetails: 'No contact with victim',
+        },
+        'user1',
+      )
+      expect(res.redirect).toHaveBeenCalledWith('/referral/task-list/additional-information-for-the-delivery-partner')
     })
   })
 })

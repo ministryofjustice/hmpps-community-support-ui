@@ -1,4 +1,5 @@
 import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendTextarea } from '@govuk-frontend'
+import { GlobalContent } from '../../../assets/content/GlobalContent'
 
 export interface IssuesOrConcernsFormData {
   identified?: string
@@ -14,11 +15,4 @@ export type IssuesOrConcernsViewModel = {
   backLink: GovukFrontendBackLink
 }
 
-export type IssuesOrConcernsContent = {
-  pageTitle: string
-  pageHeader: string
-  issuesOrConcernsLabel: string
-  issuesOrConcernsHint: string
-  submitButtonText: string
-  backLinkHref: string
-}
+export type IssuesOrConcernsContent = GlobalContent['/ics-feedback/:id/issues-or-concerns']

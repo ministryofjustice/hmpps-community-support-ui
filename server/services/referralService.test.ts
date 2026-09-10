@@ -6,6 +6,8 @@ import {
   ReferralInformation,
   CommunitySupportRiskInformationDto,
   ActionPlanSummaryDto,
+  OffenceSentenceInfoBffResponseDto,
+  OffenceSentenceRequest,
 } from '@community-support-api'
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
 import ReferralService from './referralService'
@@ -13,6 +15,8 @@ import ReferralProgressFactory from '../testutils/factories/ReferralProgress'
 import ReferralInformationFactory from '../testutils/factories/ReferralInformation'
 
 jest.mock('../data/communitySupportApiClient')
+
+const referralId = '11111111-1111-1111-1111-111111111111'
 
 describe('Referral service tests', () => {
   let communitySupportApiClient: jest.Mocked<CommunitySupportApiClient>
@@ -145,14 +149,63 @@ describe('Referral service tests', () => {
       }
       communitySupportApiClient.saveRiskInformation.mockResolvedValue(riskInformation)
 
-      const result = await referralService.saveRiskInformation('referral-uuid-1', riskInformation, 'user1')
+      const result = await referralService.saveRiskInformation(referralId, riskInformation, 'user1')
 
       expect(result).toBe(riskInformation)
-      expect(communitySupportApiClient.saveRiskInformation).toHaveBeenCalledWith(
-        'referral-uuid-1',
-        riskInformation,
-        'user1',
-      )
+      expect(communitySupportApiClient.saveRiskInformation).toHaveBeenCalledWith(referralId, riskInformation, 'user1')
+    })
+  })
+
+  describe('getOffenceSentencePage', () => {
+    it('should return offence sentence data from API client', async () => {
+      const response: OffenceSentenceInfoBffResponseDto = {
+        firstName: 'Alex',
+        lastName: 'Smith',
+        crn: 'X123456',
+        dateOfBirth: '20 April 1984 (42 years old)',
+        offenceSentenceInfo: {
+          offence: 'Robbery',
+          sentenceEndDate: '2026-06-01',
+        },
+      }
+
+      communitySupportApiClient.getOffenceSentencePage.mockResolvedValue(response)
+
+      const result = await referralService.getOffenceSentencePage(referralId, 'user1')
+
+      expect(result).toStrictEqual(response)
+      expect(result.crn).toBe('X123456')
+      expect(result.dateOfBirth).toBe('20 April 1984 (42 years old)')
+      expect(communitySupportApiClient.getOffenceSentencePage).toHaveBeenCalledWith(referralId, 'user1')
+    })
+  })
+
+  describe('updateOffenceSentencePage', () => {
+    it('should save offence sentence data via the API client', async () => {
+      const request: OffenceSentenceRequest = {
+        hasLicenceConditionsOrZones: true,
+        licenceConditionsOrZonesDetails: 'No contact with victim',
+      }
+      const response: OffenceSentenceInfoBffResponseDto = {
+        firstName: 'Alex',
+        lastName: 'Smith',
+        crn: 'X123456',
+        dateOfBirth: '20 April 1984 (42 years old)',
+        offenceSentenceInfo: {
+          offence: 'Robbery',
+          hasLicenceConditionsOrZones: true,
+          licenceConditionsOrZonesDetails: 'No contact with victim',
+        },
+      }
+
+      communitySupportApiClient.updateOffenceSentencePage.mockResolvedValue(response)
+
+      const result = await referralService.updateOffenceSentencePage(referralId, request, 'user1')
+
+      expect(result).toStrictEqual(response)
+      expect(result.crn).toBe('X123456')
+      expect(result.dateOfBirth).toBe('20 April 1984 (42 years old)')
+      expect(communitySupportApiClient.updateOffenceSentencePage).toHaveBeenCalledWith(referralId, request, 'user1')
     })
   })
 })

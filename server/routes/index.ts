@@ -244,10 +244,11 @@ export default function routes({
 
   post('/referral/task-list/service-days', (req, res) => draftReferralController.updateServiceDaysPage(req, res))
 
-  get('/referral/task-list/check-offence', (_, res) => {
-    // STUB for DAVID, please remove --Hannah
-    res.redirect('/referral/task-list/additional-information-for-the-delivery-partner')
-  })
+  get('/referral/task-list/offence-sentence', (req, res) => draftReferralController.showOffenceSentencePage(req, res))
+
+  post('/referral/task-list/offence-sentence', (req, res) =>
+    draftReferralController.updateOffenceSentencePage(req, res),
+  )
 
   get('/referral/task-list/additional-information-for-the-delivery-partner', (req, res) =>
     draftReferralController.showAdditionalInformationForDeliveryPartner(req, res),

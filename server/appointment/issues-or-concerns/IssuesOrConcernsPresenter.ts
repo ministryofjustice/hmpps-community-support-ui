@@ -37,7 +37,7 @@ export default class IssuesOrConcernsPresenter extends PresenterBase<
       },
       value: this.data?.identified || '',
       attributes: { 'data-testid': 'textarea-input' },
-      errorMessage: this.errors.messages.issuesOrConcerns || '',
+      errorMessage: this.errors?.messages?.issuesOrConcerns || '',
     }
   }
 

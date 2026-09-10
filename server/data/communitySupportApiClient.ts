@@ -41,10 +41,14 @@ import type {
   CheckDraftReferralDetailsDto,
   AdditionalInformationForTheDeliveryPartner,
   Selection,
+  OffenceSentenceRequest,
 } from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
 import { PagedResponse } from '../@types/communitySupportApi/derived'
+import { components } from '../@types/communitySupportApi/imported'
+
+type OffenceSentenceInfoBffResponseDto = components['schemas']['OffenceSentenceInfoBffResponseDto']
 
 export default class CommunitySupportApiClient extends RestClient {
   constructor(authenticationClient: AuthenticationClient, apiConfig: ApiConfig = null) {
@@ -244,6 +248,18 @@ export default class CommunitySupportApiClient extends RestClient {
 
   updateServiceDaysPage(referralId: string, data: ServiceDaysPageDto, username: string): Promise<ServiceDaysPageDto> {
     return this.patch({ path: `/draft-referral/${referralId}/service-days`, data }, asSystem(username))
+  }
+
+  getOffenceSentencePage(referralId: string, username: string): Promise<OffenceSentenceInfoBffResponseDto> {
+    return this.get({ path: `/bff/draft-referral/${referralId}/offence-sentence` }, asSystem(username))
+  }
+
+  updateOffenceSentencePage(
+    referralId: string,
+    data: OffenceSentenceRequest,
+    username: string,
+  ): Promise<OffenceSentenceInfoBffResponseDto> {
+    return this.patch({ path: `/draft-referral/${referralId}/offence-sentence`, data }, asSystem(username))
   }
 
   submitAdditionalSupportNeeds(data: AdditionalSupportNeedsRequest, referralId: string, username: string) {

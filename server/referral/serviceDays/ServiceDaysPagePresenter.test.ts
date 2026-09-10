@@ -12,7 +12,8 @@ const pageContent = {
     'Enter the maximum number of days you want to use for this service. Any unused days will be given back. For community orders or suspended sentences, consider how many RAR days to allocate.',
   bodyText2: 'Sessions delivered in the community are enforceable.',
   continueButton: 'Save and continue',
-}
+  backLink: '/referral/task-list/service-end-date',
+} as const
 const errorMessage = {
   nothingEntered: 'Enter the number of days you will use for this service',
 } as const
@@ -36,7 +37,7 @@ describe('ServiceDaysPagePresenter', () => {
       expect(viewModel.pageTitle).toBe(pageContent.pageTitle)
       expect(viewModel.pageHeader).toBe(pageContent.h2)
       expect(viewModel.bodyText1).toBe(pageContent.bodyText1)
-      expect(viewModel.backLink.href).toBe(content.backLink)
+      expect(viewModel.backLink.href).toBe(pageContent.backLink)
       expect(viewModel.button.text).toBe(pageContent.continueButton)
       expect(viewModel.input.label.text).toBe(pageContent.bodyText2)
       expect(viewModel.input.value).toBe('20')

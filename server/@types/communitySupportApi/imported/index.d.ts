@@ -208,6 +208,23 @@ export interface paths {
     patch: operations['updateProbationPractitionerDetails']
     trace?: never
   }
+  '/draft-referral/{referralId}/probation-practitioner-details': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    /** Save the Probation Practitioner details for a Draft Referral */
+    patch: operations['updateProbationPractitionerDetails']
+    trace?: never
+  }
   '/draft-referral/{referralId}/offence-sentence': {
     parameters: {
       query?: never
@@ -223,6 +240,23 @@ export interface paths {
     head?: never
     /** Update the Offence and Sentence information for a Draft Referral */
     patch: operations['updateOffenceSentenceDetails']
+    trace?: never
+  }
+  '/draft-referral/{referralId}/main-point-of-contact-details': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    /** Save the Main Point of Contact details for a Draft Referral */
+    patch: operations['updateMainPointOfContactDetails']
     trace?: never
   }
   '/draft-referral/{referralId}/main-point-of-contact-details': {
@@ -308,6 +342,23 @@ export interface paths {
     head?: never
     /** Update the Additional Support Needs information for a Draft Referral */
     patch: operations['updateAdditionalSupportNeeds']
+    trace?: never
+  }
+  '/draft-referral/additional-information-for-the-delivery-partner/{referralId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    /** Update additional information for the delivery partner for a referral */
+    patch: operations['updateAdditionalInformationForTheDeliveryPartner']
     trace?: never
   }
   '/draft-referral/additional-information-for-the-delivery-partner/{referralId}': {
@@ -472,6 +523,23 @@ export interface paths {
     }
     /** Get a single ICS appointment by ID */
     get: operations['getIcsAppointment']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/referral/withdrawal-reasons': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get withdrawal reasons */
+    get: operations['getWithdrawalReasons']
     put?: never
     post?: never
     delete?: never
@@ -657,7 +725,7 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /** Get all Probation Delivery Unit (PDU) names */
+    /** Get all Probation Delivery Units (PDUs) */
     get: operations['getPdus']
     put?: never
     post?: never
@@ -829,6 +897,23 @@ export interface paths {
     }
     /** Get additional support needs page data */
     get: operations['getAdditionalSupportNeedsPage']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/draft-referral/additional-information-for-the-delivery-partner/{referralId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get additional information for the delivery partner for a draft referral */
+    get: operations['getAdditionalInformationForTheDeliveryPartner']
     put?: never
     post?: never
     delete?: never
@@ -1248,17 +1333,23 @@ export interface components {
       name: string
       jobRole?: string | null
       emailAddress?: string | null
-      pdu?: string | null
+      /** Format: uuid */
+      pduId?: string | null
       probationOffice?: string | null
       teamPhoneNumber?: string | null
       phoneNumber?: string | null
       ppDetailsFoundAndCorrect?: boolean | null
     }
+    Pdu: {
+      /** Format: uuid */
+      id: string
+      name: string
+    }
     ProbationPractitionerDetailsBffResponseDto: {
       name: string
       jobRole?: string | null
       emailAddress?: string | null
-      pdu?: string | null
+      pdu?: components['schemas']['Pdu'] | null
       probationOffice?: string | null
       teamPhoneNumber?: string | null
       phoneNumber?: string | null
@@ -1289,6 +1380,8 @@ export interface components {
     OffenceSentenceInfoBffResponseDto: {
       firstName: string
       lastName: string
+      crn: string
+      dateOfBirth: string
       offenceSentenceInfo: components['schemas']['OffenceSentenceDto']
     }
     CriminogenicNeedsRequest: {
@@ -1460,6 +1553,9 @@ export interface components {
       fullName: string
       appointmentDetails?: components['schemas']['AppointmentDetailsDto'] | null
       otherAppointmentMethods?: string[] | null
+    }
+    WithdrawalReasonBffResponseDto: {
+      withdrawalReasons: string[]
     }
     CheckReferralInformationDto: {
       /** Format: uuid */
@@ -2232,6 +2328,50 @@ export interface operations {
       }
     }
   }
+  patchSessionDeliveryDetails: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralReference: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ActionPlanSessionDeliveryDetailsRequest']
+      }
+    }
+    responses: {
+      /** @description Session delivery details answers saved */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ActionPlanSessionDeliveryDetailsResponse']
+        }
+      }
+      /** @description Validation failure */
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
   updateServiceEndDatePage: {
     parameters: {
       query?: never
@@ -2583,6 +2723,42 @@ export interface operations {
       }
     }
   }
+  updateAdditionalInformationForTheDeliveryPartner: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralId: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json':
+          components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
+      }
+    }
+    responses: {
+      /** @description Additional information for the delivery partner updated */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          '*/*': components['schemas']['AdditionalInformationForTheDeliveryPartnerBffResponseDto']
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
   getTaskListStatus: {
     parameters: {
       query?: never
@@ -2850,6 +3026,26 @@ export interface operations {
         }
         content: {
           'application/json': unknown
+        }
+      }
+    }
+  }
+  getWithdrawalReasons: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Withdrawal reasons found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['WithdrawalReasonBffResponseDto']
         }
       }
     }
@@ -3176,16 +3372,74 @@ export interface operations {
     }
     requestBody?: never
     responses: {
-      /** @description Returns the list of Probation Delivery Unit names. */
+      /** @description Returns the list of Probation Delivery Units. */
       200: {
         headers: {
           [name: string]: unknown
         }
         content: {
-          'application/json': string[]
+          'application/json': components['schemas']['Pdu'][]
         }
       }
-      /** @description Failed to retrieve Probation Delivery Unit names */
+      /** @description Failed to retrieve Probation Delivery Units */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getPrisons: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Returns the list of active Prisons. */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['Prison'][]
+        }
+      }
+      /** @description Failed to retrieve Prisons */
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getPdus: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Returns the list of Probation Delivery Units. */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['Pdu'][]
+        }
+      }
+      /** @description Failed to retrieve Probation Delivery Units */
       500: {
         headers: {
           [name: string]: unknown
