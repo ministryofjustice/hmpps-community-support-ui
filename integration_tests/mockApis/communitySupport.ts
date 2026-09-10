@@ -20,6 +20,7 @@ import {
   ServiceDaysPageDto,
   CheckDraftReferralDetailsDto,
   AdditionalInformationForTheDeliveryPartner,
+  OffenceSentenceInfoBffResponseDto,
 } from '@community-support-api'
 import { stubFor } from './wiremock'
 import { duplicateData } from '../testUtils'
@@ -807,6 +808,40 @@ export default {
       request: {
         method: 'PATCH',
         urlPathPattern: `/community-support/draft-referral/${referralId}/service-days`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: response,
+        transformers: ['response-template'],
+      },
+    }),
+  stubGetOffenceSentencePage: (
+    referralId: string,
+    response: OffenceSentenceInfoBffResponseDto,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: `/community-support/bff/draft-referral/${referralId}/offence-sentence`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: response,
+        transformers: ['response-template'],
+      },
+    }),
+  stubUpdateOffenceSentencePage: (
+    referralId: string,
+    response: OffenceSentenceInfoBffResponseDto,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'PATCH',
+        urlPathPattern: `/community-support/draft-referral/${referralId}/offence-sentence`,
       },
       response: {
         status: httpStatus,

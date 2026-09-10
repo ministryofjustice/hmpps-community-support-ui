@@ -1,0 +1,41 @@
+{% extends "../partials/layout.njk" %}
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = content.pageTitle %}
+{% set mainClasses = "govuk-body" %}
+
+{% block contentBody %}
+  <p class="govuk-hint" data-qa="person-summary">
+    <span data-qa="crn">{{ content.crnLabel }}: {{ content.crn }}</span>
+    &nbsp;|&nbsp;
+    <span data-qa="date-of-birth">{{ content.dateOfBirthLabel }}: {{ content.dateOfBirth }}</span>
+  </p>
+
+  <h1 class="govuk-heading-l" data-qa="heading">{{ content.heading }}</h1>
+
+  <hr class="govuk-section-break govuk-section-break--visible govuk-section-break--m">
+
+  <h2 class="govuk-heading-m">{{ content.pageSubHeader }}</h2>
+
+  {% if content.bodyText %}
+    <p class="govuk-body">{{ content.bodyText }}</p>
+  {% endif %}
+
+  <div class="govuk-summary-card">
+    <div class="govuk-summary-card__title-wrapper">
+      <h2 class="govuk-summary-card__title">{{ content.offenceSentenceCardHeading }}</h2>
+    </div>
+    <div class="govuk-summary-card__content">
+      {{ govukSummaryList(content.offenceSentenceSummary) }}
+    </div>
+  </div>
+
+  <form method="post" action="{{ content.submitHref }}">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    {{ govukRadios(content.radios) }}
+    {{ govukButton(content.button) }}
+  </form>
+{% endblock %}
