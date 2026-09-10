@@ -2,9 +2,7 @@ import { Response } from 'express'
 import { Person, AreaConfirmationBffResponseDto } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
 import { ConfirmAnAreaForReferralContent, ConfirmAnAreaForReferralViewModel } from './ConfirmAnAreaForReferralViewModel'
-
-const nonEmptyStringOrDefault = (str: string | undefined | null, defaultValue: string): string =>
-  (str ?? '').trim() || defaultValue
+import { formatFullName, trimOrDefault } from '../../utils/presenterFormatters'
 
 export default class ConfirmAnAreaForReferralPresenter extends PresenterBase<
   ConfirmAnAreaForReferralViewModel,
@@ -19,14 +17,14 @@ export default class ConfirmAnAreaForReferralPresenter extends PresenterBase<
 
   private getFullName(): string {
     const { firstName, lastName } = this.personDetails
-    return `${firstName} ${lastName}`
+    return formatFullName(firstName, lastName)
   }
 
   buildViewModel(res: Response): ConfirmAnAreaForReferralViewModel {
     const content = this.buildStaticContent(res)
-    const crn = nonEmptyStringOrDefault(this.personDetails.personIdentifier, content.defaultFieldValue)
-    const dateOfBirth = nonEmptyStringOrDefault(this.personDetails.dateOfBirth, content.defaultFieldValue)
-    const areaCovered = nonEmptyStringOrDefault(this.providerDetails.contractArea, content.defaultFieldValue)
+    const crn = trimOrDefault(this.personDetails.personIdentifier, content.defaultFieldValue)
+    const dateOfBirth = trimOrDefault(this.personDetails.dateOfBirth, content.defaultFieldValue)
+    const areaCovered = trimOrDefault(this.providerDetails.contractArea, content.defaultFieldValue)
 
     return {
       backLink: { href: content.backLink },
@@ -44,7 +42,7 @@ export default class ConfirmAnAreaForReferralPresenter extends PresenterBase<
         },
       },
       deliveryPartnerLabel: content.deliveryPartnerLabel,
-      deliveryPartner: nonEmptyStringOrDefault(this.providerDetails.deliveryPartner, content.defaultFieldValue),
+      deliveryPartner: trimOrDefault(this.providerDetails.deliveryPartner, content.defaultFieldValue),
       areaCoveredLabel: content.areaCoveredLabel,
       areaCovered,
       pdusLabel: content.pdusLabel,

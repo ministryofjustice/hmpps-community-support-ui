@@ -126,3 +126,15 @@ ${items.map(({ value, text, selected }) => `<option value="${value}" ${selected 
 
 export type TriState = boolean | null
 export const not = (state: TriState): TriState => (state === null ? null : !state)
+
+export const booleanToTriState = (value: boolean | null | undefined): TriState => {
+  if (value === true) return true
+  if (value === false) return false
+  return null
+}
+
+export const yesNoSelectionToTriState = (value: string | null | undefined): TriState => {
+  if (value === 'Yes') return true
+  if (value === 'No') return false
+  return null
+}

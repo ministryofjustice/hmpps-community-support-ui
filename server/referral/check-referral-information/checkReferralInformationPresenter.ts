@@ -3,6 +3,7 @@ import { GovukFrontendSummaryList } from '@govuk-frontend'
 import { Response } from 'express'
 import { format, differenceInYears } from 'date-fns'
 import PresenterBase from '../../presenter/presenterBase'
+import { formatFullName } from '../../utils/presenterFormatters'
 import ViewUtils, { govFrontendSummaryListRow } from '../../utils/viewUtils'
 import { components } from '../../@types/communitySupportApi/imported'
 import {
@@ -53,7 +54,7 @@ const formatDisabilities = (list: components['schemas']['Disability'][], notAvai
 }
 
 const resolveName = (name: { firstName: string; middleName?: string | null; lastName: string }): string =>
-  [name.firstName, name.middleName, name.lastName].filter(Boolean).join(' ')
+  formatFullName(name.firstName, name.lastName, name.middleName)
 
 const formatDateOfBirth = (dateOfBirth: string, notAvailable: string): string => {
   if (!dateOfBirth) return notAvailable
