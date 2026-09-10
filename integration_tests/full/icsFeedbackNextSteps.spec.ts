@@ -73,7 +73,11 @@ test.describe('Next Steps Page', () => {
 
   test('Successful submission navigates to check answers', async ({ page }) => {
     await seedSessionWithIcsFeedback(page, mockIcsFeedbackSubmission)
-    await communitySupport.stubIcsFeedbackSubmission(mockIcsFeedbackSubmission, mockAppointment.appointmentIcsId, CASE_REFERENCE)
+    await communitySupport.stubIcsFeedbackSubmission(
+      mockIcsFeedbackSubmission,
+      mockAppointment.appointmentIcsId,
+      CASE_REFERENCE,
+    )
     await page.goto(NEXT_STEPS_URL)
     const nextStepsPage = await IcsFeedbackNextStepsPage.verifyOnPage(page)
     await nextStepsPage.plannedForNextSessionInput.fill('Plan for next')

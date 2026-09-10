@@ -47,7 +47,7 @@ export default class NextStepsPresenter extends PresenterBase<NextStepsViewModel
         content.plannedForNextSessionLabel,
         content.plannedForNextSessionHint.replace('{{ firstname }}', this.firstName),
         this.data?.plannedForNextSession ?? '',
-        fieldErrors.plannedForNextSession,
+        fieldErrors.plannedForNextSession?.text ?? '',
       ),
       actionsBeforeNextSession: this.buildTextarea(
         'actionsBeforeNextSession',
@@ -55,7 +55,7 @@ export default class NextStepsPresenter extends PresenterBase<NextStepsViewModel
         content.actionsBeforeNextSessionLabel.replace('{{ firstname }}', this.firstName),
         content.actionsBeforeNextSessionHint.replace('{{ firstname }}', this.firstName),
         this.data?.actionsBeforeNextSession ?? '',
-        fieldErrors.actionsBeforeNextSession,
+        fieldErrors.actionsBeforeNextSession?.text ?? '',
       ),
       submitButton: { text: content.submitButtonText },
       submitHref: `/ics-feedback/${this.caseRefId}/next-steps`,
