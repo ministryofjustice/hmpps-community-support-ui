@@ -119,7 +119,7 @@ test.describe('Check Referral Information Page', () => {
     await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[1].key).toHaveText('Ethnicity')
     await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[1].value).toHaveText('White British')
     await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[2].key).toHaveText('Religion or belief')
-    await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[2].value).toHaveText('None')
+    await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[2].value).toHaveText('Christian')
     await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[3].key).toHaveText('Sex')
     await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[3].value).toHaveText('Male')
     await expect(checkReferralInformationPage.personalDetailsSummary.rows[0].key).toHaveText('Name')
