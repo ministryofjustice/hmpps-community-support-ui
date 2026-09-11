@@ -85,8 +85,9 @@ test.describe('Check Referral Information Page', () => {
     await expect(checkReferralInformationPage.personalDetailsSummary.rows[6].key).toContainText('Disabilities')
     await expect(checkReferralInformationPage.personalDetailsSummary.rows[6].value).toHaveText('Dyslexia')
     expect(checkReferralInformationPage.equalityMonitoringSummary.rows).toHaveLength(4)
-    await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[0].key).toHaveText('Nationality')
-    await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[0].value).toHaveText('British')
+    // Nationality temporarily disabled in presenter — tests commented out
+    // await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[0].key).toHaveText('Nationality')
+    // await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[0].value).toHaveText('British')
     await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[1].key).toHaveText('Ethnicity')
     await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[1].value).toHaveText('White British')
     await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[2].key).toHaveText('Religion or belief')

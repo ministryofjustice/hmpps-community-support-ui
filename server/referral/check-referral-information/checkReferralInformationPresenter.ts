@@ -174,7 +174,7 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
     const equality = this.draftReferralDetails.equalityDetailsTableData
 
     const rows = [
-      govFrontendSummaryListRow(cardContent.nationalityLabel, equality.nationality || notAvailable),
+      // govFrontendSummaryListRow(cardContent.nationalityLabel, equality.nationality || notAvailable),
       govFrontendSummaryListRow(cardContent.ethnicityLabel, equality.ethnicity || notAvailable),
       govFrontendSummaryListRow(cardContent.religionOrBeliefLabel, equality.religionOrBelief || notAvailable),
       govFrontendSummaryListRow(cardContent.sexLabel, equality.sex || notAvailable),
