@@ -1,22 +1,20 @@
 import { Response } from 'express'
-import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendRadios } from '@govuk-frontend'
-import { ErrorMiddlewareErrors } from '../../@types/express'
 import PresenterBase from '../../presenter/presenterBase'
+import { WithdrawalFormData, WithdrawalReason } from './WithdrawalFormData'
+import { WithdrawalConfirmationContent, WithdrawalConfirmationViewModel } from './withdrawalConfirmationViewModel'
 
-interface WithdrawalConfirmationContent {
-  pageHeader: string
-  question: string
-  yesText: string
-  noText: string
-  continueButtonText: string
-}
-
-interface WithdrawalConfirmationViewModel {
-  pageHeader: string
-  confirmationRadios: GovukFrontendRadios
-  continueButton: GovukFrontendButton
-  submitHref: string
-  backLink: GovukFrontendBackLink
+const withdrawalReasonLabels: Record<WithdrawalReason, string> = {
+  INELIGIBLE_REFERRAL: 'Ineligible referral',
+  MISTAKEN_OR_DUPLICATE_REFERRAL: 'Mistaken or duplicate referral',
+  NOT_ENGAGED: 'Not engaged',
+  NEEDS_MET_THROUGH_ANOTHER_ROUTE: 'Needs met through another route',
+  USER_DIED: 'User died',
+  WORK_CARING_COMMITMENTS_OR_SICKNESS: 'Work, caring commitments, or sickness',
+  ACQUITTED_ON_APPEAL: 'Acquitted on appeal',
+  RETURNED_TO_CUSTODY: 'Returned to custody',
+  SENTENCE_REVOKED: 'Sentence revoked',
+  SENTENCE_EXPIRED: 'Sentence expired',
+  OTHER_CHANGE_OF_CIRCUMSTANCE: 'Any other change of circumstance',
 }
 
 export default class WithdrawalConfirmationPresenter extends PresenterBase<
@@ -26,7 +24,7 @@ export default class WithdrawalConfirmationPresenter extends PresenterBase<
   constructor(
     private readonly referralIdentifier: string,
     private readonly referralName: string,
-    private readonly validationErrors?: ErrorMiddlewareErrors,
+    private readonly withdrawal: WithdrawalFormData,
   ) {
     super()
   }
@@ -34,18 +32,33 @@ export default class WithdrawalConfirmationPresenter extends PresenterBase<
   protected buildViewModel(res: Response): WithdrawalConfirmationViewModel {
     const content = this.buildStaticContent(res)
     return {
-      pageHeader: content.pageHeader.replace('{{ name }}', this.referralName),
-      confirmationRadios: {
-        name: 'confirmWithdrawal',
-        fieldset: { legend: { text: content.question, classes: 'govuk-fieldset__legend--m' } },
-        errorMessage: this.validationErrors?.messages.confirmWithdrawal,
-        items: [
-          { value: 'yes', text: content.yesText },
-          { value: 'no', text: content.noText },
+      pageHeader: content.pageHeader,
+      reasonSummary: {
+        rows: [
+          {
+            key: {
+              text: content.questionLabel.replace('{{ name }}', this.referralName),
+            },
+            value: {
+              text: withdrawalReasonLabels[this.withdrawal.withdrawalReason],
+            },
+            actions: {
+              items: [
+                {
+                  href: `/referral/${this.referralIdentifier}/withdraw`,
+                  text: content.changeLinkText,
+                  visuallyHiddenText: 'withdrawal reason',
+                },
+              ],
+            },
+          },
         ],
       },
-      continueButton: { text: content.continueButtonText },
-      submitHref: `/referral/${this.referralIdentifier}/withdraw/confirmation`,
+      warningText: content.warningText,
+      withdrawButton: { text: content.withdrawButtonText, classes: 'govuk-button--warning' },
+      cancelHref: `/referral-details/${this.referralIdentifier}`,
+      cancelLinkText: content.cancelLinkText,
+      submitHref: `/referral/${this.referralIdentifier}/withdraw/confirm`,
       backLink: { href: `/referral/${this.referralIdentifier}/withdraw` },
     }
   }

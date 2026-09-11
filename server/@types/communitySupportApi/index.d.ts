@@ -62,6 +62,7 @@ type AdditionalInformationForTheDeliveryPartner =
   components['schemas']['AdditionalInformationForTheDeliveryPartnerBffResponseDto']
 
 type Selection = components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
+type WithdrawReferralRequest = components['schemas']['WithdrawReferralRequest']
 
 export type {
   Referral,
@@ -122,4 +123,5 @@ export type {
   ProbationPractitionerDetails,
   UpdateProbationPractitionerDetailsRequest,
   AdditionalInformationForTheDeliveryPartner,
+  WithdrawReferralRequest,
 }

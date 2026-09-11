@@ -21,6 +21,7 @@ import {
   CheckDraftReferralDetailsDto,
   AdditionalInformationForTheDeliveryPartner,
   OffenceSentenceInfoBffResponseDto,
+  WithdrawReferralRequest,
 } from '@community-support-api'
 import { stubFor } from './wiremock'
 import { duplicateData } from '../testUtils'
@@ -251,6 +252,24 @@ export default {
         status: httpStatus,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: submitReferralResponse,
+      },
+    }),
+
+  stubWithdrawReferral: (
+    referralReference: string,
+    expectedBody?: WithdrawReferralRequest,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'POST',
+        urlPathPattern: `/community-support/referral/${referralReference}/withdraw`,
+        ...(expectedBody ? { bodyPatterns: [{ equalToJson: JSON.stringify(expectedBody) }] } : {}),
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: {},
       },
     }),
 
