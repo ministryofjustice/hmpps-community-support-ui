@@ -220,6 +220,22 @@ export default function routes({
 
   get('/referral/:id/action-plan', (req, res) => actionPlanController.showActionPlanPage(req, res))
 
+  post('/referral/:id/action-plan/create', (req, res) => actionPlanController.createActionPlan(req, res))
+
+  get('/referral/:id/action-plan/needs', (req, res) => actionPlanController.showNeedsPage(req, res))
+
+  post('/referral/:id/action-plan/needs', (req, res) => actionPlanController.submitNeeds(req, res))
+
+  get('/referral/:id/action-plan/select-an-outcome', (req, res) => actionPlanController.showSelectOutcomePage(req, res))
+
+  post('/referral/:id/action-plan/select-an-outcome', (req, res) => actionPlanController.submitOutcome(req, res))
+
+  get('/referral/:id/action-plan/add-activities', (req, res) => actionPlanController.showAddActivitiesPage(req, res))
+
+  post('/referral/:id/action-plan/add-activity', (req, res) => actionPlanController.addActivity(req, res))
+
+  post('/referral/:id/action-plan/save-activities', (req, res) => actionPlanController.saveActivities(req, res))
+
   get('/referral/:referralIdentifier/withdraw', (req, res) => withdrawalController.showReason(req, res))
 
   post('/referral/:referralIdentifier/withdraw', (req, res) => withdrawalController.submitReason(req, res))

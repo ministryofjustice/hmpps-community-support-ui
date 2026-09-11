@@ -1,0 +1,17 @@
+{% extends "../partials/layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = "Action plan – " + applicationName %}
+{% set mainClasses = "govuk-body" %}
+
+{% block contentBody %}
+  <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
+
+  <form method="post" action="{{ content.saveAndContinueLink }}">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    {{ govukButton(content.addAnotherActivityButton) }}
+    {{ govukButton(content.saveAndContinueButton) }}
+  </form>
+
+{% endblock %}e

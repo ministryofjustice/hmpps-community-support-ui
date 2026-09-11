@@ -14,10 +14,20 @@ export default class ActionPlanPresenter extends PresenterBase<ActionPlanViewMod
 
   protected buildViewModel(res: Response): ActionPlanViewModel {
     const content = this.buildStaticContent(res)
+    const { fullName } = this.actionPlanSummary.personDetails
+
+    // const needsSummary = this.buildNeedsSummary(content)
+    const needsSummary: GovukFrontendSummaryList = undefined
+
+    const createButton = needsSummary ? undefined : { text: content.createButtonText }
+
     return {
-      pageHeader: content.pageHeader.replace('{{ fullName }}', this.actionPlanSummary.personDetails.fullName),
+      pageHeader: content.pageHeader.replace('{{ fullName }}', fullName),
       backLink: { href: `/progress/${this.caseReference}` },
-      needsSummary: this.buildNeedsSummary(content),
+      needsSummary,
+      createButton,
+      createLink: `/referral/${this.caseReference}/action-plan/create`,
+      noActionPlanText: needsSummary ? undefined : content.noActionPlanText.replace('{{ fullName }}', fullName),
     }
   }
 
