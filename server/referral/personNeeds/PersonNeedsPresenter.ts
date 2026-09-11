@@ -7,6 +7,7 @@ import { GovukFrontendCheckboxesWithConditional, WithConditional } from '../../@
 import { buildTextarea } from '../../utils/utils'
 import { ErrorMiddlewareErrors } from '../../@types/express'
 import { checkboxItemNames } from './buildPersonNeedsRequest'
+import formatFullName from '../../utils/presenterFormatters'
 
 export type personNeedsFormData = Omit<ReferralCriminogenicNeedsDto, 'id' | 'updatedAt' | 'updatedBy'>
 
@@ -100,7 +101,7 @@ export default class PersonNeedsPresenter extends PresenterBase<PersonNeedsViewM
   buildViewModel(res: Response): PersonNeedsViewModel {
     const content = this.buildStaticContent(res)
     return {
-      heading: `${this.data.refereeName.firstName} ${this.data.refereeName.lastName}`,
+      heading: formatFullName(this.data.refereeName.firstName, this.data.refereeName.lastName),
       backLink: {
         href: content.backLink,
       },

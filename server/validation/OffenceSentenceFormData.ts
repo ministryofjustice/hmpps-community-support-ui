@@ -24,4 +24,5 @@ export const OffenceSentenceSchema = z
       hasLicenceConditionsOrZones === 'Yes' ? licenceConditionsOrZonesDetails.trim() : null,
   }))
 
+export type OffenceSentenceFormInput = z.input<typeof OffenceSentenceSchema>
 export type OffenceSentenceFormData = z.infer<typeof OffenceSentenceSchema>

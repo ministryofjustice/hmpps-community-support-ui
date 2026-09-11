@@ -1,47 +1,15 @@
 import { Response } from 'express'
 import { GovukFrontendErrorMessage } from '@govuk-frontend'
+import { OffenceSentenceDto, OffenceSentenceInfoBffResponseDto } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
 import { OffenceSentencePageContent, OffenceSentencePageViewModel } from './OffenceSentencePageModel'
-import { components } from '../../@types/communitySupportApi/imported'
 import ViewUtils from '../../utils/viewUtils'
 import { GovukFrontendRadiosWithConditional } from '../../@types/govukFrontend/derived'
-import { buildTextarea, not, TriState } from '../../utils/utils'
+import { booleanToTriState, buildTextarea, not, yesNoSelectionToTriState } from '../../utils/utils'
+import { formatIsoDateOrNull } from '../../utils/dateFormat'
 import { ErrorMiddlewareErrors } from '../../@types/express'
-
-type OffenceSentenceInfoBffResponseDto = components['schemas']['OffenceSentenceInfoBffResponseDto']
-type OffenceSentenceDto = components['schemas']['OffenceSentenceDto']
-
-type OffenceSentenceFormValues = {
-  hasLicenceConditionsOrZones?: string
-  licenceConditionsOrZonesDetails?: string
-}
-
-const formatDate = (dateValue: string | null | undefined): string | null => {
-  if (!dateValue) return null
-
-  const [year, month, day] = dateValue.split('-').map(Number)
-  if (!year || !month || !day) return null
-
-  return new Date(year, month - 1, day).toLocaleDateString('en-GB', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  })
-}
-
-const selectionToTriState = (selection: boolean | null | undefined): TriState => {
-  if (selection === true) return true
-  if (selection === false) return false
-
-  return null
-}
-
-const formSelectionToTriState = (selection: string | undefined): TriState => {
-  if (selection === 'Yes') return true
-  if (selection === 'No') return false
-
-  return null
-}
+import type { OffenceSentenceFormInput } from '../../validation/OffenceSentenceFormData'
+import formatFullName from '../../utils/presenterFormatters'
 
 const buildConditional = (
   content: OffenceSentencePageContent,
@@ -60,7 +28,7 @@ const buildConditional = (
 
 const resolveLicenceOrExclusionDetails = (
   offenceSentenceInfo: OffenceSentenceDto,
-  formData: OffenceSentenceFormValues,
+  formData: Partial<OffenceSentenceFormInput>,
 ): string => {
   if (formData.licenceConditionsOrZonesDetails !== undefined) {
     return formData.licenceConditionsOrZonesDetails
@@ -92,14 +60,14 @@ const buildDateRows = (
 const buildRadios = (
   content: OffenceSentencePageContent,
   offenceSentenceInfo: OffenceSentenceDto,
-  formData: OffenceSentenceFormValues,
+  formData: Partial<OffenceSentenceFormInput>,
   messages: Record<string, GovukFrontendErrorMessage>,
 ): GovukFrontendRadiosWithConditional => {
-  const formSelection = formSelectionToTriState(formData.hasLicenceConditionsOrZones)
+  const formSelection = yesNoSelectionToTriState(formData.hasLicenceConditionsOrZones)
   const selection =
     formData.hasLicenceConditionsOrZones !== undefined
       ? formSelection
-      : selectionToTriState(offenceSentenceInfo.hasLicenceConditionsOrZones)
+      : booleanToTriState(offenceSentenceInfo.hasLicenceConditionsOrZones)
   const licenceOrExclusionDetails = resolveLicenceOrExclusionDetails(offenceSentenceInfo, formData)
 
   return {
@@ -137,7 +105,7 @@ export default class OffenceSentencePresenter extends PresenterBase<
   constructor(
     private readonly data: OffenceSentenceInfoBffResponseDto,
     private readonly validationErrors: ErrorMiddlewareErrors,
-    private readonly formData: OffenceSentenceFormValues = {},
+    private readonly formData: Partial<OffenceSentenceFormInput> = {},
   ) {
     super()
   }
@@ -146,10 +114,10 @@ export default class OffenceSentencePresenter extends PresenterBase<
     const content = this.buildStaticContent(res)
     const offenceSentenceInfo = this.data.offenceSentenceInfo || {}
     const valueOrDefault = (value: string | null | undefined): string => value || content.notAvailableText
-    const sentenceEndDate = formatDate(offenceSentenceInfo.sentenceEndDate)
-    const expectedReleaseDate = formatDate(offenceSentenceInfo.expectedReleaseDate)
+    const sentenceEndDate = formatIsoDateOrNull(offenceSentenceInfo.sentenceEndDate)
+    const expectedReleaseDate = formatIsoDateOrNull(offenceSentenceInfo.expectedReleaseDate)
     const dateRows = buildDateRows(content, sentenceEndDate, expectedReleaseDate)
-    const heading = `${this.data.firstName} ${this.data.lastName}`.trim()
+    const heading = formatFullName(this.data.firstName, this.data.lastName)
 
     return {
       pageTitle: content.pageTitle,

@@ -4,9 +4,8 @@ import { CommunitySupportRiskDto, ArnsRiskDto } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
 import dateFormat from '../../utils/dateFormat'
 import { RiskSummaryContent, RiskSummaryRow, RiskSummaryRowCard, RiskSummaryViewModel } from './RiskSummaryViewModel'
-
-const nonEmptyStringOrDefault = (str: string | undefined | null, defaultValue: string): string =>
-  (str ?? '').trim() || defaultValue
+import { trimOrDefault } from '../../utils/utils'
+import formatFullName from '../../utils/presenterFormatters'
 
 export default class RiskSummaryPresenter extends PresenterBase<RiskSummaryViewModel, RiskSummaryContent> {
   constructor(
@@ -18,7 +17,7 @@ export default class RiskSummaryPresenter extends PresenterBase<RiskSummaryViewM
 
   private getFullName(): string {
     const { firstName, lastName } = this.risk
-    return `${firstName} ${lastName}`
+    return formatFullName(firstName, lastName)
   }
 
   private concernIndicator(risk: ArnsRiskDto | null | undefined, content: RiskSummaryContent): string {
@@ -68,19 +67,19 @@ export default class RiskSummaryPresenter extends PresenterBase<RiskSummaryViewM
     return [
       this.buildRow(
         content.whoIsAtRiskCard,
-        nonEmptyStringOrDefault(summary?.whoIsAtRisk, content.defaultFieldValue),
+        trimOrDefault(summary?.whoIsAtRisk, content.defaultFieldValue),
         content,
         'riskSummaryWhoIsAtRisk',
       ),
       this.buildRow(
         content.natureOfRiskCard,
-        nonEmptyStringOrDefault(summary?.natureOfRisk, content.defaultFieldValue),
+        trimOrDefault(summary?.natureOfRisk, content.defaultFieldValue),
         content,
         'riskSummaryNatureOfRisk',
       ),
       this.buildRow(
         content.riskImminenceCard,
-        nonEmptyStringOrDefault(summary?.riskImminence, content.defaultFieldValue),
+        trimOrDefault(summary?.riskImminence, content.defaultFieldValue),
         content,
         'riskSummaryRiskImminence',
       ),
@@ -90,7 +89,7 @@ export default class RiskSummaryPresenter extends PresenterBase<RiskSummaryViewM
       this.buildConcernRow(content.vulnerabilityCard, riskToSelf?.vulnerability, content, 'riskToSelfVulnerability'),
       this.buildRow(
         content.additionalInformationCard,
-        nonEmptyStringOrDefault(this.risk.additionalInformation, content.noAdditionalInformationText),
+        trimOrDefault(this.risk.additionalInformation, content.noAdditionalInformationText),
         content,
         'additionalInformation',
       ),
@@ -108,7 +107,7 @@ export default class RiskSummaryPresenter extends PresenterBase<RiskSummaryViewM
       heading: this.getFullName(),
       subheading: content.pageSubHeader,
       crnLabel: content.crnLabel,
-      crn: nonEmptyStringOrDefault(crn, content.defaultFieldValue),
+      crn: trimOrDefault(crn, content.defaultFieldValue),
       dateOfBirthLabel: content.dateOfBirthLabel,
       dateOfBirth: `${dateFormat(dobDate)} (${age} years old)`,
       lastUpdatedLabel: content.lastUpdatedLabel,
