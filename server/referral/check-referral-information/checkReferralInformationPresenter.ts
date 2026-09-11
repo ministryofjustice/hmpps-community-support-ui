@@ -81,6 +81,10 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
       content.personalDetailsCard,
       content.notAvailable,
     )
+    viewModel.equalityMonitoringSummary = this.buildEqualityMonitoringSummary(
+      content.equalityMonitoringCard,
+      content.notAvailable,
+    )
     viewModel.referralDetailsHeader = content.referralDetailsHeader
     viewModel.referralDetailsSummary = this.buildReferralDetailsSummary()
     viewModel.referralContactDetailsHeader = content.referralContactDetailsHeader
@@ -158,6 +162,39 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
         attributes: { 'data-testid': 'referral-details' },
       },
       rows: summary,
+    }
+  }
+
+  private buildEqualityMonitoringSummary(
+    cardContent: {
+      heading: string
+      nationalityLabel: string
+      ethnicityLabel: string
+      religionOrBeliefLabel: string
+      sexLabel: string
+    },
+    notAvailable: string,
+  ): GovukFrontendSummaryList {
+    const equality = this.draftReferralDetails.equalityDetailsTableData
+
+    const rows = [
+      govFrontendSummaryListRow(cardContent.nationalityLabel, (equality && equality.nationality) || notAvailable),
+      govFrontendSummaryListRow(cardContent.ethnicityLabel, (equality && equality.ethnicity) || notAvailable),
+      govFrontendSummaryListRow(
+        cardContent.religionOrBeliefLabel,
+        (equality && equality.religionOrBelief) || notAvailable,
+      ),
+      govFrontendSummaryListRow(cardContent.sexLabel, (equality && equality.sex) || notAvailable),
+    ]
+
+    return {
+      card: {
+        title: {
+          text: cardContent.heading,
+        },
+        attributes: { 'data-testid': 'equality-monitoring' },
+      },
+      rows,
     }
   }
 }

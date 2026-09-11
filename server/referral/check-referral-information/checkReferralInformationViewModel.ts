@@ -11,6 +11,7 @@ export type CheckReferralInformationViewModel = {
   backLink: GovukFrontendBackLink
   submitHref: string
   personalDetailsSummary: GovukFrontendSummaryList
+  equalityMonitoringSummary?: GovukFrontendSummaryList
   referralDetailsSummary: GovukFrontendSummaryList
 }
 
@@ -34,6 +35,13 @@ export type CheckReferralInformationContent = {
   personalDetailsHeader: string
   notAvailable: string
   personalDetailsCard: PersonalDetailsCard
+  equalityMonitoringCard: {
+    heading: string
+    nationalityLabel: string
+    ethnicityLabel: string
+    religionOrBeliefLabel: string
+    sexLabel: string
+  }
   referralDetailsHeader: string
   referralContactDetailsHeader: string
   submitButtonText: string

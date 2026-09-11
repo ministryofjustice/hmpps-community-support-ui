@@ -43,6 +43,13 @@
       "disabilitiesLabel": "Disabilities",
       "lastUpdatedLabel": "Last updated"
     },
+    "equalityMonitoringCard": {
+      "heading": "Equality monitoring",
+      "nationalityLabel": "Nationality",
+      "ethnicityLabel": "Ethnicity",
+      "religionOrBeliefLabel": "Religion or belief",
+      "sexLabel": "Sex"
+    },
     "referralDetailsHeader": "Referral information",
     "referralContactDetailsHeader": "Referral contact details",
     "backLink": "/referral/task-list",
