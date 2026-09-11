@@ -8,6 +8,7 @@ import { components } from '../../@types/communitySupportApi/imported'
 import {
   CheckReferralInformationContent,
   CheckReferralInformationViewModel,
+  EqualityMonitoringCard,
   PersonalDetailsCard,
 } from './checkReferralInformationViewModel'
 
@@ -166,25 +167,16 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
   }
 
   private buildEqualityMonitoringSummary(
-    cardContent: {
-      heading: string
-      nationalityLabel: string
-      ethnicityLabel: string
-      religionOrBeliefLabel: string
-      sexLabel: string
-    },
+    cardContent: EqualityMonitoringCard,
     notAvailable: string,
   ): GovukFrontendSummaryList {
     const equality = this.draftReferralDetails.equalityDetailsTableData
 
     const rows = [
-      govFrontendSummaryListRow(cardContent.nationalityLabel, (equality && equality.nationality) || notAvailable),
-      govFrontendSummaryListRow(cardContent.ethnicityLabel, (equality && equality.ethnicity) || notAvailable),
-      govFrontendSummaryListRow(
-        cardContent.religionOrBeliefLabel,
-        (equality && equality.religionOrBelief) || notAvailable,
-      ),
-      govFrontendSummaryListRow(cardContent.sexLabel, (equality && equality.sex) || notAvailable),
+      govFrontendSummaryListRow(cardContent.nationalityLabel, equality.nationality || notAvailable),
+      govFrontendSummaryListRow(cardContent.ethnicityLabel, equality.ethnicity || notAvailable),
+      govFrontendSummaryListRow(cardContent.religionOrBeliefLabel, equality.religionOrBelief || notAvailable),
+      govFrontendSummaryListRow(cardContent.sexLabel, equality.sex || notAvailable),
     ]
 
     return {
