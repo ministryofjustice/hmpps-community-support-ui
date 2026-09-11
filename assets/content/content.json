@@ -264,12 +264,13 @@
       }
     ]
   },
-  "/referral/:id/withdraw/confirmation": {
-    "pageHeader": "Withdraw {{ name }}'s referral",
-    "question": "Are you sure you want to withdraw this referral?",
-    "yesText": "Yes",
-    "noText": "No",
-    "continueButtonText": "Continue"
+  "/referral/:id/withdraw/confirm": {
+    "pageHeader": "Check withdrawal details",
+    "questionLabel": "Why are you withdrawing {{ name }}'s referral?",
+    "warningText": "If you are withdrawing this referral, you cannot start or change it again.",
+    "withdrawButtonText": "Withdraw referral",
+    "cancelLinkText": "Cancel",
+    "changeLinkText": "Change"
   },
   "/referral/:id/appointment/confirm-ics": {
     "pageHeader": "Check the details before scheduling the ICS",

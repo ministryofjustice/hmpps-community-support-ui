@@ -1,15 +1,19 @@
 {% extends "../../partials/layout.njk" %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 
 {% set pageTitle = content.pageHeader + " - Community Support" %}
 {% set mainClasses = "govuk-body" %}
 
 {% block contentBody %}
   <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
+  {{ govukSummaryList(content.reasonSummary) }}
+  <p class="govuk-body">{{ content.warningText }}</p>
   <form method="post" action="{{ content.submitHref }}">
     <input type="hidden" name="_csrf" value="{{ csrfToken }}">
-    {{ govukRadios(content.confirmationRadios) }}
-    {{ govukButton(content.continueButton) }}
+    <div class="govuk-button-group govuk-!-margin-top-6">
+      {{ govukButton(content.withdrawButton) }}
+      <a href="{{ content.cancelHref }}" class="govuk-link">{{ content.cancelLinkText }}</a>
+    </div>
   </form>
 {% endblock %}

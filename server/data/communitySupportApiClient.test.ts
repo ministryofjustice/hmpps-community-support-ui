@@ -18,6 +18,7 @@ import type {
   CommunityServiceProviderBffResponseDto,
   OffenceSentenceInfoBffResponseDto,
   OffenceSentenceRequest,
+  WithdrawReferralRequest,
 } from '@community-support-api'
 import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import { AgentConfig, ApiConfig } from '@ministryofjustice/hmpps-rest-client'
@@ -497,6 +498,26 @@ describe('CommunitySupportApiClient tests', () => {
       const result = communitySupportApiClient.updateOffenceSentencePage(referralId, request, 'user1')
 
       expect(result).resolves.toEqual(response)
+    })
+  })
+
+  describe('withdrawReferral tests', () => {
+    it('should submit referral withdrawal on a 200 response', () => {
+      const referralReference = 'QD0878DE'
+      const request: WithdrawReferralRequest = {
+        reasonCode: 'NOT_ENGAGED',
+        additionalDetails: 'No longer engaging',
+      }
+
+      nock('http://localhost:8080', {
+        reqheaders: { authorization: 'Bearer dummy-token' },
+      })
+        .post(`/referral/${referralReference}/withdraw`, request)
+        .reply(200)
+
+      const result = communitySupportApiClient.withdrawReferral(referralReference, request, 'user1')
+
+      expect(result).resolves.toEqual({})
     })
   })
 })

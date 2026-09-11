@@ -4,12 +4,7 @@ import WithdrawalService from '../../services/withdrawalService'
 import { validateRequestBodyAgainstSchema } from '../../validation/validationUtils'
 import WithdrawalConfirmationPresenter from './WithdrawalConfirmationPresenter'
 import WithdrawalReasonPresenter from './WithdrawalReasonPresenter'
-import {
-  additionalInformationField,
-  WithdrawalConfirmationSchema,
-  WithdrawalFormDataSchema,
-  WithdrawalReason,
-} from './WithdrawalFormData'
+import { additionalInformationField, WithdrawalFormDataSchema, WithdrawalReason } from './WithdrawalFormData'
 
 export default class WithdrawalController {
   constructor(
@@ -44,7 +39,7 @@ export default class WithdrawalController {
         formData,
         req.session.withdrawalReferrals,
       )
-      res.redirect(`/referral/${referralIdentifier}/withdraw/confirmation`)
+      res.redirect(`/referral/${referralIdentifier}/withdraw/confirm`)
     })
   }
 
@@ -56,17 +51,30 @@ export default class WithdrawalController {
       return
     }
     const referralName = await this.getReferralName(referralIdentifier, res.locals.user.username)
-    new WithdrawalConfirmationPresenter(referralIdentifier, referralName, res.locals.errors).renderPage(res)
+    new WithdrawalConfirmationPresenter(referralIdentifier, referralName, withdrawal).renderPage(res)
   }
 
-  submitConfirmation(req: Request, res: Response): Promise<void> {
+  async submitConfirmation(req: Request, res: Response): Promise<void> {
     const { referralIdentifier } = req.params as { referralIdentifier: string }
-    if (!this.withdrawalService.getWithdrawal(referralIdentifier, req.session.withdrawalReferrals)) {
+    const withdrawal = this.withdrawalService.getWithdrawal(referralIdentifier, req.session.withdrawalReferrals)
+    if (!withdrawal) {
       res.redirect(`/referral/${referralIdentifier}/withdraw`)
-      return Promise.resolve()
+      return
     }
-    return validateRequestBodyAgainstSchema(WithdrawalConfirmationSchema, req, res, ({ confirmWithdrawal }) => {
-      res.redirect(confirmWithdrawal === 'yes' ? '/cases-in-progress' : `/referral-details/${referralIdentifier}`)
-    })
+
+    await this.referralService.withdrawReferral(
+      referralIdentifier,
+      {
+        reasonCode: withdrawal.withdrawalReason,
+        additionalDetails: withdrawal.additionalInformation,
+      },
+      res.locals.user.username,
+    )
+
+    req.session.withdrawalReferrals = this.withdrawalService.removeWithdrawal(
+      referralIdentifier,
+      req.session.withdrawalReferrals,
+    )
+    res.redirect('/cases-in-progress')
   }
 }

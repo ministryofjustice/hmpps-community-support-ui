@@ -44,6 +44,7 @@ import type {
   Selection,
   OffenceSentenceRequest,
   OffenceSentenceInfoBffResponseDto,
+  WithdrawReferralRequest,
 } from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
@@ -310,5 +311,9 @@ export default class CommunitySupportApiClient extends RestClient {
       { path: `/draft-referral/additional-information-for-the-delivery-partner/${draftReferralId}`, data },
       asSystem(username),
     )
+  }
+
+  withdrawReferral(referralReference: string, data: WithdrawReferralRequest, username: string): Promise<void> {
+    return this.post({ path: `/referral/${referralReference}/withdraw`, data }, asSystem(username))
   }
 }

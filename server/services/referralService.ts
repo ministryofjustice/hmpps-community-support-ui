@@ -25,6 +25,7 @@ import {
   type ProbationOffice,
   PDU,
   Selection,
+  WithdrawReferralRequest,
 } from '@community-support-api'
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
 import { NeedsAnInterpreterFormData } from '../validation/NeedsAnInterpreterFormDataSchema'
@@ -208,5 +209,9 @@ export default class ReferralService {
       draftReferralId,
       username,
     )
+  }
+
+  withdrawReferral(caseReference: string, request: WithdrawReferralRequest, username: string): Promise<void> {
+    return this.communitySupportApiClient.withdrawReferral(caseReference, request, username)
   }
 }
