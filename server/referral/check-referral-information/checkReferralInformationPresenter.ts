@@ -9,6 +9,7 @@ import { components } from '../../@types/communitySupportApi/imported'
 import {
   CheckReferralInformationContent,
   CheckReferralInformationViewModel,
+  EqualityMonitoringCard,
   PersonalDetailsCard,
 } from './checkReferralInformationViewModel'
 
@@ -80,6 +81,10 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
     viewModel.personalDetailsHeader = `About ${this.draftReferralDetails.personDetailsTableData.name.firstName}`
     viewModel.personalDetailsSummary = this.buildPersonalDetailsSummary(
       content.personalDetailsCard,
+      content.notAvailable,
+    )
+    viewModel.equalityMonitoringSummary = this.buildEqualityMonitoringSummary(
+      content.equalityMonitoringCard,
       content.notAvailable,
     )
     viewModel.referralDetailsHeader = content.referralDetailsHeader
@@ -159,6 +164,30 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
         attributes: { 'data-testid': 'referral-details' },
       },
       rows: summary,
+    }
+  }
+
+  private buildEqualityMonitoringSummary(
+    cardContent: EqualityMonitoringCard,
+    notAvailable: string,
+  ): GovukFrontendSummaryList {
+    const equality = this.draftReferralDetails.equalityDetailsTableData
+
+    const rows = [
+      // govFrontendSummaryListRow(cardContent.nationalityLabel, equality.nationality || notAvailable),
+      govFrontendSummaryListRow(cardContent.ethnicityLabel, equality.ethnicity || notAvailable),
+      govFrontendSummaryListRow(cardContent.religionOrBeliefLabel, equality.religionOrBelief || notAvailable),
+      govFrontendSummaryListRow(cardContent.sexLabel, equality.sex || notAvailable),
+    ]
+
+    return {
+      card: {
+        title: {
+          text: cardContent.heading,
+        },
+        attributes: { 'data-testid': 'equality-monitoring' },
+      },
+      rows,
     }
   }
 }

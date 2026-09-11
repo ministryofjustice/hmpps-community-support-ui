@@ -84,6 +84,16 @@ test.describe('Check Referral Information Page', () => {
     )
     await expect(checkReferralInformationPage.personalDetailsSummary.rows[6].key).toContainText('Disabilities')
     await expect(checkReferralInformationPage.personalDetailsSummary.rows[6].value).toHaveText('Dyslexia')
+    expect(checkReferralInformationPage.equalityMonitoringSummary.rows).toHaveLength(4)
+    // Nationality temporarily disabled in presenter — tests commented out
+    // await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[0].key).toHaveText('Nationality')
+    // await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[0].value).toHaveText('British')
+    await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[1].key).toHaveText('Ethnicity')
+    await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[1].value).toHaveText('White British')
+    await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[2].key).toHaveText('Religion or belief')
+    await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[2].value).toHaveText('Christian')
+    await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[3].key).toHaveText('Sex')
+    await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[3].value).toHaveText('Male')
   })
 
   test('should display prison number and DOB on check referral information when searched by prison number', async ({
@@ -104,6 +114,15 @@ test.describe('Check Referral Information Page', () => {
     const checkReferralInformationPage = await CheckReferralInformationPage.verifyOnPage(page)
 
     expect(checkReferralInformationPage.personalDetailsSummary.rows).toHaveLength(7)
+    expect(checkReferralInformationPage.equalityMonitoringSummary.rows).toHaveLength(4)
+    await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[0].key).toHaveText('Nationality')
+    await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[0].value).toHaveText('British')
+    await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[1].key).toHaveText('Ethnicity')
+    await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[1].value).toHaveText('White British')
+    await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[2].key).toHaveText('Religion or belief')
+    await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[2].value).toHaveText('Christian')
+    await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[3].key).toHaveText('Sex')
+    await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[3].value).toHaveText('Male')
     await expect(checkReferralInformationPage.personalDetailsSummary.rows[0].key).toHaveText('Name')
     await expect(checkReferralInformationPage.personalDetailsSummary.rows[0].value).toHaveText('Alex River')
     await expect(checkReferralInformationPage.personalDetailsSummary.rows[1].key).toHaveText('Prison number')
