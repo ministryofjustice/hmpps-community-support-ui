@@ -5,6 +5,9 @@ import PresenterBase from '../../presenter/presenterBase'
 import { ConfirmIcsContent, ConfirmIcsViewModel } from './confirmIcsViewModel'
 import { buildIcsSummaryRows, formatAddress } from '../icsDetailsSummaryBuilder'
 import { getChangeRequesterLabel } from '../change-ics-details-reason/ChangeAppointmentDetails'
+import { formatIsoDateOrNull } from '../../utils/dateFormat'
+import { formatTime12Hr } from '../../utils/timeFormat'
+import formatFullName from '../../utils/presenterFormatters'
 
 export type AdditionalInformation = {
   firstName: string
@@ -45,18 +48,8 @@ export default class ConfirmIcsPresenter extends PresenterBase<ConfirmIcsViewMod
     return 'appointment/confirmIcs'
   }
 
-  private formatDate(date: string): string {
-    const [year, month, day] = date.split('-').map(Number)
-    return new Date(year, month - 1, day).toLocaleDateString('en-GB', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    })
-  }
-
   private formatTime(time: { hour: number; minute?: number; amPm: string }): string {
-    const minute = time.minute !== undefined ? String(time.minute).padStart(2, '0') : '00'
-    return `${time.hour}:${minute}${time.amPm.toLowerCase()}`
+    return formatTime12Hr(time.hour, time.minute, time.amPm)
   }
 
   private formatSessionMethod(type: string): string {
@@ -94,7 +87,7 @@ export default class ConfirmIcsPresenter extends PresenterBase<ConfirmIcsViewMod
     }
 
     const rows = buildIcsSummaryRows({
-      formattedDate: this.formatDate(date),
+      formattedDate: formatIsoDateOrNull(date) || date,
       formattedTime: this.formatTime(time),
       methodDisplay: this.formatSessionMethod(sessionMethodRequest.type),
       reason: isNotInPerson ? sessionMethodRequest.additionalDetails : null,
@@ -121,9 +114,7 @@ export default class ConfirmIcsPresenter extends PresenterBase<ConfirmIcsViewMod
   }
 
   private buildChangeReasonSummary(): GovukFrontendSummaryList {
-    const refereeName = [this.additionalInformation.firstName, this.additionalInformation.lastName]
-      .filter(Boolean)
-      .join(' ')
+    const refereeName = formatFullName(this.additionalInformation.firstName, this.additionalInformation.lastName)
 
     const rows: GovukFrontendSummaryListRow[] = [
       {

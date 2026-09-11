@@ -9,9 +9,8 @@ import {
   EditRiskSummaryFieldContent,
   EditRiskSummaryViewModel,
 } from './EditRiskSummaryViewModel'
-
-const nonEmptyStringOrDefault = (str: string | undefined | null, defaultValue: string): string =>
-  (str ?? '').trim() || defaultValue
+import { trimOrDefault } from '../../utils/utils'
+import formatFullName from '../../utils/presenterFormatters'
 
 export default class EditRiskSummaryPresenter extends PresenterBase<EditRiskSummaryViewModel, EditRiskSummaryContent> {
   constructor(private readonly risk: CommunitySupportRiskDto) {
@@ -20,7 +19,7 @@ export default class EditRiskSummaryPresenter extends PresenterBase<EditRiskSumm
 
   private getFullName(): string {
     const { firstName, lastName } = this.risk
-    return `${firstName} ${lastName}`
+    return formatFullName(firstName, lastName)
   }
 
   private concernIndicator(risk: ArnsRiskDto | null | undefined, content: EditRiskSummaryContent): string {
@@ -89,7 +88,7 @@ export default class EditRiskSummaryPresenter extends PresenterBase<EditRiskSumm
       heading: this.getFullName(),
       subheading: content.pageHeader,
       crnLabel: content.crnLabel,
-      crn: nonEmptyStringOrDefault(crn, content.defaultFieldValue),
+      crn: trimOrDefault(crn, content.defaultFieldValue),
       dateOfBirthLabel: content.dateOfBirthLabel,
       dateOfBirth: `${dateFormat(dobDate)} (${age} years old)`,
       lastUpdatedInset: {
