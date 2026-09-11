@@ -42,13 +42,11 @@ import type {
   AdditionalInformationForTheDeliveryPartner,
   Selection,
   OffenceSentenceRequest,
+  OffenceSentenceInfoBffResponseDto,
 } from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
 import { PagedResponse } from '../@types/communitySupportApi/derived'
-import { components } from '../@types/communitySupportApi/imported'
-
-type OffenceSentenceInfoBffResponseDto = components['schemas']['OffenceSentenceInfoBffResponseDto']
 
 export default class CommunitySupportApiClient extends RestClient {
   constructor(authenticationClient: AuthenticationClient, apiConfig: ApiConfig = null) {
