@@ -561,7 +561,7 @@ export default class ReferralController {
       userInputData = {
         ...ppDetails,
         pdu: JSON.stringify(ppDetails.pdu),
-        probationOffices: JSON.stringify(ppDetails.probationOffice),
+        probationOffice: JSON.stringify(ppDetails.probationOffice),
       }
     }
     const isFromPP = fromPP === 'true'

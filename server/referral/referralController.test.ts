@@ -1234,15 +1234,7 @@ describe('ReferralController', () => {
         mockPdus,
         false,
         undefined,
-        {
-          name: 'PP Person',
-          jobRole: 'Probation Practitioner',
-          emailAddress: 'pp.person@example.com',
-          phoneNumber: '01632 960 001',
-          teamPhoneNumber: '07700 900 982',
-          pdu: JSON.stringify({ id: 'pdu-1', name: 'London PDU' }),
-          probationOffice: JSON.stringify({ id: 1, name: 'London Probation Office' }),
-        },
+        sessionPpDetails,
       )
     })
 
@@ -1308,6 +1300,7 @@ describe('ReferralController', () => {
         jobRole: 'Probation Practitioner',
         emailAddress: 'api.pp@example.com',
         pdu: { id: 'pdu-1', name: 'London PDU' },
+        probationOffice: { id: 1, name: 'London Probation Office' },
       }
       req = {
         method: 'GET',
@@ -1333,7 +1326,11 @@ describe('ReferralController', () => {
         mockPdus,
         false,
         undefined,
-        apiPpDetails,
+        {
+          ...apiPpDetails,
+          pdu: JSON.stringify(apiPpDetails.pdu),
+          probationOffice: JSON.stringify(apiPpDetails.probationOffice),
+        },
       )
     })
 
