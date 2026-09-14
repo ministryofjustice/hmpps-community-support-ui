@@ -53,6 +53,7 @@ type AdditionalSupportNeedsRequest = components['schemas']['AdditionalSupportNee
 type NeedsInterpreterRequest = components['schemas']['NeedsInterpreterRequest']
 type OffenceSentenceRequest = components['schemas']['UpdateOffenceSentenceRequest']
 type OffenceSentenceInfoBffResponseDto = components['schemas']['OffenceSentenceInfoBffResponseDto']
+type OffenceSentenceDto = components['schemas']['OffenceSentenceDto']
 type ProbationPractitionerDetails = components['schemas']['ProbationPractitionerDetailsBffResponseDto']
 type CheckDraftReferralDetailsDto = components['schemas']['CheckDraftReferralDetailsBffResponseDto']
 type UpdateProbationPractitionerDetailsRequest = components['schemas']['UpdateProbationPractitionerDetailsRequest']
@@ -117,6 +118,7 @@ export type {
   NeedsInterpreterRequest,
   OffenceSentenceRequest,
   OffenceSentenceInfoBffResponseDto,
+  OffenceSentenceDto,
   ProbationPractitionerDetails,
   UpdateProbationPractitionerDetailsRequest,
   AdditionalInformationForTheDeliveryPartner,

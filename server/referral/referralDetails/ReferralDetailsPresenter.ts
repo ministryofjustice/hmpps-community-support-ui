@@ -13,6 +13,7 @@ import {
   ReferralDetailsCard,
   ReferralDetailsContent,
 } from './ReferralDetailsViewModel'
+import { trimOrDefault } from '../../utils/utils'
 import { govFrontendSummaryListRow, createMailtoLink } from '../../utils/viewUtils'
 
 export interface ReferralDetailsViewModel {
@@ -28,9 +29,6 @@ export interface ReferralDetailsViewModel {
   withdrawReferralHref: string
   withdrawReferralLinkText: string
 }
-
-const nonEmptyStringOrDefault = (str: string | undefined | null, defaultValue: string): string =>
-  (str ?? '').trim() || defaultValue
 
 export default class ReferralDetailsPresenter extends PresenterBase<ReferralDetailsViewModel, ReferralDetailsContent> {
   private readonly assignReferralHref: string
@@ -58,20 +56,14 @@ export default class ReferralDetailsPresenter extends PresenterBase<ReferralDeta
         attributes: { 'data-testid': 'personal-details' },
       },
       rows: [
-        govFrontendSummaryListRow(cardContent.nameLabel, nonEmptyStringOrDefault(name, defaultFieldValue)),
-        govFrontendSummaryListRow(cardContent.crnLabel, nonEmptyStringOrDefault(crn, defaultFieldValue)),
+        govFrontendSummaryListRow(cardContent.nameLabel, trimOrDefault(name, defaultFieldValue)),
+        govFrontendSummaryListRow(cardContent.crnLabel, trimOrDefault(crn, defaultFieldValue)),
         govFrontendSummaryListRow(
           cardContent.dobLabel,
-          nonEmptyStringOrDefault(`${dateFormat(new Date(dateOfBirth))} (${this.age} years old)`, defaultFieldValue),
+          trimOrDefault(`${dateFormat(new Date(dateOfBirth))} (${this.age} years old)`, defaultFieldValue),
         ),
-        govFrontendSummaryListRow(
-          cardContent.languageLabel,
-          nonEmptyStringOrDefault(preferredLanguage, defaultFieldValue),
-        ),
-        govFrontendSummaryListRow(
-          cardContent.disabilitiesLabel,
-          nonEmptyStringOrDefault(disabilities, defaultFieldValue),
-        ),
+        govFrontendSummaryListRow(cardContent.languageLabel, trimOrDefault(preferredLanguage, defaultFieldValue)),
+        govFrontendSummaryListRow(cardContent.disabilitiesLabel, trimOrDefault(disabilities, defaultFieldValue)),
       ],
     }
   }
@@ -88,12 +80,9 @@ export default class ReferralDetailsPresenter extends PresenterBase<ReferralDeta
         attributes: { 'data-testid': 'equality-details' },
       },
       rows: [
-        govFrontendSummaryListRow(cardContent.ethnicityLabel, nonEmptyStringOrDefault(ethnicity, defaultFieldValue)),
-        govFrontendSummaryListRow(
-          cardContent.religionLabel,
-          nonEmptyStringOrDefault(religionOrBelief, defaultFieldValue),
-        ),
-        govFrontendSummaryListRow(cardContent.sexLabel, nonEmptyStringOrDefault(sex, defaultFieldValue)),
+        govFrontendSummaryListRow(cardContent.ethnicityLabel, trimOrDefault(ethnicity, defaultFieldValue)),
+        govFrontendSummaryListRow(cardContent.religionLabel, trimOrDefault(religionOrBelief, defaultFieldValue)),
+        govFrontendSummaryListRow(cardContent.sexLabel, trimOrDefault(sex, defaultFieldValue)),
       ],
     }
   }
@@ -101,10 +90,10 @@ export default class ReferralDetailsPresenter extends PresenterBase<ReferralDeta
   private buildContactDetails(cardContent: ContactDetailsCard, defaultFieldValue: string): GovukFrontendSummaryList {
     const { contactDetailsTableData } = this.referralDetails
     const { address, phoneNumber, mobileNumber, email } = contactDetailsTableData
-    const phoneNumberValue = nonEmptyStringOrDefault(phoneNumber, defaultFieldValue)
-    const mobileNumberValue = nonEmptyStringOrDefault(mobileNumber, defaultFieldValue)
-    const emailValue = nonEmptyStringOrDefault(email, defaultFieldValue)
-    const addressValue = nonEmptyStringOrDefault(address, defaultFieldValue)
+    const phoneNumberValue = trimOrDefault(phoneNumber, defaultFieldValue)
+    const mobileNumberValue = trimOrDefault(mobileNumber, defaultFieldValue)
+    const emailValue = trimOrDefault(email, defaultFieldValue)
+    const addressValue = trimOrDefault(address, defaultFieldValue)
     return {
       card: {
         title: {
@@ -131,7 +120,7 @@ export default class ReferralDetailsPresenter extends PresenterBase<ReferralDeta
       : cardContent.assignedToDefaultValue
     const { targetServiceCompletionDate, targetServiceCompletionDateReason } = this.referralDetails
     const completionDateValue = targetServiceCompletionDate
-      ? nonEmptyStringOrDefault(britishDateFormat(new Date(targetServiceCompletionDate)), defaultFieldValue)
+      ? trimOrDefault(britishDateFormat(new Date(targetServiceCompletionDate)), defaultFieldValue)
       : defaultFieldValue
     return {
       card: {
@@ -141,7 +130,7 @@ export default class ReferralDetailsPresenter extends PresenterBase<ReferralDeta
       rows: [
         govFrontendSummaryListRow(
           cardContent.referralDateLabel,
-          nonEmptyStringOrDefault(dateFormat(new Date(referralDate)), defaultFieldValue),
+          trimOrDefault(dateFormat(new Date(referralDate)), defaultFieldValue),
         ),
         govFrontendSummaryListRow(
           cardContent.assignedToLabel,
@@ -158,7 +147,7 @@ export default class ReferralDetailsPresenter extends PresenterBase<ReferralDeta
         govFrontendSummaryListRow(cardContent.targetServiceCompletionDateLabel, completionDateValue),
         govFrontendSummaryListRow(
           cardContent.targetServiceCompletionDateReasonLabel,
-          nonEmptyStringOrDefault(targetServiceCompletionDateReason, defaultFieldValue),
+          trimOrDefault(targetServiceCompletionDateReason, defaultFieldValue),
         ),
       ],
     }

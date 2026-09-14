@@ -14,11 +14,26 @@ export type CheckReferralInformationViewModel = {
   referralDetailsSummary: GovukFrontendSummaryList
 }
 
+export type PersonalDetailsCard = {
+  heading: string
+  nameLabel: string
+  crnLabel: string
+  prisonNumberLabel: string
+  locationLabel: string
+  dobLabel: string
+  languageLabel: string
+  currentCircumstancesLabel: string
+  disabilitiesLabel: string
+  lastUpdatedLabel: string
+}
+
 export type CheckReferralInformationContent = {
   pageTitle: string
   pageHeader: string
   pageSubHeader: string
   personalDetailsHeader: string
+  notAvailable: string
+  personalDetailsCard: PersonalDetailsCard
   referralDetailsHeader: string
   referralContactDetailsHeader: string
   submitButtonText: string

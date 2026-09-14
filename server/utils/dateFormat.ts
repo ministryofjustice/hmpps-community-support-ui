@@ -11,3 +11,16 @@ export const isoToFormattedDate = (iso: string): string =>
     month: 'long',
     year: 'numeric',
   })
+
+export const formatIsoDateOrNull = (dateValue: string | null | undefined): string | null => {
+  if (!dateValue) return null
+
+  const [year, month, day] = dateValue.split('-').map(Number)
+  if (!year || !month || !day) return null
+
+  return new Date(year, month - 1, day).toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  })
+}

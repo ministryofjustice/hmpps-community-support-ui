@@ -293,7 +293,7 @@ describe('ConfirmIcsPresenter', () => {
       })
     })
 
-    describe('reschedule ics chack answers page', () => {
+    describe('reschedule ics check answers page', () => {
       const changeAppointmentDetails: ChangeAppointmentDetails = {
         changeRequestedBy: ChangeRequesterType.PROBATION_PRACTITIONER,
         reasonForChange: 'There were technical issues',

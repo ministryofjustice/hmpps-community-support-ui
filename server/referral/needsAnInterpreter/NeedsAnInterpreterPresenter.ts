@@ -4,7 +4,7 @@ import { GovukFrontendErrorMessage } from '@govuk-frontend'
 import PresenterBase from '../../presenter/presenterBase'
 import { NeedsAnInterpreterContent, NeedsAnInterpreterViewModel } from './NeedsAnInterpreterModel'
 import { GovukFrontendRadiosWithConditional } from '../../@types/govukFrontend/derived'
-import { buildTextarea, not, TriState } from '../../utils/utils'
+import { buildTextarea, not, TriState, yesNoSelectionToTriState } from '../../utils/utils'
 import { ErrorMiddlewareErrors } from '../../@types/express'
 
 type LanguageSelection = NeedsInterpreterBffResponseDto['language']
@@ -38,26 +38,13 @@ const isYesChecked = (selected: TriState, hasError: boolean): TriState => {
   }
 }
 
-const selectionToTriState = (selection: LanguageSelection): TriState => {
-  switch (selection.selected) {
-    case 'Unanswered':
-      return null
-    case 'No':
-      return false
-    case 'Yes':
-      return true
-    default:
-      return null
-  }
-}
-
 const buildRadiosWithSelection = (
   content: NeedsAnInterpreterContent,
   selection: LanguageSelection,
   name: string,
   messages: Record<string, GovukFrontendErrorMessage>,
 ): GovukFrontendRadiosWithConditional => {
-  const yesSelected: TriState = selectionToTriState(selection)
+  const yesSelected: TriState = yesNoSelectionToTriState(selection.selected)
   const yesHasError: boolean = !!messages.language
   const yesChecked = isYesChecked(yesSelected, yesHasError)
   const languageText = selection.selected === 'Yes' ? selection.value : ''

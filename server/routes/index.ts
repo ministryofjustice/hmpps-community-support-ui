@@ -10,7 +10,6 @@ import CaseListController from '../caseList/caseListController'
 import DraftReferralController from '../referral/draftReferralController'
 import IcsFeedbackController from '../appointment/icsFeedbackController'
 import LandingController from '../landing/landingController'
-import NeedsController from '../referral/actionPlan/needs/needsController'
 import ReferralController from '../referral/referralController'
 import WithdrawalController from '../referral/withdrawal/withdrawalController'
 
@@ -40,7 +39,6 @@ export default function routes({
   const icsFeedbackController = new IcsFeedbackController(appointmentService)
   const landingController = new LandingController()
   const actionPlanController = new ActionPlanController(referralService)
-  const needsController = new NeedsController()
   const withdrawalController = new WithdrawalController(referralService, withdrawalService)
 
   router.get('/', async (req, res, next) => {
@@ -130,6 +128,10 @@ export default function routes({
     appointmentController.submitIssuesOrConcerns(req, res),
   )
 
+  get('/ics-feedback/:caseRefId/next-steps', (req, res) => appointmentController.getNextSteps(req, res))
+
+  post('/ics-feedback/:caseRefId/next-steps', (req, res) => appointmentController.submitNextSteps(req, res))
+
   get('/ics-feedback/:caseRefId/session-details', (req, res) => appointmentController.sessionDetails(req, res))
 
   post('/ics-feedback/:caseRefId/session-details', (req, res) => appointmentController.recordSessionDetails(req, res))
@@ -217,8 +219,6 @@ export default function routes({
   get('/referral/task-list', (req, res) => referralController.showTaskList(req, res))
 
   get('/referral/:id/action-plan', (req, res) => actionPlanController.showActionPlanPage(req, res))
-
-  get('/referral/:id/action-plan/needs', (req, res) => needsController.showNeedsPage(req, res))
 
   get('/referral/:referralIdentifier/withdraw', (req, res) => withdrawalController.showReason(req, res))
 

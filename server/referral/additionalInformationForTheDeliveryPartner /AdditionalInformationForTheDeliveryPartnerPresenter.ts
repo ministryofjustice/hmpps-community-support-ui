@@ -4,7 +4,7 @@ import { GovukFrontendErrorMessage } from '@govuk-frontend'
 import PresenterBase from '../../presenter/presenterBase'
 
 import { GovukFrontendRadiosWithConditional } from '../../@types/govukFrontend/derived'
-import { buildTextarea, not, TriState } from '../../utils/utils'
+import { buildTextarea, not, TriState, yesNoSelectionToTriState } from '../../utils/utils'
 import { ErrorMiddlewareErrors } from '../../@types/express'
 import {
   AdditionalInformationForTheDeliveryPartnerContent,
@@ -40,25 +40,12 @@ const isYesChecked = (selected: TriState, hasError: boolean): TriState => {
   }
 }
 
-const selectionToTriState = (selection: Selection): TriState => {
-  switch (selection.selected) {
-    case 'Unanswered':
-      return null
-    case 'No':
-      return false
-    case 'Yes':
-      return true
-    default:
-      return null
-  }
-}
-
 const buildRadiosWithSelection = (
   content: AdditionalInformationForTheDeliveryPartnerContent,
   selection: Selection,
   messages: Record<string, GovukFrontendErrorMessage>,
 ): GovukFrontendRadiosWithConditional => {
-  const yesSelected: TriState = selectionToTriState(selection)
+  const yesSelected: TriState = yesNoSelectionToTriState(selection.selected)
   const yesHasError: boolean = !!messages.details
   const yesChecked = isYesChecked(yesSelected, yesHasError)
   const text = selection.selected === 'Yes' ? selection.value : ''

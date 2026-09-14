@@ -8,4 +8,3 @@ export type ActionPlanViewModel = {
 }
 
 export type ActionPlanContent = GlobalContent['/referral/:id/action-plan']
-export type ActionPlanNeedsContent = GlobalContent['/referral/:id/action-plan/needs']

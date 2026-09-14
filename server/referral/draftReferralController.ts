@@ -284,7 +284,10 @@ export default class DraftReferralController {
     const formData = JSON.parse(postFormDataRaw || '{}')
     const validationErrors = res.locals.errors
 
-    if (!referralId) return res.redirect(taskListURL)
+    if (!referralId) {
+      logger.warn('Missing draft Referral Id in showOffenceSentencePage; redirecting to task list')
+      return res.redirect(taskListURL)
+    }
 
     try {
       const data = await this.referralService.getOffenceSentencePage(referralId, username)
@@ -302,6 +305,7 @@ export default class DraftReferralController {
     const referralId = req.session?.draftReferralId
 
     if (!referralId) {
+      logger.warn('Missing draft Referral Id in updateOffenceSentencePage; redirecting to task list')
       return res.redirect(taskListURL)
     }
 

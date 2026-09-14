@@ -23,6 +23,10 @@ const properCaseName = (name: string): string => (isBlank(name) ? '' : name.spli
 export const convertToTitleCase = (sentence: string): string =>
   isBlank(sentence) ? '' : sentence.split(' ').map(properCaseName).join(' ')
 
+export const trimOrDefault = (value: string | null | undefined, defaultValue: string): string => {
+  return (value ?? '').trim() || defaultValue
+}
+
 export const initialiseName = (fullName?: string): string | null => {
   // this check is for the authError page
   if (!fullName) return null
@@ -126,3 +130,15 @@ ${items.map(({ value, text, selected }) => `<option value="${value}" ${selected 
 
 export type TriState = boolean | null
 export const not = (state: TriState): TriState => (state === null ? null : !state)
+
+export const booleanToTriState = (value: boolean | null | undefined): TriState => {
+  if (value === true) return true
+  if (value === false) return false
+  return null
+}
+
+export const yesNoSelectionToTriState = (value: string | null | undefined): TriState => {
+  if (value === 'Yes') return true
+  if (value === 'No') return false
+  return null
+}

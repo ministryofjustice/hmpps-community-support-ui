@@ -30,6 +30,19 @@
     "pageHeader": "{{ fullName }}",
     "pageSubHeader": "Check details and submit referral",
     "personalDetailsHeader": "About {{ firstName }}",
+    "notAvailable": "Not available",
+    "personalDetailsCard": {
+      "heading": "Personal details",
+      "nameLabel": "Name",
+      "crnLabel": "CRN",
+      "prisonNumberLabel": "Prison number",
+      "locationLabel": "Current location",
+      "dobLabel": "Date of birth",
+      "languageLabel": "Preferred language",
+      "currentCircumstancesLabel": "Current circumstances",
+      "disabilitiesLabel": "Disabilities",
+      "lastUpdatedLabel": "Last updated"
+    },
     "referralDetailsHeader": "Referral information",
     "referralContactDetailsHeader": "Referral contact details",
     "backLink": "/referral/task-list",
@@ -274,12 +287,7 @@
   "/referral/:id/action-plan": {
     "pageHeader": "Action plan for {{ fullName }}",
     "stepNameRowTitle": "Step name",
-    "needsRowTitle": "Needs",
-    "needsRowStatus": "Status",
-    "needsRowLinkText": "Complete"
-  },
-  "/referral/:id/action-plan/needs": {
-    "pageHeader": "Needs"
+    "needsRowTitle": "Needs"
   },
   "/ics-feedback/:id/did-session-take-place": {
     "submitButtonText": "Continue",
@@ -387,6 +395,16 @@
     "issuesOrConcernsHint": "Give details of anything that concerned you about {{ firstname }}, or any issues they raised that might impact their engagement in future sessions.",
     "submitButtonText": "Continue",
     "backLinkHref": "/ics-feedback/{{ id }}/session-feedback"
+  },
+  "/ics-feedback/:id/next-steps": {
+    "pageTitle": "Next steps – ICS feedback – Community Support ",
+    "pageHeader": "Next steps",
+    "plannedForNextSessionLabel": "What do you have planned for the next session?",
+    "plannedForNextSessionHint": "Give details about what you plan to do when you next meet with {{ firstname }}.",
+    "actionsBeforeNextSessionLabel": "What actions do you and {{ firstname }} have before the next session takes place?",
+    "actionsBeforeNextSessionHint": "Give details of any actions or next steps you and {{ firstname }} have agreed to do ahead of your next session.",
+    "submitButtonText": "Continue",
+    "backLinkHref": "/ics-feedback/{{ id }}/issues-or-concerns"
   },
   "/ics-feedback/:id/check-answers": {
     "pageHeader": "Check your answers before submitting feedback",

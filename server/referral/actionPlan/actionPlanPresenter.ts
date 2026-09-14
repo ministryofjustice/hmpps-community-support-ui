@@ -28,15 +28,6 @@ export default class ActionPlanPresenter extends PresenterBase<ActionPlanViewMod
           key: { text: content.needsRowTitle },
           // Hard-coded to "In progress" for now, but we'll take this from the API later
           value: { html: `<strong class="govuk-tag govuk-tag--blue">In progress</strong>` },
-          actions: {
-            items: [
-              {
-                href: `/referral/${this.caseReference}/action-plan/needs`,
-                text: content.needsRowLinkText,
-                visuallyHiddenText: content.needsRowTitle,
-              },
-            ],
-          },
         },
       ],
     }

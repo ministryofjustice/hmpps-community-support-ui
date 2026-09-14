@@ -10,6 +10,7 @@ import {
 import { GovukFrontendCheckboxesWithConditional, WithConditional } from '../../@types/govukFrontend/derived'
 import { buildTextarea, not } from '../../utils/utils'
 import { ErrorMiddlewareErrors } from '../../@types/express'
+import formatFullName from '../../utils/presenterFormatters'
 
 type FieldData = Omit<AdditionalSupportNeedsDto, 'refereeName' | 'needsAdditionalSupport'>
 type TriState = boolean | null
@@ -103,7 +104,7 @@ export default class AdditionalSuportNeedsPresenter extends PresenterBase<
   buildViewModel(res: Response): AdditionalSuportNeedsViewModel {
     const content = this.buildStaticContent(res)
     const { firstName, lastName } = this.data.refereeName
-    const name = `${firstName} ${lastName}`
+    const name = formatFullName(firstName, lastName)
     return {
       heading: name,
       checkList: buildChecklist(

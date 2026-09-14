@@ -1,0 +1,20 @@
+{% extends "../partials/layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+
+{% set pageTitle = content.pageTitle %}
+{% set mainClasses = "govuk-body" %}
+
+{% block contentBody %}
+  <form method="post" action="{{ content.submitHref }}">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
+
+    {{ govukTextarea(content.plannedForNextSession) }}
+
+    {{ govukTextarea(content.actionsBeforeNextSession) }}
+
+    {{ govukButton(content.submitButton) }}
+  </form>
+{% endblock %}

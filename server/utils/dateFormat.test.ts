@@ -1,4 +1,4 @@
-import dateFormat from './dateFormat'
+import dateFormat, { formatIsoDateOrNull } from './dateFormat'
 
 describe('dateFormat', () => {
   ;[
@@ -54,5 +54,21 @@ describe('dateFormat', () => {
     test(`${date} should be ${expected}`, () => {
       expect(dateFormat(date)).toStrictEqual(expected)
     })
+  })
+})
+
+describe('formatIsoDateOrNull', () => {
+  test('formats a valid ISO date-only string', () => {
+    expect(formatIsoDateOrNull('2025-12-15')).toBe('15 December 2025')
+  })
+
+  test('returns null for missing value', () => {
+    expect(formatIsoDateOrNull(undefined)).toBeNull()
+    expect(formatIsoDateOrNull(null)).toBeNull()
+    expect(formatIsoDateOrNull('')).toBeNull()
+  })
+
+  test('returns null for invalid format', () => {
+    expect(formatIsoDateOrNull('not-a-date')).toBeNull()
   })
 })

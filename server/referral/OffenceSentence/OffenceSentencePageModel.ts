@@ -1,31 +1,8 @@
 import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendSummaryList } from '@govuk-frontend'
 import { GovukFrontendRadiosWithConditional } from '../../@types/govukFrontend/derived'
+import { GlobalContent } from '../../../assets/content/GlobalContent'
 
-export interface OffenceSentenceCardContent {
-  heading: string
-  offenceLabel: string
-  offenceSubCategoryLabel: string
-  outcomeLabel: string
-  sentenceEndDateLabel: string
-  expectedReleaseDateLabel: string
-}
-
-export interface OffenceSentencePageContent {
-  pageTitle: string
-  crnLabel: string
-  dateOfBirthLabel: string
-  pageSubHeader: string
-  bodyText: string
-  offenceSentenceCard: OffenceSentenceCardContent
-  hasLicenceConditionsOrZonesLabel: string
-  licenceConditionsOrZonesDetailsLabel: string
-  notAvailableText: string
-  yesOptionLabel: string
-  noOptionLabel: string
-  backLink: string
-  submitHref: string
-  continueButton: string
-}
+export type OffenceSentencePageContent = GlobalContent['/referral/task-list/offence-sentence']
 
 export interface OffenceSentencePageViewModel {
   pageTitle: string
