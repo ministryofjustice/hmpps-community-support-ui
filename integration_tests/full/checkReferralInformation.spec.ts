@@ -84,37 +84,39 @@ test.describe('Check Referral Information Page', () => {
     )
     await expect(checkReferralInformationPage.personalDetailsSummary.rows[6].key).toContainText('Disabilities')
     await expect(checkReferralInformationPage.personalDetailsSummary.rows[6].value).toHaveText('Dyslexia')
-      expect(checkReferralInformationPage.riskInformationSummary.rows).toHaveLength(8)
-      await expect(checkReferralInformationPage.riskInformationSummary.rows[0].key).toHaveText('Who is at risk')
-      await expect(checkReferralInformationPage.riskInformationSummary.rows[0].value).toHaveText('Family members')
-      await expect(checkReferralInformationPage.riskInformationSummary.rows[1].key).toHaveText('What is the nature of the risk?')
-      await expect(checkReferralInformationPage.riskInformationSummary.rows[1].value).toHaveText(
-        'Physical assault towards others',
-      )
-      await expect(checkReferralInformationPage.riskInformationSummary.rows[2].key).toHaveText(
-        'In what circumstances or situations would offending be most likely to occur?',
-      )
-      await expect(checkReferralInformationPage.riskInformationSummary.rows[2].value).toHaveText(
-        'When intoxicated or under stress',
-      )
-      await expect(checkReferralInformationPage.riskInformationSummary.rows[3].key).toHaveText('Risk of self-harm')
-      await expect(checkReferralInformationPage.riskInformationSummary.rows[3].value).toHaveText('Low')
-      await expect(checkReferralInformationPage.riskInformationSummary.rows[4].key).toHaveText('Risk of suicide')
-      await expect(checkReferralInformationPage.riskInformationSummary.rows[4].value).toHaveText('Low')
-      await expect(checkReferralInformationPage.riskInformationSummary.rows[5].key).toHaveText(
-        'Concerns in relation to coping in an approved premises or hostel',
-      )
-      await expect(checkReferralInformationPage.riskInformationSummary.rows[5].value).toHaveText(
-        'May struggle in shared accommodation',
-      )
-      await expect(checkReferralInformationPage.riskInformationSummary.rows[6].key).toHaveText(
-        'Concerns in relation to vulnerability',
-      )
-      await expect(checkReferralInformationPage.riskInformationSummary.rows[6].value).toHaveText(
-        'Has vulnerability due to recent trauma',
-      )
-      await expect(checkReferralInformationPage.riskInformationSummary.rows[7].key).toHaveText('Additional information')
-      await expect(checkReferralInformationPage.riskInformationSummary.rows[7].value).toHaveText('No further details')
+    expect(checkReferralInformationPage.riskInformationSummary.rows).toHaveLength(8)
+    await expect(checkReferralInformationPage.riskInformationSummary.rows[0].key).toHaveText('Who is at risk')
+    await expect(checkReferralInformationPage.riskInformationSummary.rows[0].value).toHaveText('Family members')
+    await expect(checkReferralInformationPage.riskInformationSummary.rows[1].key).toHaveText(
+      'What is the nature of the risk?',
+    )
+    await expect(checkReferralInformationPage.riskInformationSummary.rows[1].value).toHaveText(
+      'Physical assault towards others',
+    )
+    await expect(checkReferralInformationPage.riskInformationSummary.rows[2].key).toHaveText(
+      'In what circumstances or situations would offending be most likely to occur?',
+    )
+    await expect(checkReferralInformationPage.riskInformationSummary.rows[2].value).toHaveText(
+      'When intoxicated or under stress',
+    )
+    await expect(checkReferralInformationPage.riskInformationSummary.rows[3].key).toHaveText('Risk of self-harm')
+    await expect(checkReferralInformationPage.riskInformationSummary.rows[3].value).toHaveText('Low')
+    await expect(checkReferralInformationPage.riskInformationSummary.rows[4].key).toHaveText('Risk of suicide')
+    await expect(checkReferralInformationPage.riskInformationSummary.rows[4].value).toHaveText('Low')
+    await expect(checkReferralInformationPage.riskInformationSummary.rows[5].key).toHaveText(
+      'Concerns in relation to coping in an approved premises or hostel',
+    )
+    await expect(checkReferralInformationPage.riskInformationSummary.rows[5].value).toHaveText(
+      'May struggle in shared accommodation',
+    )
+    await expect(checkReferralInformationPage.riskInformationSummary.rows[6].key).toHaveText(
+      'Concerns in relation to vulnerability',
+    )
+    await expect(checkReferralInformationPage.riskInformationSummary.rows[6].value).toHaveText(
+      'Has vulnerability due to recent trauma',
+    )
+    await expect(checkReferralInformationPage.riskInformationSummary.rows[7].key).toHaveText('Additional information')
+    await expect(checkReferralInformationPage.riskInformationSummary.rows[7].value).toHaveText('No further details')
   })
 
   test('should display prison number and DOB on check referral information when searched by prison number', async ({
