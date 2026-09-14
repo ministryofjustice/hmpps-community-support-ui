@@ -208,23 +208,6 @@ export interface paths {
     patch: operations['updateProbationPractitionerDetails']
     trace?: never
   }
-  '/draft-referral/{referralId}/probation-practitioner-details': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    /** Save the Probation Practitioner details for a Draft Referral */
-    patch: operations['updateProbationPractitionerDetails']
-    trace?: never
-  }
   '/draft-referral/{referralId}/offence-sentence': {
     parameters: {
       query?: never
@@ -240,23 +223,6 @@ export interface paths {
     head?: never
     /** Update the Offence and Sentence information for a Draft Referral */
     patch: operations['updateOffenceSentenceDetails']
-    trace?: never
-  }
-  '/draft-referral/{referralId}/main-point-of-contact-details': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    /** Save the Main Point of Contact details for a Draft Referral */
-    patch: operations['updateMainPointOfContactDetails']
     trace?: never
   }
   '/draft-referral/{referralId}/main-point-of-contact-details': {
@@ -361,23 +327,6 @@ export interface paths {
     patch: operations['updateAdditionalInformationForTheDeliveryPartner']
     trace?: never
   }
-  '/draft-referral/additional-information-for-the-delivery-partner/{referralId}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    /** Update additional information for the delivery partner for a referral */
-    patch: operations['updateAdditionalInformationForTheDeliveryPartner']
-    trace?: never
-  }
   '/bff/task-list-status/{referralId}': {
     parameters: {
       query?: never
@@ -463,23 +412,6 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/bff/referral/{referralReference}/action-plan/needs': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get the needs with questions for an action plan */
-    get: operations['getActionPlanNeeds']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
   '/bff/referral/{caseReference}/ics_appointment_feedback_details': {
     parameters: {
       query?: never
@@ -557,6 +489,23 @@ export interface paths {
     }
     /** Get check-referral-information page data */
     get: operations['getReferralAndPersonInformation']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/referral/action-plan/select-a-need': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get the needs and outcomes for select a need */
+    get: operations['getNeedsAndOutcomes']
     put?: never
     post?: never
     delete?: never
@@ -897,23 +846,6 @@ export interface paths {
     }
     /** Get additional support needs page data */
     get: operations['getAdditionalSupportNeedsPage']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/bff/draft-referral/additional-information-for-the-delivery-partner/{referralId}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get additional information for the delivery partner for a draft referral */
-    get: operations['getAdditionalInformationForTheDeliveryPartner']
     put?: never
     post?: never
     delete?: never
@@ -1335,7 +1267,8 @@ export interface components {
       emailAddress?: string | null
       /** Format: uuid */
       pduId?: string | null
-      probationOffice?: string | null
+      /** Format: int32 */
+      probationOfficeId?: number | null
       teamPhoneNumber?: string | null
       phoneNumber?: string | null
       ppDetailsFoundAndCorrect?: boolean | null
@@ -1527,22 +1460,6 @@ export interface components {
     ActionPlanSummaryPersonDetails: {
       fullName: string
     }
-    ActionPlanNeedsResponse: {
-      needs: components['schemas']['NeedDto'][]
-    }
-    NeedDto: {
-      /** Format: uuid */
-      id: string
-      label: string
-      questions: components['schemas']['QuestionDto'][]
-    }
-    QuestionDto: {
-      /** Format: uuid */
-      id: string
-      label: string
-      /** @enum {string} */
-      answerType: 'TEXTAREA' | 'RADIO' | 'CHECKBOX'
-    }
     AppointmentDetailsDto: {
       /** @enum {string|null} */
       method?: 'PHONE_CALL' | 'VIDEO_CALL' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION' | null
@@ -1568,6 +1485,20 @@ export interface components {
       fullName: string
       dateOfBirth: string
       sex?: string | null
+    }
+    ActionPlanSelectANeedNeed: {
+      /** Format: uuid */
+      id: string
+      label: string
+      outcomes: components['schemas']['ActionPlanSelectANeedOutcome'][]
+    }
+    ActionPlanSelectANeedOutcome: {
+      /** Format: uuid */
+      id: string
+      text: string
+    }
+    ActionPlanSelectANeedResponse: {
+      needs: components['schemas']['ActionPlanSelectANeedNeed'][]
     }
     CommunitySupportServiceDto: {
       id: string
@@ -2328,50 +2259,6 @@ export interface operations {
       }
     }
   }
-  patchSessionDeliveryDetails: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        referralReference: string
-      }
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['ActionPlanSessionDeliveryDetailsRequest']
-      }
-    }
-    responses: {
-      /** @description Session delivery details answers saved */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ActionPlanSessionDeliveryDetailsResponse']
-        }
-      }
-      /** @description Validation failure */
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-      /** @description Referral not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
   updateServiceEndDatePage: {
     parameters: {
       query?: never
@@ -2723,42 +2610,6 @@ export interface operations {
       }
     }
   }
-  updateAdditionalInformationForTheDeliveryPartner: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        referralId: string
-      }
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json':
-          components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
-      }
-    }
-    responses: {
-      /** @description Additional information for the delivery partner updated */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          '*/*': components['schemas']['AdditionalInformationForTheDeliveryPartnerBffResponseDto']
-        }
-      }
-      /** @description Referral not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
   getTaskListStatus: {
     parameters: {
       query?: never
@@ -2892,37 +2743,6 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['ActionPlanSessionDeliveryDetailsResponse']
-        }
-      }
-      /** @description Referral not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  getActionPlanNeeds: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        referralReference: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Needs with questions returned */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ActionPlanNeedsResponse']
         }
       }
       /** @description Referral not found */
@@ -3077,6 +2897,26 @@ export interface operations {
         }
         content: {
           'application/json': unknown
+        }
+      }
+    }
+  }
+  getNeedsAndOutcomes: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Needs and outcomes returned */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ActionPlanSelectANeedResponse']
         }
       }
     }
@@ -3324,64 +3164,6 @@ export interface operations {
         }
       }
       /** @description Failed to retrieve Probation Offices Information */
-      500: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  getPrisons: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Returns the list of active Prisons. */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['Prison'][]
-        }
-      }
-      /** @description Failed to retrieve Prisons */
-      500: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  getPdus: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Returns the list of Probation Delivery Units. */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['Pdu'][]
-        }
-      }
-      /** @description Failed to retrieve Probation Delivery Units */
       500: {
         headers: {
           [name: string]: unknown
