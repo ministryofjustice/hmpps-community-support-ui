@@ -185,7 +185,7 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
       rows: summary,
     }
   }
-  
+
   private buildReferralDetailsSummary(): GovukFrontendSummaryList {
     const summary = [govFrontendSummaryListRow('Location', this.draftReferralDetails.referralAreaTableData.area || '')]
     return {
@@ -198,5 +198,4 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
       rows: summary,
     }
   }
-
 }
