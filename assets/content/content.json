@@ -43,6 +43,16 @@
       "disabilitiesLabel": "Disabilities",
       "lastUpdatedLabel": "Last updated"
     },
+    "riskInformationCard": {
+      "heading": "Risk information",
+      "riskNatureLabel": "What is the nature of the risk? ",
+      "riskCircumstancesLabel": "In what circumstances or situations would offending be most likely to occur?",
+      "riskOfSelfHarmLabel": "Risk of self-harm",
+      "riskOfSuicideLabel": "Risk of suicide",
+      "concernsCopingInApprovedPremisesLabel": "Concerns in relation to coping in an approved premises or hostel",
+      "concernsVulnerabilityLabel": "Concerns in relation to vulnerability",
+      "additionalInformationLabel": "Additional information"
+    },
     "referralDetailsHeader": "Referral information",
     "referralContactDetailsHeader": "Referral contact details",
     "backLink": "/referral/task-list",

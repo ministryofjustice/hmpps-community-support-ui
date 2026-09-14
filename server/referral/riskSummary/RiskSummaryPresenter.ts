@@ -67,7 +67,7 @@ export default class RiskSummaryPresenter extends PresenterBase<RiskSummaryViewM
     return [
       this.buildRow(
         content.whoIsAtRiskCard,
-        trimOrDefault(summary?.whoIsAtRisk, content.defaultFieldValue),
+        trimOrDefault(JSON.stringify(this.risk, null, 2), content.defaultFieldValue),
         content,
         'riskSummaryWhoIsAtRisk',
       ),
