@@ -98,6 +98,22 @@ describe('TaskListPresenter - Page Rendering', () => {
       expect(items).toHaveLength(1)
       expect(items[0].title.text).toBe('Add details of main point of contact')
       expect(items[0].href).toBe('/referral/new/add-contact-details')
+      expect(items[0].status.tag.text).toBe('Completed')
+    })
+
+    test('derives the contact details status from addMainPointOfContactCompleted, not addDetailsOfMainPointOfContactCompleted', () => {
+      const taskListState: TaskListStatusDto = {
+        ...baseTaskListState,
+        addDetailsOfMainPointOfContactCompleted: { completed: true, statusText: 'Completed', tag: 'govuk-tag--green' },
+        addMainPointOfContactCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+      }
+      const presenter = new TaskListPresenter(taskListState, 'referralId')
+      const content = TaskListContent.build()
+      const response = { locals: { content } } as unknown as Response
+      const viewModel = presenter.buildViewModel(response)
+
+      const { items } = viewModel.taskListItemsBySection.contactDetails.taskList
+      expect(items[0].status.tag.text).toBe('Incomplete')
     })
   })
 })

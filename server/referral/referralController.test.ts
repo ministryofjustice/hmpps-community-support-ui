@@ -1234,7 +1234,15 @@ describe('ReferralController', () => {
         mockPdus,
         false,
         undefined,
-        sessionPpDetails,
+        {
+          name: 'PP Person',
+          jobRole: 'Probation Practitioner',
+          emailAddress: 'pp.person@example.com',
+          phoneNumber: '01632 960 001',
+          teamPhoneNumber: '07700 900 982',
+          pdu: JSON.stringify({ id: 'pdu-1', name: 'London PDU' }),
+          probationOffice: JSON.stringify({ id: 1, name: 'London Probation Office' }),
+        },
       )
     })
 
@@ -1291,6 +1299,69 @@ describe('ReferralController', () => {
         false,
         undefined,
         { name: 'John Doe' },
+      )
+    })
+
+    it('should fall back to the API when there is no flash, body or session data', async () => {
+      const apiPpDetails = {
+        name: 'API PP Person',
+        jobRole: 'Probation Practitioner',
+        emailAddress: 'api.pp@example.com',
+        pdu: { id: 'pdu-1', name: 'London PDU' },
+      }
+      req = {
+        method: 'GET',
+        query: {},
+        body: undefined,
+        flash: jest.fn().mockReturnValue([]),
+        session: {
+          draftReferralId: 'referral-uuid-1',
+          referralCreationDetails: { personDetails: mockPersonDetails },
+        },
+      } as unknown as Request
+      res = { ...res, locals: { user: { username: 'user1' }, errors: undefined } } as unknown as Response
+      referralService.getProbationOffices.mockResolvedValue(mockProbationOffices)
+      referralService.getPDUs.mockResolvedValue(mockPdus)
+      referralService.getPPDetails.mockResolvedValue(apiPpDetails)
+
+      await referralController.showAddContactDetails(req, res)
+
+      expect(referralService.getPPDetails).toHaveBeenCalledWith('referral-uuid-1', 'user1')
+      expect(AddContactDetailsPresenter).toHaveBeenCalledWith(
+        mockPersonDetails,
+        mockProbationOffices,
+        mockPdus,
+        false,
+        undefined,
+        apiPpDetails,
+      )
+    })
+
+    it('should not fall back to the API when the user has come from the check PP details page', async () => {
+      req = {
+        method: 'GET',
+        query: { fromPP: 'true' },
+        body: undefined,
+        flash: jest.fn().mockReturnValue([]),
+        session: {
+          draftReferralId: 'referral-uuid-1',
+          referralCreationDetails: { personDetails: mockPersonDetails },
+        },
+      } as unknown as Request
+      res = { ...res, locals: { user: { username: 'user1' }, errors: undefined } } as unknown as Response
+      referralService.getProbationOffices.mockResolvedValue(mockProbationOffices)
+      referralService.getPDUs.mockResolvedValue(mockPdus)
+
+      await referralController.showAddContactDetails(req, res)
+
+      expect(referralService.getPPDetails).not.toHaveBeenCalled()
+      expect(AddContactDetailsPresenter).toHaveBeenCalledWith(
+        mockPersonDetails,
+        mockProbationOffices,
+        mockPdus,
+        true,
+        undefined,
+        undefined,
       )
     })
 

@@ -541,6 +541,11 @@ export default class ReferralController {
     const { username } = res.locals.user
     const { fromPP } = req.query
     const draftReferralKey = req.session?.draftReferralId
+
+    if (!draftReferralKey) {
+      return res.redirect('/referral/new/find-a-person')
+    }
+
     const flashData = req.flash('value')
     let userInputData = flashData.length > 0 ? JSON.parse(flashData[0]) : req.body
 
@@ -549,16 +554,17 @@ export default class ReferralController {
       userInputData = req.session.ppDetails
     }
 
-    // If there is no data in session, then check if we have any stored in the DB
-    console.log('userInputData', userInputData)
-    if (userInputData === undefined) {
-      userInputData = this.referralService.getPPDetails(draftReferralKey, username)
+    // If there is no data in session and we haven't already found a PP, then check if we have any stored in the DB
+    // Stringify the pdu and probation office so that they can be used to pre-populate the select fields
+    if (userInputData === undefined && !fromPP) {
+      const ppDetails = await this.referralService.getPPDetails(draftReferralKey, username)
+      userInputData = {
+        ...ppDetails,
+        pdu: JSON.stringify(ppDetails.pdu),
+        probationOffices: JSON.stringify(ppDetails.probationOffice),
+      }
     }
     const isFromPP = fromPP === 'true'
-
-    if (!draftReferralKey) {
-      return res.redirect('/referral/new/find-a-person')
-    }
 
     if (req.method === 'POST') {
       return validateRequestBodyAgainstSchema(AddContactDetailsSchema, req, res, async form => {
@@ -568,9 +574,9 @@ export default class ReferralController {
           : { code: '', name: 'Not entered' }
         req.session.ppDetails = {
           ...form,
-          pduId: pduInfo.code,
+          pduId: pduInfo.id,
           pduName: pduInfo.name,
-          probationOfficeId: probationOfficeInfo.code,
+          probationOfficeId: probationOfficeInfo.id,
           probationOfficeName: probationOfficeInfo.name,
         }
         return res.redirect(`/referral/new/confirm-contact-details?fromPP=${isFromPP}`)
@@ -579,7 +585,6 @@ export default class ReferralController {
     const validationErrors = res.locals.errors
     const probationOffices = await this.referralService.getProbationOffices(username)
     const pdus = await this.referralService.getPDUs(username)
-
     const presenter = new AddContactDetailsPresenter(
       req.session.referralCreationDetails.personDetails,
       probationOffices,

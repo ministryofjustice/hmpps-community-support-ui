@@ -118,11 +118,11 @@ describe('AddContactDetailsPresenter', () => {
       const options = presenter.generateProbationOfficeOptions()
       expect(options[1]).toEqual({
         text: 'London Probation Office',
-        value: JSON.stringify({ code: 1, name: 'London Probation Office' }),
+        value: JSON.stringify({ id: 1, name: 'London Probation Office' }),
       })
       expect(options[2]).toEqual({
         text: 'Manchester Probation Office',
-        value: JSON.stringify({ code: 2, name: 'Manchester Probation Office' }),
+        value: JSON.stringify({ id: 2, name: 'Manchester Probation Office' }),
       })
     })
   })
@@ -138,10 +138,10 @@ describe('AddContactDetailsPresenter', () => {
     it('maps pdus to select items', () => {
       const presenter = new AddContactDetailsPresenter(personalDetails, probationOffices, pdus)
       const options = presenter.generatePDUOptions()
-      expect(options[1]).toEqual({ text: 'London PDU', value: JSON.stringify({ code: 'pdu-1', name: 'London PDU' }) })
+      expect(options[1]).toEqual({ text: 'London PDU', value: JSON.stringify({ id: 'pdu-1', name: 'London PDU' }) })
       expect(options[2]).toEqual({
         text: 'Manchester PDU',
-        value: JSON.stringify({ code: 'pdu-2', name: 'Manchester PDU' }),
+        value: JSON.stringify({ id: 'pdu-2', name: 'Manchester PDU' }),
       })
     })
   })

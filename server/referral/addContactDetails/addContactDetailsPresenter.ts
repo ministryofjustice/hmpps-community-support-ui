@@ -75,7 +75,7 @@ export default class AddContactDetailsPresenter extends PresenterBase<
       { text: '', value: '' },
       ...this.probationOffices.map(office => ({
         text: office.name,
-        value: JSON.stringify({ code: office.probationOfficeId, name: office.name }),
+        value: JSON.stringify({ id: office.probationOfficeId, name: office.name }),
       })),
     ]
   }
@@ -85,7 +85,7 @@ export default class AddContactDetailsPresenter extends PresenterBase<
       { text: '', value: '' },
       ...this.pdus.map(pdu => ({
         text: pdu.name,
-        value: JSON.stringify({ code: pdu.id, name: pdu.name }),
+        value: JSON.stringify({ id: pdu.id, name: pdu.name }),
       })),
     ]
   }
