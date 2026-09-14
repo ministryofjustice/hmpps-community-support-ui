@@ -286,8 +286,28 @@
   },
   "/referral/:id/action-plan": {
     "pageHeader": "Action plan for {{ fullName }}",
+    "noActionPlanText": "{{ fullName }} does not have an action plan yet.",
     "stepNameRowTitle": "Step name",
-    "needsRowTitle": "Needs"
+    "needsRowTitle": "Needs",
+    "needsRowStatus": "Status",
+    "needsRowLinkText": "Complete",
+    "createButtonText": "Create an action plan"
+  },
+  "/referral/:id/action-plan/needs": {
+    "pageHeader": "Area of Need",
+    "whichNeedTitle": "Which need are you creating an action for?",
+    "whichNeedHint": "Select one option. You can select more needs later.",
+    "continueButtonText": "Continue"
+  },
+  "/referral/:id/action-plan/select-an-outcome": {
+    "pageHeader": "Which outcome is appropriate for {{ fullName }}?",
+    "selectOutcomeHint": "Select one option.",
+    "continueButtonText": "Continue"
+  },
+  "/referral/:id/action-plan/add-activities": {
+    "pageHeader": "Add activities",
+    "addAnotherActivityButtonText": "Add another activity",
+    "saveAndContinueButtonText": "Save and continue"
   },
   "/ics-feedback/:id/did-session-take-place": {
     "submitButtonText": "Continue",
