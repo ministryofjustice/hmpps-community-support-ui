@@ -45,6 +45,7 @@
     },
     "riskInformationCard": {
       "heading": "Risk information",
+      "whoIsAtRiskLabel": "Who is at risk?",
       "riskNatureLabel": "What is the nature of the risk? ",
       "riskCircumstancesLabel": "In what circumstances or situations would offending be most likely to occur?",
       "riskOfSelfHarmLabel": "Risk of self-harm",
