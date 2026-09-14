@@ -610,7 +610,7 @@ export default class ReferralController {
         pdu?: string
         probationOffice?: string
       }
-      const contactDetails = { ...ppDetails }
+      const contactDetails = { ...ppDetails, ppDetailsFoundAndCorrect: false }
       await this.referralService.submitContactDetails(draftReferralKey, username, contactDetails)
       req.session.ppDetails = undefined
       return res.redirect('/referral/task-list')

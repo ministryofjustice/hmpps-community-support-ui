@@ -1452,9 +1452,31 @@ describe('ReferralController', () => {
         emailAddress: 'pp.person@example.com',
         pduId: 'pdu-1',
         probationOfficeId: 1,
+        ppDetailsFoundAndCorrect: false,
       })
       expect(session.ppDetails).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith('/referral/task-list')
+    })
+
+    it('should always submit ppDetailsFoundAndCorrect as false, even if it was true in session', async () => {
+      const session: Record<string, unknown> = {
+        draftReferralId: 'referral-uuid-1',
+        referralCreationDetails: { personDetails: mockPersonDetails },
+        ppDetails: { ...mockPpDetails, ppDetailsFoundAndCorrect: true },
+      }
+      req = {
+        method: 'POST',
+        query: {},
+        session,
+      } as unknown as Request
+
+      await referralController.confirmAddContactDetails(req, res)
+
+      expect(referralService.submitContactDetails).toHaveBeenCalledWith(
+        'referral-uuid-1',
+        'user1',
+        expect.objectContaining({ ppDetailsFoundAndCorrect: false }),
+      )
     })
   })
 })
