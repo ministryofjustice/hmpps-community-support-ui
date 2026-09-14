@@ -26,11 +26,5 @@ describe('ActionPlanPresenter', () => {
 
     expect(renderData.content.pageHeader).toBe('Action plan for Alex River')
     expect(renderData.content.backLink).toEqual({ href: '/progress/AB1234CD' })
-    // expect(renderData.content.needsSummary.rows).toEqual([
-    //   {
-    //     key: { text: 'Needs' },
-    //     value: { html: '<strong class="govuk-tag govuk-tag--blue">In progress</strong>' },
-    //   },
-    // ])
   })
 })
