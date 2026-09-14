@@ -82,10 +82,6 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
       content.personalDetailsCard,
       content.notAvailable,
     )
-    viewModel.riskInformationSummary = this.buildRiskInformationSummary(
-        content.riskInformationCard,
-        content.notAvailable,
-      )
     viewModel.referralDetailsHeader = content.referralDetailsHeader
     viewModel.referralDetailsSummary = this.buildReferralDetailsSummary()
     viewModel.referralContactDetailsHeader = content.referralContactDetailsHeader
@@ -120,7 +116,7 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
         cardContent.dobLabel,
         formatDateOfBirth(personDetailsTableData.dateOfBirth, notAvailable),
       ),
-      govFrontendSummaryListRow(cardContent.languageLabel, JSON.stringify(this.draftReferralDetails, null, 2) || notAvailable),
+      govFrontendSummaryListRow(cardContent.languageLabel, personDetailsTableData.preferredLanguage || notAvailable),
       govFrontendSummaryListRow(
         {
           html: labelWithLastUpdated(
@@ -161,43 +157,6 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
           text: 'Referral details',
         },
         attributes: { 'data-testid': 'referral-details' },
-      },
-      rows: summary,
-    }
-  }
-
-  private buildRiskInformationSummary(
-    cardContent: components['schemas']['DraftRiskInformationDetailsTableDataDto'] | any,
-    notAvailable: string,
-  ): GovukFrontendSummaryList {
-    const data = this.draftReferralDetails.riskInformationDetailsTableData || {}
-
-    const summary = [
-      govFrontendSummaryListRow(cardContent.whoIsAtRiskLabel, JSON.stringify(this.draftReferralDetails) || notAvailable),
-      govFrontendSummaryListRow(cardContent.riskNatureLabel, data.natureOfRisk || notAvailable),
-      govFrontendSummaryListRow(
-        cardContent.riskCircumstancesLabel,
-        data.riskImminence || notAvailable,
-      ),
-      govFrontendSummaryListRow(cardContent.riskOfSelfHarmLabel, data.riskOfSelfHarm || notAvailable),
-      govFrontendSummaryListRow(cardContent.riskOfSuicideLabel, data.riskOfSuicide || notAvailable),
-      govFrontendSummaryListRow(
-        cardContent.concernsCopingInApprovedPremisesLabel,
-        data.riskToSelfHostelSetting || notAvailable,
-      ),
-      govFrontendSummaryListRow(
-        cardContent.concernsVulnerabilityLabel,
-        data.riskToSelfVulnerability || notAvailable,
-      ),
-      govFrontendSummaryListRow(cardContent.additionalInformationLabel, data.additionalInformation || notAvailable),
-    ]
-
-    return {
-      card: {
-        title: {
-          text: cardContent.heading,
-        },
-        attributes: { 'data-testid': 'risk-information' },
       },
       rows: summary,
     }

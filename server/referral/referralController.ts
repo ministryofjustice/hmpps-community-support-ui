@@ -294,7 +294,6 @@ export default class ReferralController {
     }
 
     const risk = await this.referralService.getRoshRisksByReferralId(draftReferralKey, username)
-    console.log(JSON.stringify(risk, null, 2))
     const presenter = new RiskSummaryPresenter(risk, draftReferralKey)
     return presenter.renderPage(res)
   }
