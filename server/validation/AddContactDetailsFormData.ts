@@ -17,7 +17,11 @@ const TEAM_PHONE_TOO_LONG = { error: `Team phone number must be ${MAX_CHAR} char
 
 export const AddContactDetailsSchema = z.object({
   name: z.string().nonempty(NAME_NOTHING_ENTERED_ERROR).max(MAX_CHAR, NAME_TOO_LONG),
-  email: z.string().nonempty(EMAIL_NOTHING_ENTERED_ERROR).max(MAX_CHAR, EMAIL_TOO_LONG).check(z.email(EMAIL_INVALID)),
+  emailAddress: z
+    .string()
+    .nonempty(EMAIL_NOTHING_ENTERED_ERROR)
+    .max(MAX_CHAR, EMAIL_TOO_LONG)
+    .check(z.email(EMAIL_INVALID)),
   jobRole: z.string().max(MAX_CHAR, JOB_ROLE_TOO_LONG).optional(),
   phoneNumber: z
     .string()
@@ -25,6 +29,7 @@ export const AddContactDetailsSchema = z.object({
     .refine(val => !val || phoneRegEx.test(val), PHONE_INVALID)
     .optional(),
   pdu: z.string().nonempty(PDU_NOTHING_ENTERED_ERROR),
+  probationOffice: z.string().optional(),
   teamPhoneNumber: z
     .string()
     .max(MAX_CHAR, TEAM_PHONE_TOO_LONG)

@@ -6,7 +6,7 @@ import {
   GovukFrontendSelect,
   GovukFrontendSelectItem,
 } from '@govuk-frontend'
-import { Person, type ProbationOffice } from '@community-support-api'
+import { PDU, Person, type ProbationOffice } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
 import { AddContactDetailsContent, AddContactDetailsViewModel } from './addContactDetailsViewModel'
 import { ErrorMiddlewareErrors } from '../../@types/express'
@@ -29,15 +29,10 @@ export default class AddContactDetailsPresenter extends PresenterBase<
       buttonArgs: this.generateButton(content),
       subHeading: content.subHeading,
       nameInputArgs: this.generateInputArgs(content.nameInputLabel, 'name'),
-      emailInputArgs: this.generateInputArgs(content.emailAddressInputLabel, 'email'),
+      emailInputArgs: this.generateInputArgs(content.emailAddressInputLabel, 'emailAddress'),
       jobRoleInputArgs: this.generateInputArgs(content.jobRoleInputLabel, 'jobRole'),
       phoneNumberInputArgs: this.generateInputArgs(content.phoneNumberInputLabel, 'phoneNumber'),
-      pduSelectArgs: this.generateSelectArgs(
-        content.pduInputLabel,
-        content.hintText,
-        'pdu',
-        this.generateProbationOfficeOptions(),
-      ),
+      pduSelectArgs: this.generateSelectArgs(content.pduInputLabel, content.hintText, 'pdu', this.generatePDUOptions()),
       probationOfficeSelectArgs: this.generateSelectArgs(
         content.probationOfficeInputLabel,
         content.hintText,
@@ -56,8 +51,10 @@ export default class AddContactDetailsPresenter extends PresenterBase<
   constructor(
     private readonly personalDetails: Person,
     private readonly probationOffices: ProbationOffice[],
+    private readonly pdus: PDU[],
+    readonly isFromPP: boolean | null = false,
     private readonly validationErrors?: ErrorMiddlewareErrors,
-    private readonly userInputData?: any,
+    private readonly userInputData?: Record<string, string>,
   ) {
     super()
   }
@@ -65,7 +62,7 @@ export default class AddContactDetailsPresenter extends PresenterBase<
   generateBackLink(content: AddContactDetailsContent): GovukFrontendBackLink {
     return {
       text: content.backLinkText,
-      href: content.backLinkHref,
+      href: this.isFromPP ? content.ppBackLinkHref : content.backLinkHref,
     }
   }
 
@@ -78,7 +75,17 @@ export default class AddContactDetailsPresenter extends PresenterBase<
       { text: '', value: '' },
       ...this.probationOffices.map(office => ({
         text: office.name,
-        value: `${office.probationOfficeId}`,
+        value: JSON.stringify({ code: office.probationOfficeId, name: office.name }),
+      })),
+    ]
+  }
+
+  generatePDUOptions(): GovukFrontendSelectItem[] {
+    return [
+      { text: '', value: '' },
+      ...this.pdus.map(pdu => ({
+        text: pdu.name,
+        value: JSON.stringify({ code: pdu.id, name: pdu.name }),
       })),
     ]
   }

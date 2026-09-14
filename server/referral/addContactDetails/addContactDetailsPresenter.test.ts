@@ -1,6 +1,6 @@
 import { Response } from 'express'
 import { GovukFrontendErrorSummaryErrorListElement } from '@govuk-frontend'
-import { Person, ProbationOffice } from '@community-support-api'
+import { PDU, Person, ProbationOffice } from '@community-support-api'
 import AddContactDetailsPresenter from './addContactDetailsPresenter'
 import { ErrorMiddlewareErrors } from '../../@types/express'
 
@@ -29,10 +29,16 @@ const probationOffices: ProbationOffice[] = [
   },
 ]
 
+const pdus: PDU[] = [
+  { id: 'pdu-1', name: 'London PDU' },
+  { id: 'pdu-2', name: 'Manchester PDU' },
+]
+
 const content = {
   buttonText: 'Save and continue',
   backLinkText: 'Back',
   backLinkHref: '/referral/task-list',
+  ppBackLinkHref: '/referral/new/find-a-person?fromPP=true',
   heading: 'Add contact details for {{ personName }}',
   pageCaption: 'CRN: {{ CRN }} | Date of birth: {{ DOB }}',
   subHeading: 'Contact information',
@@ -51,27 +57,27 @@ const res = {
   locals: { content },
 } as unknown as Response
 
-const validationErrors = {
+const validationErrors: ErrorMiddlewareErrors = {
   list: <GovukFrontendErrorSummaryErrorListElement[]>[
     { href: '#name', text: 'Enter a name' },
-    { href: '#email', text: 'Enter an email address' },
+    { href: '#emailAddress', text: 'Enter an email address' },
   ],
   messages: {
     name: { text: 'Enter a name' },
-    email: { text: 'Enter an email address' },
+    emailAddress: { text: 'Enter an email address' },
   },
 }
 
 describe('AddContactDetailsPresenter', () => {
   describe('heading and pageCaption', () => {
     it('builds heading from person name', () => {
-      const presenter = new AddContactDetailsPresenter(personalDetails, probationOffices)
+      const presenter = new AddContactDetailsPresenter(personalDetails, probationOffices, pdus)
       const viewModel = presenter.buildViewModel(res)
       expect(viewModel.heading).toBe('Add contact details for Alex River')
     })
 
     it('builds pageCaption from CRN and date of birth', () => {
-      const presenter = new AddContactDetailsPresenter(personalDetails, probationOffices)
+      const presenter = new AddContactDetailsPresenter(personalDetails, probationOffices, pdus)
       const viewModel = presenter.buildViewModel(res)
       expect(viewModel.pageCaption).toBe('CRN: X123456 | Date of birth: 20 Feb 1975 (51 years old)')
     })
@@ -79,15 +85,21 @@ describe('AddContactDetailsPresenter', () => {
 
   describe('back link', () => {
     it('builds back link from content', () => {
-      const presenter = new AddContactDetailsPresenter(personalDetails, probationOffices)
+      const presenter = new AddContactDetailsPresenter(personalDetails, probationOffices, pdus)
       const viewModel = presenter.buildViewModel(res)
       expect(viewModel.backLinkArgs).toEqual({ text: 'Back', href: '/referral/task-list' })
+    })
+
+    it('builds back link with the PP href when isFromPP is true', () => {
+      const presenter = new AddContactDetailsPresenter(personalDetails, probationOffices, pdus, true)
+      const viewModel = presenter.buildViewModel(res)
+      expect(viewModel.backLinkArgs).toEqual({ text: 'Back', href: '/referral/new/find-a-person?fromPP=true' })
     })
   })
 
   describe('button', () => {
     it('builds button with preventDoubleClick enabled', () => {
-      const presenter = new AddContactDetailsPresenter(personalDetails, probationOffices)
+      const presenter = new AddContactDetailsPresenter(personalDetails, probationOffices, pdus)
       const viewModel = presenter.buildViewModel(res)
       expect(viewModel.buttonArgs).toEqual({ text: 'Save and continue', preventDoubleClick: true })
     })
@@ -95,23 +107,48 @@ describe('AddContactDetailsPresenter', () => {
 
   describe('probation office options', () => {
     it('generates select items with empty first option', () => {
-      const presenter = new AddContactDetailsPresenter(personalDetails, probationOffices)
+      const presenter = new AddContactDetailsPresenter(personalDetails, probationOffices, pdus)
       const options = presenter.generateProbationOfficeOptions()
       expect(options).toHaveLength(3)
       expect(options[0]).toEqual({ text: '', value: '' })
     })
 
     it('maps probation offices to select items', () => {
-      const presenter = new AddContactDetailsPresenter(personalDetails, probationOffices)
+      const presenter = new AddContactDetailsPresenter(personalDetails, probationOffices, pdus)
       const options = presenter.generateProbationOfficeOptions()
-      expect(options[1]).toEqual({ text: 'London Probation Office', value: '1' })
-      expect(options[2]).toEqual({ text: 'Manchester Probation Office', value: '2' })
+      expect(options[1]).toEqual({
+        text: 'London Probation Office',
+        value: JSON.stringify({ code: 1, name: 'London Probation Office' }),
+      })
+      expect(options[2]).toEqual({
+        text: 'Manchester Probation Office',
+        value: JSON.stringify({ code: 2, name: 'Manchester Probation Office' }),
+      })
+    })
+  })
+
+  describe('pdu options', () => {
+    it('generates select items with empty first option', () => {
+      const presenter = new AddContactDetailsPresenter(personalDetails, probationOffices, pdus)
+      const options = presenter.generatePDUOptions()
+      expect(options).toHaveLength(3)
+      expect(options[0]).toEqual({ text: '', value: '' })
+    })
+
+    it('maps pdus to select items', () => {
+      const presenter = new AddContactDetailsPresenter(personalDetails, probationOffices, pdus)
+      const options = presenter.generatePDUOptions()
+      expect(options[1]).toEqual({ text: 'London PDU', value: JSON.stringify({ code: 'pdu-1', name: 'London PDU' }) })
+      expect(options[2]).toEqual({
+        text: 'Manchester PDU',
+        value: JSON.stringify({ code: 'pdu-2', name: 'Manchester PDU' }),
+      })
     })
   })
 
   describe('input args generation', () => {
     it('generates input args with correct structure', () => {
-      const presenter = new AddContactDetailsPresenter(personalDetails, probationOffices)
+      const presenter = new AddContactDetailsPresenter(personalDetails, probationOffices, pdus)
       const inputArgs = presenter.generateInputArgs('Name', 'name')
       expect(inputArgs).toMatchObject({
         label: {
@@ -129,13 +166,20 @@ describe('AddContactDetailsPresenter', () => {
 
     it('includes user input data when provided', () => {
       const userInputData = { name: 'John Doe' }
-      const presenter = new AddContactDetailsPresenter(personalDetails, probationOffices, undefined, userInputData)
+      const presenter = new AddContactDetailsPresenter(
+        personalDetails,
+        probationOffices,
+        pdus,
+        false,
+        undefined,
+        userInputData,
+      )
       const inputArgs = presenter.generateInputArgs('Name', 'name')
       expect(inputArgs.value).toBe('John Doe')
     })
 
     it('includes validation error when provided', () => {
-      const presenter = new AddContactDetailsPresenter(personalDetails, probationOffices, validationErrors)
+      const presenter = new AddContactDetailsPresenter(personalDetails, probationOffices, pdus, false, validationErrors)
       const inputArgs = presenter.generateInputArgs('Name', 'name')
       expect(inputArgs.errorMessage).toEqual({ text: 'Enter a name' })
     })
@@ -143,7 +187,7 @@ describe('AddContactDetailsPresenter', () => {
 
   describe('select args generation', () => {
     it('generates select args with correct structure', () => {
-      const presenter = new AddContactDetailsPresenter(personalDetails, probationOffices)
+      const presenter = new AddContactDetailsPresenter(personalDetails, probationOffices, pdus)
       const items = [{ text: 'Option 1', value: '1' }]
       const selectArgs = presenter.generateSelectArgs('PDU', 'Select an option', 'pdu', items)
       expect(selectArgs).toMatchObject({
@@ -164,7 +208,14 @@ describe('AddContactDetailsPresenter', () => {
     it('includes user input data when provided', () => {
       const userInputData = { pdu: '1' }
       const items = [{ text: 'Option 1', value: '1' }]
-      const presenter = new AddContactDetailsPresenter(personalDetails, probationOffices, undefined, userInputData)
+      const presenter = new AddContactDetailsPresenter(
+        personalDetails,
+        probationOffices,
+        pdus,
+        false,
+        undefined,
+        userInputData,
+      )
       const selectArgs = presenter.generateSelectArgs('PDU', 'Select an option', 'pdu', items)
       expect(selectArgs.value).toBe('1')
     })
@@ -175,7 +226,7 @@ describe('AddContactDetailsPresenter', () => {
         messages: { pdu: { text: 'Select a PDU' } },
       }
       const items = [{ text: 'Option 1', value: '1' }]
-      const presenter = new AddContactDetailsPresenter(personalDetails, probationOffices, errors)
+      const presenter = new AddContactDetailsPresenter(personalDetails, probationOffices, pdus, false, errors)
       const selectArgs = presenter.generateSelectArgs('PDU', 'Select an option', 'pdu', items)
       expect(selectArgs.errorMessage).toEqual({ text: 'Select a PDU' })
     })
@@ -183,7 +234,7 @@ describe('AddContactDetailsPresenter', () => {
 
   describe('buildViewModel', () => {
     it('builds complete view model with all fields', () => {
-      const presenter = new AddContactDetailsPresenter(personalDetails, probationOffices)
+      const presenter = new AddContactDetailsPresenter(personalDetails, probationOffices, pdus)
       const viewModel = presenter.buildViewModel(res)
       expect(viewModel).toHaveProperty('heading')
       expect(viewModel).toHaveProperty('pageCaption')
@@ -201,7 +252,7 @@ describe('AddContactDetailsPresenter', () => {
     })
 
     it('passes static content through to view model', () => {
-      const presenter = new AddContactDetailsPresenter(personalDetails, probationOffices)
+      const presenter = new AddContactDetailsPresenter(personalDetails, probationOffices, pdus)
       const viewModel = presenter.buildViewModel(res)
       expect(viewModel.subHeading).toBe('Contact information')
       expect(viewModel.insetText).toBe('This information will be used to contact the probation team')
@@ -210,7 +261,7 @@ describe('AddContactDetailsPresenter', () => {
 
   describe('getTemplatePath', () => {
     it('returns the correct template path', () => {
-      const presenter = new AddContactDetailsPresenter(personalDetails, probationOffices)
+      const presenter = new AddContactDetailsPresenter(personalDetails, probationOffices, pdus)
       expect(presenter.getTemplatePath()).toBe('referral/addContactDetails')
     })
   })

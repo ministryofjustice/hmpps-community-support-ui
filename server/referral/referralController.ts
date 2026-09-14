@@ -30,6 +30,7 @@ import ConfirmAnAreaForReferralPresenter from './confirmAnAreaForReferral/Confir
 import CheckPPDetailsPresenter from './checkPPDetails/checkPPDetailsPresenter'
 import { CheckPPDetailsSchema } from '../validation/CheckPPDetailsFormData'
 import { AddContactDetailsSchema } from '../validation/AddContactDetailsFormData'
+import ConfirmContactDetailsPresenter from './addContactDetails/confirmContactDetailsPresenter'
 
 export default class ReferralController {
   private static readonly CRN_REGEX = /^[A-Za-z]\d{6}$/
@@ -511,7 +512,6 @@ export default class ReferralController {
       return res.redirect('/referral/new/find-a-person')
     }
     const probationPractitionerDetails = await this.referralService.getPPDetails(draftReferralKey, username)
-
     if (req.method === 'POST') {
       return validateRequestBodyAgainstSchema(CheckPPDetailsSchema, req, res, async form => {
         if (form.detailsCorrect === 'true') {
@@ -524,10 +524,10 @@ export default class ReferralController {
           return res.redirect('/referral/task-list')
         }
 
-        // Next PR to redirect to add PP details page
-        return res.redirect('/referral/task-list')
+        return res.redirect('/referral/new/add-contact-details?fromPP=true')
       })
     }
+    req.session.ppDetails = undefined
     const validationErrors = res.locals.errors
     const presenter = new CheckPPDetailsPresenter(
       req.session.referralCreationDetails.personDetails,
@@ -539,9 +539,22 @@ export default class ReferralController {
 
   async showAddContactDetails(req: Request, res: Response) {
     const { username } = res.locals.user
+    const { fromPP } = req.query
     const draftReferralKey = req.session?.draftReferralId
     const flashData = req.flash('value')
-    const userInputData = flashData.length > 0 ? JSON.parse(flashData[0]) : req.body
+    let userInputData = flashData.length > 0 ? JSON.parse(flashData[0]) : req.body
+
+    // There is no data currently in the request body, so we will check if there is any data in the session and use that instead
+    if (Object.keys(userInputData ?? {}).length === 0 && req.session.ppDetails) {
+      userInputData = req.session.ppDetails
+    }
+
+    // If there is no data in session, then check if we have any stored in the DB
+    console.log('userInputData', userInputData)
+    if (userInputData === undefined) {
+      userInputData = this.referralService.getPPDetails(draftReferralKey, username)
+    }
+    const isFromPP = fromPP === 'true'
 
     if (!draftReferralKey) {
       return res.redirect('/referral/new/find-a-person')
@@ -549,17 +562,65 @@ export default class ReferralController {
 
     if (req.method === 'POST') {
       return validateRequestBodyAgainstSchema(AddContactDetailsSchema, req, res, async form => {
-        console.log(form)
+        const pduInfo = JSON.parse(form.pdu)
+        const probationOfficeInfo = form.probationOffice
+          ? JSON.parse(form.probationOffice)
+          : { code: '', name: 'Not entered' }
+        req.session.ppDetails = {
+          ...form,
+          pduId: pduInfo.code,
+          pduName: pduInfo.name,
+          probationOfficeId: probationOfficeInfo.code,
+          probationOfficeName: probationOfficeInfo.name,
+        }
+        return res.redirect(`/referral/new/confirm-contact-details?fromPP=${isFromPP}`)
       })
     }
     const validationErrors = res.locals.errors
     const probationOffices = await this.referralService.getProbationOffices(username)
+    const pdus = await this.referralService.getPDUs(username)
 
     const presenter = new AddContactDetailsPresenter(
       req.session.referralCreationDetails.personDetails,
       probationOffices,
+      pdus,
+      isFromPP,
       validationErrors,
       userInputData,
+    )
+    return presenter.renderPage(res)
+  }
+
+  async confirmAddContactDetails(req: Request, res: Response) {
+    const { username } = res.locals.user
+    const { fromPP } = req.query
+    const draftReferralKey = req.session?.draftReferralId
+
+    if (!draftReferralKey) {
+      return res.redirect('/referral/new/find-a-person')
+    }
+
+    if (!req.session.ppDetails) {
+      return res.redirect('/referral/new/add-contact-details')
+    }
+
+    if (req.method === 'POST') {
+      const { pdu, probationOffice, pduName, probationOfficeName, ...ppDetails } = req.session
+        .ppDetails as typeof req.session.ppDetails & {
+        pdu?: string
+        probationOffice?: string
+      }
+      const contactDetails = { ...ppDetails }
+      await this.referralService.submitContactDetails(draftReferralKey, username, contactDetails)
+      req.session.ppDetails = undefined
+      return res.redirect('/referral/task-list')
+    }
+    const isFromPP = fromPP === 'true'
+
+    const presenter = new ConfirmContactDetailsPresenter(
+      req.session.referralCreationDetails.personDetails,
+      req.session.ppDetails,
+      isFromPP,
     )
     return presenter.renderPage(res)
   }

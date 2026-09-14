@@ -1,22 +1,7 @@
 import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendInput, GovukFrontendSelect } from '@govuk-frontend'
+import { GlobalContent } from '../../../assets/content/GlobalContent'
 
-export interface AddContactDetailsContent {
-  buttonText: string
-  backLinkText: string
-  backLinkHref: string
-  heading: string
-  pageCaption: string
-  subHeading: string
-  nameInputLabel: string
-  emailAddressInputLabel: string
-  jobRoleInputLabel: string
-  phoneNumberInputLabel: string
-  pduInputLabel: string
-  probationOfficeInputLabel: string
-  teamPhoneNumberInputLabel: string
-  hintText: string
-  insetText: string
-}
+export type AddContactDetailsContent = GlobalContent['/referral/new/add-contact-details']
 
 export interface AddContactDetailsViewModel {
   heading: string

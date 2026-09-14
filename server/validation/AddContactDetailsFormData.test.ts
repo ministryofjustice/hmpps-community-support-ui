@@ -3,7 +3,7 @@ import { AddContactDetailsSchema } from './AddContactDetailsFormData'
 describe('AddContactDetailsSchema', () => {
   const validPayload = {
     name: 'John Doe',
-    email: 'john.doe@example.com',
+    emailAddress: 'john.doe@example.com',
     jobRole: 'Probation Officer',
     phoneNumber: '01632 960 001',
     pdu: 'London PDU',
@@ -52,52 +52,52 @@ describe('AddContactDetailsSchema', () => {
     })
   })
 
-  describe('email field', () => {
-    test('accepts a valid email', () => {
+  describe('emailAddress field', () => {
+    test('accepts a valid emailAddress', () => {
       const result = AddContactDetailsSchema.safeParse(validPayload)
       expect(result.success).toBe(true)
     })
 
-    test('rejects empty email', () => {
+    test('rejects empty emailAddress', () => {
       const result = AddContactDetailsSchema.safeParse({
         ...validPayload,
-        email: '',
+        emailAddress: '',
       })
 
       expect(result.success).toBe(false)
       if (result.error) {
-        const error = result.error.issues.find(issue => issue.path.includes('email'))
+        const error = result.error.issues.find(issue => issue.path.includes('emailAddress'))
         expect(error?.message).toBe('Enter an email address')
       }
     })
 
-    test('rejects invalid email format', () => {
+    test('rejects invalid emailAddress format', () => {
       const result = AddContactDetailsSchema.safeParse({
         ...validPayload,
-        email: 'invalid-email',
+        emailAddress: 'invalid-email',
       })
 
       expect(result.success).toBe(false)
       if (result.error) {
-        const error = result.error.issues.find(issue => issue.path.includes('email'))
+        const error = result.error.issues.find(issue => issue.path.includes('emailAddress'))
         expect(error?.message).toBe('Enter an email address in the correct format, like name@example.com')
       }
     })
 
-    test('rejects email that is too long', () => {
+    test('rejects emailAddress that is too long', () => {
       const result = AddContactDetailsSchema.safeParse({
         ...validPayload,
-        email: `${'a'.repeat(65001)}@example.com`,
+        emailAddress: `${'a'.repeat(65001)}@example.com`,
       })
 
       expect(result.success).toBe(false)
       if (result.error) {
-        const error = result.error.issues.find(issue => issue.path.includes('email'))
+        const error = result.error.issues.find(issue => issue.path.includes('emailAddress'))
         expect(error?.message).toBe('Email must be 65000 characters or less')
       }
     })
 
-    test('accepts various valid email formats', () => {
+    test('accepts various valid emailAddress formats', () => {
       const validEmails = [
         'user@example.com',
         'user.name@example.com',
@@ -105,10 +105,10 @@ describe('AddContactDetailsSchema', () => {
         'user_name@example-domain.com',
       ]
 
-      validEmails.forEach(email => {
+      validEmails.forEach(emailAddress => {
         const result = AddContactDetailsSchema.safeParse({
           ...validPayload,
-          email,
+          emailAddress,
         })
         expect(result.success).toBe(true)
       })
@@ -304,7 +304,7 @@ describe('AddContactDetailsSchema', () => {
     test('accepts minimal valid payload (only required fields)', () => {
       const minimalPayload = {
         name: 'John Doe',
-        email: 'john@example.com',
+        emailAddress: 'john@example.com',
         pdu: 'London PDU',
       }
 
@@ -320,7 +320,7 @@ describe('AddContactDetailsSchema', () => {
     test('reports multiple validation errors', () => {
       const result = AddContactDetailsSchema.safeParse({
         name: '',
-        email: '',
+        emailAddress: '',
         jobRole: 'a'.repeat(65001),
         phoneNumber: 'invalid',
         pdu: '',
@@ -332,7 +332,7 @@ describe('AddContactDetailsSchema', () => {
         expect(result.error.issues.length).toBeGreaterThan(1)
         const errorFields = result.error.issues.map(issue => issue.path[0])
         expect(errorFields).toContain('name')
-        expect(errorFields).toContain('email')
+        expect(errorFields).toContain('emailAddress')
         expect(errorFields).toContain('pdu')
       }
     })
