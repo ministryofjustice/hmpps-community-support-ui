@@ -297,6 +297,17 @@ describe('AddContactDetailsSchema', () => {
 
       expect(result.success).toBe(true)
     })
+
+    test('fails closed and rejects any PDU when an empty allow-list is supplied (e.g. the API returned no PDUs)', () => {
+      const schema = AddContactDetailsSchemaBuilder([])
+      const result = schema.safeParse(validPayload)
+
+      expect(result.success).toBe(false)
+      if (result.error) {
+        const error = result.error.issues.find(issue => issue.path.includes('pdu'))
+        expect(error?.message).toBe('Select a PDU from the list')
+      }
+    })
   })
 
   describe('probationOffice field', () => {
@@ -321,7 +332,7 @@ describe('AddContactDetailsSchema', () => {
     })
 
     test('rejects a probationOffice id that is not in the allowed list', () => {
-      const schema = AddContactDetailsSchemaBuilder([], [1, 2])
+      const schema = AddContactDetailsSchemaBuilder(undefined, [1, 2])
       const result = schema.safeParse({
         ...validPayload,
         probationOffice: JSON.stringify({ id: 999, name: 'Fake Office' }),
@@ -335,7 +346,7 @@ describe('AddContactDetailsSchema', () => {
     })
 
     test('rejects malformed probationOffice JSON without throwing when an allow-list is supplied', () => {
-      const schema = AddContactDetailsSchemaBuilder([], [1, 2])
+      const schema = AddContactDetailsSchemaBuilder(undefined, [1, 2])
 
       expect(() => schema.safeParse({ ...validPayload, probationOffice: '{not json' })).not.toThrow()
       const result = schema.safeParse({ ...validPayload, probationOffice: '{not json' })
@@ -348,13 +359,27 @@ describe('AddContactDetailsSchema', () => {
     })
 
     test('accepts a probationOffice id that is in the allowed list', () => {
-      const schema = AddContactDetailsSchemaBuilder([], [1, 2])
+      const schema = AddContactDetailsSchemaBuilder(undefined, [1, 2])
       const result = schema.safeParse({
         ...validPayload,
         probationOffice: JSON.stringify({ id: 1, name: 'Real Office' }),
       })
 
       expect(result.success).toBe(true)
+    })
+
+    test('fails closed and rejects any probationOffice when an empty allow-list is supplied (e.g. the API returned none)', () => {
+      const schema = AddContactDetailsSchemaBuilder(undefined, [])
+      const result = schema.safeParse({
+        ...validPayload,
+        probationOffice: JSON.stringify({ id: 1, name: 'Real Office' }),
+      })
+
+      expect(result.success).toBe(false)
+      if (result.error) {
+        const error = result.error.issues.find(issue => issue.path.includes('probationOffice'))
+        expect(error?.message).toBe('Select a probation office from the list')
+      }
     })
   })
 

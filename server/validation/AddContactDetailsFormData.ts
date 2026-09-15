@@ -45,8 +45,8 @@ const parseSelectOption = (val: string): SelectOption | null => {
 }
 
 export const AddContactDetailsSchemaBuilder = (
-  validPduIds: ReadonlyArray<string | number> = [],
-  validProbationOfficeIds: ReadonlyArray<string | number> = [],
+  validPduIds?: ReadonlyArray<string | number>,
+  validProbationOfficeIds?: ReadonlyArray<string | number>,
 ) =>
   z.object({
     name: z.string().nonempty(NAME_NOTHING_ENTERED_ERROR).max(MAX_CHAR, NAME_TOO_LONG),
@@ -67,7 +67,10 @@ export const AddContactDetailsSchemaBuilder = (
       .refine(val => parseSelectOption(val) !== null, PDU_INVALID_ERROR)
       .refine(val => {
         const option = parseSelectOption(val)
-        return !option || validPduIds.length === 0 || validPduIds.includes(option.id)
+        // validPduIds === undefined means no allow-list was supplied (e.g. the default,
+        // unrestricted AddContactDetailsSchema below) - anything else, including an empty
+        // array fetched from the API, must fail closed rather than accept any submitted id.
+        return !option || validPduIds === undefined || validPduIds.includes(option.id)
       }, PDU_INVALID_ERROR),
     probationOffice: z
       .string()
@@ -75,7 +78,7 @@ export const AddContactDetailsSchemaBuilder = (
       .refine(val => !val || parseSelectOption(val) !== null, PROBATION_OFFICE_INVALID_ERROR)
       .refine(val => {
         const option = val ? parseSelectOption(val) : null
-        return !option || validProbationOfficeIds.length === 0 || validProbationOfficeIds.includes(option.id)
+        return !option || validProbationOfficeIds === undefined || validProbationOfficeIds.includes(option.id)
       }, PROBATION_OFFICE_INVALID_ERROR),
     teamPhoneNumber: z
       .string()

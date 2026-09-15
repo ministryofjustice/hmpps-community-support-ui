@@ -68,6 +68,14 @@ const buildTaskListStatus = (taskListStatus: TaskListStatusStub): TaskListStatus
     taskListStatus.addDetailsOfMainPointOfContactCompleted ?? incompleteTaskStatus,
   addAdditionalInformationCompleted: taskListStatus.addAdditionalInformationCompleted ?? incompleteTaskStatus,
   selectAnAreaForReferralCompleted: taskListStatus.selectAnAreaForReferralCompleted ?? incompleteTaskStatus,
+  // addMainPointOfContactCompleted supersedes addDetailsOfMainPointOfContactCompleted and drives which
+  // contact details task is shown. Default it to the legacy field's value so existing fixtures/specs that
+  // only set the legacy field keep exercising the "add contact details" task, as before.
+  addMainPointOfContactCompleted:
+    taskListStatus.addMainPointOfContactCompleted ??
+    taskListStatus.addDetailsOfMainPointOfContactCompleted ??
+    incompleteTaskStatus,
+  checkProbationPractitionerDetailsCompleted: taskListStatus.checkProbationPractitionerDetailsCompleted ?? null,
 })
 
 export default {
