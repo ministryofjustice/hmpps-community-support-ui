@@ -20,8 +20,9 @@ const checkDraftReferralDetails: CheckDraftReferralDetailsDto = {
     ],
   },
   equalityDetailsTableData: {
+    nationality: 'British',
     ethnicity: 'White British',
-    religionOrBelief: 'None',
+    religionOrBelief: 'Christian',
     sex: 'Male',
   },
   additionalInformationDetailsTableData: {},

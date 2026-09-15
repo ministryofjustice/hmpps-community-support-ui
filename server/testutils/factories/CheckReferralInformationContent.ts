@@ -21,6 +21,13 @@ export default CheckReferralInformationContentFactory.define(({ transientParams 
     disabilitiesLabel: 'Disabilities',
     lastUpdatedLabel: 'Last updated',
   },
+  equalityMonitoringCard: transientParams.equalityMonitoringCard || {
+    heading: 'Equality monitoring',
+    nationalityLabel: 'Nationality',
+    ethnicityLabel: 'Ethnicity',
+    religionOrBeliefLabel: 'Religion or belief',
+    sexLabel: 'Sex',
+  },
   referralDetailsHeader: transientParams.referralDetailsHeader || 'Referral details',
   referralContactDetailsHeader: transientParams.referralContactDetailsHeader || 'Referral contact details',
   submitButtonText: transientParams.submitButtonText || 'Submit referral information',
