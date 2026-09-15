@@ -31,6 +31,7 @@ export default CheckReferralInformationContentFactory.define(({ transientParams 
     concernsCopingInApprovedPremisesLabel: 'Concerns in relation to coping in an approved premises or hostel',
     concernsVulnerabilityLabel: 'Concerns in relation to vulnerability',
     additionalInformationLabel: 'Additional information',
+    noAdditionalInformationText: 'None',
   },
   referralDetailsHeader: transientParams.referralDetailsHeader || 'Referral details',
   referralContactDetailsHeader: transientParams.referralContactDetailsHeader || 'Referral contact details',

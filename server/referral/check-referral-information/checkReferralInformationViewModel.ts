@@ -39,6 +39,7 @@ export type RiskInformationCard = {
   concernsCopingInApprovedPremisesLabel: string
   concernsVulnerabilityLabel: string
   additionalInformationLabel: string
+  noAdditionalInformationText?: string
 }
 
 export type CheckReferralInformationContent = {

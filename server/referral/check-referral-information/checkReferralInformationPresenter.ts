@@ -172,7 +172,10 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
         data.riskToSelfHostelSetting || notAvailable,
       ),
       govFrontendSummaryListRow(cardContent.concernsVulnerabilityLabel, data.riskToSelfVulnerability || notAvailable),
-      govFrontendSummaryListRow(cardContent.additionalInformationLabel, data.additionalInformation || notAvailable),
+      govFrontendSummaryListRow(
+        cardContent.additionalInformationLabel,
+        data.additionalInformation || cardContent.noAdditionalInformationText,
+      ),
     ]
 
     return {
