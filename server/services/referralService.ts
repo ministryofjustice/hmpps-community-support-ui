@@ -23,6 +23,8 @@ import {
   type UpdateProbationPractitionerDetailsRequest,
   CheckDraftReferralDetailsDto,
   Selection,
+  WithdrawReferralRequest,
+  WithdrawalReasonsGroupedBffResponseDto,
 } from '@community-support-api'
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
 import { NeedsAnInterpreterFormData } from '../validation/NeedsAnInterpreterFormDataSchema'
@@ -37,6 +39,10 @@ export default class ReferralService {
 
   getReferralById(referralId: string, username: string) {
     return this.communitySupportApiClient.getReferralById(referralId, username)
+  }
+
+  getWithdrawalReasons(username: string): Promise<WithdrawalReasonsGroupedBffResponseDto> {
+    return this.communitySupportApiClient.getWithdrawalReasons(username)
   }
 
   createReferral(referralData: CreateReferralRequest, username: string): Promise<ReferralInformation> {
@@ -190,5 +196,9 @@ export default class ReferralService {
       draftReferralId,
       username,
     )
+  }
+
+  async withdrawReferral(caseReference: string, request: WithdrawReferralRequest, username: string): Promise<void> {
+    await this.communitySupportApiClient.withdrawReferral(caseReference, request, username)
   }
 }

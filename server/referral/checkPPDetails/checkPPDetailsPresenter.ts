@@ -99,7 +99,7 @@ export default class CheckPPDetailsPresenter extends PresenterBase<CheckPPDetail
             text: content.probationOfficeLabel,
           },
           value: {
-            text: ppDetails.probationOffice ? ppDetails.probationOffice : 'Not available',
+            text: ppDetails.probationOffice?.name ?? 'Not available',
           },
         },
         {

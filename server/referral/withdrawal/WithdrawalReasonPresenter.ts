@@ -1,4 +1,5 @@
 import { Response } from 'express'
+import { WithdrawalReasonsGroupedBffResponseDto } from '@community-support-api'
 import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendErrorMessage } from '@govuk-frontend'
 import { ErrorMiddlewareErrors } from '../../@types/express'
 import {
@@ -7,7 +8,7 @@ import {
 } from '../../@types/govukFrontend/derived'
 import PresenterBase from '../../presenter/presenterBase'
 import { escapeHtml } from '../../utils/utils'
-import { additionalInformationField, WithdrawalFormData, WithdrawalReason } from './WithdrawalFormData'
+import { additionalInformationField, WithdrawalFormData } from './WithdrawalFormData'
 
 interface WithdrawalReasonContent {
   pageHeader: string
@@ -15,7 +16,6 @@ interface WithdrawalReasonContent {
   additionalInformationLabel: string
   additionalInformationHint: string
   continueButtonText: string
-  groups: Array<{ heading: string; reasons: Array<{ value: WithdrawalFormData['withdrawalReason']; text: string }> }>
 }
 
 interface WithdrawalReasonViewModel {
@@ -34,6 +34,7 @@ export default class WithdrawalReasonPresenter extends PresenterBase<
   constructor(
     private readonly referralIdentifier: string,
     private readonly referralName: string,
+    private readonly availableWithdrawalReasonsByGroup: WithdrawalReasonsGroupedBffResponseDto['withdrawalReasons'],
     private readonly formData?: WithdrawalFormData,
     private readonly validationErrors?: ErrorMiddlewareErrors,
   ) {
@@ -41,21 +42,21 @@ export default class WithdrawalReasonPresenter extends PresenterBase<
   }
 
   private buildReasonGroups(content: WithdrawalReasonContent): WithdrawalReasonViewModel['reasonGroups'] {
-    return content.groups.map((group, groupIndex) => ({
-      heading: group.heading,
+    return Object.entries(this.availableWithdrawalReasonsByGroup).map(([heading, reasons], groupIndex) => ({
+      heading,
       radios: {
         name: 'withdrawalReason',
         idPrefix: groupIndex === 0 ? 'withdrawalReason' : `withdrawalReason-${groupIndex}`,
-        items: group.reasons.map((reason): GovukFrontendRadiosItemWithConditional => ({
-          value: reason.value,
-          text: reason.text,
-          checked: this.formData?.withdrawalReason === reason.value,
+        items: reasons.map((reason): GovukFrontendRadiosItemWithConditional => ({
+          value: reason,
+          text: reason,
+          checked: this.formData?.withdrawalReason === reason,
           conditional: {
             html: this.buildAdditionalInformationTextarea(
               content,
-              reason.value,
-              this.formData?.withdrawalReason === reason.value,
-              this.validationErrors?.messages[additionalInformationField(reason.value)],
+              reason,
+              this.formData?.withdrawalReason === reason,
+              this.validationErrors?.messages[additionalInformationField(reason)],
             ),
           },
         })),
@@ -65,7 +66,7 @@ export default class WithdrawalReasonPresenter extends PresenterBase<
 
   private buildAdditionalInformationTextarea(
     content: WithdrawalReasonContent,
-    reason: WithdrawalReason,
+    reason: string,
     selected: boolean,
     errorMessage?: GovukFrontendErrorMessage,
   ): string {
