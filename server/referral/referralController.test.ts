@@ -1370,13 +1370,88 @@ describe('ReferralController', () => {
           referralCreationDetails: { personDetails: mockPersonDetails },
         },
       } as unknown as Request
+      referralService.getProbationOffices.mockResolvedValue(mockProbationOffices)
+      referralService.getPDUs.mockResolvedValue(mockPdus)
 
       await referralController.showAddContactDetails(req, res)
 
       expect(referralService.getPPDetails).not.toHaveBeenCalled()
-      expect(referralService.getProbationOffices).not.toHaveBeenCalled()
-      expect(referralService.getPDUs).not.toHaveBeenCalled()
       expect(AddContactDetailsPresenter.prototype.renderPage).not.toHaveBeenCalled()
+    })
+
+    it('fetches PDUs and probation offices on POST to validate submitted ids against real reference data', async () => {
+      req = {
+        method: 'POST',
+        query: {},
+        body: {
+          name: 'John Doe',
+          emailAddress: 'john.doe@example.com',
+          pdu: JSON.stringify({ id: 'pdu-1', name: 'London PDU' }),
+        },
+        flash: jest.fn().mockReturnValue([]),
+        session: {
+          draftReferralId: 'referral-uuid-1',
+          referralCreationDetails: { personDetails: mockPersonDetails },
+        },
+      } as unknown as Request
+      referralService.getProbationOffices.mockResolvedValue(mockProbationOffices)
+      referralService.getPDUs.mockResolvedValue(mockPdus)
+
+      await referralController.showAddContactDetails(req, res)
+
+      expect(referralService.getProbationOffices).toHaveBeenCalledWith('user1')
+      expect(referralService.getPDUs).toHaveBeenCalledWith('user1')
+    })
+
+    it('rejects a POST submitting a pdu id that is not in the fetched reference data', async () => {
+      req = {
+        method: 'POST',
+        query: {},
+        url: '/referral/new/add-contact-details',
+        body: {
+          name: 'John Doe',
+          emailAddress: 'john.doe@example.com',
+          pdu: JSON.stringify({ id: 'not-a-real-pdu', name: 'Fake PDU' }),
+        },
+        flash: jest.fn(),
+        session: {
+          draftReferralId: 'referral-uuid-1',
+          referralCreationDetails: { personDetails: mockPersonDetails },
+        },
+      } as unknown as Request
+      referralService.getProbationOffices.mockResolvedValue(mockProbationOffices)
+      referralService.getPDUs.mockResolvedValue(mockPdus)
+
+      await referralController.showAddContactDetails(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('/referral/new/add-contact-details')
+      expect(req.session.ppDetails).toBeUndefined()
+    })
+
+    it('rejects a POST submitting a probationOffice id that is not in the fetched reference data', async () => {
+      req = {
+        method: 'POST',
+        query: {},
+        url: '/referral/new/add-contact-details',
+        body: {
+          name: 'John Doe',
+          emailAddress: 'john.doe@example.com',
+          pdu: JSON.stringify({ id: 'pdu-1', name: 'London PDU' }),
+          probationOffice: JSON.stringify({ id: 999, name: 'Fake Office' }),
+        },
+        flash: jest.fn(),
+        session: {
+          draftReferralId: 'referral-uuid-1',
+          referralCreationDetails: { personDetails: mockPersonDetails },
+        },
+      } as unknown as Request
+      referralService.getProbationOffices.mockResolvedValue(mockProbationOffices)
+      referralService.getPDUs.mockResolvedValue(mockPdus)
+
+      await referralController.showAddContactDetails(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('/referral/new/add-contact-details')
+      expect(req.session.ppDetails).toBeUndefined()
     })
 
     it('should redirect back to the form when pdu is malformed JSON', async () => {
@@ -1395,6 +1470,8 @@ describe('ReferralController', () => {
           referralCreationDetails: { personDetails: mockPersonDetails },
         },
       } as unknown as Request
+      referralService.getProbationOffices.mockResolvedValue(mockProbationOffices)
+      referralService.getPDUs.mockResolvedValue(mockPdus)
 
       await referralController.showAddContactDetails(req, res)
 
@@ -1418,6 +1495,8 @@ describe('ReferralController', () => {
           referralCreationDetails: { personDetails: mockPersonDetails },
         },
       } as unknown as Request
+      referralService.getProbationOffices.mockResolvedValue(mockProbationOffices)
+      referralService.getPDUs.mockResolvedValue(mockPdus)
 
       await referralController.showAddContactDetails(req, res)
 
@@ -1443,6 +1522,8 @@ describe('ReferralController', () => {
           referralCreationDetails: { personDetails: mockPersonDetails },
         },
       } as unknown as Request
+      referralService.getProbationOffices.mockResolvedValue(mockProbationOffices)
+      referralService.getPDUs.mockResolvedValue(mockPdus)
 
       await referralController.showAddContactDetails(req, res)
 

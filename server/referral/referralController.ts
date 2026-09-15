@@ -29,7 +29,7 @@ import AddContactDetailsPresenter from './addContactDetails/addContactDetailsPre
 import ConfirmAnAreaForReferralPresenter from './confirmAnAreaForReferral/ConfirmAnAreaForReferralPresenter'
 import CheckPPDetailsPresenter from './checkPPDetails/checkPPDetailsPresenter'
 import { CheckPPDetailsSchema } from '../validation/CheckPPDetailsFormData'
-import { AddContactDetailsSchema } from '../validation/AddContactDetailsFormData'
+import { AddContactDetailsSchemaBuilder } from '../validation/AddContactDetailsFormData'
 import ConfirmContactDetailsPresenter from './addContactDetails/confirmContactDetailsPresenter'
 
 export default class ReferralController {
@@ -550,7 +550,17 @@ export default class ReferralController {
     const isFromPP = fromPP === 'true'
 
     if (req.method === 'POST') {
-      return validateRequestBodyAgainstSchema(AddContactDetailsSchema, req, res, async form => {
+      // Fetch the current reference data so submitted pdu/probationOffice ids can be validated
+      // against real options, rather than trusting arbitrary client-supplied ids.
+      const [probationOffices, pdus] = await Promise.all([
+        this.referralService.getProbationOffices(username),
+        this.referralService.getPDUs(username),
+      ])
+      const schema = AddContactDetailsSchemaBuilder(
+        pdus.map(pdu => pdu.id),
+        probationOffices.map(office => office.probationOfficeId),
+      )
+      return validateRequestBodyAgainstSchema(schema, req, res, async form => {
         const pduInfo = JSON.parse(form.pdu)
         const probationOfficeInfo = form.probationOffice
           ? JSON.parse(form.probationOffice)
