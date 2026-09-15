@@ -89,7 +89,7 @@ export default class TaskListPresenter extends PresenterBase<TaskListViewModel, 
         title: content.contactDetails.title,
         taskList: {
           items: [
-            this.data.addMainPointOfContactCompleted === null
+            this.data.addMainPointOfContactCompleted === null || this.data.addMainPointOfContactCompleted === undefined
               ? {
                   title: { text: content.contactDetails.subTasks.checkPPDetails.text },
                   href: content.contactDetails.subTasks.checkPPDetails.href,

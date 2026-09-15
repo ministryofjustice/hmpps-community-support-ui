@@ -65,16 +65,18 @@ export const AddContactDetailsSchemaBuilder = (
       .string()
       .nonempty(PDU_NOTHING_ENTERED_ERROR)
       .refine(val => parseSelectOption(val) !== null, PDU_INVALID_ERROR)
-      .refine(val => validPduIds.length === 0 || validPduIds.includes(parseSelectOption(val)!.id), PDU_INVALID_ERROR),
+      .refine(val => {
+        const option = parseSelectOption(val)
+        return !option || validPduIds.length === 0 || validPduIds.includes(option.id)
+      }, PDU_INVALID_ERROR),
     probationOffice: z
       .string()
       .optional()
       .refine(val => !val || parseSelectOption(val) !== null, PROBATION_OFFICE_INVALID_ERROR)
-      .refine(
-        val =>
-          !val || validProbationOfficeIds.length === 0 || validProbationOfficeIds.includes(parseSelectOption(val)!.id),
-        PROBATION_OFFICE_INVALID_ERROR,
-      ),
+      .refine(val => {
+        const option = val ? parseSelectOption(val) : null
+        return !option || validProbationOfficeIds.length === 0 || validProbationOfficeIds.includes(option.id)
+      }, PROBATION_OFFICE_INVALID_ERROR),
     teamPhoneNumber: z
       .string()
       .max(MAX_CHAR, TEAM_PHONE_TOO_LONG)

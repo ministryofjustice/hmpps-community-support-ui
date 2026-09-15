@@ -278,6 +278,19 @@ describe('AddContactDetailsSchema', () => {
       }
     })
 
+    test('rejects malformed pdu JSON without throwing when an allow-list is supplied', () => {
+      const schema = AddContactDetailsSchemaBuilder(['pdu-1', 'pdu-2'])
+
+      expect(() => schema.safeParse({ ...validPayload, pdu: '{not json' })).not.toThrow()
+      const result = schema.safeParse({ ...validPayload, pdu: '{not json' })
+
+      expect(result.success).toBe(false)
+      if (result.error) {
+        const error = result.error.issues.find(issue => issue.path.includes('pdu'))
+        expect(error?.message).toBe('Select a PDU from the list')
+      }
+    })
+
     test('accepts a PDU id that is in the allowed list', () => {
       const schema = AddContactDetailsSchemaBuilder(['pdu-1', 'pdu-2'])
       const result = schema.safeParse(validPayload)
@@ -313,6 +326,19 @@ describe('AddContactDetailsSchema', () => {
         ...validPayload,
         probationOffice: JSON.stringify({ id: 999, name: 'Fake Office' }),
       })
+
+      expect(result.success).toBe(false)
+      if (result.error) {
+        const error = result.error.issues.find(issue => issue.path.includes('probationOffice'))
+        expect(error?.message).toBe('Select a probation office from the list')
+      }
+    })
+
+    test('rejects malformed probationOffice JSON without throwing when an allow-list is supplied', () => {
+      const schema = AddContactDetailsSchemaBuilder([], [1, 2])
+
+      expect(() => schema.safeParse({ ...validPayload, probationOffice: '{not json' })).not.toThrow()
+      const result = schema.safeParse({ ...validPayload, probationOffice: '{not json' })
 
       expect(result.success).toBe(false)
       if (result.error) {

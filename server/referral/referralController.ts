@@ -253,6 +253,7 @@ export default class ReferralController {
   async showTaskList(req: Request, res: Response) {
     const { username } = res.locals.user
     const { draftReferralId } = req.session
+    req.session.ppDetails = undefined
     if (!draftReferralId) {
       return res.redirect('/referral/new/find-a-person')
     }
