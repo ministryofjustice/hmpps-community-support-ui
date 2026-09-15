@@ -1,20 +1,18 @@
 import { Response } from 'express'
 import PresenterBase from '../../presenter/presenterBase'
-import { WithdrawalFormData, WithdrawalReason } from './WithdrawalFormData'
+import { WithdrawalFormData } from './WithdrawalFormData'
 import { WithdrawalConfirmationContent, WithdrawalConfirmationViewModel } from './withdrawalConfirmationViewModel'
 
-const withdrawalReasonLabels: Record<WithdrawalReason, string> = {
-  INELIGIBLE_REFERRAL: 'Ineligible referral',
-  MISTAKEN_OR_DUPLICATE_REFERRAL: 'Mistaken or duplicate referral',
-  NOT_ENGAGED: 'Not engaged',
-  NEEDS_MET_THROUGH_ANOTHER_ROUTE: 'Needs met through another route',
-  USER_DIED: 'User died',
-  WORK_CARING_COMMITMENTS_OR_SICKNESS: 'Work, caring commitments, or sickness',
-  ACQUITTED_ON_APPEAL: 'Acquitted on appeal',
-  RETURNED_TO_CUSTODY: 'Returned to custody',
-  SENTENCE_REVOKED: 'Sentence revoked',
-  SENTENCE_EXPIRED: 'Sentence expired',
-  OTHER_CHANGE_OF_CIRCUMSTANCE: 'Any other change of circumstance',
+const toWithdrawalReasonLabel = (reason: string): string => {
+  if (!reason.includes('_')) {
+    return reason
+  }
+
+  return reason
+    .toLowerCase()
+    .split('_')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ')
 }
 
 export default class WithdrawalConfirmationPresenter extends PresenterBase<
@@ -40,7 +38,7 @@ export default class WithdrawalConfirmationPresenter extends PresenterBase<
               text: content.questionLabel.replace('{{ name }}', this.referralName),
             },
             value: {
-              text: withdrawalReasonLabels[this.withdrawal.withdrawalReason],
+              text: toWithdrawalReasonLabel(this.withdrawal.withdrawalReason),
             },
             actions: {
               items: [

@@ -30,7 +30,7 @@ export default class WithdrawalConfirmationPage extends AbstractPage {
       page.getByText('If you are withdrawing this referral, you cannot start or change it again.'),
       page.getByRole('button', { name: 'Withdraw referral', exact: true }),
       page.getByRole('link', { name: 'Cancel', exact: true }),
-      page.getByRole('link', { name: 'Change', exact: true }),
+      page.getByRole('link', { name: 'Change withdrawal reason', exact: true }),
     )
   }
 }

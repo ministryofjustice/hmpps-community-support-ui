@@ -14,15 +14,16 @@ const referralDetails = referralDetailsPageData(referralId)
 const reasonLabels = [
   'Ineligible referral',
   'Mistaken or duplicate referral',
+  'Died',
+  'Moved out of service area',
   'Not engaged',
   'Needs met through another route',
-  'User died',
-  'Work, caring commitments, or sickness',
+  'Work, caring commitments or sickness',
+  'Another reason',
   'Acquitted on appeal',
   'Returned to custody',
   'Sentence revoked',
   'Sentence expired',
-  'Any other change of circumstance',
 ]
 
 test.describe('Withdraw referral', () => {
@@ -30,8 +31,9 @@ test.describe('Withdraw referral', () => {
     await resetStubs()
     await communitySupport.stubGetReferralDetailsPage(200, referralId)
     await communitySupport.stubGetInProgressCase()
+    await communitySupport.stubGetWithdrawalReasons()
     await communitySupport.stubWithdrawReferral(referralIdentifier, {
-      reasonCode: 'NOT_ENGAGED',
+      reasonCode: 'Not engaged',
       additionalDetails: 'No longer engaging.',
     })
     await page.goto('/')
@@ -59,8 +61,7 @@ test.describe('Withdraw referral', () => {
     await expect(withdrawalPage.reasonHeadings).toHaveText([
       'Problem with referral',
       'User related',
-      'Sentence / custody related',
-      'Other',
+      'Sentence or custody related',
     ])
     await expect(withdrawalPage.reasonRadios).toHaveCount(reasonLabels.length)
     await Promise.all(reasonLabels.map(reasonLabel => expect(withdrawalPage.reason(reasonLabel)).toBeVisible()))

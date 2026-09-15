@@ -18,7 +18,7 @@ describe('WithdrawalController', () => {
       session: {
         withdrawalReferrals: {
           [referralIdentifier]: {
-            withdrawalReason: 'NOT_ENGAGED',
+            withdrawalReason: 'Not engaged',
             additionalInformation: 'No longer engaging',
           },
         },
@@ -40,7 +40,7 @@ describe('WithdrawalController', () => {
     expect(referralService.withdrawReferral).toHaveBeenCalledWith(
       referralIdentifier,
       {
-        reasonCode: 'NOT_ENGAGED',
+        reasonCode: 'Not engaged',
         additionalDetails: 'No longer engaging',
       },
       'test-user',
