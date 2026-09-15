@@ -1,4 +1,4 @@
-import { AddContactDetailsSchema } from './AddContactDetailsFormData'
+import { AddContactDetailsSchema, AddContactDetailsSchemaBuilder } from './AddContactDetailsFormData'
 
 describe('AddContactDetailsSchema', () => {
   const validPayload = {
@@ -6,7 +6,7 @@ describe('AddContactDetailsSchema', () => {
     emailAddress: 'john.doe@example.com',
     jobRole: 'Probation Officer',
     phoneNumber: '01632 960 001',
-    pdu: 'London PDU',
+    pdu: JSON.stringify({ id: 'pdu-1', name: 'London PDU' }),
     teamPhoneNumber: '07700 900 982',
   }
 
@@ -237,6 +237,99 @@ describe('AddContactDetailsSchema', () => {
         expect(error?.message).toBe('Enter a PDU')
       }
     })
+
+    test('rejects malformed JSON instead of throwing', () => {
+      const result = AddContactDetailsSchema.safeParse({
+        ...validPayload,
+        pdu: '{not json',
+      })
+
+      expect(result.success).toBe(false)
+      if (result.error) {
+        const error = result.error.issues.find(issue => issue.path.includes('pdu'))
+        expect(error?.message).toBe('Select a PDU from the list')
+      }
+    })
+
+    test('rejects an object missing id/name', () => {
+      const result = AddContactDetailsSchema.safeParse({
+        ...validPayload,
+        pdu: '{}',
+      })
+
+      expect(result.success).toBe(false)
+      if (result.error) {
+        const error = result.error.issues.find(issue => issue.path.includes('pdu'))
+        expect(error?.message).toBe('Select a PDU from the list')
+      }
+    })
+
+    test('rejects a PDU id that is not in the allowed list', () => {
+      const schema = AddContactDetailsSchemaBuilder(['pdu-1', 'pdu-2'])
+      const result = schema.safeParse({
+        ...validPayload,
+        pdu: JSON.stringify({ id: 'not-a-real-pdu', name: 'Fake PDU' }),
+      })
+
+      expect(result.success).toBe(false)
+      if (result.error) {
+        const error = result.error.issues.find(issue => issue.path.includes('pdu'))
+        expect(error?.message).toBe('Select a PDU from the list')
+      }
+    })
+
+    test('accepts a PDU id that is in the allowed list', () => {
+      const schema = AddContactDetailsSchemaBuilder(['pdu-1', 'pdu-2'])
+      const result = schema.safeParse(validPayload)
+
+      expect(result.success).toBe(true)
+    })
+  })
+
+  describe('probationOffice field', () => {
+    test('accepts an unset probationOffice', () => {
+      const result = AddContactDetailsSchema.safeParse(validPayload)
+      expect(result.success).toBe(true)
+    })
+
+    test('accepts an empty probationOffice', () => {
+      const result = AddContactDetailsSchema.safeParse({ ...validPayload, probationOffice: '' })
+      expect(result.success).toBe(true)
+    })
+
+    test('rejects malformed JSON', () => {
+      const result = AddContactDetailsSchema.safeParse({ ...validPayload, probationOffice: '{not json' })
+
+      expect(result.success).toBe(false)
+      if (result.error) {
+        const error = result.error.issues.find(issue => issue.path.includes('probationOffice'))
+        expect(error?.message).toBe('Select a probation office from the list')
+      }
+    })
+
+    test('rejects a probationOffice id that is not in the allowed list', () => {
+      const schema = AddContactDetailsSchemaBuilder([], [1, 2])
+      const result = schema.safeParse({
+        ...validPayload,
+        probationOffice: JSON.stringify({ id: 999, name: 'Fake Office' }),
+      })
+
+      expect(result.success).toBe(false)
+      if (result.error) {
+        const error = result.error.issues.find(issue => issue.path.includes('probationOffice'))
+        expect(error?.message).toBe('Select a probation office from the list')
+      }
+    })
+
+    test('accepts a probationOffice id that is in the allowed list', () => {
+      const schema = AddContactDetailsSchemaBuilder([], [1, 2])
+      const result = schema.safeParse({
+        ...validPayload,
+        probationOffice: JSON.stringify({ id: 1, name: 'Real Office' }),
+      })
+
+      expect(result.success).toBe(true)
+    })
   })
 
   describe('teamPhoneNumber field', () => {
@@ -305,7 +398,7 @@ describe('AddContactDetailsSchema', () => {
       const minimalPayload = {
         name: 'John Doe',
         emailAddress: 'john@example.com',
-        pdu: 'London PDU',
+        pdu: JSON.stringify({ id: 'pdu-1', name: 'London PDU' }),
       }
 
       const result = AddContactDetailsSchema.safeParse(minimalPayload)

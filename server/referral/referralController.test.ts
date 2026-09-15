@@ -1379,6 +1379,84 @@ describe('ReferralController', () => {
       expect(AddContactDetailsPresenter.prototype.renderPage).not.toHaveBeenCalled()
     })
 
+    it('should redirect back to the form when pdu is malformed JSON', async () => {
+      req = {
+        method: 'POST',
+        query: {},
+        url: '/referral/new/add-contact-details',
+        body: {
+          name: 'John Doe',
+          emailAddress: 'john.doe@example.com',
+          pdu: '{not valid json',
+        },
+        flash: jest.fn(),
+        session: {
+          draftReferralId: 'referral-uuid-1',
+          referralCreationDetails: { personDetails: mockPersonDetails },
+        },
+      } as unknown as Request
+
+      await referralController.showAddContactDetails(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('/referral/new/add-contact-details')
+      expect(res.redirect).not.toHaveBeenCalledWith('/error')
+    })
+
+    it('should redirect back to the form when pdu is an object without an id', async () => {
+      req = {
+        method: 'POST',
+        query: {},
+        url: '/referral/new/add-contact-details',
+        body: {
+          name: 'John Doe',
+          emailAddress: 'john.doe@example.com',
+          pdu: '{}',
+        },
+        flash: jest.fn(),
+        session: {
+          draftReferralId: 'referral-uuid-1',
+          referralCreationDetails: { personDetails: mockPersonDetails },
+        },
+      } as unknown as Request
+
+      await referralController.showAddContactDetails(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('/referral/new/add-contact-details')
+      expect(res.redirect).not.toHaveBeenCalledWith('/error')
+      expect(req.session.ppDetails).toBeUndefined()
+    })
+
+    it('should store the parsed pdu/probationOffice ids in session on a valid POST', async () => {
+      req = {
+        method: 'POST',
+        query: { fromPP: 'false' },
+        url: '/referral/new/add-contact-details',
+        body: {
+          name: 'John Doe',
+          emailAddress: 'john.doe@example.com',
+          pdu: JSON.stringify({ id: 'pdu-1', name: 'London PDU' }),
+          probationOffice: JSON.stringify({ id: 1, name: 'London Probation Office' }),
+        },
+        flash: jest.fn(),
+        session: {
+          draftReferralId: 'referral-uuid-1',
+          referralCreationDetails: { personDetails: mockPersonDetails },
+        },
+      } as unknown as Request
+
+      await referralController.showAddContactDetails(req, res)
+
+      expect(req.session.ppDetails).toEqual(
+        expect.objectContaining({
+          pduId: 'pdu-1',
+          pduName: 'London PDU',
+          probationOfficeId: 1,
+          probationOfficeName: 'London Probation Office',
+        }),
+      )
+      expect(res.redirect).toHaveBeenCalledWith('/referral/new/confirm-contact-details?fromPP=false')
+    })
+
     it('should propagate the error when probation offices cannot be retrieved', async () => {
       req = {
         method: 'GET',
