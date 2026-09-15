@@ -154,3 +154,27 @@ Where the path includes a path param such as a UUID or Case Reference the conten
 relevant match and maintain consistency between the defined express route. This means that all requests whether generating by the service
 or added via integration tests must use params that match the format of the intended param and not a random string otherwise the content middleware
 will not parse this correctly and will fail.
+
+## Generating API Types
+
+_tl;dr: start your API in IntelliJ and run `./script/generateApiTypes/communitySupportApiTypes --local` to update your API types_
+
+This UI codebase makes use of the [openapi-typescript](https://openapi-ts.dev) package to generate TypeScript types from the OpenAPI specification from our API.  See [the generated types here](./server/@types/communitySupportApi/index.d.ts)
+
+The types can be refreshed against a running version of the API by running the `communitySupportApiTypes` script.  Running against a local version ensures that the generated types are in sync with the API you are currently developing against - and not with an (already deployed) dev environment.
+
+With your API running locally (on port 8080), e.g. through IntelliJ, run:
+
+```sh
+$ ./script/generateApiTypes/communitySupportApiTypes --local
+```
+
+>[!WARNING]
+> If you are building against deployed API environments, that suggests breaking changes have possibly already been shipped.  Avoid this scenario.
+
+You can also run the script without the `--local` flag to generate types against the dev API environment.
+
+```sh
+$ ./script/generateApiTypes/communitySupportApiTypes
+```
+
