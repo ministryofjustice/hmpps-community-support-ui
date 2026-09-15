@@ -4,7 +4,7 @@ import WithdrawalService from '../../services/withdrawalService'
 import { validateRequestBodyAgainstSchema } from '../../validation/validationUtils'
 import WithdrawalConfirmationPresenter from './WithdrawalConfirmationPresenter'
 import WithdrawalReasonPresenter from './WithdrawalReasonPresenter'
-import { additionalInformationField, WithdrawalFormDataSchema, WithdrawalReason } from './WithdrawalFormData'
+import { additionalInformationField, createWithdrawalFormDataSchema } from './WithdrawalFormData'
 
 export default class WithdrawalController {
   constructor(
@@ -19,28 +19,46 @@ export default class WithdrawalController {
 
   async showReason(req: Request, res: Response): Promise<void> {
     const { referralIdentifier } = req.params as { referralIdentifier: string }
-    const referralName = await this.getReferralName(referralIdentifier, res.locals.user.username)
+    const [referralName, withdrawalReasonResponse] = await Promise.all([
+      this.getReferralName(referralIdentifier, res.locals.user.username),
+      this.referralService.getWithdrawalReasons(res.locals.user.username),
+    ])
     const flashedFormData = JSON.parse(req.flash('value').at(0) || '{}')
-    const withdrawalReason = flashedFormData.withdrawalReason as WithdrawalReason | undefined
+    const withdrawalReason =
+      typeof flashedFormData.withdrawalReason === 'string' ? flashedFormData.withdrawalReason : undefined
     const withdrawal = withdrawalReason
       ? {
           withdrawalReason,
           additionalInformation: flashedFormData[additionalInformationField(withdrawalReason)],
         }
       : this.withdrawalService.getWithdrawal(referralIdentifier, req.session.withdrawalReferrals)
-    new WithdrawalReasonPresenter(referralIdentifier, referralName, withdrawal, res.locals.errors).renderPage(res)
+    new WithdrawalReasonPresenter(
+      referralIdentifier,
+      referralName,
+      withdrawalReasonResponse.withdrawalReasons,
+      withdrawal,
+      res.locals.errors,
+    ).renderPage(res)
   }
 
-  submitReason(req: Request, res: Response): Promise<void> {
+  async submitReason(req: Request, res: Response): Promise<void> {
     const { referralIdentifier } = req.params as { referralIdentifier: string }
-    return validateRequestBodyAgainstSchema(WithdrawalFormDataSchema, req, res, formData => {
-      req.session.withdrawalReferrals = this.withdrawalService.saveWithdrawal(
-        referralIdentifier,
-        formData,
-        req.session.withdrawalReferrals,
-      )
-      res.redirect(`/referral/${referralIdentifier}/withdraw/confirm`)
-    })
+    const withdrawalReasonResponse = await this.referralService.getWithdrawalReasons(res.locals.user.username)
+    const availableWithdrawalReasons = Object.values(withdrawalReasonResponse.withdrawalReasons).flat()
+
+    return validateRequestBodyAgainstSchema(
+      createWithdrawalFormDataSchema(availableWithdrawalReasons),
+      req,
+      res,
+      formData => {
+        req.session.withdrawalReferrals = this.withdrawalService.saveWithdrawal(
+          referralIdentifier,
+          formData,
+          req.session.withdrawalReferrals,
+        )
+        res.redirect(`/referral/${referralIdentifier}/withdraw/confirm`)
+      },
+    )
   }
 
   async showConfirmation(req: Request, res: Response): Promise<void> {

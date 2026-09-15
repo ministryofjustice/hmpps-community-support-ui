@@ -215,6 +215,14 @@
         "heading": "User related",
         "reasons": [
           {
+            "value": "USER_DIED",
+            "text": "Died"
+          },
+          {
+            "value": "MOVED_OUT_OF_SERVICE_AREA",
+            "text": "Moved out of service area"
+          },
+          {
             "value": "NOT_ENGAGED",
             "text": "Not engaged"
           },
@@ -223,17 +231,17 @@
             "text": "Needs met through another route"
           },
           {
-            "value": "USER_DIED",
-            "text": "User died"
+            "value": "WORK_CARING_COMMITMENTS_OR_SICKNESS",
+            "text": "Work, caring commitments or sickness"
           },
           {
-            "value": "WORK_CARING_COMMITMENTS_OR_SICKNESS",
-            "text": "Work, caring commitments, or sickness"
+            "value": "ANOTHER_REASON",
+            "text": "Another reason"
           }
         ]
       },
       {
-        "heading": "Sentence / custody related",
+        "heading": "Sentence or custody related",
         "reasons": [
           {
             "value": "ACQUITTED_ON_APPEAL",
@@ -250,15 +258,6 @@
           {
             "value": "SENTENCE_EXPIRED",
             "text": "Sentence expired"
-          }
-        ]
-      },
-      {
-        "heading": "Other",
-        "reasons": [
-          {
-            "value": "OTHER_CHANGE_OF_CIRCUMSTANCE",
-            "text": "Any other change of circumstance"
           }
         ]
       }

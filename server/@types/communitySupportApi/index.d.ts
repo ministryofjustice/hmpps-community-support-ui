@@ -64,6 +64,7 @@ type AdditionalInformationForTheDeliveryPartner =
 
 type Selection = components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
 type WithdrawReferralRequest = components['schemas']['WithdrawReferralRequest']
+type WithdrawalReasonsGroupedBffResponseDto = components['schemas']['WithdrawalReasonsGroupedBffResponseDto']
 
 export type {
   Referral,
@@ -126,4 +127,5 @@ export type {
   PDU,
   AdditionalInformationForTheDeliveryPartner,
   WithdrawReferralRequest,
+  WithdrawalReasonsGroupedBffResponseDto,
 }
