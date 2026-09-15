@@ -955,6 +955,24 @@ describe('ReferralController', () => {
       expect(CheckPPDetailsPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
     })
 
+    it('should clear any stale ppDetails left over from a previous, unconfirmed add contact details attempt', async () => {
+      const session: Record<string, unknown> = {
+        draftReferralId: 'referral-uuid-1',
+        referralCreationDetails: { personDetails: mockPersonDetails },
+        ppDetails: { name: 'Stale Draft Person', pduName: 'Stale PDU' },
+      }
+      req = {
+        method: 'GET',
+        session,
+      } as unknown as Request
+      res = { ...res, locals: { user: { username: 'user1' }, errors: undefined } } as unknown as Response
+      referralService.getPPDetails.mockResolvedValue(mockPPDetails)
+
+      await referralController.showCheckPPDetails(req, res)
+
+      expect(session.ppDetails).toBeUndefined()
+    })
+
     it('should pass validation errors to presenter on GET after failed POST', async () => {
       const validationErrors = {
         list: [{ href: '#detailsCorrect', text: 'Select yes if these details are correct' }],
@@ -1061,6 +1079,13 @@ describe('ReferralController', () => {
       id: 'ID123',
       dateOfBirth: '20 Feb 1975 (51 years old)',
     }
+    const mockApiPpDetails = {
+      name: 'API PP Person',
+      jobRole: 'Probation Practitioner',
+      emailAddress: 'api.pp@example.com',
+      pdu: { id: 'pdu-1', name: 'London PDU' },
+      probationOffice: { id: 1, name: 'London Probation Office' },
+    }
 
     it('should redirect to find a person when there is no draft referral in session', async () => {
       req = { method: 'GET', query: {}, flash: jest.fn().mockReturnValue([]), session: {} } as unknown as Request
@@ -1076,7 +1101,6 @@ describe('ReferralController', () => {
       req = {
         method: 'GET',
         query: {},
-        body: {},
         flash: jest.fn().mockReturnValue([]),
         session: {
           draftReferralId: 'referral-uuid-1',
@@ -1086,6 +1110,7 @@ describe('ReferralController', () => {
       res = { ...res, locals: { user: { username: 'user1' }, errors: undefined } } as unknown as Response
       referralService.getProbationOffices.mockResolvedValue(mockProbationOffices)
       referralService.getPDUs.mockResolvedValue(mockPdus)
+      referralService.getPPDetails.mockResolvedValue(mockApiPpDetails)
 
       await referralController.showAddContactDetails(req, res)
 
@@ -1097,7 +1122,11 @@ describe('ReferralController', () => {
         mockPdus,
         false,
         undefined,
-        {},
+        {
+          ...mockApiPpDetails,
+          pdu: JSON.stringify(mockApiPpDetails.pdu),
+          probationOffice: JSON.stringify(mockApiPpDetails.probationOffice),
+        },
       )
       expect(AddContactDetailsPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
     })
@@ -1106,7 +1135,6 @@ describe('ReferralController', () => {
       req = {
         method: 'GET',
         query: { fromPP: 'true' },
-        body: {},
         flash: jest.fn().mockReturnValue([]),
         session: {
           draftReferralId: 'referral-uuid-1',
@@ -1119,13 +1147,14 @@ describe('ReferralController', () => {
 
       await referralController.showAddContactDetails(req, res)
 
+      expect(referralService.getPPDetails).not.toHaveBeenCalled()
       expect(AddContactDetailsPresenter).toHaveBeenCalledWith(
         mockPersonDetails,
         mockProbationOffices,
         mockPdus,
         true,
         undefined,
-        {},
+        undefined,
       )
     })
 
@@ -1137,7 +1166,6 @@ describe('ReferralController', () => {
       req = {
         method: 'GET',
         query: {},
-        body: {},
         flash: jest.fn().mockReturnValue([]),
         session: {
           draftReferralId: 'referral-uuid-1',
@@ -1147,6 +1175,7 @@ describe('ReferralController', () => {
       res = { ...res, locals: { user: { username: 'user1' }, errors: validationErrors } } as unknown as Response
       referralService.getProbationOffices.mockResolvedValue(mockProbationOffices)
       referralService.getPDUs.mockResolvedValue(mockPdus)
+      referralService.getPPDetails.mockResolvedValue(mockApiPpDetails)
 
       await referralController.showAddContactDetails(req, res)
 
@@ -1161,7 +1190,11 @@ describe('ReferralController', () => {
             name: { text: 'Enter a name' },
           }),
         }),
-        {},
+        {
+          ...mockApiPpDetails,
+          pdu: JSON.stringify(mockApiPpDetails.pdu),
+          probationOffice: JSON.stringify(mockApiPpDetails.probationOffice),
+        },
       )
       expect(AddContactDetailsPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
     })
@@ -1238,39 +1271,11 @@ describe('ReferralController', () => {
       )
     })
 
-    it('should not fall back to req.session.ppDetails when there is no ppDetails in session', async () => {
-      req = {
-        method: 'GET',
-        query: {},
-        body: {},
-        flash: jest.fn().mockReturnValue([]),
-        session: {
-          draftReferralId: 'referral-uuid-1',
-          referralCreationDetails: { personDetails: mockPersonDetails },
-        },
-      } as unknown as Request
-      res = { ...res, locals: { user: { username: 'user1' }, errors: undefined } } as unknown as Response
-      referralService.getProbationOffices.mockResolvedValue(mockProbationOffices)
-      referralService.getPDUs.mockResolvedValue(mockPdus)
-
-      await referralController.showAddContactDetails(req, res)
-
-      expect(AddContactDetailsPresenter).toHaveBeenCalledWith(
-        mockPersonDetails,
-        mockProbationOffices,
-        mockPdus,
-        false,
-        undefined,
-        {},
-      )
-    })
-
     it('should not fall back to req.session.ppDetails when flash data is present', async () => {
       const flashData = JSON.stringify({ name: 'John Doe' })
       req = {
         method: 'GET',
         query: {},
-        body: {},
         flash: jest.fn().mockReturnValue([flashData]),
         session: {
           draftReferralId: 'referral-uuid-1',
@@ -1284,6 +1289,7 @@ describe('ReferralController', () => {
 
       await referralController.showAddContactDetails(req, res)
 
+      expect(referralService.getPPDetails).not.toHaveBeenCalled()
       expect(AddContactDetailsPresenter).toHaveBeenCalledWith(
         mockPersonDetails,
         mockProbationOffices,
@@ -1294,18 +1300,10 @@ describe('ReferralController', () => {
       )
     })
 
-    it('should fall back to the API when there is no flash, body or session data', async () => {
-      const apiPpDetails = {
-        name: 'API PP Person',
-        jobRole: 'Probation Practitioner',
-        emailAddress: 'api.pp@example.com',
-        pdu: { id: 'pdu-1', name: 'London PDU' },
-        probationOffice: { id: 1, name: 'London Probation Office' },
-      }
+    it('should fall back to the API when there is no flash or session data', async () => {
       req = {
         method: 'GET',
         query: {},
-        body: undefined,
         flash: jest.fn().mockReturnValue([]),
         session: {
           draftReferralId: 'referral-uuid-1',
@@ -1315,7 +1313,7 @@ describe('ReferralController', () => {
       res = { ...res, locals: { user: { username: 'user1' }, errors: undefined } } as unknown as Response
       referralService.getProbationOffices.mockResolvedValue(mockProbationOffices)
       referralService.getPDUs.mockResolvedValue(mockPdus)
-      referralService.getPPDetails.mockResolvedValue(apiPpDetails)
+      referralService.getPPDetails.mockResolvedValue(mockApiPpDetails)
 
       await referralController.showAddContactDetails(req, res)
 
@@ -1327,9 +1325,9 @@ describe('ReferralController', () => {
         false,
         undefined,
         {
-          ...apiPpDetails,
-          pdu: JSON.stringify(apiPpDetails.pdu),
-          probationOffice: JSON.stringify(apiPpDetails.probationOffice),
+          ...mockApiPpDetails,
+          pdu: JSON.stringify(mockApiPpDetails.pdu),
+          probationOffice: JSON.stringify(mockApiPpDetails.probationOffice),
         },
       )
     })
@@ -1338,7 +1336,6 @@ describe('ReferralController', () => {
       req = {
         method: 'GET',
         query: { fromPP: 'true' },
-        body: undefined,
         flash: jest.fn().mockReturnValue([]),
         session: {
           draftReferralId: 'referral-uuid-1',
@@ -1362,7 +1359,7 @@ describe('ReferralController', () => {
       )
     })
 
-    it('should call validation schema on POST request', async () => {
+    it('should call validation schema on POST request without computing prefill data', async () => {
       req = {
         method: 'POST',
         query: {},
@@ -1376,6 +1373,7 @@ describe('ReferralController', () => {
 
       await referralController.showAddContactDetails(req, res)
 
+      expect(referralService.getPPDetails).not.toHaveBeenCalled()
       expect(referralService.getProbationOffices).not.toHaveBeenCalled()
       expect(referralService.getPDUs).not.toHaveBeenCalled()
       expect(AddContactDetailsPresenter.prototype.renderPage).not.toHaveBeenCalled()
@@ -1385,7 +1383,6 @@ describe('ReferralController', () => {
       req = {
         method: 'GET',
         query: {},
-        body: {},
         flash: jest.fn().mockReturnValue([]),
         session: {
           draftReferralId: 'referral-uuid-1',
@@ -1393,6 +1390,7 @@ describe('ReferralController', () => {
         },
       } as unknown as Request
       res = { ...res, locals: { user: { username: 'user1' }, errors: undefined } } as unknown as Response
+      referralService.getPPDetails.mockResolvedValue(mockApiPpDetails)
       referralService.getProbationOffices.mockRejectedValue(new Error('error retrieving probation offices'))
 
       await expect(referralController.showAddContactDetails(req, res)).rejects.toThrow(

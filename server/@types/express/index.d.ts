@@ -50,7 +50,7 @@ export declare module 'express-session' {
     personId: string
     selectedProviderId: string
     withdrawalReferrals: Record<string, WithdrawalFormData>
-    ppDetails: UpdateProbationPractitionerDetailsRequest & {
+    ppDetails?: UpdateProbationPractitionerDetailsRequest & {
       pduName: string
       probationOfficeName?: string
     }

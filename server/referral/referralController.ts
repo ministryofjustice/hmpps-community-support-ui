@@ -546,24 +546,6 @@ export default class ReferralController {
       return res.redirect('/referral/new/find-a-person')
     }
 
-    const flashData = req.flash('value')
-    let userInputData = flashData.length > 0 ? JSON.parse(flashData[0]) : req.body
-
-    // There is no data currently in the request body, so we will check if there is any data in the session and use that instead
-    if (Object.keys(userInputData ?? {}).length === 0 && req.session.ppDetails) {
-      userInputData = req.session.ppDetails
-    }
-
-    // If there is no data in session and we haven't already found a PP, then check if we have any stored in the DB
-    // Stringify the pdu and probation office so that they can be used to pre-populate the select fields
-    if (userInputData === undefined && !fromPP) {
-      const ppDetails = await this.referralService.getPPDetails(draftReferralKey, username)
-      userInputData = {
-        ...ppDetails,
-        pdu: JSON.stringify(ppDetails.pdu),
-        probationOffice: JSON.stringify(ppDetails.probationOffice),
-      }
-    }
     const isFromPP = fromPP === 'true'
 
     if (req.method === 'POST') {
@@ -582,6 +564,24 @@ export default class ReferralController {
         return res.redirect(`/referral/new/confirm-contact-details?fromPP=${isFromPP}`)
       })
     }
+
+    const flashData = req.flash('value')
+    const flashedInputData = flashData.length > 0 ? JSON.parse(flashData[0]) : undefined
+
+    // Prefill priority: flashed data from a failed submission, then an in-progress session draft,
+    // then (if we haven't already established the PP details are wrong) previously saved details from the API
+    let userInputData = flashedInputData ?? req.session.ppDetails
+
+    if (!userInputData && !fromPP) {
+      const ppDetails = await this.referralService.getPPDetails(draftReferralKey, username)
+      // Stringify the pdu and probation office so that they can be used to pre-populate the select fields
+      userInputData = {
+        ...ppDetails,
+        pdu: JSON.stringify(ppDetails.pdu),
+        probationOffice: JSON.stringify(ppDetails.probationOffice),
+      }
+    }
+
     const validationErrors = res.locals.errors
     const probationOffices = await this.referralService.getProbationOffices(username)
     const pdus = await this.referralService.getPDUs(username)
