@@ -22,7 +22,7 @@ const getTaskListStatus = (data: TaskListStatusDto) => {
     riskInformation: getStatusTag(data.checkRiskInformationCompleted),
     personNeeds: getStatusTag(data.selectThePersonsNeedsCompleted),
     supportNeeds: getStatusTag(data.addDetailsOfAnyAdditionalSupportNeedsCompleted),
-    contactDetails: getStatusTag(data.addDetailsOfMainPointOfContactCompleted),
+    contactDetails: getStatusTag(data.addMainPointOfContactCompleted),
     checkPPDetails: getStatusTag(data.checkProbationPractitionerDetailsCompleted),
     additionalReferralInformation: getStatusTag(data.addAdditionalInformationCompleted),
     selectAnAreaForReferral: getStatusTag(data.selectAnAreaForReferralCompleted),
@@ -89,7 +89,7 @@ export default class TaskListPresenter extends PresenterBase<TaskListViewModel, 
         title: content.contactDetails.title,
         taskList: {
           items: [
-            this.data.addMainPointOfContactCompleted === null
+            this.data.addMainPointOfContactCompleted === null || this.data.addMainPointOfContactCompleted === undefined
               ? {
                   title: { text: content.contactDetails.subTasks.checkPPDetails.text },
                   href: content.contactDetails.subTasks.checkPPDetails.href,
