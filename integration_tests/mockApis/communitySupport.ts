@@ -8,7 +8,9 @@ import {
   IcsFeedbackSubmission,
   IcsFeedbackSubmissionResponse,
   ActionPlanSummaryDto,
+  PDU,
   ProbationOffice,
+  ProbationPractitionerDetails,
   ReferralInformation,
   SubmitReferralResponse,
   TaskListStatusDto,
@@ -923,6 +925,61 @@ export default {
       request: {
         method: 'PATCH',
         urlPathPattern: `/community-support/draft-referral/additional-information-for-the-delivery-partner/${referralId}`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: {},
+        transformers: ['response-template'],
+      },
+    }),
+  stubGetPDUs: (mockData: PDU[], httpStatus = 200): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPattern: '/.*reference-data/pdus',
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: mockData,
+      },
+    }),
+  stubGetPPDetails: (
+    referralId: string,
+    ppDetails: ProbationPractitionerDetails,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: `/community-support/bff/draft-referral/${referralId}/probation-practitioner-details`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: ppDetails,
+        transformers: ['response-template'],
+      },
+    }),
+  stubSubmitPPDetails: (referralId: string, httpStatus = 200): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'PATCH',
+        urlPathPattern: `/community-support/draft-referral/${referralId}/probation-practitioner-details`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: {},
+        transformers: ['response-template'],
+      },
+    }),
+  stubSubmitContactDetails: (referralId: string, httpStatus = 200): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'PATCH',
+        urlPathPattern: `/community-support/draft-referral/${referralId}/main-point-of-contact-details`,
       },
       response: {
         status: httpStatus,
