@@ -78,6 +78,16 @@ export default function setupAuthentication() {
     if (req.isAuthenticated() && (await tokenVerificationClient.verifyToken(req as unknown as AuthenticatedRequest))) {
       return next()
     }
+
+    if (req.isAuthenticated()) {
+      return req.logout(err => {
+        if (err) return next(err)
+
+        req.session.returnTo = req.originalUrl
+        return res.redirect('/sign-in')
+      })
+    }
+
     req.session.returnTo = req.originalUrl
     return res.redirect('/sign-in')
   })
