@@ -88,10 +88,7 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
       content.riskInformationCard,
       content.notAvailable,
     )
-    viewModel.additionalInformationSummary = this.buildAdditionalInformationSummary(
-      content.additionalInformationCard,
-      content.notAvailable,
-    )
+    viewModel.additionalInformationSummary = this.buildAdditionalInformationSummary(content.additionalInformationCard)
     viewModel.referralDetailsHeader = content.referralDetailsHeader
     viewModel.referralDetailsSummary = this.buildReferralDetailsSummary()
     viewModel.referralContactDetailsHeader = content.referralContactDetailsHeader
@@ -206,16 +203,21 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
     }
   }
 
-  private buildAdditionalInformationSummary(
-    cardContent: { heading?: string; homeOfficeInterestLabel: string; opdPathwayLabel: string },
-    notAvailable: string,
-  ): GovukFrontendSummaryList {
+  private buildAdditionalInformationSummary(cardContent: {
+    heading?: string
+    homeOfficeInterestLabel: string
+    opdPathwayLabel: string
+  }): GovukFrontendSummaryList {
     const data = this.draftReferralDetails.additionalInformationDetailsTableData
 
     const summary = [
-      govFrontendSummaryListRow(cardContent.homeOfficeInterestLabel, data.homeOfficeInterest || notAvailable),
-      govFrontendSummaryListRow(cardContent.opdPathwayLabel, data.offenderPersonalityDisorderPathway || notAvailable),
-    ]
+      data.homeOfficeInterest
+        ? govFrontendSummaryListRow(cardContent.homeOfficeInterestLabel, data.homeOfficeInterest)
+        : null,
+      data.offenderPersonalityDisorderPathway
+        ? govFrontendSummaryListRow(cardContent.opdPathwayLabel, data.offenderPersonalityDisorderPathway)
+        : null,
+    ].filter(row => row !== null)
 
     return {
       card: {
