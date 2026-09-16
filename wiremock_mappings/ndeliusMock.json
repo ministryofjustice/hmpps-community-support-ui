@@ -132,6 +132,24 @@
       "name": "nDelius community manager not found by CRN",
       "request": {
         "method": "GET",
+        "urlPathPattern": "/case/X123455/community-manager"
+      },
+      "response": {
+        "status": 404,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "status": 404,
+          "error": "Not Found",
+          "message": "Person not found"
+        }
+      }
+    },
+    {
+      "name": "nDelius community manager not found by CRN",
+      "request": {
+        "method": "GET",
         "urlPathPattern": "/case/Z[0-9]{6}/community-manager"
       },
       "response": {

@@ -8,7 +8,7 @@
 
 {% block contentBody %}
 <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
-    {% for feedbackSummary in content.feedbackSummarys %}
+    {% for feedbackSummary in content.feedbackSummaries %}
        <h2 class="govuk-heading-m">{{ feedbackSummary.summaryTitle }}</h2>
        {{ govukSummaryList(feedbackSummary) }}
     {% endfor %}

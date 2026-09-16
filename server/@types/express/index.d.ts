@@ -4,6 +4,7 @@ import {
   ReferralInformationDto,
   IcsFeedbackSubmission,
   ActionPlanSelectANeedNeed,
+  UpdateProbationPractitionerDetailsRequest,
 } from '@community-support-api'
 import { GovukFrontendErrorSummaryErrorListElement } from '@govuk-frontend'
 import { HmppsUser } from '../../interfaces/hmppsUser'
@@ -53,6 +54,10 @@ export declare module 'express-session' {
     actionPlan?: {
       needs: ActionPlanSelectANeedNeed[]
       selectedNeedId?: string
+    }
+    ppDetails?: UpdateProbationPractitionerDetailsRequest & {
+      pduName: string
+      probationOfficeName?: string
     }
   }
 }

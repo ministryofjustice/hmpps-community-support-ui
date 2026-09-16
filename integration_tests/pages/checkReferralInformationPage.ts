@@ -11,11 +11,14 @@ export default class CheckReferralInformationPage extends AbstractPage {
 
   readonly referralDetailsSummary: SummaryList
 
+  readonly equalityMonitoringSummary: SummaryList
+
   readonly riskInformationSummary: SummaryList
 
   private constructor(
     page: Page,
     personalDetailsSummary: SummaryList,
+    equalityMonitoringSummary: SummaryList,
     riskInformationSummary: SummaryList,
     referralDetailsSummary: SummaryList,
   ) {
@@ -25,6 +28,7 @@ export default class CheckReferralInformationPage extends AbstractPage {
     this.personalDetailsSummary = personalDetailsSummary
     this.riskInformationSummary = riskInformationSummary
     this.referralDetailsSummary = referralDetailsSummary
+    this.equalityMonitoringSummary = equalityMonitoringSummary
   }
 
   static url(): string {
@@ -35,15 +39,18 @@ export default class CheckReferralInformationPage extends AbstractPage {
     const personalDetailsSummary = await SummaryList.create(page.locator('[data-testid="personal-details"]'))
     const riskInformationSummary = await SummaryList.create(page.locator('[data-testid="risk-information"]'))
     const referralDetailsSummary = await SummaryList.create(page.locator('[data-testid="referral-details"]'))
+    const equalityMonitoringSummary = await SummaryList.create(page.locator('[data-testid="equality-monitoring"]'))
     const checkReferralInformationPage = new CheckReferralInformationPage(
       page,
       personalDetailsSummary,
       riskInformationSummary,
       referralDetailsSummary,
+      equalityMonitoringSummary,
     )
     await expect(checkReferralInformationPage.personalDetailsSummary.summaryLocator).toBeVisible()
     await expect(checkReferralInformationPage.riskInformationSummary.summaryLocator).toBeVisible()
     await expect(checkReferralInformationPage.referralDetailsSummary.summaryLocator).toBeVisible()
+    await expect(checkReferralInformationPage.equalityMonitoringSummary.summaryLocator).toBeVisible()
     return checkReferralInformationPage
   }
 }
