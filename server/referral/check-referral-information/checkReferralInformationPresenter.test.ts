@@ -309,5 +309,34 @@ describe('CheckReferralInformationPresenter', () => {
         value: { text: '20 Feb 1975 (51 years old)' },
       })
     })
+
+    it('should not include additional information summary when no additional information provided', () => {
+      const draftReferralDetails = {
+        id: 'referralId123',
+        createdDate: '2026-02-10T11:23:00.780Z',
+        personDetailsTableData: {
+          name: { firstName: 'John', lastName: 'Doe' },
+          crn: 'X123456',
+          dateOfBirth: '1975-02-20',
+          preferredLanguage: 'English',
+          disabilities: [],
+          personalCircumstances: [],
+        },
+        equalityDetailsTableData: {},
+        additionalInformationDetailsTableData: {},
+        contactDetailsTableData: {},
+        riskInformationDetailsTableData: {},
+        additionalSupportNeedsDetailsTableData: {},
+        personNeedsDetailsTableData: {},
+        referralAreaTableData: {},
+        mainPocDetailsTableData: {},
+      } as CheckDraftReferralDetailsDto
+
+      new CheckReferralInformationPresenter(draftReferralDetails).renderPage(res)
+
+      const renderData = (res.render as jest.Mock).mock.calls[0][1] as { content: CheckReferralInformationViewModel }
+
+      expect(renderData.content.additionalInformationSummary).toBeUndefined()
+    })
   })
 })

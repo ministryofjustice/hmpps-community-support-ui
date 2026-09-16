@@ -24,7 +24,10 @@ const checkDraftReferralDetails: CheckDraftReferralDetailsDto = {
     religionOrBelief: 'None',
     sex: 'Male',
   },
-  additionalInformationDetailsTableData: {},
+  additionalInformationDetailsTableData: {
+    homeOfficeInterest: 'Yes',
+    offenderPersonalityDisorderPathway: 'Assessment ongoing',
+  },
   contactDetailsTableData: {},
   riskInformationDetailsTableData: {
     whoIsAtRisk: 'Family members',
