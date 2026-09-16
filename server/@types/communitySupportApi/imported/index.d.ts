@@ -1762,6 +1762,7 @@ export interface components {
       address?: string | null
     }
     DraftEqualityDetailsTableDataDto: {
+      nationality?: string | null
       ethnicity?: string | null
       religionOrBelief?: string | null
       sex: string
@@ -3143,7 +3144,9 @@ export interface operations {
   }
   getProbationOffices: {
     parameters: {
-      query?: never
+      query?: {
+        sortOrder?: 'ASC' | 'DESC'
+      }
       header?: never
       path?: never
       cookie?: never
