@@ -31,6 +31,7 @@ export function referralPageData(
       referralDate: '2026-05-09T11:23:00.780Z',
       assignedTo,
     },
+    withdrawReferral: false,
   }
 }
 export default referralPageData

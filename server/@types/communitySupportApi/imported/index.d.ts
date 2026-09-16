@@ -1571,6 +1571,7 @@ export interface components {
       equalityDetailsTableData: components['schemas']['EqualityDetailsTableDataDto']
       contactDetailsTableData: components['schemas']['ContactDetailsTableDataDto']
       referralDetailsTableData: components['schemas']['ReferralDetailsTableDataDto']
+      withdrawReferral: boolean
     }
     ReferralDetailsTableDataDto: {
       referralDate: string
@@ -1761,7 +1762,6 @@ export interface components {
       address?: string | null
     }
     DraftEqualityDetailsTableDataDto: {
-      nationality?: string | null
       ethnicity?: string | null
       religionOrBelief?: string | null
       sex: string
@@ -3143,9 +3143,7 @@ export interface operations {
   }
   getProbationOffices: {
     parameters: {
-      query?: {
-        sortOrder?: 'ASC' | 'DESC'
-      }
+      query?: never
       header?: never
       path?: never
       cookie?: never
