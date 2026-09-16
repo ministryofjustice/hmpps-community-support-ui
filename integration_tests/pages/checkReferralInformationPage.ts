@@ -11,11 +11,19 @@ export default class CheckReferralInformationPage extends AbstractPage {
 
   readonly referralDetailsSummary: SummaryList
 
-  private constructor(page: Page, personalDetailsSummary: SummaryList, referralDetailsSummary: SummaryList) {
+  readonly riskInformationSummary: SummaryList
+
+  private constructor(
+    page: Page,
+    personalDetailsSummary: SummaryList,
+    riskInformationSummary: SummaryList,
+    referralDetailsSummary: SummaryList,
+  ) {
     super(page)
     this.header = page.locator('h1').first()
     this.submitButton = page.locator('button', { hasText: 'Submit referral' })
     this.personalDetailsSummary = personalDetailsSummary
+    this.riskInformationSummary = riskInformationSummary
     this.referralDetailsSummary = referralDetailsSummary
   }
 
@@ -25,13 +33,16 @@ export default class CheckReferralInformationPage extends AbstractPage {
 
   static async verifyOnPage(page: Page): Promise<CheckReferralInformationPage> {
     const personalDetailsSummary = await SummaryList.create(page.locator('[data-testid="personal-details"]'))
+    const riskInformationSummary = await SummaryList.create(page.locator('[data-testid="risk-information"]'))
     const referralDetailsSummary = await SummaryList.create(page.locator('[data-testid="referral-details"]'))
     const checkReferralInformationPage = new CheckReferralInformationPage(
       page,
       personalDetailsSummary,
+      riskInformationSummary,
       referralDetailsSummary,
     )
     await expect(checkReferralInformationPage.personalDetailsSummary.summaryLocator).toBeVisible()
+    await expect(checkReferralInformationPage.riskInformationSummary.summaryLocator).toBeVisible()
     await expect(checkReferralInformationPage.referralDetailsSummary.summaryLocator).toBeVisible()
     return checkReferralInformationPage
   }
