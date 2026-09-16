@@ -8,6 +8,7 @@ import {
   IcsFeedbackSubmission,
   IcsFeedbackSubmissionResponse,
   ActionPlanSummaryDto,
+  ActionPlanSelectANeedResponse,
   PDU,
   ProbationOffice,
   ProbationPractitionerDetails,
@@ -614,6 +615,21 @@ export default {
         status: httpStatus,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: actionPlanSummary,
+      },
+    }),
+  stubGetActionPlanNeedsAndOutcomes: (
+    needsAndOutcomes: ActionPlanSelectANeedResponse,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPath: '/community-support/bff/referral/action-plan/select-a-need',
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: needsAndOutcomes,
       },
     }),
   stubGetPersonalDetails: (

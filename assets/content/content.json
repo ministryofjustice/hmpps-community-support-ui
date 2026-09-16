@@ -312,7 +312,7 @@
     "needsRowLinkText": "Complete",
     "createButtonText": "Create an action plan"
   },
-  "/referral/:id/action-plan/needs": {
+  "/referral/:id/action-plan/select-a-need": {
     "pageHeader": "Area of Need",
     "whichNeedTitle": "Which need are you creating an action for?",
     "whichNeedHint": "Select one option. You can select more needs later.",

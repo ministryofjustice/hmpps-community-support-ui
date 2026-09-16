@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import ReferralService from '../../services/referralService'
 import ActionPlanPresenter from './actionPlanPresenter'
-import ActionPlanNeedsPresenter from './needs/actionPlanNeedsPresenter'
+import ActionPlanSelectANeedPresenter from './selectANeed/actionPlanSelectANeedPresenter'
 import ActionPlanSelectOutcomePresenter from './selectOutcome/actionPlanSelectOutcomePresenter'
 import ActionPlanAddActivitiesPresenter from './addActivities/actionPlanAddActivitiesPresenter'
 
@@ -21,21 +21,36 @@ class ActionPlanController {
   async createActionPlan(req: Request, res: Response) {
     const { id: caseReference } = req.params as { id: string }
 
-    res.redirect(`/referral/${caseReference}/action-plan/needs`)
+    res.redirect(`/referral/${caseReference}/action-plan/select-a-need`)
   }
 
-  async showNeedsPage(req: Request, res: Response) {
+  async showSelectANeedPage(req: Request, res: Response) {
     const { id: caseReference } = req.params as { id: string }
+    const { username } = res.locals.user
 
-    const presenter = new ActionPlanNeedsPresenter(caseReference)
+    const { needs } = await this.referralService.getActionPlanNeedsAndOutcomes(username)
+
+    req.session.actionPlan = { ...req.session.actionPlan, needs }
+
+    const presenter = new ActionPlanSelectANeedPresenter(caseReference, needs, req.session.actionPlan.selectedNeedId)
 
     return presenter.renderPage(res)
   }
 
-  async submitNeeds(req: Request, res: Response) {
+  async submitSelectedNeed(req: Request, res: Response) {
     const { id: caseReference } = req.params as { id: string }
+    const { needId } = req.body as { needId?: string }
 
-    res.redirect(`/referral/${caseReference}/action-plan/select-an-outcome`)
+    const needs = req.session.actionPlan?.needs ?? []
+    const selectedNeed = needs.find(need => need.id === needId)
+
+    req.session.actionPlan = { needs, selectedNeedId: needId }
+
+    if ((selectedNeed?.outcomes?.length ?? 0) > 1) {
+      return res.redirect(`/referral/${caseReference}/action-plan/select-an-outcome`)
+    }
+
+    return res.redirect(`/referral/${caseReference}/action-plan/add-activities`)
   }
 
   async showSelectOutcomePage(req: Request, res: Response) {
