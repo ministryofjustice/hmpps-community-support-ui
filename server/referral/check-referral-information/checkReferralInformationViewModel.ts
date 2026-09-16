@@ -5,7 +5,6 @@ export type CheckReferralInformationViewModel = {
   pageHeader: string
   pageSubHeader: string
   personalDetailsHeader: string
-  riskInformationHeader: string
   additionalInformationSummary?: GovukFrontendSummaryList
   riskInformationSummary: GovukFrontendSummaryList
   referralDetailsHeader: string
@@ -14,6 +13,7 @@ export type CheckReferralInformationViewModel = {
   backLink: GovukFrontendBackLink
   submitHref: string
   personalDetailsSummary: GovukFrontendSummaryList
+  equalityMonitoringSummary?: GovukFrontendSummaryList
   referralDetailsSummary: GovukFrontendSummaryList
 }
 
@@ -28,6 +28,14 @@ export type PersonalDetailsCard = {
   currentCircumstancesLabel: string
   disabilitiesLabel: string
   lastUpdatedLabel: string
+}
+
+export type EqualityMonitoringCard = {
+  heading: string
+  nationalityLabel: string
+  ethnicityLabel: string
+  religionOrBeliefLabel: string
+  sexLabel: string
 }
 
 export type RiskInformationCard = {
@@ -59,6 +67,7 @@ export type CheckReferralInformationContent = {
   personalDetailsCard: PersonalDetailsCard
   riskInformationCard: RiskInformationCard
   additionalInformationCard?: AdditionalInformationCard
+  equalityMonitoringCard: EqualityMonitoringCard
   referralDetailsHeader: string
   referralContactDetailsHeader: string
   submitButtonText: string

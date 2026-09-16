@@ -5,7 +5,7 @@ export type IcsFeedbackCheckYourAnswersViewModel = {
   submitButtonText: string
   submitHref: string
   backLink: GovukFrontendBackLink
-  feedbackSummarys: Array<SummaryListWithTitle>
+  feedbackSummaries: Array<SummaryListWithTitle>
 }
 
 export type IcsFeedbackCheckYourAnswersContent = {

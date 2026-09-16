@@ -13,11 +13,14 @@ export default class CheckReferralInformationPage extends AbstractPage {
 
   readonly referralDetailsSummary: SummaryList
 
+  readonly equalityMonitoringSummary: SummaryList
+
   readonly riskInformationSummary: SummaryList
 
   private constructor(
     page: Page,
     personalDetailsSummary: SummaryList,
+    equalityMonitoringSummary: SummaryList,
     riskInformationSummary: SummaryList,
     referralDetailsSummary: SummaryList,
     additionalInformationSummary?: SummaryList,
@@ -26,9 +29,10 @@ export default class CheckReferralInformationPage extends AbstractPage {
     this.header = page.locator('h1').first()
     this.submitButton = page.locator('button', { hasText: 'Submit referral' })
     this.personalDetailsSummary = personalDetailsSummary
+    this.equalityMonitoringSummary = equalityMonitoringSummary
+    this.additionalInformationSummary = additionalInformationSummary
     this.riskInformationSummary = riskInformationSummary
     this.referralDetailsSummary = referralDetailsSummary
-    this.additionalInformationSummary = additionalInformationSummary
   }
 
   static url(): string {
@@ -42,17 +46,20 @@ export default class CheckReferralInformationPage extends AbstractPage {
     const additionalInformationSummary = await SummaryList.create(
       page.locator('[data-testid="additional-information"]'),
     )
+    const equalityMonitoringSummary = await SummaryList.create(page.locator('[data-testid="equality-monitoring"]'))
     const checkReferralInformationPage = new CheckReferralInformationPage(
       page,
       personalDetailsSummary,
       riskInformationSummary,
       referralDetailsSummary,
       additionalInformationSummary,
+      equalityMonitoringSummary,
     )
     await expect(checkReferralInformationPage.personalDetailsSummary.summaryLocator).toBeVisible()
     await expect(checkReferralInformationPage.riskInformationSummary.summaryLocator).toBeVisible()
     await expect(checkReferralInformationPage.referralDetailsSummary.summaryLocator).toBeVisible()
     await expect(additionalInformationSummary.summaryLocator).toBeVisible()
+    await expect(checkReferralInformationPage.equalityMonitoringSummary.summaryLocator).toBeVisible()
     return checkReferralInformationPage
   }
 }

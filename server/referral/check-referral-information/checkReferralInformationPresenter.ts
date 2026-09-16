@@ -9,6 +9,7 @@ import { components } from '../../@types/communitySupportApi/imported'
 import {
   CheckReferralInformationContent,
   CheckReferralInformationViewModel,
+  EqualityMonitoringCard,
   PersonalDetailsCard,
   RiskInformationCard,
 } from './checkReferralInformationViewModel'
@@ -83,7 +84,10 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
       content.personalDetailsCard,
       content.notAvailable,
     )
-    viewModel.riskInformationHeader = content.riskInformationCard.heading
+    viewModel.equalityMonitoringSummary = this.buildEqualityMonitoringSummary(
+      content.equalityMonitoringCard,
+      content.notAvailable,
+    )
     viewModel.riskInformationSummary = this.buildRiskInformationSummary(
       content.riskInformationCard,
       content.notAvailable,
@@ -203,6 +207,30 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
     }
   }
 
+  private buildEqualityMonitoringSummary(
+    cardContent: EqualityMonitoringCard,
+    notAvailable: string,
+  ): GovukFrontendSummaryList {
+    const equality = this.draftReferralDetails.equalityDetailsTableData
+
+    const rows = [
+      govFrontendSummaryListRow(cardContent.nationalityLabel, equality.nationality || notAvailable),
+      govFrontendSummaryListRow(cardContent.ethnicityLabel, equality.ethnicity || notAvailable),
+      govFrontendSummaryListRow(cardContent.religionOrBeliefLabel, equality.religionOrBelief || notAvailable),
+      govFrontendSummaryListRow(cardContent.sexLabel, equality.sex || notAvailable),
+    ]
+
+    return {
+      card: {
+        title: {
+          text: cardContent.heading,
+        },
+        attributes: { 'data-testid': 'equality-monitoring' },
+      },
+      rows,
+    }
+  }
+
   private buildAdditionalInformationSummary(cardContent: {
     heading?: string
     homeOfficeInterestLabel: string
@@ -218,7 +246,6 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
         ? govFrontendSummaryListRow(cardContent.opdPathwayLabel, data.offenderPersonalityDisorderPathway)
         : null,
     ].filter(row => row !== null)
-
     return {
       card: {
         title: {
