@@ -49,6 +49,7 @@
       "ethnicityLabel": "Ethnicity",
       "religionOrBeliefLabel": "Religion or belief",
       "sexLabel": "Sex"
+    },
     "riskInformationCard": {
       "heading": "Risk information",
       "whoIsAtRiskLabel": "Who is at risk?",
