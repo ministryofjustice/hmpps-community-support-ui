@@ -515,6 +515,41 @@
             "text": "Details about how you tried to contact {{ firstname }} and why they did not attend ",
             "hint": "details about how you tried to contact them and why they did not attend’",
             "changeHref": "/ics-feedback/caseRefId/how-they-tried-to-contact-the-person"
+          },
+          {
+            "text": "What was {{ firstname }}'s engagement like during the session?",
+            "hint": "What was {{ firstname }}'s engagement like during the session?",
+            "changeHref": "/ics-feedback/caseRefId/session-feedback"
+          },
+          {
+            "text": "What strengths did you identify?",
+            "hint": "What strengths did you identify?",
+            "changeHref": "/ics-feedback/caseRefId/session-feedback"
+          }
+        ]
+      },
+      {
+        "summaryTitle": "Issues or concerns",
+        "rows": [
+          {
+            "text": "What issues or concerns did you identify?",
+            "hint": "What issues or concerns did you identify?",
+            "changeHref": "/ics-feedback/caseRefId/issues-or-concerns"
+          }
+        ]
+      },
+      {
+        "summaryTitle": "Next steps",
+        "rows": [
+          {
+            "text": "What do you have planned for the next session?",
+            "hint": "What do you have planned for the next session?",
+            "changeHref": "/ics-feedback/caseRefId/next-steps"
+          },
+          {
+            "text": "What actions do you and {{ firstname }} have before the next session takes place?",
+            "hint": "What actions do you and {{ firstname }} have before the next session takes place?",
+            "changeHref": "/ics-feedback/caseRefId/next-steps"
           }
         ]
       }
@@ -528,7 +563,7 @@
     "submitHref": "/ics-feedback/caseRefId/submit",
     "didNotAttendbackLinkHref": "/ics-feedback/caseRefId/how-they-tried-to-contact-the-person",
     "noSessionbackLinkHref": "/ics-feedback/caseRefId/why-did-the-session-not-happen",
-    "attendedBackLinkHref": "/ics-feedback/caseRefId/session-feedback"
+    "attendedBackLinkHref": "/ics-feedback/caseRefId/next-steps"
   },
   "/ics-feedback/:id/session-details": {
     "pageHeader": "Session details",
