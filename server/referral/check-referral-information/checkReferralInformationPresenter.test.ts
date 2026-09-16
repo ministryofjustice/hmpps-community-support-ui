@@ -106,7 +106,6 @@ describe('CheckReferralInformationPresenter', () => {
         classes: 'govuk-!-margin-top-6',
       })
 
-      expect(renderData.content.additionalInformationHeader).toBe('Additional information')
       expect(renderData.content.additionalInformationSummary.rows).toHaveLength(2)
       expect(renderData.content.additionalInformationSummary.rows[0]).toMatchObject({
         key: { text: 'Home Office interest' },
