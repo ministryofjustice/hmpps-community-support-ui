@@ -172,10 +172,7 @@ test.describe('Ics Feedback CYA Page', () => {
     await page.goto(`ics-feedback/${caseRefId}/check-answers`)
     const icsFeedbackCheckYourAnswersPage = await IcsFeedbackCheckYourAnswersPage.verifyOnPage(page)
     expect(icsFeedbackCheckYourAnswersPage.attendanceSummary).toBeVisible()
-    expect(icsFeedbackCheckYourAnswersPage.backLink).toHaveAttribute(
-      'href',
-      `/ics-feedback/${caseRefId}/session-feedback`,
-    )
+    expect(icsFeedbackCheckYourAnswersPage.backLink).toHaveAttribute('href', `/ics-feedback/${caseRefId}/next-steps`)
   })
 
   test('when we dont have valid session data should redirect to referral progress page', async ({ page }) => {
@@ -201,10 +198,7 @@ test.describe('Ics Feedback CYA Page', () => {
     await page.goto(`ics-feedback/${caseRefId}/check-answers`)
     const icsFeedbackCheckYourAnswersPage = await IcsFeedbackCheckYourAnswersPage.verifyOnPage(page)
     expect(icsFeedbackCheckYourAnswersPage.sessionDetailsSummary).toBeVisible()
-    expect(icsFeedbackCheckYourAnswersPage.backLink).toHaveAttribute(
-      'href',
-      `/ics-feedback/${caseRefId}/session-feedback`,
-    )
+    expect(icsFeedbackCheckYourAnswersPage.backLink).toHaveAttribute('href', `/ics-feedback/${caseRefId}/next-steps`)
   })
 
   // AC2.3
@@ -213,10 +207,7 @@ test.describe('Ics Feedback CYA Page', () => {
     await page.goto(`ics-feedback/${caseRefId}/check-answers`)
     const icsFeedbackCheckYourAnswersPage = await IcsFeedbackCheckYourAnswersPage.verifyOnPage(page)
     expect(icsFeedbackCheckYourAnswersPage.sessionFeedbackSummary).toBeVisible()
-    expect(icsFeedbackCheckYourAnswersPage.backLink).toHaveAttribute(
-      'href',
-      `/ics-feedback/${caseRefId}/session-feedback`,
-    )
+    expect(icsFeedbackCheckYourAnswersPage.backLink).toHaveAttribute('href', `/ics-feedback/${caseRefId}/next-steps`)
   })
 
   test('when the ICS has taken place in a PDU display the PDU', async ({ page }) => {
@@ -225,10 +216,7 @@ test.describe('Ics Feedback CYA Page', () => {
     const icsFeedbackCheckYourAnswersPage = await IcsFeedbackCheckYourAnswersPage.verifyOnPage(page)
     expect(icsFeedbackCheckYourAnswersPage.locationRowTitle).toBeVisible()
     expect(icsFeedbackCheckYourAnswersPage.sessionFeedbackSummary).toBeVisible()
-    expect(icsFeedbackCheckYourAnswersPage.backLink).toHaveAttribute(
-      'href',
-      `/ics-feedback/${caseRefId}/session-feedback`,
-    )
+    expect(icsFeedbackCheckYourAnswersPage.backLink).toHaveAttribute('href', `/ics-feedback/${caseRefId}/next-steps`)
   })
 
   test('when the ICS has taken place in a custom location display the address', async ({ page }) => {
@@ -237,10 +225,7 @@ test.describe('Ics Feedback CYA Page', () => {
     const icsFeedbackCheckYourAnswersPage = await IcsFeedbackCheckYourAnswersPage.verifyOnPage(page)
     expect(icsFeedbackCheckYourAnswersPage.locationRowTitle).toBeVisible()
     expect(icsFeedbackCheckYourAnswersPage.sessionFeedbackSummary).toBeVisible()
-    expect(icsFeedbackCheckYourAnswersPage.backLink).toHaveAttribute(
-      'href',
-      `/ics-feedback/${caseRefId}/session-feedback`,
-    )
+    expect(icsFeedbackCheckYourAnswersPage.backLink).toHaveAttribute('href', `/ics-feedback/${caseRefId}/next-steps`)
   })
 
   test('when the ICS has taken place display persons first name in was late question', async ({ page }) => {
@@ -249,10 +234,7 @@ test.describe('Ics Feedback CYA Page', () => {
     const icsFeedbackCheckYourAnswersPage = await IcsFeedbackCheckYourAnswersPage.verifyOnPage(page)
     expect(page.getByText(`Was ${mockAppointmentIcsResponse.referralFirstName} late`)).toBeVisible()
     expect(icsFeedbackCheckYourAnswersPage.sessionDetailsSummary).toBeVisible()
-    expect(icsFeedbackCheckYourAnswersPage.backLink).toHaveAttribute(
-      'href',
-      `/ics-feedback/${caseRefId}/session-feedback`,
-    )
+    expect(icsFeedbackCheckYourAnswersPage.backLink).toHaveAttribute('href', `/ics-feedback/${caseRefId}/next-steps`)
   })
 
   test('when the ICS was attended but person did not comply, display did not comply with reason in session details', async ({

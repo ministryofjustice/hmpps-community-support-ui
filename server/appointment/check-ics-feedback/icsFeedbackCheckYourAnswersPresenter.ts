@@ -26,7 +26,7 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
     return {
       ...content,
       submitHref: content.submitHref.replace('caseRefId', this.caseRefId),
-      feedbackSummarys: this.buildFeedbackSummaries(content),
+      feedbackSummaries: this.buildFeedbackSummaries(content),
       backLink: { href: this.getBackLinkHref(content) },
     } as IcsFeedbackCheckYourAnswersViewModel
   }
@@ -105,7 +105,24 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
         this.icsFeedbackSubmission.sessionFeedback?.whatHappened || null,
         this.getDidNotHappenReason(content) || null,
         this.getDidNotAttendReason() || null,
+        this.icsFeedbackSubmission.sessionFeedback?.behaviour || null,
+        this.icsFeedbackSubmission.sessionFeedback?.strengthsIdentified || null,
       ]),
+      // Issues or concerns
+      this.buildSummary(
+        content.summaryLists.filter(item => item.summaryTitle === 'Issues or concerns')[0],
+        [this.icsFeedbackSubmission.issuesAndConcerns?.identified || null],
+        !!this.icsFeedbackSubmission.issuesAndConcerns,
+      ),
+      // Next steps
+      this.buildSummary(
+        content.summaryLists.filter(item => item.summaryTitle === 'Next steps')[0],
+        [
+          this.icsFeedbackSubmission.nextSteps?.plannedForNextSession || null,
+          this.icsFeedbackSubmission.nextSteps?.actionsBeforeNextSession || null,
+        ],
+        !!this.icsFeedbackSubmission.nextSteps,
+      ),
     ]
     return summaries.filter(summary => summary !== null) as Array<SummaryListWithTitle>
   }
