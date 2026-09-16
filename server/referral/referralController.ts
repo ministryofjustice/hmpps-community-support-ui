@@ -25,9 +25,12 @@ import { validateRequestBodyAgainstSchema } from '../validation/validationUtils'
 import { PersonNeedsSchema } from '../validation/PersonNeedsFormData'
 import SelectAreaPresenter from './selectArea/SelectAreaPresenter'
 import { SelectAreaSchema } from '../validation/SelectAreaFormData'
+import AddContactDetailsPresenter from './addContactDetails/addContactDetailsPresenter'
 import ConfirmAnAreaForReferralPresenter from './confirmAnAreaForReferral/ConfirmAnAreaForReferralPresenter'
 import CheckPPDetailsPresenter from './checkPPDetails/checkPPDetailsPresenter'
 import { CheckPPDetailsSchema } from '../validation/CheckPPDetailsFormData'
+import { AddContactDetailsSchemaBuilder } from '../validation/AddContactDetailsFormData'
+import ConfirmContactDetailsPresenter from './addContactDetails/confirmContactDetailsPresenter'
 
 export default class ReferralController {
   private static readonly CRN_REGEX = /^[A-Za-z]\d{6}$/
@@ -250,6 +253,7 @@ export default class ReferralController {
   async showTaskList(req: Request, res: Response) {
     const { username } = res.locals.user
     const { draftReferralId } = req.session
+    req.session.ppDetails = undefined
     if (!draftReferralId) {
       return res.redirect('/referral/new/find-a-person')
     }
@@ -509,7 +513,6 @@ export default class ReferralController {
       return res.redirect('/referral/new/find-a-person')
     }
     const probationPractitionerDetails = await this.referralService.getPPDetails(draftReferralKey, username)
-
     if (req.method === 'POST') {
       return validateRequestBodyAgainstSchema(CheckPPDetailsSchema, req, res, async form => {
         if (form.detailsCorrect === 'true') {
@@ -522,15 +525,118 @@ export default class ReferralController {
           return res.redirect('/referral/task-list')
         }
 
-        // Next PR to redirect to add PP details page
-        return res.redirect('/referral/task-list')
+        return res.redirect('/referral/new/add-contact-details?fromPP=true')
       })
     }
+    req.session.ppDetails = undefined
     const validationErrors = res.locals.errors
     const presenter = new CheckPPDetailsPresenter(
       req.session.referralCreationDetails.personDetails,
       probationPractitionerDetails,
       validationErrors,
+    )
+    return presenter.renderPage(res)
+  }
+
+  async showAddContactDetails(req: Request, res: Response) {
+    const { username } = res.locals.user
+    const { fromPP } = req.query
+    const draftReferralKey = req.session?.draftReferralId
+
+    if (!draftReferralKey) {
+      return res.redirect('/referral/new/find-a-person')
+    }
+
+    const isFromPP = fromPP === 'true'
+
+    if (req.method === 'POST') {
+      // Fetch the current reference data so submitted pdu/probationOffice ids can be validated
+      // against real options, rather than trusting arbitrary client-supplied ids.
+      const [probationOffices, pdus] = await Promise.all([
+        this.referralService.getProbationOffices(username),
+        this.referralService.getPDUs(username),
+      ])
+      const schema = AddContactDetailsSchemaBuilder(
+        pdus.map(pdu => pdu.id),
+        probationOffices.map(office => office.probationOfficeId),
+      )
+      return validateRequestBodyAgainstSchema(schema, req, res, async form => {
+        const pduInfo = JSON.parse(form.pdu)
+        const probationOfficeInfo = form.probationOffice
+          ? JSON.parse(form.probationOffice)
+          : { code: '', name: 'Not entered' }
+        req.session.ppDetails = {
+          ...form,
+          pduId: pduInfo.id,
+          pduName: pduInfo.name,
+          probationOfficeId: probationOfficeInfo.id,
+          probationOfficeName: probationOfficeInfo.name,
+        }
+        return res.redirect(`/referral/new/confirm-contact-details?fromPP=${isFromPP}`)
+      })
+    }
+
+    const flashData = req.flash('value')
+    const flashedInputData = flashData.length > 0 ? JSON.parse(flashData[0]) : undefined
+
+    // Prefill priority: flashed data from a failed submission, then an in-progress session draft,
+    // then (if we haven't already established the PP details are wrong) previously saved details from the API
+    let userInputData = flashedInputData ?? req.session.ppDetails
+
+    if (!userInputData && !fromPP) {
+      const ppDetails = await this.referralService.getPPDetails(draftReferralKey, username)
+      // Stringify the pdu and probation office so that they can be used to pre-populate the select fields
+      userInputData = {
+        ...ppDetails,
+        pdu: JSON.stringify(ppDetails.pdu),
+        probationOffice: JSON.stringify(ppDetails.probationOffice),
+      }
+    }
+
+    const validationErrors = res.locals.errors
+    const probationOffices = await this.referralService.getProbationOffices(username)
+    const pdus = await this.referralService.getPDUs(username)
+    const presenter = new AddContactDetailsPresenter(
+      req.session.referralCreationDetails.personDetails,
+      probationOffices,
+      pdus,
+      isFromPP,
+      validationErrors,
+      userInputData,
+    )
+    return presenter.renderPage(res)
+  }
+
+  async confirmAddContactDetails(req: Request, res: Response) {
+    const { username } = res.locals.user
+    const { fromPP } = req.query
+    const draftReferralKey = req.session?.draftReferralId
+
+    if (!draftReferralKey) {
+      return res.redirect('/referral/new/find-a-person')
+    }
+
+    if (!req.session.ppDetails) {
+      return res.redirect('/referral/new/add-contact-details')
+    }
+
+    if (req.method === 'POST') {
+      const { pdu, probationOffice, pduName, probationOfficeName, ...ppDetails } = req.session
+        .ppDetails as typeof req.session.ppDetails & {
+        pdu?: string
+        probationOffice?: string
+      }
+      const contactDetails = { ...ppDetails, ppDetailsFoundAndCorrect: false }
+      await this.referralService.submitContactDetails(draftReferralKey, username, contactDetails)
+      req.session.ppDetails = undefined
+      return res.redirect('/referral/task-list')
+    }
+    const isFromPP = fromPP === 'true'
+
+    const presenter = new ConfirmContactDetailsPresenter(
+      req.session.referralCreationDetails.personDetails,
+      req.session.ppDetails,
+      isFromPP,
     )
     return presenter.renderPage(res)
   }

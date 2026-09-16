@@ -282,6 +282,12 @@ export default function routes({
     referralController.showCheckPPDetails(req, res),
   )
 
+  getOrPost('/referral/new/add-contact-details', (req, res) => referralController.showAddContactDetails(req, res))
+
+  getOrPost('/referral/new/confirm-contact-details', (req, res) =>
+    referralController.confirmAddContactDetails(req, res),
+  )
+
   get('/referral/:id', (req, res, next) => referralController.showReferralPage(req, res, next))
 
   return router

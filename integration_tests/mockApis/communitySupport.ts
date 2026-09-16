@@ -8,7 +8,9 @@ import {
   IcsFeedbackSubmission,
   IcsFeedbackSubmissionResponse,
   ActionPlanSummaryDto,
+  PDU,
   ProbationOffice,
+  ProbationPractitionerDetails,
   ReferralInformation,
   SubmitReferralResponse,
   TaskListStatusDto,
@@ -68,6 +70,14 @@ const buildTaskListStatus = (taskListStatus: TaskListStatusStub): TaskListStatus
     taskListStatus.addDetailsOfMainPointOfContactCompleted ?? incompleteTaskStatus,
   addAdditionalInformationCompleted: taskListStatus.addAdditionalInformationCompleted ?? incompleteTaskStatus,
   selectAnAreaForReferralCompleted: taskListStatus.selectAnAreaForReferralCompleted ?? incompleteTaskStatus,
+  // addMainPointOfContactCompleted supersedes addDetailsOfMainPointOfContactCompleted and drives which
+  // contact details task is shown. Default it to the legacy field's value so existing fixtures/specs that
+  // only set the legacy field keep exercising the "add contact details" task, as before.
+  addMainPointOfContactCompleted:
+    taskListStatus.addMainPointOfContactCompleted ??
+    taskListStatus.addDetailsOfMainPointOfContactCompleted ??
+    incompleteTaskStatus,
+  checkProbationPractitionerDetailsCompleted: taskListStatus.checkProbationPractitionerDetailsCompleted ?? null,
 })
 
 export default {
@@ -915,6 +925,61 @@ export default {
       request: {
         method: 'PATCH',
         urlPathPattern: `/community-support/draft-referral/additional-information-for-the-delivery-partner/${referralId}`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: {},
+        transformers: ['response-template'],
+      },
+    }),
+  stubGetPDUs: (mockData: PDU[], httpStatus = 200): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPattern: '/.*reference-data/pdus',
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: mockData,
+      },
+    }),
+  stubGetPPDetails: (
+    referralId: string,
+    ppDetails: ProbationPractitionerDetails,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: `/community-support/bff/draft-referral/${referralId}/probation-practitioner-details`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: ppDetails,
+        transformers: ['response-template'],
+      },
+    }),
+  stubSubmitPPDetails: (referralId: string, httpStatus = 200): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'PATCH',
+        urlPathPattern: `/community-support/draft-referral/${referralId}/probation-practitioner-details`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: {},
+        transformers: ['response-template'],
+      },
+    }),
+  stubSubmitContactDetails: (referralId: string, httpStatus = 200): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'PATCH',
+        urlPathPattern: `/community-support/draft-referral/${referralId}/main-point-of-contact-details`,
       },
       response: {
         status: httpStatus,
