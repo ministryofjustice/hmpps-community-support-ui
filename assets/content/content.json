@@ -510,8 +510,8 @@
             "changeHref": "/ics-feedback/caseRefId/how-they-tried-to-contact-the-person"
           },
           {
-            "text": "What was {{ firstname }} engagement like during the session?",
-            "hint": "What was {{ firstname }} engagement like during the session?",
+            "text": "What was {{ firstname }}'s engagement like during the session?",
+            "hint": "What was {{ firstname }}'s engagement like during the session?",
             "changeHref": "/ics-feedback/caseRefId/session-feedback"
           },
           {
