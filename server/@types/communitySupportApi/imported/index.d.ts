@@ -1740,7 +1740,8 @@ export interface components {
       mainPocDetailsTableData: components['schemas']['DraftMainPOCDetailsTableDataDto']
     }
     DraftAdditionalInformationDetailsTableDataDto: {
-      homeOfficeInterest?: string | null
+      ofHomeOfficeInterest?: boolean | null
+      homeOfficeInterestNotes?: string | null
       offenderPersonalityDisorderPathway?: string | null
     }
     DraftAdditionalSupportNeedsDetailsTableDataDto: {
