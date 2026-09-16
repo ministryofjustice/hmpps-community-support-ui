@@ -36,6 +36,8 @@ export type EqualityMonitoringCard = {
   ethnicityLabel: string
   religionOrBeliefLabel: string
   sexLabel: string
+}
+
 export type RiskInformationCard = {
   heading: string
   whoIsAtRiskLabel: string

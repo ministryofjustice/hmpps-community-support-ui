@@ -12,6 +12,7 @@ export default class CheckReferralInformationPage extends AbstractPage {
   readonly referralDetailsSummary: SummaryList
 
   readonly equalityMonitoringSummary: SummaryList
+
   readonly riskInformationSummary: SummaryList
 
   private constructor(
