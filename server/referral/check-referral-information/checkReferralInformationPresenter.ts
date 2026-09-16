@@ -88,6 +88,10 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
       content.riskInformationCard,
       content.notAvailable,
     )
+    viewModel.additionalInformationSummary = this.buildAdditionalInformationSummary(
+      content.additionalInformationCard,
+      content.notAvailable,
+    )
     viewModel.referralDetailsHeader = content.referralDetailsHeader
     viewModel.referralDetailsSummary = this.buildReferralDetailsSummary()
     viewModel.referralContactDetailsHeader = content.referralContactDetailsHeader
@@ -197,6 +201,28 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
           text: 'Referral details',
         },
         attributes: { 'data-testid': 'referral-details' },
+      },
+      rows: summary,
+    }
+  }
+
+  private buildAdditionalInformationSummary(
+    cardContent: { heading?: string; homeOfficeInterestLabel: string; opdPathwayLabel: string },
+    notAvailable: string,
+  ): GovukFrontendSummaryList {
+    const data = this.draftReferralDetails.additionalInformationDetailsTableData
+
+    const summary = [
+      govFrontendSummaryListRow(cardContent.homeOfficeInterestLabel, data.homeOfficeInterest || notAvailable),
+      govFrontendSummaryListRow(cardContent.opdPathwayLabel, data.offenderPersonalityDisorderPathway || notAvailable),
+    ]
+
+    return {
+      card: {
+        title: {
+          text: cardContent.heading,
+        },
+        attributes: { 'data-testid': 'additional-information' },
       },
       rows: summary,
     }

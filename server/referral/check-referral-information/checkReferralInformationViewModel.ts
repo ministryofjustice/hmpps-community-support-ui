@@ -6,6 +6,7 @@ export type CheckReferralInformationViewModel = {
   pageSubHeader: string
   personalDetailsHeader: string
   riskInformationHeader: string
+  additionalInformationSummary?: GovukFrontendSummaryList
   riskInformationSummary: GovukFrontendSummaryList
   referralDetailsHeader: string
   referralContactDetailsHeader: string
@@ -42,6 +43,13 @@ export type RiskInformationCard = {
   noAdditionalInformationText?: string
 }
 
+export type AdditionalInformationCard = {
+  heading: string
+  homeOfficeInterestLabel: string
+  opdPathwayLabel: string
+  changeLinkText?: string
+}
+
 export type CheckReferralInformationContent = {
   pageTitle: string
   pageHeader: string
@@ -50,6 +58,7 @@ export type CheckReferralInformationContent = {
   notAvailable: string
   personalDetailsCard: PersonalDetailsCard
   riskInformationCard: RiskInformationCard
+  additionalInformationCard?: AdditionalInformationCard
   referralDetailsHeader: string
   referralContactDetailsHeader: string
   submitButtonText: string

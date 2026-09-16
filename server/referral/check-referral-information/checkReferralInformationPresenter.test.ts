@@ -34,9 +34,21 @@ describe('CheckReferralInformationPresenter', () => {
           ],
         },
         equalityDetailsTableData: { ethnicity: 'White British', religionOrBelief: 'None', sex: 'Male' },
-        additionalInformationDetailsTableData: {},
+        additionalInformationDetailsTableData: {
+          homeOfficeInterest: 'Yes',
+          offenderPersonalityDisorderPathway: 'Assessment ongoing',
+        },
         contactDetailsTableData: {},
-        riskInformationDetailsTableData: {},
+        riskInformationDetailsTableData: {
+          whoIsAtRisk: 'Family members',
+          natureOfRisk: 'Violence',
+          riskImminence: 'When intoxicated',
+          riskOfSelfHarm: 'Low',
+          riskOfSuicide: 'Low',
+          riskToSelfHostelSetting: 'No concerns',
+          riskToSelfVulnerability: 'Vulnerable',
+          additionalInformation: 'Some additional risk info',
+        },
         additionalSupportNeedsDetailsTableData: {},
         personNeedsDetailsTableData: {},
         referralAreaTableData: { area: 'London' },
@@ -92,6 +104,51 @@ describe('CheckReferralInformationPresenter', () => {
       expect(renderData.content.submitButton).toEqual({
         text: 'Submit referral information',
         classes: 'govuk-!-margin-top-6',
+      })
+
+      expect(renderData.content.additionalInformationHeader).toBe('Additional information')
+      expect(renderData.content.additionalInformationSummary.rows).toHaveLength(2)
+      expect(renderData.content.additionalInformationSummary.rows[0]).toMatchObject({
+        key: { text: 'Home Office interest' },
+        value: { text: 'Yes' },
+      })
+      expect(renderData.content.additionalInformationSummary.rows[1]).toMatchObject({
+        key: { text: 'Offender personality disorder (OPD) pathway' },
+        value: { text: 'Assessment ongoing' },
+      })
+
+      expect(renderData.content.riskInformationSummary.rows).toHaveLength(8)
+      expect(renderData.content.riskInformationSummary.rows[0]).toMatchObject({
+        key: { text: 'Who is at risk' },
+        value: { text: 'Family members' },
+      })
+      expect(renderData.content.riskInformationSummary.rows[1]).toMatchObject({
+        key: { text: 'What is the nature of the risk?' },
+        value: { text: 'Violence' },
+      })
+      expect(renderData.content.riskInformationSummary.rows[2]).toMatchObject({
+        key: { text: 'In what circumstances or situations would offending be most likely to occur?' },
+        value: { text: 'When intoxicated' },
+      })
+      expect(renderData.content.riskInformationSummary.rows[3]).toMatchObject({
+        key: { text: 'Risk of self-harm' },
+        value: { text: 'Low' },
+      })
+      expect(renderData.content.riskInformationSummary.rows[4]).toMatchObject({
+        key: { text: 'Risk of suicide' },
+        value: { text: 'Low' },
+      })
+      expect(renderData.content.riskInformationSummary.rows[5]).toMatchObject({
+        key: { text: 'Concerns in relation to coping in an approved premises or hostel' },
+        value: { text: 'No concerns' },
+      })
+      expect(renderData.content.riskInformationSummary.rows[6]).toMatchObject({
+        key: { text: 'Concerns in relation to vulnerability' },
+        value: { text: 'Vulnerable' },
+      })
+      expect(renderData.content.riskInformationSummary.rows[7]).toMatchObject({
+        key: { text: 'Additional information' },
+        value: { text: 'Some additional risk info' },
       })
 
       expect(res.render).toHaveBeenCalledWith(

@@ -43,6 +43,11 @@
       "disabilitiesLabel": "Disabilities",
       "lastUpdatedLabel": "Last updated"
     },
+    "additionalInformationCard": {
+      "heading": "Additional information",
+      "homeOfficeInterestLabel": "Home Office interest",
+      "opdPathwayLabel": "Offender personality disorder (OPD) pathway"
+    },
     "riskInformationCard": {
       "heading": "Risk information",
       "whoIsAtRiskLabel": "Who is at risk?",
