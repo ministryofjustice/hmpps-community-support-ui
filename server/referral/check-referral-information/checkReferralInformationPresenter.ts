@@ -11,6 +11,7 @@ import {
   CheckReferralInformationViewModel,
   EqualityMonitoringCard,
   PersonalDetailsCard,
+  RiskInformationCard,
 } from './checkReferralInformationViewModel'
 
 type IdentifierRow = {
@@ -87,6 +88,11 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
       content.equalityMonitoringCard,
       content.notAvailable,
     )
+    viewModel.riskInformationHeader = content.riskInformationCard.heading
+    viewModel.riskInformationSummary = this.buildRiskInformationSummary(
+      content.riskInformationCard,
+      content.notAvailable,
+    )
     viewModel.referralDetailsHeader = content.referralDetailsHeader
     viewModel.referralDetailsSummary = this.buildReferralDetailsSummary()
     viewModel.referralContactDetailsHeader = content.referralContactDetailsHeader
@@ -149,6 +155,40 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
           text: cardContent.heading,
         },
         attributes: { 'data-testid': 'personal-details' },
+      },
+      rows: summary,
+    }
+  }
+
+  private buildRiskInformationSummary(
+    cardContent: RiskInformationCard,
+    notAvailable: string,
+  ): GovukFrontendSummaryList {
+    const data = this.draftReferralDetails.riskInformationDetailsTableData || {}
+
+    const summary = [
+      govFrontendSummaryListRow(cardContent.whoIsAtRiskLabel, data.whoIsAtRisk || notAvailable),
+      govFrontendSummaryListRow(cardContent.riskNatureLabel, data.natureOfRisk || notAvailable),
+      govFrontendSummaryListRow(cardContent.riskCircumstancesLabel, data.riskImminence || notAvailable),
+      govFrontendSummaryListRow(cardContent.riskOfSelfHarmLabel, data.riskOfSelfHarm || notAvailable),
+      govFrontendSummaryListRow(cardContent.riskOfSuicideLabel, data.riskOfSuicide || notAvailable),
+      govFrontendSummaryListRow(
+        cardContent.concernsCopingInApprovedPremisesLabel,
+        data.riskToSelfHostelSetting || notAvailable,
+      ),
+      govFrontendSummaryListRow(cardContent.concernsVulnerabilityLabel, data.riskToSelfVulnerability || notAvailable),
+      govFrontendSummaryListRow(
+        cardContent.additionalInformationLabel,
+        data.additionalInformation || cardContent.noAdditionalInformationText,
+      ),
+    ]
+
+    return {
+      card: {
+        title: {
+          text: cardContent.heading,
+        },
+        attributes: { 'data-testid': 'risk-information' },
       },
       rows: summary,
     }
