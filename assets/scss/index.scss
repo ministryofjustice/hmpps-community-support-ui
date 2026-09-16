@@ -4,6 +4,8 @@ $path: "/assets/images/";
 $moj-page-width: 1170px;
 $govuk-page-width: $moj-page-width;
 
+@use 'node_modules/accessible-autocomplete/src/autocomplete';
+
 @import "govuk-frontend/dist/govuk/index";
 @import "@ministryofjustice/frontend/moj/all";
 

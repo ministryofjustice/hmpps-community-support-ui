@@ -262,6 +262,7 @@ describe('ReferralDetailsPresenter', () => {
           { fullName: 'assigned2', emailAddress: 'assigned2@email.com', userType: 'EXTERNAL' },
         ],
       },
+      withdrawReferral: false,
       targetServiceCompletionDate: '2026-12-25T11:23:00.780Z',
       targetServiceCompletionDateReason: 'Some reason',
     }

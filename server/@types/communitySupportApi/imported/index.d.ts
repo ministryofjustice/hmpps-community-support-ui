@@ -1571,6 +1571,7 @@ export interface components {
       equalityDetailsTableData: components['schemas']['EqualityDetailsTableDataDto']
       contactDetailsTableData: components['schemas']['ContactDetailsTableDataDto']
       referralDetailsTableData: components['schemas']['ReferralDetailsTableDataDto']
+      withdrawReferral: boolean
     }
     ReferralDetailsTableDataDto: {
       referralDate: string

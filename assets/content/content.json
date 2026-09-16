@@ -43,6 +43,13 @@
       "disabilitiesLabel": "Disabilities",
       "lastUpdatedLabel": "Last updated"
     },
+    "equalityMonitoringCard": {
+      "heading": "Equality monitoring",
+      "nationalityLabel": "Nationality",
+      "ethnicityLabel": "Ethnicity",
+      "religionOrBeliefLabel": "Religion or belief",
+      "sexLabel": "Sex"
+    },
     "riskInformationCard": {
       "heading": "Risk information",
       "whoIsAtRiskLabel": "Who is at risk?",
@@ -1123,6 +1130,42 @@
     "radioQuestion": "Are these details correct?",
     "radioYes": "Yes",
     "radioNo": "No"
+  },
+  "/referral/new/add-contact-details": {
+    "backLinkText": "Back",
+    "backLinkHref" : "/referral/task-list",
+    "ppBackLinkHref" : "/referral/task-list/check-probation-practitioner-details",
+    "buttonText": "Save and continue",
+    "heading": "{{ personName }}",
+    "pageCaption": "CRN: {{ CRN }} | Date of birth: {{ DOB }}",
+    "subHeading": "Add details of the main point of contact",
+    "nameInputLabel": "Name",
+    "emailAddressInputLabel": "Email address",
+    "jobRoleInputLabel": "Job role (optional)",
+    "phoneNumberInputLabel": "Phone number (optional)",
+    "pduInputLabel": "PDU",
+    "probationOfficeInputLabel": "Probation office (optional)",
+    "teamPhoneNumberInputLabel":"Team phone number (optional)",
+    "hintText": "Start typing and choose from list",
+    "insetText": "These contact details will be sent to the delivery partner for the referral. They should also be updated in NDelius."
+  },
+  "/referral/new/confirm-contact-details": {
+    "backLinkText": "Back",
+    "backLinkHref" : "/referral/new/add-contact-details",
+    "buttonText": "Save and continue",
+    "heading": "{{ personName }}",
+    "pageCaption": "CRN: {{ CRN }} | Date of birth: {{ DOB }}",
+    "subHeading": "Check contact details",
+    "summaryHeading": "Contact details",
+    "nameLabel": "Name",
+    "emailAddressLabel": "Email address",
+    "jobRoleLabel": "Job role",
+    "phoneNumberLabel": "Phone number",
+    "pduLabel": "PDU",
+    "probationOfficeLabel": "Probation office",
+    "teamPhoneNumberLabel":"Team phone number",
+    "changeLabel":"Change",
+    "notEnteredText":"Not entered"
   },
   "/referral/task-list/additional-information-for-the-delivery-partner": {
     "pageTitle": "Is there anything else the delivery partner should know? - Community Support",
