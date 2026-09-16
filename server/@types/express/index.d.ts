@@ -3,6 +3,7 @@ import {
   CreateAppointmentRequest,
   ReferralInformationDto,
   IcsFeedbackSubmission,
+  ActionPlanSelectANeedNeed,
 } from '@community-support-api'
 import { GovukFrontendErrorSummaryErrorListElement } from '@govuk-frontend'
 import { HmppsUser } from '../../interfaces/hmppsUser'
@@ -49,6 +50,10 @@ export declare module 'express-session' {
     personId: string
     selectedProviderId: string
     withdrawalReferrals: Record<string, WithdrawalFormData>
+    actionPlan?: {
+      needs: ActionPlanSelectANeedNeed[]
+      selectedNeedId?: string
+    }
   }
 }
 

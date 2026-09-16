@@ -222,9 +222,9 @@ export default function routes({
 
   post('/referral/:id/action-plan/create', (req, res) => actionPlanController.createActionPlan(req, res))
 
-  get('/referral/:id/action-plan/needs', (req, res) => actionPlanController.showNeedsPage(req, res))
+  get('/referral/:id/action-plan/select-a-need', (req, res) => actionPlanController.showSelectANeedPage(req, res))
 
-  post('/referral/:id/action-plan/needs', (req, res) => actionPlanController.submitNeeds(req, res))
+  post('/referral/:id/action-plan/select-a-need', (req, res) => actionPlanController.submitSelectedNeed(req, res))
 
   get('/referral/:id/action-plan/select-an-outcome', (req, res) => actionPlanController.showSelectOutcomePage(req, res))
 
