@@ -4,7 +4,7 @@ import { Response } from 'express'
 import { format, differenceInYears } from 'date-fns'
 import PresenterBase from '../../presenter/presenterBase'
 import formatFullName from '../../utils/presenterFormatters'
-import ViewUtils, { govFrontendSummaryListRow } from '../../utils/viewUtils'
+import ViewUtils, { escapeSpecialHtmlCharacters, govFrontendSummaryListRow } from '../../utils/viewUtils'
 import { components } from '../../@types/communitySupportApi/imported'
 import {
   CheckReferralInformationContent,
@@ -63,6 +63,12 @@ const formatDateOfBirth = (dateOfBirth: string, notAvailable: string): string =>
   const dobDate = new Date(dateOfBirth)
   const age = differenceInYears(new Date(), dobDate)
   return `${format(dobDate, 'd MMM yyyy')} (${age} years old)`
+}
+const formatHomeOfficeInterest = (notes?: string): string => {
+  if (notes) {
+    return `<div>Yes</div><br/><div>${escapeSpecialHtmlCharacters(notes)}</div>`
+  }
+  return 'Yes'
 }
 
 export default class CheckReferralInformationPresenter extends PresenterBase<
@@ -239,8 +245,10 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
     const data = this.draftReferralDetails.additionalInformationDetailsTableData
 
     const summary = [
-      data.homeOfficeInterest
-        ? govFrontendSummaryListRow(cardContent.homeOfficeInterestLabel, data.homeOfficeInterest)
+      data.ofHomeOfficeInterest
+        ? govFrontendSummaryListRow(cardContent.homeOfficeInterestLabel, {
+            html: formatHomeOfficeInterest(data.homeOfficeInterestNotes),
+          })
         : null,
       data.offenderPersonalityDisorderPathway
         ? govFrontendSummaryListRow(cardContent.opdPathwayLabel, data.offenderPersonalityDisorderPathway)

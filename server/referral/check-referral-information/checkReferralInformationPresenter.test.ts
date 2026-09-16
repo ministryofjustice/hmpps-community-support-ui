@@ -35,7 +35,8 @@ describe('CheckReferralInformationPresenter', () => {
         },
         equalityDetailsTableData: { ethnicity: 'White British', religionOrBelief: 'None', sex: 'Male' },
         additionalInformationDetailsTableData: {
-          homeOfficeInterest: 'Yes',
+          ofHomeOfficeInterest: true,
+          homeOfficeInterestNotes: 'Claiming asylum from Iran',
           offenderPersonalityDisorderPathway: 'Assessment ongoing',
         },
         contactDetailsTableData: {},
@@ -109,7 +110,7 @@ describe('CheckReferralInformationPresenter', () => {
       expect(renderData.content.additionalInformationSummary.rows).toHaveLength(2)
       expect(renderData.content.additionalInformationSummary.rows[0]).toMatchObject({
         key: { text: 'Home Office interest' },
-        value: { text: 'Yes' },
+        value: { html: '<div>Yes</div><br/><div>Claiming asylum from Iran</div>' },
       })
       expect(renderData.content.additionalInformationSummary.rows[1]).toMatchObject({
         key: { text: 'Offender personality disorder (OPD) pathway' },

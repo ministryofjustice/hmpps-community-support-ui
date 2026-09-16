@@ -84,7 +84,7 @@ test.describe('Check Referral Information Page', () => {
     )
     await expect(checkReferralInformationPage.personalDetailsSummary.rows[6].key).toContainText('Disabilities')
     await expect(checkReferralInformationPage.personalDetailsSummary.rows[6].value).toHaveText('Dyslexia')
-    
+
     expect(checkReferralInformationPage.equalityMonitoringSummary.rows).toHaveLength(4)
     await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[0].key).toHaveText('Nationality')
     await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[0].value).toHaveText('British')
@@ -100,7 +100,10 @@ test.describe('Check Referral Information Page', () => {
     await expect(checkReferralInformationPage.additionalInformationSummary!.rows[0].key).toHaveText(
       'Home Office interest',
     )
-    await expect(checkReferralInformationPage.additionalInformationSummary!.rows[0].value).toHaveText('Yes')
+    await expect(checkReferralInformationPage.additionalInformationSummary!.rows[0].value).toContainText('Yes')
+    await expect(checkReferralInformationPage.additionalInformationSummary!.rows[0].value).toContainText(
+      'Claiming asylum from Iran',
+    )
     await expect(checkReferralInformationPage.additionalInformationSummary!.rows[1].key).toHaveText(
       'Offender personality disorder (OPD) pathway',
     )

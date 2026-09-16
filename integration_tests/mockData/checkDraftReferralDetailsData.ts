@@ -26,7 +26,8 @@ const checkDraftReferralDetails: CheckDraftReferralDetailsDto = {
     sex: 'Male',
   },
   additionalInformationDetailsTableData: {
-    homeOfficeInterest: 'Yes',
+    ofHomeOfficeInterest: true,
+    homeOfficeInterestNotes: 'Claiming asylum from Iran',
     offenderPersonalityDisorderPathway: 'Assessment ongoing',
   },
   contactDetailsTableData: {},
