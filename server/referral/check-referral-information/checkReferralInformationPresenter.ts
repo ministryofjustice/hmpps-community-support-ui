@@ -88,11 +88,11 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
       content.equalityMonitoringCard,
       content.notAvailable,
     )
+    viewModel.additionalInformationSummary = this.buildAdditionalInformationSummary(content.additionalInformationCard)
     viewModel.riskInformationSummary = this.buildRiskInformationSummary(
       content.riskInformationCard,
       content.notAvailable,
     )
-    viewModel.additionalInformationSummary = this.buildAdditionalInformationSummary(content.additionalInformationCard)
     viewModel.referralDetailsHeader = content.referralDetailsHeader
     viewModel.referralDetailsSummary = this.buildReferralDetailsSummary()
     viewModel.referralContactDetailsHeader = content.referralContactDetailsHeader
