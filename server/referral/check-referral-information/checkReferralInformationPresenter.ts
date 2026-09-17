@@ -4,7 +4,7 @@ import { Response } from 'express'
 import { format, differenceInYears } from 'date-fns'
 import PresenterBase from '../../presenter/presenterBase'
 import formatFullName from '../../utils/presenterFormatters'
-import ViewUtils, { govFrontendSummaryListRow } from '../../utils/viewUtils'
+import ViewUtils, { escapeSpecialHtmlCharacters, govFrontendSummaryListRow } from '../../utils/viewUtils'
 import { components } from '../../@types/communitySupportApi/imported'
 import {
   CheckReferralInformationContent,
@@ -64,6 +64,12 @@ const formatDateOfBirth = (dateOfBirth: string, notAvailable: string): string =>
   const age = differenceInYears(new Date(), dobDate)
   return `${format(dobDate, 'd MMM yyyy')} (${age} years old)`
 }
+const formatHomeOfficeInterest = (notes?: string): string => {
+  if (notes) {
+    return `<div>Yes</div><br/><div>${escapeSpecialHtmlCharacters(notes)}</div>`
+  }
+  return 'Yes'
+}
 
 export default class CheckReferralInformationPresenter extends PresenterBase<
   CheckReferralInformationViewModel,
@@ -88,7 +94,7 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
       content.equalityMonitoringCard,
       content.notAvailable,
     )
-    viewModel.riskInformationHeader = content.riskInformationCard.heading
+    viewModel.additionalInformationSummary = this.buildAdditionalInformationSummary(content.additionalInformationCard)
     viewModel.riskInformationSummary = this.buildRiskInformationSummary(
       content.riskInformationCard,
       content.notAvailable,
@@ -228,6 +234,34 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
         attributes: { 'data-testid': 'equality-monitoring' },
       },
       rows,
+    }
+  }
+
+  private buildAdditionalInformationSummary(cardContent: {
+    heading?: string
+    homeOfficeInterestLabel: string
+    opdPathwayLabel: string
+  }): GovukFrontendSummaryList {
+    const data = this.draftReferralDetails.additionalInformationDetailsTableData
+
+    const summary = [
+      data.ofHomeOfficeInterest
+        ? govFrontendSummaryListRow(cardContent.homeOfficeInterestLabel, {
+            html: formatHomeOfficeInterest(data.homeOfficeInterestNotes),
+          })
+        : null,
+      data.offenderPersonalityDisorderPathway
+        ? govFrontendSummaryListRow(cardContent.opdPathwayLabel, data.offenderPersonalityDisorderPathway)
+        : null,
+    ].filter(row => row !== null)
+    return {
+      card: {
+        title: {
+          text: cardContent.heading,
+        },
+        attributes: { 'data-testid': 'additional-information' },
+      },
+      rows: summary,
     }
   }
 }

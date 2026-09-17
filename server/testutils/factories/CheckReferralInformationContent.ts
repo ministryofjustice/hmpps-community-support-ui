@@ -28,6 +28,11 @@ export default CheckReferralInformationContentFactory.define(({ transientParams 
     religionOrBeliefLabel: 'Religion or belief',
     sexLabel: 'Sex',
   },
+  additionalInformationCard: transientParams.additionalInformationCard || {
+    heading: 'Additional information',
+    homeOfficeInterestLabel: 'Home Office interest',
+    opdPathwayLabel: 'Offender personality disorder (OPD) pathway',
+  },
   riskInformationCard: transientParams.riskInformationCard || {
     heading: 'Risk information',
     whoIsAtRiskLabel: 'Who is at risk',

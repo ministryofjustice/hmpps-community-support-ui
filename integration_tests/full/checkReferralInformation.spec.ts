@@ -84,6 +84,7 @@ test.describe('Check Referral Information Page', () => {
     )
     await expect(checkReferralInformationPage.personalDetailsSummary.rows[6].key).toContainText('Disabilities')
     await expect(checkReferralInformationPage.personalDetailsSummary.rows[6].value).toHaveText('Dyslexia')
+
     expect(checkReferralInformationPage.equalityMonitoringSummary.rows).toHaveLength(4)
     await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[0].key).toHaveText('Nationality')
     await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[0].value).toHaveText('British')
@@ -93,6 +94,23 @@ test.describe('Check Referral Information Page', () => {
     await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[2].value).toHaveText('Christian')
     await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[3].key).toHaveText('Sex')
     await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[3].value).toHaveText('Male')
+
+    expect(checkReferralInformationPage.additionalInformationSummary).toBeDefined()
+    expect(checkReferralInformationPage.additionalInformationSummary!.rows).toHaveLength(2)
+    await expect(checkReferralInformationPage.additionalInformationSummary!.rows[0].key).toHaveText(
+      'Home Office interest',
+    )
+    await expect(checkReferralInformationPage.additionalInformationSummary!.rows[0].value).toContainText('Yes')
+    await expect(checkReferralInformationPage.additionalInformationSummary!.rows[0].value).toContainText(
+      'Claiming asylum from Iran',
+    )
+    await expect(checkReferralInformationPage.additionalInformationSummary!.rows[1].key).toHaveText(
+      'Offender personality disorder (OPD) pathway',
+    )
+    await expect(checkReferralInformationPage.additionalInformationSummary!.rows[1].value).toHaveText(
+      'Assessment ongoing',
+    )
+
     expect(checkReferralInformationPage.riskInformationSummary.rows).toHaveLength(8)
     await expect(checkReferralInformationPage.riskInformationSummary.rows[0].key).toHaveText('Who is at risk')
     await expect(checkReferralInformationPage.riskInformationSummary.rows[0].value).toHaveText('Family members')
@@ -146,15 +164,7 @@ test.describe('Check Referral Information Page', () => {
     const checkReferralInformationPage = await CheckReferralInformationPage.verifyOnPage(page)
 
     expect(checkReferralInformationPage.personalDetailsSummary.rows).toHaveLength(7)
-    expect(checkReferralInformationPage.equalityMonitoringSummary.rows).toHaveLength(4)
-    await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[0].key).toHaveText('Nationality')
-    await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[0].value).toHaveText('British')
-    await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[1].key).toHaveText('Ethnicity')
-    await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[1].value).toHaveText('White British')
-    await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[2].key).toHaveText('Religion or belief')
-    await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[2].value).toHaveText('Christian')
-    await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[3].key).toHaveText('Sex')
-    await expect(checkReferralInformationPage.equalityMonitoringSummary.rows[3].value).toHaveText('Male')
+
     await expect(checkReferralInformationPage.personalDetailsSummary.rows[0].key).toHaveText('Name')
     await expect(checkReferralInformationPage.personalDetailsSummary.rows[0].value).toHaveText('Alex River')
     await expect(checkReferralInformationPage.personalDetailsSummary.rows[1].key).toHaveText('Prison number')

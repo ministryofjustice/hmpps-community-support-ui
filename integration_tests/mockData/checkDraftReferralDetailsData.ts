@@ -25,7 +25,11 @@ const checkDraftReferralDetails: CheckDraftReferralDetailsDto = {
     religionOrBelief: 'Christian',
     sex: 'Male',
   },
-  additionalInformationDetailsTableData: {},
+  additionalInformationDetailsTableData: {
+    ofHomeOfficeInterest: true,
+    homeOfficeInterestNotes: 'Claiming asylum from Iran',
+    offenderPersonalityDisorderPathway: 'Assessment ongoing',
+  },
   contactDetailsTableData: {},
   riskInformationDetailsTableData: {
     whoIsAtRisk: 'Family members',
