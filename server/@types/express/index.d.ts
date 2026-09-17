@@ -3,6 +3,7 @@ import {
   CreateAppointmentRequest,
   ReferralInformationDto,
   IcsFeedbackSubmission,
+  ActionPlanSelectANeedNeed,
   UpdateProbationPractitionerDetailsRequest,
 } from '@community-support-api'
 import { GovukFrontendErrorSummaryErrorListElement } from '@govuk-frontend'
@@ -50,6 +51,10 @@ export declare module 'express-session' {
     personId: string
     selectedProviderId: string
     withdrawalReferrals: Record<string, WithdrawalFormData>
+    actionPlan?: {
+      needs: ActionPlanSelectANeedNeed[]
+      selectedNeedId?: string
+    }
     ppDetails?: UpdateProbationPractitionerDetailsRequest & {
       pduName: string
       probationOfficeName?: string
