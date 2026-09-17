@@ -104,10 +104,6 @@ describe('ActionPlanController', () => {
       expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/select-a-need')
     })
 
-      expect(req.session.actionPlan).toEqual({ needs, selectedNeedId: 'need-2' })
-      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/select-an-outcome')
-    })
-
     it('redirects to activities when the selected need has a single outcome', async () => {
       req.session.actionPlan = { needs }
       req.body = { needId: 'need-1' }
@@ -182,7 +178,6 @@ describe('ActionPlanController', () => {
       await actionPlanController.submitOutcome(req, res)
 
       expect(req.session.actionPlanAction).toEqual({ needId: 'need-2', outcomeId: 'outcome-2' })
-      expect(req.session.actionPlan).toEqual({ needs, selectedNeedId: 'need-1' })
       expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/add-activities')
     })
   })

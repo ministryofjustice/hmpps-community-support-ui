@@ -57,7 +57,6 @@ export declare module 'express-session' {
     actionPlanAction?: {
       needId: string
       outcomeId?: string
-      selectedNeedId?: string
     }
     ppDetails?: UpdateProbationPractitionerDetailsRequest & {
       pduName: string
