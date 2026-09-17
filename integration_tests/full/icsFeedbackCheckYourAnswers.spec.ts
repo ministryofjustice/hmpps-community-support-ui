@@ -172,10 +172,7 @@ test.describe('Ics Feedback CYA Page', () => {
     await page.goto(`ics-feedback/${caseRefId}/check-answers`)
     const icsFeedbackCheckYourAnswersPage = await IcsFeedbackCheckYourAnswersPage.verifyOnPage(page)
     expect(icsFeedbackCheckYourAnswersPage.attendanceSummary).toBeVisible()
-    expect(icsFeedbackCheckYourAnswersPage.backLink).toHaveAttribute(
-      'href',
-      `/ics-feedback/${caseRefId}/session-feedback`,
-    )
+    expect(icsFeedbackCheckYourAnswersPage.backLink).toHaveAttribute('href', `/ics-feedback/${caseRefId}/next-steps`)
   })
 
   test('when we dont have valid session data should redirect to referral progress page', async ({ page }) => {

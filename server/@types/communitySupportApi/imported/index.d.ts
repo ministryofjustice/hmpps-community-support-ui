@@ -1215,6 +1215,7 @@ export interface components {
       displayOrder: number
       displayAdditionalDetailsOnSelect: boolean
       additionalDetailsLabel?: string | null
+      additionalDetailsHint?: string | null
     }
     SavedResponse: {
       value: string
@@ -1226,6 +1227,7 @@ export interface components {
       /** Format: int32 */
       displayOrder: number
       label: string
+      hint?: string | null
       /** @enum {string} */
       answerType: 'TEXTAREA' | 'RADIO' | 'CHECKBOX'
       /** Format: int32 */
@@ -1740,7 +1742,8 @@ export interface components {
       mainPocDetailsTableData: components['schemas']['DraftMainPOCDetailsTableDataDto']
     }
     DraftAdditionalInformationDetailsTableDataDto: {
-      homeOfficeInterest?: string | null
+      ofHomeOfficeInterest?: boolean | null
+      homeOfficeInterestNotes?: string | null
       offenderPersonalityDisorderPathway?: string | null
     }
     DraftAdditionalSupportNeedsDetailsTableDataDto: {
