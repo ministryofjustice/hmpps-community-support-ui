@@ -36,7 +36,7 @@ export default class ActionPlanSelectOutcomePresenter extends PresenterBase<
     const content = this.buildStaticContent(res)
 
     return {
-      backLink: { href: `/referral/${this.caseReference}/action-plan/needs` },
+      backLink: { href: `/referral/${this.caseReference}/action-plan/select-a-need` },
       selectOutcomeRadio: this.buildSelectOutcomeRadio(content),
       continueButton: { text: content.continueButtonText },
       continueButtonLink: `/referral/${this.caseReference}/action-plan/select-an-outcome`,
