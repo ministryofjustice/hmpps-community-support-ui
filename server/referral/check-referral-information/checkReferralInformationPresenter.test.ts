@@ -336,7 +336,7 @@ describe('CheckReferralInformationPresenter', () => {
 
       const renderData = (res.render as jest.Mock).mock.calls[0][1] as { content: CheckReferralInformationViewModel }
 
-      expect(renderData.content.additionalInformationSummary).toBeUndefined()
+      expect(renderData.content.additionalInformationSummary!.rows).toHaveLength(0)
     })
   })
 })
