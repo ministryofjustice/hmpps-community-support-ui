@@ -18,7 +18,11 @@ class ActionPlanController {
       : undefined
   }
 
-  private setActionPlanSessionDelivery(req: Request, caseReference: string, sessionDelivery: Partial<ActionPlanSessionDeliveryData>) {
+  private setActionPlanSessionDelivery(
+    req: Request,
+    caseReference: string,
+    sessionDelivery: Partial<ActionPlanSessionDeliveryData>,
+  ) {
     req.session.actionPlanSessionDelivery = {
       ...(this.getActionPlanSessionDelivery(req, caseReference) ?? { caseReference }),
       ...sessionDelivery,
@@ -90,7 +94,7 @@ class ActionPlanController {
   }
 
   async saveActivities(req: Request, res: Response) {
-    const {id: caseReference} = req.params as { id: string }
+    const { id: caseReference } = req.params as { id: string }
 
     // Post to backend
 
