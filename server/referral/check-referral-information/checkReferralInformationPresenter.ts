@@ -99,7 +99,10 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
     viewModel.referralDetailsHeader = content.referralDetailsHeader
     viewModel.referralDetailsSummary = this.buildReferralDetailsSummary()
     if (content.contactDetailsCard) {
-      viewModel.contactDetailsSummary = this.buildContactDetailsSummary(content.contactDetailsCard, content.notAvailable)
+      viewModel.contactDetailsSummary = this.buildContactDetailsSummary(
+        content.contactDetailsCard,
+        content.notAvailable,
+      )
     }
     viewModel.referralContactDetailsHeader = content.referralContactDetailsHeader
     viewModel.backLink = { href: content.backLink }
