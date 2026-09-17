@@ -21,6 +21,13 @@ export default CheckReferralInformationContentFactory.define(({ transientParams 
     disabilitiesLabel: 'Disabilities',
     lastUpdatedLabel: 'Last updated',
   },
+  equalityMonitoringCard: transientParams.equalityMonitoringCard || {
+    heading: 'Equality monitoring',
+    nationalityLabel: 'Nationality',
+    ethnicityLabel: 'Ethnicity',
+    religionOrBeliefLabel: 'Religion or belief',
+    sexLabel: 'Sex',
+  },
   riskInformationCard: transientParams.riskInformationCard || {
     heading: 'Risk information',
     whoIsAtRiskLabel: 'Who is at risk',

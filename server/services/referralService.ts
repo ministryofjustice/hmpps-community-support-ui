@@ -23,6 +23,8 @@ import {
   type ProbationPractitionerDetails,
   type UpdateProbationPractitionerDetailsRequest,
   CheckDraftReferralDetailsDto,
+  type ProbationOffice,
+  PDU,
   Selection,
 } from '@community-support-api'
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
@@ -177,6 +179,22 @@ export default class ReferralService {
 
   submitPPDetails(referralId: string, username: string, ppDetails: UpdateProbationPractitionerDetailsRequest) {
     return this.communitySupportApiClient.submitPPDetails(referralId, username, ppDetails)
+  }
+
+  submitContactDetails(
+    referralId: string,
+    username: string,
+    contactDetails: UpdateProbationPractitionerDetailsRequest,
+  ) {
+    return this.communitySupportApiClient.submitContactDetails(referralId, username, contactDetails)
+  }
+
+  getProbationOffices(username: string): Promise<ProbationOffice[]> {
+    return this.communitySupportApiClient.getProbationOffices(username)
+  }
+
+  getPDUs(username: string): Promise<PDU[]> {
+    return this.communitySupportApiClient.getPDUs(username)
   }
 
   getAdditionalInformationForDeliveryPartner(draftReferralId: string, username: string) {

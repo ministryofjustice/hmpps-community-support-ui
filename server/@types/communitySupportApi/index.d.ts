@@ -29,6 +29,7 @@ type SessionFeedbackAppointmentDetails = components['schemas']['SessionFeedbackA
 type SessionMethod = components['schemas']['SessionMethod']
 type AppointmentDeliveryDetails = components['schemas']['AppointmentDelivery']
 type CaseWorkerSummary = components['schemas']['CaseWorkerSummaryDto']
+type PDU = components['schemas']['Pdu']
 
 type TaskListStatusDto = components['schemas']['TaskListStatusResponseDto']
 type TaskListStatusItem = components['schemas']['TaskListStatusItem']
@@ -127,5 +128,6 @@ export type {
   OffenceSentenceDto,
   ProbationPractitionerDetails,
   UpdateProbationPractitionerDetailsRequest,
+  PDU,
   AdditionalInformationForTheDeliveryPartner,
 }

@@ -470,8 +470,8 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /** Get withdrawal reasons */
-    get: operations['getWithdrawalReasons']
+    /** Get withdrawal reasons grouped by heading */
+    get: operations['getGroupedWithdrawalReasons']
     put?: never
     post?: never
     delete?: never
@@ -1066,19 +1066,7 @@ export interface components {
       deliveryPartner?: string | null
     }
     WithdrawReferralRequest: {
-      /** @enum {string} */
-      reasonCode:
-        | 'INELIGIBLE_REFERRAL'
-        | 'MISTAKEN_OR_DUPLICATE_REFERRAL'
-        | 'NOT_ENGAGED'
-        | 'NEEDS_MET_THROUGH_ANOTHER_ROUTE'
-        | 'USER_DIED'
-        | 'WORK_CARING_COMMITMENTS_OR_SICKNESS'
-        | 'ACQUITTED_ON_APPEAL'
-        | 'RETURNED_TO_CUSTODY'
-        | 'SENTENCE_REVOKED'
-        | 'SENTENCE_EXPIRED'
-        | 'OTHER_CHANGE_OF_CIRCUMSTANCE'
+      reasonCode: string
       additionalDetails?: string | null
     }
     AssignCaseWorkersRequest: {
@@ -1227,6 +1215,7 @@ export interface components {
       displayOrder: number
       displayAdditionalDetailsOnSelect: boolean
       additionalDetailsLabel?: string | null
+      additionalDetailsHint?: string | null
     }
     SavedResponse: {
       value: string
@@ -1238,6 +1227,7 @@ export interface components {
       /** Format: int32 */
       displayOrder: number
       label: string
+      hint?: string | null
       /** @enum {string} */
       answerType: 'TEXTAREA' | 'RADIO' | 'CHECKBOX'
       /** Format: int32 */
@@ -1278,12 +1268,17 @@ export interface components {
       id: string
       name: string
     }
+    ProbationOfficeSummary: {
+      /** Format: int32 */
+      id: number
+      name: string
+    }
     ProbationPractitionerDetailsBffResponseDto: {
       name: string
       jobRole?: string | null
       emailAddress?: string | null
       pdu?: components['schemas']['Pdu'] | null
-      probationOffice?: string | null
+      probationOffice?: components['schemas']['ProbationOfficeSummary'] | null
       teamPhoneNumber?: string | null
       phoneNumber?: string | null
       ppDetailsFoundAndCorrect?: boolean | null
@@ -1471,8 +1466,10 @@ export interface components {
       appointmentDetails?: components['schemas']['AppointmentDetailsDto'] | null
       otherAppointmentMethods?: string[] | null
     }
-    WithdrawalReasonBffResponseDto: {
-      withdrawalReasons: string[]
+    WithdrawalReasonsGroupedBffResponseDto: {
+      withdrawalReasons: {
+        [key: string]: string[]
+      }
     }
     CheckReferralInformationDto: {
       /** Format: uuid */
@@ -1576,6 +1573,7 @@ export interface components {
       equalityDetailsTableData: components['schemas']['EqualityDetailsTableDataDto']
       contactDetailsTableData: components['schemas']['ContactDetailsTableDataDto']
       referralDetailsTableData: components['schemas']['ReferralDetailsTableDataDto']
+      withdrawReferral: boolean
     }
     ReferralDetailsTableDataDto: {
       referralDate: string
@@ -1744,7 +1742,8 @@ export interface components {
       mainPocDetailsTableData: components['schemas']['DraftMainPOCDetailsTableDataDto']
     }
     DraftAdditionalInformationDetailsTableDataDto: {
-      homeOfficeInterest?: string | null
+      ofHomeOfficeInterest?: boolean | null
+      homeOfficeInterestNotes?: string | null
       offenderPersonalityDisorderPathway?: string | null
     }
     DraftAdditionalSupportNeedsDetailsTableDataDto: {
@@ -1766,6 +1765,7 @@ export interface components {
       address?: string | null
     }
     DraftEqualityDetailsTableDataDto: {
+      nationality?: string | null
       ethnicity?: string | null
       religionOrBelief?: string | null
       sex: string
@@ -2850,7 +2850,7 @@ export interface operations {
       }
     }
   }
-  getWithdrawalReasons: {
+  getGroupedWithdrawalReasons: {
     parameters: {
       query?: never
       header?: never
@@ -2859,13 +2859,13 @@ export interface operations {
     }
     requestBody?: never
     responses: {
-      /** @description Withdrawal reasons found */
+      /** @description Withdrawal reasons found, grouped by heading */
       200: {
         headers: {
           [name: string]: unknown
         }
         content: {
-          'application/json': components['schemas']['WithdrawalReasonBffResponseDto']
+          'application/json': components['schemas']['WithdrawalReasonsGroupedBffResponseDto']
         }
       }
     }
@@ -3147,7 +3147,9 @@ export interface operations {
   }
   getProbationOffices: {
     parameters: {
-      query?: never
+      query?: {
+        sortOrder?: 'ASC' | 'DESC'
+      }
       header?: never
       path?: never
       cookie?: never

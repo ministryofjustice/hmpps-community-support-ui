@@ -40,6 +40,7 @@ import type {
   ProbationPractitionerDetails,
   UpdateProbationPractitionerDetailsRequest,
   CheckDraftReferralDetailsDto,
+  PDU,
   AdditionalInformationForTheDeliveryPartner,
   Selection,
   OffenceSentenceRequest,
@@ -106,6 +107,10 @@ export default class CommunitySupportApiClient extends RestClient {
 
   async getProbationOffices(username: string): Promise<ProbationOffice[]> {
     return this.get({ path: `/bff/reference-data/probation-offices` }, asSystem(username))
+  }
+
+  async getPDUs(username: string): Promise<PDU[]> {
+    return this.get({ path: `/bff/reference-data/pdus` }, asSystem(username))
   }
 
   getICS(caseRefId: string, username: string): Promise<AppointmentIcsResponse> {
@@ -280,6 +285,17 @@ export default class CommunitySupportApiClient extends RestClient {
   submitPPDetails(draftReferralId: string, username: string, ppDetails: UpdateProbationPractitionerDetailsRequest) {
     return this.patch(
       { path: `/draft-referral/${draftReferralId}/probation-practitioner-details`, data: ppDetails },
+      asSystem(username),
+    )
+  }
+
+  submitContactDetails(
+    draftReferralId: string,
+    username: string,
+    contactDetails: UpdateProbationPractitionerDetailsRequest,
+  ) {
+    return this.patch(
+      { path: `/draft-referral/${draftReferralId}/main-point-of-contact-details`, data: contactDetails },
       asSystem(username),
     )
   }

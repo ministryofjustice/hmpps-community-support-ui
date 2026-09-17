@@ -43,6 +43,13 @@
       "disabilitiesLabel": "Disabilities",
       "lastUpdatedLabel": "Last updated"
     },
+    "equalityMonitoringCard": {
+      "heading": "Equality monitoring",
+      "nationalityLabel": "Nationality",
+      "ethnicityLabel": "Ethnicity",
+      "religionOrBeliefLabel": "Religion or belief",
+      "sexLabel": "Sex"
+    },
     "riskInformationCard": {
       "heading": "Risk information",
       "whoIsAtRiskLabel": "Who is at risk?",
@@ -508,6 +515,41 @@
             "text": "Details about how you tried to contact {{ firstname }} and why they did not attend ",
             "hint": "details about how you tried to contact them and why they did not attend’",
             "changeHref": "/ics-feedback/caseRefId/how-they-tried-to-contact-the-person"
+          },
+          {
+            "text": "What was {{ firstname }}'s engagement like during the session?",
+            "hint": "What was {{ firstname }}'s engagement like during the session?",
+            "changeHref": "/ics-feedback/caseRefId/session-feedback"
+          },
+          {
+            "text": "What strengths did you identify?",
+            "hint": "What strengths did you identify?",
+            "changeHref": "/ics-feedback/caseRefId/session-feedback"
+          }
+        ]
+      },
+      {
+        "summaryTitle": "Issues or concerns",
+        "rows": [
+          {
+            "text": "What issues or concerns did you identify?",
+            "hint": "What issues or concerns did you identify?",
+            "changeHref": "/ics-feedback/caseRefId/issues-or-concerns"
+          }
+        ]
+      },
+      {
+        "summaryTitle": "Next steps",
+        "rows": [
+          {
+            "text": "What do you have planned for the next session?",
+            "hint": "What do you have planned for the next session?",
+            "changeHref": "/ics-feedback/caseRefId/next-steps"
+          },
+          {
+            "text": "What actions do you and {{ firstname }} have before the next session takes place?",
+            "hint": "What actions do you and {{ firstname }} have before the next session takes place?",
+            "changeHref": "/ics-feedback/caseRefId/next-steps"
           }
         ]
       }
@@ -521,7 +563,7 @@
     "submitHref": "/ics-feedback/caseRefId/submit",
     "didNotAttendbackLinkHref": "/ics-feedback/caseRefId/how-they-tried-to-contact-the-person",
     "noSessionbackLinkHref": "/ics-feedback/caseRefId/why-did-the-session-not-happen",
-    "attendedBackLinkHref": "/ics-feedback/caseRefId/session-feedback"
+    "attendedBackLinkHref": "/ics-feedback/caseRefId/next-steps"
   },
   "/ics-feedback/:id/session-details": {
     "pageHeader": "Session details",
@@ -1088,6 +1130,42 @@
     "radioQuestion": "Are these details correct?",
     "radioYes": "Yes",
     "radioNo": "No"
+  },
+  "/referral/new/add-contact-details": {
+    "backLinkText": "Back",
+    "backLinkHref" : "/referral/task-list",
+    "ppBackLinkHref" : "/referral/task-list/check-probation-practitioner-details",
+    "buttonText": "Save and continue",
+    "heading": "{{ personName }}",
+    "pageCaption": "CRN: {{ CRN }} | Date of birth: {{ DOB }}",
+    "subHeading": "Add details of the main point of contact",
+    "nameInputLabel": "Name",
+    "emailAddressInputLabel": "Email address",
+    "jobRoleInputLabel": "Job role (optional)",
+    "phoneNumberInputLabel": "Phone number (optional)",
+    "pduInputLabel": "PDU",
+    "probationOfficeInputLabel": "Probation office (optional)",
+    "teamPhoneNumberInputLabel":"Team phone number (optional)",
+    "hintText": "Start typing and choose from list",
+    "insetText": "These contact details will be sent to the delivery partner for the referral. They should also be updated in NDelius."
+  },
+  "/referral/new/confirm-contact-details": {
+    "backLinkText": "Back",
+    "backLinkHref" : "/referral/new/add-contact-details",
+    "buttonText": "Save and continue",
+    "heading": "{{ personName }}",
+    "pageCaption": "CRN: {{ CRN }} | Date of birth: {{ DOB }}",
+    "subHeading": "Check contact details",
+    "summaryHeading": "Contact details",
+    "nameLabel": "Name",
+    "emailAddressLabel": "Email address",
+    "jobRoleLabel": "Job role",
+    "phoneNumberLabel": "Phone number",
+    "pduLabel": "PDU",
+    "probationOfficeLabel": "Probation office",
+    "teamPhoneNumberLabel":"Team phone number",
+    "changeLabel":"Change",
+    "notEnteredText":"Not entered"
   },
   "/referral/task-list/additional-information-for-the-delivery-partner": {
     "pageTitle": "Is there anything else the delivery partner should know? - Community Support",
