@@ -40,8 +40,15 @@
       "dobLabel": "Date of birth",
       "languageLabel": "Preferred language",
       "currentCircumstancesLabel": "Current circumstances",
-      "disabilitiesLabel": "Disabilities",
-      "lastUpdatedLabel": "Last updated"
+      "disabilitiesLabel": "Disabilities"
+    },
+    "lastUpdatedLabel": "Last updated",
+    "contactDetailsCard": {
+      "heading": "Contact details",
+      "phoneNumberLabel": "Phone number",
+      "mobileNumberLabel": "Mobile number",
+      "emailAddressLabel": "Email address",
+      "mainAddressLabel": "Main address"
     },
     "equalityMonitoringCard": {
       "heading": "Equality monitoring",

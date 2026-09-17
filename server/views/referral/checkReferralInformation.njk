@@ -20,12 +20,14 @@
   <h3 class="govuk-heading-m govuk-!-margin-top-8">{{ content.personalDetailsHeader }}</h3>
     {{ govukSummaryList(content.personalDetailsSummary) }}
     {{ govukSummaryList(content.equalityMonitoringSummary) }}
+    {{ govukSummaryList(content.contactDetailsSummary) }}
     {{ govukSummaryList(content.riskInformationSummary) }}
 
   <h3 class="govuk-heading-m govuk-!-margin-top-8">{{ content.referralDetailsHeader }}</h3>
     {{ govukSummaryList(content.referralDetailsSummary) }}
 
   <h3 class="govuk-heading-m govuk-!-margin-top-8">{{ content.referralContactDetailsHeader }}</h3>
+
 
     <form method="post" action="{{ content.submitHref }}">
     <input type="hidden" name="_csrf" value="{{csrfToken}}">

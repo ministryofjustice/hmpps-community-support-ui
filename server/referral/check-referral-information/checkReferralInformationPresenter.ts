@@ -3,6 +3,7 @@ import { GovukFrontendSummaryList } from '@govuk-frontend'
 import { Response } from 'express'
 import { format, differenceInYears } from 'date-fns'
 import PresenterBase from '../../presenter/presenterBase'
+import { trimOrDefault } from '../../utils/utils'
 import formatFullName from '../../utils/presenterFormatters'
 import ViewUtils, { govFrontendSummaryListRow } from '../../utils/viewUtils'
 import { components } from '../../@types/communitySupportApi/imported'
@@ -12,6 +13,7 @@ import {
   EqualityMonitoringCard,
   PersonalDetailsCard,
   RiskInformationCard,
+  ContactDetailsCard,
 } from './checkReferralInformationViewModel'
 
 type IdentifierRow = {
@@ -83,6 +85,7 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
     viewModel.personalDetailsSummary = this.buildPersonalDetailsSummary(
       content.personalDetailsCard,
       content.notAvailable,
+      content.lastUpdatedLabel,
     )
     viewModel.equalityMonitoringSummary = this.buildEqualityMonitoringSummary(
       content.equalityMonitoringCard,
@@ -95,6 +98,9 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
     )
     viewModel.referralDetailsHeader = content.referralDetailsHeader
     viewModel.referralDetailsSummary = this.buildReferralDetailsSummary()
+    if (content.contactDetailsCard) {
+      viewModel.contactDetailsSummary = this.buildContactDetailsSummary(content.contactDetailsCard, content.notAvailable)
+    }
     viewModel.referralContactDetailsHeader = content.referralContactDetailsHeader
     viewModel.backLink = { href: content.backLink }
     viewModel.submitButton = { text: content.submitButtonText, classes: 'govuk-!-margin-top-6' }
@@ -110,6 +116,7 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
   private buildPersonalDetailsSummary(
     cardContent: PersonalDetailsCard,
     notAvailable: string,
+    lastUpdatedLabel: string,
   ): GovukFrontendSummaryList {
     const { personDetailsTableData } = this.draftReferralDetails
     let identifierRow: IdentifierRow | null = null
@@ -132,7 +139,7 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
         {
           html: labelWithLastUpdated(
             cardContent.currentCircumstancesLabel,
-            cardContent.lastUpdatedLabel,
+            lastUpdatedLabel,
             getLatestUpdatedAt(personDetailsTableData.personalCircumstances, notAvailable),
           ),
         },
@@ -142,7 +149,7 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
         {
           html: labelWithLastUpdated(
             cardContent.disabilitiesLabel,
-            cardContent.lastUpdatedLabel,
+            lastUpdatedLabel,
             getLatestUpdatedAt(personDetailsTableData.disabilities, notAvailable),
           ),
         },
@@ -228,6 +235,25 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
         attributes: { 'data-testid': 'equality-monitoring' },
       },
       rows,
+    }
+  }
+
+  private buildContactDetailsSummary(cardContent: ContactDetailsCard, notAvailable: string): GovukFrontendSummaryList {
+    const data = this.draftReferralDetails.contactDetailsTableData || {}
+
+    return {
+      card: {
+        title: {
+          text: cardContent.heading,
+        },
+        attributes: { 'data-testid': 'contact-details' },
+      },
+      rows: [
+        govFrontendSummaryListRow(cardContent.phoneNumberLabel, data.phoneNumber || notAvailable),
+        govFrontendSummaryListRow(cardContent.mobileNumberLabel, data.mobileNumber || notAvailable),
+        govFrontendSummaryListRow(cardContent.emailAddressLabel, data.email || notAvailable),
+        govFrontendSummaryListRow(cardContent.mainAddressLabel, data.address || notAvailable),
+      ],
     }
   }
 }

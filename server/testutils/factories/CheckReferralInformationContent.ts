@@ -19,7 +19,14 @@ export default CheckReferralInformationContentFactory.define(({ transientParams 
     languageLabel: 'Preferred language',
     currentCircumstancesLabel: 'Current circumstances',
     disabilitiesLabel: 'Disabilities',
-    lastUpdatedLabel: 'Last updated',
+  },
+  lastUpdatedLabel: transientParams.lastUpdatedLabel || 'Last updated',
+  contactDetailsCard: transientParams.contactDetailsCard || {
+    heading: 'Contact details',
+    phoneNumberLabel: 'Phone number',
+    mobileNumberLabel: 'Mobile number',
+    emailAddressLabel: 'Email address',
+    mainAddressLabel: 'Main address',
   },
   equalityMonitoringCard: transientParams.equalityMonitoringCard || {
     heading: 'Equality monitoring',
