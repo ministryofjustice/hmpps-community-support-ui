@@ -48,7 +48,10 @@
       "phoneNumberLabel": "Phone number",
       "mobileNumberLabel": "Mobile number",
       "emailAddressLabel": "Email address",
-      "mainAddressLabel": "Main address"
+      "mainAddressLabel": "Main address",
+      "addressTypeLabel": "Type of address",
+      "addressStartDateLabel": "Start date",
+      "addressNotesLabel": "Notes"
     },
     "equalityMonitoringCard": {
       "heading": "Equality monitoring",

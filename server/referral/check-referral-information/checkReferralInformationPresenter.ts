@@ -3,7 +3,6 @@ import { GovukFrontendSummaryList } from '@govuk-frontend'
 import { Response } from 'express'
 import { format, differenceInYears } from 'date-fns'
 import PresenterBase from '../../presenter/presenterBase'
-import { trimOrDefault } from '../../utils/utils'
 import formatFullName from '../../utils/presenterFormatters'
 import ViewUtils, { govFrontendSummaryListRow } from '../../utils/viewUtils'
 import { components } from '../../@types/communitySupportApi/imported'
@@ -55,6 +54,29 @@ const formatPersonalCircumstances = (
 const formatDisabilities = (list: components['schemas']['Disability'][], notAvailable: string): string => {
   if (list && list.length > 0) return list.map(d => `<div>${ViewUtils.escape(d.description)}</div>`).join('')
   return notAvailable
+}
+
+const formatAddress = (
+  address?: string,
+  typeLabel?: string,
+  startDateLabel?: string,
+  notesLabel?: string,
+  notAvailable?: string,
+): string => {
+  const typeVal = notAvailable
+  const startDateVal = format(new Date(), 'd MMMM yyyy')
+  const notesVal = notAvailable
+
+  return `<div>${address || notAvailable}</div>
+<br/>
+<div class="govuk-summary-list__key">${typeLabel}</div>
+<div>${typeVal}</div>
+<br/>
+<div class="govuk-summary-list__key">${startDateLabel}</div>
+<div>${startDateVal}</div>
+<br/>
+<div class="govuk-summary-list__key">${notesLabel}</div>
+<div>${notesVal}</div>`
 }
 
 const resolveName = (name: { firstName: string; middleName?: string | null; lastName: string }): string =>
@@ -244,6 +266,14 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
   private buildContactDetailsSummary(cardContent: ContactDetailsCard, notAvailable: string): GovukFrontendSummaryList {
     const data = this.draftReferralDetails.contactDetailsTableData || {}
 
+    const addressValueHtml = formatAddress(
+      data.address,
+      cardContent.addressTypeLabel,
+      cardContent.addressStartDateLabel,
+      cardContent.addressNotesLabel,
+      notAvailable,
+    )
+
     return {
       card: {
         title: {
@@ -255,7 +285,7 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
         govFrontendSummaryListRow(cardContent.phoneNumberLabel, data.phoneNumber || notAvailable),
         govFrontendSummaryListRow(cardContent.mobileNumberLabel, data.mobileNumber || notAvailable),
         govFrontendSummaryListRow(cardContent.emailAddressLabel, data.email || notAvailable),
-        govFrontendSummaryListRow(cardContent.mainAddressLabel, data.address || notAvailable),
+        govFrontendSummaryListRow({ html: cardContent.mainAddressLabel }, { html: addressValueHtml }),
       ],
     }
   }

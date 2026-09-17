@@ -1,4 +1,5 @@
 import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendSummaryList } from '@govuk-frontend'
+import { GlobalContent } from '../../../assets/content/GlobalContent'
 
 export type CheckReferralInformationViewModel = {
   pageTitle: string
@@ -28,7 +29,6 @@ export type PersonalDetailsCard = {
   languageLabel: string
   currentCircumstancesLabel: string
   disabilitiesLabel: string
-  lastUpdatedLabel: string
 }
 
 export type EqualityMonitoringCard = {
@@ -45,6 +45,9 @@ export type ContactDetailsCard = {
   mobileNumberLabel: string
   emailAddressLabel: string
   mainAddressLabel: string
+  addressTypeLabel?: string
+  addressStartDateLabel?: string
+  addressNotesLabel?: string
 }
 
 export type RiskInformationCard = {
@@ -60,19 +63,4 @@ export type RiskInformationCard = {
   noAdditionalInformationText?: string
 }
 
-export type CheckReferralInformationContent = {
-  pageTitle: string
-  pageHeader: string
-  pageSubHeader: string
-  personalDetailsHeader: string
-  lastUpdatedLabel: string
-  notAvailable: string
-  personalDetailsCard: PersonalDetailsCard
-  equalityMonitoringCard: EqualityMonitoringCard
-  contactDetailsCard?: ContactDetailsCard
-  riskInformationCard: RiskInformationCard
-  referralDetailsHeader: string
-  referralContactDetailsHeader: string
-  submitButtonText: string
-  backLink: string
-}
+export type CheckReferralInformationContent = GlobalContent['/referral/check-referral-information']
