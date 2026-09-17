@@ -4,10 +4,12 @@ import ReferralService from '../../services/referralService'
 import ActionPlanController from './actionPlanController'
 import ActionPlanPresenter from './actionPlanPresenter'
 import ActionPlanSelectANeedPresenter from './selectANeed/actionPlanSelectANeedPresenter'
+import ActionPlanSelectOutcomePresenter from './selectOutcome/actionPlanSelectOutcomePresenter'
 
 jest.mock('../../services/referralService')
 jest.mock('./actionPlanPresenter')
 jest.mock('./selectANeed/actionPlanSelectANeedPresenter')
+jest.mock('./selectOutcome/actionPlanSelectOutcomePresenter')
 
 describe('ActionPlanController', () => {
   let referralService: jest.Mocked<ReferralService>
@@ -29,6 +31,7 @@ describe('ActionPlanController', () => {
       },
       body: {},
       session: {},
+      flash: jest.fn(),
     } as unknown as Request
 
     res = {
@@ -88,8 +91,17 @@ describe('ActionPlanController', () => {
 
       await actionPlanController.submitSelectedNeed(req, res)
 
-      expect(req.session.actionPlan).toEqual({ needs, selectedNeedId: 'need-2' })
+      expect(req.session.actionPlanAction).toEqual({ needId: 'need-2' })
       expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/select-an-outcome')
+    })
+
+    it('flashes an error and redirects back when no need is selected', async () => {
+      req.session.actionPlan = { needs }
+
+      await actionPlanController.submitSelectedNeed(req, res)
+
+      expect(req.flash).toHaveBeenCalledWith('needIdError', 'Select which need you are creating an action for')
+      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/select-a-need')
     })
 
     it('redirects to activities when the selected need has a single outcome', async () => {
@@ -98,7 +110,74 @@ describe('ActionPlanController', () => {
 
       await actionPlanController.submitSelectedNeed(req, res)
 
-      expect(req.session.actionPlan).toEqual({ needs, selectedNeedId: 'need-1' })
+      expect(req.session.actionPlanAction).toEqual({ needId: 'need-1', outcomeId: 'outcome-1' })
+      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/add-activities')
+    })
+  })
+
+  describe('select an outcome', () => {
+    it('pre-selects the outcome previously chosen for the current need', async () => {
+      req.session.actionPlan = {
+        needs: [{ id: 'need-2', label: 'Employment', outcomes: [{ id: 'outcome-2', text: 'Outcome two' }] }],
+      }
+      req.session.actionPlanAction = { needId: 'need-2', outcomeId: 'outcome-2' }
+      referralService.getActionPlanSummary.mockResolvedValue({
+        personDetails: { fullName: 'Alex River' },
+        needs: [],
+      })
+
+      await actionPlanController.showSelectOutcomePage(req, res)
+
+      expect(ActionPlanSelectOutcomePresenter).toHaveBeenCalledWith(
+        'AB1234CD',
+        'Alex River',
+        [{ id: 'outcome-2', text: 'Outcome two' }],
+        'outcome-2',
+      )
+    })
+
+    it('renders with no outcome pre-selected when none has been chosen yet', async () => {
+      req.session.actionPlan = {
+        needs: [{ id: 'need-2', label: 'Employment', outcomes: [{ id: 'outcome-2', text: 'Outcome two' }] }],
+      }
+      req.session.actionPlanAction = { needId: 'need-2' }
+      referralService.getActionPlanSummary.mockResolvedValue({
+        personDetails: { fullName: 'Alex River' },
+        needs: [],
+      })
+
+      await actionPlanController.showSelectOutcomePage(req, res)
+
+      expect(ActionPlanSelectOutcomePresenter).toHaveBeenCalledWith(
+        'AB1234CD',
+        'Alex River',
+        [{ id: 'outcome-2', text: 'Outcome two' }],
+        undefined,
+      )
+    })
+
+    it('flashes an error and redirects back when no outcome is selected', async () => {
+      req.session.actionPlan = { needs: [] }
+      referralService.getActionPlanSummary.mockResolvedValue({
+        personDetails: { fullName: 'Alex River' },
+        needs: [],
+      })
+
+      await actionPlanController.submitOutcome(req, res)
+
+      expect(referralService.getActionPlanSummary).toHaveBeenCalledWith('AB1234CD', 'user1')
+      expect(req.session.formKeys).toEqual(['selectOutcomeRadio'])
+      expect(req.flash).toHaveBeenCalledWith('selectOutcomeRadioError', 'Select which outcome is appropriate for Alex')
+      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/select-an-outcome')
+    })
+
+    it('redirects to activities when an outcome is selected', async () => {
+      req.session.actionPlanAction = { needId: 'need-2' }
+      req.body = { selectOutcomeRadio: 'outcome-2' }
+
+      await actionPlanController.submitOutcome(req, res)
+
+      expect(req.session.actionPlanAction).toEqual({ needId: 'need-2', outcomeId: 'outcome-2' })
       expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/add-activities')
     })
   })

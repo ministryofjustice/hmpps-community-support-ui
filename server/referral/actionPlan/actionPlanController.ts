@@ -32,7 +32,7 @@ class ActionPlanController {
 
     req.session.actionPlan = { ...req.session.actionPlan, needs }
 
-    const presenter = new ActionPlanSelectANeedPresenter(caseReference, needs, req.session.actionPlan.selectedNeedId)
+    const presenter = new ActionPlanSelectANeedPresenter(caseReference, needs, req.session.actionPlanAction?.needId)
 
     return presenter.renderPage(res)
   }
@@ -42,13 +42,20 @@ class ActionPlanController {
     const { needId } = req.body as { needId?: string }
 
     const needs = req.session.actionPlan?.needs ?? []
+    if (!needId) {
+      req.session.formKeys = ['needId']
+      req.flash('needIdError', 'Select which need you are creating an action for')
+      return res.redirect(`/referral/${caseReference}/action-plan/select-a-need`)
+    }
+
     const selectedNeed = needs.find(need => need.id === needId)
 
-    req.session.actionPlan = { needs, selectedNeedId: needId }
-
     if ((selectedNeed?.outcomes?.length ?? 0) > 1) {
+      req.session.actionPlanAction = { needId }
       return res.redirect(`/referral/${caseReference}/action-plan/select-an-outcome`)
     }
+
+    req.session.actionPlanAction = { needId, outcomeId: selectedNeed?.outcomes?.[0]?.id }
 
     return res.redirect(`/referral/${caseReference}/action-plan/add-activities`)
   }
@@ -57,16 +64,41 @@ class ActionPlanController {
     const { id: caseReference } = req.params as { id: string }
     const { username } = res.locals.user
 
+    const { needId: selectedNeedId, outcomeId: selectedOutcomeId } = req.session.actionPlanAction ?? {}
+    if (!selectedNeedId) {
+      return res.redirect(`/referral/${caseReference}/action-plan/select-a-need`)
+    }
+
+    const outcomes = req.session.actionPlan?.needs?.find(need => need.id === selectedNeedId)?.outcomes ?? []
+
     const actionPlanSummary = await this.referralService.getActionPlanSummary(caseReference, username)
-    const presenter = new ActionPlanSelectOutcomePresenter(caseReference, actionPlanSummary?.personDetails?.fullName)
+    const presenter = new ActionPlanSelectOutcomePresenter(
+      caseReference,
+      actionPlanSummary?.personDetails?.fullName,
+      outcomes,
+      selectedOutcomeId,
+    )
 
     return presenter.renderPage(res)
   }
 
   async submitOutcome(req: Request, res: Response) {
     const { id: caseReference } = req.params as { id: string }
+    const { username } = res.locals.user
+    const { selectOutcomeRadio } = req.body as { selectOutcomeRadio?: string }
 
-    res.redirect(`/referral/${caseReference}/action-plan/add-activities`)
+    if (!selectOutcomeRadio) {
+      const actionPlanSummary = await this.referralService.getActionPlanSummary(caseReference, username)
+      const firstName = actionPlanSummary.personDetails.fullName.trim().split(/\s+/)[0]
+
+      req.session.formKeys = ['selectOutcomeRadio']
+      req.flash('selectOutcomeRadioError', `Select which outcome is appropriate for ${firstName}`)
+      return res.redirect(`/referral/${caseReference}/action-plan/select-an-outcome`)
+    }
+
+    req.session.actionPlanAction = { needId: req.session.actionPlanAction?.needId, outcomeId: selectOutcomeRadio }
+
+    return res.redirect(`/referral/${caseReference}/action-plan/add-activities`)
   }
 
   async showAddActivitiesPage(req: Request, res: Response) {
