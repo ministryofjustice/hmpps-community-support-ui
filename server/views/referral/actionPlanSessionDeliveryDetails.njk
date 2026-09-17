@@ -1,0 +1,29 @@
+{% extends "../partials/layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+
+{% set pageTitle = content.pageTitle %}
+{% set mainClasses = "govuk-body" %}
+
+{% block contentBody %}
+  <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
+
+  <form method="post">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+
+    {% for question in content.questions %}
+      {% if question.textarea %}
+        {{ govukTextarea(question.textarea) }}
+      {% elif question.radios %}
+        {{ govukRadios(question.radios) }}
+      {% elif question.checkboxes %}
+        {{ govukCheckboxes(question.checkboxes) }}
+      {% endif %}
+    {% endfor %}
+
+    {{ govukButton(content.submitButton) }}
+  </form>
+{% endblock %}

@@ -14,6 +14,7 @@ import {
   type ReferralCriminogenicNeedsDto,
   type CriminogenicNeedsRequest,
   ActionPlanSummaryDto,
+  ActionPlanSessionDeliveryDetailsResponse,
   ServiceEndDatePageDto,
   ServiceDaysPageDto,
   AdditionalSupportNeedsRequest,
@@ -75,6 +76,13 @@ export default class ReferralService {
 
   getActionPlanSummary(caseReference: string, username: string): Promise<ActionPlanSummaryDto> {
     return this.communitySupportApiClient.getActionPlanSummary(caseReference, username)
+  }
+
+  getSessionDeliveryDetails(
+    caseReference: string,
+    username: string,
+  ): Promise<ActionPlanSessionDeliveryDetailsResponse> {
+    return this.communitySupportApiClient.getSessionDeliveryDetails(caseReference, username)
   }
 
   getPersonalDetails(id: string, username: string): Promise<ConfirmPersonDetailsBffDto> {

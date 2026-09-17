@@ -8,6 +8,7 @@ import {
   IcsFeedbackSubmission,
   IcsFeedbackSubmissionResponse,
   ActionPlanSummaryDto,
+  ActionPlanSessionDeliveryDetailsResponse,
   PDU,
   ProbationOffice,
   ProbationPractitionerDetails,
@@ -601,19 +602,35 @@ export default {
     }),
 
   stubGetActionPlanSummary: (
-    _caseReference: string,
+    caseReference: string,
     actionPlanSummary: ActionPlanSummaryDto,
     httpStatus = 200,
   ): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'GET',
-        urlPattern: '/community-support/bff/referral/.*/action-plan.*',
+        urlPathPattern: `/community-support/bff/referral/${caseReference}/action-plan`,
       },
       response: {
         status: httpStatus,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: actionPlanSummary,
+      },
+    }),
+  stubGetSessionDeliveryDetails: (
+    caseReference: string,
+    sessionDeliveryDetails: ActionPlanSessionDeliveryDetailsResponse,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: `/community-support/bff/referral/${caseReference}/action-plan/session-delivery-details`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: sessionDeliveryDetails,
       },
     }),
   stubGetPersonalDetails: (

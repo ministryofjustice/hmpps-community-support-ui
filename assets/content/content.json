@@ -328,6 +328,12 @@
     "addAnotherActivityButtonText": "Add another activity",
     "saveAndContinueButtonText": "Save and continue"
   },
+  "/referral/:id/action-plan/session-delivery-details": {
+    "pageTitle": "Session delivery details – [Service name]",
+    "pageHeader": "Session delivery details",
+    "continueButtonText": "Continue",
+    "backLink": "/referral/:id/action-plan"
+  },
   "/ics-feedback/:id/did-session-take-place": {
     "submitButtonText": "Continue",
     "pageHeaders": {
@@ -1133,8 +1139,8 @@
   },
   "/referral/new/add-contact-details": {
     "backLinkText": "Back",
-    "backLinkHref" : "/referral/task-list",
-    "ppBackLinkHref" : "/referral/task-list/check-probation-practitioner-details",
+    "backLinkHref": "/referral/task-list",
+    "ppBackLinkHref": "/referral/task-list/check-probation-practitioner-details",
     "buttonText": "Save and continue",
     "heading": "{{ personName }}",
     "pageCaption": "CRN: {{ CRN }} | Date of birth: {{ DOB }}",
@@ -1145,13 +1151,13 @@
     "phoneNumberInputLabel": "Phone number (optional)",
     "pduInputLabel": "PDU",
     "probationOfficeInputLabel": "Probation office (optional)",
-    "teamPhoneNumberInputLabel":"Team phone number (optional)",
+    "teamPhoneNumberInputLabel": "Team phone number (optional)",
     "hintText": "Start typing and choose from list",
     "insetText": "These contact details will be sent to the delivery partner for the referral. They should also be updated in NDelius."
   },
   "/referral/new/confirm-contact-details": {
     "backLinkText": "Back",
-    "backLinkHref" : "/referral/new/add-contact-details",
+    "backLinkHref": "/referral/new/add-contact-details",
     "buttonText": "Save and continue",
     "heading": "{{ personName }}",
     "pageCaption": "CRN: {{ CRN }} | Date of birth: {{ DOB }}",
@@ -1163,9 +1169,9 @@
     "phoneNumberLabel": "Phone number",
     "pduLabel": "PDU",
     "probationOfficeLabel": "Probation office",
-    "teamPhoneNumberLabel":"Team phone number",
-    "changeLabel":"Change",
-    "notEnteredText":"Not entered"
+    "teamPhoneNumberLabel": "Team phone number",
+    "changeLabel": "Change",
+    "notEnteredText": "Not entered"
   },
   "/referral/task-list/additional-information-for-the-delivery-partner": {
     "pageTitle": "Is there anything else the delivery partner should know? - Community Support",

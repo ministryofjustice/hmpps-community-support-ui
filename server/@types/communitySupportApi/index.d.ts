@@ -30,6 +30,13 @@ type SessionMethod = components['schemas']['SessionMethod']
 type AppointmentDeliveryDetails = components['schemas']['AppointmentDelivery']
 type CaseWorkerSummary = components['schemas']['CaseWorkerSummaryDto']
 type PDU = components['schemas']['Pdu']
+type ActionPlanSessionDeliveryDetailsRequest = components['schemas']['ActionPlanSessionDeliveryDetailsRequest']
+type ActionPlanSessionDeliveryDetailsResponse = components['schemas']['ActionPlanSessionDeliveryDetailsResponse']
+type SessionDeliveryDetailsQuestionAnswer = components['schemas']['SessionDeliveryDetailsQuestionAnswer']
+type SessionDeliveryDetailsQuestionAnswers = components['schemas']['SessionDeliveryDetailsQuestionAnswers']
+type SessionDeliveryQuestion = components['schemas']['SessionDeliveryQuestion']
+type QuestionChoice = components['schemas']['QuestionChoice']
+type SavedResponse = components['schemas']['SavedResponse']
 
 type TaskListStatusDto = components['schemas']['TaskListStatusResponseDto']
 type TaskListStatusItem = components['schemas']['TaskListStatusItem']
@@ -94,6 +101,13 @@ export type {
   AppointmentDeliveryDetails,
   SessionMethod,
   CaseWorkerSummary,
+  ActionPlanSessionDeliveryDetailsRequest,
+  ActionPlanSessionDeliveryDetailsResponse,
+  SessionDeliveryDetailsQuestionAnswer,
+  SessionDeliveryDetailsQuestionAnswers,
+  SessionDeliveryQuestion,
+  QuestionChoice,
+  SavedResponse,
   TaskListStatusDto,
   TaskListStatusItem,
   ConfirmPersonDetailsBffDto,

@@ -3,6 +3,7 @@ import {
   CreateAppointmentRequest,
   ReferralInformationDto,
   IcsFeedbackSubmission,
+  ActionPlanSessionDeliveryDetailsRequest,
   UpdateProbationPractitionerDetailsRequest,
 } from '@community-support-api'
 import { GovukFrontendErrorSummaryErrorListElement } from '@govuk-frontend'
@@ -27,6 +28,11 @@ export interface IcsFeedbackHowSessionTookPlaceSession {
   howSessionTookPlace?: HowSessionTookPlace
 }
 
+export interface ActionPlanSessionDeliveryData {
+  caseReference: string
+  sessionDeliveryDetails?: ActionPlanSessionDeliveryDetailsRequest
+}
+
 export declare module 'express-session' {
   // Declare that the session will potentially contain these additional fields
   interface SessionData {
@@ -49,6 +55,7 @@ export declare module 'express-session' {
     draftReferralId: string
     personId: string
     selectedProviderId: string
+    actionPlanSessionDelivery?: ActionPlanSessionDeliveryData
     withdrawalReferrals: Record<string, WithdrawalFormData>
     ppDetails?: UpdateProbationPractitionerDetailsRequest & {
       pduName: string
