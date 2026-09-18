@@ -4,6 +4,7 @@ import CaseListPage from '../pages/caseListPage'
 import ReferralDetailsPage from '../pages/referralDetailsPage'
 import WithdrawalConfirmationPage from '../pages/withdrawalConfirmationPage'
 import WithdrawalReasonPage from '../pages/withdrawalReasonPage'
+import WithdrawalSuccessPage from '../pages/withdrawalSuccessPage'
 import communitySupport from '../mockApis/communitySupport'
 import { login, resetStubs } from '../testUtils'
 import referralDetailsPageData from '../mockData/referralDetailsPageData'
@@ -158,6 +159,10 @@ test.describe('Withdraw referral', () => {
 
     const confirmationPage = await WithdrawalConfirmationPage.verifyOnPage(page)
     await confirmationPage.withdrawButton.click()
+
+    await expect(page).toHaveURL(WithdrawalSuccessPage.url(referralIdentifier))
+    const successPage = await WithdrawalSuccessPage.verifyOnPage(page)
+    await successPage.goToCasesListButton.click()
 
     await expect(page).toHaveURL(CaseListPage.url('in-progress'))
     await CaseListPage.verifyOnPage(page)

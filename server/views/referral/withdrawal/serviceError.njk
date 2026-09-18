@@ -1,0 +1,22 @@
+{% extends "../../partials/layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = content.pageHeader + " - Community Support" %}
+{% set mainClasses = "govuk-body" %}
+
+{% block contentBody %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">{{ content.pageHeader }}</h1>
+
+      <p class="govuk-body">{{ content.message }}</p>
+
+      {{ govukButton({
+        text: content.backToCasesLinkText,
+        href: content.backToCasesLink,
+        classes: "govuk-!-margin-top-6"
+      }) }}
+    </div>
+  </div>
+{% endblock %}

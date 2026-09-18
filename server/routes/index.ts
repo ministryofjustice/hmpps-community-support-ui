@@ -246,6 +246,8 @@ export default function routes({
     withdrawalController.submitConfirmation(req, res),
   )
 
+  get('/referral/:referralIdentifier/withdraw/success', (req, res) => withdrawalController.showSuccess(req, res))
+
   get('/referral/task-list/select-person-needs', (req, res) => referralController.showPersonNeeds(req, res))
 
   post('/referral/task-list/select-person-needs', (req, res) => referralController.recordPersonNeeds(req, res))
