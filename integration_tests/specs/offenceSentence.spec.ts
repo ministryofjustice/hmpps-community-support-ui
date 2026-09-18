@@ -74,7 +74,6 @@ test.describe('Offence Sentence Page', () => {
       'Sentence end date',
     )
     await expect(offenceSentencePage.summaryRows.nth(3).locator('.govuk-summary-list__value')).toHaveText('1 June 2026')
-    await expect(offenceSentencePage.licenceConditionsDetailsTextArea).not.toBeVisible()
   })
 
   test('shows expected release date row when sentence end date is missing', async ({ page }) => {

@@ -1,11 +1,14 @@
 import {
   WithdrawalConfirmationSchema,
-  WithdrawalFormDataSchema,
-  WithdrawalReasonSchema,
-  withdrawalReasons,
+  createWithdrawalFormDataSchema,
+  createWithdrawalReasonSchema,
 } from './WithdrawalFormData'
 
 describe('withdrawal form validation', () => {
+  const withdrawalReasons = ['Ineligible referral', 'Not engaged', 'Another reason']
+  const WithdrawalReasonSchema = createWithdrawalReasonSchema(withdrawalReasons)
+  const WithdrawalFormDataSchema = createWithdrawalFormDataSchema(withdrawalReasons)
+
   it.each(withdrawalReasons)('accepts %s as a withdrawal reason', withdrawalReason => {
     expect(WithdrawalReasonSchema.safeParse({ withdrawalReason }).success).toBe(true)
   })
@@ -20,8 +23,8 @@ describe('withdrawal form validation', () => {
 
   it('requires additional information', () => {
     const result = WithdrawalFormDataSchema.safeParse({
-      withdrawalReason: 'NOT_ENGAGED',
-      NOT_ENGAGEDDetails: '  ',
+      withdrawalReason: 'Not engaged',
+      'Not engagedDetails': '  ',
     })
     expect(result.success).toBe(false)
     if (!result.success) {
@@ -33,12 +36,12 @@ describe('withdrawal form validation', () => {
 
   it('limits additional information to 2000 characters', () => {
     const validResult = WithdrawalFormDataSchema.safeParse({
-      withdrawalReason: 'NOT_ENGAGED',
-      NOT_ENGAGEDDetails: 'a'.repeat(2000),
+      withdrawalReason: 'Not engaged',
+      'Not engagedDetails': 'a'.repeat(2000),
     })
     const invalidResult = WithdrawalFormDataSchema.safeParse({
-      withdrawalReason: 'NOT_ENGAGED',
-      NOT_ENGAGEDDetails: 'a'.repeat(2001),
+      withdrawalReason: 'Not engaged',
+      'Not engagedDetails': 'a'.repeat(2001),
     })
 
     expect(validResult.success).toBe(true)

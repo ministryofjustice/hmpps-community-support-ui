@@ -24,6 +24,7 @@ import {
   CheckDraftReferralDetailsDto,
   AdditionalInformationForTheDeliveryPartner,
   OffenceSentenceInfoBffResponseDto,
+  WithdrawReferralRequest,
 } from '@community-support-api'
 import { stubFor } from './wiremock'
 import { duplicateData } from '../testUtils'
@@ -265,6 +266,24 @@ export default {
       },
     }),
 
+  stubWithdrawReferral: (
+    referralReference: string,
+    expectedBody?: WithdrawReferralRequest,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'POST',
+        urlPathPattern: `/community-support/referral/${referralReference}/withdraw`,
+        ...(expectedBody ? { bodyPatterns: [{ equalToJson: JSON.stringify(expectedBody) }] } : {}),
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: {},
+      },
+    }),
+
   stubGetReferral: (httpStatus = 200): SuperAgentRequest =>
     stubFor({
       request: {
@@ -462,6 +481,37 @@ export default {
         status: httpStatus,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: mockData,
+      },
+    }),
+  stubGetWithdrawalReasons: (
+    withdrawalReasons = {
+      'Problem with referral': ['Ineligible referral', 'Mistaken or duplicate referral'],
+      'User related': [
+        'Died',
+        'Moved out of service area',
+        'Not engaged',
+        'Needs met through another route',
+        'Work, caring commitments or sickness',
+        'Another reason',
+      ],
+      'Sentence or custody related': [
+        'Acquitted on appeal',
+        'Returned to custody',
+        'Sentence revoked',
+        'Sentence expired',
+      ],
+    },
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPattern: '/.*referral/withdrawal-reasons',
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: { withdrawalReasons },
       },
     }),
   stubGetICS: (caseRefId: string, mockData: AppointmentIcsResponse, httpStatus = 200): SuperAgentRequest =>

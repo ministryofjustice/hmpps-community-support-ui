@@ -14,15 +14,16 @@ const referralDetails = referralDetailsPageData(referralId)
 const reasonLabels = [
   'Ineligible referral',
   'Mistaken or duplicate referral',
+  'Died',
+  'Moved out of service area',
   'Not engaged',
   'Needs met through another route',
-  'User died',
-  'Work, caring commitments, or sickness',
+  'Work, caring commitments or sickness',
+  'Another reason',
   'Acquitted on appeal',
   'Returned to custody',
   'Sentence revoked',
   'Sentence expired',
-  'Any other change of circumstance',
 ]
 
 test.describe('Withdraw referral', () => {
@@ -30,6 +31,11 @@ test.describe('Withdraw referral', () => {
     await resetStubs()
     await communitySupport.stubGetReferralDetailsPage(200, referralId)
     await communitySupport.stubGetInProgressCase()
+    await communitySupport.stubGetWithdrawalReasons()
+    await communitySupport.stubWithdrawReferral(referralIdentifier, {
+      reasonCode: 'Not engaged',
+      additionalDetails: 'No longer engaging.',
+    })
     await page.goto('/')
     await login(page)
   })
@@ -55,8 +61,7 @@ test.describe('Withdraw referral', () => {
     await expect(withdrawalPage.reasonHeadings).toHaveText([
       'Problem with referral',
       'User related',
-      'Sentence / custody related',
-      'Other',
+      'Sentence or custody related',
     ])
     await expect(withdrawalPage.reasonRadios).toHaveCount(reasonLabels.length)
     await Promise.all(reasonLabels.map(reasonLabel => expect(withdrawalPage.reason(reasonLabel)).toBeVisible()))
@@ -75,9 +80,15 @@ test.describe('Withdraw referral', () => {
 
     await expect(page).toHaveURL(WithdrawalConfirmationPage.url(referralIdentifier))
     const confirmationPage = await WithdrawalConfirmationPage.verifyOnPage(page)
-    await expect(confirmationPage.header).toHaveText(
-      `Withdraw ${referralDetails.personDetailsTableData.name}'s referral`,
+    await expect(confirmationPage.header).toHaveText('Check withdrawal details')
+    await expect(confirmationPage.reasonSummaryKey).toHaveText(
+      `Why are you withdrawing ${referralDetails.personDetailsTableData.name}'s referral?`,
     )
+    await expect(confirmationPage.reasonSummaryValue).toHaveText('Not engaged')
+    await expect(confirmationPage.warningText).toBeVisible()
+    await expect(confirmationPage.withdrawButton).toBeVisible()
+    await expect(confirmationPage.cancelLink).toBeVisible()
+    await expect(confirmationPage.changeLink).toBeVisible()
   })
 
   // AC4
@@ -112,7 +123,7 @@ test.describe('Withdraw referral', () => {
   })
 
   // AC7
-  test('returns to referral details when withdrawal is not confirmed', async ({ page }) => {
+  test('returns to referral details when withdrawal is cancelled', async ({ page }) => {
     await page.goto(WithdrawalReasonPage.url(referralIdentifier))
     const withdrawalPage = await WithdrawalReasonPage.verifyOnPage(page)
     await withdrawalPage.reason('Not engaged').check()
@@ -120,8 +131,7 @@ test.describe('Withdraw referral', () => {
     await withdrawalPage.continueButton.click()
 
     const confirmationPage = await WithdrawalConfirmationPage.verifyOnPage(page)
-    await confirmationPage.choice('No').check()
-    await confirmationPage.continueButton.click()
+    await confirmationPage.cancelLink.click()
 
     await expect(page).toHaveURL(ReferralDetailsPage.url(referralIdentifier))
     await ReferralDetailsPage.verifyOnPage(page)
@@ -136,8 +146,7 @@ test.describe('Withdraw referral', () => {
     await withdrawalPage.continueButton.click()
 
     const confirmationPage = await WithdrawalConfirmationPage.verifyOnPage(page)
-    await confirmationPage.choice('Yes').check()
-    await confirmationPage.continueButton.click()
+    await confirmationPage.withdrawButton.click()
 
     await expect(page).toHaveURL(CaseListPage.url('in-progress'))
     await CaseListPage.verifyOnPage(page)
