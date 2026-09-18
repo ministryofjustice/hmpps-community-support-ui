@@ -45,6 +45,8 @@ import type {
   Selection,
   OffenceSentenceRequest,
   OffenceSentenceInfoBffResponseDto,
+  WithdrawReferralRequest,
+  WithdrawalReasonsGroupedBffResponseDto,
 } from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
@@ -111,6 +113,10 @@ export default class CommunitySupportApiClient extends RestClient {
 
   async getPDUs(username: string): Promise<PDU[]> {
     return this.get({ path: `/bff/reference-data/pdus` }, asSystem(username))
+  }
+
+  getWithdrawalReasons(username: string): Promise<WithdrawalReasonsGroupedBffResponseDto> {
+    return this.get({ path: '/bff/referral/withdrawal-reasons' }, asSystem(username))
   }
 
   getICS(caseRefId: string, username: string): Promise<AppointmentIcsResponse> {
@@ -315,5 +321,9 @@ export default class CommunitySupportApiClient extends RestClient {
       { path: `/draft-referral/additional-information-for-the-delivery-partner/${draftReferralId}`, data },
       asSystem(username),
     )
+  }
+
+  withdrawReferral(referralReference: string, data: WithdrawReferralRequest, username: string): Promise<void> {
+    return this.post({ path: `/referral/${referralReference}/withdraw`, data }, asSystem(username))
   }
 }

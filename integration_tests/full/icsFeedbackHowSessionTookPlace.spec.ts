@@ -60,9 +60,9 @@ test.describe('ICS Feedback - Did session take place by phone call?', () => {
     await page.goto(IcsFeedbackPage.url(ICS_ID))
     const icsFeedbackPage = await IcsFeedbackPage.verifyOnPage(page)
     await icsFeedbackPage.didSessionTakePlaceAsPlannedYesRadio.click()
-    await expect(icsFeedbackPage.videoCallRadio).not.toBeVisible()
-    await expect(icsFeedbackPage.probationOfficeRadio).not.toBeVisible()
-    await expect(icsFeedbackPage.somewhereElseRadio).not.toBeVisible()
+    await expect(page.locator('#conditional-didSessionTakePlaceAsPlanned-2')).toHaveClass(
+      /govuk-radios__conditional--hidden/,
+    )
   })
 
   test('selecting No reveals the how-session sub-question', async ({ page }) => {
