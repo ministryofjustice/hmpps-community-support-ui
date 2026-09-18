@@ -43,6 +43,13 @@
       "disabilitiesLabel": "Disabilities"
     },
     "lastUpdatedLabel": "Last updated",
+    "equalityMonitoringCard": {
+      "heading": "Equality monitoring",
+      "nationalityLabel": "Nationality",
+      "ethnicityLabel": "Ethnicity",
+      "religionOrBeliefLabel": "Religion or belief",
+      "sexLabel": "Sex"
+    },
     "contactDetailsCard": {
       "heading": "Contact details",
       "phoneNumberLabel": "Phone number",
@@ -51,14 +58,8 @@
       "mainAddressLabel": "Main address",
       "addressTypeLabel": "Type of address",
       "addressStartDateLabel": "Start date",
-      "addressNotesLabel": "Notes"
-    },
-    "equalityMonitoringCard": {
-      "heading": "Equality monitoring",
-      "nationalityLabel": "Nationality",
-      "ethnicityLabel": "Ethnicity",
-      "religionOrBeliefLabel": "Religion or belief",
-      "sexLabel": "Sex"
+      "addressNotesLabel": "Notes",
+      "noFixedAbode": "No fixed abode"
     },
     "riskInformationCard": {
       "heading": "Risk information",

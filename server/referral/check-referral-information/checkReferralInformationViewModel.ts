@@ -19,48 +19,12 @@ export type CheckReferralInformationViewModel = {
   referralDetailsSummary: GovukFrontendSummaryList
 }
 
-export type PersonalDetailsCard = {
-  heading: string
-  nameLabel: string
-  crnLabel: string
-  prisonNumberLabel: string
-  locationLabel: string
-  dobLabel: string
-  languageLabel: string
-  currentCircumstancesLabel: string
-  disabilitiesLabel: string
-}
+export type PersonalDetailsCard = GlobalContent['/referral/check-referral-information']['personalDetailsCard']
 
-export type EqualityMonitoringCard = {
-  heading: string
-  nationalityLabel: string
-  ethnicityLabel: string
-  religionOrBeliefLabel: string
-  sexLabel: string
-}
+export type EqualityMonitoringCard = GlobalContent['/referral/check-referral-information']['equalityMonitoringCard']
 
-export type ContactDetailsCard = {
-  heading: string
-  phoneNumberLabel: string
-  mobileNumberLabel: string
-  emailAddressLabel: string
-  mainAddressLabel: string
-  addressTypeLabel?: string
-  addressStartDateLabel?: string
-  addressNotesLabel?: string
-}
+export type ContactDetailsCard = GlobalContent['/referral/check-referral-information']['contactDetailsCard']
 
-export type RiskInformationCard = {
-  heading: string
-  whoIsAtRiskLabel: string
-  riskNatureLabel: string
-  riskCircumstancesLabel: string
-  riskOfSelfHarmLabel: string
-  riskOfSuicideLabel: string
-  concernsCopingInApprovedPremisesLabel: string
-  concernsVulnerabilityLabel: string
-  additionalInformationLabel: string
-  noAdditionalInformationText?: string
-}
+export type RiskInformationCard = GlobalContent['/referral/check-referral-information']['riskInformationCard']
 
 export type CheckReferralInformationContent = GlobalContent['/referral/check-referral-information']
