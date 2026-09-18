@@ -10,11 +10,16 @@ export default class ActionPlanSelectOutcomePresenter extends PresenterBase<
   constructor(
     private readonly caseReference: string,
     private readonly fullName: string,
+    private readonly outcomes: Array<{ id: string; text: string }>,
+    private readonly selectedOutcomeId?: string,
   ) {
     super()
   }
 
-  private buildSelectOutcomeRadio(content: ActionPlanSelectOutcomeContent): GovukFrontendRadios {
+  private buildSelectOutcomeRadio(
+    content: ActionPlanSelectOutcomeContent,
+    errorMessage?: { text: string },
+  ): GovukFrontendRadios {
     return {
       name: 'selectOutcomeRadio',
       fieldset: {
@@ -25,10 +30,12 @@ export default class ActionPlanSelectOutcomePresenter extends PresenterBase<
         },
       },
       hint: { text: content.selectOutcomeHint },
-      items: [
-        { text: 'item1', value: 'item1' },
-        { text: 'item2', value: 'item2' },
-      ],
+      errorMessage,
+      items: this.outcomes.map(outcome => ({
+        text: outcome.text,
+        value: outcome.id,
+        checked: outcome.id === this.selectedOutcomeId,
+      })),
     }
   }
 
@@ -37,7 +44,7 @@ export default class ActionPlanSelectOutcomePresenter extends PresenterBase<
 
     return {
       backLink: { href: `/referral/${this.caseReference}/action-plan/select-a-need` },
-      selectOutcomeRadio: this.buildSelectOutcomeRadio(content),
+      selectOutcomeRadio: this.buildSelectOutcomeRadio(content, res.locals.errors?.messages.selectOutcomeRadio),
       continueButton: { text: content.continueButtonText },
       continueButtonLink: `/referral/${this.caseReference}/action-plan/select-an-outcome`,
     }

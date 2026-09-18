@@ -8,7 +8,8 @@ describe('ActionPlanPresenter', () => {
   it('builds the page header and back link from summary data', () => {
     const actionPlanSummary: ActionPlanSummaryDto = {
       personDetails: {
-        fullName: 'Alex River',
+        firstName: 'Alex',
+        lastName: 'River',
       },
       needs: [],
     }
