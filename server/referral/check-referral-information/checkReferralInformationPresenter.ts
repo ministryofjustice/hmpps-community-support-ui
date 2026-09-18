@@ -12,6 +12,7 @@ import {
   EqualityMonitoringCard,
   PersonalDetailsCard,
   RiskInformationCard,
+  AdditionalSupportNeedsCard,
   ContactDetailsCard,
 } from './checkReferralInformationViewModel'
 
@@ -95,6 +96,13 @@ const formatHomeOfficeInterest = (notes?: string): string => {
   return 'Yes'
 }
 
+const formatAdditionalSupportNeed = (need?: string): string => {
+  if (need) {
+    return `<div>Yes</div><br/><div>${escapeSpecialHtmlCharacters(need)}</div>`
+  }
+  return 'No'
+}
+
 export default class CheckReferralInformationPresenter extends PresenterBase<
   CheckReferralInformationViewModel,
   CheckReferralInformationContent
@@ -120,6 +128,12 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
       content.notAvailable,
     )
     viewModel.additionalInformationSummary = this.buildAdditionalInformationSummary(content.additionalInformationCard)
+    if (content.additionalSupportNeedsCard) {
+      viewModel.additionalSupportNeedsSummary = this.buildAdditionalSupportNeedsSummary(
+        content.additionalSupportNeedsCard,
+        content.notAvailable,
+      )
+    }
     viewModel.riskInformationSummary = this.buildRiskInformationSummary(
       content.riskInformationCard,
       content.notAvailable,
@@ -194,7 +208,7 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
         },
         attributes: { 'data-testid': 'personal-details' },
       },
-      rows: rows,
+      rows,
     }
   }
 
@@ -228,7 +242,7 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
         },
         attributes: { 'data-testid': 'risk-information' },
       },
-      rows: rows,
+      rows,
     }
   }
 
@@ -241,7 +255,7 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
         },
         attributes: { 'data-testid': 'referral-details' },
       },
-      rows: rows,
+      rows,
     }
   }
 
@@ -293,7 +307,7 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
         },
         attributes: { 'data-testid': 'contact-details' },
       },
-      rows: rows,
+      rows,
     }
   }
 
@@ -321,7 +335,50 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
         },
         attributes: { 'data-testid': 'additional-information' },
       },
-      rows: rows,
+      rows,
+    }
+  }
+
+  private buildAdditionalSupportNeedsSummary(cardContent: AdditionalSupportNeedsCard): GovukFrontendSummaryList {
+    const data = this.draftReferralDetails.additionalSupportNeedsDetailsTableData
+    const { firstName } = this.draftReferralDetails.personDetailsTableData.name
+
+    const rows = [
+      govFrontendSummaryListRow(cardContent.physicalHealthLabel, {
+        html: formatAdditionalSupportNeed(data.physicalHealth),
+      }),
+      govFrontendSummaryListRow(cardContent.mentalOrEmotionalHealthLabel, {
+        html: formatAdditionalSupportNeed(data.mentalOrEmotionalHealth),
+      }),
+      govFrontendSummaryListRow(cardContent.neurodiversityLabel, {
+        html: formatAdditionalSupportNeed(data.neurodiversity),
+      }),
+      govFrontendSummaryListRow(cardContent.locationAndTravelLabel, {
+        html: formatAdditionalSupportNeed(data.locationAndTravel),
+      }),
+      govFrontendSummaryListRow(cardContent.employmentResponsibilitiesLabel, {
+        html: formatAdditionalSupportNeed(data.employmentResponsibilities),
+      }),
+      govFrontendSummaryListRow(cardContent.diversityLabel, { html: formatAdditionalSupportNeed(data.diversity) }),
+      govFrontendSummaryListRow(cardContent.anyOtherNeedsLabel, {
+        html: formatAdditionalSupportNeed(data.anyOtherNeeds),
+      }),
+      govFrontendSummaryListRow(
+        {
+          html: `<div>${cardContent.interpreterLabel.replace('{{ firstName }}', firstName)}</div><br/><div>${cardContent.interpreterLanguageLabel.replace('{{ firstName }}', firstName)}</div>`,
+        },
+        { html: formatAdditionalSupportNeed(data.interpreterLanguage) },
+      ),
+    ]
+
+    return {
+      card: {
+        title: {
+          text: cardContent.heading,
+        },
+        attributes: { 'data-testid': 'additional-support-needs' },
+      },
+      rows,
     }
   }
 }
