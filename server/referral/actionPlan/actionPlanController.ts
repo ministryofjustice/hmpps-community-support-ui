@@ -1,5 +1,7 @@
 import { Request, Response } from 'express'
 import ReferralService from '../../services/referralService'
+import logger from '../../../logger'
+import formatFullName from '../../utils/presenterFormatters'
 import ActionPlanPresenter from './actionPlanPresenter'
 import ActionPlanSelectANeedPresenter from './selectANeed/actionPlanSelectANeedPresenter'
 import ActionPlanSelectOutcomePresenter from './selectOutcome/actionPlanSelectOutcomePresenter'
@@ -55,7 +57,13 @@ class ActionPlanController {
       return res.redirect(`/referral/${caseReference}/action-plan/select-an-outcome`)
     }
 
-    req.session.actionPlanAction = { needId, outcomeId: selectedNeed?.outcomes?.[0]?.id }
+    const outcomeId = selectedNeed?.outcomes?.[0]?.id
+    if (!outcomeId) {
+      logger.error(`No outcome found for need '${needId}' on case '${caseReference}'`)
+      throw new Error(`No outcome found for need '${needId}'`)
+    }
+
+    req.session.actionPlanAction = { needId, outcomeId }
 
     return res.redirect(`/referral/${caseReference}/action-plan/add-activities`)
   }
@@ -72,9 +80,10 @@ class ActionPlanController {
     const outcomes = req.session.actionPlan?.needs?.find(need => need.id === selectedNeedId)?.outcomes ?? []
 
     const actionPlanSummary = await this.referralService.getActionPlanSummary(caseReference, username)
+    const { firstName, lastName } = actionPlanSummary.personDetails
     const presenter = new ActionPlanSelectOutcomePresenter(
       caseReference,
-      actionPlanSummary?.personDetails?.fullName,
+      formatFullName(firstName, lastName),
       outcomes,
       selectedOutcomeId,
     )
@@ -89,7 +98,7 @@ class ActionPlanController {
 
     if (!selectOutcomeRadio) {
       const actionPlanSummary = await this.referralService.getActionPlanSummary(caseReference, username)
-      const firstName = actionPlanSummary.personDetails.fullName.trim().split(/\s+/)[0]
+      const { firstName } = actionPlanSummary.personDetails
 
       req.session.formKeys = ['selectOutcomeRadio']
       req.flash('selectOutcomeRadioError', `Select which outcome is appropriate for ${firstName}`)

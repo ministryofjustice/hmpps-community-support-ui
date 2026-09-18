@@ -49,7 +49,8 @@ describe('ActionPlanController', () => {
   it('renders action plan page with summary data', async () => {
     const actionPlanSummary: ActionPlanSummaryDto = {
       personDetails: {
-        fullName: 'Alex River',
+        firstName: 'Alex',
+        lastName: 'River',
       },
       needs: [],
     }
@@ -113,6 +114,17 @@ describe('ActionPlanController', () => {
       expect(req.session.actionPlanAction).toEqual({ needId: 'need-1', outcomeId: 'outcome-1' })
       expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/add-activities')
     })
+
+    it('throws when the selected need has no outcomes', async () => {
+      req.session.actionPlan = {
+        needs: [...needs, { id: 'need-3', label: 'Education', outcomes: [] }],
+      }
+      req.body = { needId: 'need-3' }
+
+      await expect(actionPlanController.submitSelectedNeed(req, res)).rejects.toThrow(
+        "No outcome found for need 'need-3'",
+      )
+    })
   })
 
   describe('select an outcome', () => {
@@ -122,7 +134,7 @@ describe('ActionPlanController', () => {
       }
       req.session.actionPlanAction = { needId: 'need-2', outcomeId: 'outcome-2' }
       referralService.getActionPlanSummary.mockResolvedValue({
-        personDetails: { fullName: 'Alex River' },
+        personDetails: { firstName: 'Alex', lastName: 'River' },
         needs: [],
       })
 
@@ -142,7 +154,7 @@ describe('ActionPlanController', () => {
       }
       req.session.actionPlanAction = { needId: 'need-2' }
       referralService.getActionPlanSummary.mockResolvedValue({
-        personDetails: { fullName: 'Alex River' },
+        personDetails: { firstName: 'Alex', lastName: 'River' },
         needs: [],
       })
 
@@ -159,7 +171,7 @@ describe('ActionPlanController', () => {
     it('flashes an error and redirects back when no outcome is selected', async () => {
       req.session.actionPlan = { needs: [] }
       referralService.getActionPlanSummary.mockResolvedValue({
-        personDetails: { fullName: 'Alex River' },
+        personDetails: { firstName: 'Alex', lastName: 'River' },
         needs: [],
       })
 

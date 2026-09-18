@@ -1453,7 +1453,8 @@ export interface components {
       outcomes: string[]
     }
     ActionPlanSummaryPersonDetails: {
-      fullName: string
+      firstName: string
+      lastName: string
     }
     AppointmentDetailsDto: {
       /** @enum {string|null} */

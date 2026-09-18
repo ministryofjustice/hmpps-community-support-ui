@@ -128,7 +128,8 @@ describe('Referral service tests', () => {
       const caseReference = 'AB1234CD'
       const mockActionPlanSummary: ActionPlanSummaryDto = {
         personDetails: {
-          fullName: 'Alex River',
+          firstName: 'Alex',
+          lastName: 'River',
         },
         needs: [],
       }

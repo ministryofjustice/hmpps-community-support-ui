@@ -31,7 +31,7 @@ test.describe('Select an action plan need', () => {
   }
 
   const actionPlanSummary: ActionPlanSummaryDto = {
-    personDetails: { fullName: 'Alex River' },
+    personDetails: { firstName: 'Alex', lastName: 'River' },
     needs: [],
   }
 
