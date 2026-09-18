@@ -50,6 +50,11 @@
       "religionOrBeliefLabel": "Religion or belief",
       "sexLabel": "Sex"
     },
+    "additionalInformationCard": {
+      "heading": "Additional information",
+      "homeOfficeInterestLabel": "Home Office interest",
+      "opdPathwayLabel": "Offender personality disorder (OPD) pathway"
+    },
     "contactDetailsCard": {
       "heading": "Contact details",
       "phoneNumberLabel": "Phone number",
@@ -226,6 +231,14 @@
         "heading": "User related",
         "reasons": [
           {
+            "value": "USER_DIED",
+            "text": "Died"
+          },
+          {
+            "value": "MOVED_OUT_OF_SERVICE_AREA",
+            "text": "Moved out of service area"
+          },
+          {
             "value": "NOT_ENGAGED",
             "text": "Not engaged"
           },
@@ -234,17 +247,17 @@
             "text": "Needs met through another route"
           },
           {
-            "value": "USER_DIED",
-            "text": "User died"
+            "value": "WORK_CARING_COMMITMENTS_OR_SICKNESS",
+            "text": "Work, caring commitments or sickness"
           },
           {
-            "value": "WORK_CARING_COMMITMENTS_OR_SICKNESS",
-            "text": "Work, caring commitments, or sickness"
+            "value": "ANOTHER_REASON",
+            "text": "Another reason"
           }
         ]
       },
       {
-        "heading": "Sentence / custody related",
+        "heading": "Sentence or custody related",
         "reasons": [
           {
             "value": "ACQUITTED_ON_APPEAL",
@@ -263,24 +276,16 @@
             "text": "Sentence expired"
           }
         ]
-      },
-      {
-        "heading": "Other",
-        "reasons": [
-          {
-            "value": "OTHER_CHANGE_OF_CIRCUMSTANCE",
-            "text": "Any other change of circumstance"
-          }
-        ]
       }
     ]
   },
-  "/referral/:id/withdraw/confirmation": {
-    "pageHeader": "Withdraw {{ name }}'s referral",
-    "question": "Are you sure you want to withdraw this referral?",
-    "yesText": "Yes",
-    "noText": "No",
-    "continueButtonText": "Continue"
+  "/referral/:id/withdraw/confirm": {
+    "pageHeader": "Check withdrawal details",
+    "questionLabel": "Why are you withdrawing {{ name }}'s referral?",
+    "warningText": "If you are withdrawing this referral, you cannot start or change it again.",
+    "withdrawButtonText": "Withdraw referral",
+    "cancelLinkText": "Cancel",
+    "changeLinkText": "Change"
   },
   "/referral/:id/appointment/confirm-ics": {
     "pageHeader": "Check the details before scheduling the ICS",

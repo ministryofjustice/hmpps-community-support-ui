@@ -34,9 +34,22 @@ describe('CheckReferralInformationPresenter', () => {
           ],
         },
         equalityDetailsTableData: { ethnicity: 'White British', religionOrBelief: 'None', sex: 'Male' },
-        additionalInformationDetailsTableData: {},
+        additionalInformationDetailsTableData: {
+          ofHomeOfficeInterest: true,
+          homeOfficeInterestNotes: 'Claiming asylum from Iran',
+          offenderPersonalityDisorderPathway: 'Assessment ongoing',
+        },
         contactDetailsTableData: {},
-        riskInformationDetailsTableData: {},
+        riskInformationDetailsTableData: {
+          whoIsAtRisk: 'Family members',
+          natureOfRisk: 'Violence',
+          riskImminence: 'When intoxicated',
+          riskOfSelfHarm: 'Low',
+          riskOfSuicide: 'Low',
+          riskToSelfHostelSetting: 'No concerns',
+          riskToSelfVulnerability: 'Vulnerable',
+          additionalInformation: 'Some additional risk info',
+        },
         additionalSupportNeedsDetailsTableData: {},
         personNeedsDetailsTableData: {},
         referralAreaTableData: { area: 'London' },
@@ -92,6 +105,50 @@ describe('CheckReferralInformationPresenter', () => {
       expect(renderData.content.submitButton).toEqual({
         text: 'Submit referral information',
         classes: 'govuk-!-margin-top-6',
+      })
+
+      expect(renderData.content.additionalInformationSummary.rows).toHaveLength(2)
+      expect(renderData.content.additionalInformationSummary.rows[0]).toMatchObject({
+        key: { text: 'Home Office interest' },
+        value: { html: '<div>Yes</div><br/><div>Claiming asylum from Iran</div>' },
+      })
+      expect(renderData.content.additionalInformationSummary.rows[1]).toMatchObject({
+        key: { text: 'Offender personality disorder (OPD) pathway' },
+        value: { text: 'Assessment ongoing' },
+      })
+
+      expect(renderData.content.riskInformationSummary.rows).toHaveLength(8)
+      expect(renderData.content.riskInformationSummary.rows[0]).toMatchObject({
+        key: { text: 'Who is at risk' },
+        value: { text: 'Family members' },
+      })
+      expect(renderData.content.riskInformationSummary.rows[1]).toMatchObject({
+        key: { text: 'What is the nature of the risk?' },
+        value: { text: 'Violence' },
+      })
+      expect(renderData.content.riskInformationSummary.rows[2]).toMatchObject({
+        key: { text: 'In what circumstances or situations would offending be most likely to occur?' },
+        value: { text: 'When intoxicated' },
+      })
+      expect(renderData.content.riskInformationSummary.rows[3]).toMatchObject({
+        key: { text: 'Risk of self-harm' },
+        value: { text: 'Low' },
+      })
+      expect(renderData.content.riskInformationSummary.rows[4]).toMatchObject({
+        key: { text: 'Risk of suicide' },
+        value: { text: 'Low' },
+      })
+      expect(renderData.content.riskInformationSummary.rows[5]).toMatchObject({
+        key: { text: 'Concerns in relation to coping in an approved premises or hostel' },
+        value: { text: 'No concerns' },
+      })
+      expect(renderData.content.riskInformationSummary.rows[6]).toMatchObject({
+        key: { text: 'Concerns in relation to vulnerability' },
+        value: { text: 'Vulnerable' },
+      })
+      expect(renderData.content.riskInformationSummary.rows[7]).toMatchObject({
+        key: { text: 'Additional information' },
+        value: { text: 'Some additional risk info' },
       })
 
       expect(res.render).toHaveBeenCalledWith(
@@ -251,6 +308,35 @@ describe('CheckReferralInformationPresenter', () => {
         key: { text: 'Date of birth' },
         value: { text: '20 Feb 1975 (51 years old)' },
       })
+    })
+
+    it('should not include additional information summary when no additional information provided', () => {
+      const draftReferralDetails = {
+        id: 'referralId123',
+        createdDate: '2026-02-10T11:23:00.780Z',
+        personDetailsTableData: {
+          name: { firstName: 'John', lastName: 'Doe' },
+          crn: 'X123456',
+          dateOfBirth: '1975-02-20',
+          preferredLanguage: 'English',
+          disabilities: [],
+          personalCircumstances: [],
+        },
+        equalityDetailsTableData: {},
+        additionalInformationDetailsTableData: {},
+        contactDetailsTableData: {},
+        riskInformationDetailsTableData: {},
+        additionalSupportNeedsDetailsTableData: {},
+        personNeedsDetailsTableData: {},
+        referralAreaTableData: {},
+        mainPocDetailsTableData: {},
+      } as CheckDraftReferralDetailsDto
+
+      new CheckReferralInformationPresenter(draftReferralDetails).renderPage(res)
+
+      const renderData = (res.render as jest.Mock).mock.calls[0][1] as { content: CheckReferralInformationViewModel }
+
+      expect(renderData.content.additionalInformationSummary!.rows).toHaveLength(0)
     })
   })
 })

@@ -18,6 +18,7 @@ import type {
   CommunityServiceProviderBffResponseDto,
   OffenceSentenceInfoBffResponseDto,
   OffenceSentenceRequest,
+  WithdrawReferralRequest,
 } from '@community-support-api'
 import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import { AgentConfig, ApiConfig } from '@ministryofjustice/hmpps-rest-client'
@@ -284,6 +285,27 @@ describe('CommunitySupportApiClient tests', () => {
       expect(result).resolves.toEqual(mockProbationOffices)
     })
   })
+
+  describe('getWithdrawalReasons tests', () => {
+    it('should return withdrawal reasons on a 200 response', () => {
+      const response = {
+        withdrawalReasons: {
+          'Problem with referral': ['Ineligible referral', 'Mistaken or duplicate referral'],
+          'User related': ['Not engaged', 'Needs met through another route', 'Died'],
+        },
+      }
+
+      nock('http://localhost:8080', {
+        reqheaders: { authorization: 'Bearer dummy-token' },
+      })
+        .get('/bff/referral/withdrawal-reasons')
+        .reply(200, response)
+
+      const result = communitySupportApiClient.getWithdrawalReasons('user1')
+
+      expect(result).resolves.toEqual(response)
+    })
+  })
   describe('getReferralProgress tests', () => {
     it('should return the progress of a referral with a 200 response', () => {
       const caseReference = 'AB1234CD'
@@ -497,6 +519,26 @@ describe('CommunitySupportApiClient tests', () => {
       const result = communitySupportApiClient.updateOffenceSentencePage(referralId, request, 'user1')
 
       expect(result).resolves.toEqual(response)
+    })
+  })
+
+  describe('withdrawReferral tests', () => {
+    it('should submit referral withdrawal on a 200 response', () => {
+      const referralReference = 'QD0878DE'
+      const request: WithdrawReferralRequest = {
+        reasonCode: 'NOT_ENGAGED',
+        additionalDetails: 'No longer engaging',
+      }
+
+      nock('http://localhost:8080', {
+        reqheaders: { authorization: 'Bearer dummy-token' },
+      })
+        .post(`/referral/${referralReference}/withdraw`, request)
+        .reply(200)
+
+      const result = communitySupportApiClient.withdrawReferral(referralReference, request, 'user1')
+
+      expect(result).resolves.toEqual({})
     })
   })
 })

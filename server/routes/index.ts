@@ -240,11 +240,9 @@ export default function routes({
 
   post('/referral/:referralIdentifier/withdraw', (req, res) => withdrawalController.submitReason(req, res))
 
-  get('/referral/:referralIdentifier/withdraw/confirmation', (req, res) =>
-    withdrawalController.showConfirmation(req, res),
-  )
+  get('/referral/:referralIdentifier/withdraw/confirm', (req, res) => withdrawalController.showConfirmation(req, res))
 
-  post('/referral/:referralIdentifier/withdraw/confirmation', (req, res) =>
+  post('/referral/:referralIdentifier/withdraw/confirm', (req, res) =>
     withdrawalController.submitConfirmation(req, res),
   )
 

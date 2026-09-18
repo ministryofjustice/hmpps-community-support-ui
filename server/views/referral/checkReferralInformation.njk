@@ -20,6 +20,9 @@
   <h3 class="govuk-heading-m govuk-!-margin-top-8">{{ content.personalDetailsHeader }}</h3>
     {{ govukSummaryList(content.personalDetailsSummary) }}
     {{ govukSummaryList(content.equalityMonitoringSummary) }}
+    {% if content.additionalInformationSummary.rows.length > 0 %}
+      {{ govukSummaryList(content.additionalInformationSummary) }}
+    {% endif %}
     {{ govukSummaryList(content.contactDetailsSummary) }}
     {{ govukSummaryList(content.riskInformationSummary) }}
 

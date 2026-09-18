@@ -9,9 +9,19 @@ const DEFAULT_ROLES = ['ROLE_COMMUNITY_SUPPORT_REFERRER', 'ROLE_COMMUNITY_SUPPOR
 
 export const attemptHmppsAuthLogin = async (page: Page) => {
   await page.goto('/')
-  page.locator('h1', { hasText: 'Sign in' })
-  const url = await hmppsAuth.getSignInUrl()
-  await page.goto(url)
+  await page.waitForLoadState('networkidle')
+  const currentUrl = new URL(page.url())
+  const state = currentUrl.searchParams.get('state')
+
+  if (!state) {
+    if (currentUrl.pathname === '/') {
+      return
+    }
+
+    throw new Error(`Expected auth state in sign-in URL, got ${page.url()}`)
+  }
+
+  await page.goto(`/sign-in/callback?code=codexxxx&state=${state}`)
 }
 
 export const login = async (

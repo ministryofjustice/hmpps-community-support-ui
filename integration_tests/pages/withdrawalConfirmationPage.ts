@@ -1,20 +1,22 @@
 import { expect, Locator, Page } from '@playwright/test'
 import AbstractPage from './abstractPage'
-import ErrorSummary from './components/errorSummary'
 
 export default class WithdrawalConfirmationPage extends AbstractPage {
   private constructor(
     page: Page,
     readonly header: Locator,
-    readonly confirmationRadios: Locator,
-    readonly errorSummary: ErrorSummary,
-    readonly continueButton: Locator,
+    readonly reasonSummaryKey: Locator,
+    readonly reasonSummaryValue: Locator,
+    readonly warningText: Locator,
+    readonly withdrawButton: Locator,
+    readonly cancelLink: Locator,
+    readonly changeLink: Locator,
   ) {
     super(page)
   }
 
   static url(referralIdentifier: string): string {
-    return `/referral/${referralIdentifier}/withdraw/confirmation`
+    return `/referral/${referralIdentifier}/withdraw/confirm`
   }
 
   static async verifyOnPage(page: Page): Promise<WithdrawalConfirmationPage> {
@@ -23,13 +25,12 @@ export default class WithdrawalConfirmationPage extends AbstractPage {
     return new WithdrawalConfirmationPage(
       page,
       header,
-      page.locator('input[name="confirmWithdrawal"]'),
-      await ErrorSummary.create(page.locator('[data-testid="error-messages"]')),
-      page.getByRole('button', { name: 'Continue', exact: true }),
+      page.locator('.govuk-summary-list__key'),
+      page.locator('.govuk-summary-list__value'),
+      page.getByText('If you are withdrawing this referral, you cannot start or change it again.'),
+      page.getByRole('button', { name: 'Withdraw referral', exact: true }),
+      page.getByRole('link', { name: 'Cancel', exact: true }),
+      page.getByRole('link', { name: 'Change withdrawal reason', exact: true }),
     )
-  }
-
-  choice(label: string): Locator {
-    return this.page.getByLabel(label, { exact: true })
   }
 }

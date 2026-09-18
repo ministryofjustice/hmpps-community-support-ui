@@ -8,6 +8,7 @@ export type CheckReferralInformationViewModel = {
   personalDetailsHeader: string
   riskInformationHeader: string
   contactDetailsSummary?: GovukFrontendSummaryList
+  additionalInformationSummary?: GovukFrontendSummaryList
   riskInformationSummary: GovukFrontendSummaryList
   referralDetailsHeader: string
   referralContactDetailsHeader: string
@@ -22,6 +23,8 @@ export type CheckReferralInformationViewModel = {
 export type PersonalDetailsCard = GlobalContent['/referral/check-referral-information']['personalDetailsCard']
 
 export type EqualityMonitoringCard = GlobalContent['/referral/check-referral-information']['equalityMonitoringCard']
+
+export type AdditionalInformationCard = GlobalContent['/referral/check-referral-information']['additionalInformationCard']
 
 export type ContactDetailsCard = GlobalContent['/referral/check-referral-information']['contactDetailsCard']
 

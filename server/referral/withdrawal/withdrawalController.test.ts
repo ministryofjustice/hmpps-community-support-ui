@@ -6,17 +6,19 @@ import WithdrawalController from './withdrawalController'
 describe('WithdrawalController', () => {
   const referralIdentifier = 'QD0878DE'
   let controller: WithdrawalController
+  let referralService: jest.Mocked<ReferralService>
   let req: Request
   let res: Response
 
   beforeEach(() => {
-    controller = new WithdrawalController({} as ReferralService, new WithdrawalService())
+    referralService = { withdrawReferral: jest.fn() } as unknown as jest.Mocked<ReferralService>
+    controller = new WithdrawalController(referralService, new WithdrawalService())
     req = {
       params: { referralIdentifier },
       session: {
         withdrawalReferrals: {
           [referralIdentifier]: {
-            withdrawalReason: 'NOT_ENGAGED',
+            withdrawalReason: 'Not engaged',
             additionalInformation: 'No longer engaging',
           },
         },
@@ -24,28 +26,27 @@ describe('WithdrawalController', () => {
       body: {},
       flash: jest.fn(),
     } as unknown as Request
-    res = { redirect: jest.fn() } as unknown as Response
+    res = {
+      redirect: jest.fn(),
+      locals: { user: { username: 'test-user' } },
+    } as unknown as Response
   })
 
-  it('returns to referral details when withdrawal is not confirmed', async () => {
-    req.body = { confirmWithdrawal: 'no' }
+  it('submits withdrawal and returns to open cases when confirmed', async () => {
+    referralService.withdrawReferral.mockResolvedValue(undefined)
 
     await controller.submitConfirmation(req, res)
 
-    expect(res.redirect).toHaveBeenCalledWith(`/referral-details/${referralIdentifier}`)
-  })
-
-  // TODO - Update this to use the confirmation page once implemented
-  it('returns to open cases when withdrawal is confirmed', async () => {
-    req.body = { confirmWithdrawal: 'yes' }
-
-    await controller.submitConfirmation(req, res)
-
+    expect(referralService.withdrawReferral).toHaveBeenCalledWith(
+      referralIdentifier,
+      {
+        reasonCode: 'Not engaged',
+        additionalDetails: 'No longer engaging',
+      },
+      'test-user',
+    )
     expect(res.redirect).toHaveBeenCalledWith('/cases-in-progress')
-    expect(req.session.withdrawalReferrals[referralIdentifier]).toEqual({
-      withdrawalReason: 'NOT_ENGAGED',
-      additionalInformation: 'No longer engaging',
-    })
+    expect(req.session.withdrawalReferrals[referralIdentifier]).toBeUndefined()
   })
 
   it('guards confirmation when no reason has been saved', async () => {
@@ -54,5 +55,6 @@ describe('WithdrawalController', () => {
     await controller.submitConfirmation(req, res)
 
     expect(res.redirect).toHaveBeenCalledWith(`/referral/${referralIdentifier}/withdraw`)
+    expect(referralService.withdrawReferral).not.toHaveBeenCalled()
   })
 })
