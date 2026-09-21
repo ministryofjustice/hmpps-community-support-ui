@@ -57,26 +57,33 @@ const formatDisabilities = (list: components['schemas']['Disability'][], notAvai
 }
 
 const formatAddress = (
-  address?: string,
-  typeLabel?: string,
-  startDateLabel?: string,
-  notesLabel?: string,
-  notAvailable?: string,
+  addressData: {
+    noFixedAbode?: boolean
+    noFixedAbodeText?: string
+    address?: string | null
+    addressType?: string | null
+    startDate?: string | null
+    notes?: string | null
+  },
+  typeLabel: string,
+  startDateLabel: string,
+  notesLabel: string,
+  notAvailable: string,
 ): string => {
-  const typeVal = notAvailable
-  const startDateVal = format(new Date(), 'd MMMM yyyy')
-  const notesVal = notAvailable
-
+  let address = addressData?.address ?? undefined
+  if (addressData?.noFixedAbode) {
+    address = addressData?.noFixedAbodeText
+  }
   return `<div>${address || notAvailable}</div>
 <br/>
 <div class="govuk-summary-list__key">${typeLabel}</div>
-<div>${typeVal}</div>
+<div>${addressData.addressType || notAvailable}</div>
 <br/>
 <div class="govuk-summary-list__key">${startDateLabel}</div>
-<div>${startDateVal}</div>
+<div>${addressData.startDate || notAvailable}</div>
 <br/>
 <div class="govuk-summary-list__key">${notesLabel}</div>
-<div>${notesVal}</div>`
+<div>${addressData.notes || notAvailable}</div>`
 }
 
 const resolveName = (name: { firstName: string; middleName?: string | null; lastName: string }): string =>
@@ -110,10 +117,12 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
     viewModel.pageHeader = resolveName(this.draftReferralDetails.personDetailsTableData.name)
     viewModel.pageSubHeader = content.pageSubHeader
     viewModel.personalDetailsHeader = `About ${this.draftReferralDetails.personDetailsTableData.name.firstName}`
+    // compute last-updated values and pass label through
+    const personalLastUpdated = content.lastUpdatedLabel
     viewModel.personalDetailsSummary = this.buildPersonalDetailsSummary(
       content.personalDetailsCard,
       content.notAvailable,
-      content.lastUpdatedLabel,
+      personalLastUpdated,
     )
     viewModel.equalityMonitoringSummary = this.buildEqualityMonitoringSummary(
       content.equalityMonitoringCard,
@@ -127,9 +136,11 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
     viewModel.referralDetailsHeader = content.referralDetailsHeader
     viewModel.referralDetailsSummary = this.buildReferralDetailsSummary()
     if (content.contactDetailsCard) {
+      const contactLastUpdatedLabel = content.lastUpdatedLabel
       viewModel.contactDetailsSummary = this.buildContactDetailsSummary(
         content.contactDetailsCard,
         content.notAvailable,
+        contactLastUpdatedLabel,
       )
     }
     viewModel.referralContactDetailsHeader = content.referralContactDetailsHeader
@@ -269,21 +280,36 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
     }
   }
 
-  private buildContactDetailsSummary(cardContent: ContactDetailsCard, notAvailable: string): GovukFrontendSummaryList {
-    const data = this.draftReferralDetails.contactDetailsTableData || {}
+  private buildContactDetailsSummary(
+    cardContent: ContactDetailsCard,
+    notAvailable: string,
+    lastUpdatedLabel: string,
+  ): GovukFrontendSummaryList {
+    const data = this.draftReferralDetails.contactDetailsTableData as any
 
-    const addressValueHtml = formatAddress(
-      data.address,
+    const formattedAddress = formatAddress(
+      {
+        noFixedAbode: data.noFixedAbode,
+        noFixedAbodeText: data.noFixedAbodeText,
+        address: data.address,
+        addressType: data.addressType,
+        startDate: data.addressStartDate,
+        notes: data.addressNotes,
+      },
       cardContent.addressTypeLabel,
       cardContent.addressStartDateLabel,
       cardContent.addressNotesLabel,
       notAvailable,
     )
+    const addressLabel = data.inCustody ? cardContent.mainAddressLabel : cardContent.lastKnownAddressLabel
     const rows = [
       govFrontendSummaryListRow(cardContent.phoneNumberLabel, data.phoneNumber || notAvailable),
       govFrontendSummaryListRow(cardContent.mobileNumberLabel, data.mobileNumber || notAvailable),
       govFrontendSummaryListRow(cardContent.emailAddressLabel, data.email || notAvailable),
-      govFrontendSummaryListRow({ html: cardContent.mainAddressLabel }, { html: addressValueHtml }),
+      govFrontendSummaryListRow(
+        { html: labelWithLastUpdated(addressLabel, lastUpdatedLabel, data.addressLastUpdated || notAvailable) },
+        { html: formattedAddress },
+      ),
     ]
 
     return {
