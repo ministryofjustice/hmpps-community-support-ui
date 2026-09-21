@@ -131,7 +131,6 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
     if (content.additionalSupportNeedsCard) {
       viewModel.additionalSupportNeedsSummary = this.buildAdditionalSupportNeedsSummary(
         content.additionalSupportNeedsCard,
-        content.notAvailable,
       )
     }
     viewModel.riskInformationSummary = this.buildRiskInformationSummary(
@@ -356,6 +355,9 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
       govFrontendSummaryListRow(cardContent.locationAndTravelLabel, {
         html: formatAdditionalSupportNeed(data.locationAndTravel),
       }),
+      govFrontendSummaryListRow(cardContent.caringResponsibilitiesLabel, {
+        html: formatAdditionalSupportNeed(data.caringResponsibilities),
+      }),
       govFrontendSummaryListRow(cardContent.employmentResponsibilitiesLabel, {
         html: formatAdditionalSupportNeed(data.employmentResponsibilities),
       }),
@@ -365,7 +367,7 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
       }),
       govFrontendSummaryListRow(
         {
-          html: `<div>${cardContent.interpreterLabel.replace('{{ firstName }}', firstName)}</div><br/><div>${cardContent.interpreterLanguageLabel.replace('{{ firstName }}', firstName)}</div>`,
+          html: `<div>${cardContent.interpreterLabel.replace('{{ firstName }}', escapeSpecialHtmlCharacters(firstName))}</div><br/><div>${cardContent.interpreterLanguageLabel.replace('{{ firstName }}', escapeSpecialHtmlCharacters(firstName))}</div>`,
         },
         { html: formatAdditionalSupportNeed(data.interpreterLanguage) },
       ),

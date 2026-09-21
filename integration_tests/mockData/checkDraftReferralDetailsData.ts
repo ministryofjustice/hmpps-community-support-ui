@@ -46,6 +46,7 @@ const checkDraftReferralDetails: CheckDraftReferralDetailsDto = {
     mentalOrEmotionalHealth: 'Struggles with anxiety',
     neurodiversity: 'Autism',
     locationAndTravel: 'Limited mobility',
+    caringResponsibilities: 'Cares for a young child',
     employmentResponsibilities: 'Works part-time and cares for dependants',
     diversity: 'Is diverse',
     anyOtherNeeds: 'Needs printed materials',

@@ -84,11 +84,12 @@
       "mentalOrEmotionalHealthLabel": "Mental or emotional health",
       "neurodiversityLabel": "Neurodiversity",
       "locationAndTravelLabel": "Location and travel",
+      "caringResponsibilitiesLabel": "Caring responsibilities",
       "employmentResponsibilitiesLabel": "Employment responsibilities",
       "diversityLabel": "Diversity",
       "anyOtherNeedsLabel": "Any other needs",
       "interpreterLabel": "Does {{ firstName }} need an interpreter",
-      "interpreterLanguageLabel": "What language does {{ firstName }} need an interpreter for? "
+      "interpreterLanguageLabel": "What language does {{ firstName }} need an interpreter for?"
 
 
     },
