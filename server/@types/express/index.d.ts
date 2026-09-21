@@ -53,7 +53,10 @@ export declare module 'express-session' {
     withdrawalReferrals: Record<string, WithdrawalFormData>
     actionPlan?: {
       needs: ActionPlanSelectANeedNeed[]
-      selectedNeedId?: string
+    }
+    actionPlanAction?: {
+      needId: string
+      outcomeId?: string
     }
     ppDetails?: UpdateProbationPractitionerDetailsRequest & {
       pduName: string

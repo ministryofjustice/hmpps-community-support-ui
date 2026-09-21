@@ -16,7 +16,10 @@ export default class ActionPlanSelectANeedPresenter extends PresenterBase<
     super()
   }
 
-  private buildWhichNeedsRadio(content: ActionPlanSelectANeedContent): GovukFrontendRadios {
+  private buildWhichNeedsRadio(
+    content: ActionPlanSelectANeedContent,
+    errorMessage?: { text: string },
+  ): GovukFrontendRadios {
     return {
       name: 'needId',
       fieldset: {
@@ -27,6 +30,7 @@ export default class ActionPlanSelectANeedPresenter extends PresenterBase<
         },
       },
       hint: { text: content.whichNeedHint },
+      errorMessage,
       items: this.needs
         .filter(need => (need.outcomes?.length ?? 0) > 0)
         .map(need => ({
@@ -43,7 +47,7 @@ export default class ActionPlanSelectANeedPresenter extends PresenterBase<
     return {
       pageHeader: content.pageHeader,
       backLink: { href: `/referral/${this.caseReference}/action-plan` },
-      whichNeedsRadio: this.buildWhichNeedsRadio(content),
+      whichNeedsRadio: this.buildWhichNeedsRadio(content, res.locals.errors?.messages.needId),
       continueButton: { text: content.continueButtonText },
       continueButtonLink: `/referral/${this.caseReference}/action-plan/select-a-need`,
     }

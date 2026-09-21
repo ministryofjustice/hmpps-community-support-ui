@@ -31,7 +31,7 @@ test.describe('Select an action plan need', () => {
   }
 
   const actionPlanSummary: ActionPlanSummaryDto = {
-    personDetails: { fullName: 'Alex River' },
+    personDetails: { firstName: 'Alex', lastName: 'River' },
     needs: [],
   }
 
@@ -49,6 +49,18 @@ test.describe('Select an action plan need', () => {
     const selectANeedPage = await ActionPlanSelectANeedPage.verifyOnPage(page)
 
     expect(selectANeedPage.needs.labels()).toEqual(['Accommodation', 'Employment'])
+  })
+
+  test('shows an error when no need is selected', async ({ page }) => {
+    await communitySupport.stubGetActionPlanNeedsAndOutcomes(needsAndOutcomes)
+
+    await page.goto(ActionPlanSelectANeedPage.url(caseReference))
+    const selectANeedPage = await ActionPlanSelectANeedPage.verifyOnPage(page)
+
+    await selectANeedPage.continueButton.click()
+
+    await expect(page).toHaveURL(ActionPlanSelectANeedPage.url(caseReference))
+    await expect(page.getByText('Select which need you are creating an action for', { exact: true })).toHaveCount(2)
   })
 
   test('redirects to select an outcome for a need with multiple outcomes', async ({ page }) => {

@@ -11,7 +11,8 @@ test.describe('Action Plan Page', () => {
 
   const actionPlanSummary: ActionPlanSummaryDto = {
     personDetails: {
-      fullName: 'Alex River',
+      firstName: 'Alex',
+      lastName: 'River',
     },
     needs: [],
   }
