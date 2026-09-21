@@ -1229,7 +1229,7 @@ export interface components {
       label: string
       hint?: string | null
       /** @enum {string} */
-      answerType: 'TEXTAREA' | 'RADIO' | 'CHECKBOX'
+      answerType: 'TEXTAREA' | 'RADIO' | 'CHECKBOX' | 'DATE'
       /** Format: int32 */
       maximumNumberOfResponses: number
       choices?: components['schemas']['QuestionChoice'][] | null
