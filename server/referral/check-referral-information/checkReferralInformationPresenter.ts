@@ -205,7 +205,7 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
         },
         attributes: { 'data-testid': 'personal-details' },
       },
-      rows: rows,
+      rows,
     }
   }
 
@@ -239,7 +239,7 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
         },
         attributes: { 'data-testid': 'risk-information' },
       },
-      rows: rows,
+      rows,
     }
   }
 
@@ -252,7 +252,7 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
         },
         attributes: { 'data-testid': 'referral-details' },
       },
-      rows: rows,
+      rows,
     }
   }
 
@@ -285,12 +285,12 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
     notAvailable: string,
     lastUpdatedLabel: string,
   ): GovukFrontendSummaryList {
-    const data = this.draftReferralDetails.contactDetailsTableData as any
+    const data = this.draftReferralDetails.contactDetailsTableData
 
     const formattedAddress = formatAddress(
       {
-        noFixedAbode: data.noFixedAbode,
-        noFixedAbodeText: data.noFixedAbodeText,
+        noFixedAbode: data.noFixedAddress,
+        noFixedAbodeText: cardContent.noFixedAbode,
         address: data.address,
         addressType: data.addressType,
         startDate: data.addressStartDate,
@@ -307,7 +307,7 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
       govFrontendSummaryListRow(cardContent.mobileNumberLabel, data.mobileNumber || notAvailable),
       govFrontendSummaryListRow(cardContent.emailAddressLabel, data.email || notAvailable),
       govFrontendSummaryListRow(
-        { html: labelWithLastUpdated(addressLabel, lastUpdatedLabel, data.addressLastUpdated || notAvailable) },
+        { html: labelWithLastUpdated(addressLabel, lastUpdatedLabel, notAvailable) },
         { html: formattedAddress },
       ),
     ]
@@ -319,7 +319,7 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
         },
         attributes: { 'data-testid': 'contact-details' },
       },
-      rows: rows,
+      rows,
     }
   }
 
@@ -347,7 +347,7 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
         },
         attributes: { 'data-testid': 'additional-information' },
       },
-      rows: rows,
+      rows,
     }
   }
 }

@@ -144,6 +144,20 @@ test.describe('Check Referral Information Page', () => {
     )
     await expect(checkReferralInformationPage.riskInformationSummary.rows[7].key).toHaveText('Additional information')
     await expect(checkReferralInformationPage.riskInformationSummary.rows[7].value).toHaveText('No further details')
+
+    // Contact details assertions for new address section
+    const contact = checkReferralInformationPage.contactDetailsSummary
+    const summary = contact
+    await expect(summary.title).toHaveText('Contact details')
+    await expect(summary.rows).toHaveLength(4)
+    await expect(summary.rows[0].key).toHaveText('Phone number')
+    await expect(summary.rows[0].value).toHaveText('01234567890')
+    await expect(summary.rows[1].key).toHaveText('Mobile number')
+    await expect(summary.rows[1].value).toHaveText('09876543210')
+    await expect(summary.rows[2].key).toHaveText('Email address')
+    await expect(summary.rows[2].value).toHaveText('alex.river@test.com')
+    await expect(summary.rows[3].key).toHaveText('Main address')
+    await expect(summary.rows[3].value).toHaveText('10 Main Street, London, AA1 1AA')
   })
 
   test('should display prison number and DOB on check referral information when searched by prison number', async ({
