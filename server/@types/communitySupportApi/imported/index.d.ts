@@ -1764,6 +1764,11 @@ export interface components {
       mobileNumber?: string | null
       email?: string | null
       address?: string | null
+      noFixedAddress?: boolean | null
+      addressType?: string | null
+      /** Format: date */
+      addressStartDate?: string | null
+      addressNotes?: string | null
     }
     DraftEqualityDetailsTableDataDto: {
       nationality?: string | null
