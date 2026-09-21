@@ -301,7 +301,7 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
       cardContent.addressNotesLabel,
       notAvailable,
     )
-    const addressLabel = data.inCustody ? cardContent.mainAddressLabel : cardContent.lastKnownAddressLabel
+    const addressLabel = data.inCustody ? cardContent.lastKnownAddressLabel : cardContent.mainAddressLabel
     const rows = [
       govFrontendSummaryListRow(cardContent.phoneNumberLabel, data.phoneNumber || notAvailable),
       govFrontendSummaryListRow(cardContent.mobileNumberLabel, data.mobileNumber || notAvailable),
