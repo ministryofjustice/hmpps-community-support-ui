@@ -144,6 +144,54 @@ test.describe('Check Referral Information Page', () => {
     )
     await expect(checkReferralInformationPage.riskInformationSummary.rows[7].key).toHaveText('Additional information')
     await expect(checkReferralInformationPage.riskInformationSummary.rows[7].value).toHaveText('No further details')
+
+    expect(checkReferralInformationPage.additionalSupportNeedsSummary).toBeDefined()
+    expect(checkReferralInformationPage.additionalSupportNeedsSummary.rows).toHaveLength(8)
+    await expect(checkReferralInformationPage.additionalSupportNeedsSummary.rows[0].key).toHaveText('Physical health')
+    await expect(checkReferralInformationPage.additionalSupportNeedsSummary.rows[0].value).toContainText('Yes')
+    await expect(checkReferralInformationPage.additionalSupportNeedsSummary.rows[0].value).toContainText(
+      'Requires regular medication',
+    )
+    await expect(checkReferralInformationPage.additionalSupportNeedsSummary.rows[1].key).toHaveText(
+      'Mental or emotional health',
+    )
+    await expect(checkReferralInformationPage.additionalSupportNeedsSummary.rows[1].value).toContainText('Yes')
+    await expect(checkReferralInformationPage.additionalSupportNeedsSummary.rows[1].value).toContainText(
+      'Struggles with anxiety',
+    )
+    await expect(checkReferralInformationPage.additionalSupportNeedsSummary.rows[2].key).toHaveText('Neurodiversity')
+    await expect(checkReferralInformationPage.additionalSupportNeedsSummary.rows[2].value).toContainText('Yes')
+    await expect(checkReferralInformationPage.additionalSupportNeedsSummary.rows[2].value).toContainText('Autism')
+    await expect(checkReferralInformationPage.additionalSupportNeedsSummary.rows[3].key).toHaveText(
+      'Location and travel',
+    )
+    await expect(checkReferralInformationPage.additionalSupportNeedsSummary.rows[3].value).toContainText('Yes')
+    await expect(checkReferralInformationPage.additionalSupportNeedsSummary.rows[3].value).toContainText(
+      'Limited mobility',
+    )
+    await expect(checkReferralInformationPage.additionalSupportNeedsSummary.rows[4].key).toHaveText(
+      'Employment responsibilities',
+    )
+    await expect(checkReferralInformationPage.additionalSupportNeedsSummary.rows[4].value).toContainText('Yes')
+    await expect(checkReferralInformationPage.additionalSupportNeedsSummary.rows[4].value).toContainText(
+      'Works part-time and cares for dependants',
+    )
+    await expect(checkReferralInformationPage.additionalSupportNeedsSummary.rows[5].key).toHaveText('Diversity')
+    await expect(checkReferralInformationPage.additionalSupportNeedsSummary.rows[5].value).toContainText('Yes')
+    await expect(checkReferralInformationPage.additionalSupportNeedsSummary.rows[5].value).toContainText('Is diverse')
+    await expect(checkReferralInformationPage.additionalSupportNeedsSummary.rows[6].key).toHaveText('Any other needs')
+    await expect(checkReferralInformationPage.additionalSupportNeedsSummary.rows[6].value).toContainText('Yes')
+    await expect(checkReferralInformationPage.additionalSupportNeedsSummary.rows[6].value).toContainText(
+      'Needs printed materials',
+    )
+    await expect(checkReferralInformationPage.additionalSupportNeedsSummary.rows[7].key).toContainText(
+      'Does Alex need an interpreter?',
+    )
+    await expect(checkReferralInformationPage.additionalSupportNeedsSummary.rows[7].key).toContainText(
+      'What language does Alex need?',
+    )
+    await expect(checkReferralInformationPage.additionalSupportNeedsSummary.rows[7].value).toContainText('Yes')
+    await expect(checkReferralInformationPage.additionalSupportNeedsSummary.rows[7].value).toContainText('Spanish')
   })
 
   test('should display prison number and DOB on check referral information when searched by prison number', async ({
