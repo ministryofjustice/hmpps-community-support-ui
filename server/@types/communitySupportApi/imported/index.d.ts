@@ -1765,6 +1765,7 @@ export interface components {
       email?: string | null
       address?: string | null
       noFixedAddress?: boolean | null
+      inCustody: boolean
       addressType?: string | null
       /** Format: date */
       addressStartDate?: string | null
