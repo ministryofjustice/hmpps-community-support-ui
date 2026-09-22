@@ -307,7 +307,7 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
       govFrontendSummaryListRow(cardContent.mobileNumberLabel, data.mobileNumber || notAvailable),
       govFrontendSummaryListRow(cardContent.emailAddressLabel, data.email || notAvailable),
       govFrontendSummaryListRow(
-        { html: labelWithLastUpdated(addressLabel, lastUpdatedLabel, notAvailable) },
+        { html: labelWithLastUpdated(addressLabel, lastUpdatedLabel, data.addressUpdatedAt || notAvailable) },
         { html: formattedAddress },
       ),
     ]
