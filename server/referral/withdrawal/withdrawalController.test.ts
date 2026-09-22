@@ -5,7 +5,7 @@ import WithdrawalService from '../../services/withdrawalService'
 import WithdrawalController from './withdrawalController'
 
 describe('WithdrawalController', () => {
-  const referralIdentifier = 'QD0878DE'
+  const caseIdentifier = 'QD0878DE'
   let controller: WithdrawalController
   let referralService: jest.Mocked<ReferralService>
   let req: Request
@@ -23,10 +23,10 @@ describe('WithdrawalController', () => {
     } as unknown as jest.Mocked<ReferralService>
     controller = new WithdrawalController(referralService, new WithdrawalService())
     req = {
-      params: { referralIdentifier },
+      params: { caseIdentifier },
       session: {
         withdrawalReferrals: {
-          [referralIdentifier]: {
+          [caseIdentifier]: {
             withdrawalReason: 'Not engaged',
             additionalInformation: 'No longer engaging',
           },
@@ -41,9 +41,10 @@ describe('WithdrawalController', () => {
       locals: {
         user: { username: 'user1' },
         content: {
-          pageHeader: "Why are you withdrawing {{ name }}'s referral?",
-          additionalInformationLabel: 'Give details',
-          continueButtonText: 'Continue',
+          pageHeader: 'The referral has been withdrawn',
+          introText: 'You can now return to cases in progress.',
+          goToCaseListLink: '/cases-in-progress',
+          goToCaseListButtonText: 'Go to case list',
         },
       },
     } as unknown as Response
@@ -130,29 +131,15 @@ describe('WithdrawalController', () => {
     await controller.submitConfirmation(req, res)
 
     expect(referralService.withdrawReferral).toHaveBeenCalledWith(
-      referralIdentifier,
+      caseIdentifier,
       {
         reasonCode: 'Not engaged',
         additionalDetails: 'No longer engaging',
       },
       'user1',
     )
-    expect(res.redirect).toHaveBeenCalledWith(`/referral/${referralIdentifier}/withdraw/success`)
-    expect(req.session.withdrawalReferrals[referralIdentifier]).toBeUndefined()
-  })
-
-  it('renders the withdrawal success page', async () => {
-    await controller.showSuccess(req, res)
-
-    expect(res.render).toHaveBeenCalledWith(
-      'referral/withdrawal/success',
-      expect.objectContaining({
-        pageHeader: 'The referral has been withdrawn',
-        introText: 'You can now return to cases in progress.',
-        backToCasesLink: '/cases-in-progress',
-        backToCasesLinkText: 'Go to case list',
-      }),
-    )
+    expect(res.redirect).toHaveBeenCalledWith('/cases-in-progress')
+    expect(req.session.withdrawalReferrals[caseIdentifier]).toBeUndefined()
   })
 
   it('guards confirmation when no reason has been saved', async () => {
@@ -160,49 +147,25 @@ describe('WithdrawalController', () => {
 
     await controller.submitConfirmation(req, res)
 
-    expect(res.redirect).toHaveBeenCalledWith(`/referral/${referralIdentifier}/withdraw`)
+    expect(res.redirect).toHaveBeenCalledWith(`/referral/${caseIdentifier}/withdraw`)
     expect(referralService.withdrawReferral).not.toHaveBeenCalled()
   })
 
   it('renders service error page on unexpected error', async () => {
     referralService.withdrawReferral.mockRejectedValue(new Error('Unexpected service error'))
-    res.locals.content = {
-      ...res.locals.content,
-      pageHeader: 'Sorry, there is a problem with this service',
-      message: 'Try again later.',
-    }
 
     await controller.submitConfirmation(req, res)
 
-    expect(res.render).toHaveBeenCalledWith(
-      'referral/withdrawal/serviceError',
-      expect.objectContaining({
-        pageHeader: 'Sorry, there is a problem with this service',
-        message: 'Try again later.',
-        backToCasesLink: '/cases-in-progress',
-        backToCasesLinkText: 'Go to case list',
-      }),
-    )
+    expect(res.redirect).toHaveBeenCalledWith(`/referral/${caseIdentifier}/withdraw/service-error`)
   })
 
-  it('renders error when referral has already been withdrawn by another user', async () => {
+  it('redirects to referral details when referral has already been withdrawn by another user', async () => {
     referralService.withdrawReferral.mockRejectedValue({ responseStatus: 409 })
-    res.locals.content = {
-      ...res.locals.content,
-      pageHeader: 'Unable to withdraw referral',
-      errorMessage: 'This referral has already been withdrawn by another user',
-    }
+    referralService.getCaseDetailsByCaseIdentifier.mockResolvedValue({ id: 'referral-uuid' } as never)
 
     await controller.submitConfirmation(req, res)
 
-    expect(res.render).toHaveBeenCalledWith(
-      'referral/withdrawal/error',
-      expect.objectContaining({
-        pageHeader: 'Unable to withdraw referral',
-        errorMessage: 'This referral has already been withdrawn by another user',
-        backToCasesLink: '/cases-in-progress',
-        backToCasesLinkText: 'Go to case list',
-      }),
-    )
+    expect(referralService.getCaseDetailsByCaseIdentifier).toHaveBeenCalledWith(caseIdentifier, 'test-user')
+    expect(res.redirect).toHaveBeenCalledWith('/referral-details/referral-uuid')
   })
 })

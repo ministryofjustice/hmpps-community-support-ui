@@ -10,8 +10,8 @@ describe('WithdrawalServiceErrorPresenter', () => {
         content: {
           pageHeader: 'Sorry, there is a problem with this service',
           message: 'Try again later.',
-          backToCasesLink: '/cases-in-progress',
-          backToCasesLinkText: 'Go to case list',
+          goToCaseListLink: '/cases-in-progress',
+          goToCaseListButtonText: 'Go to case list',
         },
       },
       render: jest.fn(),
@@ -28,8 +28,8 @@ describe('WithdrawalServiceErrorPresenter', () => {
       expect.objectContaining({
         pageHeader: 'Sorry, there is a problem with this service',
         message: 'Try again later.',
-        backToCasesLink: '/cases-in-progress',
-        backToCasesLinkText: 'Go to case list',
+        goToCaseListLink: '/cases-in-progress',
+        goToCaseListButtonText: 'Go to case list',
       }),
     )
   })

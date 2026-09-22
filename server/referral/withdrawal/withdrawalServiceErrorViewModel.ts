@@ -5,6 +5,6 @@ export type WithdrawalServiceErrorContent = GlobalContent['/referral/:id/withdra
 export interface WithdrawalServiceErrorViewModel {
   pageHeader: string
   message: string
-  backToCasesLink: string
-  backToCasesLinkText: string
+  goToCaseListLink: string
+  goToCaseListButtonText: string
 }

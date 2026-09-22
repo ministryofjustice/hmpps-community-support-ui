@@ -15,8 +15,8 @@ export default class WithdrawalServiceErrorPresenter extends PresenterBase<
     return {
       pageHeader: content.pageHeader,
       message: content.message,
-      backToCasesLink: content.backToCasesLink,
-      backToCasesLinkText: content.backToCasesLinkText,
+      goToCaseListLink: content.goToCaseListLink,
+      goToCaseListButtonText: content.goToCaseListButtonText,
     }
   }
 

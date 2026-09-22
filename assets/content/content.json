@@ -224,20 +224,20 @@
   "/referral/:id/withdraw/success": {
     "pageHeader": "The referral has been withdrawn",
     "introText": "You can now return to cases in progress.",
-    "backToCasesLink": "/cases-in-progress",
-    "backToCasesLinkText": "Go to case list"
+    "goToCaseListLink": "/cases-in-progress",
+    "goToCaseListButtonText": "Go to case list"
   },
-  "/referral/:id/withdraw/error": {
+  "/referral/:id/withdraw/already-withdrawn": {
     "pageHeader": "Unable to withdraw referral",
     "errorMessage": "This referral has already been withdrawn by another user",
-    "backToCasesLink": "/cases-in-progress",
-    "backToCasesLinkText": "Back to cases in progress"
+    "goToCaseListLink": "/cases-in-progress",
+    "goToCaseListButtonText": "Go to case list"
   },
   "/referral/:id/withdraw/service-error": {
     "pageHeader": "Sorry, there is a problem with this service",
     "message": "Try again later.",
-    "backToCasesLink": "/cases-in-progress",
-    "backToCasesLinkText": "Go to case list"
+    "goToCaseListLink": "/cases-in-progress",
+    "goToCaseListButtonText": "Go to case list"
   },
   "/referral/:id/appointment/confirm-ics": {
     "pageHeader": "Check the details before scheduling the ICS",

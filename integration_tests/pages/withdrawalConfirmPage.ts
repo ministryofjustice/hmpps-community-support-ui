@@ -1,7 +1,7 @@
 import { expect, Locator, Page } from '@playwright/test'
 import AbstractPage from './abstractPage'
 
-export default class WithdrawalConfirmationPage extends AbstractPage {
+export default class WithdrawalConfirmPage extends AbstractPage {
   private constructor(
     page: Page,
     readonly header: Locator,
@@ -15,14 +15,14 @@ export default class WithdrawalConfirmationPage extends AbstractPage {
     super(page)
   }
 
-  static url(referralIdentifier: string): string {
-    return `/referral/${referralIdentifier}/withdraw/confirm`
+  static url(caseIdentifier: string): string {
+    return `/referral/${caseIdentifier}/withdraw/confirm`
   }
 
-  static async verifyOnPage(page: Page): Promise<WithdrawalConfirmationPage> {
+  static async verifyOnPage(page: Page): Promise<WithdrawalConfirmPage> {
     const header = page.getByRole('heading', { level: 1 })
     await expect(header).toBeVisible()
-    return new WithdrawalConfirmationPage(
+    return new WithdrawalConfirmPage(
       page,
       header,
       page.locator('.govuk-summary-list__key'),

@@ -29,8 +29,7 @@ function getContentForPath(req: Request, contentData: Record<string, Record<stri
     }
   }
   const contentForFullPath = contentData[parsedPath] || {}
-  const mergedContent = contentForFullPath ? { ...content, ...contentForFullPath } : content
-  return mergedContent
+  return { ...content, ...contentForFullPath }
 }
 
 function getParentPathsForSubPath(subPath: string): Array<string> {

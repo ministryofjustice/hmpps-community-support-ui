@@ -7,16 +7,16 @@
 
 {% block contentBody %}
   <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-      <h1 class="govuk-heading-xl">{{ content.pageHeader }}</h1>
+	<div class="govuk-grid-column-two-thirds">
+	  <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
 
-      <p class="govuk-body">{{ content.message }}</p>
+	  <p class="govuk-body">{{ content.message }}</p>
 
-      {{ govukButton({
-        text: content.backToCasesLinkText,
-        href: content.backToCasesLink,
-        classes: "govuk-!-margin-top-6"
-      }) }}
-    </div>
+	  {{ govukButton({
+      text: content.goToCaseListButtonText,
+      href: content.goToCaseListLink,
+      classes: "govuk-!-margin-top-6"
+	  }) }}
+	</div>
   </div>
 {% endblock %}
