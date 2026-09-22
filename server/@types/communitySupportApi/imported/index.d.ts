@@ -1250,6 +1250,10 @@ export interface components {
       additionalDetailsLabel?: string | null
       additionalDetailsHint?: string | null
     }
+    SavedResponse: {
+      value: string
+      additionalDetails?: string | null
+    }
     SessionDeliveryQuestion: {
       /** Format: uuid */
       id: string
@@ -1258,15 +1262,11 @@ export interface components {
       label: string
       hint?: string | null
       /** @enum {string} */
-      answerType: 'TEXTAREA' | 'RADIO' | 'CHECKBOX' | 'DATE'
+      answerType: 'TEXTAREA' | 'RADIO' | 'CHECKBOX'
       /** Format: int32 */
       maximumNumberOfResponses: number
       choices?: components['schemas']['QuestionChoice'][] | null
-      savedResponses: components['schemas']['SessionDeliveryQuestionSavedResponse'][]
-    }
-    SessionDeliveryQuestionSavedResponse: {
-      value: string
-      additionalDetails?: string | null
+      savedResponses: components['schemas']['SavedResponse'][]
     }
     ServiceEndDatePageDto: {
       /**
@@ -1797,6 +1797,8 @@ export interface components {
       mobileNumber?: string | null
       email?: string | null
       address?: string | null
+      /** Format: date-time */
+      addressUpdatedAt?: string | null
       noFixedAddress?: boolean | null
       inCustody: boolean
       addressType?: string | null
