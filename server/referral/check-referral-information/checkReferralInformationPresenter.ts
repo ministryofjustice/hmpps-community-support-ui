@@ -74,16 +74,16 @@ const formatAddress = (
   if (addressData?.noFixedAbode) {
     address = addressData?.noFixedAbodeText
   }
-  return `<div>${address || notAvailable}</div>
+  return `<div>${escapeSpecialHtmlCharacters(address) || notAvailable}</div>
 <br/>
 <div class="govuk-summary-list__key">${typeLabel}</div>
-<div>${addressData.addressType || notAvailable}</div>
+<div>${escapeSpecialHtmlCharacters(addressData.addressType) || notAvailable}</div>
 <br/>
 <div class="govuk-summary-list__key">${startDateLabel}</div>
 <div>${addressData.startDate || notAvailable}</div>
 <br/>
 <div class="govuk-summary-list__key">${notesLabel}</div>
-<div>${addressData.notes || notAvailable}</div>`
+<div>${escapeSpecialHtmlCharacters(addressData.notes) || notAvailable}</div>`
 }
 
 const resolveName = (name: { firstName: string; middleName?: string | null; lastName: string }): string =>
