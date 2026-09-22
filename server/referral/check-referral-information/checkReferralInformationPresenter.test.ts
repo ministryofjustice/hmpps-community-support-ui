@@ -51,7 +51,17 @@ describe('CheckReferralInformationPresenter', () => {
           additionalInformation: 'Some additional risk info',
         },
         additionalSupportNeedsDetailsTableData: {},
-        personNeedsDetailsTableData: {},
+        personNeedsDetailsTableData: {
+          hasAccommodationNeeds: true,
+          accommodationDetails: 'Has suitable housing',
+          employmentAndEducation: 'Seeking part-time work',
+          financialDetails: 'On benefits',
+          personalRelationshipsCommunityDetails: 'Has supportive family',
+          drugUseDetails: 'No current use',
+          alcoholUseDetails: 'Occasional',
+          healthWellbeingDetails: 'Good',
+          thinkingBehavioursAttitudeDetails: 'Responds well to prompts',
+        },
         referralAreaTableData: { area: 'London' },
         mainPocDetailsTableData: {},
       } as CheckDraftReferralDetailsDto
@@ -149,6 +159,41 @@ describe('CheckReferralInformationPresenter', () => {
       expect(renderData.content.riskInformationSummary.rows[7]).toMatchObject({
         key: { text: 'Additional information' },
         value: { text: 'Some additional risk info' },
+      })
+
+      // persons needs summary should render all labels with provided data (not 'No')
+      expect(renderData.content.personsNeedsSummary!.rows).toHaveLength(8)
+      expect(renderData.content.personsNeedsSummary!.rows[0]).toMatchObject({
+        key: { text: 'Accommodation' },
+        value: { html: expect.stringContaining('Has suitable housing') },
+      })
+      expect(renderData.content.personsNeedsSummary!.rows[1]).toMatchObject({
+        key: { text: 'Employment and education' },
+        value: { html: expect.stringContaining('Seeking part-time work') },
+      })
+      expect(renderData.content.personsNeedsSummary!.rows[2]).toMatchObject({
+        key: { text: 'Finances' },
+        value: { html: expect.stringContaining('On benefits') },
+      })
+      expect(renderData.content.personsNeedsSummary!.rows[3]).toMatchObject({
+        key: { text: 'Personal relationships and community' },
+        value: { html: expect.stringContaining('Has supportive family') },
+      })
+      expect(renderData.content.personsNeedsSummary!.rows[4]).toMatchObject({
+        key: { text: 'Drug use' },
+        value: { html: expect.stringContaining('No current use') },
+      })
+      expect(renderData.content.personsNeedsSummary!.rows[5]).toMatchObject({
+        key: { text: 'Alcohol use' },
+        value: { html: expect.stringContaining('Occasional') },
+      })
+      expect(renderData.content.personsNeedsSummary!.rows[6]).toMatchObject({
+        key: { text: 'Health and wellbeing' },
+        value: { html: expect.stringContaining('Good') },
+      })
+      expect(renderData.content.personsNeedsSummary!.rows[7]).toMatchObject({
+        key: { text: 'Thinking, behaviour and attitudes' },
+        value: { html: expect.stringContaining('Responds well to prompts') },
       })
 
       expect(res.render).toHaveBeenCalledWith(
