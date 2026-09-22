@@ -70,10 +70,7 @@ const formatAddress = (
   notesLabel: string,
   notAvailable: string,
 ): string => {
-  let address = addressData?.address ?? undefined
-  if (addressData?.noFixedAbode) {
-    address = addressData?.noFixedAbodeText
-  }
+  const address = addressData.noFixedAbode ? addressData.noFixedAbodeText : addressData.address
   return `<div>${escapeSpecialHtmlCharacters(address) || notAvailable}</div>
 <br/>
 <div class="govuk-summary-list__key">${typeLabel}</div>
