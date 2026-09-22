@@ -9,6 +9,7 @@ import {
   IcsFeedbackSubmissionResponse,
   ActionPlanSummaryDto,
   ActionPlanSelectANeedResponse,
+  WithdrawalReasonsGroupedBffResponseDto,
   PDU,
   ProbationOffice,
   ProbationPractitionerDetails,
@@ -483,37 +484,6 @@ export default {
         jsonBody: mockData,
       },
     }),
-  stubGetWithdrawalReasons: (
-    withdrawalReasons = {
-      'Problem with referral': ['Ineligible referral', 'Mistaken or duplicate referral'],
-      'User related': [
-        'Died',
-        'Moved out of service area',
-        'Not engaged',
-        'Needs met through another route',
-        'Work, caring commitments or sickness',
-        'Another reason',
-      ],
-      'Sentence or custody related': [
-        'Acquitted on appeal',
-        'Returned to custody',
-        'Sentence revoked',
-        'Sentence expired',
-      ],
-    },
-    httpStatus = 200,
-  ): SuperAgentRequest =>
-    stubFor({
-      request: {
-        method: 'GET',
-        urlPattern: '/.*referral/withdrawal-reasons',
-      },
-      response: {
-        status: httpStatus,
-        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: { withdrawalReasons },
-      },
-    }),
   stubGetICS: (caseRefId: string, mockData: AppointmentIcsResponse, httpStatus = 200): SuperAgentRequest =>
     stubFor({
       request: {
@@ -681,6 +651,21 @@ export default {
         status: httpStatus,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: needsAndOutcomes,
+      },
+    }),
+  stubGetWithdrawalReasons: (
+    withdrawalReasons: WithdrawalReasonsGroupedBffResponseDto,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPath: '/community-support/bff/referral/withdrawal-reasons',
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: withdrawalReasons,
       },
     }),
   stubGetPersonalDetails: (
