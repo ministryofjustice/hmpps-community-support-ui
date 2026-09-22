@@ -6,6 +6,7 @@ import type {
 } from './checkReferralInformationViewModel'
 import CheckReferralInformationPresenter from './checkReferralInformationPresenter'
 import CheckReferralInformationContentFactory from '../../testutils/factories/CheckReferralInformationContent'
+import DraftReferralDetailsFactory from '../../testutils/factories/DraftReferralDetails'
 
 describe('CheckReferralInformationPresenter', () => {
   let res: Response
@@ -19,10 +20,11 @@ describe('CheckReferralInformationPresenter', () => {
     } as unknown as Response
   })
   describe('renderPage', () => {
+    const buildDraftReferralDetails = (overrides = {}): CheckDraftReferralDetailsDto =>
+      DraftReferralDetailsFactory.build(overrides) as unknown as CheckDraftReferralDetailsDto
+
     it('should render draft referral details', () => {
-      const draftReferralDetails = {
-        id: 'referralId123',
-        createdDate: '2026-02-10T11:23:00.780Z',
+      const draftReferralDetails = DraftReferralDetailsFactory.build({
         personDetailsTableData: {
           name: { firstName: 'John', lastName: 'Doe' },
           crn: 'X123456',
@@ -54,7 +56,7 @@ describe('CheckReferralInformationPresenter', () => {
         personNeedsDetailsTableData: {},
         referralAreaTableData: { area: 'London' },
         mainPocDetailsTableData: {},
-      } as CheckDraftReferralDetailsDto
+      } as CheckDraftReferralDetailsDto)
 
       const presenter = new CheckReferralInformationPresenter(draftReferralDetails)
       presenter.renderPage(res)
@@ -158,9 +160,7 @@ describe('CheckReferralInformationPresenter', () => {
     })
 
     it('should render main address when person is not in custody', () => {
-      const draftReferralDetails = {
-        id: 'referralId123',
-        createdDate: '2026-02-10T11:23:00.780Z',
+      const draftReferralDetails = buildDraftReferralDetails({
         personDetailsTableData: {
           name: { firstName: 'John', lastName: 'Doe' },
           crn: 'X123456',
@@ -169,8 +169,6 @@ describe('CheckReferralInformationPresenter', () => {
           disabilities: [],
           personalCircumstances: [],
         },
-        equalityDetailsTableData: {},
-        additionalInformationDetailsTableData: {},
         contactDetailsTableData: {
           phoneNumber: '0123',
           mobileNumber: '0456',
@@ -181,12 +179,7 @@ describe('CheckReferralInformationPresenter', () => {
           addressStartDate: '2026-01-01',
           addressNotes: 'Notes',
         },
-        riskInformationDetailsTableData: {},
-        additionalSupportNeedsDetailsTableData: {},
-        personNeedsDetailsTableData: {},
-        referralAreaTableData: {},
-        mainPocDetailsTableData: {},
-      } as CheckDraftReferralDetailsDto
+      })
 
       const presenter = new CheckReferralInformationPresenter(draftReferralDetails)
       presenter.renderPage(res)
@@ -212,9 +205,7 @@ describe('CheckReferralInformationPresenter', () => {
     })
 
     it('should render last known address when person is in custody', () => {
-      const draftReferralDetails = {
-        id: 'referralId123',
-        createdDate: '2026-02-10T11:23:00.780Z',
+      const draftReferralDetails = buildDraftReferralDetails({
         personDetailsTableData: {
           name: { firstName: 'John', lastName: 'Doe' },
           crn: 'X123456',
@@ -223,8 +214,6 @@ describe('CheckReferralInformationPresenter', () => {
           disabilities: [],
           personalCircumstances: [],
         },
-        equalityDetailsTableData: {},
-        additionalInformationDetailsTableData: {},
         contactDetailsTableData: {
           phoneNumber: '0123',
           mobileNumber: '0456',
@@ -235,12 +224,7 @@ describe('CheckReferralInformationPresenter', () => {
           addressStartDate: '2026-01-01',
           addressNotes: 'Notes',
         },
-        riskInformationDetailsTableData: {},
-        additionalSupportNeedsDetailsTableData: {},
-        personNeedsDetailsTableData: {},
-        referralAreaTableData: {},
-        mainPocDetailsTableData: {},
-      } as CheckDraftReferralDetailsDto
+      })
 
       const presenter = new CheckReferralInformationPresenter(draftReferralDetails)
       presenter.renderPage(res)
@@ -266,9 +250,7 @@ describe('CheckReferralInformationPresenter', () => {
     })
 
     it('should render no fixed abode text when noFixedAddress is true', () => {
-      const draftReferralDetails = {
-        id: 'referralId123',
-        createdDate: '2026-02-10T11:23:00.780Z',
+      const draftReferralDetails = buildDraftReferralDetails({
         personDetailsTableData: {
           name: { firstName: 'John', lastName: 'Doe' },
           crn: 'X123456',
@@ -277,8 +259,6 @@ describe('CheckReferralInformationPresenter', () => {
           disabilities: [],
           personalCircumstances: [],
         },
-        equalityDetailsTableData: {},
-        additionalInformationDetailsTableData: {},
         contactDetailsTableData: {
           phoneNumber: '',
           mobileNumber: '',
@@ -286,12 +266,7 @@ describe('CheckReferralInformationPresenter', () => {
           address: null,
           noFixedAddress: true,
         },
-        riskInformationDetailsTableData: {},
-        additionalSupportNeedsDetailsTableData: {},
-        personNeedsDetailsTableData: {},
-        referralAreaTableData: {},
-        mainPocDetailsTableData: {},
-      } as unknown as CheckDraftReferralDetailsDto
+      } as unknown as CheckDraftReferralDetailsDto)
 
       const presenter = new CheckReferralInformationPresenter(draftReferralDetails)
       presenter.renderPage(res)
@@ -302,9 +277,7 @@ describe('CheckReferralInformationPresenter', () => {
     })
 
     it('should list each personal circumstance in a fixed order', () => {
-      const draftReferralDetails = {
-        id: 'referralId123',
-        createdDate: '2026-02-10T11:23:00.780Z',
+      const draftReferralDetails = buildDraftReferralDetails({
         personDetailsTableData: {
           name: { firstName: 'John', lastName: 'Doe' },
           crn: 'X123456',
@@ -326,15 +299,7 @@ describe('CheckReferralInformationPresenter', () => {
             },
           ],
         },
-        equalityDetailsTableData: {},
-        additionalInformationDetailsTableData: {},
-        contactDetailsTableData: {},
-        riskInformationDetailsTableData: {},
-        additionalSupportNeedsDetailsTableData: {},
-        personNeedsDetailsTableData: {},
-        referralAreaTableData: {},
-        mainPocDetailsTableData: {},
-      } as CheckDraftReferralDetailsDto
+      } as CheckDraftReferralDetailsDto)
 
       new CheckReferralInformationPresenter(draftReferralDetails).renderPage(res)
 
@@ -348,9 +313,7 @@ describe('CheckReferralInformationPresenter', () => {
     })
 
     it('should show unavailable personal circumstance categories', () => {
-      const draftReferralDetails = {
-        id: 'referralId123',
-        createdDate: '2026-02-10T11:23:00.780Z',
+      const draftReferralDetails = buildDraftReferralDetails({
         personDetailsTableData: {
           name: { firstName: 'John', lastName: 'Doe' },
           crn: 'X123456',
@@ -361,15 +324,7 @@ describe('CheckReferralInformationPresenter', () => {
             { description: 'Employment', subDescription: 'Full-time employed', updatedAt: '2026-01-05T00:00:00Z' },
           ],
         },
-        equalityDetailsTableData: {},
-        additionalInformationDetailsTableData: {},
-        contactDetailsTableData: {},
-        riskInformationDetailsTableData: {},
-        additionalSupportNeedsDetailsTableData: {},
-        personNeedsDetailsTableData: {},
-        referralAreaTableData: {},
-        mainPocDetailsTableData: {},
-      } as CheckDraftReferralDetailsDto
+      } as CheckDraftReferralDetailsDto)
 
       new CheckReferralInformationPresenter(draftReferralDetails).renderPage(res)
 
@@ -383,9 +338,7 @@ describe('CheckReferralInformationPresenter', () => {
     })
 
     it('should render a prison number when CRN is unavailable', () => {
-      const draftReferralDetails = {
-        id: 'referralId123',
-        createdDate: '2026-02-10T11:23:00.780Z',
+      const draftReferralDetails = buildDraftReferralDetails({
         personDetailsTableData: {
           name: { firstName: 'John', lastName: 'Doe' },
           crn: '',
@@ -396,14 +349,7 @@ describe('CheckReferralInformationPresenter', () => {
           personalCircumstances: [],
         },
         equalityDetailsTableData: { ethnicity: 'White British', religionOrBelief: 'None', sex: 'Male' },
-        additionalInformationDetailsTableData: {},
-        contactDetailsTableData: {},
-        riskInformationDetailsTableData: {},
-        additionalSupportNeedsDetailsTableData: {},
-        personNeedsDetailsTableData: {},
-        referralAreaTableData: {},
-        mainPocDetailsTableData: {},
-      } as CheckDraftReferralDetailsDto
+      } as CheckDraftReferralDetailsDto)
 
       const presenter = new CheckReferralInformationPresenter(draftReferralDetails)
       presenter.renderPage(res)
@@ -417,9 +363,7 @@ describe('CheckReferralInformationPresenter', () => {
     })
 
     it('should not render identifier row when no identifier is available', () => {
-      const draftReferralDetails = {
-        id: 'referralId123',
-        createdDate: '2026-02-10T11:23:00.780Z',
+      const draftReferralDetails = buildDraftReferralDetails({
         personDetailsTableData: {
           name: { firstName: 'John', lastName: 'Doe' },
           crn: '',
@@ -429,14 +373,7 @@ describe('CheckReferralInformationPresenter', () => {
           personalCircumstances: [],
         },
         equalityDetailsTableData: { ethnicity: 'White British', religionOrBelief: 'None', sex: 'Male' },
-        additionalInformationDetailsTableData: {},
-        contactDetailsTableData: {},
-        riskInformationDetailsTableData: {},
-        additionalSupportNeedsDetailsTableData: {},
-        personNeedsDetailsTableData: {},
-        referralAreaTableData: {},
-        mainPocDetailsTableData: {},
-      } as CheckDraftReferralDetailsDto
+      } as CheckDraftReferralDetailsDto)
 
       const presenter = new CheckReferralInformationPresenter(draftReferralDetails)
       presenter.renderPage(res)
@@ -455,9 +392,7 @@ describe('CheckReferralInformationPresenter', () => {
     })
 
     it('should not include additional information summary when no additional information provided', () => {
-      const draftReferralDetails = {
-        id: 'referralId123',
-        createdDate: '2026-02-10T11:23:00.780Z',
+      const draftReferralDetails = buildDraftReferralDetails({
         personDetailsTableData: {
           name: { firstName: 'John', lastName: 'Doe' },
           crn: 'X123456',
@@ -466,15 +401,8 @@ describe('CheckReferralInformationPresenter', () => {
           disabilities: [],
           personalCircumstances: [],
         },
-        equalityDetailsTableData: {},
         additionalInformationDetailsTableData: {},
-        contactDetailsTableData: {},
-        riskInformationDetailsTableData: {},
-        additionalSupportNeedsDetailsTableData: {},
-        personNeedsDetailsTableData: {},
-        referralAreaTableData: {},
-        mainPocDetailsTableData: {},
-      } as CheckDraftReferralDetailsDto
+      } as CheckDraftReferralDetailsDto)
 
       new CheckReferralInformationPresenter(draftReferralDetails).renderPage(res)
 
