@@ -30,6 +30,7 @@ import type {
   CriminogenicNeedsRequest,
   ActionPlanSummaryDto,
   ActionPlanSelectANeedResponse,
+  WithdrawalReasonsGroupedBffResponseDto,
   AreaConfirmationBffResponseDto,
   CommunityServiceProviderRequest,
   CommunityServiceProviderBffResponseDto,
@@ -46,7 +47,6 @@ import type {
   OffenceSentenceRequest,
   OffenceSentenceInfoBffResponseDto,
   WithdrawReferralRequest,
-  WithdrawalReasonsGroupedBffResponseDto,
 } from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
