@@ -6,6 +6,7 @@ import {
   ReferralInformation,
   CommunitySupportRiskInformationDto,
   ActionPlanSummaryDto,
+  WithdrawalReasonsGroupedBffResponseDto,
   OffenceSentenceInfoBffResponseDto,
   OffenceSentenceRequest,
 } from '@community-support-api'
@@ -140,6 +141,21 @@ describe('Referral service tests', () => {
 
       expect(result).toStrictEqual(mockActionPlanSummary)
       expect(communitySupportApiClient.getActionPlanSummary).toHaveBeenCalledWith(caseReference, 'user1')
+    })
+  })
+
+  describe('getWithdrawalReasons', () => {
+    it('should return withdrawal reasons grouped by heading from API client', async () => {
+      const mockWithdrawalReasons: WithdrawalReasonsGroupedBffResponseDto = {
+        withdrawalReasons: { 'Problem with referral': ['INELIGIBLE_REFERRAL', 'MISTAKEN_OR_DUPLICATE_REFERRAL'] },
+      }
+
+      communitySupportApiClient.getWithdrawalReasons.mockResolvedValue(mockWithdrawalReasons)
+
+      const result = await referralService.getWithdrawalReasons('user1')
+
+      expect(result).toStrictEqual(mockWithdrawalReasons)
+      expect(communitySupportApiClient.getWithdrawalReasons).toHaveBeenCalledWith('user1')
     })
   })
 

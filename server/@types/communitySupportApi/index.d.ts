@@ -43,6 +43,7 @@ type ActionPlanSummaryDto = components['schemas']['ActionPlanSummaryDto']
 type ActionPlanSelectANeedResponse = components['schemas']['ActionPlanSelectANeedResponse']
 type ActionPlanSelectANeedNeed = components['schemas']['ActionPlanSelectANeedNeed']
 type ActionPlanSelectANeedOutcome = components['schemas']['ActionPlanSelectANeedOutcome']
+type WithdrawalReasonsGroupedBffResponseDto = components['schemas']['WithdrawalReasonsGroupedBffResponseDto']
 type ArnsRiskConcernsToSelfDto = components['schemas']['ArnsRiskConcernsToSelfDto']
 type ArnsRiskDto = components['schemas']['ArnsRiskDto']
 type ArnsRiskRoshSummaryDto = components['schemas']['ArnsRiskRoshSummaryDto']
@@ -67,7 +68,6 @@ type AdditionalInformationForTheDeliveryPartner =
 
 type Selection = components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
 type WithdrawReferralRequest = components['schemas']['WithdrawReferralRequest']
-type WithdrawalReasonsGroupedBffResponseDto = components['schemas']['WithdrawalReasonsGroupedBffResponseDto']
 
 export type {
   Referral,
@@ -113,6 +113,7 @@ export type {
   ActionPlanSelectANeedResponse,
   ActionPlanSelectANeedNeed,
   ActionPlanSelectANeedOutcome,
+  WithdrawalReasonsGroupedBffResponseDto,
   ArnsRiskConcernsToSelfDto,
   ArnsRiskDto,
   ArnsRiskRoshSummaryDto,
@@ -133,5 +134,4 @@ export type {
   PDU,
   AdditionalInformationForTheDeliveryPartner,
   WithdrawReferralRequest,
-  WithdrawalReasonsGroupedBffResponseDto,
 }

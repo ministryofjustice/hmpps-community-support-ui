@@ -9,7 +9,6 @@
   <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
   <form method="post" action="{{ content.submitHref }}">
     <input type="hidden" name="_csrf" value="{{ csrfToken }}">
-    <div class="govuk-hint">{{ content.hint }}</div>
     {% for group in content.reasonGroups %}
       <h2 class="govuk-heading-s">{{ group.heading }}</h2>
       {{ govukRadios(group.radios) }}
