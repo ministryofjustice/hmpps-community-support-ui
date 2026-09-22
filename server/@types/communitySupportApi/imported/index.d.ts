@@ -1217,10 +1217,6 @@ export interface components {
       additionalDetailsLabel?: string | null
       additionalDetailsHint?: string | null
     }
-    SavedResponse: {
-      value: string
-      additionalDetails?: string | null
-    }
     SessionDeliveryQuestion: {
       /** Format: uuid */
       id: string
@@ -1233,7 +1229,11 @@ export interface components {
       /** Format: int32 */
       maximumNumberOfResponses: number
       choices?: components['schemas']['QuestionChoice'][] | null
-      savedResponses: components['schemas']['SavedResponse'][]
+      savedResponses: components['schemas']['SessionDeliveryQuestionSavedResponse'][]
+    }
+    SessionDeliveryQuestionSavedResponse: {
+      value: string
+      additionalDetails?: string | null
     }
     ServiceEndDatePageDto: {
       /**
