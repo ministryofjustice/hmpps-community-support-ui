@@ -1,8 +1,4 @@
-import {
-  WithdrawalConfirmationSchema,
-  createWithdrawalFormDataSchema,
-  createWithdrawalReasonSchema,
-} from './WithdrawalFormData'
+import { createWithdrawalFormDataSchema, createWithdrawalReasonSchema } from './WithdrawalFormData'
 
 describe('withdrawal form validation', () => {
   const withdrawalReasons = ['Ineligible referral', 'Not engaged', 'Another reason']
@@ -17,7 +13,7 @@ describe('withdrawal form validation', () => {
     const result = WithdrawalReasonSchema.safeParse({})
     expect(result.success).toBe(false)
     if (!result.success) {
-      expect(result.error.issues[0].message).toBe('Select a reason for withdrawing the referral')
+      expect(result.error.issues[0].message).toBe('Select why you are withdrawing the referral')
     }
   })
 
@@ -28,9 +24,7 @@ describe('withdrawal form validation', () => {
     })
     expect(result.success).toBe(false)
     if (!result.success) {
-      expect(result.error.issues[0].message).toBe(
-        'Enter additional information about why the referral is being withdrawn',
-      )
+      expect(result.error.issues[0].message).toBe('Enter details')
     }
   })
 
@@ -49,10 +43,5 @@ describe('withdrawal form validation', () => {
     if (!invalidResult.success) {
       expect(invalidResult.error.issues[0].message).toBe('Additional information must be 2000 characters or less')
     }
-  })
-
-  it('requires a confirmation choice', () => {
-    expect(WithdrawalConfirmationSchema.safeParse({}).success).toBe(false)
-    expect(WithdrawalConfirmationSchema.safeParse({ confirmWithdrawal: 'yes' }).success).toBe(true)
   })
 })

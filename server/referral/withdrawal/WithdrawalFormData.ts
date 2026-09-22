@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 const MAX_ADDITIONAL_INFORMATION_LENGTH = 2000
-const SELECT_WITHDRAWAL_REASON_ERROR = 'Select a reason for withdrawing the referral'
+const SELECT_WITHDRAWAL_REASON_ERROR = 'Select why you are withdrawing the referral'
 
 export type WithdrawalReason = string
 
@@ -32,7 +32,7 @@ export const createWithdrawalFormDataSchema = (withdrawalReasons: string[]) =>
       if (!additionalInformation) {
         context.addIssue({
           code: 'custom',
-          message: 'Enter additional information about why the referral is being withdrawn',
+          message: 'Enter details',
           path: [field],
         })
       } else if (additionalInformation.length > MAX_ADDITIONAL_INFORMATION_LENGTH) {
@@ -56,7 +56,3 @@ export const createWithdrawalFormDataSchema = (withdrawalReasons: string[]) =>
         additionalInformation: additionalInformation.trim(),
       } satisfies WithdrawalFormData
     })
-
-export const WithdrawalConfirmationSchema = z.object({
-  confirmWithdrawal: z.enum(['yes', 'no'], { error: 'Select whether you want to withdraw the referral' }),
-})

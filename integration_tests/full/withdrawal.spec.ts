@@ -11,19 +11,31 @@ import referralDetailsPageData from '../mockData/referralDetailsPageData'
 const referralId = randomUUID()
 const referralIdentifier = 'QD0878DE'
 const referralDetails = referralDetailsPageData(referralId)
+const withdrawalReasonGroups = {
+  'Problem with referral': ['Ineligible referral', 'Mistaken or duplicate referral'],
+  'Sentence or custody related': ['Acquitted on appeal', 'Returned to custody', 'Sentence expired', 'Sentence revoked'],
+  'User related': [
+    'Another reason',
+    'Died',
+    'Moved out of service area',
+    'Needs met through another route',
+    'Not engaged',
+    'Work, caring commitments or sickness',
+  ],
+}
 const reasonLabels = [
   'Ineligible referral',
   'Mistaken or duplicate referral',
-  'Died',
-  'Moved out of service area',
-  'Not engaged',
-  'Needs met through another route',
-  'Work, caring commitments or sickness',
-  'Another reason',
   'Acquitted on appeal',
   'Returned to custody',
-  'Sentence revoked',
   'Sentence expired',
+  'Sentence revoked',
+  'Died',
+  'Moved out of service area',
+  'Needs met through another route',
+  'Not engaged',
+  'Work, caring commitments or sickness',
+  'Another reason',
 ]
 
 test.describe('Withdraw referral', () => {
@@ -31,11 +43,11 @@ test.describe('Withdraw referral', () => {
     await resetStubs()
     await communitySupport.stubGetReferralDetailsPage(200, referralId)
     await communitySupport.stubGetInProgressCase()
-    await communitySupport.stubGetWithdrawalReasons()
     await communitySupport.stubWithdrawReferral(referralIdentifier, {
       reasonCode: 'Not engaged',
       additionalDetails: 'No longer engaging.',
     })
+    await communitySupport.stubGetWithdrawalReasons({ withdrawalReasons: withdrawalReasonGroups })
     await page.goto('/')
     await login(page)
   })
@@ -43,7 +55,7 @@ test.describe('Withdraw referral', () => {
   // AC1
   test('takes a delivery partner from referral details to withdrawal', async ({ page }) => {
     await page.goto(ReferralDetailsPage.url(referralId))
-    await page.getByRole('link', { name: 'Withdraw referral', exact: true }).click()
+    await page.getByRole('button', { name: 'Withdraw referral', exact: true }).click()
 
     await expect(page).toHaveURL(WithdrawalReasonPage.url(referralIdentifier))
     const withdrawalPage = await WithdrawalReasonPage.verifyOnPage(page)
@@ -57,14 +69,15 @@ test.describe('Withdraw referral', () => {
     await page.goto(WithdrawalReasonPage.url(referralIdentifier))
     const withdrawalPage = await WithdrawalReasonPage.verifyOnPage(page)
 
-    await expect(page.locator('.govuk-hint', { hasText: 'Select one reason.' })).toBeVisible()
     await expect(withdrawalPage.reasonHeadings).toHaveText([
       'Problem with referral',
-      'User related',
       'Sentence or custody related',
+      'User related',
     ])
     await expect(withdrawalPage.reasonRadios).toHaveCount(reasonLabels.length)
     await Promise.all(reasonLabels.map(reasonLabel => expect(withdrawalPage.reason(reasonLabel)).toBeVisible()))
+    await expect(withdrawalPage.reasonDivider).toHaveText('or')
+    await expect(page.locator('.govuk-radios__divider + .govuk-radios__item')).toContainText('Another reason')
   })
 
   // AC3 and AC6
@@ -99,7 +112,7 @@ test.describe('Withdraw referral', () => {
 
     await expect(withdrawalPage.errorSummary.locator).toBeVisible()
     await expect(
-      withdrawalPage.errorSummary.list.getByRole('link', { name: 'Select a reason for withdrawing the referral' }),
+      withdrawalPage.errorSummary.list.getByRole('link', { name: 'Select why you are withdrawing the referral' }),
     ).toBeVisible()
     expect(await page.locator('textarea').allTextContents()).not.toContain('null')
   })
@@ -114,12 +127,10 @@ test.describe('Withdraw referral', () => {
     await expect(withdrawalPage.errorSummary.locator).toBeVisible()
     await expect(
       withdrawalPage.errorSummary.list.getByRole('link', {
-        name: 'Enter additional information about why the referral is being withdrawn',
+        name: 'Enter details',
       }),
     ).toBeVisible()
-    await expect(withdrawalPage.additionalInformationErrorFor('Not engaged')).toContainText(
-      'Enter additional information about why the referral is being withdrawn',
-    )
+    await expect(withdrawalPage.additionalInformationErrorFor('Not engaged')).toContainText('Enter details')
   })
 
   // AC7
