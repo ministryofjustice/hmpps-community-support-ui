@@ -133,24 +133,21 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
       content.notAvailable,
     )
     viewModel.additionalInformationSummary = this.buildAdditionalInformationSummary(content.additionalInformationCard)
-    if (content.additionalSupportNeedsCard) {
-      viewModel.additionalSupportNeedsSummary = this.buildAdditionalSupportNeedsSummary(
-        content.additionalSupportNeedsCard,
-      )
-    }
+    viewModel.contactDetailsSummary = this.buildContactDetailsSummary(
+      content.contactDetailsCard,
+      content.notAvailable,
+      content.lastUpdatedLabel,
+    )
     viewModel.riskInformationSummary = this.buildRiskInformationSummary(
       content.riskInformationCard,
       content.notAvailable,
     )
+    viewModel.additionalSupportNeedsSummary = this.buildAdditionalSupportNeedsSummary(
+      content.additionalSupportNeedsCard,
+    )
     viewModel.referralDetailsHeader = content.referralDetailsHeader
     viewModel.referralDetailsSummary = this.buildReferralDetailsSummary()
-    if (content.contactDetailsCard) {
-      viewModel.contactDetailsSummary = this.buildContactDetailsSummary(
-        content.contactDetailsCard,
-        content.notAvailable,
-        content.lastUpdatedLabel,
-      )
-    }
+    
     viewModel.referralContactDetailsHeader = content.referralContactDetailsHeader
     viewModel.backLink = { href: content.backLink }
     viewModel.submitButton = { text: content.submitButtonText, classes: 'govuk-!-margin-top-6' }
