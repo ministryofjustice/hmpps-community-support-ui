@@ -31,17 +31,17 @@ describe('withdrawal form validation', () => {
   it('limits additional information to 2000 characters', () => {
     const validResult = WithdrawalFormDataSchema.safeParse({
       withdrawalReason: 'Not engaged',
-      'Not engagedDetails': 'a'.repeat(2000),
+      'Not engagedDetails': 'a'.repeat(65000),
     })
     const invalidResult = WithdrawalFormDataSchema.safeParse({
       withdrawalReason: 'Not engaged',
-      'Not engagedDetails': 'a'.repeat(2001),
+      'Not engagedDetails': 'a'.repeat(65001),
     })
 
     expect(validResult.success).toBe(true)
     expect(invalidResult.success).toBe(false)
     if (!invalidResult.success) {
-      expect(invalidResult.error.issues[0].message).toBe('Additional information must be 2000 characters or less')
+      expect(invalidResult.error.issues[0].message).toBe('Additional information must be 65000 characters or less')
     }
   })
 })
