@@ -30,7 +30,17 @@ const checkDraftReferralDetails: CheckDraftReferralDetailsDto = {
     homeOfficeInterestNotes: 'Claiming asylum from Iran',
     offenderPersonalityDisorderPathway: 'Assessment ongoing',
   },
-  contactDetailsTableData: {},
+  contactDetailsTableData: {
+    phoneNumber: '01234567890',
+    mobileNumber: '09876543210',
+    email: 'alex.river@test.com',
+    address: '10 Main Street, London, AA1 1AA',
+    addressType: 'Home address',
+    addressStartDate: '2026-01-01',
+    addressNotes: 'Lives with family',
+    noFixedAddress: false,
+    inCustody: false,
+  },
   riskInformationDetailsTableData: {
     whoIsAtRisk: 'Family members',
     natureOfRisk: 'Physical assault towards others',

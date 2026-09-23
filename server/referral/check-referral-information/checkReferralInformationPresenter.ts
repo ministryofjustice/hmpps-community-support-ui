@@ -58,26 +58,30 @@ const formatDisabilities = (list: components['schemas']['Disability'][], notAvai
 }
 
 const formatAddress = (
-  address?: string,
-  typeLabel?: string,
-  startDateLabel?: string,
-  notesLabel?: string,
-  notAvailable?: string,
+  addressData: {
+    noFixedAbode?: boolean
+    noFixedAbodeText?: string
+    address?: string | null
+    addressType?: string | null
+    startDate?: string | null
+    notes?: string | null
+  },
+  typeLabel: string,
+  startDateLabel: string,
+  notesLabel: string,
+  notAvailable: string,
 ): string => {
-  const typeVal = notAvailable
-  const startDateVal = format(new Date(), 'd MMMM yyyy')
-  const notesVal = notAvailable
-
-  return `<div>${address || notAvailable}</div>
+  const address = addressData.noFixedAbode ? addressData.noFixedAbodeText : addressData.address
+  return `<div>${escapeSpecialHtmlCharacters(address) || notAvailable}</div>
 <br/>
 <div class="govuk-summary-list__key">${typeLabel}</div>
-<div>${typeVal}</div>
+<div>${escapeSpecialHtmlCharacters(addressData.addressType) || notAvailable}</div>
 <br/>
 <div class="govuk-summary-list__key">${startDateLabel}</div>
-<div>${startDateVal}</div>
+<div>${addressData.startDate || notAvailable}</div>
 <br/>
 <div class="govuk-summary-list__key">${notesLabel}</div>
-<div>${notesVal}</div>`
+<div>${escapeSpecialHtmlCharacters(addressData.notes) || notAvailable}</div>`
 }
 
 const resolveName = (name: { firstName: string; middleName?: string | null; lastName: string }): string =>
@@ -118,6 +122,7 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
     viewModel.pageHeader = resolveName(this.draftReferralDetails.personDetailsTableData.name)
     viewModel.pageSubHeader = content.pageSubHeader
     viewModel.personalDetailsHeader = `About ${this.draftReferralDetails.personDetailsTableData.name.firstName}`
+
     viewModel.personalDetailsSummary = this.buildPersonalDetailsSummary(
       content.personalDetailsCard,
       content.notAvailable,
@@ -143,6 +148,7 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
       viewModel.contactDetailsSummary = this.buildContactDetailsSummary(
         content.contactDetailsCard,
         content.notAvailable,
+        content.lastUpdatedLabel,
       )
     }
     viewModel.referralContactDetailsHeader = content.referralContactDetailsHeader
@@ -282,21 +288,37 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
     }
   }
 
-  private buildContactDetailsSummary(cardContent: ContactDetailsCard, notAvailable: string): GovukFrontendSummaryList {
-    const data = this.draftReferralDetails.contactDetailsTableData || {}
+  private buildContactDetailsSummary(
+    cardContent: ContactDetailsCard,
+    notAvailable: string,
+    lastUpdatedLabel: string,
+  ): GovukFrontendSummaryList {
+    const data = this.draftReferralDetails.contactDetailsTableData
 
-    const addressValueHtml = formatAddress(
-      data.address,
+    const formattedAddress = formatAddress(
+      {
+        noFixedAbode: data.noFixedAddress,
+        noFixedAbodeText: cardContent.noFixedAbode,
+        address: data.address,
+        addressType: data.addressType,
+        startDate: data.addressStartDate,
+        notes: data.addressNotes,
+      },
       cardContent.addressTypeLabel,
       cardContent.addressStartDateLabel,
       cardContent.addressNotesLabel,
       notAvailable,
     )
+    const addressLabel = data.inCustody ? cardContent.lastKnownAddressLabel : cardContent.mainAddressLabel
     const rows = [
       govFrontendSummaryListRow(cardContent.phoneNumberLabel, data.phoneNumber || notAvailable),
       govFrontendSummaryListRow(cardContent.mobileNumberLabel, data.mobileNumber || notAvailable),
       govFrontendSummaryListRow(cardContent.emailAddressLabel, data.email || notAvailable),
       govFrontendSummaryListRow({ html: cardContent.mainAddressLabel }, { html: addressValueHtml }),
+      govFrontendSummaryListRow(
+        { html: labelWithLastUpdated(addressLabel, lastUpdatedLabel, data.addressUpdatedAt || notAvailable) },
+        { html: formattedAddress },
+      ),
     ]
 
     return {

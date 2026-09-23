@@ -13,6 +13,7 @@ import type {
   CommunitySupportRiskInformationDto,
   CommunitySupportRiskDto,
   ActionPlanSummaryDto,
+  WithdrawalReasonsGroupedBffResponseDto,
   AreaConfirmationBffResponseDto,
   CommunityServiceProviderRequest,
   CommunityServiceProviderBffResponseDto,
@@ -358,6 +359,23 @@ describe('CommunitySupportApiClient tests', () => {
       const result = communitySupportApiClient.getActionPlanSummary(caseReference, 'user1')
 
       expect(result).resolves.toEqual(mockActionPlanSummary)
+    })
+  })
+  describe('getWithdrawalReasons tests', () => {
+    it('should return withdrawal reasons grouped by heading with a 200 response', () => {
+      const mockWithdrawalReasons: WithdrawalReasonsGroupedBffResponseDto = {
+        withdrawalReasons: { 'Problem with referral': ['INELIGIBLE_REFERRAL', 'MISTAKEN_OR_DUPLICATE_REFERRAL'] },
+      }
+
+      nock('http://localhost:8080', {
+        reqheaders: { authorization: 'Bearer dummy-token' },
+      })
+        .get('/bff/referral/withdrawal-reasons')
+        .reply(200, mockWithdrawalReasons)
+
+      const result = communitySupportApiClient.getWithdrawalReasons('user1')
+
+      expect(result).resolves.toEqual(mockWithdrawalReasons)
     })
   })
   describe('getIcsFeedbackSubmissionResponse tests', () => {

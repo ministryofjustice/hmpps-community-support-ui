@@ -12,6 +12,7 @@ export default class CheckReferralInformationPage extends AbstractPage {
   readonly equalityMonitoringSummary: SummaryList
 
   readonly additionalInformationSummary?: SummaryList
+  readonly contactDetailsSummary: SummaryList
 
   readonly riskInformationSummary: SummaryList
 
@@ -23,7 +24,8 @@ export default class CheckReferralInformationPage extends AbstractPage {
     page: Page,
     personalDetailsSummary: SummaryList,
     equalityMonitoringSummary: SummaryList,
-    additionalInformationSummary: SummaryList,
+    additionalInformationSummary?: SummaryList,
+    contactDetailsSummary?: SummaryList,
     riskInformationSummary: SummaryList,
     additionalSupportNeedsSummary: SummaryList,
     referralDetailsSummary: SummaryList,
@@ -37,6 +39,7 @@ export default class CheckReferralInformationPage extends AbstractPage {
     this.riskInformationSummary = riskInformationSummary
     this.additionalSupportNeedsSummary = additionalSupportNeedsSummary
     this.referralDetailsSummary = referralDetailsSummary
+    this.contactDetailsSummary = contactDetailsSummary as SummaryList
   }
 
   static url(): string {
@@ -49,6 +52,7 @@ export default class CheckReferralInformationPage extends AbstractPage {
     const additionalInformationSummary = await SummaryList.create(
       page.locator('[data-testid="additional-information"]'),
     )
+    const contactDetailsSummary = await SummaryList.create(page.locator('[data-testid="contact-details"]'))
     const riskInformationSummary = await SummaryList.create(page.locator('[data-testid="risk-information"]'))
     const additionalSupportNeedsSummary = await SummaryList.create(
       page.locator('[data-testid="additional-support-needs"]'),
@@ -60,6 +64,7 @@ export default class CheckReferralInformationPage extends AbstractPage {
       personalDetailsSummary,
       equalityMonitoringSummary,
       additionalInformationSummary,
+      contactDetailsSummary,
       riskInformationSummary,
       additionalSupportNeedsSummary,
       referralDetailsSummary,
@@ -71,6 +76,7 @@ export default class CheckReferralInformationPage extends AbstractPage {
     await expect(checkReferralInformationPage.riskInformationSummary.summaryLocator).toBeVisible()
     await expect(checkReferralInformationPage.additionalSupportNeedsSummary.summaryLocator).toBeVisible()
     await expect(checkReferralInformationPage.referralDetailsSummary.summaryLocator).toBeVisible()
+    await expect(contactDetailsSummary.summaryLocator).toBeVisible()
     return checkReferralInformationPage
   }
 }
