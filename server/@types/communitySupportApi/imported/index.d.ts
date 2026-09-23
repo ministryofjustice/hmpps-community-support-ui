@@ -1262,7 +1262,7 @@ export interface components {
       label: string
       hint?: string | null
       /** @enum {string} */
-      answerType: 'TEXTAREA' | 'RADIO' | 'CHECKBOX' | 'DATE'
+      answerType: 'TEXTAREA' | 'RADIO' | 'CHECKBOX'
       /** Format: int32 */
       maximumNumberOfResponses: number
       choices?: components['schemas']['QuestionChoice'][] | null
@@ -1483,7 +1483,19 @@ export interface components {
       /** Format: uuid */
       id: string
       label: string
-      outcomes: string[]
+      outcomes: components['schemas']['ActionPlanSummaryOutcome'][]
+    }
+    ActionPlanSummaryOutcome: {
+      /** Format: uuid */
+      id: string
+      label: string
+      activities: components['schemas']['ActionPlanSummaryOutcomeActivity'][]
+    }
+    ActionPlanSummaryOutcomeActivity: {
+      /** Format: uuid */
+      id: string
+      who: string
+      details: string
     }
     ActionPlanSummaryPersonDetails: {
       firstName: string
@@ -1800,7 +1812,7 @@ export interface components {
       /** Format: date-time */
       addressUpdatedAt?: string | null
       noFixedAddress?: boolean | null
-      inCustody?: boolean | null
+      inCustody: boolean
       addressType?: string | null
       /** Format: date */
       addressStartDate?: string | null
