@@ -1608,6 +1608,8 @@ export interface components {
       contactDetailsTableData: components['schemas']['ContactDetailsTableDataDto']
       referralDetailsTableData: components['schemas']['ReferralDetailsTableDataDto']
       withdrawReferral: boolean
+      /** Format: date-time */
+      withdrawalCreationDate?: string | null
     }
     ReferralDetailsTableDataDto: {
       referralDate: string
