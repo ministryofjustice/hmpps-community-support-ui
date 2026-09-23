@@ -1,6 +1,7 @@
 import { Factory } from 'fishery'
+import type { CheckDraftReferralDetailsDto } from '@community-support-api'
 
-const DraftReferralDetailsFactory = new Factory(() => ({
+const DraftReferralDetailsFactory = new Factory<CheckDraftReferralDetailsDto>(() => ({
   id: 'referralId123',
   createdDate: '2026-02-10T11:23:00.780Z',
   personDetailsTableData: {
@@ -12,9 +13,9 @@ const DraftReferralDetailsFactory = new Factory(() => ({
     disabilities: [],
     personalCircumstances: [],
   },
-  equalityDetailsTableData: {},
+  equalityDetailsTableData: { ethnicity: 'White British', religionOrBelief: 'None', sex: 'Male' },
   additionalInformationDetailsTableData: {},
-  contactDetailsTableData: {},
+  contactDetailsTableData: { inCustody: false },
   riskInformationDetailsTableData: {},
   additionalSupportNeedsDetailsTableData: {},
   personNeedsDetailsTableData: {},
