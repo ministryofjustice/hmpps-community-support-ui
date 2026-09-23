@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import ReferralService from '../../services/referralService'
 import WithdrawalService from '../../services/withdrawalService'
+import type { ReferralDetailsNotification } from '../referralDetails/ReferralDetailsNotification'
 import { validateRequestBodyAgainstSchema } from '../../validation/validationUtils'
 import WithdrawalConfirmPresenter from './WithdrawalConfirmPresenter'
 import WithdrawalReasonPresenter from './WithdrawalReasonPresenter'
@@ -42,6 +43,7 @@ export default class WithdrawalController {
           additionalInformation: flashedFormData[additionalInformationField(withdrawalReason)],
         }
       : this.withdrawalService.getWithdrawal(caseIdentifier, req.session.withdrawalReferrals)
+
     new WithdrawalReasonPresenter(
       caseIdentifier,
       referralName,
@@ -78,6 +80,7 @@ export default class WithdrawalController {
       res.redirect(`/referral/${caseIdentifier}/withdraw`)
       return
     }
+
     const referralName = await this.getReferralName(caseIdentifier, res.locals.user.username)
     new WithdrawalConfirmPresenter(caseIdentifier, referralName, withdrawal).renderPage(res)
   }
@@ -111,6 +114,11 @@ export default class WithdrawalController {
           caseIdentifier,
           res.locals.user.username,
         )
+        req.session.referralDetailsNotification = {
+          type: 'warning',
+          code: 'withdrawalAlreadyCompleted',
+          caseReference: caseIdentifier,
+        } satisfies ReferralDetailsNotification
         res.redirect(`/referral-details/${referral.id}`)
         return
       }

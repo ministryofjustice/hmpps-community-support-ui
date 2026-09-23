@@ -48,10 +48,7 @@ test.describe('Withdraw referral', () => {
     await resetStubs()
     await communitySupport.stubGetReferralDetailsPage(200, referralId)
     await communitySupport.stubGetInProgressCase()
-    await communitySupport.stubWithdrawReferral(referralIdentifier, {
-      reasonCode: 'Not engaged',
-      additionalDetails: 'No longer engaging.',
-    })
+    await communitySupport.stubWithdrawReferral(caseIdentifier, withdrawalRequest)
     await communitySupport.stubGetWithdrawalReasons({ withdrawalReasons: withdrawalReasonGroups })
     await page.goto('/')
     await login(page)
@@ -75,7 +72,6 @@ test.describe('Withdraw referral', () => {
     await page.goto(ReferralDetailsPage.url(referralId))
     const referralDetailsPage = await ReferralDetailsPage.verifyOnPage(page)
     await referralDetailsPage.withdrawReferralLink.click()
-    await page.getByRole('button', { name: 'Withdraw referral', exact: true }).click()
 
     await expect(page).toHaveURL(WithdrawalReasonPage.url(caseIdentifier))
     const withdrawalPage = await WithdrawalReasonPage.verifyOnPage(page)
