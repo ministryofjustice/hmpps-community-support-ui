@@ -91,8 +91,17 @@
       "anyOtherNeedsLabel": "Any other needs",
       "interpreterLabel": "Does {{ firstName }} need an interpreter?",
       "interpreterLanguageLabel": "What language does {{ firstName }} need an interpreter for?"
-
-
+    },
+    "personsNeedsCard": {
+      "heading": "Person's needs",
+      "accommodationLabel": "Accommodation",
+      "employmentAndEducationLabel": "Employment and education",
+      "financesLabel": "Finances",
+      "personalRelationshipsAndCommunityLabel": "Personal relationships and community",
+      "drugUseLabel": "Drug use",
+      "alcoholUseLabel": "Alcohol use",
+      "healthAndWellbeingLabel": "Health and wellbeing",
+      "thinkingBehaviourAndAttitudesLabel": "Thinking, behaviour and attitudes"
     },
     "referralDetailsHeader": "Referral information",
     "referralContactDetailsHeader": "Referral contact details",

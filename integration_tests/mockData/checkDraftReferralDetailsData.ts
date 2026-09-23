@@ -62,7 +62,17 @@ const checkDraftReferralDetails: CheckDraftReferralDetailsDto = {
     anyOtherNeeds: 'Needs printed materials',
     interpreterLanguage: 'Spanish',
   },
-  personNeedsDetailsTableData: {},
+  personNeedsDetailsTableData: {
+    hasAccommodationNeeds: true,
+    accommodationDetails: 'Has suitable housing',
+    employmentAndEducation: 'Seeking part-time work',
+    financialDetails: 'On benefits',
+    personalRelationshipsCommunityDetails: 'Has supportive family',
+    drugUseDetails: 'No current use',
+    alcoholUseDetails: 'Occasional',
+    healthWellbeingDetails: 'Good',
+    thinkingBehavioursAttitudeDetails: 'Responds well to prompts',
+  },
   referralAreaTableData: { area: 'London' },
   mainPocDetailsTableData: {},
 }

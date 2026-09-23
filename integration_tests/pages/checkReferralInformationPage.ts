@@ -17,6 +17,8 @@ export default class CheckReferralInformationPage extends AbstractPage {
 
   readonly riskInformationSummary: SummaryList
 
+  readonly personsNeedsSummary: SummaryList
+
   readonly additionalSupportNeedsSummary: SummaryList
 
   readonly referralDetailsSummary: SummaryList
@@ -27,6 +29,7 @@ export default class CheckReferralInformationPage extends AbstractPage {
     equalityMonitoringSummary: SummaryList,
     contactDetailsSummary: SummaryList,
     riskInformationSummary: SummaryList,
+    personsNeedsSummary: SummaryList,
     additionalSupportNeedsSummary: SummaryList,
     referralDetailsSummary: SummaryList,
     additionalInformationSummary?: SummaryList,
@@ -38,6 +41,7 @@ export default class CheckReferralInformationPage extends AbstractPage {
     this.equalityMonitoringSummary = equalityMonitoringSummary
     this.additionalInformationSummary = additionalInformationSummary
     this.riskInformationSummary = riskInformationSummary
+    this.personsNeedsSummary = personsNeedsSummary
     this.additionalSupportNeedsSummary = additionalSupportNeedsSummary
     this.referralDetailsSummary = referralDetailsSummary
     this.contactDetailsSummary = contactDetailsSummary as SummaryList
@@ -55,6 +59,7 @@ export default class CheckReferralInformationPage extends AbstractPage {
     )
     const contactDetailsSummary = await SummaryList.create(page.locator('[data-testid="contact-details"]'))
     const riskInformationSummary = await SummaryList.create(page.locator('[data-testid="risk-information"]'))
+    const personsNeedsSummary = await SummaryList.create(page.locator('[data-testid="persons-needs"]'))
     const additionalSupportNeedsSummary = await SummaryList.create(
       page.locator('[data-testid="additional-support-needs"]'),
     )
@@ -66,6 +71,7 @@ export default class CheckReferralInformationPage extends AbstractPage {
       equalityMonitoringSummary,
       contactDetailsSummary,
       riskInformationSummary,
+      personsNeedsSummary,
       additionalSupportNeedsSummary,
       referralDetailsSummary,
       additionalInformationSummary,
@@ -75,6 +81,7 @@ export default class CheckReferralInformationPage extends AbstractPage {
     await expect(checkReferralInformationPage.equalityMonitoringSummary.summaryLocator).toBeVisible()
     await expect(additionalInformationSummary.summaryLocator).toBeVisible()
     await expect(checkReferralInformationPage.riskInformationSummary.summaryLocator).toBeVisible()
+    await expect(checkReferralInformationPage.personsNeedsSummary.summaryLocator).toBeVisible()
     await expect(checkReferralInformationPage.additionalSupportNeedsSummary.summaryLocator).toBeVisible()
     await expect(checkReferralInformationPage.referralDetailsSummary.summaryLocator).toBeVisible()
     await expect(contactDetailsSummary.summaryLocator).toBeVisible()

@@ -53,6 +53,17 @@ export default CheckReferralInformationContentFactory.define(({ transientParams 
     interpreterLabel: 'Does Alex need an interpreter?',
     interpreterLanguageLabel: 'What language does Alex need an interpreter for?',
   },
+  personsNeedsCard: transientParams.personsNeedsCard || {
+    heading: "Person's needs",
+    accommodationLabel: 'Accommodation',
+    employmentAndEducationLabel: 'Employment and education',
+    financesLabel: 'Finances',
+    personalRelationshipsAndCommunityLabel: 'Personal relationships and community',
+    drugUseLabel: 'Drug use',
+    alcoholUseLabel: 'Alcohol use',
+    healthAndWellbeingLabel: 'Health and wellbeing',
+    thinkingBehaviourAndAttitudesLabel: 'Thinking, behaviour and attitudes',
+  },
   additionalInformationCard: transientParams.additionalInformationCard || {
     heading: 'Additional information',
     homeOfficeInterestLabel: 'Home Office interest',
