@@ -89,7 +89,7 @@
       "employmentResponsibilitiesLabel": "Employment responsibilities",
       "diversityLabel": "Diversity",
       "anyOtherNeedsLabel": "Any other needs",
-      "interpreterLabel": "Does {{ firstName }} need an interpreter",
+      "interpreterLabel": "Does {{ firstName }} need an interpreter?",
       "interpreterLanguageLabel": "What language does {{ firstName }} need an interpreter for?"
 
 

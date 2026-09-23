@@ -64,11 +64,11 @@ export default class CheckReferralInformationPage extends AbstractPage {
       page,
       personalDetailsSummary,
       equalityMonitoringSummary,
-      additionalInformationSummary,
       contactDetailsSummary,
       riskInformationSummary,
       additionalSupportNeedsSummary,
       referralDetailsSummary,
+      additionalInformationSummary,
     )
 
     await expect(checkReferralInformationPage.personalDetailsSummary.summaryLocator).toBeVisible()

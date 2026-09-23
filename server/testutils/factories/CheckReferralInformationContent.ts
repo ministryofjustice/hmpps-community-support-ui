@@ -50,7 +50,7 @@ export default CheckReferralInformationContentFactory.define(({ transientParams 
     employmentResponsibilitiesLabel: 'Employment responsibilities',
     diversityLabel: 'Diversity',
     anyOtherNeedsLabel: 'Any other needs',
-    interpreterLabel: 'Does Alex need an interpreter',
+    interpreterLabel: 'Does Alex need an interpreter?',
     interpreterLanguageLabel: 'What language does Alex need an interpreter for?',
   },
   additionalInformationCard: transientParams.additionalInformationCard || {
