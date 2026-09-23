@@ -30,7 +30,7 @@ const checkDraftReferralDetails: CheckDraftReferralDetailsDto = {
     homeOfficeInterestNotes: 'Claiming asylum from Iran',
     offenderPersonalityDisorderPathway: 'Assessment ongoing',
   },
-  contactDetailsTableData: {},
+  contactDetailsTableData: {inCustody: false},
   riskInformationDetailsTableData: {
     whoIsAtRisk: 'Family members',
     natureOfRisk: 'Physical assault towards others',
