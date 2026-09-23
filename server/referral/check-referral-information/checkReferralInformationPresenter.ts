@@ -147,7 +147,7 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
     )
     viewModel.referralDetailsHeader = content.referralDetailsHeader
     viewModel.referralDetailsSummary = this.buildReferralDetailsSummary()
-    
+
     viewModel.referralContactDetailsHeader = content.referralContactDetailsHeader
     viewModel.backLink = { href: content.backLink }
     viewModel.submitButton = { text: content.submitButtonText, classes: 'govuk-!-margin-top-6' }
