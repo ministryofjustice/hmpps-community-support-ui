@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-const MAX_ADDITIONAL_INFORMATION_LENGTH = 2000
+const MAX_ADDITIONAL_INFORMATION_LENGTH = 65000
 const SELECT_WITHDRAWAL_REASON_ERROR = 'Select why you are withdrawing the referral'
 
 export type WithdrawalReason = string
