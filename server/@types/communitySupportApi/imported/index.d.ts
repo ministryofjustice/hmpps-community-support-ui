@@ -1800,7 +1800,7 @@ export interface components {
       /** Format: date-time */
       addressUpdatedAt?: string | null
       noFixedAddress?: boolean | null
-      inCustody: boolean
+      inCustody?: boolean | null
       addressType?: string | null
       /** Format: date */
       addressStartDate?: string | null

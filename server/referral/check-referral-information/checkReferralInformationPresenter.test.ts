@@ -6,6 +6,7 @@ import type {
 } from './checkReferralInformationViewModel'
 import CheckReferralInformationPresenter from './checkReferralInformationPresenter'
 import CheckReferralInformationContentFactory from '../../testutils/factories/CheckReferralInformationContent'
+import DraftReferralDetailsFactory from '../../testutils/factories/DraftReferralDetails'
 
 describe('CheckReferralInformationPresenter', () => {
   let res: Response
@@ -19,10 +20,11 @@ describe('CheckReferralInformationPresenter', () => {
     } as unknown as Response
   })
   describe('renderPage', () => {
+    const buildDraftReferralDetails = (overrides = {}): CheckDraftReferralDetailsDto =>
+      DraftReferralDetailsFactory.build(overrides) as unknown as CheckDraftReferralDetailsDto
+
     it('should render draft referral details', () => {
-      const draftReferralDetails = {
-        id: 'referralId123',
-        createdDate: '2026-02-10T11:23:00.780Z',
+      const draftReferralDetails = DraftReferralDetailsFactory.build({
         personDetailsTableData: {
           name: { firstName: 'John', lastName: 'Doe' },
           crn: 'X123456',
@@ -54,7 +56,7 @@ describe('CheckReferralInformationPresenter', () => {
         personNeedsDetailsTableData: {},
         referralAreaTableData: { area: 'London' },
         mainPocDetailsTableData: {},
-      } as CheckDraftReferralDetailsDto
+      } as CheckDraftReferralDetailsDto)
 
       const presenter = new CheckReferralInformationPresenter(draftReferralDetails)
       presenter.renderPage(res)
@@ -157,10 +159,125 @@ describe('CheckReferralInformationPresenter', () => {
       )
     })
 
+    it('should render main address when person is not in custody', () => {
+      const draftReferralDetails = buildDraftReferralDetails({
+        personDetailsTableData: {
+          name: { firstName: 'John', lastName: 'Doe' },
+          crn: 'X123456',
+          dateOfBirth: '1975-02-20',
+          preferredLanguage: 'English',
+          disabilities: [],
+          personalCircumstances: [],
+        },
+        contactDetailsTableData: {
+          phoneNumber: '0123',
+          mobileNumber: '0456',
+          email: 'a@b.com',
+          address: 'HMP Somewhere',
+          inCustody: false,
+          addressType: 'Prison',
+          addressStartDate: '2026-01-01',
+          addressNotes: 'Notes',
+        },
+      })
+
+      const presenter = new CheckReferralInformationPresenter(draftReferralDetails)
+      presenter.renderPage(res)
+
+      const renderData = (res.render as jest.Mock).mock.calls[0][1] as { content: CheckReferralInformationViewModel }
+      const contact = renderData.content.contactDetailsSummary
+      expect(contact.rows[0]).toMatchObject({
+        key: { text: content.contactDetailsCard.phoneNumberLabel },
+        value: { text: '0123' },
+      })
+      expect(contact.rows[1]).toMatchObject({
+        key: { text: content.contactDetailsCard.mobileNumberLabel },
+        value: { text: '0456' },
+      })
+      expect(contact.rows[2]).toMatchObject({
+        key: { text: content.contactDetailsCard.emailAddressLabel },
+        value: { text: 'a@b.com' },
+      })
+      expect(contact.rows[3].key).toHaveProperty('html')
+      expect(contact.rows[3].key.html).toContain(content.contactDetailsCard.mainAddressLabel)
+      expect(contact.rows[3].value).toHaveProperty('html')
+      expect(contact.rows[3].value.html).toContain('HMP Somewhere')
+    })
+
+    it('should render last known address when person is in custody', () => {
+      const draftReferralDetails = buildDraftReferralDetails({
+        personDetailsTableData: {
+          name: { firstName: 'John', lastName: 'Doe' },
+          crn: 'X123456',
+          dateOfBirth: '1975-02-20',
+          preferredLanguage: 'English',
+          disabilities: [],
+          personalCircumstances: [],
+        },
+        contactDetailsTableData: {
+          phoneNumber: '0123',
+          mobileNumber: '0456',
+          email: 'a@b.com',
+          address: 'HMP Somewhere',
+          inCustody: true,
+          addressType: 'Prison',
+          addressStartDate: '2026-01-01',
+          addressNotes: 'Notes',
+        },
+      })
+
+      const presenter = new CheckReferralInformationPresenter(draftReferralDetails)
+      presenter.renderPage(res)
+
+      const renderData = (res.render as jest.Mock).mock.calls[0][1] as { content: CheckReferralInformationViewModel }
+      const contact = renderData.content.contactDetailsSummary
+      expect(contact.rows[0]).toMatchObject({
+        key: { text: content.contactDetailsCard.phoneNumberLabel },
+        value: { text: '0123' },
+      })
+      expect(contact.rows[1]).toMatchObject({
+        key: { text: content.contactDetailsCard.mobileNumberLabel },
+        value: { text: '0456' },
+      })
+      expect(contact.rows[2]).toMatchObject({
+        key: { text: content.contactDetailsCard.emailAddressLabel },
+        value: { text: 'a@b.com' },
+      })
+      expect(contact.rows[3].key).toHaveProperty('html')
+      expect(contact.rows[3].key.html).toContain(content.contactDetailsCard.lastKnownAddressLabel)
+      expect(contact.rows[3].value).toHaveProperty('html')
+      expect(contact.rows[3].value.html).toContain('HMP Somewhere')
+    })
+
+    it('should render no fixed abode text when noFixedAddress is true', () => {
+      const draftReferralDetails = buildDraftReferralDetails({
+        personDetailsTableData: {
+          name: { firstName: 'John', lastName: 'Doe' },
+          crn: 'X123456',
+          dateOfBirth: '1975-02-20',
+          preferredLanguage: 'English',
+          disabilities: [],
+          personalCircumstances: [],
+        },
+        contactDetailsTableData: {
+          phoneNumber: '',
+          mobileNumber: '',
+          email: null,
+          address: null,
+          noFixedAddress: true,
+        },
+      } as unknown as CheckDraftReferralDetailsDto)
+
+      const presenter = new CheckReferralInformationPresenter(draftReferralDetails)
+      presenter.renderPage(res)
+
+      const renderData = (res.render as jest.Mock).mock.calls[0][1] as { content: CheckReferralInformationViewModel }
+      const contact = renderData.content.contactDetailsSummary
+      expect(contact.rows[3].value.html).toContain(content.contactDetailsCard.noFixedAbode)
+    })
+
     it('should list each personal circumstance in a fixed order', () => {
-      const draftReferralDetails = {
-        id: 'referralId123',
-        createdDate: '2026-02-10T11:23:00.780Z',
+      const draftReferralDetails = buildDraftReferralDetails({
         personDetailsTableData: {
           name: { firstName: 'John', lastName: 'Doe' },
           crn: 'X123456',
@@ -182,15 +299,7 @@ describe('CheckReferralInformationPresenter', () => {
             },
           ],
         },
-        equalityDetailsTableData: {},
-        additionalInformationDetailsTableData: {},
-        contactDetailsTableData: {},
-        riskInformationDetailsTableData: {},
-        additionalSupportNeedsDetailsTableData: {},
-        personNeedsDetailsTableData: {},
-        referralAreaTableData: {},
-        mainPocDetailsTableData: {},
-      } as CheckDraftReferralDetailsDto
+      } as CheckDraftReferralDetailsDto)
 
       new CheckReferralInformationPresenter(draftReferralDetails).renderPage(res)
 
@@ -204,9 +313,7 @@ describe('CheckReferralInformationPresenter', () => {
     })
 
     it('should show unavailable personal circumstance categories', () => {
-      const draftReferralDetails = {
-        id: 'referralId123',
-        createdDate: '2026-02-10T11:23:00.780Z',
+      const draftReferralDetails = buildDraftReferralDetails({
         personDetailsTableData: {
           name: { firstName: 'John', lastName: 'Doe' },
           crn: 'X123456',
@@ -217,15 +324,7 @@ describe('CheckReferralInformationPresenter', () => {
             { description: 'Employment', subDescription: 'Full-time employed', updatedAt: '2026-01-05T00:00:00Z' },
           ],
         },
-        equalityDetailsTableData: {},
-        additionalInformationDetailsTableData: {},
-        contactDetailsTableData: {},
-        riskInformationDetailsTableData: {},
-        additionalSupportNeedsDetailsTableData: {},
-        personNeedsDetailsTableData: {},
-        referralAreaTableData: {},
-        mainPocDetailsTableData: {},
-      } as CheckDraftReferralDetailsDto
+      } as CheckDraftReferralDetailsDto)
 
       new CheckReferralInformationPresenter(draftReferralDetails).renderPage(res)
 
@@ -239,9 +338,7 @@ describe('CheckReferralInformationPresenter', () => {
     })
 
     it('should render a prison number when CRN is unavailable', () => {
-      const draftReferralDetails = {
-        id: 'referralId123',
-        createdDate: '2026-02-10T11:23:00.780Z',
+      const draftReferralDetails = buildDraftReferralDetails({
         personDetailsTableData: {
           name: { firstName: 'John', lastName: 'Doe' },
           crn: '',
@@ -252,14 +349,7 @@ describe('CheckReferralInformationPresenter', () => {
           personalCircumstances: [],
         },
         equalityDetailsTableData: { ethnicity: 'White British', religionOrBelief: 'None', sex: 'Male' },
-        additionalInformationDetailsTableData: {},
-        contactDetailsTableData: {},
-        riskInformationDetailsTableData: {},
-        additionalSupportNeedsDetailsTableData: {},
-        personNeedsDetailsTableData: {},
-        referralAreaTableData: {},
-        mainPocDetailsTableData: {},
-      } as CheckDraftReferralDetailsDto
+      } as CheckDraftReferralDetailsDto)
 
       const presenter = new CheckReferralInformationPresenter(draftReferralDetails)
       presenter.renderPage(res)
@@ -273,9 +363,7 @@ describe('CheckReferralInformationPresenter', () => {
     })
 
     it('should not render identifier row when no identifier is available', () => {
-      const draftReferralDetails = {
-        id: 'referralId123',
-        createdDate: '2026-02-10T11:23:00.780Z',
+      const draftReferralDetails = buildDraftReferralDetails({
         personDetailsTableData: {
           name: { firstName: 'John', lastName: 'Doe' },
           crn: '',
@@ -285,14 +373,7 @@ describe('CheckReferralInformationPresenter', () => {
           personalCircumstances: [],
         },
         equalityDetailsTableData: { ethnicity: 'White British', religionOrBelief: 'None', sex: 'Male' },
-        additionalInformationDetailsTableData: {},
-        contactDetailsTableData: {},
-        riskInformationDetailsTableData: {},
-        additionalSupportNeedsDetailsTableData: {},
-        personNeedsDetailsTableData: {},
-        referralAreaTableData: {},
-        mainPocDetailsTableData: {},
-      } as CheckDraftReferralDetailsDto
+      } as CheckDraftReferralDetailsDto)
 
       const presenter = new CheckReferralInformationPresenter(draftReferralDetails)
       presenter.renderPage(res)
@@ -311,9 +392,7 @@ describe('CheckReferralInformationPresenter', () => {
     })
 
     it('should not include additional information summary when no additional information provided', () => {
-      const draftReferralDetails = {
-        id: 'referralId123',
-        createdDate: '2026-02-10T11:23:00.780Z',
+      const draftReferralDetails = buildDraftReferralDetails({
         personDetailsTableData: {
           name: { firstName: 'John', lastName: 'Doe' },
           crn: 'X123456',
@@ -322,15 +401,8 @@ describe('CheckReferralInformationPresenter', () => {
           disabilities: [],
           personalCircumstances: [],
         },
-        equalityDetailsTableData: {},
         additionalInformationDetailsTableData: {},
-        contactDetailsTableData: {},
-        riskInformationDetailsTableData: {},
-        additionalSupportNeedsDetailsTableData: {},
-        personNeedsDetailsTableData: {},
-        referralAreaTableData: {},
-        mainPocDetailsTableData: {},
-      } as CheckDraftReferralDetailsDto
+      } as CheckDraftReferralDetailsDto)
 
       new CheckReferralInformationPresenter(draftReferralDetails).renderPage(res)
 

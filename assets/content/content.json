@@ -40,9 +40,9 @@
       "dobLabel": "Date of birth",
       "languageLabel": "Preferred language",
       "currentCircumstancesLabel": "Current circumstances",
-      "disabilitiesLabel": "Disabilities",
-      "lastUpdatedLabel": "Last updated"
+      "disabilitiesLabel": "Disabilities"
     },
+    "lastUpdatedLabel": "Last updated",
     "equalityMonitoringCard": {
       "heading": "Equality monitoring",
       "nationalityLabel": "Nationality",
@@ -54,6 +54,18 @@
       "heading": "Additional information",
       "homeOfficeInterestLabel": "Home Office interest",
       "opdPathwayLabel": "Offender personality disorder (OPD) pathway"
+    },
+    "contactDetailsCard": {
+      "heading": "Contact details",
+      "phoneNumberLabel": "Phone number",
+      "mobileNumberLabel": "Mobile number",
+      "emailAddressLabel": "Email address",
+      "mainAddressLabel": "Main address",
+      "lastKnownAddressLabel": "Last known address",
+      "addressTypeLabel": "Type of address",
+      "addressStartDateLabel": "Start date",
+      "addressNotesLabel": "Notes",
+      "noFixedAbode": "No fixed abode"
     },
     "riskInformationCard": {
       "heading": "Risk information",

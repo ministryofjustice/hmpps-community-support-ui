@@ -1,10 +1,13 @@
 import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendSummaryList } from '@govuk-frontend'
+import { GlobalContent } from '../../../assets/content/GlobalContent'
 
 export type CheckReferralInformationViewModel = {
   pageTitle: string
   pageHeader: string
   pageSubHeader: string
   personalDetailsHeader: string
+  riskInformationHeader: string
+  contactDetailsSummary?: GovukFrontendSummaryList
   additionalInformationSummary?: GovukFrontendSummaryList
   riskInformationSummary: GovukFrontendSummaryList
   referralDetailsHeader: string
@@ -17,59 +20,15 @@ export type CheckReferralInformationViewModel = {
   referralDetailsSummary: GovukFrontendSummaryList
 }
 
-export type PersonalDetailsCard = {
-  heading: string
-  nameLabel: string
-  crnLabel: string
-  prisonNumberLabel: string
-  locationLabel: string
-  dobLabel: string
-  languageLabel: string
-  currentCircumstancesLabel: string
-  disabilitiesLabel: string
-  lastUpdatedLabel: string
-}
+export type PersonalDetailsCard = GlobalContent['/referral/check-referral-information']['personalDetailsCard']
 
-export type EqualityMonitoringCard = {
-  heading: string
-  nationalityLabel: string
-  ethnicityLabel: string
-  religionOrBeliefLabel: string
-  sexLabel: string
-}
+export type EqualityMonitoringCard = GlobalContent['/referral/check-referral-information']['equalityMonitoringCard']
 
-export type RiskInformationCard = {
-  heading: string
-  whoIsAtRiskLabel: string
-  riskNatureLabel: string
-  riskCircumstancesLabel: string
-  riskOfSelfHarmLabel: string
-  riskOfSuicideLabel: string
-  concernsCopingInApprovedPremisesLabel: string
-  concernsVulnerabilityLabel: string
-  additionalInformationLabel: string
-  noAdditionalInformationText?: string
-}
+export type AdditionalInformationCard =
+  GlobalContent['/referral/check-referral-information']['additionalInformationCard']
 
-export type AdditionalInformationCard = {
-  heading: string
-  homeOfficeInterestLabel: string
-  opdPathwayLabel: string
-  changeLinkText?: string
-}
+export type ContactDetailsCard = GlobalContent['/referral/check-referral-information']['contactDetailsCard']
 
-export type CheckReferralInformationContent = {
-  pageTitle: string
-  pageHeader: string
-  pageSubHeader: string
-  personalDetailsHeader: string
-  notAvailable: string
-  personalDetailsCard: PersonalDetailsCard
-  riskInformationCard: RiskInformationCard
-  additionalInformationCard?: AdditionalInformationCard
-  equalityMonitoringCard: EqualityMonitoringCard
-  referralDetailsHeader: string
-  referralContactDetailsHeader: string
-  submitButtonText: string
-  backLink: string
-}
+export type RiskInformationCard = GlobalContent['/referral/check-referral-information']['riskInformationCard']
+
+export type CheckReferralInformationContent = GlobalContent['/referral/check-referral-information']
