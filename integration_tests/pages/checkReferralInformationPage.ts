@@ -12,6 +12,7 @@ export default class CheckReferralInformationPage extends AbstractPage {
   readonly equalityMonitoringSummary: SummaryList
 
   readonly additionalInformationSummary?: SummaryList
+
   readonly contactDetailsSummary: SummaryList
 
   readonly riskInformationSummary: SummaryList
@@ -24,11 +25,11 @@ export default class CheckReferralInformationPage extends AbstractPage {
     page: Page,
     personalDetailsSummary: SummaryList,
     equalityMonitoringSummary: SummaryList,
-    additionalInformationSummary?: SummaryList,
-    contactDetailsSummary?: SummaryList,
+    contactDetailsSummary: SummaryList,
     riskInformationSummary: SummaryList,
     additionalSupportNeedsSummary: SummaryList,
     referralDetailsSummary: SummaryList,
+    additionalInformationSummary?: SummaryList,
   ) {
     super(page)
     this.submitButton = page.locator('button', { hasText: 'Submit referral' })

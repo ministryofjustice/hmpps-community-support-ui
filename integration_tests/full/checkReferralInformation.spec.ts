@@ -159,7 +159,7 @@ test.describe('Check Referral Information Page', () => {
     await expect(summary.rows[3].key).toHaveText('Main address')
     await expect(summary.rows[3].value).toHaveText('10 Main Street, London, AA1 1AA')
 
-        expect(checkReferralInformationPage.additionalSupportNeedsSummary).toBeDefined()
+    expect(checkReferralInformationPage.additionalSupportNeedsSummary).toBeDefined()
     expect(checkReferralInformationPage.additionalSupportNeedsSummary.rows).toHaveLength(9)
     await expect(checkReferralInformationPage.additionalSupportNeedsSummary.rows[0].key).toHaveText('Physical health')
     await expect(checkReferralInformationPage.additionalSupportNeedsSummary.rows[0].value).toContainText('Yes')
