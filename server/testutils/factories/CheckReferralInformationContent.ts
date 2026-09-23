@@ -27,6 +27,11 @@ export default CheckReferralInformationContentFactory.define(({ transientParams 
     mobileNumberLabel: 'Mobile number',
     emailAddressLabel: 'Email address',
     mainAddressLabel: 'Main address',
+    lastKnownAddressLabel: 'Last known address',
+    addressTypeLabel: 'Type of address',
+    addressStartDateLabel: 'Start date',
+    addressNotesLabel: 'Notes',
+    noFixedAbode: 'No fixed abode',
   },
   equalityMonitoringCard: transientParams.equalityMonitoringCard || {
     heading: 'Equality monitoring',
@@ -45,7 +50,7 @@ export default CheckReferralInformationContentFactory.define(({ transientParams 
     employmentResponsibilitiesLabel: 'Employment responsibilities',
     diversityLabel: 'Diversity',
     anyOtherNeedsLabel: 'Any other needs',
-    interpreterLabel: 'Does Alex need an interpreter',
+    interpreterLabel: 'Does Alex need an interpreter?',
     interpreterLanguageLabel: 'What language does Alex need an interpreter for?',
   },
   personsNeedsCard: transientParams.personsNeedsCard || {

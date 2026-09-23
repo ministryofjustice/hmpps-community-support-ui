@@ -4,7 +4,7 @@ import WithdrawalService from '../../services/withdrawalService'
 import { validateRequestBodyAgainstSchema } from '../../validation/validationUtils'
 import WithdrawalConfirmationPresenter from './WithdrawalConfirmationPresenter'
 import WithdrawalReasonPresenter from './WithdrawalReasonPresenter'
-import { additionalInformationField, createWithdrawalFormDataSchema } from './WithdrawalFormData'
+import { additionalInformationField, createWithdrawalFormDataSchema, WithdrawalReason } from './WithdrawalFormData'
 
 export default class WithdrawalController {
   constructor(
@@ -19,13 +19,13 @@ export default class WithdrawalController {
 
   async showReason(req: Request, res: Response): Promise<void> {
     const { referralIdentifier } = req.params as { referralIdentifier: string }
-    const [referralName, withdrawalReasonResponse] = await Promise.all([
-      this.getReferralName(referralIdentifier, res.locals.user.username),
-      this.referralService.getWithdrawalReasons(res.locals.user.username),
+    const { username } = res.locals.user
+    const [referralName, { withdrawalReasons }] = await Promise.all([
+      this.getReferralName(referralIdentifier, username),
+      this.referralService.getWithdrawalReasons(username),
     ])
     const flashedFormData = JSON.parse(req.flash('value').at(0) || '{}')
-    const withdrawalReason =
-      typeof flashedFormData.withdrawalReason === 'string' ? flashedFormData.withdrawalReason : undefined
+    const withdrawalReason = flashedFormData.withdrawalReason as WithdrawalReason | undefined
     const withdrawal = withdrawalReason
       ? {
           withdrawalReason,
@@ -35,7 +35,7 @@ export default class WithdrawalController {
     new WithdrawalReasonPresenter(
       referralIdentifier,
       referralName,
-      withdrawalReasonResponse.withdrawalReasons,
+      withdrawalReasons,
       withdrawal,
       res.locals.errors,
     ).renderPage(res)

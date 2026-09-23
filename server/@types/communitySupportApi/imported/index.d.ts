@@ -89,6 +89,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/referral/{referralReference}/action-plan/action': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Submit a need, outcome, and activities for an action plan */
+    post: operations['submitAction']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/referral/{identifier}/assign': {
     parameters: {
       query?: never
@@ -1069,6 +1086,22 @@ export interface components {
       reasonCode: string
       additionalDetails?: string | null
     }
+    ActionPlanActionRequest: {
+      /** Format: uuid */
+      needId: string
+      /** Format: uuid */
+      outcomeId: string
+      activities: components['schemas']['ActionPlanActivityRequest'][]
+    }
+    ActionPlanActivityRequest: {
+      who: string
+      activityDetails: string
+      status: string
+    }
+    ActionPlanActionResponse: {
+      success: boolean
+      message: string
+    }
     AssignCaseWorkersRequest: {
       emails: string[]
     }
@@ -1229,7 +1262,7 @@ export interface components {
       label: string
       hint?: string | null
       /** @enum {string} */
-      answerType: 'TEXTAREA' | 'RADIO' | 'CHECKBOX'
+      answerType: 'TEXTAREA' | 'RADIO' | 'CHECKBOX' | 'DATE'
       /** Format: int32 */
       maximumNumberOfResponses: number
       choices?: components['schemas']['QuestionChoice'][] | null
@@ -1764,6 +1797,14 @@ export interface components {
       mobileNumber?: string | null
       email?: string | null
       address?: string | null
+      /** Format: date-time */
+      addressUpdatedAt?: string | null
+      noFixedAddress?: boolean | null
+      inCustody?: boolean | null
+      addressType?: string | null
+      /** Format: date */
+      addressStartDate?: string | null
+      addressNotes?: string | null
     }
     DraftEqualityDetailsTableDataDto: {
       nationality?: string | null
@@ -2056,6 +2097,50 @@ export interface operations {
       }
       /** @description Referral already withdrawn */
       208: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  submitAction: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralReference: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ActionPlanActionRequest']
+      }
+    }
+    responses: {
+      /** @description Action submitted successfully */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ActionPlanActionResponse']
+        }
+      }
+      /** @description Validation failure */
+      400: {
         headers: {
           [name: string]: unknown
         }
