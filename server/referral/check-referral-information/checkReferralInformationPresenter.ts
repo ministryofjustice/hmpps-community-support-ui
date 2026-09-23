@@ -392,14 +392,20 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
     const data = this.draftReferralDetails.personNeedsDetailsTableData || {}
 
     const rows = [
-      govFrontendSummaryListRow(cardContent.accommodationLabel, data.hasAccommodationNeeds ? { html: `<div>Yes</div><br/><div>${escapeSpecialHtmlCharacters(data.accommodationDetails || '')}</div>` } : 'No'),
-      govFrontendSummaryListRow(cardContent.employmentAndEducationLabel, formatNeed(data.employmentAndEducation)),
-      govFrontendSummaryListRow(cardContent.financesLabel, formatNeed(data.financialDetails)),
-      govFrontendSummaryListRow(cardContent.personalRelationshipsAndCommunityLabel, formatNeed(data.personalRelationshipsCommunityDetails)),
-      govFrontendSummaryListRow(cardContent.drugUseLabel, formatNeed(data.drugUseDetails)),
-      govFrontendSummaryListRow(cardContent.alcoholUseLabel, formatNeed(data.alcoholUseDetails)),
-      govFrontendSummaryListRow(cardContent.healthAndWellbeingLabel, formatNeed(data.healthWellbeingDetails)),
-      govFrontendSummaryListRow(cardContent.thinkingBehaviourAndAttitudesLabel, formatNeed(data.thinkingBehavioursAttitudeDetails)),
+      govFrontendSummaryListRow(cardContent.accommodationLabel, { html: formatNeed(data.accommodationDetails) }),
+      govFrontendSummaryListRow(cardContent.employmentAndEducationLabel, {
+        html: formatNeed(data.employmentAndEducation),
+      }),
+      govFrontendSummaryListRow(cardContent.financesLabel, { html: formatNeed(data.financialDetails) }),
+      govFrontendSummaryListRow(cardContent.personalRelationshipsAndCommunityLabel, {
+        html: formatNeed(data.personalRelationshipsCommunityDetails),
+      }),
+      govFrontendSummaryListRow(cardContent.drugUseLabel, { html: formatNeed(data.drugUseDetails) }),
+      govFrontendSummaryListRow(cardContent.alcoholUseLabel, { html: formatNeed(data.alcoholUseDetails) }),
+      govFrontendSummaryListRow(cardContent.healthAndWellbeingLabel, { html: formatNeed(data.healthWellbeingDetails) }),
+      govFrontendSummaryListRow(cardContent.thinkingBehaviourAndAttitudesLabel, {
+        html: formatNeed(data.thinkingBehavioursAttitudeDetails),
+      }),
     ]
 
     return {

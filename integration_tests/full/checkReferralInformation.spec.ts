@@ -203,23 +203,15 @@ test.describe('Check Referral Information Page', () => {
     expect(checkReferralInformationPage.personsNeedsSummary).toBeDefined()
     expect(checkReferralInformationPage.personsNeedsSummary.rows).toHaveLength(8)
     await expect(checkReferralInformationPage.personsNeedsSummary.rows[0].key).toHaveText('Accommodation')
-    await expect(checkReferralInformationPage.personsNeedsSummary.rows[0].value).toHaveText(
-      'Has suitable housing',
-    )
-    await expect(checkReferralInformationPage.personsNeedsSummary.rows[1].key).toHaveText(
-      'Employment and education',
-    )
-    await expect(checkReferralInformationPage.personsNeedsSummary.rows[1].value).toHaveText(
-      'Seeking part-time work',
-    )
+    await expect(checkReferralInformationPage.personsNeedsSummary.rows[0].value).toHaveText('Has suitable housing')
+    await expect(checkReferralInformationPage.personsNeedsSummary.rows[1].key).toHaveText('Employment and education')
+    await expect(checkReferralInformationPage.personsNeedsSummary.rows[1].value).toHaveText('Seeking part-time work')
     await expect(checkReferralInformationPage.personsNeedsSummary.rows[2].key).toHaveText('Finances')
     await expect(checkReferralInformationPage.personsNeedsSummary.rows[2].value).toHaveText('On benefits')
     await expect(checkReferralInformationPage.personsNeedsSummary.rows[3].key).toHaveText(
       'Personal relationships and community',
     )
-    await expect(checkReferralInformationPage.personsNeedsSummary.rows[3].value).toHaveText(
-      'Has supportive family',
-    )
+    await expect(checkReferralInformationPage.personsNeedsSummary.rows[3].value).toHaveText('Has supportive family')
     await expect(checkReferralInformationPage.personsNeedsSummary.rows[4].key).toHaveText('Drug use')
     await expect(checkReferralInformationPage.personsNeedsSummary.rows[4].value).toHaveText('No current use')
     await expect(checkReferralInformationPage.personsNeedsSummary.rows[5].key).toHaveText('Alcohol use')
@@ -229,9 +221,7 @@ test.describe('Check Referral Information Page', () => {
     await expect(checkReferralInformationPage.personsNeedsSummary.rows[7].key).toHaveText(
       'Thinking, behaviour and attitudes',
     )
-    await expect(checkReferralInformationPage.personsNeedsSummary.rows[7].value).toHaveText(
-      'Responds well to prompts',
-    )
+    await expect(checkReferralInformationPage.personsNeedsSummary.rows[7].value).toHaveText('Responds well to prompts')
   })
 
   test('should display prison number and DOB on check referral information when searched by prison number', async ({
