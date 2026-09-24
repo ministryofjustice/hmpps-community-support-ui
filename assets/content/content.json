@@ -221,18 +221,6 @@
     "cancelLinkText": "Cancel",
     "changeLinkText": "Change"
   },
-  "/referral/:id/withdraw/success": {
-    "pageHeader": "The referral has been withdrawn",
-    "introText": "You can now return to cases in progress.",
-    "goToCaseListLink": "/cases-in-progress",
-    "goToCaseListButtonText": "Go to case list"
-  },
-  "/referral/:id/withdraw/already-withdrawn": {
-    "pageHeader": "Unable to withdraw referral",
-    "errorMessage": "This referral has already been withdrawn by another user",
-    "goToCaseListLink": "/cases-in-progress",
-    "goToCaseListButtonText": "Go to case list"
-  },
   "/referral/:id/withdraw/service-error": {
     "pageHeader": "Sorry, there is a problem with this service",
     "message": "Try again later.",
