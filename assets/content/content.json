@@ -91,8 +91,6 @@
       "anyOtherNeedsLabel": "Any other needs",
       "interpreterLabel": "Does {{ firstName }} need an interpreter?",
       "interpreterLanguageLabel": "What language does {{ firstName }} need an interpreter for?"
-
-
     },
     "referralDetailsHeader": "Referral information",
     "referralContactDetailsHeader": "Referral contact details",
