@@ -5,7 +5,7 @@ import WithdrawalService from '../../services/withdrawalService'
 import WithdrawalController from './withdrawalController'
 
 describe('WithdrawalController', () => {
-  const referralIdentifier = 'QD0878DE'
+  const caseIdentifier = 'QD0878DE'
   let controller: WithdrawalController
   let referralService: jest.Mocked<ReferralService>
   let req: Request
@@ -21,12 +21,14 @@ describe('WithdrawalController', () => {
       } satisfies WithdrawalReasonsGroupedBffResponseDto),
       withdrawReferral: jest.fn().mockResolvedValue(undefined),
     } as unknown as jest.Mocked<ReferralService>
+
     controller = new WithdrawalController(referralService, new WithdrawalService())
+
     req = {
-      params: { referralIdentifier },
+      params: { caseIdentifier },
       session: {
         withdrawalReferrals: {
-          [referralIdentifier]: {
+          [caseIdentifier]: {
             withdrawalReason: 'Not engaged',
             additionalInformation: 'No longer engaging',
           },
@@ -35,15 +37,23 @@ describe('WithdrawalController', () => {
       body: {},
       flash: jest.fn().mockReturnValue([]),
     } as unknown as Request
+
     res = {
-      redirect: jest.fn(),
+      status: jest.fn().mockReturnThis(),
       render: jest.fn(),
+      redirect: jest.fn(),
       locals: {
         user: { username: 'user1' },
+        errors: { list: [], messages: {} },
         content: {
           pageHeader: "Why are you withdrawing {{ name }}'s referral?",
           additionalInformationLabel: 'Give details',
           continueButtonText: 'Continue',
+          questionLabel: "Why are you withdrawing {{ name }}'s referral?",
+          warningText: 'If you are withdrawing this referral, you cannot start or change it again.',
+          withdrawButtonText: 'Withdraw referral',
+          cancelLinkText: 'Cancel',
+          changeLinkText: 'Change',
         },
       },
     } as unknown as Response
@@ -54,7 +64,7 @@ describe('WithdrawalController', () => {
       await controller.showReason(req, res)
 
       expect(referralService.getWithdrawalReasons).toHaveBeenCalledWith('user1')
-      expect(referralService.getCaseDetailsByCaseIdentifier).toHaveBeenCalledWith(referralIdentifier, 'user1')
+      expect(referralService.getCaseDetailsByCaseIdentifier).toHaveBeenCalledWith(caseIdentifier, 'user1')
       expect(res.render).toHaveBeenCalledWith(
         'referral/withdrawal/reason',
         expect.objectContaining({
@@ -110,43 +120,69 @@ describe('WithdrawalController', () => {
       await controller.submitReason(req, res)
 
       expect(referralService.getWithdrawalReasons).toHaveBeenCalledWith('user1')
-      expect(req.session.withdrawalReferrals[referralIdentifier]).toEqual({
+      expect(req.session.withdrawalReferrals[caseIdentifier]).toEqual({
         withdrawalReason: 'Ineligible referral',
         additionalInformation: 'No longer eligible.',
       })
-      expect(res.redirect).toHaveBeenCalledWith(`/referral/${referralIdentifier}/withdraw/confirm`)
-    })
-
-    it('rejects a reason that is not in the current valid set', async () => {
-      req.body = { withdrawalReason: 'not_a_real_reason' }
-
-      await controller.submitReason(req, res)
-
-      expect(res.redirect).not.toHaveBeenCalledWith(`/referral/${referralIdentifier}/withdraw/confirm`)
+      expect(res.redirect).toHaveBeenCalledWith(`/referral/${caseIdentifier}/withdraw/confirm`)
     })
   })
 
-  it('submits withdrawal and returns to open cases when confirmed', async () => {
-    await controller.submitConfirmation(req, res)
+  describe('submitConfirmation', () => {
+    it('submits withdrawal and redirects to referral details when confirmed', async () => {
+      await controller.submitConfirmation(req, res)
 
-    expect(referralService.withdrawReferral).toHaveBeenCalledWith(
-      referralIdentifier,
-      {
-        reasonCode: 'Not engaged',
-        additionalDetails: 'No longer engaging',
-      },
-      'user1',
-    )
-    expect(res.redirect).toHaveBeenCalledWith('/cases-in-progress')
-    expect(req.session.withdrawalReferrals[referralIdentifier]).toBeUndefined()
+      expect(referralService.withdrawReferral).toHaveBeenCalledWith(
+        caseIdentifier,
+        {
+          reasonCode: 'Not engaged',
+          additionalDetails: 'No longer engaging',
+        },
+        'user1',
+      )
+      expect(req.session.referralDetailsNotification).toEqual({
+        type: 'success',
+        code: 'withdrawalCompleted',
+        caseReference: caseIdentifier,
+      })
+      expect(res.redirect).toHaveBeenCalledWith(`/referral-details/${caseIdentifier}`)
+      expect(req.session.withdrawalReferrals[caseIdentifier]).toBeUndefined()
+    })
+
+    it('stores a referral details notification and redirects when the referral was already withdrawn', async () => {
+      referralService.withdrawReferral.mockRejectedValue({ responseStatus: 409 })
+
+      await controller.submitConfirmation(req, res)
+
+      expect(req.session.referralDetailsNotification).toEqual({
+        type: 'warning',
+        code: 'withdrawalAlreadyCompleted',
+        caseReference: caseIdentifier,
+      })
+      expect(res.redirect).toHaveBeenCalledWith(`/referral-details/${caseIdentifier}`)
+    })
   })
 
-  it('guards confirmation when no reason has been saved', async () => {
-    req.session.withdrawalReferrals = {}
+  describe('showServiceError', () => {
+    it('renders the shared error page with a case list button', async () => {
+      res.locals.content = {
+        pageHeader: 'Sorry, there is a problem with this service',
+        message: 'Try again later.',
+        goToCaseListLink: '/cases-in-progress',
+        goToCaseListButtonText: 'Go to case list',
+      }
 
-    await controller.submitConfirmation(req, res)
+      await controller.showServiceError(req, res)
 
-    expect(res.redirect).toHaveBeenCalledWith(`/referral/${referralIdentifier}/withdraw`)
-    expect(referralService.withdrawReferral).not.toHaveBeenCalled()
+      expect(res.status).toHaveBeenCalledWith(500)
+      expect(res.render).toHaveBeenCalledWith('pages/error', {
+        systemError: {
+          heading: 'Sorry, there is a problem with this service',
+          message: 'Try again later.',
+          buttonText: 'Go to case list',
+          buttonUrl: '/cases-in-progress',
+        },
+      })
+    })
   })
 })

@@ -48,7 +48,7 @@ export default class ReferralController {
     return ReferralController.CRN_REGEX.test(normalized) || ReferralController.PRISON_NUMBER_REGEX.test(normalized)
   }
 
-  async showReferralPage(req: Request, res: Response, next: NextFunction) {
+  async showReferralPage(req: Request, res: Response, _next: NextFunction) {
     const referralId = req.params.id as string
     const { username } = res.locals.user
     const referral = await this.referralService.getReferralById(referralId, username)
@@ -102,7 +102,7 @@ export default class ReferralController {
     }
   }
 
-  async handleGetFindPersonRequest(req: Request, res: Response, next: NextFunction) {
+  async handleGetFindPersonRequest(req: Request, res: Response, _next: NextFunction) {
     return res.render('referral/findPerson', {
       content: {
         backLink: { href: '/' },
