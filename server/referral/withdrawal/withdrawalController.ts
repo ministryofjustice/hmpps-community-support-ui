@@ -107,7 +107,17 @@ export default class WithdrawalController {
         caseIdentifier,
         req.session.withdrawalReferrals,
       )
-      res.redirect('/cases-in-progress')
+
+      const referral = await this.referralService.getCaseDetailsByCaseIdentifier(
+        caseIdentifier,
+        res.locals.user.username,
+      )
+      req.session.referralDetailsNotification = {
+        type: 'success',
+        code: 'withdrawalCompleted',
+        caseReference: caseIdentifier,
+      } satisfies ReferralDetailsNotification
+      res.redirect(`/referral-details/${referral.id}`)
     } catch (error) {
       if (getResponseStatus(error) === 409) {
         const referral = await this.referralService.getCaseDetailsByCaseIdentifier(

@@ -150,13 +150,13 @@ test.describe('Withdraw referral', () => {
   })
 
   // AC8
-  test('returns to open cases when withdrawal is confirmed', async ({ page }) => {
+  test('redirects to referral details when withdrawal is confirmed', async ({ page }) => {
     await communitySupport.stubWithdrawReferral(caseIdentifier, withdrawalRequest)
     const confirmationPage = await goToWithdrawalConfirm(page)
     await confirmationPage.withdrawButton.click()
 
-    await expect(page).toHaveURL(CaseListPage.url('in-progress'))
-    await CaseListPage.verifyOnPage(page)
+    await expect(page).toHaveURL(ReferralDetailsPage.url(referralId))
+    await ReferralDetailsPage.verifyOnPage(page)
   })
 
   // AC9

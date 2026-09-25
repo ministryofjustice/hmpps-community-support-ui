@@ -128,7 +128,9 @@ describe('WithdrawalController', () => {
   })
 
   describe('submitConfirmation', () => {
-    it('submits withdrawal and returns to open cases when confirmed', async () => {
+    it('submits withdrawal and redirects to referral details when confirmed', async () => {
+      referralService.getCaseDetailsByCaseIdentifier.mockResolvedValue({ id: 'referral-uuid' } as never)
+
       await controller.submitConfirmation(req, res)
 
       expect(referralService.withdrawReferral).toHaveBeenCalledWith(
@@ -139,7 +141,13 @@ describe('WithdrawalController', () => {
         },
         'user1',
       )
-      expect(res.redirect).toHaveBeenCalledWith('/cases-in-progress')
+      expect(referralService.getCaseDetailsByCaseIdentifier).toHaveBeenCalledWith(caseIdentifier, 'user1')
+      expect(req.session.referralDetailsNotification).toEqual({
+        type: 'success',
+        code: 'withdrawalCompleted',
+        caseReference: caseIdentifier,
+      })
+      expect(res.redirect).toHaveBeenCalledWith('/referral-details/referral-uuid')
       expect(req.session.withdrawalReferrals[caseIdentifier]).toBeUndefined()
     })
 
