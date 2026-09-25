@@ -1,11 +1,11 @@
 import { Request, Response } from 'express'
+import type { SystemError } from '../../interfaces/systemError'
 import ReferralService from '../../services/referralService'
 import WithdrawalService from '../../services/withdrawalService'
 import type { ReferralDetailsNotification } from '../referralDetails/ReferralDetailsNotification'
 import { validateRequestBodyAgainstSchema } from '../../validation/validationUtils'
 import WithdrawalConfirmPresenter from './WithdrawalConfirmPresenter'
 import WithdrawalReasonPresenter from './WithdrawalReasonPresenter'
-import WithdrawalServiceErrorPresenter from './WithdrawalServiceErrorPresenter'
 import { additionalInformationField, createWithdrawalFormDataSchema, WithdrawalReason } from './WithdrawalFormData'
 
 const getResponseStatus = (error: unknown): number | undefined => {
@@ -108,28 +108,20 @@ export default class WithdrawalController {
         req.session.withdrawalReferrals,
       )
 
-      const referral = await this.referralService.getCaseDetailsByCaseIdentifier(
-        caseIdentifier,
-        res.locals.user.username,
-      )
       req.session.referralDetailsNotification = {
         type: 'success',
         code: 'withdrawalCompleted',
         caseReference: caseIdentifier,
       } satisfies ReferralDetailsNotification
-      res.redirect(`/referral-details/${referral.id}`)
+      res.redirect(`/referral-details/${caseIdentifier}`)
     } catch (error) {
       if (getResponseStatus(error) === 409) {
-        const referral = await this.referralService.getCaseDetailsByCaseIdentifier(
-          caseIdentifier,
-          res.locals.user.username,
-        )
         req.session.referralDetailsNotification = {
           type: 'warning',
           code: 'withdrawalAlreadyCompleted',
           caseReference: caseIdentifier,
         } satisfies ReferralDetailsNotification
-        res.redirect(`/referral-details/${referral.id}`)
+        res.redirect(`/referral-details/${caseIdentifier}`)
         return
       }
 
@@ -138,6 +130,21 @@ export default class WithdrawalController {
   }
 
   async showServiceError(_req: Request, res: Response): Promise<void> {
-    new WithdrawalServiceErrorPresenter().renderPage(res)
+    const content = res.locals.content as {
+      pageHeader: string
+      message: string
+      goToCaseListButtonText: string
+      goToCaseListLink: string
+    }
+
+    const systemError: SystemError = {
+      heading: content.pageHeader,
+      message: content.message,
+      buttonText: content.goToCaseListButtonText,
+      buttonUrl: content.goToCaseListLink,
+    }
+
+    res.status(500)
+    return res.render('pages/error', { systemError })
   }
 }

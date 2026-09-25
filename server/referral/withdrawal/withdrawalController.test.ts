@@ -39,6 +39,7 @@ describe('WithdrawalController', () => {
     } as unknown as Request
 
     res = {
+      status: jest.fn().mockReturnThis(),
       render: jest.fn(),
       redirect: jest.fn(),
       locals: {
@@ -129,8 +130,6 @@ describe('WithdrawalController', () => {
 
   describe('submitConfirmation', () => {
     it('submits withdrawal and redirects to referral details when confirmed', async () => {
-      referralService.getCaseDetailsByCaseIdentifier.mockResolvedValue({ id: 'referral-uuid' } as never)
-
       await controller.submitConfirmation(req, res)
 
       expect(referralService.withdrawReferral).toHaveBeenCalledWith(
@@ -141,29 +140,49 @@ describe('WithdrawalController', () => {
         },
         'user1',
       )
-      expect(referralService.getCaseDetailsByCaseIdentifier).toHaveBeenCalledWith(caseIdentifier, 'user1')
       expect(req.session.referralDetailsNotification).toEqual({
         type: 'success',
         code: 'withdrawalCompleted',
         caseReference: caseIdentifier,
       })
-      expect(res.redirect).toHaveBeenCalledWith('/referral-details/referral-uuid')
+      expect(res.redirect).toHaveBeenCalledWith(`/referral-details/${caseIdentifier}`)
       expect(req.session.withdrawalReferrals[caseIdentifier]).toBeUndefined()
     })
 
     it('stores a referral details notification and redirects when the referral was already withdrawn', async () => {
       referralService.withdrawReferral.mockRejectedValue({ responseStatus: 409 })
-      referralService.getCaseDetailsByCaseIdentifier.mockResolvedValue({ id: 'referral-uuid' } as never)
 
       await controller.submitConfirmation(req, res)
 
-      expect(referralService.getCaseDetailsByCaseIdentifier).toHaveBeenCalledWith(caseIdentifier, 'user1')
       expect(req.session.referralDetailsNotification).toEqual({
         type: 'warning',
         code: 'withdrawalAlreadyCompleted',
         caseReference: caseIdentifier,
       })
-      expect(res.redirect).toHaveBeenCalledWith('/referral-details/referral-uuid')
+      expect(res.redirect).toHaveBeenCalledWith(`/referral-details/${caseIdentifier}`)
+    })
+  })
+
+  describe('showServiceError', () => {
+    it('renders the shared error page with a case list button', async () => {
+      res.locals.content = {
+        pageHeader: 'Sorry, there is a problem with this service',
+        message: 'Try again later.',
+        goToCaseListLink: '/cases-in-progress',
+        goToCaseListButtonText: 'Go to case list',
+      }
+
+      await controller.showServiceError(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(500)
+      expect(res.render).toHaveBeenCalledWith('pages/error', {
+        systemError: {
+          heading: 'Sorry, there is a problem with this service',
+          message: 'Try again later.',
+          buttonText: 'Go to case list',
+          buttonUrl: '/cases-in-progress',
+        },
+      })
     })
   })
 })

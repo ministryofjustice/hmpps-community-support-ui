@@ -1,10 +1,10 @@
 import { expect, test, type Page } from '@playwright/test'
 import { randomUUID } from 'node:crypto'
 import CaseListPage from '../pages/caseListPage'
+import ErrorPage from '../pages/errorPage'
 import ReferralDetailsPage from '../pages/referralDetailsPage'
 import WithdrawalConfirmPage from '../pages/withdrawalConfirmPage'
 import WithdrawalReasonPage from '../pages/withdrawalReasonPage'
-import WithdrawalServiceErrorPage from '../pages/withdrawalServiceErrorPage'
 import communitySupport from '../mockApis/communitySupport'
 import { login, resetStubs } from '../testUtils'
 import referralDetailsPageData from '../mockData/referralDetailsPageData'
@@ -155,7 +155,7 @@ test.describe('Withdraw referral', () => {
     const confirmationPage = await goToWithdrawalConfirm(page)
     await confirmationPage.withdrawButton.click()
 
-    await expect(page).toHaveURL(ReferralDetailsPage.url(referralId))
+    await expect(page).toHaveURL(ReferralDetailsPage.url(caseIdentifier))
     await ReferralDetailsPage.verifyOnPage(page)
   })
 
@@ -165,7 +165,7 @@ test.describe('Withdraw referral', () => {
     const confirmationPage = await goToWithdrawalConfirm(page)
     await confirmationPage.withdrawButton.click()
 
-    await expect(page).toHaveURL(ReferralDetailsPage.url(referralId))
+    await expect(page).toHaveURL(ReferralDetailsPage.url(caseIdentifier))
     await ReferralDetailsPage.verifyOnPage(page)
   })
 
@@ -175,9 +175,14 @@ test.describe('Withdraw referral', () => {
     const confirmationPage = await goToWithdrawalConfirm(page)
     await confirmationPage.withdrawButton.click()
 
-    await expect(page).toHaveURL(WithdrawalServiceErrorPage.url(caseIdentifier))
-    const serviceErrorPage = await WithdrawalServiceErrorPage.verifyOnPage(page)
-    await serviceErrorPage.goToCasesListButton.click()
+    await expect(page).toHaveURL(`/referral/${caseIdentifier}/withdraw/service-error`)
+    const errorPage = await ErrorPage.verifyOnSystemErrorPage(page, {
+      heading: 'Sorry, there is a problem with this service',
+      message: 'Try again later.',
+      buttonText: 'Go to case list',
+      buttonUrl: '/cases-in-progress',
+    })
+    await errorPage.clickButton()
 
     await expect(page).toHaveURL(CaseListPage.url('in-progress'))
     await CaseListPage.verifyOnPage(page)
