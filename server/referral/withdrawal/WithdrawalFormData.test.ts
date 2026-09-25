@@ -1,4 +1,8 @@
-import { createWithdrawalFormDataSchema, createWithdrawalReasonSchema } from './WithdrawalFormData'
+import {
+  WithdrawalConfirmSchema,
+  createWithdrawalFormDataSchema,
+  createWithdrawalReasonSchema,
+} from './WithdrawalFormData'
 
 describe('withdrawal form validation', () => {
   const withdrawalReasons = ['Ineligible referral', 'Not engaged', 'Another reason']
@@ -43,5 +47,10 @@ describe('withdrawal form validation', () => {
     if (!invalidResult.success) {
       expect(invalidResult.error.issues[0].message).toBe('Additional information must be 65000 characters or less')
     }
+  })
+
+  it('requires a confirmation choice', () => {
+    expect(WithdrawalConfirmSchema.safeParse({}).success).toBe(false)
+    expect(WithdrawalConfirmSchema.safeParse({ confirmWithdrawal: 'yes' }).success).toBe(true)
   })
 })

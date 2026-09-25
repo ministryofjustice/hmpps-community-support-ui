@@ -221,6 +221,12 @@
     "cancelLinkText": "Cancel",
     "changeLinkText": "Change"
   },
+  "/referral/:id/withdraw/service-error": {
+    "pageHeader": "Sorry, there is a problem with this service",
+    "message": "Try again later.",
+    "goToCaseListLink": "/cases-in-progress",
+    "goToCaseListButtonText": "Go to case list"
+  },
   "/referral/:id/appointment/confirm-ics": {
     "pageHeader": "Check the details before scheduling the ICS",
     "submitButtonText": "Submit"
