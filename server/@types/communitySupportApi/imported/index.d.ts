@@ -1821,7 +1821,6 @@ export interface components {
       employmentResponsibilities?: string | null
       diversity?: string | null
       anyOtherNeeds?: string | null
-      needsInterpreter?: boolean | null
       interpreterLanguage?: string | null
     }
     DraftContactDetailsTableDataDto: {

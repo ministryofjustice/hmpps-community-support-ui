@@ -12,6 +12,7 @@ import {
   EqualityMonitoringCard,
   PersonalDetailsCard,
   RiskInformationCard,
+  AdditionalSupportNeedsCard,
   ContactDetailsCard,
 } from './checkReferralInformationViewModel'
 
@@ -99,6 +100,13 @@ const formatHomeOfficeInterest = (notes?: string): string => {
   return 'Yes'
 }
 
+const formatAdditionalSupportNeed = (need?: string): string => {
+  if (need) {
+    return `<div>Yes</div><br/><div>${escapeSpecialHtmlCharacters(need)}</div>`
+  }
+  return 'No'
+}
+
 export default class CheckReferralInformationPresenter extends PresenterBase<
   CheckReferralInformationViewModel,
   CheckReferralInformationContent
@@ -114,32 +122,32 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
     viewModel.pageHeader = resolveName(this.draftReferralDetails.personDetailsTableData.name)
     viewModel.pageSubHeader = content.pageSubHeader
     viewModel.personalDetailsHeader = `About ${this.draftReferralDetails.personDetailsTableData.name.firstName}`
-    // compute last-updated values and pass label through
-    const personalLastUpdated = content.lastUpdatedLabel
+
     viewModel.personalDetailsSummary = this.buildPersonalDetailsSummary(
       content.personalDetailsCard,
       content.notAvailable,
-      personalLastUpdated,
+      content.lastUpdatedLabel,
     )
     viewModel.equalityMonitoringSummary = this.buildEqualityMonitoringSummary(
       content.equalityMonitoringCard,
       content.notAvailable,
     )
     viewModel.additionalInformationSummary = this.buildAdditionalInformationSummary(content.additionalInformationCard)
+    viewModel.contactDetailsSummary = this.buildContactDetailsSummary(
+      content.contactDetailsCard,
+      content.notAvailable,
+      content.lastUpdatedLabel,
+    )
     viewModel.riskInformationSummary = this.buildRiskInformationSummary(
       content.riskInformationCard,
       content.notAvailable,
     )
+    viewModel.additionalSupportNeedsSummary = this.buildAdditionalSupportNeedsSummary(
+      content.additionalSupportNeedsCard,
+    )
     viewModel.referralDetailsHeader = content.referralDetailsHeader
     viewModel.referralDetailsSummary = this.buildReferralDetailsSummary()
-    if (content.contactDetailsCard) {
-      const contactLastUpdatedLabel = content.lastUpdatedLabel
-      viewModel.contactDetailsSummary = this.buildContactDetailsSummary(
-        content.contactDetailsCard,
-        content.notAvailable,
-        contactLastUpdatedLabel,
-      )
-    }
+
     viewModel.referralContactDetailsHeader = content.referralContactDetailsHeader
     viewModel.backLink = { href: content.backLink }
     viewModel.submitButton = { text: content.submitButtonText, classes: 'govuk-!-margin-top-6' }
@@ -343,6 +351,52 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
           text: cardContent.heading,
         },
         attributes: { 'data-testid': 'additional-information' },
+      },
+      rows,
+    }
+  }
+
+  private buildAdditionalSupportNeedsSummary(cardContent: AdditionalSupportNeedsCard): GovukFrontendSummaryList {
+    const data = this.draftReferralDetails.additionalSupportNeedsDetailsTableData
+    const { firstName } = this.draftReferralDetails.personDetailsTableData.name
+
+    const rows = [
+      govFrontendSummaryListRow(cardContent.physicalHealthLabel, {
+        html: formatAdditionalSupportNeed(data.physicalHealth),
+      }),
+      govFrontendSummaryListRow(cardContent.mentalOrEmotionalHealthLabel, {
+        html: formatAdditionalSupportNeed(data.mentalOrEmotionalHealth),
+      }),
+      govFrontendSummaryListRow(cardContent.neurodiversityLabel, {
+        html: formatAdditionalSupportNeed(data.neurodiversity),
+      }),
+      govFrontendSummaryListRow(cardContent.locationAndTravelLabel, {
+        html: formatAdditionalSupportNeed(data.locationAndTravel),
+      }),
+      govFrontendSummaryListRow(cardContent.caringResponsibilitiesLabel, {
+        html: formatAdditionalSupportNeed(data.caringResponsibilities),
+      }),
+      govFrontendSummaryListRow(cardContent.employmentResponsibilitiesLabel, {
+        html: formatAdditionalSupportNeed(data.employmentResponsibilities),
+      }),
+      govFrontendSummaryListRow(cardContent.diversityLabel, { html: formatAdditionalSupportNeed(data.diversity) }),
+      govFrontendSummaryListRow(cardContent.anyOtherNeedsLabel, {
+        html: formatAdditionalSupportNeed(data.anyOtherNeeds),
+      }),
+      govFrontendSummaryListRow(
+        {
+          html: `<div>${cardContent.interpreterLabel.replace('{{ firstName }}', escapeSpecialHtmlCharacters(firstName))}</div><br/><div>${cardContent.interpreterLanguageLabel.replace('{{ firstName }}', escapeSpecialHtmlCharacters(firstName))}</div>`,
+        },
+        { html: formatAdditionalSupportNeed(data.interpreterLanguage) },
+      ),
+    ]
+
+    return {
+      card: {
+        title: {
+          text: cardContent.heading,
+        },
+        attributes: { 'data-testid': 'additional-support-needs' },
       },
       rows,
     }
