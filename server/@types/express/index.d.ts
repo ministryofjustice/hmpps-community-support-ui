@@ -11,6 +11,7 @@ import { HmppsUser } from '../../interfaces/hmppsUser'
 import { ChangeAppointmentDetails } from '../../appointment/change-ics-details-reason/ChangeAppointmentDetails'
 import { ReferralProgressBannerContent } from '../../referral/progress/ReferralProgressBannerContent'
 import { ReferralCreationDetails } from '../../referral/referralDetails/ReferralCreationDetails'
+import { ReferralDetailsNotification } from '../../referral/referralDetails/ReferralDetailsNotification'
 import { WithdrawalFormData } from '../../referral/withdrawal/WithdrawalFormData'
 
 export interface HowSessionTookPlace {
@@ -46,6 +47,7 @@ export declare module 'express-session' {
       target_service_completion_reason?: string
     }
     referralProgressBanner?: ReferralProgressBannerContent
+    referralDetailsNotification?: ReferralDetailsNotification
     icsFeedbackSubmission: IcsFeedbackSubmission & { caseReferenceId: string }
     draftReferralId: string
     personId: string

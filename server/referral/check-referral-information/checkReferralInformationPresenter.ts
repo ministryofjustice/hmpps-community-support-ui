@@ -94,6 +94,7 @@ const formatDateOfBirth = (dateOfBirth: string, notAvailable: string): string =>
   const age = differenceInYears(new Date(), dobDate)
   return `${format(dobDate, 'd MMM yyyy')} (${age} years old)`
 }
+
 const formatHomeOfficeInterest = (notes?: string): string => {
   if (notes) {
     return `<div>Yes</div><br/><div>${escapeSpecialHtmlCharacters(notes)}</div>`
@@ -146,9 +147,8 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
     viewModel.additionalSupportNeedsSummary = this.buildAdditionalSupportNeedsSummary(
       content.additionalSupportNeedsCard,
     )
-    if (content.personsNeedsCard) {
-      viewModel.personsNeedsSummary = this.buildPersonsNeedsSummary(content.personsNeedsCard)
-    }
+    viewModel.personsNeedsSummary = this.buildPersonsNeedsSummary(content.personsNeedsCard)
+    
     viewModel.referralDetailsHeader = content.referralDetailsHeader
     viewModel.referralDetailsSummary = this.buildReferralDetailsSummary()
 

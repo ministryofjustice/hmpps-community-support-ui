@@ -17,9 +17,9 @@ export default class CheckReferralInformationPage extends AbstractPage {
 
   readonly riskInformationSummary: SummaryList
 
-  readonly personsNeedsSummary: SummaryList
-
   readonly additionalSupportNeedsSummary: SummaryList
+
+  readonly personsNeedsSummary: SummaryList
 
   readonly referralDetailsSummary: SummaryList
 
@@ -29,8 +29,8 @@ export default class CheckReferralInformationPage extends AbstractPage {
     equalityMonitoringSummary: SummaryList,
     contactDetailsSummary: SummaryList,
     riskInformationSummary: SummaryList,
-    personsNeedsSummary: SummaryList,
     additionalSupportNeedsSummary: SummaryList,
+    personsNeedsSummary: SummaryList,
     referralDetailsSummary: SummaryList,
     additionalInformationSummary?: SummaryList,
   ) {
@@ -41,8 +41,8 @@ export default class CheckReferralInformationPage extends AbstractPage {
     this.equalityMonitoringSummary = equalityMonitoringSummary
     this.additionalInformationSummary = additionalInformationSummary
     this.riskInformationSummary = riskInformationSummary
-    this.personsNeedsSummary = personsNeedsSummary
     this.additionalSupportNeedsSummary = additionalSupportNeedsSummary
+    this.personsNeedsSummary = personsNeedsSummary
     this.referralDetailsSummary = referralDetailsSummary
     this.contactDetailsSummary = contactDetailsSummary as SummaryList
   }
@@ -59,10 +59,11 @@ export default class CheckReferralInformationPage extends AbstractPage {
     )
     const contactDetailsSummary = await SummaryList.create(page.locator('[data-testid="contact-details"]'))
     const riskInformationSummary = await SummaryList.create(page.locator('[data-testid="risk-information"]'))
-    const personsNeedsSummary = await SummaryList.create(page.locator('[data-testid="persons-needs"]'))
     const additionalSupportNeedsSummary = await SummaryList.create(
       page.locator('[data-testid="additional-support-needs"]'),
     )
+    const personsNeedsSummary = await SummaryList.create(page.locator('[data-testid="persons-needs"]'))
+
     const referralDetailsSummary = await SummaryList.create(page.locator('[data-testid="referral-details"]'))
 
     const checkReferralInformationPage = new CheckReferralInformationPage(
@@ -71,8 +72,8 @@ export default class CheckReferralInformationPage extends AbstractPage {
       equalityMonitoringSummary,
       contactDetailsSummary,
       riskInformationSummary,
-      personsNeedsSummary,
       additionalSupportNeedsSummary,
+      personsNeedsSummary,
       referralDetailsSummary,
       additionalInformationSummary,
     )

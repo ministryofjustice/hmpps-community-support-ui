@@ -6,10 +6,10 @@ export type CheckReferralInformationViewModel = {
   pageHeader: string
   pageSubHeader: string
   personalDetailsHeader: string
-  personsNeedsSummary?: GovukFrontendSummaryList
-  additionalSupportNeedsSummary?: GovukFrontendSummaryList
+  additionalSupportNeedsSummary: GovukFrontendSummaryList
+  personsNeedsSummary: GovukFrontendSummaryList
   riskInformationHeader: string
-  contactDetailsSummary?: GovukFrontendSummaryList
+  contactDetailsSummary: GovukFrontendSummaryList
   additionalInformationSummary?: GovukFrontendSummaryList
   riskInformationSummary: GovukFrontendSummaryList
   referralDetailsHeader: string

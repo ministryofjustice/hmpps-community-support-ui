@@ -30,7 +30,7 @@ export default class WithdrawalReasonPresenter extends PresenterBase<
   WithdrawalReasonContent
 > {
   constructor(
-    private readonly referralIdentifier: string,
+    private readonly caseIdentifier: string,
     private readonly referralName: string,
     private readonly withdrawalReasonGroups: Record<string, string[]>,
     private readonly formData?: WithdrawalFormData,
@@ -109,8 +109,8 @@ export default class WithdrawalReasonPresenter extends PresenterBase<
       pageHeader: content.pageHeader.replace('{{ name }}', this.referralName),
       reasonGroups: this.buildReasonGroups(content),
       continueButton: { text: content.continueButtonText },
-      submitHref: `/referral/${this.referralIdentifier}/withdraw`,
-      backLink: { href: `/referral-details/${this.referralIdentifier}` },
+      submitHref: `/referral/${this.caseIdentifier}/withdraw`,
+      backLink: { href: `/referral-details/${this.caseIdentifier}` },
     }
   }
 

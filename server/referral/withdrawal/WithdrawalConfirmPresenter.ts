@@ -1,7 +1,7 @@
 import { Response } from 'express'
 import PresenterBase from '../../presenter/presenterBase'
 import { WithdrawalFormData } from './WithdrawalFormData'
-import { WithdrawalConfirmationContent, WithdrawalConfirmationViewModel } from './withdrawalConfirmationViewModel'
+import { WithdrawalConfirmContent, WithdrawalConfirmViewModel } from './withdrawalConfirmViewModel'
 
 const toWithdrawalReasonLabel = (reason: string): string => {
   if (!reason.includes('_')) {
@@ -15,19 +15,19 @@ const toWithdrawalReasonLabel = (reason: string): string => {
     .join(' ')
 }
 
-export default class WithdrawalConfirmationPresenter extends PresenterBase<
-  WithdrawalConfirmationViewModel,
-  WithdrawalConfirmationContent
+export default class WithdrawalConfirmPresenter extends PresenterBase<
+  WithdrawalConfirmViewModel,
+  WithdrawalConfirmContent
 > {
   constructor(
-    private readonly referralIdentifier: string,
+    private readonly caseIdentifier: string,
     private readonly referralName: string,
     private readonly withdrawal: WithdrawalFormData,
   ) {
     super()
   }
 
-  protected buildViewModel(res: Response): WithdrawalConfirmationViewModel {
+  protected buildViewModel(res: Response): WithdrawalConfirmViewModel {
     const content = this.buildStaticContent(res)
     return {
       pageHeader: content.pageHeader,
@@ -43,7 +43,7 @@ export default class WithdrawalConfirmationPresenter extends PresenterBase<
             actions: {
               items: [
                 {
-                  href: `/referral/${this.referralIdentifier}/withdraw`,
+                  href: `/referral/${this.caseIdentifier}/withdraw`,
                   text: content.changeLinkText,
                   visuallyHiddenText: 'withdrawal reason',
                 },
@@ -54,14 +54,14 @@ export default class WithdrawalConfirmationPresenter extends PresenterBase<
       },
       warningText: content.warningText,
       withdrawButton: { text: content.withdrawButtonText, classes: 'govuk-button--warning' },
-      cancelHref: `/referral-details/${this.referralIdentifier}`,
+      cancelHref: `/referral-details/${this.caseIdentifier}`,
       cancelLinkText: content.cancelLinkText,
-      submitHref: `/referral/${this.referralIdentifier}/withdraw/confirm`,
-      backLink: { href: `/referral/${this.referralIdentifier}/withdraw` },
+      submitHref: `/referral/${this.caseIdentifier}/withdraw/confirm`,
+      backLink: { href: `/referral/${this.caseIdentifier}/withdraw` },
     }
   }
 
   protected getTemplatePath(): string {
-    return 'referral/withdrawal/confirmation'
+    return 'referral/withdrawal/confirm'
   }
 }

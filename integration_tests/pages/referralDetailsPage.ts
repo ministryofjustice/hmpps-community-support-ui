@@ -45,7 +45,7 @@ export default class ReferralDetailsPage extends AbstractPage {
     const referralDetailsSummary = await SummaryList.create(page.locator('[data-testid="referral-details"]'))
     const progressTab = page.getByRole('link', { name: 'Progress' })
     const withdrawReferralLink = page.locator('[data-testid="withdraw-referral-link"]')
-    const referralDetailsPage = new ReferralDetailsPage(
+    return new ReferralDetailsPage(
       page,
       header,
       backLink,
@@ -56,7 +56,6 @@ export default class ReferralDetailsPage extends AbstractPage {
       progressTab,
       withdrawReferralLink,
     )
-    return referralDetailsPage
   }
 
   static async verifyAssignmentOnPage(page: Page, messageType: string = 'single'): Promise<ReferralDetailsPage> {

@@ -412,7 +412,7 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/bff/referral/{referralReference}/action-plan/session-delivery-details': {
+  '/bff/referral/{referralReference}/action-plan/session-delivery-details/session-delivery': {
     parameters: {
       query?: never
       header?: never
@@ -421,6 +421,23 @@ export interface paths {
     }
     /** Get the session delivery details with questions and saved answers for an action plan */
     get: operations['getSessionDeliveryDetails']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/referral/{referralReference}/action-plan/service-delivery-details/risks-and-adjustments': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get the risk and adjustments with questions and saved answers for an action plan */
+    get: operations['getRiskAndAdjustments']
     put?: never
     post?: never
     delete?: never
@@ -1250,23 +1267,24 @@ export interface components {
       additionalDetailsLabel?: string | null
       additionalDetailsHint?: string | null
     }
-    SavedResponse: {
-      value: string
-      additionalDetails?: string | null
-    }
     SessionDeliveryQuestion: {
       /** Format: uuid */
       id: string
       /** Format: int32 */
       displayOrder: number
       label: string
+      key: string
       hint?: string | null
       /** @enum {string} */
       answerType: 'TEXTAREA' | 'RADIO' | 'CHECKBOX' | 'DATE'
       /** Format: int32 */
       maximumNumberOfResponses: number
       choices?: components['schemas']['QuestionChoice'][] | null
-      savedResponses: components['schemas']['SavedResponse'][]
+      savedResponses: components['schemas']['SessionDeliveryQuestionSavedResponse'][]
+    }
+    SessionDeliveryQuestionSavedResponse: {
+      value: string
+      additionalDetails?: string | null
     }
     ServiceEndDatePageDto: {
       /**
@@ -1483,7 +1501,19 @@ export interface components {
       /** Format: uuid */
       id: string
       label: string
-      outcomes: string[]
+      outcomes: components['schemas']['ActionPlanSummaryOutcome'][]
+    }
+    ActionPlanSummaryOutcome: {
+      /** Format: uuid */
+      id: string
+      label: string
+      activities: components['schemas']['ActionPlanSummaryOutcomeActivity'][]
+    }
+    ActionPlanSummaryOutcomeActivity: {
+      /** Format: uuid */
+      id: string
+      who: string
+      details: string
     }
     ActionPlanSummaryPersonDetails: {
       firstName: string
@@ -1608,6 +1638,8 @@ export interface components {
       contactDetailsTableData: components['schemas']['ContactDetailsTableDataDto']
       referralDetailsTableData: components['schemas']['ReferralDetailsTableDataDto']
       withdrawReferral: boolean
+      /** Format: date-time */
+      withdrawalCreationDate?: string | null
     }
     ReferralDetailsTableDataDto: {
       referralDate: string
@@ -1789,7 +1821,6 @@ export interface components {
       employmentResponsibilities?: string | null
       diversity?: string | null
       anyOtherNeeds?: string | null
-      needsInterpreter?: boolean | null
       interpreterLanguage?: string | null
     }
     DraftContactDetailsTableDataDto: {
@@ -2823,6 +2854,37 @@ export interface operations {
     requestBody?: never
     responses: {
       /** @description Session delivery details with questions and saved answered returned */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ActionPlanSessionDeliveryDetailsResponse']
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getRiskAndAdjustments: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralReference: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Risk and adjustments with questions and saved answered returned */
       200: {
         headers: {
           [name: string]: unknown
