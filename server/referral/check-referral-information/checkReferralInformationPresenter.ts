@@ -150,8 +150,6 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
     viewModel.personsNeedsSummary = this.buildPersonsNeedsSummary(content.personsNeedsCard)
 
     viewModel.referralDetailsHeader = content.referralDetailsHeader
-    viewModel.referralDetailsSummary = this.buildReferralDetailsSummary()
-
     viewModel.referralContactDetailsHeader = content.referralContactDetailsHeader
     viewModel.backLink = { href: content.backLink }
     viewModel.submitButton = { text: content.submitButtonText, classes: 'govuk-!-margin-top-6' }
@@ -247,19 +245,6 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
           text: cardContent.heading,
         },
         attributes: { 'data-testid': 'risk-information' },
-      },
-      rows,
-    }
-  }
-
-  private buildReferralDetailsSummary(): GovukFrontendSummaryList {
-    const rows = [govFrontendSummaryListRow('Location', this.draftReferralDetails.referralAreaTableData.area || '')]
-    return {
-      card: {
-        title: {
-          text: 'Referral details',
-        },
-        attributes: { 'data-testid': 'referral-details' },
       },
       rows,
     }

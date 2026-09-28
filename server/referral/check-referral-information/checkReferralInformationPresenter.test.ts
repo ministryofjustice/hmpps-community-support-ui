@@ -64,7 +64,6 @@ describe('CheckReferralInformationPresenter', () => {
           healthWellbeingDetails: 'Good',
           thinkingBehavioursAttitudeDetails: 'Responds well to prompts',
         },
-        referralAreaTableData: { area: 'London' },
         mainPocDetailsTableData: {},
       } as CheckDraftReferralDetailsDto)
 
@@ -111,7 +110,6 @@ describe('CheckReferralInformationPresenter', () => {
       expect(renderData.content.pageTitle).toBe('Check details and submit referral')
       expect(renderData.content.pageHeader).toBe('John Doe')
       expect(renderData.content.personalDetailsHeader).toBe('About John')
-      expect(renderData.content.referralDetailsHeader).toBe('Referral details')
       expect(renderData.content.referralContactDetailsHeader).toBe('Referral contact details')
       expect(renderData.content.backLink).toEqual({ href: '/referral/task-list' })
       expect(renderData.content.submitButton).toEqual({
