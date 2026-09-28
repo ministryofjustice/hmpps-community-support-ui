@@ -4,6 +4,7 @@ export function referralPageData(
   id: string | null,
   personNumber: string = 'CRN123',
   assignedTo: CaseWorkerDto[] = [],
+  withdrawReferral: boolean = false,
 ): ReferralDetailsResponseDto {
   return {
     id: id || '{{request.path.[3]}}',
@@ -31,7 +32,7 @@ export function referralPageData(
       referralDate: '2026-05-09T11:23:00.780Z',
       assignedTo,
     },
-    withdrawReferral: false,
+    withdrawReferral,
   }
 }
 export default referralPageData

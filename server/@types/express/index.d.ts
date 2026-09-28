@@ -3,7 +3,7 @@ import {
   CreateAppointmentRequest,
   ReferralInformationDto,
   IcsFeedbackSubmission,
-  ActionPlanSessionDeliveryDetailsRequest,
+  ActionPlanSelectANeedNeed,
   UpdateProbationPractitionerDetailsRequest,
 } from '@community-support-api'
 import { GovukFrontendErrorSummaryErrorListElement } from '@govuk-frontend'
@@ -11,6 +11,7 @@ import { HmppsUser } from '../../interfaces/hmppsUser'
 import { ChangeAppointmentDetails } from '../../appointment/change-ics-details-reason/ChangeAppointmentDetails'
 import { ReferralProgressBannerContent } from '../../referral/progress/ReferralProgressBannerContent'
 import { ReferralCreationDetails } from '../../referral/referralDetails/ReferralCreationDetails'
+import { ReferralDetailsNotification } from '../../referral/referralDetails/ReferralDetailsNotification'
 import { WithdrawalFormData } from '../../referral/withdrawal/WithdrawalFormData'
 
 export interface HowSessionTookPlace {
@@ -26,11 +27,6 @@ export interface HowSessionTookPlace {
 
 export interface IcsFeedbackHowSessionTookPlaceSession {
   howSessionTookPlace?: HowSessionTookPlace
-}
-
-export interface ActionPlanSessionDeliveryData {
-  caseReference: string
-  sessionDeliveryDetails?: ActionPlanSessionDeliveryDetailsRequest
 }
 
 export declare module 'express-session' {
@@ -51,12 +47,19 @@ export declare module 'express-session' {
       target_service_completion_reason?: string
     }
     referralProgressBanner?: ReferralProgressBannerContent
+    referralDetailsNotification?: ReferralDetailsNotification
     icsFeedbackSubmission: IcsFeedbackSubmission & { caseReferenceId: string }
     draftReferralId: string
     personId: string
     selectedProviderId: string
-    actionPlanSessionDelivery?: ActionPlanSessionDeliveryData
     withdrawalReferrals: Record<string, WithdrawalFormData>
+    actionPlan?: {
+      needs: ActionPlanSelectANeedNeed[]
+    }
+    actionPlanAction?: {
+      needId: string
+      outcomeId?: string
+    }
     ppDetails?: UpdateProbationPractitionerDetailsRequest & {
       pduName: string
       probationOfficeName?: string

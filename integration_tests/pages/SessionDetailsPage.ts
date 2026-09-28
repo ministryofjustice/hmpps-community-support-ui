@@ -14,6 +14,7 @@ export default class SessionDetailsPage extends AbstractPage {
     readonly backLink: Locator,
     readonly summary: SummaryList,
     readonly wasPersonLateRadios: RadiosWithFieldSet,
+    readonly lateReasonConditional: Locator,
     readonly lateReason: TextArea,
     readonly duration: TimeInput,
     readonly continueButton: Locator,
@@ -35,6 +36,7 @@ export default class SessionDetailsPage extends AbstractPage {
       page.locator('[data-testid="wasPersonLate"]'),
       page.locator('[data-testid="fieldset-wasPersonLate"]'),
     )
+    const lateReasonConditional = page.locator('#conditional-YesRadio')
     const lateReason = await TextArea.create(page.locator('[data-testid="lateReason"]'))
     const duration = await TimeInput.create(
       page.locator('[data-testid="sessionDuration"]'),
@@ -49,6 +51,7 @@ export default class SessionDetailsPage extends AbstractPage {
       backLink,
       summary,
       wasPersonLate,
+      lateReasonConditional,
       lateReason,
       duration,
       submit,

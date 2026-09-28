@@ -222,9 +222,9 @@ export default function routes({
 
   post('/referral/:id/action-plan/create', (req, res) => actionPlanController.createActionPlan(req, res))
 
-  get('/referral/:id/action-plan/needs', (req, res) => actionPlanController.showNeedsPage(req, res))
+  get('/referral/:id/action-plan/select-a-need', (req, res) => actionPlanController.showSelectANeedPage(req, res))
 
-  post('/referral/:id/action-plan/needs', (req, res) => actionPlanController.submitNeeds(req, res))
+  post('/referral/:id/action-plan/select-a-need', (req, res) => actionPlanController.submitSelectedNeed(req, res))
 
   get('/referral/:id/action-plan/select-an-outcome', (req, res) => actionPlanController.showSelectOutcomePage(req, res))
 
@@ -245,16 +245,15 @@ export default function routes({
   )
 
   get('/referral/:referralIdentifier/withdraw', (req, res) => withdrawalController.showReason(req, res))
+  get('/referral/:caseIdentifier/withdraw', (req, res) => withdrawalController.showReason(req, res))
 
-  post('/referral/:referralIdentifier/withdraw', (req, res) => withdrawalController.submitReason(req, res))
+  post('/referral/:caseIdentifier/withdraw', (req, res) => withdrawalController.submitReason(req, res))
 
-  get('/referral/:referralIdentifier/withdraw/confirmation', (req, res) =>
-    withdrawalController.showConfirmation(req, res),
-  )
+  get('/referral/:caseIdentifier/withdraw/confirm', (req, res) => withdrawalController.showConfirmation(req, res))
 
-  post('/referral/:referralIdentifier/withdraw/confirmation', (req, res) =>
-    withdrawalController.submitConfirmation(req, res),
-  )
+  post('/referral/:caseIdentifier/withdraw/confirm', (req, res) => withdrawalController.submitConfirmation(req, res))
+
+  get('/referral/:caseIdentifier/withdraw/service-error', (req, res) => withdrawalController.showServiceError(req, res))
 
   get('/referral/task-list/select-person-needs', (req, res) => referralController.showPersonNeeds(req, res))
 

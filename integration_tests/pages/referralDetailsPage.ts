@@ -22,6 +22,7 @@ export default class ReferralDetailsPage extends AbstractPage {
     readonly contactDetailsSummary: SummaryList,
     readonly referralDetailsSummary: SummaryList,
     readonly progressTab: Locator,
+    readonly withdrawReferralLink: Locator,
   ) {
     super(page)
     this.successHeader = page.locator('h3', { hasText: 'Case assigned' })
@@ -43,7 +44,8 @@ export default class ReferralDetailsPage extends AbstractPage {
     const contactDetailsSummary = await SummaryList.create(page.locator('[data-testid="contact-details"]'))
     const referralDetailsSummary = await SummaryList.create(page.locator('[data-testid="referral-details"]'))
     const progressTab = page.getByRole('link', { name: 'Progress' })
-    const referralDetailsPage = new ReferralDetailsPage(
+    const withdrawReferralLink = page.locator('[data-testid="withdraw-referral-link"]')
+    return new ReferralDetailsPage(
       page,
       header,
       backLink,
@@ -52,8 +54,8 @@ export default class ReferralDetailsPage extends AbstractPage {
       contactDetailsSummary,
       referralDetailsSummary,
       progressTab,
+      withdrawReferralLink,
     )
-    return referralDetailsPage
   }
 
   static async verifyAssignmentOnPage(page: Page, messageType: string = 'single'): Promise<ReferralDetailsPage> {
@@ -65,6 +67,7 @@ export default class ReferralDetailsPage extends AbstractPage {
     const contactDetailsSummary = await SummaryList.create(page.locator('[data-testid="contact-details"]'))
     const referralDetailsSummary = await SummaryList.create(page.locator('[data-testid="referral-details"]'))
     const progressTab = page.getByRole('link', { name: 'Progress' })
+    const withdrawReferralLink = page.locator('[data-testid="withdraw-referral-link"]')
     const assignedPage = new ReferralDetailsPage(
       page,
       header,
@@ -74,6 +77,7 @@ export default class ReferralDetailsPage extends AbstractPage {
       contactDetailsSummary,
       referralDetailsSummary,
       progressTab,
+      withdrawReferralLink,
     )
     await expect(assignedPage.successHeader).toBeVisible()
     if (messageType === 'single') {

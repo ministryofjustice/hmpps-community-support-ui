@@ -86,11 +86,7 @@ test.describe('Confirm Contact Details Page', () => {
   })
 
   test('should redirect to find-a-person when there is no draft referral in session', async ({ page }) => {
-    await resetStubs()
-    await communitySupport.stubGetPDUs(mockPdus)
-    await communitySupport.stubGetProbationOffices(mockProbationOffices)
-    await page.goto('/')
-    await login(page)
+    await seedSessionRiskSummary(page, '')
 
     await page.goto(ConfirmContactDetailsPage.url())
 

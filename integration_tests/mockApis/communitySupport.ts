@@ -9,6 +9,8 @@ import {
   IcsFeedbackSubmissionResponse,
   ActionPlanSummaryDto,
   ActionPlanSessionDeliveryDetailsResponse,
+  ActionPlanSelectANeedResponse,
+  WithdrawalReasonsGroupedBffResponseDto,
   PDU,
   ProbationOffice,
   ProbationPractitionerDetails,
@@ -24,6 +26,7 @@ import {
   CheckDraftReferralDetailsDto,
   AdditionalInformationForTheDeliveryPartner,
   OffenceSentenceInfoBffResponseDto,
+  WithdrawReferralRequest,
 } from '@community-support-api'
 import { stubFor } from './wiremock'
 import { duplicateData } from '../testUtils'
@@ -265,6 +268,24 @@ export default {
       },
     }),
 
+  stubWithdrawReferral: (
+    referralReference: string,
+    expectedBody?: WithdrawReferralRequest,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'POST',
+        urlPathPattern: `/community-support/referral/${referralReference}/withdraw`,
+        ...(expectedBody ? { bodyPatterns: [{ equalToJson: JSON.stringify(expectedBody) }] } : {}),
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: {},
+      },
+    }),
+
   stubGetReferral: (httpStatus = 200): SuperAgentRequest =>
     stubFor({
       request: {
@@ -438,6 +459,7 @@ export default {
     referralId: string | null = null,
     personNumber: string = 'CRN123',
     assignedTo: CaseWorkerDto[] = [],
+    withdrawReferral: boolean = false,
   ): SuperAgentRequest =>
     stubFor({
       request: {
@@ -447,7 +469,7 @@ export default {
       response: {
         status: httpStatus,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: referralDetailsPageData(referralId, personNumber, assignedTo),
+        jsonBody: referralDetailsPageData(referralId, personNumber, assignedTo, withdrawReferral),
         transformers: ['response-template'],
       },
     }),
@@ -631,6 +653,36 @@ export default {
         status: httpStatus,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: sessionDeliveryDetails,
+      },
+    }),
+  stubGetActionPlanNeedsAndOutcomes: (
+    needsAndOutcomes: ActionPlanSelectANeedResponse,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPath: '/community-support/bff/referral/action-plan/select-a-need',
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: needsAndOutcomes,
+      },
+    }),
+  stubGetWithdrawalReasons: (
+    withdrawalReasons: WithdrawalReasonsGroupedBffResponseDto,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPath: '/community-support/bff/referral/withdrawal-reasons',
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: withdrawalReasons,
       },
     }),
   stubGetPersonalDetails: (

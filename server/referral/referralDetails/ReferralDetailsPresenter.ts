@@ -26,7 +26,7 @@ export interface ReferralDetailsViewModel {
   referral: GovukFrontendSummaryList
   backLink: GovukFrontendBackLink
   // TODO - Remove once we have a decision on the entry point for withdrawing referrals
-  withdrawReferralHref: string
+  withdrawReferralHref: string | null
   withdrawReferralLinkText: string
 }
 
@@ -188,7 +188,9 @@ export default class ReferralDetailsPresenter extends PresenterBase<ReferralDeta
       contact: this.buildContactDetails(content.contactDetailsCard, content.defaultFieldValue),
       referral: this.buildReferralDetails(content.referralDetailsCard, content.defaultFieldValue),
       backLink: { href: '/unassigned-cases' },
-      withdrawReferralHref: `/referral/${this.referralDetails.referenceNumber}/withdraw`,
+      withdrawReferralHref: this.referralDetails.withdrawReferral
+        ? null
+        : `/referral/${this.referralDetails.referenceNumber}/withdraw`,
       withdrawReferralLinkText: content.withdrawReferralLinkText,
     }
   }

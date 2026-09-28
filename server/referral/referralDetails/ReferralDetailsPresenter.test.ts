@@ -343,4 +343,24 @@ describe('ReferralDetailsPresenter', () => {
     expected.referral.rows[1].actions = null
     expect(pageContent).toStrictEqual(expected)
   })
+  test('withdraw referral link is present when referral has not been withdrawn', () => {
+    dto.withdrawReferral = false
+
+    const presenter = new ReferralDetailsPresenter(dto, null, authSource)
+    const content = ReferralDetailsContent.build()
+    const response = { locals: { content } } as unknown as Response
+    const pageContent = presenter.buildViewModel(response)
+
+    expect(pageContent.withdrawReferralHref).toBe('/referral/QD0878DE/withdraw')
+  })
+  test('withdraw referral link is absent when referral has already been withdrawn', () => {
+    dto.withdrawReferral = true
+
+    const presenter = new ReferralDetailsPresenter(dto, null, authSource)
+    const content = ReferralDetailsContent.build()
+    const response = { locals: { content } } as unknown as Response
+    const pageContent = presenter.buildViewModel(response)
+
+    expect(pageContent.withdrawReferralHref).toBeNull()
+  })
 })

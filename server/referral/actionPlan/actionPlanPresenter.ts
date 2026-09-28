@@ -2,6 +2,7 @@ import { ActionPlanSummaryDto } from '@community-support-api'
 import { Response } from 'express'
 import { GovukFrontendSummaryList } from '@govuk-frontend'
 import PresenterBase from '../../presenter/presenterBase'
+import formatFullName from '../../utils/presenterFormatters'
 import { ActionPlanContent, ActionPlanViewModel } from './actionPlanViewModel'
 
 export default class ActionPlanPresenter extends PresenterBase<ActionPlanViewModel, ActionPlanContent> {
@@ -14,7 +15,8 @@ export default class ActionPlanPresenter extends PresenterBase<ActionPlanViewMod
 
   protected buildViewModel(res: Response): ActionPlanViewModel {
     const content = this.buildStaticContent(res)
-    const { fullName } = this.actionPlanSummary.personDetails
+    const { firstName, lastName } = this.actionPlanSummary.personDetails
+    const fullName = formatFullName(firstName, lastName)
 
     // const needsSummary = this.buildNeedsSummary(content)
     const needsSummary: GovukFrontendSummaryList = undefined

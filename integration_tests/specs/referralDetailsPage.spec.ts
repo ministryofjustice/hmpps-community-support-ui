@@ -233,4 +233,25 @@ test.describe('Referral Details Page', () => {
       await expect(page).toHaveURL(AssignPage.url(id))
     })
   })
+
+  test('Withdraw referral link is shown when the referral has not been withdrawn', async ({ page }) => {
+    const referralDetailsPage = await ReferralDetailsPage.verifyOnPage(page)
+    await test.step('check link is visible with correct text', async () => {
+      await expect(referralDetailsPage.withdrawReferralLink).toBeVisible()
+      await expect(referralDetailsPage.withdrawReferralLink).toHaveText('Withdraw referral')
+    })
+    await test.step('check navigation on click', async () => {
+      await referralDetailsPage.withdrawReferralLink.click()
+      await expect(page).toHaveURL(`/referral/QD0878DE/withdraw`)
+    })
+  })
+
+  test('Withdraw referral link is not shown when the referral has already been withdrawn', async ({ page }) => {
+    await communitySupport.stubGetReferralDetailsPage(200, id, undefined, undefined, true)
+    await test.step('reload referral details page', async () => {
+      await page.goto(ReferralDetailsPage.url(id))
+    })
+    const referralDetailsPage = await ReferralDetailsPage.verifyOnPage(page)
+    await expect(referralDetailsPage.withdrawReferralLink).toHaveCount(0)
+  })
 })

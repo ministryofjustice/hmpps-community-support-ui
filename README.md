@@ -157,7 +157,19 @@ will not parse this correctly and will fail.
 
 ## Generating API Types
 
-_tl;dr: start your API in IntelliJ and run `./script/generateApiTypes/communitySupportApiTypes --local` to update your API types_
+Is your API located in `../hmpps-community-support-api` relative to this UI project? 
+
+```sh
+# If your'e on `main` this will also check you out on a no-ticket branch & commit the types file
+$ make types-local
+```
+
+Is it somewhere else?  
+
+```sh
+# Before you begin: Start your API in IntelliJ 
+$ ./script/generateApiTypes/communitySupportApiTypes --local
+```
 
 This UI codebase makes use of the [openapi-typescript](https://openapi-ts.dev) package to generate TypeScript types from the OpenAPI specification from our API.  See [the generated types here](./server/@types/communitySupportApi/index.d.ts)
 

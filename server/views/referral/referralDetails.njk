@@ -2,6 +2,7 @@
 
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "moj/components/sub-navigation/macro.njk" import mojSubNavigation %}
 
 {% set pageTitle = "Referral - Community Support" %}
@@ -23,14 +24,25 @@
       }
     }) }}
   {% endif %}
-  <h1 class="govuk-heading-l">Referral for {{ content.name }}</h1>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-l">Referral for {{ content.name }}</h1>
+    </div>
+    {% if content.withdrawReferralHref %}
+      <div class="govuk-grid-column-one-third govuk-!-text-align-right">
+        {{ govukButton({
+          text: content.withdrawReferralLinkText,
+          href: content.withdrawReferralHref,
+          classes: "govuk-button--secondary",
+          attributes: { "data-testid": "withdraw-referral-link" }
+        }) }}
+      </div>
+    {% endif %}
+  </div>
   {{ mojSubNavigation(content.subNav) }}
   <h2 class="govuk-heading-m">Case details</h2>
   {{ govukSummaryList(content.personal) }}
   {{ govukSummaryList(content.equality) }}
   {{ govukSummaryList(content.contact) }}
   {{ govukSummaryList(content.referral) }}
-  <p class="govuk-body">
-    <a href="{{ content.withdrawReferralHref }}" class="govuk-link">{{ content.withdrawReferralLinkText }}</a>
-  </p>
 {% endblock %}

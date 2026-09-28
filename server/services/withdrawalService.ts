@@ -12,4 +12,16 @@ export default class WithdrawalService {
   ): Record<string, WithdrawalFormData> {
     return { ...withdrawals, [referralIdentifier]: withdrawal }
   }
+
+  removeWithdrawal(
+    referralIdentifier: string,
+    withdrawals: Record<string, WithdrawalFormData> | undefined,
+  ): Record<string, WithdrawalFormData> {
+    if (!withdrawals) {
+      return {}
+    }
+
+    const { [referralIdentifier]: _removed, ...remainingWithdrawals } = withdrawals
+    return remainingWithdrawals
+  }
 }
