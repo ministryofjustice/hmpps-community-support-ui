@@ -6,6 +6,7 @@ import {
   CommunitySupportRiskDto,
   ReferralCriminogenicNeedsDto,
   ProbationPractitionerDetails,
+  ReferralDetailsResponseDto,
 } from '@community-support-api'
 import ReferralController from './referralController'
 import ReferralService from '../services/referralService'
@@ -23,6 +24,8 @@ import SelectAreaPresenter from './selectArea/SelectAreaPresenter'
 import CheckPPDetailsPresenter from './checkPPDetails/checkPPDetailsPresenter'
 import AddContactDetailsPresenter from './addContactDetails/addContactDetailsPresenter'
 import ConfirmContactDetailsPresenter from './addContactDetails/confirmContactDetailsPresenter'
+import ReferralDetailsPresenter from './referralDetails/ReferralDetailsPresenter'
+import { HmppsUser } from '../interfaces/hmppsUser'
 
 jest.mock('../services/referralService')
 jest.mock('../services/communityServiceProviderService')
@@ -38,6 +41,7 @@ jest.mock('./confirmAnAreaForReferral/ConfirmAnAreaForReferralPresenter')
 jest.mock('./checkPPDetails/checkPPDetailsPresenter')
 jest.mock('./addContactDetails/addContactDetailsPresenter')
 jest.mock('./addContactDetails/confirmContactDetailsPresenter')
+jest.mock('./referralDetails/ReferralDetailsPresenter')
 
 describe('ReferralController', () => {
   let referralService: jest.Mocked<ReferralService>
@@ -65,6 +69,7 @@ describe('ReferralController', () => {
       getProbationOffices: jest.fn(),
       getPDUs: jest.fn(),
       submitContactDetails: jest.fn(),
+      getCaseDetailsByCaseIdentifier: jest.fn(),
     } as unknown as jest.Mocked<ReferralService>
     personService = {
       getPersonByIdentifier: jest.fn(),
@@ -86,6 +91,7 @@ describe('ReferralController', () => {
     CheckPPDetailsPresenter.prototype.renderPage = jest.fn()
     AddContactDetailsPresenter.prototype.renderPage = jest.fn()
     ConfirmContactDetailsPresenter.prototype.renderPage = jest.fn()
+    ReferralDetailsPresenter.prototype.renderPage = jest.fn()
 
     req = {
       params: { id: 'referral123' },
@@ -215,6 +221,55 @@ describe('ReferralController', () => {
       expect(referralService.getReferralById).toHaveBeenCalledWith('referral123', 'user1')
       expect(ConfirmationPresenter).toHaveBeenCalledWith(mockReferralData)
       expect(ConfirmationPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+    })
+  })
+  describe('showReferralDetailsPage', () => {
+    const mockReferralDetails = {
+      id: 'referral123',
+      referenceNumber: 'referral123',
+    } as unknown as ReferralDetailsResponseDto
+
+    beforeEach(() => {
+      referralService.getCaseDetailsByCaseIdentifier.mockResolvedValue(mockReferralDetails)
+      res.locals.user = { username: 'user1', authSource: 'nomis' } as unknown as HmppsUser
+    })
+
+    it('passes the matching session notification to the presenter and clears it from the session', async () => {
+      req.session.referralDetailsNotification = {
+        type: 'success',
+        code: 'withdrawalCompleted',
+        caseReference: 'referral123',
+      }
+
+      await referralController.showReferralDetailsPage(req, res)
+
+      expect(referralService.getCaseDetailsByCaseIdentifier).toHaveBeenCalledWith('referral123', 'user1')
+      expect(ReferralDetailsPresenter).toHaveBeenCalledWith(mockReferralDetails, null, 'nomis', {
+        type: 'success',
+        code: 'withdrawalCompleted',
+        caseReference: 'referral123',
+      })
+      expect(req.session.referralDetailsNotification).toBeUndefined()
+      expect(ReferralDetailsPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+    })
+
+    it('does not pass a notification for a different case reference and still clears the session', async () => {
+      req.session.referralDetailsNotification = {
+        type: 'warning',
+        code: 'withdrawalAlreadyCompleted',
+        caseReference: 'some-other-case',
+      }
+
+      await referralController.showReferralDetailsPage(req, res)
+
+      expect(ReferralDetailsPresenter).toHaveBeenCalledWith(mockReferralDetails, null, 'nomis', undefined)
+      expect(req.session.referralDetailsNotification).toBeUndefined()
+    })
+
+    it('passes undefined when there is no session notification', async () => {
+      await referralController.showReferralDetailsPage(req, res)
+
+      expect(ReferralDetailsPresenter).toHaveBeenCalledWith(mockReferralDetails, null, 'nomis', undefined)
     })
   })
   describe('showAssignCaseWorkersPage', () => {

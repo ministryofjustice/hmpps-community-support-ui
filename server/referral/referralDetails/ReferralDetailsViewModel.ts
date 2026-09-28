@@ -35,6 +35,12 @@ export interface ReferralDetailsCard {
   targetServiceCompletionDateReasonLabel: string
 }
 
+export interface ReferralDetailsAlertsContent {
+  withdrawalCompletedTitle: string
+  withdrawalAlreadyCompletedTitle: string
+  withdrawnInformationTitle: string
+}
+
 export interface ReferralDetailsContent {
   pageHeader: string
   pageSubHeader: string
@@ -49,9 +55,18 @@ export interface ReferralDetailsContent {
   subNavItems: MojSubNavigationItem[]
   // TODO - Remove once we have a decision on the entry point for withdrawing referrals
   withdrawReferralLinkText: string
+  alerts: ReferralDetailsAlertsContent
 }
 
 export type AssignmentSuccessBanner = {
   successBannerHeading: string
   successBannerMessage: string
+}
+
+export type ReferralDetailsAlertVariant = 'success' | 'information' | 'warning' | 'error'
+
+export type ReferralDetailsAlert = {
+  variant: ReferralDetailsAlertVariant
+  title: string
+  dismissible: boolean
 }

@@ -459,6 +459,7 @@ export default {
     personNumber: string = 'CRN123',
     assignedTo: CaseWorkerDto[] = [],
     withdrawReferral: boolean = false,
+    withdrawalCreationDate?: string,
   ): SuperAgentRequest =>
     stubFor({
       request: {
@@ -468,7 +469,13 @@ export default {
       response: {
         status: httpStatus,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: referralDetailsPageData(referralId, personNumber, assignedTo, withdrawReferral),
+        jsonBody: referralDetailsPageData(
+          referralId,
+          personNumber,
+          assignedTo,
+          withdrawReferral,
+          withdrawalCreationDate,
+        ),
         transformers: ['response-template'],
       },
     }),
