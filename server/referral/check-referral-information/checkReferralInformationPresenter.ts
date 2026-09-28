@@ -148,7 +148,7 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
       content.additionalSupportNeedsCard,
     )
     viewModel.personsNeedsSummary = this.buildPersonsNeedsSummary(content.personsNeedsCard)
-    
+
     viewModel.referralDetailsHeader = content.referralDetailsHeader
     viewModel.referralDetailsSummary = this.buildReferralDetailsSummary()
 
