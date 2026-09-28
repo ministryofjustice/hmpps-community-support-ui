@@ -436,7 +436,7 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /** Get the risk and adjustments with questions and saved answers for an action plan */
+    /** Get the risk and adjustments questions and saved answers of the service delivery details */
     get: operations['getRiskAndAdjustments']
     put?: never
     post?: never
@@ -2126,8 +2126,8 @@ export interface operations {
           'application/json': unknown
         }
       }
-      /** @description Referral already withdrawn */
-      208: {
+      /** @description Referral not found */
+      404: {
         headers: {
           [name: string]: unknown
         }
@@ -2135,8 +2135,8 @@ export interface operations {
           'application/json': unknown
         }
       }
-      /** @description Referral not found */
-      404: {
+      /** @description Referral already withdrawn */
+      409: {
         headers: {
           [name: string]: unknown
         }
@@ -2884,7 +2884,7 @@ export interface operations {
     }
     requestBody?: never
     responses: {
-      /** @description Risk and adjustments with questions and saved answered returned */
+      /** @description Risk and adjustments questions and saved answers returned */
       200: {
         headers: {
           [name: string]: unknown
