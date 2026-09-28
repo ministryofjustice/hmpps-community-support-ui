@@ -1640,6 +1640,7 @@ export interface components {
       withdrawReferral: boolean
       /** Format: date-time */
       withdrawalCreationDate?: string | null
+      withdrawnBySameUser?: boolean | null
     }
     ReferralDetailsTableDataDto: {
       referralDate: string
