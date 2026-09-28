@@ -80,6 +80,10 @@ export default function createApp(services: Services): express.Application {
       req.session.referralProgressBanner = req.body.referralProgressBanner
       res.sendStatus(200)
     })
+    app.post('/test/setup-referral-details-notification', (req, res) => {
+      req.session.referralDetailsNotification = req.body.referralDetailsNotification
+      res.sendStatus(200)
+    })
     app.post('/test/setup-create-referral-details', (req, res) => {
       req.session.referralCreationDetails = req.body.referralCreationDetails
       res.sendStatus(200)
