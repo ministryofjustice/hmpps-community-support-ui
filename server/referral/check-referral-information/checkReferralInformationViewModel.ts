@@ -19,7 +19,6 @@ export type CheckReferralInformationViewModel = {
   submitHref: string
   personalDetailsSummary: GovukFrontendSummaryList
   equalityMonitoringSummary?: GovukFrontendSummaryList
-  referralDetailsSummary: GovukFrontendSummaryList
 }
 
 export type PersonalDetailsCard = GlobalContent['/referral/check-referral-information']['personalDetailsCard']
