@@ -318,7 +318,7 @@
     "pageTitle": "Session details – [Service name]",
     "pageHeader": "Session details",
     "continueButtonText": "Continue",
-    "backLink": "/referral/:id/action-plan"
+    "backLink": "/referral/{{ id }}/action-plan"
   },
   "/ics-feedback/:id/did-session-take-place": {
     "submitButtonText": "Continue",

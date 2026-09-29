@@ -158,7 +158,7 @@ export default class ActionPlanSessionDeliveryDetailsPresenter extends Presenter
 
     return {
       pageHeader: content.pageHeader,
-      backLink: { href: `/referral/${this.caseReference}/action-plan/add-activities` },
+      backLink: { href: content.backLink.replace('{{ id }}', this.caseReference) },
       submitButton: { text: content.continueButtonText },
       frequencyTextBoxArgs: this.buildTextareaQuestion(frequencyQuestion),
       howRadioArgs: (videoCallHtml, phoneCallHtml) =>

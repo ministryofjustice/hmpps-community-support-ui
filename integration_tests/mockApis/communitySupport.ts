@@ -656,7 +656,7 @@ export default {
     stubFor({
       request: {
         method: 'GET',
-        urlPathPattern: `/community-support/bff/referral/${caseReference}/action-plan/session-delivery-details`,
+        urlPathPattern: `/bff/referral/${caseReference}/action-plan/session-delivery-details`,
       },
       response: {
         status: httpStatus,
