@@ -204,7 +204,7 @@ test.describe('Withdraw referral', () => {
     await expect(page).toHaveURL(ReferralDetailsPage.url(caseIdentifier))
     const referralDetailsPage = await ReferralDetailsPage.verifyOnPage(page)
     await expect(referralDetailsPage.alert).toBeVisible()
-    await expect(referralDetailsPage.alert).toContainText('This referral has already been withdrawn by another user.')
+    await expect(referralDetailsPage.alert).toContainText('Referral already withdrawn by another user')
   })
 
   test('shows an information alert with the withdrawal date when the referral was already withdrawn and there is no new notification', async ({

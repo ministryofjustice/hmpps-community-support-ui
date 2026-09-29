@@ -446,6 +446,57 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/bff/referral/{referralReference}/action-plan/service-delivery-details/confirm-service-end-date': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get the confirm service end date questions and saved answers of the service delivery details */
+    get: operations['getConfirmServiceEndDate']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/referral/{referralReference}/action-plan/service-delivery-details/update-service-end-date': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get the update service end date questions and saved answers of the service delivery details */
+    get: operations['getUpdateServiceEndDate']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/referral/{referralReference}/action-plan/service-delivery-details/person-involvement': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get the person involvement questions and saved answers of the service delivery details */
+    get: operations['getPersonInvolvement']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/bff/referral/{caseReference}/ics_appointment_feedback_details': {
     parameters: {
       query?: never
@@ -1806,12 +1857,27 @@ export interface components {
       additionalSupportNeedsDetailsTableData: components['schemas']['DraftAdditionalSupportNeedsDetailsTableDataDto']
       personNeedsDetailsTableData: components['schemas']['DraftPersonNeedsDetailsTableDataDto']
       referralAreaTableData: components['schemas']['DraftReferralAreaTableDataDto']
+      additionalReferralInformationTableData: components['schemas']['DraftAdditionalReferralInformationTableDataDto']
       mainPocDetailsTableData: components['schemas']['DraftMainPOCDetailsTableDataDto']
     }
     DraftAdditionalInformationDetailsTableDataDto: {
       ofHomeOfficeInterest?: boolean | null
       homeOfficeInterestNotes?: string | null
       offenderPersonalityDisorderPathway?: string | null
+    }
+    DraftAdditionalReferralInformationTableDataDto: {
+      /** Format: date-time */
+      serviceCompletionDate?: string | null
+      serviceCompletionDateReason?: string | null
+      /** Format: int32 */
+      serviceDays?: number | null
+      offence?: string | null
+      offenceSubCategory?: string | null
+      outcome?: string | null
+      /** Format: date */
+      sentenceEndDate?: string | null
+      licenceConditions?: string | null
+      anythingElse?: string | null
     }
     DraftAdditionalSupportNeedsDetailsTableDataDto: {
       physicalHealth?: string | null
@@ -1860,7 +1926,7 @@ export interface components {
       prisonNumber?: string | null
       /** Format: date */
       dateOfBirth: string
-      preferredLanguage: string
+      preferredLanguage?: string | null
       personalCircumstances: components['schemas']['PersonalCircumstance'][]
       disabilities: components['schemas']['Disability'][]
     }
@@ -2127,8 +2193,8 @@ export interface operations {
           'application/json': unknown
         }
       }
-      /** @description Referral not found */
-      404: {
+      /** @description Referral already withdrawn */
+      208: {
         headers: {
           [name: string]: unknown
         }
@@ -2136,8 +2202,8 @@ export interface operations {
           'application/json': unknown
         }
       }
-      /** @description Referral already withdrawn */
-      409: {
+      /** @description Referral not found */
+      404: {
         headers: {
           [name: string]: unknown
         }
@@ -2886,6 +2952,99 @@ export interface operations {
     requestBody?: never
     responses: {
       /** @description Risk and adjustments questions and saved answers returned */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ActionPlanSessionDeliveryDetailsResponse']
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getConfirmServiceEndDate: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralReference: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Confirm service end date questions and saved answers returned */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ActionPlanSessionDeliveryDetailsResponse']
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getUpdateServiceEndDate: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralReference: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Update service end date questions and saved answers returned */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ActionPlanSessionDeliveryDetailsResponse']
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getPersonInvolvement: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralReference: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Person involvement questions and saved answers returned */
       200: {
         headers: {
           [name: string]: unknown
