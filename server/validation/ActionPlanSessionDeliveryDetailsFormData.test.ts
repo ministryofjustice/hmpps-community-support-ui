@@ -5,9 +5,9 @@ describe('ActionPlanSessionDeliveryDetailsFormDataSchemaBuilder', () => {
 
   it('accepts valid data when the session is not video', () => {
     const result = schema.safeParse({
-      frequency: 'Every week',
-      how: 'PHONE',
-      format: 'One-to-one',
+      SESSION_FREQUENCY: 'Every week',
+      SESSION_DELIVERY_METHOD: 'IN_PERSON',
+      SESSION_FORMAT: 'One-to-one',
     })
 
     expect(result.success).toBe(true)
@@ -15,16 +15,16 @@ describe('ActionPlanSessionDeliveryDetailsFormDataSchemaBuilder', () => {
 
   it('requires whyVideoCall when how is VIDEO_CALL', () => {
     const result = schema.safeParse({
-      frequency: 'Every week',
-      how: 'VIDEO_CALL',
-      format: 'One-to-one',
+      SESSION_FREQUENCY: 'Every week',
+      SESSION_DELIVERY_METHOD: 'VIDEO_CALL',
+      SESSION_FORMAT: 'One-to-one',
     })
 
     expect(result.success).toBe(false)
     expect(result.error?.issues).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          path: ['whyVideoCall'],
+          path: ['VIDEO_CALL'],
           message: 'Enter why the sessions are not in person',
         }),
       ]),
@@ -33,10 +33,10 @@ describe('ActionPlanSessionDeliveryDetailsFormDataSchemaBuilder', () => {
 
   it('accepts whyVideoCall when how is VIDEO_CALL', () => {
     const result = schema.safeParse({
-      frequency: 'Every week',
-      how: 'VIDEO_CALL',
-      format: 'One-to-one',
-      whyVideoCall: 'Because of remote-only sessions',
+      SESSION_FREQUENCY: 'Every week',
+      SESSION_DELIVERY_METHOD: 'VIDEO_CALL',
+      SESSION_FORMAT: 'One-to-one',
+      VIDEO_CALL: 'Because of remote-only sessions',
     })
 
     expect(result.success).toBe(true)

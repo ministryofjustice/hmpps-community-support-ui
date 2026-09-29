@@ -19,49 +19,49 @@ const toFormatValues = (format: string | string[] | undefined): string[] => {
 export const ActionPlanSessionDeliveryDetailsFormDataSchemaBuilder = () =>
   z
     .object({
-      frequency: z.string().max(MAX_CHAR, FREQUENCY_TOO_LONG).optional(),
-      how: z.string().optional(),
-      format: z.union([z.string(), z.array(z.string())]).optional(),
-      whyVideoCall: z.string().optional(),
-      whyPhoneCall: z.string().optional(),
+      SESSION_FREQUENCY: z.string().max(MAX_CHAR, FREQUENCY_TOO_LONG).optional(),
+      SESSION_DELIVERY_METHOD: z.string().optional(),
+      SESSION_FORMAT: z.union([z.string(), z.array(z.string())]).optional(),
+      VIDEO_CALL: z.string().optional(),
+      PHONE_CALL: z.string().optional(),
     })
     .superRefine((data, ctx) => {
-      if (!data.frequency?.trim()) {
+      if (!data.SESSION_FREQUENCY?.trim()) {
         ctx.addIssue({
           code: 'custom',
-          path: ['frequency'],
+          path: ['SESSION_FREQUENCY'],
           message: FREQUENCY_NOTHING_ENTERED_ERROR.error,
         })
       }
 
-      if (!data.how?.trim()) {
+      if (!data.SESSION_DELIVERY_METHOD?.trim()) {
         ctx.addIssue({
           code: 'custom',
-          path: ['how'],
+          path: ['SESSION_DELIVERY_METHOD'],
           message: HOW_NOTHING_ENTERED_ERROR.error,
         })
       }
 
-      const formatValues = toFormatValues(data.format)
+      const formatValues = toFormatValues(data.SESSION_FORMAT)
       if (formatValues.length === 0) {
         ctx.addIssue({
           code: 'custom',
-          path: ['format'],
+          path: ['SESSION_FORMAT'],
           message: FORMAT_NOTHING_ENTERED_ERROR.error,
         })
       }
 
-      if (data.how === 'VIDEO_CALL' && !data.whyVideoCall?.trim()) {
+      if (data.SESSION_DELIVERY_METHOD === 'VIDEO_CALL' && !data.VIDEO_CALL?.trim()) {
         ctx.addIssue({
           code: 'custom',
-          path: ['whyVideoCall'],
+          path: ['VIDEO_CALL'],
           message: WHY_VIDEO_CALL_REQUIRED_ERROR.error,
         })
       }
-      if (data.how === 'PHONE_CALL' && !data.whyPhoneCall?.trim()) {
+      if (data.SESSION_DELIVERY_METHOD === 'PHONE_CALL' && !data.PHONE_CALL?.trim()) {
         ctx.addIssue({
           code: 'custom',
-          path: ['whyPhoneCall'],
+          path: ['PHONE_CALL'],
           message: WHY_PHONE_CALL_REQUIRED_ERROR.error,
         })
       }

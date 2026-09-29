@@ -5,8 +5,6 @@ import { login, resetStubs } from '../testUtils'
 import communitySupport from '../mockApis/communitySupport'
 import ActionPlanSessionDeliveryDetailsPage from '../pages/actionPlanSessionDeliveryDetailsPage'
 
-import { sessionDeliveryAdditionalDetailsFieldName } from '../../server/referral/actionPlan/sessionDeliveryDetails/fieldNames'
-
 test.describe('Action Plan Session Delivery Details Page', () => {
   const caseReference = 'AB1234CD'
 
@@ -107,9 +105,7 @@ test.describe('Action Plan Session Delivery Details Page', () => {
     await expect(page.getByLabel('How often will sessions take place?')).toHaveValue('Every week')
     await expect(page.getByText('For example, every week, every 2 weeks, every month.')).toBeVisible()
     await expect(page.getByRole('radio', { name: 'Video call' })).toBeChecked()
-    await expect(
-      page.locator(`#${sessionDeliveryAdditionalDetailsFieldName(sessionDeliveryDetails.questions[1].id, 2)}`),
-    ).toHaveValue('Travel restrictions')
+    await expect(page.locator('#VIDEO_CALL')).toHaveValue('Travel restrictions')
     await expect(page.getByRole('checkbox', { name: 'Group session' })).toBeChecked()
   })
 })

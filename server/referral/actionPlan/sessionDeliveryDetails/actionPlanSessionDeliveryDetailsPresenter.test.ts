@@ -119,8 +119,8 @@ describe('ActionPlanSessionDeliveryDetailsPresenter', () => {
     const content = renderAndGetContent('AB1234CD', sessionDeliveryDetails)
 
     expect(content.frequencyTextBoxArgs).toMatchObject({
-      id: 'frequency',
-      name: 'frequency',
+      id: 'SESSION_FREQUENCY',
+      name: 'SESSION_FREQUENCY',
       label: { text: 'How often will sessions take place?' },
       hint: { text: 'For example, every week, every 2 weeks, every month.' },
       value: '',
@@ -129,10 +129,27 @@ describe('ActionPlanSessionDeliveryDetailsPresenter', () => {
 
   it('prefills the frequency textarea value from userInputData', () => {
     const content = renderAndGetContent('AB1234CD', sessionDeliveryDetails, undefined, {
-      frequency: 'Every week',
+      SESSION_FREQUENCY: 'Every week',
     })
 
     expect(content.frequencyTextBoxArgs.value).toBe('Every week')
+  })
+
+  it('prefills the frequency textarea value from savedResponses when there is no userInputData', () => {
+    const detailsWithSavedFrequency: ActionPlanSessionDeliveryDetailsResponse = {
+      questions: [
+        {
+          ...sessionDeliveryDetails.questions[0],
+          savedResponses: [{ value: 'Every 2 weeks', additionalDetails: null }],
+        },
+        sessionDeliveryDetails.questions[1],
+        sessionDeliveryDetails.questions[2],
+      ],
+    }
+
+    const content = renderAndGetContent('AB1234CD', detailsWithSavedFrequency)
+
+    expect(content.frequencyTextBoxArgs.value).toBe('Every 2 weeks')
   })
 
   it('builds the how radios with conditional html slotted in by choice value', () => {
@@ -140,8 +157,8 @@ describe('ActionPlanSessionDeliveryDetailsPresenter', () => {
 
     const radios = content.howRadioArgs('<div>video reason</div>', '<div>phone reason</div>')
 
-    expect(radios.idPrefix).toBe('how')
-    expect(radios.name).toBe('how')
+    expect(radios.idPrefix).toBe('SESSION_DELIVERY_METHOD')
+    expect(radios.name).toBe('SESSION_DELIVERY_METHOD')
     expect(radios.fieldset?.legend?.text).toBe('How will the sessions take place?')
     expect(radios.items).toHaveLength(3)
 
@@ -156,7 +173,7 @@ describe('ActionPlanSessionDeliveryDetailsPresenter', () => {
 
   it('marks the radio item as checked based on userInputData', () => {
     const content = renderAndGetContent('AB1234CD', sessionDeliveryDetails, undefined, {
-      how: 'VIDEO_CALL',
+      SESSION_DELIVERY_METHOD: 'VIDEO_CALL',
     })
 
     const radios = content.howRadioArgs('', '')
@@ -165,18 +182,38 @@ describe('ActionPlanSessionDeliveryDetailsPresenter', () => {
     expect(radios.items.find(item => item.value === 'IN_PERSON')?.checked).toBe(false)
   })
 
+  it('marks the radio item as checked from savedResponses when there is no userInputData', () => {
+    const detailsWithSavedDeliveryMethod: ActionPlanSessionDeliveryDetailsResponse = {
+      questions: [
+        sessionDeliveryDetails.questions[0],
+        {
+          ...sessionDeliveryDetails.questions[1],
+          savedResponses: [{ value: 'PHONE_CALL', additionalDetails: null }],
+        },
+        sessionDeliveryDetails.questions[2],
+      ],
+    }
+
+    const content = renderAndGetContent('AB1234CD', detailsWithSavedDeliveryMethod)
+
+    const radios = content.howRadioArgs('', '')
+
+    expect(radios.items.find(item => item.value === 'PHONE_CALL')?.checked).toBe(true)
+    expect(radios.items.find(item => item.value === 'IN_PERSON')?.checked).toBe(false)
+  })
+
   it('builds the video call and phone call reason textareas from the choice additional details label', () => {
     const content = renderAndGetContent('AB1234CD', sessionDeliveryDetails)
 
     expect(content.videoCallReasonTextBoxArgs).toMatchObject({
-      id: 'whyVideoCall',
-      name: 'whyVideoCall',
+      id: 'VIDEO_CALL',
+      name: 'VIDEO_CALL',
       label: { text: 'Why are the sessions not in person?' },
       value: '',
     })
     expect(content.phoneCallReasonTextBoxArgs).toMatchObject({
-      id: 'whyPhoneCall',
-      name: 'whyPhoneCall',
+      id: 'PHONE_CALL',
+      name: 'PHONE_CALL',
       label: { text: 'Why are the sessions not in person?' },
       value: '',
     })
@@ -184,19 +221,37 @@ describe('ActionPlanSessionDeliveryDetailsPresenter', () => {
 
   it('prefills the video call and phone call reason textareas from userInputData', () => {
     const content = renderAndGetContent('AB1234CD', sessionDeliveryDetails, undefined, {
-      whyVideoCall: 'Travel restrictions',
-      whyPhoneCall: 'No transport available',
+      VIDEO_CALL: 'Travel restrictions',
+      PHONE_CALL: 'No transport available',
     })
 
     expect(content.videoCallReasonTextBoxArgs.value).toBe('Travel restrictions')
     expect(content.phoneCallReasonTextBoxArgs.value).toBe('No transport available')
   })
 
+  it('prefills the video call reason textarea from savedResponses when there is no userInputData', () => {
+    const detailsWithSavedReason: ActionPlanSessionDeliveryDetailsResponse = {
+      questions: [
+        sessionDeliveryDetails.questions[0],
+        {
+          ...sessionDeliveryDetails.questions[1],
+          savedResponses: [{ value: 'VIDEO_CALL', additionalDetails: 'Travel restrictions' }],
+        },
+        sessionDeliveryDetails.questions[2],
+      ],
+    }
+
+    const content = renderAndGetContent('AB1234CD', detailsWithSavedReason)
+
+    expect(content.videoCallReasonTextBoxArgs.value).toBe('Travel restrictions')
+    expect(content.phoneCallReasonTextBoxArgs.value).toBe('')
+  })
+
   it('builds the format checkboxes with saved responses checked', () => {
     const content = renderAndGetContent('AB1234CD', sessionDeliveryDetails)
 
-    expect(content.formatCheckboxArgs.idPrefix).toBe('format')
-    expect(content.formatCheckboxArgs.name).toBe('format')
+    expect(content.formatCheckboxArgs.idPrefix).toBe('SESSION_FORMAT')
+    expect(content.formatCheckboxArgs.name).toBe('SESSION_FORMAT')
     expect(content.formatCheckboxArgs.fieldset?.legend?.text).toBe('What format will you use for the sessions?')
     expect(content.formatCheckboxArgs.items).toEqual([
       expect.objectContaining({ text: 'One-to-one session', value: 'ONE_TO_ONE_SESSION', checked: false }),
@@ -206,7 +261,7 @@ describe('ActionPlanSessionDeliveryDetailsPresenter', () => {
 
   it('marks checkboxes as checked from userInputData array values, ignoring saved responses', () => {
     const content = renderAndGetContent('AB1234CD', sessionDeliveryDetails, undefined, {
-      format: ['ONE_TO_ONE_SESSION'],
+      SESSION_FORMAT: ['ONE_TO_ONE_SESSION'],
     })
 
     expect(content.formatCheckboxArgs.items).toEqual([
@@ -217,7 +272,7 @@ describe('ActionPlanSessionDeliveryDetailsPresenter', () => {
 
   it('marks a single checked checkbox from a plain string value without matching by substring', () => {
     const content = renderAndGetContent('AB1234CD', sessionDeliveryDetails, undefined, {
-      format: 'ONE_TO_ONE_SESSION',
+      SESSION_FORMAT: 'ONE_TO_ONE_SESSION',
     })
 
     expect(content.formatCheckboxArgs.items).toEqual([
@@ -242,7 +297,7 @@ describe('ActionPlanSessionDeliveryDetailsPresenter', () => {
     }
 
     const content = renderAndGetContent('AB1234CD', detailsWithOverlappingValues, undefined, {
-      format: 'ONE_TO_ONE_SESSION',
+      SESSION_FORMAT: 'ONE_TO_ONE_SESSION',
     })
 
     expect(content.formatCheckboxArgs.items).toEqual([
@@ -255,11 +310,11 @@ describe('ActionPlanSessionDeliveryDetailsPresenter', () => {
     const content = renderAndGetContent('AB1234CD', sessionDeliveryDetails, {
       list: [],
       messages: {
-        frequency: { text: 'Enter how often the sessions will take place' },
-        how: { text: 'Select how the sessions will take place' },
-        format: { text: 'Select which format you will use for the sessions' },
-        whyVideoCall: { text: 'Enter why the sessions are not in person' },
-        whyPhoneCall: { text: 'Enter why the sessions are not in person' },
+        SESSION_FREQUENCY: { text: 'Enter how often the sessions will take place' },
+        SESSION_DELIVERY_METHOD: { text: 'Select how the sessions will take place' },
+        SESSION_FORMAT: { text: 'Select which format you will use for the sessions' },
+        VIDEO_CALL: { text: 'Enter why the sessions are not in person' },
+        PHONE_CALL: { text: 'Enter why the sessions are not in person' },
       },
     })
 

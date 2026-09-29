@@ -8,6 +8,7 @@ import ActionPlanSelectANeedPresenter from './selectANeed/actionPlanSelectANeedP
 import ActionPlanSelectOutcomePresenter from './selectOutcome/actionPlanSelectOutcomePresenter'
 import ActionPlanAddActivitiesPresenter from './addActivities/actionPlanAddActivitiesPresenter'
 import ActionPlanSessionDeliveryDetailsPresenter from './sessionDeliveryDetails/actionPlanSessionDeliveryDetailsPresenter'
+import buildSessionDeliveryDetailsRequestFromForm from './sessionDeliveryDetails/buildSessionDeliveryDetailsRequestFromForm'
 import applySessionDeliveryDetailsData from './sessionDeliveryDetails/applySessionDeliveryDetailsData'
 import { validateRequestBodyAgainstSchema } from '../../validation/validationUtils'
 import { ActionPlanSessionDeliveryDetailsFormDataSchemaBuilder } from '../../validation/ActionPlanSessionDeliveryDetailsFormData'
@@ -161,20 +162,20 @@ class ActionPlanController {
     const { username } = res.locals.user
 
     const sessionDeliveryDetails = await this.referralService.getSessionDeliveryDetails(caseReference, username)
-    const sessionDelivery = this.getActionPlanSessionDelivery(req, caseReference)?.sessionDeliveryDetails
     const flashData = req.flash('value')
     const flashedInputData = flashData.length > 0 ? JSON.parse(flashData[0]) : undefined
-    const userInputData = flashedInputData // check for session data here when ready
+    const userInputData = flashedInputData
 
     if (req.method === 'POST') {
       const schema = ActionPlanSessionDeliveryDetailsFormDataSchemaBuilder()
-      return validateRequestBodyAgainstSchema(schema, req, res, async _form => {
-        // Format this into the request object for the API when we know what it looks like and pass it to the session
-        // req.session.sessionDetails = form
+      return validateRequestBodyAgainstSchema(schema, req, res, async form => {
+        const request = buildSessionDeliveryDetailsRequestFromForm(sessionDeliveryDetails, form)
+        this.setActionPlanSessionDelivery(req, caseReference, { sessionDeliveryDetails: request })
         return res.redirect(`/referral/${caseReference}/action-plan`)
       })
     }
 
+    const sessionDelivery = this.getActionPlanSessionDelivery(req, caseReference)?.sessionDeliveryDetails
     const validationErrors = res.locals.errors
     const presenter = new ActionPlanSessionDeliveryDetailsPresenter(
       caseReference,
