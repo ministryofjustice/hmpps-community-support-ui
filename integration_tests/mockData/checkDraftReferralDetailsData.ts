@@ -74,6 +74,7 @@ const checkDraftReferralDetails: CheckDraftReferralDetailsDto = {
     thinkingBehavioursAttitudeDetails: 'Responds well to prompts',
   },
   referralAreaTableData: { area: 'London' },
+  additionalReferralInformationTableData: {},
   mainPocDetailsTableData: {},
   additionalReferralInformationTableData: {},
 }
