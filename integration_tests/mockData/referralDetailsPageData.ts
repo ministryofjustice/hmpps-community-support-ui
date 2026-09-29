@@ -6,6 +6,7 @@ export function referralPageData(
   assignedTo: CaseWorkerDto[] = [],
   withdrawReferral: boolean = false,
   withdrawalCreationDate?: string,
+  withdrawnBySameUser?: boolean,
 ): ReferralDetailsResponseDto {
   return {
     id: id || '{{request.path.[3]}}',
@@ -35,6 +36,7 @@ export function referralPageData(
     },
     withdrawReferral,
     withdrawalCreationDate,
+    withdrawnBySameUser,
   }
 }
 export default referralPageData
