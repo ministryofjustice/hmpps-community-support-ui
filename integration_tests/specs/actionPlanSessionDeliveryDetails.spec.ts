@@ -101,7 +101,7 @@ test.describe('Action Plan Session Delivery Details Page', () => {
 
     const sessionDeliveryDetailsPage = await ActionPlanSessionDeliveryDetailsPage.verifyOnPage(page)
 
-    await expect(sessionDeliveryDetailsPage.header).toHaveText('Session delivery details')
+    await expect(sessionDeliveryDetailsPage.header).toHaveText('Session details')
     await expect(page.getByLabel('How often will sessions take place?')).toHaveValue('Every week')
     await expect(page.getByText('For example, every week, every 2 weeks, every month.')).toBeVisible()
     await expect(page.getByRole('radio', { name: 'Video call' })).toBeChecked()

@@ -6,6 +6,7 @@ import {
 } from '../../../@types/govukFrontend/derived'
 
 export type ActionPlanSessionDeliveryDetailsViewModel = {
+  pageTitle: string
   pageHeader: string
   backLink: GovukFrontendBackLink
   submitButton: GovukFrontendButton

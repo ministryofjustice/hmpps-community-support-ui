@@ -157,6 +157,7 @@ export default class ActionPlanSessionDeliveryDetailsPresenter extends Presenter
     const phoneCallChoice = deliveryMethodQuestion.choices.find(c => c.value === 'PHONE_CALL')!
 
     return {
+      pageTitle: content.pageTitle,
       pageHeader: content.pageHeader,
       backLink: { href: content.backLink.replace('{{ id }}', this.caseReference) },
       submitButton: { text: content.continueButtonText },

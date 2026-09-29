@@ -166,7 +166,7 @@ class ActionPlanController {
     const userInputData = flashData.length > 0 ? JSON.parse(flashData[0]) : undefined
 
     if (req.method === 'POST') {
-      const schema = ActionPlanSessionDeliveryDetailsFormDataSchemaBuilder()
+      const schema = ActionPlanSessionDeliveryDetailsFormDataSchemaBuilder(sessionDeliveryDetails)
       return validateRequestBodyAgainstSchema(schema, req, res, async form => {
         const request = buildSessionDeliveryDetailsRequestFromForm(sessionDeliveryDetails, form)
         this.setActionPlanSessionDelivery(req, caseReference, { sessionDeliveryDetails: request })
