@@ -18,7 +18,8 @@ export default referralDetailsContentFactory.define(({ transientParams }) => ({
   withdrawReferralLinkText: 'Withdraw referral',
   alerts: {
     withdrawalCompletedTitle: 'Referral withdrawn',
-    withdrawalAlreadyCompletedTitle: 'This referral has already been withdrawn by another user.',
+    withdrawalAlreadyCompletedBySameUserTitle: 'You have already withdrawn this referral',
+    withdrawalAlreadyCompletedByOtherUserTitle: 'Referral already withdrawn by another user',
     withdrawnInformationTitle: 'Referral withdrawn on {{ date }}',
   },
   personalDetailsCard: {

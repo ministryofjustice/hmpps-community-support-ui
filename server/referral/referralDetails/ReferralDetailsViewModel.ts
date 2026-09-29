@@ -37,7 +37,8 @@ export interface ReferralDetailsCard {
 
 export interface ReferralDetailsAlertsContent {
   withdrawalCompletedTitle: string
-  withdrawalAlreadyCompletedTitle: string
+  withdrawalAlreadyCompletedBySameUserTitle: string
+  withdrawalAlreadyCompletedByOtherUserTitle: string
   withdrawnInformationTitle: string
 }
 

@@ -460,6 +460,7 @@ export default {
     assignedTo: CaseWorkerDto[] = [],
     withdrawReferral: boolean = false,
     withdrawalCreationDate?: string,
+    withdrawnBySameUser?: boolean,
   ): SuperAgentRequest =>
     stubFor({
       request: {
@@ -475,6 +476,7 @@ export default {
           assignedTo,
           withdrawReferral,
           withdrawalCreationDate,
+          withdrawnBySameUser,
         ),
         transformers: ['response-template'],
       },

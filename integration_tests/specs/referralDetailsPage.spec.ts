@@ -283,7 +283,24 @@ test.describe('Referral Details Page', () => {
 
     const referralDetailsPage = await ReferralDetailsPage.verifyOnPage(page)
     await expect(referralDetailsPage.alert).toBeVisible()
-    await expect(referralDetailsPage.alert).toContainText('This referral has already been withdrawn by another user.')
+    await expect(referralDetailsPage.alert).toContainText('Referral already withdrawn by another user')
+    await expect(referralDetailsPage.alert.getByRole('button', { name: 'Dismiss' })).toHaveCount(0)
+  })
+
+  test('shows a different error alert message when the current user withdrew the referral themselves', async ({
+    page,
+  }) => {
+    await communitySupport.stubGetReferralDetailsPage(200, id, undefined, undefined, false, undefined, true)
+    await page.request.post('/test/setup-referral-details-notification', {
+      data: {
+        referralDetailsNotification: { type: 'warning', code: 'withdrawalAlreadyCompleted', caseReference: id },
+      },
+    })
+    await page.goto(ReferralDetailsPage.url(id))
+
+    const referralDetailsPage = await ReferralDetailsPage.verifyOnPage(page)
+    await expect(referralDetailsPage.alert).toBeVisible()
+    await expect(referralDetailsPage.alert).toContainText('You have already withdrawn this referral')
     await expect(referralDetailsPage.alert.getByRole('button', { name: 'Dismiss' })).toHaveCount(0)
   })
 

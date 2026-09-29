@@ -170,7 +170,10 @@ export default class ReferralDetailsPresenter extends PresenterBase<ReferralDeta
     }
 
     if (this.notification?.code === 'withdrawalAlreadyCompleted') {
-      return { variant: 'error', title: content.alerts.withdrawalAlreadyCompletedTitle, dismissible: false }
+      const title = this.referralDetails.withdrawnBySameUser
+        ? content.alerts.withdrawalAlreadyCompletedBySameUserTitle
+        : content.alerts.withdrawalAlreadyCompletedByOtherUserTitle
+      return { variant: 'error', title, dismissible: false }
     }
 
     if (this.referralDetails.withdrawReferral && this.referralDetails.withdrawalCreationDate) {
