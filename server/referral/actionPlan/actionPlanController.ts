@@ -163,8 +163,7 @@ class ActionPlanController {
 
     const sessionDeliveryDetails = await this.referralService.getSessionDeliveryDetails(caseReference, username)
     const flashData = req.flash('value')
-    const flashedInputData = flashData.length > 0 ? JSON.parse(flashData[0]) : undefined
-    const userInputData = flashedInputData
+    const userInputData = flashData.length > 0 ? JSON.parse(flashData[0]) : undefined
 
     if (req.method === 'POST') {
       const schema = ActionPlanSessionDeliveryDetailsFormDataSchemaBuilder()
