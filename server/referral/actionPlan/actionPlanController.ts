@@ -8,8 +8,11 @@ import ActionPlanSelectANeedPresenter from './selectANeed/actionPlanSelectANeedP
 import ActionPlanSelectOutcomePresenter from './selectOutcome/actionPlanSelectOutcomePresenter'
 import ActionPlanAddActivitiesPresenter from './addActivities/actionPlanAddActivitiesPresenter'
 import ActionPlanSessionDeliveryDetailsPresenter from './sessionDeliveryDetails/actionPlanSessionDeliveryDetailsPresenter'
-import buildSessionDeliveryDetailsRequestFromForm from './sessionDeliveryDetails/buildSessionDeliveryDetailsRequestFromForm'
 import applySessionDeliveryDetailsData from './sessionDeliveryDetails/applySessionDeliveryDetailsData'
+import { validateRequestBodyAgainstSchema } from '../../validation/validationUtils'
+import {
+  ActionPlanSessionDeliveryDetailsFormDataSchemaBuilder
+} from '../../validation/ActionPlanSessionDeliveryDetailsFormData'
 
 class ActionPlanController {
   constructor(private readonly referralService: ReferralService) {}
@@ -161,23 +164,29 @@ class ActionPlanController {
 
     const sessionDeliveryDetails = await this.referralService.getSessionDeliveryDetails(caseReference, username)
     const sessionDelivery = this.getActionPlanSessionDelivery(req, caseReference)?.sessionDeliveryDetails
+    const flashData = req.flash('value')
+    const flashedInputData = flashData.length > 0 ? JSON.parse(flashData[0]) : undefined
+    let userInputData = flashedInputData // check for session data here when ready
+
+    if (req.method === 'POST') {
+      const schema = ActionPlanSessionDeliveryDetailsFormDataSchemaBuilder()
+      return validateRequestBodyAgainstSchema(schema, req, res, async form => {
+        //Format this into the request object for the API when we know what it looks like and pass it to the session
+        //req.session.sessionDetails = form
+        return res.redirect(`/referral/${caseReference}/action-plan`)
+      })
+    }
+
+
+    const validationErrors = res.locals.errors
     const presenter = new ActionPlanSessionDeliveryDetailsPresenter(
       caseReference,
       applySessionDeliveryDetailsData(sessionDeliveryDetails, sessionDelivery),
+      validationErrors,
+      userInputData
     )
 
     return presenter.renderPage(res)
-  }
-
-  async saveSessionDeliveryDetails(req: Request, res: Response) {
-    const { id: caseReference } = req.params as { id: string }
-    const { username } = res.locals.user
-
-    const sessionDeliveryDetails = await this.referralService.getSessionDeliveryDetails(caseReference, username)
-    const request = buildSessionDeliveryDetailsRequestFromForm(sessionDeliveryDetails, req.body)
-    this.setActionPlanSessionDelivery(req, caseReference, { sessionDeliveryDetails: request })
-
-    return res.redirect(`/referral/${caseReference}/action-plan`)
   }
 }
 

@@ -4,13 +4,13 @@ import type {
   ActionPlanSessionDeliveryDetailsResponse,
   ActionPlanSummaryDto,
 } from '@community-support-api'
+import type { ErrorMiddlewareErrors } from '../../@types/express'
 import ReferralService from '../../services/referralService'
 import ActionPlanController from './actionPlanController'
 import ActionPlanPresenter from './actionPlanPresenter'
 import ActionPlanSelectANeedPresenter from './selectANeed/actionPlanSelectANeedPresenter'
 import ActionPlanSelectOutcomePresenter from './selectOutcome/actionPlanSelectOutcomePresenter'
 import ActionPlanSessionDeliveryDetailsPresenter from './sessionDeliveryDetails/actionPlanSessionDeliveryDetailsPresenter'
-import buildSessionDeliveryDetailsRequestFromForm from './sessionDeliveryDetails/buildSessionDeliveryDetailsRequestFromForm'
 import applySessionDeliveryDetailsData from './sessionDeliveryDetails/applySessionDeliveryDetailsData'
 
 jest.mock('../../services/referralService')
@@ -18,7 +18,6 @@ jest.mock('./actionPlanPresenter')
 jest.mock('./selectANeed/actionPlanSelectANeedPresenter')
 jest.mock('./selectOutcome/actionPlanSelectOutcomePresenter')
 jest.mock('./sessionDeliveryDetails/actionPlanSessionDeliveryDetailsPresenter')
-jest.mock('./sessionDeliveryDetails/buildSessionDeliveryDetailsRequestFromForm')
 jest.mock('./sessionDeliveryDetails/applySessionDeliveryDetailsData')
 
 describe('ActionPlanController', () => {
@@ -42,7 +41,7 @@ describe('ActionPlanController', () => {
       },
       body: {},
       session: {},
-      flash: jest.fn(),
+      flash: jest.fn().mockReturnValue([]),
     } as unknown as Request
 
     res = {
@@ -217,7 +216,12 @@ describe('ActionPlanController', () => {
 
     expect(referralService.getSessionDeliveryDetails).toHaveBeenCalledWith('AB1234CD', 'user1')
     expect(applySessionDeliveryDetailsData).toHaveBeenCalledWith(sessionDeliveryDetails, undefined)
-    expect(ActionPlanSessionDeliveryDetailsPresenter).toHaveBeenCalledWith('AB1234CD', sessionDeliveryDetails)
+    expect(ActionPlanSessionDeliveryDetailsPresenter).toHaveBeenCalledWith(
+      'AB1234CD',
+      sessionDeliveryDetails,
+      undefined,
+      undefined,
+    )
     expect(ActionPlanSessionDeliveryDetailsPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
   })
 
@@ -262,23 +266,59 @@ describe('ActionPlanController', () => {
     expect(applySessionDeliveryDetailsData).toHaveBeenCalledWith(sessionDeliveryDetails, undefined)
   })
 
-  it('stores the session-delivery draft as a single session object', async () => {
+  it('passes flashed form values and validation errors through to the presenter', async () => {
     const sessionDeliveryDetails: ActionPlanSessionDeliveryDetailsResponse = {
       questions: [],
     }
-    const requestPayload: ActionPlanSessionDeliveryDetailsRequest = {
-      answers: [{ questionId: 'question-1', incomingAnswerDetails: [{ value: 'saved' }] }],
+    const validationErrors: ErrorMiddlewareErrors = { list: [], messages: { frequency: { text: 'Enter how often' } } }
+    const flashedValue = { frequency: 'Every week' }
+    jest.mocked(applySessionDeliveryDetailsData).mockReturnValue(sessionDeliveryDetails)
+    referralService.getSessionDeliveryDetails.mockResolvedValue(sessionDeliveryDetails)
+    req.flash = jest.fn().mockReturnValue([JSON.stringify(flashedValue)])
+    res.locals.errors = validationErrors
+
+    await actionPlanController.showSessionDeliveryDetailsPage(req, res)
+
+    expect(ActionPlanSessionDeliveryDetailsPresenter).toHaveBeenCalledWith(
+      'AB1234CD',
+      sessionDeliveryDetails,
+      validationErrors,
+      flashedValue,
+    )
+  })
+
+  it('redirects to the action plan page when the submitted form is valid', async () => {
+    const sessionDeliveryDetails: ActionPlanSessionDeliveryDetailsResponse = {
+      questions: [],
+    }
+    req.method = 'POST'
+    req.body = {
+      frequency: 'Every week',
+      how: 'IN_PERSON',
+      format: 'ONE_TO_ONE_SESSION',
     }
     referralService.getSessionDeliveryDetails.mockResolvedValue(sessionDeliveryDetails)
-    jest.mocked(buildSessionDeliveryDetailsRequestFromForm).mockReturnValue(requestPayload)
     res.redirect = jest.fn()
 
-    await actionPlanController.saveSessionDeliveryDetails(req, res)
+    await actionPlanController.showSessionDeliveryDetailsPage(req, res)
 
-    expect(req.session.actionPlanSessionDelivery).toEqual({
-      caseReference: 'AB1234CD',
-      sessionDeliveryDetails: requestPayload,
-    })
     expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan')
+  })
+
+  it('flashes validation errors and redirects back when the submitted form is invalid', async () => {
+    const sessionDeliveryDetails: ActionPlanSessionDeliveryDetailsResponse = {
+      questions: [],
+    }
+    req.method = 'POST'
+    req.url = '/referral/AB1234CD/action-plan/session-delivery-details'
+    req.body = {}
+    referralService.getSessionDeliveryDetails.mockResolvedValue(sessionDeliveryDetails)
+    res.redirect = jest.fn()
+
+    await actionPlanController.showSessionDeliveryDetailsPage(req, res)
+
+    expect(req.flash).toHaveBeenCalledWith('howError', 'Select how the sessions will take place')
+    expect(req.flash).toHaveBeenCalledWith('formatError', 'Select which format you will use for the sessions')
+    expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/session-delivery-details')
   })
 })

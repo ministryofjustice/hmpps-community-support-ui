@@ -14,15 +14,20 @@
   <form method="post">
     <input type="hidden" name="_csrf" value="{{csrfToken}}">
 
-    {% for question in content.questions %}
-      {% if question.textarea %}
-        {{ govukTextarea(question.textarea) }}
-      {% elif question.radios %}
-        {{ govukRadios(question.radios) }}
-      {% elif question.checkboxes %}
-        {{ govukCheckboxes(question.checkboxes) }}
-      {% endif %}
-    {% endfor %}
+    {{ govukTextarea(content.frequencyTextBoxArgs) }}
+
+    {% set videoCallHtml %}
+      {{ govukTextarea(content.videoCallReasonTextBoxArgs) }}
+    {% endset %}
+
+    {% set phoneCallHtml %}
+      {{ govukTextarea(content.phoneCallReasonTextBoxArgs) }}
+    {% endset %}
+
+    {{ govukRadios(content.howRadioArgs(videoCallHtml, phoneCallHtml)) }}
+
+    {{ govukCheckboxes(content.formatCheckboxArgs) }}
+
 
     {{ govukButton(content.submitButton) }}
   </form>

@@ -309,8 +309,8 @@
     "saveAndContinueButtonText": "Save and continue"
   },
   "/referral/:id/action-plan/session-delivery-details": {
-    "pageTitle": "Session delivery details – [Service name]",
-    "pageHeader": "Session delivery details",
+    "pageTitle": "Session details – [Service name]",
+    "pageHeader": "Session details",
     "continueButtonText": "Continue",
     "backLink": "/referral/:id/action-plan"
   },

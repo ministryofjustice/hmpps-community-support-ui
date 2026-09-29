@@ -5,19 +5,21 @@ import {
   GovukFrontendRadiosWithConditional,
 } from '../../../@types/govukFrontend/derived'
 
-export type ActionPlanSessionDeliveryDetailsQuestionViewModel = {
-  id: string
-  textarea?: GovukFrontendTextarea
-  radios?: GovukFrontendRadiosWithConditional
-  checkboxes?: GovukFrontendCheckboxesWithConditional
-}
 
 export type ActionPlanSessionDeliveryDetailsViewModel = {
   pageHeader: string
   backLink: GovukFrontendBackLink
-  questions: ActionPlanSessionDeliveryDetailsQuestionViewModel[]
   submitButton: GovukFrontendButton
   submitHref: string
+  frequencyTextBoxArgs: GovukFrontendTextarea
+  howRadioArgs:  (
+    videoCallHtml: string,
+    phoneCallHtml: string,
+  ) => GovukFrontendRadiosWithConditional
+  videoCallReasonTextBoxArgs: GovukFrontendTextarea
+  phoneCallReasonTextBoxArgs: GovukFrontendTextarea
+  formatCheckboxArgs: GovukFrontendCheckboxesWithConditional
+
 }
 
 export type ActionPlanSessionDeliveryDetailsContent =
