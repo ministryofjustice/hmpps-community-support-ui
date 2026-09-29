@@ -22,7 +22,6 @@ const DraftReferralDetailsFactory = new Factory<CheckDraftReferralDetailsDto>(()
   referralAreaTableData: { area: '' },
   additionalReferralInformationTableData: {},
   mainPocDetailsTableData: {},
-  additionalReferralInformationTableData: {},
 }))
 
 export default DraftReferralDetailsFactory
