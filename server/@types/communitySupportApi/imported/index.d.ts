@@ -1691,6 +1691,7 @@ export interface components {
       withdrawReferral: boolean
       /** Format: date-time */
       withdrawalCreationDate?: string | null
+      withdrawnBySameUser?: boolean | null
     }
     ReferralDetailsTableDataDto: {
       referralDate: string
@@ -1856,12 +1857,27 @@ export interface components {
       additionalSupportNeedsDetailsTableData: components['schemas']['DraftAdditionalSupportNeedsDetailsTableDataDto']
       personNeedsDetailsTableData: components['schemas']['DraftPersonNeedsDetailsTableDataDto']
       referralAreaTableData: components['schemas']['DraftReferralAreaTableDataDto']
+      additionalReferralInformationTableData: components['schemas']['DraftAdditionalReferralInformationTableDataDto']
       mainPocDetailsTableData: components['schemas']['DraftMainPOCDetailsTableDataDto']
     }
     DraftAdditionalInformationDetailsTableDataDto: {
       ofHomeOfficeInterest?: boolean | null
       homeOfficeInterestNotes?: string | null
       offenderPersonalityDisorderPathway?: string | null
+    }
+    DraftAdditionalReferralInformationTableDataDto: {
+      /** Format: date-time */
+      serviceCompletionDate?: string | null
+      serviceCompletionDateReason?: string | null
+      /** Format: int32 */
+      serviceDays?: number | null
+      offence?: string | null
+      offenceSubCategory?: string | null
+      outcome?: string | null
+      /** Format: date */
+      sentenceEndDate?: string | null
+      licenceConditions?: string | null
+      anythingElse?: string | null
     }
     DraftAdditionalSupportNeedsDetailsTableDataDto: {
       physicalHealth?: string | null
@@ -1910,7 +1926,7 @@ export interface components {
       prisonNumber?: string | null
       /** Format: date */
       dateOfBirth: string
-      preferredLanguage: string
+      preferredLanguage?: string | null
       personalCircumstances: components['schemas']['PersonalCircumstance'][]
       disabilities: components['schemas']['Disability'][]
     }
@@ -2177,8 +2193,8 @@ export interface operations {
           'application/json': unknown
         }
       }
-      /** @description Referral not found */
-      404: {
+      /** @description Referral already withdrawn */
+      208: {
         headers: {
           [name: string]: unknown
         }
@@ -2186,8 +2202,8 @@ export interface operations {
           'application/json': unknown
         }
       }
-      /** @description Referral already withdrawn */
-      409: {
+      /** @description Referral not found */
+      404: {
         headers: {
           [name: string]: unknown
         }
