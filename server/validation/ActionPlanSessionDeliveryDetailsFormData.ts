@@ -67,6 +67,6 @@ export const ActionPlanSessionDeliveryDetailsFormDataSchemaBuilder = () =>
       }
     })
 
-export const AddSessionDetailsSchema = ActionPlanSessionDeliveryDetailsFormDataSchemaBuilder
+export const AddSessionDetailsSchema = ActionPlanSessionDeliveryDetailsFormDataSchemaBuilder()
 type AddSessionDetailsSchemaFormData = z.infer<typeof AddSessionDetailsSchema>
 export default AddSessionDetailsSchemaFormData
