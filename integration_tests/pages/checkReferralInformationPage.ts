@@ -21,8 +21,6 @@ export default class CheckReferralInformationPage extends AbstractPage {
 
   readonly personsNeedsSummary: SummaryList
 
-  readonly referralDetailsSummary: SummaryList
-
   private constructor(
     page: Page,
     personalDetailsSummary: SummaryList,
@@ -31,7 +29,6 @@ export default class CheckReferralInformationPage extends AbstractPage {
     riskInformationSummary: SummaryList,
     additionalSupportNeedsSummary: SummaryList,
     personsNeedsSummary: SummaryList,
-    referralDetailsSummary: SummaryList,
     additionalInformationSummary?: SummaryList,
   ) {
     super(page)
@@ -43,7 +40,6 @@ export default class CheckReferralInformationPage extends AbstractPage {
     this.riskInformationSummary = riskInformationSummary
     this.additionalSupportNeedsSummary = additionalSupportNeedsSummary
     this.personsNeedsSummary = personsNeedsSummary
-    this.referralDetailsSummary = referralDetailsSummary
     this.contactDetailsSummary = contactDetailsSummary as SummaryList
   }
 
@@ -64,8 +60,6 @@ export default class CheckReferralInformationPage extends AbstractPage {
     )
     const personsNeedsSummary = await SummaryList.create(page.locator('[data-testid="persons-needs"]'))
 
-    const referralDetailsSummary = await SummaryList.create(page.locator('[data-testid="referral-details"]'))
-
     const checkReferralInformationPage = new CheckReferralInformationPage(
       page,
       personalDetailsSummary,
@@ -74,7 +68,6 @@ export default class CheckReferralInformationPage extends AbstractPage {
       riskInformationSummary,
       additionalSupportNeedsSummary,
       personsNeedsSummary,
-      referralDetailsSummary,
       additionalInformationSummary,
     )
 
@@ -84,7 +77,6 @@ export default class CheckReferralInformationPage extends AbstractPage {
     await expect(checkReferralInformationPage.riskInformationSummary.summaryLocator).toBeVisible()
     await expect(checkReferralInformationPage.personsNeedsSummary.summaryLocator).toBeVisible()
     await expect(checkReferralInformationPage.additionalSupportNeedsSummary.summaryLocator).toBeVisible()
-    await expect(checkReferralInformationPage.referralDetailsSummary.summaryLocator).toBeVisible()
     await expect(contactDetailsSummary.summaryLocator).toBeVisible()
     return checkReferralInformationPage
   }

@@ -281,4 +281,69 @@ test.describe('Referral Details Page', () => {
     const referralDetailsPage = await ReferralDetailsPage.verifyOnPage(page)
     await expect(referralDetailsPage.withdrawReferralLink).toHaveCount(0)
   })
+
+  test('shows a dismissible success alert when a matching withdrawal-completed notification is in the session', async ({
+    page,
+  }) => {
+    await page.request.post('/test/setup-referral-details-notification', {
+      data: {
+        referralDetailsNotification: { type: 'success', code: 'withdrawalCompleted', caseReference: id },
+      },
+    })
+    await page.goto(ReferralDetailsPage.url(id))
+
+    const referralDetailsPage = await ReferralDetailsPage.verifyOnPage(page)
+    await expect(referralDetailsPage.alert).toBeVisible()
+    await expect(referralDetailsPage.alert).toContainText('Referral withdrawn')
+    await expect(referralDetailsPage.alert.getByRole('button', { name: 'Dismiss' })).toBeVisible()
+  })
+
+  test('shows a non-dismissible error alert when a matching withdrawal-already-completed notification is in the session', async ({
+    page,
+  }) => {
+    await page.request.post('/test/setup-referral-details-notification', {
+      data: {
+        referralDetailsNotification: { type: 'warning', code: 'withdrawalAlreadyCompleted', caseReference: id },
+      },
+    })
+    await page.goto(ReferralDetailsPage.url(id))
+
+    const referralDetailsPage = await ReferralDetailsPage.verifyOnPage(page)
+    await expect(referralDetailsPage.alert).toBeVisible()
+    await expect(referralDetailsPage.alert).toContainText('This referral has already been withdrawn by another user.')
+    await expect(referralDetailsPage.alert.getByRole('button', { name: 'Dismiss' })).toHaveCount(0)
+  })
+
+  test('does not show an alert when the session notification is for a different case reference', async ({ page }) => {
+    await page.request.post('/test/setup-referral-details-notification', {
+      data: {
+        referralDetailsNotification: {
+          type: 'success',
+          code: 'withdrawalCompleted',
+          caseReference: 'some-other-case',
+        },
+      },
+    })
+    await page.goto(ReferralDetailsPage.url(id))
+
+    const referralDetailsPage = await ReferralDetailsPage.verifyOnPage(page)
+    await expect(referralDetailsPage.alert).toHaveCount(0)
+  })
+
+  test('shows an information alert with the withdrawal date when the referral was withdrawn and there is no fresh notification', async ({
+    page,
+  }) => {
+    await communitySupport.stubGetReferralDetailsPage(200, id, undefined, undefined, true, '2026-09-08T00:00:00.000Z')
+    await page.goto(ReferralDetailsPage.url(id))
+
+    const referralDetailsPage = await ReferralDetailsPage.verifyOnPage(page)
+    await expect(referralDetailsPage.alert).toBeVisible()
+    await expect(referralDetailsPage.alert).toContainText('Referral withdrawn on 8 September 2026')
+    await expect(referralDetailsPage.alert.getByRole('button', { name: 'Dismiss' })).toHaveCount(0)
+  })
+
+  test('shows no alert when the referral has not been withdrawn and there is no notification', async ({ page }) => {
+    const referralDetailsPage = await ReferralDetailsPage.verifyOnPage(page)
+    await expect(referralDetailsPage.alert).toHaveCount(0)
+  })
 })

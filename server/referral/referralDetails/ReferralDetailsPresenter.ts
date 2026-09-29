@@ -10,15 +10,18 @@ import {
   ContactDetailsCard,
   EqualityMonitoringCard,
   PersonalDetailsCard,
+  ReferralDetailsAlert,
   ReferralDetailsCard,
   ReferralDetailsContent,
 } from './ReferralDetailsViewModel'
 import { trimOrDefault } from '../../utils/utils'
 import { govFrontendSummaryListRow, createMailtoLink } from '../../utils/viewUtils'
+import { ReferralDetailsNotification } from './ReferralDetailsNotification'
 
 export interface ReferralDetailsViewModel {
   name: string
   successBanner: AssignmentSuccessBanner | null
+  alert: ReferralDetailsAlert | null
   subNav: MojSubNavigation
   personal: GovukFrontendSummaryList
   equality: GovukFrontendSummaryList
@@ -41,6 +44,7 @@ export default class ReferralDetailsPresenter extends PresenterBase<ReferralDeta
     private readonly referralDetails: ReferralDetailsResponseDto,
     private readonly assignResult: ReferralUserAssignmentsResponse | null,
     private readonly authSource: string,
+    private readonly notification?: ReferralDetailsNotification,
   ) {
     super()
     this.assignReferralHref = `/referral/${referralDetails.id}/assign`
@@ -160,6 +164,27 @@ export default class ReferralDetailsPresenter extends PresenterBase<ReferralDeta
     }
   }
 
+  private buildAlert(content: ReferralDetailsContent): ReferralDetailsAlert | null {
+    if (this.notification?.code === 'withdrawalCompleted') {
+      return { variant: 'success', title: content.alerts.withdrawalCompletedTitle, dismissible: true }
+    }
+
+    if (this.notification?.code === 'withdrawalAlreadyCompleted') {
+      return { variant: 'error', title: content.alerts.withdrawalAlreadyCompletedTitle, dismissible: false }
+    }
+
+    if (this.referralDetails.withdrawReferral && this.referralDetails.withdrawalCreationDate) {
+      const withdrawalDate = dateFormat(new Date(this.referralDetails.withdrawalCreationDate))
+      return {
+        variant: 'information',
+        title: content.alerts.withdrawnInformationTitle.replace('{{ date }}', withdrawalDate),
+        dismissible: false,
+      }
+    }
+
+    return null
+  }
+
   private buildSubNav(content: ReferralDetailsContent, isAssigned: boolean): MojSubNavigation {
     return {
       label: content.subNavTitle,
@@ -183,6 +208,7 @@ export default class ReferralDetailsPresenter extends PresenterBase<ReferralDeta
       name: this.referralDetails.personDetailsTableData.name,
       subNav: this.buildSubNav(content, this.isReferralAssigned()),
       successBanner: this.assignResult ? this.buildSuccessBanner(content.successBannerHeading) : null,
+      alert: this.buildAlert(content),
       personal: this.buildPersonalDetails(content.personalDetailsCard, content.defaultFieldValue),
       equality: this.buildEqualityDetails(content.equalityMonitoringCard, content.defaultFieldValue),
       contact: this.buildContactDetails(content.contactDetailsCard, content.defaultFieldValue),

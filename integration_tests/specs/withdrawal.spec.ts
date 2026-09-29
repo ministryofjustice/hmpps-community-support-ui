@@ -157,6 +157,31 @@ test.describe('Withdraw referral', () => {
     await ReferralDetailsPage.verifyOnPage(page)
   })
 
+  test('shows a dismissible success alert on referral details after withdrawal, which does not reappear on reload', async ({
+    page,
+  }) => {
+    await communitySupport.stubWithdrawReferral(caseIdentifier, withdrawalRequest)
+    const confirmationPage = await goToWithdrawalConfirm(page)
+    await confirmationPage.withdrawButton.click()
+
+    await expect(page).toHaveURL(ReferralDetailsPage.url(caseIdentifier))
+    let referralDetailsPage = await ReferralDetailsPage.verifyOnPage(page)
+    await expect(referralDetailsPage.alert).toBeVisible()
+    await expect(referralDetailsPage.alert).toContainText('Referral withdrawn')
+
+    await test.step('dismiss the alert', async () => {
+      await referralDetailsPage.alert.getByRole('button', { name: 'Dismiss' }).click()
+      await expect(referralDetailsPage.alert).toHaveCount(0)
+    })
+
+    await test.step('the alert does not reappear after navigating back to the page', async () => {
+      await communitySupport.stubGetReferralDetailsPage(200, referralId)
+      await page.reload()
+      referralDetailsPage = await ReferralDetailsPage.verifyOnPage(page)
+      await expect(referralDetailsPage.alert).toHaveCount(0)
+    })
+  })
+
   // AC9
   test('redirects to referral details when another user has already withdrawn the referral', async ({ page }) => {
     await communitySupport.stubWithdrawReferral(caseIdentifier, withdrawalRequest, 409)
@@ -165,6 +190,38 @@ test.describe('Withdraw referral', () => {
 
     await expect(page).toHaveURL(ReferralDetailsPage.url(caseIdentifier))
     await ReferralDetailsPage.verifyOnPage(page)
+  })
+
+  test('shows an error alert on referral details when another user has already withdrawn the referral', async ({
+    page,
+  }) => {
+    await communitySupport.stubWithdrawReferral(caseIdentifier, withdrawalRequest, 409)
+    const confirmationPage = await goToWithdrawalConfirm(page)
+    await confirmationPage.withdrawButton.click()
+
+    await expect(page).toHaveURL(ReferralDetailsPage.url(caseIdentifier))
+    const referralDetailsPage = await ReferralDetailsPage.verifyOnPage(page)
+    await expect(referralDetailsPage.alert).toBeVisible()
+    await expect(referralDetailsPage.alert).toContainText('This referral has already been withdrawn by another user.')
+  })
+
+  test('shows an information alert with the withdrawal date when the referral was already withdrawn and there is no new notification', async ({
+    page,
+  }) => {
+    await communitySupport.stubGetReferralDetailsPage(
+      200,
+      referralId,
+      undefined,
+      undefined,
+      true,
+      '2026-09-08T00:00:00.000Z',
+    )
+    await page.goto(ReferralDetailsPage.url(referralId))
+
+    const referralDetailsPage = await ReferralDetailsPage.verifyOnPage(page)
+    await expect(referralDetailsPage.alert).toBeVisible()
+    await expect(referralDetailsPage.alert).toContainText('Referral withdrawn on 8 September 2026')
+    await expect(referralDetailsPage.alert.getByRole('button', { name: 'Dismiss' })).toHaveCount(0)
   })
 
   // AC10
