@@ -75,6 +75,7 @@ const checkDraftReferralDetails: CheckDraftReferralDetailsDto = {
   },
   referralAreaTableData: { area: 'London' },
   mainPocDetailsTableData: {},
+  additionalReferralInformationTableData: {},
 }
 
 export default checkDraftReferralDetails

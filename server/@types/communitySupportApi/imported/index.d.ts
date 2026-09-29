@@ -1806,12 +1806,27 @@ export interface components {
       additionalSupportNeedsDetailsTableData: components['schemas']['DraftAdditionalSupportNeedsDetailsTableDataDto']
       personNeedsDetailsTableData: components['schemas']['DraftPersonNeedsDetailsTableDataDto']
       referralAreaTableData: components['schemas']['DraftReferralAreaTableDataDto']
+      additionalReferralInformationTableData: components['schemas']['DraftAdditionalReferralInformationTableDataDto']
       mainPocDetailsTableData: components['schemas']['DraftMainPOCDetailsTableDataDto']
     }
     DraftAdditionalInformationDetailsTableDataDto: {
       ofHomeOfficeInterest?: boolean | null
       homeOfficeInterestNotes?: string | null
       offenderPersonalityDisorderPathway?: string | null
+    }
+    DraftAdditionalReferralInformationTableDataDto: {
+      /** Format: date-time */
+      serviceCompletionDate?: string | null
+      serviceCompletionDateReason?: string | null
+      /** Format: int32 */
+      serviceDays?: number | null
+      offence?: string | null
+      offenceSubCategory?: string | null
+      outcome?: string | null
+      /** Format: date */
+      sentenceEndDate?: string | null
+      licenceConditions?: string | null
+      anythingElse?: string | null
     }
     DraftAdditionalSupportNeedsDetailsTableDataDto: {
       physicalHealth?: string | null
@@ -1860,7 +1875,7 @@ export interface components {
       prisonNumber?: string | null
       /** Format: date */
       dateOfBirth: string
-      preferredLanguage: string
+      preferredLanguage?: string | null
       personalCircumstances: components['schemas']['PersonalCircumstance'][]
       disabilities: components['schemas']['Disability'][]
     }
