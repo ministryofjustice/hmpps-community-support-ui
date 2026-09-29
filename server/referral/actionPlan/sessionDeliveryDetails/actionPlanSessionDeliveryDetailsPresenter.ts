@@ -4,7 +4,7 @@ import {
   SessionDeliveryQuestion,
 } from '@community-support-api'
 import { Response } from 'express'
-import { GovukFrontendHint, GovukFrontendTextarea } from '@govuk-frontend'
+import { GovukFrontendTextarea } from '@govuk-frontend'
 import {
   GovukFrontendCheckboxesWithConditional,
   GovukFrontendRadiosItemWithConditional,
@@ -63,8 +63,7 @@ export default class ActionPlanSessionDeliveryDetailsPresenter extends Presenter
     return [...(question.choices ?? [])]
       .sort((left, right) => left.displayOrder - right.displayOrder)
       .map((choice): GovukFrontendRadiosItemWithConditional => {
-        const conditionalHtml =
-          conditionalHtmlByChoiceValue[choice.value]
+        const conditionalHtml = conditionalHtmlByChoiceValue[choice.value]
 
         return {
           text: choice.label,
@@ -83,11 +82,13 @@ export default class ActionPlanSessionDeliveryDetailsPresenter extends Presenter
     return question.savedResponses.some(savedResponse => savedResponse.value === choiceValue)
   }
 
-  private buildCheckboxItems(question: SessionDeliveryQuestion, parentId: string): GovukFrontendCheckboxesWithConditional['items'] {
+  private buildCheckboxItems(
+    question: SessionDeliveryQuestion,
+    parentId: string,
+  ): GovukFrontendCheckboxesWithConditional['items'] {
     return [...(question.choices ?? [])]
       .sort((left, right) => left.displayOrder - right.displayOrder)
       .map(choice => {
-
         return {
           text: choice.label,
           value: choice.value,
@@ -98,7 +99,7 @@ export default class ActionPlanSessionDeliveryDetailsPresenter extends Presenter
 
   private buildTextareaQuestion(question: SessionDeliveryQuestion, id: string): GovukFrontendTextarea {
     return {
-      id: id,
+      id,
       name: id,
       label: {
         text: question.label,
@@ -113,7 +114,7 @@ export default class ActionPlanSessionDeliveryDetailsPresenter extends Presenter
 
   private buildAdditionalDetailsTextareaQuestion(choice: QuestionChoice, id: string): GovukFrontendTextarea {
     return {
-      id: id,
+      id,
       name: id,
       label: {
         text: choice.additionalDetailsLabel,
@@ -149,36 +150,19 @@ export default class ActionPlanSessionDeliveryDetailsPresenter extends Presenter
     const videoCallChoice = deliveryMethodQuestion.choices.find(c => c.value === 'VIDEO_CALL')!
     const phoneCallChoice = deliveryMethodQuestion.choices.find(c => c.value === 'PHONE_CALL')!
 
-
     return {
       pageHeader: content.pageHeader,
       backLink: { href: `/referral/${this.caseReference}/action-plan/add-activities` },
       submitButton: { text: content.continueButtonText },
-      frequencyTextBoxArgs: this.buildTextareaQuestion(
-        frequencyQuestion,
-        'frequency',
-      ),
+      frequencyTextBoxArgs: this.buildTextareaQuestion(frequencyQuestion, 'frequency'),
       howRadioArgs: (videoCallHtml, phoneCallHtml) =>
-        this.buildRadioQuestion(
-          deliveryMethodQuestion,
-          'how',
-          {
-            VIDEO_CALL: videoCallHtml,
-            PHONE_CALL: phoneCallHtml,
-          },
-        ),
-      videoCallReasonTextBoxArgs: this.buildAdditionalDetailsTextareaQuestion(
-        videoCallChoice,
-        'whyVideoCall',
-      ),
-      phoneCallReasonTextBoxArgs: this.buildAdditionalDetailsTextareaQuestion(
-        phoneCallChoice,
-        'whyPhoneCall',
-      ),
-      formatCheckboxArgs: this.buildCheckboxQuestion(
-        sessionFormatQuestion,
-        'format',
-      ),
+        this.buildRadioQuestion(deliveryMethodQuestion, 'how', {
+          VIDEO_CALL: videoCallHtml,
+          PHONE_CALL: phoneCallHtml,
+        }),
+      videoCallReasonTextBoxArgs: this.buildAdditionalDetailsTextareaQuestion(videoCallChoice, 'whyVideoCall'),
+      phoneCallReasonTextBoxArgs: this.buildAdditionalDetailsTextareaQuestion(phoneCallChoice, 'whyPhoneCall'),
+      formatCheckboxArgs: this.buildCheckboxQuestion(sessionFormatQuestion, 'format'),
       submitHref: `/referral/${this.caseReference}/action-plan/session-delivery-details`,
     }
   }

@@ -10,9 +10,7 @@ import ActionPlanAddActivitiesPresenter from './addActivities/actionPlanAddActiv
 import ActionPlanSessionDeliveryDetailsPresenter from './sessionDeliveryDetails/actionPlanSessionDeliveryDetailsPresenter'
 import applySessionDeliveryDetailsData from './sessionDeliveryDetails/applySessionDeliveryDetailsData'
 import { validateRequestBodyAgainstSchema } from '../../validation/validationUtils'
-import {
-  ActionPlanSessionDeliveryDetailsFormDataSchemaBuilder
-} from '../../validation/ActionPlanSessionDeliveryDetailsFormData'
+import { ActionPlanSessionDeliveryDetailsFormDataSchemaBuilder } from '../../validation/ActionPlanSessionDeliveryDetailsFormData'
 
 class ActionPlanController {
   constructor(private readonly referralService: ReferralService) {}
@@ -166,24 +164,23 @@ class ActionPlanController {
     const sessionDelivery = this.getActionPlanSessionDelivery(req, caseReference)?.sessionDeliveryDetails
     const flashData = req.flash('value')
     const flashedInputData = flashData.length > 0 ? JSON.parse(flashData[0]) : undefined
-    let userInputData = flashedInputData // check for session data here when ready
+    const userInputData = flashedInputData // check for session data here when ready
 
     if (req.method === 'POST') {
       const schema = ActionPlanSessionDeliveryDetailsFormDataSchemaBuilder()
-      return validateRequestBodyAgainstSchema(schema, req, res, async form => {
-        //Format this into the request object for the API when we know what it looks like and pass it to the session
-        //req.session.sessionDetails = form
+      return validateRequestBodyAgainstSchema(schema, req, res, async _form => {
+        // Format this into the request object for the API when we know what it looks like and pass it to the session
+        // req.session.sessionDetails = form
         return res.redirect(`/referral/${caseReference}/action-plan`)
       })
     }
-
 
     const validationErrors = res.locals.errors
     const presenter = new ActionPlanSessionDeliveryDetailsPresenter(
       caseReference,
       applySessionDeliveryDetailsData(sessionDeliveryDetails, sessionDelivery),
       validationErrors,
-      userInputData
+      userInputData,
     )
 
     return presenter.renderPage(res)

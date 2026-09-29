@@ -3,12 +3,18 @@ import { z } from 'zod'
 const MAX_CHAR = 65000
 
 const FREQUENCY_NOTHING_ENTERED_ERROR = { error: 'Enter how often the sessions will take place' }
-const FREQUENCY_TOO_LONG = { error: 'Details about session frequency must be 65000 characters or less' +
-    '' }
+const FREQUENCY_TOO_LONG = { error: 'Details about session frequency must be 65000 characters or less' }
 const HOW_NOTHING_ENTERED_ERROR = { error: 'Select how the sessions will take place' }
 const FORMAT_NOTHING_ENTERED_ERROR = { error: 'Select which format you will use for the sessions' }
 const WHY_VIDEO_CALL_REQUIRED_ERROR = { error: 'Enter why the sessions are not in person' }
 const WHY_PHONE_CALL_REQUIRED_ERROR = { error: 'Enter why the sessions are not in person' }
+
+const toFormatValues = (format: string | string[] | undefined): string[] => {
+  if (Array.isArray(format)) {
+    return format
+  }
+  return format ? [format] : []
+}
 
 export const ActionPlanSessionDeliveryDetailsFormDataSchemaBuilder = () =>
   z
@@ -20,7 +26,6 @@ export const ActionPlanSessionDeliveryDetailsFormDataSchemaBuilder = () =>
       whyPhoneCall: z.string().optional(),
     })
     .superRefine((data, ctx) => {
-
       if (!data.frequency?.trim()) {
         ctx.addIssue({
           code: 'custom',
@@ -37,7 +42,7 @@ export const ActionPlanSessionDeliveryDetailsFormDataSchemaBuilder = () =>
         })
       }
 
-      const formatValues = Array.isArray(data.format) ? data.format : data.format ? [data.format] : []
+      const formatValues = toFormatValues(data.format)
       if (formatValues.length === 0) {
         ctx.addIssue({
           code: 'custom',
