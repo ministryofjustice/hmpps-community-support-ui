@@ -384,6 +384,7 @@ describe('ReferralDetailsPresenter', () => {
     })
 
     test('shows a non-dismissible error alert when another user has already withdrawn the referral', () => {
+      dto.withdrawnBySameUser = false
       const presenter = new ReferralDetailsPresenter(dto, null, authSource, {
         type: 'warning',
         code: 'withdrawalAlreadyCompleted',
@@ -395,7 +396,25 @@ describe('ReferralDetailsPresenter', () => {
 
       expect(pageContent.alert).toEqual({
         variant: 'error',
-        title: 'This referral has already been withdrawn by another user.',
+        title: 'Referral already withdrawn by another user',
+        dismissible: false,
+      })
+    })
+
+    test('shows a non-dismissible error alert with a different message when the same user has already withdrawn the referral', () => {
+      dto.withdrawnBySameUser = true
+      const presenter = new ReferralDetailsPresenter(dto, null, authSource, {
+        type: 'warning',
+        code: 'withdrawalAlreadyCompleted',
+        caseReference: dto.referenceNumber,
+      })
+      const content = ReferralDetailsContent.build()
+      const response = { locals: { content } } as unknown as Response
+      const pageContent = presenter.buildViewModel(response)
+
+      expect(pageContent.alert).toEqual({
+        variant: 'error',
+        title: 'You have already withdrawn this referral',
         dismissible: false,
       })
     })
