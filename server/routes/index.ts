@@ -240,7 +240,6 @@ export default function routes({
     actionPlanController.showSessionDeliveryDetailsPage(req, res),
   )
 
-  get('/referral/:referralIdentifier/withdraw', (req, res) => withdrawalController.showReason(req, res))
   get('/referral/:caseIdentifier/withdraw', (req, res) => withdrawalController.showReason(req, res))
 
   post('/referral/:caseIdentifier/withdraw', (req, res) => withdrawalController.submitReason(req, res))
