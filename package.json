@@ -45,7 +45,7 @@
     "@ministryofjustice/hmpps-rest-client": "^2.2.0",
     "@playwright/test": "^1.63.0",
     "accessible-autocomplete": "3.0.1",
-    "applicationinsights": "^2.9.8",
+    "applicationinsights": "^3.0.0",
     "body-parser": "^2.3.0",
     "bunyan": "^1.8.15",
     "bunyan-format": "^0.2.1",
@@ -70,6 +70,9 @@
     "superagent": "^10.3.0",
     "ts-node": "^10.9.2",
     "zod": "^4.6.5"
+  },
+  "overrides": {
+    "moment": "^2.31.0"
   },
   "devDependencies": {
     "@jgoz/esbuild-plugin-typecheck": "5.0.0",
