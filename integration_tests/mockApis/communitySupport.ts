@@ -9,7 +9,6 @@ import {
   IcsFeedbackSubmissionResponse,
   ActionPlanSummaryDto,
   ActionPlanSessionDeliveryDetailsResponse,
-  ActionPlanSelectANeedResponse,
   WithdrawalReasonsGroupedBffResponseDto,
   PDU,
   ProbationOffice,
@@ -678,21 +677,6 @@ export default {
         status: httpStatus,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: risksAndAdjustments,
-      },
-    }),
-  stubGetActionPlanNeedsAndOutcomes: (
-    needsAndOutcomes: ActionPlanSelectANeedResponse,
-    httpStatus = 200,
-  ): SuperAgentRequest =>
-    stubFor({
-      request: {
-        method: 'GET',
-        urlPath: '/community-support/bff/referral/action-plan/select-a-need',
-      },
-      response: {
-        status: httpStatus,
-        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: needsAndOutcomes,
       },
     }),
   stubGetWithdrawalReasons: (
