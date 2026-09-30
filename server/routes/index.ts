@@ -240,6 +240,10 @@ export default function routes({
     actionPlanController.showSessionDeliveryDetailsPage(req, res),
   )
 
+  getOrPost('/referral/:id/action-plan/risks-and-adjustments', (req, res) =>
+    actionPlanController.showRisksAndAdjustmentsPage(req, res),
+  )
+
   get('/referral/:caseIdentifier/withdraw', (req, res) => withdrawalController.showReason(req, res))
 
   post('/referral/:caseIdentifier/withdraw', (req, res) => withdrawalController.submitReason(req, res))
