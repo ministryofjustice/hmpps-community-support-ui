@@ -13,18 +13,18 @@ export type SessionDeliveryDetailsFormData = Record<string, FormValue>
 
 // Resolves the form field name that holds the additional-details value entered for a given
 // choice. Defaults to the choice's own `value` (e.g. VIDEO_CALL, PHONE_CALL), which matches the
-// convention used on the session-delivery-details page, but this doesn't hold everywhere - e.g.
+// naming used on the session-delivery-details page. There are some questions where this is not possible,
 // on the risks-and-adjustments page, multiple questions share the choice value 'YES', so their
-// additional-details fields must be named differently ('RISK_INFO', 'ADJUSTMENT_INFO'). Pages that
-// don't follow the default convention should supply their own resolver.
+// additional-details fields must be named differently ('RISK_INFO', 'ADJUSTMENT_INFO'). When the value and name
+// do not match, we need to supply a custom resolver.
 export type AdditionalDetailsFieldNameResolver = (question: SessionDeliveryQuestion, choice: QuestionChoice) => string
 
 const defaultAdditionalDetailsFieldNameResolver: AdditionalDetailsFieldNameResolver = (_question, choice) =>
   choice.value
 
 // Builds a resolver that looks up an override field name by `question.key`, falling back to the
-// default `choice.value` convention for any question not present in the map. Use this where a
-// page's additional-details fields aren't named after their triggering choice's value (e.g. when
+// default `choice.value` for any question not present in the map. Use this where a
+// page's additional-details fields aren't named after their parent choice's value (e.g. when
 // multiple questions on the same page share a choice value like 'YES').
 export const buildAdditionalDetailsFieldNameResolver = (
   fieldNameByQuestionKey: Partial<Record<string, string>>,
