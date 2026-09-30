@@ -2,7 +2,6 @@ import { test, expect } from '@playwright/test'
 import { ActionPlanSelectANeedResponse, ActionPlanSummaryDto } from '@community-support-api'
 import { login, resetStubs } from '../testUtils'
 import communitySupport from '../mockApis/communitySupport'
-import ActionPlanSelectANeedPage from '../pages/actionPlanSelectANeedPage'
 import ActionPlanAddActivityPage from '../pages/actionPlanAddActivityPage'
 import ActionPlanViewActivitiesPage from '../pages/actionPlanViewActivitiesPage'
 
@@ -12,22 +11,12 @@ test.describe('Select an action plan need', () => {
   const needsAndOutcomes: ActionPlanSelectANeedResponse = {
     needs: [
       {
-        id: 'need-one-outcome',
-        label: 'Accommodation',
-        outcomes: [{ id: 'outcome-one', text: 'Improve accommodation' }],
-      },
-      {
         id: 'need-multiple-outcomes',
         label: 'Employment',
         outcomes: [
           { id: 'outcome-one', text: 'Find employment' },
           { id: 'outcome-two', text: 'Keep employment' },
         ],
-      },
-      {
-        id: 'need-no-outcomes',
-        label: 'Education',
-        outcomes: [],
       },
     ],
   }
@@ -43,63 +32,13 @@ test.describe('Select an action plan need', () => {
     await login(page)
   })
 
-  test('shows only needs that have outcomes', async ({ page }) => {
-    await communitySupport.stubGetActionPlanNeedsAndOutcomes(needsAndOutcomes)
-
-    await page.goto(ActionPlanSelectANeedPage.url(caseReference))
-
-    const selectANeedPage = await ActionPlanSelectANeedPage.verifyOnPage(page)
-
-    expect(selectANeedPage.needs.labels()).toEqual(['Accommodation', 'Employment'])
-  })
-
-  test('shows an error when no need is selected', async ({ page }) => {
-    await communitySupport.stubGetActionPlanNeedsAndOutcomes(needsAndOutcomes)
-
-    await page.goto(ActionPlanSelectANeedPage.url(caseReference))
-    const selectANeedPage = await ActionPlanSelectANeedPage.verifyOnPage(page)
-
-    await selectANeedPage.continueButton.click()
-
-    await expect(page).toHaveURL(ActionPlanSelectANeedPage.url(caseReference))
-    await expect(page.getByText('Select which need you are creating an action for', { exact: true })).toHaveCount(2)
-  })
-
-  test('redirects to select an outcome for a need with multiple outcomes', async ({ page }) => {
-    await communitySupport.stubGetActionPlanNeedsAndOutcomes(needsAndOutcomes)
-    await communitySupport.stubGetActionPlanSummary(caseReference, actionPlanSummary)
-
-    const selectANeedPage = await page.goto(ActionPlanSelectANeedPage.url(caseReference))
-    expect(selectANeedPage).toBeTruthy()
-    const pageObject = await ActionPlanSelectANeedPage.verifyOnPage(page)
-
-    await pageObject.needs.select('Employment')
-    await pageObject.continueButton.click()
-
-    await expect(page).toHaveURL(`/referral/${caseReference}/action-plan/select-an-outcome`)
-  })
-
-  test('redirects to add activity for a need with one outcome', async ({ page }) => {
-    await communitySupport.stubGetActionPlanNeedsAndOutcomes(needsAndOutcomes)
-
-    await page.goto(ActionPlanSelectANeedPage.url(caseReference))
-    const selectANeedPage = await ActionPlanSelectANeedPage.verifyOnPage(page)
-
-    await selectANeedPage.needs.select('Accommodation')
-    await selectANeedPage.continueButton.click()
-
-    await expect(page).toHaveURL(ActionPlanAddActivityPage.url(caseReference))
-    await ActionPlanAddActivityPage.verifyOnPage(page)
-  })
-
   test('adds first activity, then returns to activities for later outcomes', async ({ page }) => {
     await communitySupport.stubGetActionPlanNeedsAndOutcomes(needsAndOutcomes)
     await communitySupport.stubGetActionPlanSummary(caseReference, actionPlanSummary)
 
-    await page.goto(ActionPlanSelectANeedPage.url(caseReference))
-    const selectANeedPage = await ActionPlanSelectANeedPage.verifyOnPage(page)
-    await selectANeedPage.needs.select('Employment')
-    await selectANeedPage.continueButton.click()
+    await page.goto(`/referral/${caseReference}/action-plan/select-a-need`)
+    await page.getByLabel('Employment').check()
+    await page.getByRole('button', { name: 'Continue', exact: true }).click()
 
     await expect(page).toHaveURL(`/referral/${caseReference}/action-plan/select-an-outcome`)
     await page.getByLabel('Find employment').check()
