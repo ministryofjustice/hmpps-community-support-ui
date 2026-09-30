@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import type { ActionPlanSessionDeliveryData } from '../../@types/express'
 import ReferralService from '../../services/referralService'
 import logger from '../../../logger'
 import formatFullName from '../../utils/presenterFormatters'
@@ -6,9 +7,31 @@ import ActionPlanPresenter from './actionPlanPresenter'
 import ActionPlanSelectANeedPresenter from './selectANeed/actionPlanSelectANeedPresenter'
 import ActionPlanSelectOutcomePresenter from './selectOutcome/actionPlanSelectOutcomePresenter'
 import ActionPlanAddActivitiesPresenter from './addActivities/actionPlanAddActivitiesPresenter'
+import ActionPlanSessionDeliveryDetailsPresenter from './sessionDeliveryDetails/actionPlanSessionDeliveryDetailsPresenter'
+import buildSessionDeliveryDetailsRequestFromForm from './sessionDeliveryDetails/buildSessionDeliveryDetailsRequestFromForm'
+import applySessionDeliveryDetailsData from './sessionDeliveryDetails/applySessionDeliveryDetailsData'
+import { validateRequestBodyAgainstSchema } from '../../validation/validationUtils'
+import { ActionPlanSessionDeliveryDetailsFormDataSchemaBuilder } from '../../validation/ActionPlanSessionDeliveryDetailsFormData'
 
 class ActionPlanController {
   constructor(private readonly referralService: ReferralService) {}
+
+  private getActionPlanSessionDelivery(req: Request, caseReference: string) {
+    return req.session.actionPlanSessionDelivery?.caseReference === caseReference
+      ? req.session.actionPlanSessionDelivery
+      : undefined
+  }
+
+  private setActionPlanSessionDelivery(
+    req: Request,
+    caseReference: string,
+    sessionDelivery: Partial<ActionPlanSessionDeliveryData>,
+  ) {
+    req.session.actionPlanSessionDelivery = {
+      ...(this.getActionPlanSessionDelivery(req, caseReference) ?? { caseReference }),
+      ...sessionDelivery,
+    }
+  }
 
   async showActionPlanPage(req: Request, res: Response) {
     const { id: caseReference } = req.params as { id: string }
@@ -132,6 +155,35 @@ class ActionPlanController {
     // Post to backend
 
     res.redirect(`/referral/${caseReference}/action-plan`)
+  }
+
+  async showSessionDeliveryDetailsPage(req: Request, res: Response) {
+    const { id: caseReference } = req.params as { id: string }
+    const { username } = res.locals.user
+
+    const sessionDeliveryDetails = await this.referralService.getSessionDeliveryDetails(caseReference, username)
+    const flashData = req.flash('value')
+    const userInputData = flashData.length > 0 ? JSON.parse(flashData[0]) : undefined
+
+    if (req.method === 'POST') {
+      const schema = ActionPlanSessionDeliveryDetailsFormDataSchemaBuilder(sessionDeliveryDetails)
+      return validateRequestBodyAgainstSchema(schema, req, res, async form => {
+        const request = buildSessionDeliveryDetailsRequestFromForm(sessionDeliveryDetails, form)
+        this.setActionPlanSessionDelivery(req, caseReference, { sessionDeliveryDetails: request })
+        return res.redirect(`/referral/${caseReference}/action-plan`)
+      })
+    }
+
+    const sessionDelivery = this.getActionPlanSessionDelivery(req, caseReference)?.sessionDeliveryDetails
+    const validationErrors = res.locals.errors
+    const presenter = new ActionPlanSessionDeliveryDetailsPresenter(
+      caseReference,
+      applySessionDeliveryDetailsData(sessionDeliveryDetails, sessionDelivery),
+      validationErrors,
+      userInputData,
+    )
+
+    return presenter.renderPage(res)
   }
 }
 

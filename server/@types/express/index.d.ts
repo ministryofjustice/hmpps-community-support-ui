@@ -4,6 +4,7 @@ import {
   ReferralInformationDto,
   IcsFeedbackSubmission,
   ActionPlanSelectANeedNeed,
+  ActionPlanSessionDeliveryDetailsRequest,
   UpdateProbationPractitionerDetailsRequest,
 } from '@community-support-api'
 import { GovukFrontendErrorSummaryErrorListElement } from '@govuk-frontend'
@@ -27,6 +28,11 @@ export interface HowSessionTookPlace {
 
 export interface IcsFeedbackHowSessionTookPlaceSession {
   howSessionTookPlace?: HowSessionTookPlace
+}
+
+export interface ActionPlanSessionDeliveryData {
+  caseReference: string
+  sessionDeliveryDetails?: ActionPlanSessionDeliveryDetailsRequest
 }
 
 export declare module 'express-session' {
@@ -60,6 +66,7 @@ export declare module 'express-session' {
       needId: string
       outcomeId?: string
     }
+    actionPlanSessionDelivery?: ActionPlanSessionDeliveryData
     ppDetails?: UpdateProbationPractitionerDetailsRequest & {
       pduName: string
       probationOfficeName?: string

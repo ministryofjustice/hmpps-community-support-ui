@@ -1,15 +1,18 @@
 import { Request, Response } from 'express'
-import { ActionPlanSummaryDto } from '@community-support-api'
+import type { ActionPlanSessionDeliveryDetailsResponse, ActionPlanSummaryDto } from '@community-support-api'
+import type { ErrorMiddlewareErrors } from '../../@types/express'
 import ReferralService from '../../services/referralService'
 import ActionPlanController from './actionPlanController'
 import ActionPlanPresenter from './actionPlanPresenter'
 import ActionPlanSelectANeedPresenter from './selectANeed/actionPlanSelectANeedPresenter'
 import ActionPlanSelectOutcomePresenter from './selectOutcome/actionPlanSelectOutcomePresenter'
+import ActionPlanSessionDeliveryDetailsPresenter from './sessionDeliveryDetails/actionPlanSessionDeliveryDetailsPresenter'
 
 jest.mock('../../services/referralService')
 jest.mock('./actionPlanPresenter')
 jest.mock('./selectANeed/actionPlanSelectANeedPresenter')
 jest.mock('./selectOutcome/actionPlanSelectOutcomePresenter')
+jest.mock('./sessionDeliveryDetails/actionPlanSessionDeliveryDetailsPresenter')
 
 describe('ActionPlanController', () => {
   let referralService: jest.Mocked<ReferralService>
@@ -21,6 +24,7 @@ describe('ActionPlanController', () => {
     referralService = {
       getActionPlanSummary: jest.fn(),
       getActionPlanNeedsAndOutcomes: jest.fn(),
+      getSessionDeliveryDetails: jest.fn(),
     } as unknown as jest.Mocked<ReferralService>
 
     actionPlanController = new ActionPlanController(referralService)
@@ -31,7 +35,7 @@ describe('ActionPlanController', () => {
       },
       body: {},
       session: {},
-      flash: jest.fn(),
+      flash: jest.fn().mockReturnValue([]),
     } as unknown as Request
 
     res = {
@@ -192,5 +196,214 @@ describe('ActionPlanController', () => {
       expect(req.session.actionPlanAction).toEqual({ needId: 'need-2', outcomeId: 'outcome-2' })
       expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/add-activities')
     })
+  })
+
+  it('renders the session delivery details page with backend questions', async () => {
+    const sessionDeliveryDetails: ActionPlanSessionDeliveryDetailsResponse = {
+      questions: [],
+    }
+
+    referralService.getSessionDeliveryDetails.mockResolvedValue(sessionDeliveryDetails)
+
+    await actionPlanController.showSessionDeliveryDetailsPage(req, res)
+
+    expect(referralService.getSessionDeliveryDetails).toHaveBeenCalledWith('AB1234CD', 'user1')
+    expect(ActionPlanSessionDeliveryDetailsPresenter).toHaveBeenCalledWith(
+      'AB1234CD',
+      sessionDeliveryDetails,
+      undefined,
+      undefined,
+    )
+    expect(ActionPlanSessionDeliveryDetailsPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+  })
+
+  it('merges a saved session-delivery draft for the current referral into the questions passed to the presenter', async () => {
+    const sessionDeliveryDetails: ActionPlanSessionDeliveryDetailsResponse = {
+      questions: [
+        {
+          id: 'question-1',
+          displayOrder: 1,
+          label: 'How often will sessions take place?',
+          key: 'SESSION_FREQUENCY',
+          hint: null,
+          answerType: 'TEXTAREA',
+          maximumNumberOfResponses: 1,
+          choices: null,
+          savedResponses: [],
+        },
+      ],
+    }
+    referralService.getSessionDeliveryDetails.mockResolvedValue(sessionDeliveryDetails)
+    req.session = {
+      actionPlanSessionDelivery: {
+        caseReference: 'AB1234CD',
+        sessionDeliveryDetails: {
+          answers: [{ questionId: 'question-1', incomingAnswerDetails: [{ value: 'Every week' }] }],
+        },
+      },
+    } as Request['session']
+
+    await actionPlanController.showSessionDeliveryDetailsPage(req, res)
+
+    expect(ActionPlanSessionDeliveryDetailsPresenter).toHaveBeenCalledWith(
+      'AB1234CD',
+      {
+        questions: [
+          {
+            ...sessionDeliveryDetails.questions[0],
+            savedResponses: [{ value: 'Every week', additionalDetails: null }],
+          },
+        ],
+      },
+      undefined,
+      undefined,
+    )
+  })
+
+  it('ignores a saved session-delivery draft from a different referral', async () => {
+    const sessionDeliveryDetails: ActionPlanSessionDeliveryDetailsResponse = {
+      questions: [],
+    }
+    referralService.getSessionDeliveryDetails.mockResolvedValue(sessionDeliveryDetails)
+    req.session = {
+      actionPlanSessionDelivery: {
+        caseReference: 'ZZ9999ZZ',
+        sessionDeliveryDetails: {
+          answers: [{ questionId: 'question-1', incomingAnswerDetails: [{ value: 'saved' }] }],
+        },
+      },
+    } as Request['session']
+
+    await actionPlanController.showSessionDeliveryDetailsPage(req, res)
+
+    expect(ActionPlanSessionDeliveryDetailsPresenter).toHaveBeenCalledWith(
+      'AB1234CD',
+      sessionDeliveryDetails,
+      undefined,
+      undefined,
+    )
+  })
+
+  it('passes flashed form values and validation errors through to the presenter', async () => {
+    const sessionDeliveryDetails: ActionPlanSessionDeliveryDetailsResponse = {
+      questions: [],
+    }
+    const validationErrors: ErrorMiddlewareErrors = {
+      list: [],
+      messages: { SESSION_FREQUENCY: { text: 'Enter how often' } },
+    }
+    const flashedValue = { SESSION_FREQUENCY: 'Every week' }
+    referralService.getSessionDeliveryDetails.mockResolvedValue(sessionDeliveryDetails)
+    req.flash = jest.fn().mockReturnValue([JSON.stringify(flashedValue)])
+    res.locals.errors = validationErrors
+
+    await actionPlanController.showSessionDeliveryDetailsPage(req, res)
+
+    expect(ActionPlanSessionDeliveryDetailsPresenter).toHaveBeenCalledWith(
+      'AB1234CD',
+      sessionDeliveryDetails,
+      validationErrors,
+      flashedValue,
+    )
+  })
+
+  it('redirects to the action plan page when the submitted form is valid', async () => {
+    const sessionDeliveryDetails: ActionPlanSessionDeliveryDetailsResponse = {
+      questions: [
+        {
+          id: 'question-1',
+          displayOrder: 1,
+          label: 'How often will sessions take place?',
+          key: 'SESSION_FREQUENCY',
+          hint: null,
+          answerType: 'TEXTAREA',
+          maximumNumberOfResponses: 1,
+          choices: null,
+          savedResponses: [],
+        },
+        {
+          id: 'question-2',
+          displayOrder: 2,
+          label: 'How will the sessions take place?',
+          key: 'SESSION_DELIVERY_METHOD',
+          hint: null,
+          answerType: 'RADIO',
+          maximumNumberOfResponses: 1,
+          choices: [
+            {
+              value: 'IN_PERSON',
+              label: 'In person',
+              displayOrder: 1,
+              displayAdditionalDetailsOnSelect: false,
+              additionalDetailsLabel: null,
+              additionalDetailsHint: null,
+            },
+          ],
+          savedResponses: [],
+        },
+        {
+          id: 'question-3',
+          displayOrder: 3,
+          label: 'What format will you use for the sessions?',
+          key: 'SESSION_FORMAT',
+          hint: null,
+          answerType: 'CHECKBOX',
+          maximumNumberOfResponses: 2,
+          choices: [
+            {
+              value: 'ONE_TO_ONE_SESSION',
+              label: 'One-to-one session',
+              displayOrder: 1,
+              displayAdditionalDetailsOnSelect: false,
+              additionalDetailsLabel: null,
+              additionalDetailsHint: null,
+            },
+          ],
+          savedResponses: [],
+        },
+      ],
+    }
+    req.method = 'POST'
+    req.body = {
+      SESSION_FREQUENCY: 'Every week',
+      SESSION_DELIVERY_METHOD: 'IN_PERSON',
+      SESSION_FORMAT: 'ONE_TO_ONE_SESSION',
+    }
+    referralService.getSessionDeliveryDetails.mockResolvedValue(sessionDeliveryDetails)
+    res.redirect = jest.fn()
+
+    await actionPlanController.showSessionDeliveryDetailsPage(req, res)
+
+    expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan')
+    expect(req.session.actionPlanSessionDelivery).toEqual({
+      caseReference: 'AB1234CD',
+      sessionDeliveryDetails: {
+        answers: [
+          { questionId: 'question-1', incomingAnswerDetails: [{ value: 'Every week', additionalDetails: undefined }] },
+          { questionId: 'question-2', incomingAnswerDetails: [{ value: 'IN_PERSON', additionalDetails: undefined }] },
+          {
+            questionId: 'question-3',
+            incomingAnswerDetails: [{ value: 'ONE_TO_ONE_SESSION', additionalDetails: undefined }],
+          },
+        ],
+      },
+    })
+  })
+
+  it('flashes validation errors and redirects back when the submitted form is invalid', async () => {
+    const sessionDeliveryDetails: ActionPlanSessionDeliveryDetailsResponse = {
+      questions: [],
+    }
+    req.method = 'POST'
+    req.url = '/referral/AB1234CD/action-plan/session-delivery-details'
+    req.body = {}
+    referralService.getSessionDeliveryDetails.mockResolvedValue(sessionDeliveryDetails)
+    res.redirect = jest.fn()
+
+    await actionPlanController.showSessionDeliveryDetailsPage(req, res)
+
+    expect(req.flash).toHaveBeenCalledWith('SESSION_DELIVERY_METHODError', 'Select how the sessions will take place')
+    expect(req.flash).toHaveBeenCalledWith('SESSION_FORMATError', 'Select which format you will use for the sessions')
+    expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/session-delivery-details')
   })
 })

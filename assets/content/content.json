@@ -314,6 +314,12 @@
     "addAnotherActivityButtonText": "Add another activity",
     "saveAndContinueButtonText": "Save and continue"
   },
+  "/referral/:id/action-plan/session-delivery-details": {
+    "pageTitle": "Session details – Session delivery details",
+    "pageHeader": "Session details",
+    "continueButtonText": "Continue",
+    "backLink": "/referral/{{ id }}/action-plan"
+  },
   "/ics-feedback/:id/did-session-take-place": {
     "submitButtonText": "Continue",
     "pageHeaders": {

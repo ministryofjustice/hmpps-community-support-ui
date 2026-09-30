@@ -29,6 +29,7 @@ import type {
   ReferralCriminogenicNeedsDto,
   CriminogenicNeedsRequest,
   ActionPlanSummaryDto,
+  ActionPlanSessionDeliveryDetailsResponse,
   ActionPlanSelectANeedResponse,
   WithdrawalReasonsGroupedBffResponseDto,
   AreaConfirmationBffResponseDto,
@@ -141,6 +142,16 @@ export default class CommunitySupportApiClient extends RestClient {
 
   getActionPlanSummary(caseReference: string, username: string): Promise<ActionPlanSummaryDto> {
     return this.get({ path: `/bff/referral/${caseReference}/action-plan` }, asSystem(username))
+  }
+
+  getSessionDeliveryDetails(
+    caseReference: string,
+    username: string,
+  ): Promise<ActionPlanSessionDeliveryDetailsResponse> {
+    return this.get(
+      { path: `/bff/referral/${caseReference}/action-plan/session-delivery-details/session-delivery` },
+      asSystem(username),
+    )
   }
 
   getActionPlanNeedsAndOutcomes(username: string): Promise<ActionPlanSelectANeedResponse> {

@@ -236,6 +236,10 @@ export default function routes({
 
   post('/referral/:id/action-plan/save-activities', (req, res) => actionPlanController.saveActivities(req, res))
 
+  getOrPost('/referral/:id/action-plan/session-delivery-details', (req, res) =>
+    actionPlanController.showSessionDeliveryDetailsPage(req, res),
+  )
+
   get('/referral/:caseIdentifier/withdraw', (req, res) => withdrawalController.showReason(req, res))
 
   post('/referral/:caseIdentifier/withdraw', (req, res) => withdrawalController.submitReason(req, res))
