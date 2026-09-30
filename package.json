@@ -71,6 +71,9 @@
     "ts-node": "^10.9.2",
     "zod": "^4.6.5"
   },
+  "overrides": {
+    "moment": "^2.31.0"
+  },
   "devDependencies": {
     "@jgoz/esbuild-plugin-typecheck": "5.0.0",
     "@ministryofjustice/eslint-config-hmpps": "^1.0.3",
