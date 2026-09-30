@@ -6,20 +6,19 @@ import {
 import { Response } from 'express'
 import { GovukFrontendTextarea } from '@govuk-frontend'
 import {
-  GovukFrontendCheckboxesWithConditional,
   GovukFrontendRadiosItemWithConditional,
   GovukFrontendRadiosWithConditional,
 } from '../../../@types/govukFrontend/derived'
 import PresenterBase from '../../../presenter/presenterBase'
-import {
-  ActionPlanSessionDeliveryDetailsContent,
-  ActionPlanSessionDeliveryDetailsViewModel,
-} from './actionPlanSessionDeliveryDetailsViewModel'
 import { ErrorMiddlewareErrors } from '../../../@types/express'
+import {
+  ActionPlanRisksAndAdjustmentsContent,
+  ActionPlanRisksAndAdjustmentsViewModel,
+} from './actionPlanRisksAndAdjustmentsViewModel'
 
-export default class ActionPlanSessionDeliveryDetailsPresenter extends PresenterBase<
-  ActionPlanSessionDeliveryDetailsViewModel,
-  ActionPlanSessionDeliveryDetailsContent
+export default class ActionPlanRisksAndAdjustmentsPresenter extends PresenterBase<
+  ActionPlanRisksAndAdjustmentsViewModel,
+  ActionPlanRisksAndAdjustmentsContent
 > {
   constructor(
     private readonly caseReference: string,
@@ -83,33 +82,6 @@ export default class ActionPlanSessionDeliveryDetailsPresenter extends Presenter
     return question.savedResponses.some(savedResponse => savedResponse.value === choiceValue)
   }
 
-  private buildCheckboxItems(question: SessionDeliveryQuestion): GovukFrontendCheckboxesWithConditional['items'] {
-    return [...(question.choices ?? [])]
-      .sort((left, right) => left.displayOrder - right.displayOrder)
-      .map(choice => {
-        return {
-          text: choice.label,
-          value: choice.value,
-          checked: this.isChoiceChecked(question, choice.value),
-        }
-      })
-  }
-
-  private buildTextareaQuestion(question: SessionDeliveryQuestion): GovukFrontendTextarea {
-    return {
-      id: question.key,
-      name: question.key,
-      label: {
-        text: question.label,
-        classes: 'govuk-label--m',
-      },
-      hint: question.hint ? { text: question.hint } : undefined,
-      value: this.stringUserInput(question.key, question.savedResponses[0]?.value) ?? '',
-      rows: '1',
-      errorMessage: this.validationErrors?.messages[question.key] ?? null,
-    }
-  }
-
   private buildAdditionalDetailsTextareaQuestion(
     question: SessionDeliveryQuestion,
     choice: QuestionChoice,
@@ -125,63 +97,48 @@ export default class ActionPlanSessionDeliveryDetailsPresenter extends Presenter
       label: {
         text: choice.additionalDetailsLabel,
       },
-      rows: '1',
+      rows: '5',
       errorMessage: this.validationErrors?.messages[id] ?? null,
       value: this.stringUserInput(id, savedAdditionalDetails ?? undefined) ?? '',
     }
   }
 
-  private buildCheckboxQuestion(question: SessionDeliveryQuestion): GovukFrontendCheckboxesWithConditional {
-    return {
-      idPrefix: question.key,
-      name: question.key,
-      fieldset: {
-        legend: {
-          text: question.label,
-          classes: 'govuk-fieldset__legend--m',
-        },
-      },
-      hint: question.hint ? { text: question.hint } : undefined,
-      items: this.buildCheckboxItems(question),
-      errorMessage: this.validationErrors?.messages[question.key] ?? null,
-    }
-  }
-
-  protected buildViewModel(res: Response): ActionPlanSessionDeliveryDetailsViewModel {
+  protected buildViewModel(res: Response): ActionPlanRisksAndAdjustmentsViewModel {
     const content = this.buildStaticContent(res)
-    const frequencyQuestion = this.sessionDeliveryDetails.questions.find(q => q.key === 'SESSION_FREQUENCY')!
-    const deliveryMethodQuestion = this.sessionDeliveryDetails.questions.find(q => q.key === 'SESSION_DELIVERY_METHOD')!
-    const sessionFormatQuestion = this.sessionDeliveryDetails.questions.find(q => q.key === 'SESSION_FORMAT')!
-    const videoCallChoice = deliveryMethodQuestion.choices.find(c => c.value === 'VIDEO_CALL')!
-    const phoneCallChoice = deliveryMethodQuestion.choices.find(c => c.value === 'PHONE_CALL')!
+    const plannedActivitiesRiskQuestion = this.sessionDeliveryDetails.questions.find(
+      q => q.key === 'RISK_ASSOCIATED_WITH_PLANNED_ACTIVITIES',
+    )!
+    const plannedActivitiesAdjustmentsQuestion = this.sessionDeliveryDetails.questions.find(
+      q => q.key === 'REASONABLE_ADJUSTMENTS_FOR_PLANNED_ACTIVITIES',
+    )!
+    const riskInfo = plannedActivitiesRiskQuestion.choices.find(c => c.value === 'YES')!
+    const adjustmentInfo = plannedActivitiesAdjustmentsQuestion.choices.find(c => c.value === 'YES')!
 
     return {
       pageTitle: content.pageTitle,
       pageHeader: content.pageHeader,
       backLink: { href: content.backLink.replace('{{ id }}', this.caseReference) },
       submitButton: { text: content.continueButtonText },
-      frequencyTextBoxArgs: this.buildTextareaQuestion(frequencyQuestion),
-      howRadioArgs: (videoCallHtml, phoneCallHtml) =>
-        this.buildRadioQuestion(deliveryMethodQuestion, {
-          VIDEO_CALL: videoCallHtml,
-          PHONE_CALL: phoneCallHtml,
+      plannedActivitiesRiskRadioArgs: (riskInfoHtml: string) =>
+        this.buildRadioQuestion(plannedActivitiesRiskQuestion, { YES: riskInfoHtml }),
+      plannedActivitiesAdjustmentsRadioArgs: (adjustmentInfoHtml: string) =>
+        this.buildRadioQuestion(plannedActivitiesAdjustmentsQuestion, {
+          YES: adjustmentInfoHtml,
         }),
-      videoCallReasonTextBoxArgs: this.buildAdditionalDetailsTextareaQuestion(
-        deliveryMethodQuestion,
-        videoCallChoice,
-        'VIDEO_CALL',
+      riskInfoTextBoxArgs: this.buildAdditionalDetailsTextareaQuestion(
+        plannedActivitiesRiskQuestion,
+        riskInfo,
+        'RISK_INFO',
       ),
-      phoneCallReasonTextBoxArgs: this.buildAdditionalDetailsTextareaQuestion(
-        deliveryMethodQuestion,
-        phoneCallChoice,
-        'PHONE_CALL',
+      adjustmentInfoTextBoxArgs: this.buildAdditionalDetailsTextareaQuestion(
+        plannedActivitiesAdjustmentsQuestion,
+        adjustmentInfo,
+        'ADJUSTMENT_INFO',
       ),
-      formatCheckboxArgs: this.buildCheckboxQuestion(sessionFormatQuestion),
-      submitHref: `/referral/${this.caseReference}/action-plan/session-delivery-details`,
     }
   }
 
   protected getTemplatePath(): string {
-    return 'referral/actionPlanSessionDeliveryDetails'
+    return 'referral/actionPlanRisksAndAdjustments'
   }
 }
