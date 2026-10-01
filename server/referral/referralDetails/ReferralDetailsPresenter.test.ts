@@ -17,6 +17,7 @@ describe('ReferralDetailsPresenter', () => {
     withdrawReferralHref: '/referral/QD0878DE/withdraw',
     withdrawReferralLinkText: 'Withdraw referral',
     successBanner: null,
+    alert: null,
     subNav: {
       label: 'Sub navigation',
       items: [
@@ -362,5 +363,85 @@ describe('ReferralDetailsPresenter', () => {
     const pageContent = presenter.buildViewModel(response)
 
     expect(pageContent.withdrawReferralHref).toBeNull()
+  })
+
+  describe('alert', () => {
+    test('shows a dismissible success alert when the withdrawal notification has just completed', () => {
+      const presenter = new ReferralDetailsPresenter(dto, null, authSource, {
+        type: 'success',
+        code: 'withdrawalCompleted',
+        caseReference: dto.referenceNumber,
+      })
+      const content = ReferralDetailsContent.build()
+      const response = { locals: { content } } as unknown as Response
+      const pageContent = presenter.buildViewModel(response)
+
+      expect(pageContent.alert).toEqual({
+        variant: 'success',
+        title: 'Referral withdrawn',
+        dismissible: true,
+      })
+    })
+
+    test('shows a non-dismissible error alert when another user has already withdrawn the referral', () => {
+      dto.withdrawnBySameUser = false
+      const presenter = new ReferralDetailsPresenter(dto, null, authSource, {
+        type: 'warning',
+        code: 'withdrawalAlreadyCompleted',
+        caseReference: dto.referenceNumber,
+      })
+      const content = ReferralDetailsContent.build()
+      const response = { locals: { content } } as unknown as Response
+      const pageContent = presenter.buildViewModel(response)
+
+      expect(pageContent.alert).toEqual({
+        variant: 'error',
+        title: 'Referral already withdrawn by another user',
+        dismissible: false,
+      })
+    })
+
+    test('shows a non-dismissible error alert with a different message when the same user has already withdrawn the referral', () => {
+      dto.withdrawnBySameUser = true
+      const presenter = new ReferralDetailsPresenter(dto, null, authSource, {
+        type: 'warning',
+        code: 'withdrawalAlreadyCompleted',
+        caseReference: dto.referenceNumber,
+      })
+      const content = ReferralDetailsContent.build()
+      const response = { locals: { content } } as unknown as Response
+      const pageContent = presenter.buildViewModel(response)
+
+      expect(pageContent.alert).toEqual({
+        variant: 'error',
+        title: 'You have already withdrawn this referral',
+        dismissible: false,
+      })
+    })
+
+    test('shows an information alert with the withdrawal date when the referral was withdrawn and there is no fresh notification', () => {
+      dto.withdrawReferral = true
+      dto.withdrawalCreationDate = '2026-09-08T11:23:00.780Z'
+
+      const presenter = new ReferralDetailsPresenter(dto, null, authSource)
+      const content = ReferralDetailsContent.build()
+      const response = { locals: { content } } as unknown as Response
+      const pageContent = presenter.buildViewModel(response)
+
+      expect(pageContent.alert).toEqual({
+        variant: 'information',
+        title: 'Referral withdrawn on 8 September 2026',
+        dismissible: false,
+      })
+    })
+
+    test('shows no alert when the referral has not been withdrawn and there is no notification', () => {
+      const presenter = new ReferralDetailsPresenter(dto, null, authSource)
+      const content = ReferralDetailsContent.build()
+      const response = { locals: { content } } as unknown as Response
+      const pageContent = presenter.buildViewModel(response)
+
+      expect(pageContent.alert).toBeNull()
+    })
   })
 })

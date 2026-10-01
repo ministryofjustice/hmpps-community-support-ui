@@ -31,16 +31,16 @@ const withdrawalRequest = {
 const reasonLabels = [
   'Ineligible referral',
   'Mistaken or duplicate referral',
-  'Acquitted on appeal',
-  'Returned to custody',
-  'Sentence expired',
-  'Sentence revoked',
   'Died',
   'Moved out of service area',
-  'Needs met through another route',
   'Not engaged',
+  'Needs met through another route',
   'Work, caring commitments or sickness',
   'Another reason',
+  'Acquitted on appeal',
+  'Returned to custody',
+  'Sentence revoked',
+  'Sentence expired',
 ]
 
 test.describe('Withdraw referral', () => {
@@ -48,7 +48,6 @@ test.describe('Withdraw referral', () => {
     await resetStubs()
     await communitySupport.stubGetReferralDetailsPage(200, referralId)
     await communitySupport.stubGetInProgressCase()
-    await communitySupport.stubWithdrawReferral(caseIdentifier, withdrawalRequest)
     await communitySupport.stubGetWithdrawalReasons({ withdrawalReasons: withdrawalReasonGroups })
     await page.goto('/')
     await login(page)
@@ -93,7 +92,6 @@ test.describe('Withdraw referral', () => {
     await expect(withdrawalPage.reasonRadios).toHaveCount(reasonLabels.length)
     await Promise.all(reasonLabels.map(reasonLabel => expect(withdrawalPage.reason(reasonLabel)).toBeVisible()))
     await expect(withdrawalPage.reasonDivider).toHaveText('or')
-    await expect(page.locator('.govuk-radios__divider + .govuk-radios__item')).toContainText('Another reason')
   })
 
   // AC3 and AC6

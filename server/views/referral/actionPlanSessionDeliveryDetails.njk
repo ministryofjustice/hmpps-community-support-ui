@@ -1,0 +1,34 @@
+{% extends "../partials/layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+
+{% set pageTitle = content.pageTitle %}
+{% set mainClasses = "govuk-body" %}
+
+{% block contentBody %}
+  <h1 class="govuk-heading-xl">{{ content.pageHeader }}</h1>
+
+  <form method="post">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+
+    {{ govukTextarea(content.frequencyTextBoxArgs) }}
+
+    {% set videoCallHtml %}
+      {{ govukTextarea(content.videoCallReasonTextBoxArgs) }}
+    {% endset %}
+
+    {% set phoneCallHtml %}
+      {{ govukTextarea(content.phoneCallReasonTextBoxArgs) }}
+    {% endset %}
+
+    {{ govukRadios(content.howRadioArgs(videoCallHtml, phoneCallHtml)) }}
+
+    {{ govukCheckboxes(content.formatCheckboxArgs) }}
+
+
+    {{ govukButton(content.submitButton) }}
+  </form>
+{% endblock %}

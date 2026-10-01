@@ -23,6 +23,7 @@ export default class ReferralDetailsPage extends AbstractPage {
     readonly referralDetailsSummary: SummaryList,
     readonly progressTab: Locator,
     readonly withdrawReferralLink: Locator,
+    readonly alert: Locator,
   ) {
     super(page)
     this.successHeader = page.locator('h3', { hasText: 'Case assigned' })
@@ -45,7 +46,8 @@ export default class ReferralDetailsPage extends AbstractPage {
     const referralDetailsSummary = await SummaryList.create(page.locator('[data-testid="referral-details"]'))
     const progressTab = page.getByRole('link', { name: 'Progress' })
     const withdrawReferralLink = page.locator('[data-testid="withdraw-referral-link"]')
-    const referralDetailsPage = new ReferralDetailsPage(
+    const alert = page.locator('[data-testid="referral-details-alert"]')
+    return new ReferralDetailsPage(
       page,
       header,
       backLink,
@@ -55,8 +57,8 @@ export default class ReferralDetailsPage extends AbstractPage {
       referralDetailsSummary,
       progressTab,
       withdrawReferralLink,
+      alert,
     )
-    return referralDetailsPage
   }
 
   static async verifyAssignmentOnPage(page: Page, messageType: string = 'single'): Promise<ReferralDetailsPage> {
@@ -69,6 +71,7 @@ export default class ReferralDetailsPage extends AbstractPage {
     const referralDetailsSummary = await SummaryList.create(page.locator('[data-testid="referral-details"]'))
     const progressTab = page.getByRole('link', { name: 'Progress' })
     const withdrawReferralLink = page.locator('[data-testid="withdraw-referral-link"]')
+    const alert = page.locator('[data-testid="referral-details-alert"]')
     const assignedPage = new ReferralDetailsPage(
       page,
       header,
@@ -79,6 +82,7 @@ export default class ReferralDetailsPage extends AbstractPage {
       referralDetailsSummary,
       progressTab,
       withdrawReferralLink,
+      alert,
     )
     await expect(assignedPage.successHeader).toBeVisible()
     if (messageType === 'single') {

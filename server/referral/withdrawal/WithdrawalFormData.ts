@@ -56,3 +56,7 @@ export const createWithdrawalFormDataSchema = (withdrawalReasons: string[]) =>
         additionalInformation: additionalInformation.trim(),
       } satisfies WithdrawalFormData
     })
+
+export const WithdrawalConfirmSchema = z.object({
+  confirmWithdrawal: z.enum(['yes', 'no'], { error: 'Select whether you want to withdraw the referral' }),
+})

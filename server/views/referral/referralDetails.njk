@@ -4,11 +4,22 @@
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "moj/components/sub-navigation/macro.njk" import mojSubNavigation %}
+{% from "moj/components/alert/macro.njk" import mojAlert %}
 
 {% set pageTitle = "Referral - Community Support" %}
 {% set mainClasses = "govuk-body" %}
 
 {% block contentBody %}
+  {% if content.alert %}
+    {{ mojAlert({
+      variant: content.alert.variant,
+      title: content.alert.title,
+      dismissible: content.alert.dismissible,
+      attributes: {
+        "data-testid": "referral-details-alert"
+      }
+    }) }}
+  {% endif %}
   {% if content.successBanner %}
     {% set html %}
       <h3 class="govuk-notification-banner__heading">

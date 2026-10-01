@@ -31,6 +31,7 @@
     "pageSubHeader": "Check details and submit referral",
     "personalDetailsHeader": "About {{ firstName }}",
     "notAvailable": "Not available",
+    "lastUpdatedLabel": "Last updated",
     "personalDetailsCard": {
       "heading": "Personal details",
       "nameLabel": "Name",
@@ -42,7 +43,6 @@
       "currentCircumstancesLabel": "Current circumstances",
       "disabilitiesLabel": "Disabilities"
     },
-    "lastUpdatedLabel": "Last updated",
     "equalityMonitoringCard": {
       "heading": "Equality monitoring",
       "nationalityLabel": "Nationality",
@@ -78,6 +78,30 @@
       "concernsVulnerabilityLabel": "Concerns in relation to vulnerability",
       "additionalInformationLabel": "Additional information",
       "noAdditionalInformationText": "None"
+    },
+    "additionalSupportNeedsCard": {
+      "heading": "Additional support needs",
+      "physicalHealthLabel": "Physical health",
+      "mentalOrEmotionalHealthLabel": "Mental or emotional health",
+      "neurodiversityLabel": "Neurodiversity",
+      "locationAndTravelLabel": "Location and travel",
+      "caringResponsibilitiesLabel": "Caring responsibilities",
+      "employmentResponsibilitiesLabel": "Employment responsibilities",
+      "diversityLabel": "Diversity",
+      "anyOtherNeedsLabel": "Any other needs",
+      "interpreterLabel": "Does {{ firstName }} need an interpreter?",
+      "interpreterLanguageLabel": "What language does {{ firstName }} need an interpreter for?"
+    },
+    "personsNeedsCard": {
+      "heading": "Person's needs",
+      "accommodationLabel": "Accommodation",
+      "employmentAndEducationLabel": "Employment and education",
+      "financesLabel": "Finances",
+      "personalRelationshipsAndCommunityLabel": "Personal relationships and community",
+      "drugUseLabel": "Drug use",
+      "alcoholUseLabel": "Alcohol use",
+      "healthAndWellbeingLabel": "Health and wellbeing",
+      "thinkingBehaviourAndAttitudesLabel": "Thinking, behaviour and attitudes"
     },
     "referralDetailsHeader": "Referral information",
     "referralContactDetailsHeader": "Referral contact details",
@@ -139,6 +163,12 @@
     "defaultFieldValue": "Not available",
     "successBannerHeading": "Case assigned",
     "withdrawReferralLinkText": "Withdraw referral",
+    "alerts": {
+      "withdrawalCompletedTitle": "Referral withdrawn",
+      "withdrawalAlreadyCompletedBySameUserTitle": "You have already withdrawn this referral",
+      "withdrawalAlreadyCompletedByOtherUserTitle": "Referral already withdrawn by another user",
+      "withdrawnInformationTitle": "Referral withdrawn on {{ date }}"
+    },
     "subNavTitle": "Sub navigation",
     "subNavItems": [
       {
@@ -221,6 +251,12 @@
     "cancelLinkText": "Cancel",
     "changeLinkText": "Change"
   },
+  "/referral/:id/withdraw/service-error": {
+    "pageHeader": "Sorry, there is a problem with this service",
+    "message": "Try again later.",
+    "goToCaseListLink": "/cases-in-progress",
+    "goToCaseListButtonText": "Go to case list"
+  },
   "/referral/:id/appointment/confirm-ics": {
     "pageHeader": "Check the details before scheduling the ICS",
     "submitButtonText": "Submit"
@@ -279,6 +315,18 @@
     "outcomeLabel": "Outcome",
     "activityProviderHeading": "Who will deliver this",
     "activityDetailsHeading": "Activity details"
+  },
+  "/referral/:id/action-plan/session-delivery-details": {
+    "pageTitle": "Session details – Session delivery details",
+    "pageHeader": "Session details",
+    "continueButtonText": "Continue",
+    "backLink": "/referral/{{ id }}/action-plan"
+  },
+  "/referral/:id/action-plan/risks-and-adjustments": {
+    "pageTitle": "Session details – Risks and adjustments",
+    "pageHeader": "Risks and adjustments",
+    "continueButtonText": "Continue",
+    "backLink": "/referral/{{ id }}/action-plan/session-delivery-details"
   },
   "/ics-feedback/:id/did-session-take-place": {
     "submitButtonText": "Continue",
