@@ -340,6 +340,12 @@
     "continueButtonText": "Continue",
     "backLink": "/referral/{{ id }}/action-plan/session-delivery-details"
   },
+  "/referral/:id/action-plan/service-end-date-check": {
+    "pageTitle": "Session details – Service end date",
+    "pageHeader": "Service end date",
+    "continueButtonText": "Continue",
+    "backLink": "/referral/{{ id }}/action-plan/risks-and-adjustments"
+  },
   "/referral/:id/action-plan/activities/add": {
     "pageHeader": "Add An Activity",
     "areaOfNeedLabel": "Area of need",

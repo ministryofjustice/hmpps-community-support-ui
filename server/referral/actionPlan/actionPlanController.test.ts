@@ -10,6 +10,7 @@ import ActionPlanAddActivityPresenter from './addActivity/actionPlanAddActivityP
 import ActionPlanViewActivitiesPresenter from './viewActivities/actionPlanViewActivitiesPresenter'
 import ActionPlanRemoveActivityPresenter from './removeActivity/actionPlanRemoveActivityPresenter'
 import ActionPlanSessionDeliveryDetailsPresenter from './sessionDeliveryDetails/actionPlanSessionDeliveryDetailsPresenter'
+import ActionPlanServiceEndDateCheckPresenter from './sessionDeliveryDetails/actionPlanServiceEndDateCheckPresenter'
 
 jest.mock('../../services/referralService')
 jest.mock('./actionPlanPresenter')
@@ -19,6 +20,7 @@ jest.mock('./addActivity/actionPlanAddActivityPresenter')
 jest.mock('./viewActivities/actionPlanViewActivitiesPresenter')
 jest.mock('./removeActivity/actionPlanRemoveActivityPresenter')
 jest.mock('./sessionDeliveryDetails/actionPlanSessionDeliveryDetailsPresenter')
+jest.mock('./sessionDeliveryDetails/actionPlanServiceEndDateCheckPresenter')
 
 describe('ActionPlanController', () => {
   let referralService: jest.Mocked<ReferralService>
@@ -31,6 +33,7 @@ describe('ActionPlanController', () => {
       getActionPlanSummary: jest.fn(),
       getActionPlanNeedsAndOutcomes: jest.fn(),
       getSessionDeliveryDetails: jest.fn(),
+      getServiceEndDateCheck: jest.fn(),
       submitAction: jest.fn(),
     } as unknown as jest.Mocked<ReferralService>
 
@@ -758,5 +761,159 @@ describe('ActionPlanController', () => {
     expect(req.flash).toHaveBeenCalledWith('SESSION_DELIVERY_METHODError', 'Select how the sessions will take place')
     expect(req.flash).toHaveBeenCalledWith('SESSION_FORMATError', 'Select which format you will use for the sessions')
     expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/session-delivery-details')
+  })
+
+  describe('service end date check', () => {
+    const serviceEndDateCheckDetails: ActionPlanSessionDeliveryDetailsResponse = {
+      questions: [
+        {
+          id: 'question-1',
+          displayOrder: 1,
+          label: 'Is the service end date still 24 May 2026?',
+          key: 'SERVICE_END_DATE_CHECK',
+          hint: null,
+          answerType: 'RADIO',
+          maximumNumberOfResponses: 1,
+          choices: [
+            {
+              value: 'YES',
+              label: 'Yes',
+              displayOrder: 1,
+              displayAdditionalDetailsOnSelect: false,
+              additionalDetailsLabel: null,
+              additionalDetailsHint: null,
+            },
+            {
+              value: 'NO',
+              label: 'No, I need to change the date',
+              displayOrder: 2,
+              displayAdditionalDetailsOnSelect: false,
+              additionalDetailsLabel: null,
+              additionalDetailsHint: null,
+            },
+          ],
+          savedResponses: [],
+        },
+      ],
+    }
+
+    it('renders the service end date check page with backend questions', async () => {
+      referralService.getServiceEndDateCheck.mockResolvedValue(serviceEndDateCheckDetails)
+
+      await actionPlanController.showServiceEndDateCheckPage(req, res)
+
+      expect(referralService.getServiceEndDateCheck).toHaveBeenCalledWith('AB1234CD', 'user1')
+      expect(ActionPlanServiceEndDateCheckPresenter).toHaveBeenCalledWith(
+        'AB1234CD',
+        serviceEndDateCheckDetails,
+        undefined,
+        undefined,
+      )
+      expect(ActionPlanServiceEndDateCheckPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+    })
+
+    it('merges a saved session-delivery draft for the current referral into the questions passed to the presenter', async () => {
+      referralService.getServiceEndDateCheck.mockResolvedValue(serviceEndDateCheckDetails)
+      req.session = {
+        actionPlanSessionDelivery: {
+          caseReference: 'AB1234CD',
+          sessionDeliveryDetails: {
+            answers: [{ questionId: 'question-1', incomingAnswerDetails: [{ value: 'NO' }] }],
+          },
+        },
+      } as Request['session']
+
+      await actionPlanController.showServiceEndDateCheckPage(req, res)
+
+      expect(ActionPlanServiceEndDateCheckPresenter).toHaveBeenCalledWith(
+        'AB1234CD',
+        {
+          questions: [
+            {
+              ...serviceEndDateCheckDetails.questions[0],
+              savedResponses: [{ value: 'NO', additionalDetails: null }],
+            },
+          ],
+        },
+        undefined,
+        undefined,
+      )
+    })
+
+    it('ignores a saved session-delivery draft from a different referral', async () => {
+      referralService.getServiceEndDateCheck.mockResolvedValue(serviceEndDateCheckDetails)
+      req.session = {
+        actionPlanSessionDelivery: {
+          caseReference: 'ZZ9999ZZ',
+          sessionDeliveryDetails: {
+            answers: [{ questionId: 'question-1', incomingAnswerDetails: [{ value: 'NO' }] }],
+          },
+        },
+      } as Request['session']
+
+      await actionPlanController.showServiceEndDateCheckPage(req, res)
+
+      expect(ActionPlanServiceEndDateCheckPresenter).toHaveBeenCalledWith(
+        'AB1234CD',
+        serviceEndDateCheckDetails,
+        undefined,
+        undefined,
+      )
+    })
+
+    it('passes flashed form values and validation errors through to the presenter', async () => {
+      const validationErrors: ErrorMiddlewareErrors = {
+        list: [],
+        messages: { SERVICE_END_DATE_CHECK: { text: 'Select yes if the service end date is still 24 May 2026' } },
+      }
+      const flashedValue = { SERVICE_END_DATE_CHECK: 'NO' }
+      referralService.getServiceEndDateCheck.mockResolvedValue(serviceEndDateCheckDetails)
+      req.flash = jest.fn().mockReturnValue([JSON.stringify(flashedValue)])
+      res.locals.errors = validationErrors
+
+      await actionPlanController.showServiceEndDateCheckPage(req, res)
+
+      expect(ActionPlanServiceEndDateCheckPresenter).toHaveBeenCalledWith(
+        'AB1234CD',
+        serviceEndDateCheckDetails,
+        validationErrors,
+        flashedValue,
+      )
+    })
+
+    it('redirects to the action plan page when the submitted form is valid', async () => {
+      req.method = 'POST'
+      req.body = { SERVICE_END_DATE_CHECK: 'YES' }
+      referralService.getServiceEndDateCheck.mockResolvedValue(serviceEndDateCheckDetails)
+      res.redirect = jest.fn()
+
+      await actionPlanController.showServiceEndDateCheckPage(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan')
+      expect(req.session.actionPlanSessionDelivery).toEqual({
+        caseReference: 'AB1234CD',
+        sessionDeliveryDetails: {
+          answers: [
+            { questionId: 'question-1', incomingAnswerDetails: [{ value: 'YES', additionalDetails: undefined }] },
+          ],
+        },
+      })
+    })
+
+    it('flashes a validation error and redirects back when the submitted form is invalid', async () => {
+      req.method = 'POST'
+      req.url = '/referral/AB1234CD/action-plan/service-end-date-check'
+      req.body = {}
+      referralService.getServiceEndDateCheck.mockResolvedValue(serviceEndDateCheckDetails)
+      res.redirect = jest.fn()
+
+      await actionPlanController.showServiceEndDateCheckPage(req, res)
+
+      expect(req.flash).toHaveBeenCalledWith(
+        'SERVICE_END_DATE_CHECKError',
+        'Select yes if the service end date is still REPLACE WITH API DATE',
+      )
+      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/service-end-date-check')
+    })
   })
 })
