@@ -8,7 +8,6 @@ import ActionPlanPresenter from './actionPlanPresenter'
 import ActionPlanSelectANeedPresenter from './selectANeed/actionPlanSelectANeedPresenter'
 import ActionPlanSelectOutcomePresenter from './selectOutcome/actionPlanSelectOutcomePresenter'
 import ActionPlanViewActivitiesPresenter from './viewActivities/actionPlanViewActivitiesPresenter'
-import ActionPlanAddActivitiesPresenter from './addActivities/actionPlanAddActivitiesPresenter'
 import ActionPlanSessionDeliveryDetailsPresenter from './sessionDeliveryDetails/actionPlanSessionDeliveryDetailsPresenter'
 import buildSessionDeliveryDetailsRequestFromForm, {
   buildAdditionalDetailsFieldNameResolver,
