@@ -92,6 +92,10 @@ export default class ReferralService {
     return this.communitySupportApiClient.getSessionDeliveryDetails(caseReference, username)
   }
 
+  getRisksAndAdjustments(caseReference: string, username: string): Promise<ActionPlanSessionDeliveryDetailsResponse> {
+    return this.communitySupportApiClient.getRisksAndAdjustments(caseReference, username)
+  }
+
   getActionPlanNeedsAndOutcomes(username: string): Promise<ActionPlanSelectANeedResponse> {
     return this.communitySupportApiClient.getActionPlanNeedsAndOutcomes(username)
   }

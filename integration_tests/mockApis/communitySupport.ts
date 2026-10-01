@@ -664,6 +664,22 @@ export default {
         jsonBody: sessionDeliveryDetails,
       },
     }),
+  stubGetRisksAndAdjustments: (
+    caseReference: string,
+    risksAndAdjustments: ActionPlanSessionDeliveryDetailsResponse,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: `/community-support/bff/referral/${caseReference}/action-plan/service-delivery-details/risks-and-adjustments`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: risksAndAdjustments,
+      },
+    }),
   stubGetActionPlanNeedsAndOutcomes: (
     needsAndOutcomes: ActionPlanSelectANeedResponse,
     httpStatus = 200,

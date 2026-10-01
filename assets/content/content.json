@@ -325,6 +325,12 @@
     "continueButtonText": "Continue",
     "backLink": "/referral/{{ id }}/action-plan"
   },
+  "/referral/:id/action-plan/risks-and-adjustments": {
+    "pageTitle": "Session details – Risks and adjustments",
+    "pageHeader": "Risks and adjustments",
+    "continueButtonText": "Continue",
+    "backLink": "/referral/{{ id }}/action-plan/session-delivery-details"
+  },
   "/ics-feedback/:id/did-session-take-place": {
     "submitButtonText": "Continue",
     "pageHeaders": {
