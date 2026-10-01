@@ -1,0 +1,23 @@
+{% extends "../partials/layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+
+{% set pageTitle = content.pageHeader + " – " + applicationName %}
+{% set mainClasses = "govuk-body" %}
+
+{% block contentBody %}
+  <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
+
+  {{ govukInsetText(content.selectedNeedAndOutcomeInset) }}
+
+  <form method="post" action="{{ content.saveAndContinueLink }}">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    {% if content.activityIndex is not undefined %}<input type="hidden" name="activityIndex" value="{{ content.activityIndex }}">{% endif %}
+    {{ govukInput(content.activityProviderInput) }}
+    {{ govukTextarea(content.activityDescriptionTextarea) }}
+    {{ govukButton(content.saveAndContinueButton) }}
+  </form>
+{% endblock %}

@@ -5,11 +5,13 @@ import ActionPlanController from './actionPlanController'
 import ActionPlanPresenter from './actionPlanPresenter'
 import ActionPlanSelectANeedPresenter from './selectANeed/actionPlanSelectANeedPresenter'
 import ActionPlanSelectOutcomePresenter from './selectOutcome/actionPlanSelectOutcomePresenter'
+import ActionPlanAddActivityPresenter from './addActivity/actionPlanAddActivityPresenter'
 
 jest.mock('../../services/referralService')
 jest.mock('./actionPlanPresenter')
 jest.mock('./selectANeed/actionPlanSelectANeedPresenter')
 jest.mock('./selectOutcome/actionPlanSelectOutcomePresenter')
+jest.mock('./addActivity/actionPlanAddActivityPresenter')
 
 describe('ActionPlanController', () => {
   let referralService: jest.Mocked<ReferralService>
@@ -112,7 +114,7 @@ describe('ActionPlanController', () => {
       await actionPlanController.submitSelectedNeed(req, res)
 
       expect(req.session.actionPlanAction).toEqual({ needId: 'need-1', outcomeId: 'outcome-1' })
-      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/add-activities')
+      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/activities')
     })
 
     it('throws when the selected need has no outcomes', async () => {
@@ -183,14 +185,134 @@ describe('ActionPlanController', () => {
       expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/select-an-outcome')
     })
 
-    it('redirects to activities when an outcome is selected', async () => {
+    it('redirects to add activity when an outcome is selected and there are no activities in session', async () => {
       req.session.actionPlanAction = { needId: 'need-2' }
       req.body = { selectOutcomeRadio: 'outcome-2' }
 
       await actionPlanController.submitOutcome(req, res)
 
       expect(req.session.actionPlanAction).toEqual({ needId: 'need-2', outcomeId: 'outcome-2' })
-      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/add-activities')
+      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/activities/add')
+    })
+
+    it('redirects to activities when an outcome is selected and activities already exist', async () => {
+      req.session.actionPlanAction = { needId: 'need-2' }
+      req.session.actionPlanActivities = [{ activityProvider: 'Provider', activityDescription: 'Activity' }]
+      req.body = { selectOutcomeRadio: 'outcome-2' }
+
+      await actionPlanController.submitOutcome(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/activities')
+    })
+  })
+
+  describe('add activity', () => {
+    it('renders the add activity page with the selected need and outcome', async () => {
+      req.session.actionPlan = {
+        needs: [{ id: 'need-1', label: 'Accommodation', outcomes: [{ id: 'outcome-1', text: 'Find housing' }] }],
+      }
+      req.session.actionPlanAction = { needId: 'need-1', outcomeId: 'outcome-1' }
+
+      await actionPlanController.showAddActivityPage(req, res)
+
+      expect(ActionPlanAddActivityPresenter).toHaveBeenCalledWith(
+        'AB1234CD',
+        'Accommodation',
+        'Find housing',
+        undefined,
+        undefined,
+      )
+      expect(ActionPlanAddActivityPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+    })
+
+    it('stores the submitted activity and returns to the activities page', async () => {
+      req.session.actionPlanActivities = [
+        { activityProvider: 'Existing provider', activityDescription: 'Existing activity' },
+      ]
+      req.body = { activityProvider: 'Local charity', activityDescription: 'Weekly support sessions' }
+
+      await actionPlanController.addActivity(req, res)
+
+      expect(req.session.actionPlanActivities).toEqual([
+        { activityProvider: 'Existing provider', activityDescription: 'Existing activity' },
+        { activityProvider: 'Local charity', activityDescription: 'Weekly support sessions' },
+      ])
+      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/activities')
+    })
+
+    it('updates an existing activity when its index is submitted', async () => {
+      req.session.actionPlanActivities = [
+        { activityProvider: 'Old provider', activityDescription: 'Old details' },
+        { activityProvider: 'Other provider', activityDescription: 'Other details' },
+      ]
+      req.body = { activityProvider: 'Updated provider', activityDescription: 'Updated details', activityIndex: '0' }
+
+      await actionPlanController.addActivity(req, res)
+
+      expect(req.session.actionPlanActivities).toEqual([
+        { activityProvider: 'Updated provider', activityDescription: 'Updated details' },
+        { activityProvider: 'Other provider', activityDescription: 'Other details' },
+      ])
+      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/activities')
+    })
+
+    it('shows the confirmation page for the selected activity', async () => {
+      req.params = { id: 'AB1234CD', activityIndex: '0' }
+      req.session.actionPlanActivities = [
+        { activityProvider: 'Remove provider', activityDescription: 'Remove details' },
+        { activityProvider: 'Keep provider', activityDescription: 'Keep details' },
+      ]
+
+      await actionPlanController.removeActivity(req, res)
+
+      expect(req.session.actionPlanActivities).toHaveLength(2)
+      expect(res.render).toHaveBeenCalled()
+    })
+
+    it('removes an activity after confirmation', async () => {
+      req.params = { id: 'AB1234CD', activityIndex: '0' }
+      req.session.actionPlanActivities = [
+        { activityProvider: 'Remove provider', activityDescription: 'Remove details' },
+        { activityProvider: 'Keep provider', activityDescription: 'Keep details' },
+      ]
+
+      await actionPlanController.confirmRemoveActivity(req, res)
+
+      expect(req.session.actionPlanActivities).toEqual([
+        { activityProvider: 'Keep provider', activityDescription: 'Keep details' },
+      ])
+      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/activities')
+    })
+  })
+
+  describe('save activities', () => {
+    it('redirects to add activity when yes is selected', async () => {
+      req.body = { addAnotherActivity: 'yes' }
+
+      await actionPlanController.saveActivities(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/activities/add')
+    })
+
+    it('redirects to the action plan when no is selected', async () => {
+      req.body = { addAnotherActivity: 'no' }
+
+      await actionPlanController.saveActivities(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan')
+    })
+
+    it('requires a yes or no selection', async () => {
+      req.body = {}
+
+      await actionPlanController.saveActivities(req, res)
+
+      expect(req.session.formKeys).toEqual(['addAnotherActivity'])
+      expect(req.flash).toHaveBeenCalledWith(
+        'addAnotherActivityError',
+        'Select yes if you want to add another activity',
+      )
+      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/activities')
     })
   })
 })

@@ -58,6 +58,10 @@ export declare module 'express-session' {
       needId: string
       outcomeId?: string
     }
+    actionPlanActivities?: {
+      activityProvider: string
+      activityDescription: string
+    }[]
     ppDetails?: UpdateProbationPractitionerDetailsRequest & {
       pduName: string
       probationOfficeName?: string

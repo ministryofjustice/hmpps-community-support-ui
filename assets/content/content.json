@@ -273,10 +273,35 @@
     "selectOutcomeHint": "Select one option.",
     "continueButtonText": "Continue"
   },
-  "/referral/:id/action-plan/add-activities": {
-    "pageHeader": "Add activities",
-    "addAnotherActivityButtonText": "Add another activity",
+  "/referral/:id/action-plan/activities": {
+    "pageHeader": "Activities",
+    "areaOfNeedLabel": "Area of need",
+    "outcomeLabel": "Outcome",
+    "activityProviderHeading": "Who will deliver this",
+    "activityDetailsHeading": "Activity details",
+    "actionsHeading": "Actions",
+    "changeActionText": "Change",
+    "removeActionText": "Remove",
+    "addAnotherActivityQuestion": "Do you want to add another activity?",
+    "yesOptionText": "Yes",
+    "noOptionText": "No",
     "saveAndContinueButtonText": "Save and continue"
+  },
+  "/referral/:id/action-plan/activities/add": {
+    "pageHeader": "Add An Activity",
+    "areaOfNeedLabel": "Area of need",
+    "outcomeLabel": "Outcome",
+    "activityProviderLabel": "Who will deliver the activity?",
+    "activityProviderHint": "For example, the name of the organisation or person running the activity.",
+    "activityDescriptionLabel": "What does the activity involve?",
+    "saveAndContinueButtonText": "Save and continue"
+  },
+  "/referral/:id/action-plan/activities/:activityIndex/remove": {
+    "pageHeader": "Are you sure you want to remove this activity?",
+    "activityProviderLabel": "Who will deliver this",
+    "activityDetailsLabel": "Activity details",
+    "removeButtonText": "Remove activity",
+    "cancelLinkText": "Cancel"
   },
   "/ics-feedback/:id/did-session-take-place": {
     "submitButtonText": "Continue",

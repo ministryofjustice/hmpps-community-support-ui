@@ -230,9 +230,19 @@ export default function routes({
 
   post('/referral/:id/action-plan/select-an-outcome', (req, res) => actionPlanController.submitOutcome(req, res))
 
-  get('/referral/:id/action-plan/add-activities', (req, res) => actionPlanController.showAddActivitiesPage(req, res))
+  get('/referral/:id/action-plan/activities', (req, res) => actionPlanController.showViewActivitiesPage(req, res))
 
-  post('/referral/:id/action-plan/add-activity', (req, res) => actionPlanController.addActivity(req, res))
+  get('/referral/:id/action-plan/activities/add', (req, res) => actionPlanController.showAddActivityPage(req, res))
+
+  post('/referral/:id/action-plan/activities/add', (req, res) => actionPlanController.addActivity(req, res))
+
+  get('/referral/:id/action-plan/activities/:activityIndex/remove', (req, res) =>
+    actionPlanController.removeActivity(req, res),
+  )
+
+  post('/referral/:id/action-plan/activities/:activityIndex/remove', (req, res) =>
+    actionPlanController.confirmRemoveActivity(req, res),
+  )
 
   post('/referral/:id/action-plan/save-activities', (req, res) => actionPlanController.saveActivities(req, res))
 
