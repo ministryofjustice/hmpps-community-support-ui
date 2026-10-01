@@ -5,7 +5,7 @@ import formatFullName from '../../utils/presenterFormatters'
 import ActionPlanPresenter from './actionPlanPresenter'
 import ActionPlanSelectANeedPresenter from './selectANeed/actionPlanSelectANeedPresenter'
 import ActionPlanSelectOutcomePresenter from './selectOutcome/actionPlanSelectOutcomePresenter'
-import ActionPlanAddActivitiesPresenter from './addActivities/actionPlanAddActivitiesPresenter'
+import ActionPlanViewActivitiesPresenter from './viewActivities/actionPlanViewActivitiesPresenter'
 
 class ActionPlanController {
   constructor(private readonly referralService: ReferralService) {}
@@ -65,7 +65,7 @@ class ActionPlanController {
 
     req.session.actionPlanAction = { needId, outcomeId }
 
-    return res.redirect(`/referral/${caseReference}/action-plan/add-activities`)
+    return res.redirect(`/referral/${caseReference}/action-plan/activities`)
   }
 
   async showSelectOutcomePage(req: Request, res: Response) {
@@ -107,31 +107,24 @@ class ActionPlanController {
 
     req.session.actionPlanAction = { needId: req.session.actionPlanAction?.needId, outcomeId: selectOutcomeRadio }
 
-    return res.redirect(`/referral/${caseReference}/action-plan/add-activities`)
+    return res.redirect(`/referral/${caseReference}/action-plan/activities`)
   }
 
-  async showAddActivitiesPage(req: Request, res: Response) {
+  async showViewActivitiesPage(req: Request, res: Response) {
     const { id: caseReference } = req.params as { id: string }
 
-    const presenter = new ActionPlanAddActivitiesPresenter(caseReference)
+    const { needId: selectedNeedId, outcomeId: selectedOutcomeId } = req.session.actionPlanAction ?? {}
+    const selectedNeed = req.session.actionPlan?.needs?.find(need => need.id === selectedNeedId)
+    const selectedOutcome = selectedNeed?.outcomes?.find(outcome => outcome.id === selectedOutcomeId)
+
+    const presenter = new ActionPlanViewActivitiesPresenter(
+      caseReference,
+      selectedNeed?.label ?? '',
+      selectedOutcome?.text ?? '',
+      req.session.actionPlanActivities ?? [],
+    )
 
     return presenter.renderPage(res)
-  }
-
-  async addActivity(req: Request, res: Response) {
-    const { id: caseReference } = req.params as { id: string }
-
-    // Add activity to session for rendering
-
-    res.redirect(`/referral/${caseReference}/action-plan/add-activities`)
-  }
-
-  async saveActivities(req: Request, res: Response) {
-    const { id: caseReference } = req.params as { id: string }
-
-    // Post to backend
-
-    res.redirect(`/referral/${caseReference}/action-plan`)
   }
 }
 

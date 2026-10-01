@@ -5,11 +5,13 @@ import ActionPlanController from './actionPlanController'
 import ActionPlanPresenter from './actionPlanPresenter'
 import ActionPlanSelectANeedPresenter from './selectANeed/actionPlanSelectANeedPresenter'
 import ActionPlanSelectOutcomePresenter from './selectOutcome/actionPlanSelectOutcomePresenter'
+import ActionPlanViewActivitiesPresenter from './viewActivities/actionPlanViewActivitiesPresenter'
 
 jest.mock('../../services/referralService')
 jest.mock('./actionPlanPresenter')
 jest.mock('./selectANeed/actionPlanSelectANeedPresenter')
 jest.mock('./selectOutcome/actionPlanSelectOutcomePresenter')
+jest.mock('./viewActivities/actionPlanViewActivitiesPresenter')
 
 describe('ActionPlanController', () => {
   let referralService: jest.Mocked<ReferralService>
@@ -112,7 +114,7 @@ describe('ActionPlanController', () => {
       await actionPlanController.submitSelectedNeed(req, res)
 
       expect(req.session.actionPlanAction).toEqual({ needId: 'need-1', outcomeId: 'outcome-1' })
-      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/add-activities')
+      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/activities')
     })
 
     it('throws when the selected need has no outcomes', async () => {
@@ -190,7 +192,24 @@ describe('ActionPlanController', () => {
       await actionPlanController.submitOutcome(req, res)
 
       expect(req.session.actionPlanAction).toEqual({ needId: 'need-2', outcomeId: 'outcome-2' })
-      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/add-activities')
+      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/activities')
+    })
+  })
+
+  describe('view activities', () => {
+    it('renders the selected need, outcome, and session activities', async () => {
+      req.session.actionPlan = {
+        needs: [{ id: 'need-1', label: 'Accommodation', outcomes: [{ id: 'outcome-1', text: 'Find housing' }] }],
+      }
+      req.session.actionPlanAction = { needId: 'need-1', outcomeId: 'outcome-1' }
+      req.session.actionPlanActivities = [{ activityProvider: 'Local group', activityDescription: 'Weekly sessions' }]
+
+      await actionPlanController.showViewActivitiesPage(req, res)
+
+      expect(ActionPlanViewActivitiesPresenter).toHaveBeenCalledWith('AB1234CD', 'Accommodation', 'Find housing', [
+        { activityProvider: 'Local group', activityDescription: 'Weekly sessions' },
+      ])
+      expect(ActionPlanViewActivitiesPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
     })
   })
 })

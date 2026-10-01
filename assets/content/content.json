@@ -273,10 +273,12 @@
     "selectOutcomeHint": "Select one option.",
     "continueButtonText": "Continue"
   },
-  "/referral/:id/action-plan/add-activities": {
-    "pageHeader": "Add activities",
-    "addAnotherActivityButtonText": "Add another activity",
-    "saveAndContinueButtonText": "Save and continue"
+  "/referral/:id/action-plan/activities": {
+    "pageHeader": "Activities",
+    "areaOfNeedLabel": "Area of need",
+    "outcomeLabel": "Outcome",
+    "activityProviderHeading": "Who will deliver this",
+    "activityDetailsHeading": "Activity details"
   },
   "/ics-feedback/:id/did-session-take-place": {
     "submitButtonText": "Continue",
