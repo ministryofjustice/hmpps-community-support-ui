@@ -7,40 +7,20 @@ export default class CheckReferralInformationPage extends AbstractPage {
 
   readonly submitButton: Locator
 
-  readonly personalDetailsSummary: SummaryList
-
-  readonly equalityMonitoringSummary: SummaryList
-
-  readonly additionalInformationSummary?: SummaryList
-
-  readonly contactDetailsSummary: SummaryList
-
-  readonly riskInformationSummary: SummaryList
-
-  readonly additionalSupportNeedsSummary: SummaryList
-
-  readonly personsNeedsSummary: SummaryList
-
   private constructor(
     page: Page,
-    personalDetailsSummary: SummaryList,
-    equalityMonitoringSummary: SummaryList,
-    contactDetailsSummary: SummaryList,
-    riskInformationSummary: SummaryList,
-    additionalSupportNeedsSummary: SummaryList,
-    personsNeedsSummary: SummaryList,
-    additionalInformationSummary?: SummaryList,
+    public readonly personalDetailsSummary: SummaryList,
+    public readonly equalityMonitoringSummary: SummaryList,
+    public readonly contactDetailsSummary: SummaryList,
+    public readonly riskInformationSummary: SummaryList,
+    public readonly additionalSupportNeedsSummary: SummaryList,
+    public readonly personsNeedsSummary: SummaryList,
+    public readonly referralDetailsSummary: SummaryList,
+    public readonly additionalInformationSummary?: SummaryList,
   ) {
     super(page)
     this.submitButton = page.locator('button', { hasText: 'Submit referral' })
     this.header = page.locator('h1').first()
-    this.personalDetailsSummary = personalDetailsSummary
-    this.equalityMonitoringSummary = equalityMonitoringSummary
-    this.additionalInformationSummary = additionalInformationSummary
-    this.riskInformationSummary = riskInformationSummary
-    this.additionalSupportNeedsSummary = additionalSupportNeedsSummary
-    this.personsNeedsSummary = personsNeedsSummary
-    this.contactDetailsSummary = contactDetailsSummary as SummaryList
   }
 
   static url(): string {
@@ -55,6 +35,7 @@ export default class CheckReferralInformationPage extends AbstractPage {
     )
     const contactDetailsSummary = await SummaryList.create(page.locator('[data-testid="contact-details"]'))
     const riskInformationSummary = await SummaryList.create(page.locator('[data-testid="risk-information"]'))
+    const referralDetailsSummary = await SummaryList.create(page.locator('[data-testid="referral-details"]'))
     const additionalSupportNeedsSummary = await SummaryList.create(
       page.locator('[data-testid="additional-support-needs"]'),
     )
@@ -68,6 +49,7 @@ export default class CheckReferralInformationPage extends AbstractPage {
       riskInformationSummary,
       additionalSupportNeedsSummary,
       personsNeedsSummary,
+      referralDetailsSummary,
       additionalInformationSummary,
     )
 
@@ -76,6 +58,7 @@ export default class CheckReferralInformationPage extends AbstractPage {
     await expect(additionalInformationSummary.summaryLocator).toBeVisible()
     await expect(checkReferralInformationPage.riskInformationSummary.summaryLocator).toBeVisible()
     await expect(checkReferralInformationPage.personsNeedsSummary.summaryLocator).toBeVisible()
+    await expect(checkReferralInformationPage.referralDetailsSummary.summaryLocator).toBeVisible()
     await expect(checkReferralInformationPage.additionalSupportNeedsSummary.summaryLocator).toBeVisible()
     await expect(contactDetailsSummary.summaryLocator).toBeVisible()
     return checkReferralInformationPage

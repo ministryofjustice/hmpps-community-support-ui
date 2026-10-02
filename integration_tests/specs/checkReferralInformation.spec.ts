@@ -45,10 +45,10 @@ test.describe('Check Referral Information Page', () => {
     await page.goto(CheckReferralInformationPage.url())
 
     const checkReferralInformationPage = await CheckReferralInformationPage.verifyOnPage(page)
-    // const { rows } = checkReferralInformationPage.referralDetailsSummary
-    // expect(rows).toHaveLength(1)
-    // await expect(rows[0].key).toHaveText('Area the referral is being made to')
-    // await expect(rows[0].value).toHaveText('London')
+    const { rows } = checkReferralInformationPage.referralDetailsSummary
+    expect(rows).toHaveLength(1)
+    await expect(rows[0].key).toHaveText('Area the referral is being made to')
+    await expect(rows[0].value).toHaveText('London')
   })
 
   test('should link back to task list from check referral information page', async ({ page }) => {
