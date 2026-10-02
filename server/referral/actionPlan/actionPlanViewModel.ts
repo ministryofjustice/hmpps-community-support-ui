@@ -1,10 +1,19 @@
 import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendSummaryList } from '@govuk-frontend'
 import { GlobalContent } from '../../../assets/content/GlobalContent'
 
+export type ActionPlanSummaryList = GovukFrontendSummaryList & {
+  preText: string
+  moveUpButton?: GovukFrontendButton
+  moveDownButton?: GovukFrontendButton
+}
+
 export type ActionPlanViewModel = {
   pageHeader: string
   backLink: GovukFrontendBackLink
-  needsSummary: GovukFrontendSummaryList
+  updatedAtText: string
+  needsSummary: ActionPlanSummaryList[]
+  addAnotherOutcomeButton: GovukFrontendButton
+  submitActionPlanButton: GovukFrontendButton
   createButton: GovukFrontendButton
   createLink: string
   noActionPlanText: string
