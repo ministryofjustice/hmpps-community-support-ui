@@ -2,6 +2,9 @@ name: branch-name-validator
 
 on: [ pull_request ]
 
+permissions:
+  contents: read
+
 jobs:
   check-jira-prefix:
     runs-on: ubuntu-latest

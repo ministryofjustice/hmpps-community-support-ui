@@ -307,7 +307,7 @@ describe('ActionPlanController', () => {
     )
   })
 
-  it('redirects to the action plan page when the submitted form is valid', async () => {
+  it('redirects to the risks-and-adjustments page when the submitted form is valid', async () => {
     const sessionDeliveryDetails: ActionPlanSessionDeliveryDetailsResponse = {
       questions: [
         {
@@ -374,7 +374,7 @@ describe('ActionPlanController', () => {
 
     await actionPlanController.showSessionDeliveryDetailsPage(req, res)
 
-    expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan')
+    expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/risks-and-adjustments')
     expect(req.session.actionPlanSessionDelivery).toEqual({
       caseReference: 'AB1234CD',
       sessionDeliveryDetails: {

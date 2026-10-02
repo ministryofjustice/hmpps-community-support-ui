@@ -1,5 +1,11 @@
-import { ActionPlanSessionDeliveryDetailsResponse } from '@community-support-api'
-import buildSessionDeliveryDetailsRequestFromForm from './buildSessionDeliveryDetailsRequestFromForm'
+import {
+  ActionPlanSessionDeliveryDetailsResponse,
+  QuestionChoice,
+  SessionDeliveryQuestion,
+} from '@community-support-api'
+import buildSessionDeliveryDetailsRequestFromForm, {
+  buildAdditionalDetailsFieldNameResolver,
+} from './buildSessionDeliveryDetailsRequestFromForm'
 
 describe('buildSessionDeliveryDetailsRequestFromForm', () => {
   it('maps textarea, radio and checkbox answers into the API request shape', () => {
@@ -149,5 +155,134 @@ describe('buildSessionDeliveryDetailsRequestFromForm', () => {
         { questionId: 'question-2', incomingAnswerDetails: [] },
       ],
     })
+  })
+
+  it('uses a custom resolver to look up additional-details fields that are not named after the choice value', () => {
+    const sessionDeliveryDetails: ActionPlanSessionDeliveryDetailsResponse = {
+      questions: [
+        {
+          id: 'risk-question',
+          displayOrder: 1,
+          label: 'Is there a risk associated with the planned activities?',
+          key: 'RISK_ASSOCIATED_WITH_PLANNED_ACTIVITIES',
+          hint: null,
+          answerType: 'RADIO',
+          maximumNumberOfResponses: 1,
+          choices: [
+            {
+              value: 'YES',
+              label: 'Yes',
+              displayOrder: 1,
+              displayAdditionalDetailsOnSelect: true,
+              additionalDetailsLabel: 'Give details',
+              additionalDetailsHint: null,
+            },
+            {
+              value: 'NO',
+              label: 'No',
+              displayOrder: 2,
+              displayAdditionalDetailsOnSelect: false,
+              additionalDetailsLabel: null,
+              additionalDetailsHint: null,
+            },
+          ],
+          savedResponses: [],
+        },
+        {
+          id: 'adjustments-question',
+          displayOrder: 2,
+          label: 'Will you put reasonable adjustments in place?',
+          key: 'REASONABLE_ADJUSTMENTS_FOR_PLANNED_ACTIVITIES',
+          hint: null,
+          answerType: 'RADIO',
+          maximumNumberOfResponses: 1,
+          choices: [
+            {
+              value: 'YES',
+              label: 'Yes',
+              displayOrder: 1,
+              displayAdditionalDetailsOnSelect: true,
+              additionalDetailsLabel: 'Give details',
+              additionalDetailsHint: null,
+            },
+            {
+              value: 'NO',
+              label: 'No',
+              displayOrder: 2,
+              displayAdditionalDetailsOnSelect: false,
+              additionalDetailsLabel: null,
+              additionalDetailsHint: null,
+            },
+          ],
+          savedResponses: [],
+        },
+      ],
+    }
+
+    const request = buildSessionDeliveryDetailsRequestFromForm(
+      sessionDeliveryDetails,
+      {
+        RISK_ASSOCIATED_WITH_PLANNED_ACTIVITIES: 'YES',
+        RISK_INFO: 'There is a risk of harm to staff',
+        REASONABLE_ADJUSTMENTS_FOR_PLANNED_ACTIVITIES: 'YES',
+        ADJUSTMENT_INFO: 'Provide a hearing loop',
+      },
+      buildAdditionalDetailsFieldNameResolver({
+        RISK_ASSOCIATED_WITH_PLANNED_ACTIVITIES: 'RISK_INFO',
+        REASONABLE_ADJUSTMENTS_FOR_PLANNED_ACTIVITIES: 'ADJUSTMENT_INFO',
+      }),
+    )
+
+    expect(request).toEqual({
+      answers: [
+        {
+          questionId: 'risk-question',
+          incomingAnswerDetails: [{ value: 'YES', additionalDetails: 'There is a risk of harm to staff' }],
+        },
+        {
+          questionId: 'adjustments-question',
+          incomingAnswerDetails: [{ value: 'YES', additionalDetails: 'Provide a hearing loop' }],
+        },
+      ],
+    })
+  })
+})
+
+describe('buildAdditionalDetailsFieldNameResolver', () => {
+  const question = (key: string): SessionDeliveryQuestion => ({
+    id: 'question-id',
+    displayOrder: 1,
+    label: 'Label',
+    key,
+    hint: null,
+    answerType: 'RADIO',
+    maximumNumberOfResponses: 1,
+    choices: [],
+    savedResponses: [],
+  })
+
+  const choice = (value: string): QuestionChoice => ({
+    value,
+    label: value,
+    displayOrder: 1,
+    displayAdditionalDetailsOnSelect: true,
+    additionalDetailsLabel: null,
+    additionalDetailsHint: null,
+  })
+
+  it('returns the override field name when the question key has one', () => {
+    const resolver = buildAdditionalDetailsFieldNameResolver({
+      RISK_ASSOCIATED_WITH_PLANNED_ACTIVITIES: 'RISK_INFO',
+    })
+
+    expect(resolver(question('RISK_ASSOCIATED_WITH_PLANNED_ACTIVITIES'), choice('YES'))).toBe('RISK_INFO')
+  })
+
+  it('falls back to the choice value when the question key has no override', () => {
+    const resolver = buildAdditionalDetailsFieldNameResolver({
+      RISK_ASSOCIATED_WITH_PLANNED_ACTIVITIES: 'RISK_INFO',
+    })
+
+    expect(resolver(question('SESSION_DELIVERY_METHOD'), choice('VIDEO_CALL'))).toBe('VIDEO_CALL')
   })
 })
