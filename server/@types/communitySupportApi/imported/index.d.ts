@@ -429,40 +429,6 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/bff/referral/{referralReference}/action-plan/service-delivery-details/risks-and-adjustments': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get the risk and adjustments questions and saved answers of the service delivery details */
-    get: operations['getRiskAndAdjustments']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/bff/referral/{referralReference}/action-plan/service-delivery-details/confirm-service-end-date': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get the confirm service end date questions and saved answers of the service delivery details */
-    get: operations['getConfirmServiceEndDate']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
   '/bff/referral/{referralReference}/action-plan/service-delivery-details/update-service-end-date': {
     parameters: {
       query?: never
@@ -480,6 +446,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/bff/referral/{referralReference}/action-plan/service-delivery-details/risks-and-adjustments': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get the risk and adjustments questions and saved answers of the service delivery details */
+    get: operations['getRiskAndAdjustments']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/bff/referral/{referralReference}/action-plan/service-delivery-details/person-involvement': {
     parameters: {
       query?: never
@@ -489,6 +472,23 @@ export interface paths {
     }
     /** Get the person involvement questions and saved answers of the service delivery details */
     get: operations['getPersonInvolvement']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/referral/{referralReference}/action-plan/service-delivery-details/confirm-service-end-date': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get the confirm service end date questions and saved answers of the service delivery details */
+    get: operations['getConfirmServiceEndDate']
     put?: never
     post?: never
     delete?: never
@@ -2193,8 +2193,8 @@ export interface operations {
           'application/json': unknown
         }
       }
-      /** @description Referral already withdrawn */
-      208: {
+      /** @description Referral not found */
+      404: {
         headers: {
           [name: string]: unknown
         }
@@ -2202,8 +2202,8 @@ export interface operations {
           'application/json': unknown
         }
       }
-      /** @description Referral not found */
-      404: {
+      /** @description Referral already withdrawn */
+      409: {
         headers: {
           [name: string]: unknown
         }
@@ -2940,68 +2940,6 @@ export interface operations {
       }
     }
   }
-  getRiskAndAdjustments: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        referralReference: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Risk and adjustments questions and saved answers returned */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ActionPlanSessionDeliveryDetailsResponse']
-        }
-      }
-      /** @description Referral not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  getConfirmServiceEndDate: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        referralReference: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Confirm service end date questions and saved answers returned */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ActionPlanSessionDeliveryDetailsResponse']
-        }
-      }
-      /** @description Referral not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
   getUpdateServiceEndDate: {
     parameters: {
       query?: never
@@ -3033,6 +2971,37 @@ export interface operations {
       }
     }
   }
+  getRiskAndAdjustments: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralReference: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Risk and adjustments questions and saved answers returned */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ActionPlanSessionDeliveryDetailsResponse']
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
   getPersonInvolvement: {
     parameters: {
       query?: never
@@ -3045,6 +3014,37 @@ export interface operations {
     requestBody?: never
     responses: {
       /** @description Person involvement questions and saved answers returned */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ActionPlanSessionDeliveryDetailsResponse']
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getConfirmServiceEndDate: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralReference: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Confirm service end date questions and saved answers returned */
       200: {
         headers: {
           [name: string]: unknown
