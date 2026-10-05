@@ -1,8 +1,14 @@
-.actionplan-summary__index {
-  vertical-align: top;
+.actionplan-summary {
+  display: inline;
+}
+
+.actionplan-summary li {
+  padding-left: 1em;
+  margin-left: 1em;
+}
+
+.actionplan-summary li::marker {
   font-weight: bold;
-  width: 2%;
-  padding-top: 23px;
 }
 
 .actionplan-summary__title {
@@ -10,7 +16,7 @@
   margin-right: 5em;
 }
 
-.actionplan-summaru__actions {
+.actionplan-summary__actions {
   float: right;
   display: inline;
   text-align: right;

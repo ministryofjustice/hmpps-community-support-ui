@@ -7,7 +7,7 @@
 {% set mainClasses = "govuk-body" %}
 
 {% block content %}
-  <div class="actionplan-summaru__actions">
+  <div class="actionplan-summary__actions">
     {% if content.addAnotherOutcomeButton %}
     {{ govukButton(content.addAnotherOutcomeButton) }}
     {% endif %}
@@ -21,9 +21,11 @@
   <p>{{ content.updatedAtText }}</p>
   <p>{{ content.noActionPlanText }}</p>
   {% if content.needsSummary %}
+  <ol class="actionplan-summary">
     {% for need in content.needsSummary %}
-      <table><tr><td class="actionplan-summary__index">{{ loop.index }}. </td><td>{{ actionPlanSummaryList(need) }}</td></tr></table>
+      <li>{{ actionPlanSummaryList(need) }}</li>
     {% endfor %}
+  </ol>
   {% endif %}
   {% if content.createButton %}
     <form method="post" novalidate action="{{ content.createLink }}">

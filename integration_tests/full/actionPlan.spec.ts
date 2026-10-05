@@ -31,7 +31,7 @@ test.describe('Action Plan Page', () => {
 
     const actionPlanPage = await ActionPlanPage.verifyOnPage(page)
 
-    await expect(actionPlanPage.header).toHaveText('Action plan for Alex River')
+    await expect(actionPlanPage.header).toHaveText('Action plan')
     await expect(actionPlanPage.backLink).toHaveAttribute('href', `/progress/${caseReference}`)
 
     await actionPlanPage.backLink.click()
