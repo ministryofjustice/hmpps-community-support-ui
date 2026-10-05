@@ -13,6 +13,7 @@ export default class ActionPlanAddActivityPresenter extends PresenterBase<
     private readonly selectedOutcomeText: string,
     private readonly activity?: { activityProvider: string; activityDescription: string },
     private readonly activityIndex?: number,
+    private readonly userInputData?: Record<string, string>,
   ) {
     super()
   }
@@ -31,13 +32,15 @@ export default class ActionPlanAddActivityPresenter extends PresenterBase<
         name: 'activityProvider',
         label: { text: content.activityProviderLabel, classes: 'govuk-label--m' },
         hint: { text: content.activityProviderHint },
-        value: this.activity?.activityProvider ?? '',
+        errorMessage: res.locals.errors?.messages.activityProvider,
+        value: this.userInputData?.activityProvider ?? this.activity?.activityProvider ?? '',
       },
       activityDescriptionTextarea: {
         id: 'activityDescription',
         name: 'activityDescription',
         label: { text: content.activityDescriptionLabel, classes: 'govuk-label--m' },
-        value: this.activity?.activityDescription ?? '',
+        errorMessage: res.locals.errors?.messages.activityDescription,
+        value: this.userInputData?.activityDescription ?? this.activity?.activityDescription ?? '',
       },
       activityIndex: this.activityIndex,
       saveAndContinueButton: { text: content.saveAndContinueButtonText, type: 'submit' },

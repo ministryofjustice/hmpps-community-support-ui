@@ -113,13 +113,26 @@ describe('ActionPlanController', () => {
       expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/select-a-need')
     })
 
-    it('redirects to activities when the selected need has a single outcome', async () => {
+    it('redirects to add activity when the selected need has one outcome and no activities exist', async () => {
       req.session.actionPlan = { needs }
       req.body = { needId: 'need-1' }
 
       await actionPlanController.submitSelectedNeed(req, res)
 
       expect(req.session.actionPlanAction).toEqual({ needId: 'need-1', outcomeId: 'outcome-1' })
+      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/activities/add')
+    })
+
+    it('redirects to activities when a single-outcome need is selected and this referral already has activities', async () => {
+      req.session.actionPlan = { needs }
+      req.session.actionPlanActivities = {
+        caseReference: 'AB1234CD',
+        activities: [{ activityProvider: 'Provider', activityDescription: 'Activity' }],
+      }
+      req.body = { needId: 'need-1' }
+
+      await actionPlanController.submitSelectedNeed(req, res)
+
       expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/activities')
     })
 
@@ -203,12 +216,29 @@ describe('ActionPlanController', () => {
 
     it('redirects to activities when an outcome is selected and activities already exist', async () => {
       req.session.actionPlanAction = { needId: 'need-2' }
-      req.session.actionPlanActivities = [{ activityProvider: 'Provider', activityDescription: 'Activity' }]
+      req.session.actionPlanActivities = {
+        caseReference: 'AB1234CD',
+        activities: [{ activityProvider: 'Provider', activityDescription: 'Activity' }],
+      }
       req.body = { selectOutcomeRadio: 'outcome-2' }
 
       await actionPlanController.submitOutcome(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/activities')
+    })
+
+    it('does not treat activities from another referral as existing activities', async () => {
+      req.params = { id: 'ZZ9876YY' }
+      req.session.actionPlanAction = { needId: 'need-2' }
+      req.session.actionPlanActivities = {
+        caseReference: 'AB1234CD',
+        activities: [{ activityProvider: 'Provider A', activityDescription: 'Activity for referral A' }],
+      }
+      req.body = { selectOutcomeRadio: 'outcome-2' }
+
+      await actionPlanController.submitOutcome(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('/referral/ZZ9876YY/action-plan/activities/add')
     })
   })
 
@@ -227,66 +257,151 @@ describe('ActionPlanController', () => {
         'Find housing',
         undefined,
         undefined,
+        undefined,
       )
       expect(ActionPlanAddActivityPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
     })
 
     it('stores the submitted activity and returns to the activities page', async () => {
-      req.session.actionPlanActivities = [
-        { activityProvider: 'Existing provider', activityDescription: 'Existing activity' },
-      ]
+      req.session.actionPlanActivities = {
+        caseReference: 'AB1234CD',
+        activities: [{ activityProvider: 'Existing provider', activityDescription: 'Existing activity' }],
+      }
       req.body = { activityProvider: 'Local charity', activityDescription: 'Weekly support sessions' }
 
       await actionPlanController.addActivity(req, res)
 
-      expect(req.session.actionPlanActivities).toEqual([
-        { activityProvider: 'Existing provider', activityDescription: 'Existing activity' },
-        { activityProvider: 'Local charity', activityDescription: 'Weekly support sessions' },
-      ])
+      expect(req.session.actionPlanActivities).toEqual({
+        caseReference: 'AB1234CD',
+        activities: [
+          { activityProvider: 'Existing provider', activityDescription: 'Existing activity' },
+          { activityProvider: 'Local charity', activityDescription: 'Weekly support sessions' },
+        ],
+      })
       expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/activities')
     })
 
-    it('updates an existing activity when its index is submitted', async () => {
-      req.session.actionPlanActivities = [
+    it('rejects blank or whitespace-only activity fields without changing the session activities', async () => {
+      req.session.actionPlanActivities = {
+        caseReference: 'AB1234CD',
+        activities: [{ activityProvider: 'Existing provider', activityDescription: 'Existing activity' }],
+      }
+      req.url = '/referral/AB1234CD/action-plan/activities/add'
+      req.body = { activityProvider: '  ', activityDescription: '' }
+
+      await actionPlanController.addActivity(req, res)
+
+      expect(req.session.actionPlanActivities).toEqual({
+        caseReference: 'AB1234CD',
+        activities: [{ activityProvider: 'Existing provider', activityDescription: 'Existing activity' }],
+      })
+      expect(req.session.formKeys).toEqual(['activityProvider', 'activityDescription'])
+      expect(req.flash).toHaveBeenCalledWith('activityProviderError', 'Enter who will deliver the activity')
+      expect(req.flash).toHaveBeenCalledWith('activityDescriptionError', 'Enter what the activity involves')
+      expect(req.flash).toHaveBeenCalledWith(
+        'value',
+        JSON.stringify({ activityProvider: '  ', activityDescription: '' }),
+      )
+      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/activities/add')
+    })
+
+    it('redisplays an invalid submission with the submitted values and field errors', async () => {
+      req.flash = jest.fn(key =>
+        key === 'value' ? [JSON.stringify({ activityProvider: 'Community group', activityDescription: '   ' })] : [],
+      ) as unknown as Request['flash']
+      res.locals.errors = {
+        list: [],
+        messages: { activityDescription: { text: 'Enter what the activity involves' } },
+      } as ErrorMiddlewareErrors
+      req.query = { activityIndex: '0' }
+      req.session.actionPlanActivities = {
+        caseReference: 'AB1234CD',
+        activities: [{ activityProvider: 'Old provider', activityDescription: 'Old details' }],
+      }
+
+      await actionPlanController.showAddActivityPage(req, res)
+
+      expect(ActionPlanAddActivityPresenter).toHaveBeenLastCalledWith(
+        'AB1234CD',
+        '',
+        '',
         { activityProvider: 'Old provider', activityDescription: 'Old details' },
-        { activityProvider: 'Other provider', activityDescription: 'Other details' },
-      ]
+        0,
+        { activityProvider: 'Community group', activityDescription: '   ' },
+      )
+    })
+
+    it('updates an existing activity when its index is submitted', async () => {
+      req.session.actionPlanActivities = {
+        caseReference: 'AB1234CD',
+        activities: [
+          { activityProvider: 'Old provider', activityDescription: 'Old details' },
+          { activityProvider: 'Other provider', activityDescription: 'Other details' },
+        ],
+      }
       req.body = { activityProvider: 'Updated provider', activityDescription: 'Updated details', activityIndex: '0' }
 
       await actionPlanController.addActivity(req, res)
 
-      expect(req.session.actionPlanActivities).toEqual([
-        { activityProvider: 'Updated provider', activityDescription: 'Updated details' },
-        { activityProvider: 'Other provider', activityDescription: 'Other details' },
-      ])
+      expect(req.session.actionPlanActivities).toEqual({
+        caseReference: 'AB1234CD',
+        activities: [
+          { activityProvider: 'Updated provider', activityDescription: 'Updated details' },
+          { activityProvider: 'Other provider', activityDescription: 'Other details' },
+        ],
+      })
       expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/activities')
+    })
+
+    it('starts a separate activity collection when saving for a different referral', async () => {
+      req.params = { id: 'ZZ9876YY' }
+      req.session.actionPlanActivities = {
+        caseReference: 'AB1234CD',
+        activities: [{ activityProvider: 'Provider A', activityDescription: 'Activity for referral A' }],
+      }
+      req.body = { activityProvider: 'Provider B', activityDescription: 'Activity for referral B' }
+
+      await actionPlanController.addActivity(req, res)
+
+      expect(req.session.actionPlanActivities).toEqual({
+        caseReference: 'ZZ9876YY',
+        activities: [{ activityProvider: 'Provider B', activityDescription: 'Activity for referral B' }],
+      })
+      expect(res.redirect).toHaveBeenCalledWith('/referral/ZZ9876YY/action-plan/activities')
     })
 
     it('shows the confirmation page for the selected activity', async () => {
       req.params = { id: 'AB1234CD', activityIndex: '0' }
-      req.session.actionPlanActivities = [
-        { activityProvider: 'Remove provider', activityDescription: 'Remove details' },
-        { activityProvider: 'Keep provider', activityDescription: 'Keep details' },
-      ]
+      req.session.actionPlanActivities = {
+        caseReference: 'AB1234CD',
+        activities: [
+          { activityProvider: 'Remove provider', activityDescription: 'Remove details' },
+          { activityProvider: 'Keep provider', activityDescription: 'Keep details' },
+        ],
+      }
 
       await actionPlanController.removeActivity(req, res)
 
-      expect(req.session.actionPlanActivities).toHaveLength(2)
+      expect(req.session.actionPlanActivities?.activities).toHaveLength(2)
       expect(res.render).toHaveBeenCalled()
     })
 
     it('removes an activity after confirmation', async () => {
       req.params = { id: 'AB1234CD', activityIndex: '0' }
-      req.session.actionPlanActivities = [
-        { activityProvider: 'Remove provider', activityDescription: 'Remove details' },
-        { activityProvider: 'Keep provider', activityDescription: 'Keep details' },
-      ]
+      req.session.actionPlanActivities = {
+        caseReference: 'AB1234CD',
+        activities: [
+          { activityProvider: 'Remove provider', activityDescription: 'Remove details' },
+          { activityProvider: 'Keep provider', activityDescription: 'Keep details' },
+        ],
+      }
 
       await actionPlanController.confirmRemoveActivity(req, res)
 
-      expect(req.session.actionPlanActivities).toEqual([
-        { activityProvider: 'Keep provider', activityDescription: 'Keep details' },
-      ])
+      expect(req.session.actionPlanActivities).toEqual({
+        caseReference: 'AB1234CD',
+        activities: [{ activityProvider: 'Keep provider', activityDescription: 'Keep details' }],
+      })
       expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/activities')
     })
   })
@@ -328,7 +443,10 @@ describe('ActionPlanController', () => {
         needs: [{ id: 'need-1', label: 'Accommodation', outcomes: [{ id: 'outcome-1', text: 'Find housing' }] }],
       }
       req.session.actionPlanAction = { needId: 'need-1', outcomeId: 'outcome-1' }
-      req.session.actionPlanActivities = [{ activityProvider: 'Local group', activityDescription: 'Weekly sessions' }]
+      req.session.actionPlanActivities = {
+        caseReference: 'AB1234CD',
+        activities: [{ activityProvider: 'Local group', activityDescription: 'Weekly sessions' }],
+      }
 
       await actionPlanController.showViewActivitiesPage(req, res)
 
@@ -336,6 +454,34 @@ describe('ActionPlanController', () => {
         { activityProvider: 'Local group', activityDescription: 'Weekly sessions' },
       ])
       expect(ActionPlanViewActivitiesPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+    })
+
+    it('does not display or edit activities belonging to a different referral', async () => {
+      req.params = { id: 'ZZ9876YY' }
+      req.session.actionPlan = {
+        needs: [{ id: 'need-2', label: 'Employment', outcomes: [{ id: 'outcome-2', text: 'Find work' }] }],
+      }
+      req.session.actionPlanAction = { needId: 'need-2', outcomeId: 'outcome-2' }
+      req.session.actionPlanActivities = {
+        caseReference: 'AB1234CD',
+        activities: [{ activityProvider: 'Provider A', activityDescription: 'Activity for referral A' }],
+      }
+
+      await actionPlanController.showViewActivitiesPage(req, res)
+
+      expect(ActionPlanViewActivitiesPresenter).toHaveBeenCalledWith('ZZ9876YY', 'Employment', 'Find work', [])
+
+      req.query = { activityIndex: '0' }
+      await actionPlanController.showAddActivityPage(req, res)
+
+      expect(ActionPlanAddActivityPresenter).toHaveBeenLastCalledWith(
+        'ZZ9876YY',
+        'Employment',
+        'Find work',
+        undefined,
+        undefined,
+        undefined,
+      )
     })
   })
 

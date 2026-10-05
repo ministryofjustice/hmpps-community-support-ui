@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import type { ActionPlanSessionDeliveryDetailsRequest } from '@community-support-api'
-import type { ActionPlanSessionDeliveryData } from '../../@types/express'
+import type { ActionPlanActivitiesData, ActionPlanActivity, ActionPlanSessionDeliveryData } from '../../@types/express'
 import ReferralService from '../../services/referralService'
 import logger from '../../../logger'
 import formatFullName from '../../utils/presenterFormatters'
@@ -19,6 +19,7 @@ import { validateRequestBodyAgainstSchema } from '../../validation/validationUti
 import { ActionPlanSessionDeliveryDetailsFormDataSchemaBuilder } from '../../validation/ActionPlanSessionDeliveryDetailsFormData'
 import ActionPlanRisksAndAdjustmentsPresenter from './sessionDeliveryDetails/actionPlanRisksAndAdjustmentsPresenter'
 import { ActionPlanRisksAndAdjustmentsFormDataSchemaBuilder } from '../../validation/ActionPlanRisksAndAdjustmentsFormData'
+import { ActionPlanActivityFormDataSchema } from '../../validation/ActionPlanActivityFormData'
 
 class ActionPlanController {
   constructor(private readonly referralService: ReferralService) {}
@@ -38,6 +39,19 @@ class ActionPlanController {
       ...(this.getActionPlanSessionDelivery(req, caseReference) ?? { caseReference }),
       ...sessionDelivery,
     }
+  }
+
+  private getActionPlanActivities(req: Request, caseReference: string): ActionPlanActivity[] {
+    return req.session.actionPlanActivities?.caseReference === caseReference
+      ? req.session.actionPlanActivities.activities
+      : []
+  }
+
+  private setActionPlanActivities(req: Request, caseReference: string, activities: ActionPlanActivity[]) {
+    req.session.actionPlanActivities = {
+      caseReference,
+      activities,
+    } satisfies ActionPlanActivitiesData
   }
 
   // Merges answers for the questions just submitted into any already-saved session-delivery
@@ -108,7 +122,11 @@ class ActionPlanController {
 
     req.session.actionPlanAction = { needId, outcomeId }
 
-    return res.redirect(`/referral/${caseReference}/action-plan/activities`)
+    const activitiesPath = this.getActionPlanActivities(req, caseReference).length
+      ? `/referral/${caseReference}/action-plan/activities`
+      : `/referral/${caseReference}/action-plan/activities/add`
+
+    return res.redirect(activitiesPath)
   }
 
   async showSelectOutcomePage(req: Request, res: Response) {
@@ -150,7 +168,7 @@ class ActionPlanController {
 
     req.session.actionPlanAction = { needId: req.session.actionPlanAction?.needId, outcomeId: selectOutcomeRadio }
 
-    const activitiesPath = req.session.actionPlanActivities?.length
+    const activitiesPath = this.getActionPlanActivities(req, caseReference).length
       ? `/referral/${caseReference}/action-plan/activities`
       : `/referral/${caseReference}/action-plan/activities/add`
 
@@ -168,7 +186,7 @@ class ActionPlanController {
       caseReference,
       selectedNeed?.label ?? '',
       selectedOutcome?.text ?? '',
-      req.session.actionPlanActivities ?? [],
+      this.getActionPlanActivities(req, caseReference),
     )
     return presenter.renderPage(res)
   }
@@ -180,7 +198,10 @@ class ActionPlanController {
     const selectedNeed = req.session.actionPlan?.needs?.find(need => need.id === selectedNeedId)
     const selectedOutcome = selectedNeed?.outcomes?.find(outcome => outcome.id === selectedOutcomeId)
     const activityIndex = Number(req.query?.activityIndex)
-    const activity = Number.isInteger(activityIndex) ? req.session.actionPlanActivities?.[activityIndex] : undefined
+    const activities = this.getActionPlanActivities(req, caseReference)
+    const activity = Number.isInteger(activityIndex) ? activities[activityIndex] : undefined
+    const flashData = req.flash('value')
+    const userInputData = flashData.length > 0 ? (JSON.parse(flashData[0]) as Record<string, string>) : undefined
 
     const presenter = new ActionPlanAddActivityPresenter(
       caseReference,
@@ -188,6 +209,7 @@ class ActionPlanController {
       selectedOutcome?.text ?? '',
       activity,
       activity ? activityIndex : undefined,
+      userInputData,
     )
 
     return presenter.renderPage(res)
@@ -195,30 +217,19 @@ class ActionPlanController {
 
   async addActivity(req: Request, res: Response) {
     const { id: caseReference } = req.params as { id: string }
-    const {
-      activityProvider,
-      activityDescription,
-      activityIndex: submittedActivityIndex,
-    } = req.body as {
-      activityProvider?: string
-      activityDescription?: string
-      activityIndex?: string
-    }
-    const actionPlanActivity = {
-      activityProvider: activityProvider ?? '',
-      activityDescription: activityDescription ?? '',
-    }
+    return validateRequestBodyAgainstSchema(ActionPlanActivityFormDataSchema, req, res, async form => {
+      const { activityIndex: submittedActivityIndex, ...actionPlanActivity } = form
+      const activities = this.getActionPlanActivities(req, caseReference)
+      const activityIndex = Number(submittedActivityIndex)
+      if (submittedActivityIndex !== undefined && Number.isInteger(activityIndex) && activities[activityIndex]) {
+        activities[activityIndex] = actionPlanActivity
+        this.setActionPlanActivities(req, caseReference, activities)
+      } else {
+        this.setActionPlanActivities(req, caseReference, [...activities, actionPlanActivity])
+      }
 
-    const activities = req.session.actionPlanActivities ?? []
-    const activityIndex = Number(submittedActivityIndex)
-    if (submittedActivityIndex !== undefined && Number.isInteger(activityIndex) && activities[activityIndex]) {
-      activities[activityIndex] = actionPlanActivity
-      req.session.actionPlanActivities = activities
-    } else {
-      req.session.actionPlanActivities = [...activities, actionPlanActivity]
-    }
-
-    return res.redirect(`/referral/${caseReference}/action-plan/activities`)
+      return res.redirect(`/referral/${caseReference}/action-plan/activities`)
+    })
   }
 
   async removeActivity(req: Request, res: Response) {
@@ -226,7 +237,7 @@ class ActionPlanController {
       id: string
       activityIndex: string
     }
-    const activities = req.session.actionPlanActivities ?? []
+    const activities = this.getActionPlanActivities(req, caseReference)
     const activityIndex = Number(activityIndexParam)
     const activity = Number.isInteger(activityIndex) ? activities[activityIndex] : undefined
 
@@ -243,12 +254,12 @@ class ActionPlanController {
       id: string
       activityIndex: string
     }
-    const activities = req.session.actionPlanActivities ?? []
+    const activities = this.getActionPlanActivities(req, caseReference)
     const activityIndex = Number(activityIndexParam)
 
     if (Number.isInteger(activityIndex) && activityIndex >= 0 && activityIndex < activities.length) {
       activities.splice(activityIndex, 1)
-      req.session.actionPlanActivities = activities
+      this.setActionPlanActivities(req, caseReference, activities)
     }
 
     return res.redirect(`/referral/${caseReference}/action-plan/activities`)
