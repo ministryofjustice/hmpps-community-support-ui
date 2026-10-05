@@ -1,0 +1,16 @@
+{% extends "../partials/layout.njk" %}
+
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+
+{% set pageTitle = content.pageHeader + " – " + applicationName %}
+{% set mainClasses = "govuk-body" %}
+
+{% block contentBody %}
+  <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
+
+  {{ govukInsetText(content.selectedNeedAndOutcomeInset) }}
+
+{% endblock %}
+  {{ govukTable(content.activitiesTable) }}
+{% endblock %}
