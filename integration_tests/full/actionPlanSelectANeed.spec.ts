@@ -86,6 +86,9 @@ test.describe('Select an action plan need', () => {
     await selectANeedPage.needs.select('Accommodation')
     await selectANeedPage.continueButton.click()
 
-    await expect(page).toHaveURL(`/referral/${caseReference}/action-plan/add-activities`)
+    await expect(page).toHaveURL(`/referral/${caseReference}/action-plan/activities`)
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Activities')
+    await expect(page.locator('.govuk-inset-text')).toContainText('Area of need: Accommodation')
+    await expect(page.locator('.govuk-inset-text')).toContainText('Outcome: Improve accommodation')
   })
 })

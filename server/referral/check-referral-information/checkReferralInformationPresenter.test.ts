@@ -35,6 +35,7 @@ describe('CheckReferralInformationPresenter', () => {
             { description: 'Employment', subDescription: 'Full-time employed', updatedAt: '2026-01-05T00:00:00Z' },
           ],
         },
+        referralAreaTableData: { area: 'London' },
         equalityDetailsTableData: { ethnicity: 'White British', religionOrBelief: 'None', sex: 'Male' },
         additionalInformationDetailsTableData: {
           ofHomeOfficeInterest: true,
@@ -112,6 +113,10 @@ describe('CheckReferralInformationPresenter', () => {
       expect(renderData.content.personalDetailsHeader).toBe('About John')
       expect(renderData.content.referralContactDetailsHeader).toBe('Referral contact details')
       expect(renderData.content.backLink).toEqual({ href: '/referral/task-list' })
+      expect(renderData.content.referralDetailsSummary.rows[0]).toMatchObject({
+        key: { text: 'Area the referral is being made to' },
+        value: { text: 'London' },
+      })
       expect(renderData.content.submitButton).toEqual({
         text: 'Submit referral information',
         classes: 'govuk-!-margin-top-6',
