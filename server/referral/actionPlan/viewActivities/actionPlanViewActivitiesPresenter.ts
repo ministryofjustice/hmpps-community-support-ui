@@ -52,7 +52,7 @@ export default class ActionPlanViewActivitiesPresenter extends PresenterBase<
     const rows: GovukFrontendTableRow[] = this.activities.map((activity, index) => {
       const editHref = `/referral/${this.caseReference}/action-plan/activities/add?activityIndex=${index}`
       const removeHref = `/referral/${this.caseReference}/action-plan/activities/${index}/remove`
-      const actionLinks = `<a class="govuk-link" href="${editHref}">${escapeHtml(content.changeActionText)}</a><a class="govuk-link govuk-!-margin-left-2" href="${removeHref}">${escapeHtml(content.removeActionText)}</a>`
+      const actionLinks = `<a class="govuk-link" href="${escapeHtml(editHref)}">${escapeHtml(content.changeActionText)}</a><a class="govuk-link govuk-!-margin-left-2" href="${escapeHtml(removeHref)}">${escapeHtml(content.removeActionText)}</a>`
 
       return [{ text: activity.activityProvider }, { text: activity.activityDescription }, { html: actionLinks }]
     })
