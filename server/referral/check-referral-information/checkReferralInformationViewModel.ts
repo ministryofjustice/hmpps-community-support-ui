@@ -13,6 +13,7 @@ export type CheckReferralInformationViewModel = {
   additionalInformationSummary?: GovukFrontendSummaryList
   riskInformationSummary: GovukFrontendSummaryList
   referralDetailsHeader: string
+  referralDetailsSummary: GovukFrontendSummaryList
   referralContactDetailsHeader: string
   submitButton: GovukFrontendButton
   backLink: GovukFrontendBackLink

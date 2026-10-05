@@ -39,6 +39,18 @@ test.describe('Check Referral Information Page', () => {
     await page.goto(TaskListPage.url())
   })
 
+  test('should show the selected referral area on check details and submit', async ({ page }) => {
+    await communitySupport.stubGetCheckDraftReferralDetails(mockReferralId, mockCheckDraftReferralDetails)
+
+    await page.goto(CheckReferralInformationPage.url())
+
+    const checkReferralInformationPage = await CheckReferralInformationPage.verifyOnPage(page)
+    const { rows } = checkReferralInformationPage.referralDetailsSummary
+    expect(rows).toHaveLength(1)
+    await expect(rows[0].key).toHaveText('Area the referral is being made to')
+    await expect(rows[0].value).toHaveText('London')
+  })
+
   test('should link back to task list from check referral information page', async ({ page }) => {
     await seedSessionCreateReferralDetails(page, { referralCreationDetails: mockReferralDetailsInCommunity })
     await communitySupport.stubGetCheckDraftReferralDetails(mockReferralId, mockCheckDraftReferralDetails)

@@ -109,6 +109,16 @@ const formatNeed = (need?: string): string => {
   return 'No'
 }
 
+const buildReferralDetailsSummary = (area: string): GovukFrontendSummaryList => ({
+  card: {
+    title: {
+      text: 'Referral details',
+    },
+    attributes: { 'data-testid': 'referral-details' },
+  },
+  rows: [govFrontendSummaryListRow('Area the referral is being made to', area || '')],
+})
+
 export default class CheckReferralInformationPresenter extends PresenterBase<
   CheckReferralInformationViewModel,
   CheckReferralInformationContent
@@ -150,6 +160,9 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
     viewModel.personsNeedsSummary = this.buildPersonsNeedsSummary(content.personsNeedsCard)
 
     viewModel.referralDetailsHeader = content.referralDetailsHeader
+    viewModel.referralDetailsSummary = buildReferralDetailsSummary(
+      this.draftReferralDetails.referralAreaTableData?.area || '',
+    )
     viewModel.referralContactDetailsHeader = content.referralContactDetailsHeader
     viewModel.backLink = { href: content.backLink }
     viewModel.submitButton = { text: content.submitButtonText, classes: 'govuk-!-margin-top-6' }
