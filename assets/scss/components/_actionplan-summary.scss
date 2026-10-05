@@ -1,0 +1,23 @@
+.actionplan-summary {
+  display: inline;
+}
+
+.actionplan-summary li {
+  padding-left: 1em;
+  margin-left: 1em;
+}
+
+.actionplan-summary li::marker {
+  font-weight: bold;
+}
+
+.actionplan-summary__title {
+  text-align: left;
+  margin-right: 5em;
+}
+
+.actionplan-summary__actions {
+  float: right;
+  display: inline;
+  text-align: right;
+}

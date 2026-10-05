@@ -1,17 +1,31 @@
 {% extends "../partials/layout.njk" %}
 
-{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "components/action-plan-summary-list/macro.njk" import actionPlanSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% set pageTitle = "Action plan – " + applicationName %}
 {% set mainClasses = "govuk-body" %}
 
-{% block contentBody %}
-  <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
+{% block content %}
+  <div class="actionplan-summary__actions">
+    {% if content.addAnotherOutcomeButton %}
+    {{ govukButton(content.addAnotherOutcomeButton) }}
+    {% endif %}
+    {% if content.submitActionPlanButton %}
+    {{ govukButton(content.submitActionPlanButton) }}
+    {% endif %}
+  </div>
+  <div class="actionplan-summary__title">
+    <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
+  </div>
+  <p>{{ content.updatedAtText }}</p>
+  <p>{{ content.noActionPlanText }}</p>
   {% if content.needsSummary %}
-    {{ govukSummaryList(content.needsSummary) }}
-  {% else %}
-    {{ content.noActionPlanText }}
+  <ol class="actionplan-summary">
+    {% for need in content.needsSummary %}
+      <li>{{ actionPlanSummaryList(need) }}</li>
+    {% endfor %}
+  </ol>
   {% endif %}
   {% if content.createButton %}
     <form method="post" novalidate action="{{ content.createLink }}">
