@@ -5,6 +5,8 @@ export function referralPageData(
   personNumber: string = 'CRN123',
   assignedTo: CaseWorkerDto[] = [],
   withdrawReferral: boolean = false,
+  withdrawalCreationDate?: string,
+  withdrawnBySameUser?: boolean,
 ): ReferralDetailsResponseDto {
   return {
     id: id || '{{request.path.[3]}}',
@@ -33,6 +35,8 @@ export function referralPageData(
       assignedTo,
     },
     withdrawReferral,
+    withdrawalCreationDate,
+    withdrawnBySameUser,
   }
 }
 export default referralPageData

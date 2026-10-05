@@ -4,6 +4,7 @@ import {
   ReferralInformationDto,
   IcsFeedbackSubmission,
   ActionPlanSelectANeedNeed,
+  ActionPlanSessionDeliveryDetailsRequest,
   UpdateProbationPractitionerDetailsRequest,
 } from '@community-support-api'
 import { GovukFrontendErrorSummaryErrorListElement } from '@govuk-frontend'
@@ -11,6 +12,7 @@ import { HmppsUser } from '../../interfaces/hmppsUser'
 import { ChangeAppointmentDetails } from '../../appointment/change-ics-details-reason/ChangeAppointmentDetails'
 import { ReferralProgressBannerContent } from '../../referral/progress/ReferralProgressBannerContent'
 import { ReferralCreationDetails } from '../../referral/referralDetails/ReferralCreationDetails'
+import { ReferralDetailsNotification } from '../../referral/referralDetails/ReferralDetailsNotification'
 import { WithdrawalFormData } from '../../referral/withdrawal/WithdrawalFormData'
 
 export interface HowSessionTookPlace {
@@ -26,6 +28,11 @@ export interface HowSessionTookPlace {
 
 export interface IcsFeedbackHowSessionTookPlaceSession {
   howSessionTookPlace?: HowSessionTookPlace
+}
+
+export interface ActionPlanSessionDeliveryData {
+  caseReference: string
+  sessionDeliveryDetails?: ActionPlanSessionDeliveryDetailsRequest
 }
 
 export declare module 'express-session' {
@@ -46,6 +53,7 @@ export declare module 'express-session' {
       target_service_completion_reason?: string
     }
     referralProgressBanner?: ReferralProgressBannerContent
+    referralDetailsNotification?: ReferralDetailsNotification
     icsFeedbackSubmission: IcsFeedbackSubmission & { caseReferenceId: string }
     draftReferralId: string
     personId: string
@@ -62,6 +70,7 @@ export declare module 'express-session' {
       activityProvider: string
       activityDescription: string
     }[]
+    actionPlanSessionDelivery?: ActionPlanSessionDeliveryData
     ppDetails?: UpdateProbationPractitionerDetailsRequest & {
       pduName: string
       probationOfficeName?: string

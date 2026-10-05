@@ -48,7 +48,7 @@ export default class ReferralController {
     return ReferralController.CRN_REGEX.test(normalized) || ReferralController.PRISON_NUMBER_REGEX.test(normalized)
   }
 
-  async showReferralPage(req: Request, res: Response, next: NextFunction) {
+  async showReferralPage(req: Request, res: Response, _next: NextFunction) {
     const referralId = req.params.id as string
     const { username } = res.locals.user
     const referral = await this.referralService.getReferralById(referralId, username)
@@ -59,10 +59,13 @@ export default class ReferralController {
     const referralId = req.params.id as string
     const results = req.session.assignmentResults ? { ...req.session.assignmentResults } : null
     delete req.session.assignmentResults
+    const sessionNotification = req.session.referralDetailsNotification
+    const notification = sessionNotification?.caseReference === referralId ? sessionNotification : undefined
+    delete req.session.referralDetailsNotification
     const { username, authSource } = res.locals.user
     return this.referralService
       .getCaseDetailsByCaseIdentifier(referralId, username)
-      .then(dto => new ReferralDetailsPresenter(dto, results, authSource))
+      .then(dto => new ReferralDetailsPresenter(dto, results, authSource, notification))
       .then(presenter => presenter.renderPage(res))
   }
 
@@ -102,7 +105,7 @@ export default class ReferralController {
     }
   }
 
-  async handleGetFindPersonRequest(req: Request, res: Response, next: NextFunction) {
+  async handleGetFindPersonRequest(req: Request, res: Response, _next: NextFunction) {
     return res.render('referral/findPerson', {
       content: {
         backLink: { href: '/' },

@@ -6,18 +6,20 @@ export type CheckReferralInformationViewModel = {
   pageHeader: string
   pageSubHeader: string
   personalDetailsHeader: string
+  additionalSupportNeedsSummary: GovukFrontendSummaryList
+  personsNeedsSummary: GovukFrontendSummaryList
   riskInformationHeader: string
-  contactDetailsSummary?: GovukFrontendSummaryList
+  contactDetailsSummary: GovukFrontendSummaryList
   additionalInformationSummary?: GovukFrontendSummaryList
   riskInformationSummary: GovukFrontendSummaryList
   referralDetailsHeader: string
+  referralDetailsSummary: GovukFrontendSummaryList
   referralContactDetailsHeader: string
   submitButton: GovukFrontendButton
   backLink: GovukFrontendBackLink
   submitHref: string
   personalDetailsSummary: GovukFrontendSummaryList
   equalityMonitoringSummary?: GovukFrontendSummaryList
-  referralDetailsSummary: GovukFrontendSummaryList
 }
 
 export type PersonalDetailsCard = GlobalContent['/referral/check-referral-information']['personalDetailsCard']
@@ -30,5 +32,10 @@ export type AdditionalInformationCard =
 export type ContactDetailsCard = GlobalContent['/referral/check-referral-information']['contactDetailsCard']
 
 export type RiskInformationCard = GlobalContent['/referral/check-referral-information']['riskInformationCard']
+
+export type AdditionalSupportNeedsCard =
+  GlobalContent['/referral/check-referral-information']['additionalSupportNeedsCard']
+
+export type PersonsNeedsCard = GlobalContent['/referral/check-referral-information']['personsNeedsCard']
 
 export type CheckReferralInformationContent = GlobalContent['/referral/check-referral-information']

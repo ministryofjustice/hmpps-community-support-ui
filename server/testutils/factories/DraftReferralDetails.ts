@@ -20,6 +20,7 @@ const DraftReferralDetailsFactory = new Factory<CheckDraftReferralDetailsDto>(()
   additionalSupportNeedsDetailsTableData: {},
   personNeedsDetailsTableData: {},
   referralAreaTableData: { area: '' },
+  additionalReferralInformationTableData: {},
   mainPocDetailsTableData: {},
 }))
 

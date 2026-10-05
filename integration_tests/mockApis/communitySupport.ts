@@ -8,6 +8,7 @@ import {
   IcsFeedbackSubmission,
   IcsFeedbackSubmissionResponse,
   ActionPlanSummaryDto,
+  ActionPlanSessionDeliveryDetailsResponse,
   ActionPlanSelectANeedResponse,
   WithdrawalReasonsGroupedBffResponseDto,
   PDU,
@@ -459,6 +460,8 @@ export default {
     personNumber: string = 'CRN123',
     assignedTo: CaseWorkerDto[] = [],
     withdrawReferral: boolean = false,
+    withdrawalCreationDate?: string,
+    withdrawnBySameUser?: boolean,
   ): SuperAgentRequest =>
     stubFor({
       request: {
@@ -468,7 +471,14 @@ export default {
       response: {
         status: httpStatus,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: referralDetailsPageData(referralId, personNumber, assignedTo, withdrawReferral),
+        jsonBody: referralDetailsPageData(
+          referralId,
+          personNumber,
+          assignedTo,
+          withdrawReferral,
+          withdrawalCreationDate,
+          withdrawnBySameUser,
+        ),
         transformers: ['response-template'],
       },
     }),
@@ -623,19 +633,51 @@ export default {
     }),
 
   stubGetActionPlanSummary: (
-    _caseReference: string,
+    caseReference: string,
     actionPlanSummary: ActionPlanSummaryDto,
     httpStatus = 200,
   ): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'GET',
-        urlPattern: '/community-support/bff/referral/.*/action-plan.*',
+        urlPathPattern: `/community-support/bff/referral/${caseReference}/action-plan`,
       },
       response: {
         status: httpStatus,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: actionPlanSummary,
+      },
+    }),
+  stubGetSessionDeliveryDetails: (
+    caseReference: string,
+    sessionDeliveryDetails: ActionPlanSessionDeliveryDetailsResponse,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: `/community-support/bff/referral/${caseReference}/action-plan/session-delivery-details/session-delivery`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: sessionDeliveryDetails,
+      },
+    }),
+  stubGetRisksAndAdjustments: (
+    caseReference: string,
+    risksAndAdjustments: ActionPlanSessionDeliveryDetailsResponse,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: `/community-support/bff/referral/${caseReference}/action-plan/service-delivery-details/risks-and-adjustments`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: risksAndAdjustments,
       },
     }),
   stubGetActionPlanNeedsAndOutcomes: (

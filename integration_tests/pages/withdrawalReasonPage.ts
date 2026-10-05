@@ -12,14 +12,13 @@ export default class WithdrawalReasonPage extends AbstractPage {
     readonly reasonRadios: Locator,
     readonly reasonDivider: Locator,
     readonly additionalInformation: Locator,
-    readonly additionalInformationError: Locator,
     readonly continueButton: Locator,
   ) {
     super(page)
   }
 
-  static url(referralIdentifier: string): string {
-    return `/referral/${referralIdentifier}/withdraw`
+  static url(caseIdentifier: string): string {
+    return `/referral/${caseIdentifier}/withdraw`
   }
 
   static async verifyOnPage(page: Page): Promise<WithdrawalReasonPage> {
@@ -34,7 +33,6 @@ export default class WithdrawalReasonPage extends AbstractPage {
       page.locator('input[name="withdrawalReason"]'),
       page.locator('.govuk-radios__divider'),
       page.locator('.govuk-radios__conditional textarea'),
-      page.locator('.govuk-radios__conditional--visible .govuk-error-message'),
       page.getByRole('button', { name: 'Continue', exact: true }),
     )
   }
