@@ -35,6 +35,16 @@ export interface ActionPlanSessionDeliveryData {
   sessionDeliveryDetails?: ActionPlanSessionDeliveryDetailsRequest
 }
 
+export interface ActionPlanActivity {
+  activityProvider: string
+  activityDescription: string
+}
+
+export interface ActionPlanActivitiesData {
+  caseReference: string
+  activities: ActionPlanActivity[]
+}
+
 export declare module 'express-session' {
   // Declare that the session will potentially contain these additional fields
   interface SessionData {
@@ -66,10 +76,7 @@ export declare module 'express-session' {
       needId: string
       outcomeId?: string
     }
-    actionPlanActivities?: {
-      activityProvider: string
-      activityDescription: string
-    }[]
+    actionPlanActivities?: ActionPlanActivitiesData
     actionPlanSessionDelivery?: ActionPlanSessionDeliveryData
     ppDetails?: UpdateProbationPractitionerDetailsRequest & {
       pduName: string
