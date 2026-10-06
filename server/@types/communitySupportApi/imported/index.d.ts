@@ -548,6 +548,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/bff/referral/{caseReference}/appointments': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get referral appointments for the appointments tab */
+    get: operations['getReferralAppointments']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/bff/referral/withdrawal-reasons': {
     parameters: {
       query?: never
@@ -1051,7 +1068,7 @@ export interface components {
       referralId: string
       caseReference?: string | null
       /** @enum {string} */
-      appointmentType: 'ICS'
+      appointmentType: 'ICS' | 'CONTACT_SESSION' | 'POST_RELEASE_SESSION' | 'PRE_RELEASE_SESSION' | 'HANDOVER_SESSION'
       /** Format: date */
       appointmentDate: string
       appointmentTime: components['schemas']['AppointmentTimeResponse']
@@ -1581,6 +1598,22 @@ export interface components {
       appointmentDetails?: components['schemas']['AppointmentDetailsDto'] | null
       otherAppointmentMethods?: string[] | null
     }
+    ReferralAppointmentSummaryDto: {
+      /** Format: uuid */
+      id: string
+      label: string
+      time: string
+    }
+    ReferralAppointmentsBffResponseDto: {
+      personDetails: components['schemas']['ReferralAppointmentsPersonDetailsDto']
+      appointments: components['schemas']['ReferralAppointmentSummaryDto'][]
+    }
+    ReferralAppointmentsPersonDetailsDto: {
+      firstName: string
+      lastName: string
+      dateOfBirth: string
+      crn: string
+    }
     WithdrawalReasonsGroupedBffResponseDto: {
       withdrawalReasons: {
         [key: string]: string[]
@@ -1711,7 +1744,7 @@ export interface components {
       /** Format: uuid */
       appointmentIcsId: string
       /** @enum {string} */
-      type: 'ICS'
+      type: 'ICS' | 'CONTACT_SESSION' | 'POST_RELEASE_SESSION' | 'PRE_RELEASE_SESSION' | 'HANDOVER_SESSION'
       /** Format: date-time */
       dateTime: string
       /** @enum {string} */
@@ -3148,6 +3181,37 @@ export interface operations {
         }
       }
       /** @description Appointment not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getReferralAppointments: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        caseReference: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Referral appointments found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ReferralAppointmentsBffResponseDto']
+        }
+      }
+      /** @description Referral not found */
       404: {
         headers: {
           [name: string]: unknown
