@@ -46,7 +46,7 @@ describe('ActionPlanController', () => {
       locals: {
         user: { username: 'user1' },
         content: {
-          pageHeader: 'Action plan for {{ fullName }}',
+          pageHeader: 'Action plan',
         },
       },
       render: jest.fn(),

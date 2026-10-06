@@ -290,12 +290,17 @@
     "historySummary": "View ICS history"
   },
   "/referral/:id/action-plan": {
-    "pageHeader": "Action plan for {{ fullName }}",
-    "noActionPlanText": "{{ fullName }} does not have an action plan yet.",
-    "stepNameRowTitle": "Step name",
-    "needsRowTitle": "Needs",
-    "needsRowStatus": "Status",
-    "needsRowLinkText": "Complete",
+    "pageHeader": "Action plan",
+    "noActionPlanText": "{{ firstName }} does not have an action plan yet.",
+    "addAnotherOutcomeText": "Add another outcome",
+    "submitActionPlanText": "Submit Action plan",
+    "addOrChangeActivitiesText": "Add or change activities",
+    "removeOutcomeText": "Remove",
+    "outcomePrefixText": "Outcome: ",
+    "whoWillDeliverHeaderText": "Who will do this",
+    "activityHeaderText": "Activity",
+    "moveOutcomeDownText": "Move outcome down",
+    "moveOutcomeUpText": "Move outcome up",
     "createButtonText": "Create an action plan"
   },
   "/referral/:id/action-plan/select-a-need": {
