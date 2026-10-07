@@ -424,40 +424,6 @@ describe('ActionPlanController', () => {
       expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/activities/remove?activityIndex=0')
     })
 
-    it('keeps the activity when no is selected', async () => {
-      req.query = { activityIndex: '0' }
-      req.body = { removeActivity: 'no' }
-      req.session.actionPlanActivities = {
-        caseReference: 'AB1234CD',
-        activities: [{ activityProvider: 'Only provider', activityDescription: 'Only details' }],
-      }
-
-      await actionPlanController.removeActivity(req, res)
-
-      expect(req.session.actionPlanActivities?.activities).toHaveLength(1)
-      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/activities')
-    })
-
-    it('removes the selected activity when yes is selected and others remain', async () => {
-      req.query = { activityIndex: '0' }
-      req.body = { removeActivity: 'yes' }
-      req.session.actionPlanActivities = {
-        caseReference: 'AB1234CD',
-        activities: [
-          { activityProvider: 'Remove provider', activityDescription: 'Remove details' },
-          { activityProvider: 'Keep provider', activityDescription: 'Keep details' },
-        ],
-      }
-
-      await actionPlanController.removeActivity(req, res)
-
-      expect(req.session.actionPlanActivities).toEqual({
-        caseReference: 'AB1234CD',
-        activities: [{ activityProvider: 'Keep provider', activityDescription: 'Keep details' }],
-      })
-      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/activities')
-    })
-
     it('removes the need and outcome and returns to select a need when the only activity is removed', async () => {
       req.query = { activityIndex: '0' }
       req.body = { removeActivity: 'yes' }

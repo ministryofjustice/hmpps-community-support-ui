@@ -33,7 +33,9 @@ test.describe('Select an action plan need', () => {
     await login(page)
   })
 
-  test('adds first activity, then returns to activities for later outcomes', async ({ page }) => {
+  test('adds, edits, and removes the last activity from an action plan and returns user back to start of add need and outcome process', async ({
+    page,
+  }) => {
     await communitySupport.stubGetActionPlanNeedsAndOutcomes(needsAndOutcomes)
     await communitySupport.stubGetActionPlanSummary(caseReference, actionPlanSummary)
 
@@ -107,7 +109,34 @@ test.describe('Select an action plan need', () => {
     await expect(page).toHaveURL(`/referral/${caseReference}/action-plan/select-a-need`)
   })
 
-  test('keeps an activity when no is selected and removes one of several when yes is selected', async ({ page }) => {
+  test('keeps an activity when the no do not remove radio option is selected', async ({ page }) => {
+    await communitySupport.stubGetActionPlanNeedsAndOutcomes(needsAndOutcomes)
+    await communitySupport.stubGetActionPlanSummary(caseReference, actionPlanSummary)
+
+    await page.goto(`/referral/${caseReference}/action-plan/select-a-need`)
+    await page.getByLabel('Employment').check()
+    await page.getByRole('button', { name: 'Continue', exact: true }).click()
+    await page.getByLabel('Find employment').check()
+    await page.getByRole('button', { name: 'Continue', exact: true }).click()
+
+    const firstActivityPage = await ActionPlanAddActivityPage.verifyOnPage(page)
+    await firstActivityPage.activityProvider.fill('First provider')
+    await firstActivityPage.activityDescription.fill('First activity')
+    await firstActivityPage.saveAndContinueButton.click()
+
+    const viewActivitiesPage = await ActionPlanViewActivitiesPage.verifyOnPage(page)
+    await viewActivitiesPage.removeLinks.first().click()
+    const removeActivityPage = await ActionPlanRemoveActivityPage.verifyOnPage(page)
+    await expect(removeActivityPage.hint).toHaveCount(0)
+    await removeActivityPage.noOption.check()
+    await removeActivityPage.saveAndContinueButton.click()
+
+    await ActionPlanViewActivitiesPage.verifyOnPage(page)
+    await expect(viewActivitiesPage.activityRows).toHaveCount(1)
+    await expect(viewActivitiesPage.activityRows.first()).toContainText('First provider')
+  })
+
+  test('removes the selected activity when several are present', async ({ page }) => {
     await communitySupport.stubGetActionPlanNeedsAndOutcomes(needsAndOutcomes)
     await communitySupport.stubGetActionPlanSummary(caseReference, actionPlanSummary)
 
@@ -136,15 +165,6 @@ test.describe('Select an action plan need', () => {
 
     await viewActivitiesPage.removeLinks.first().click()
     const removeActivityPage = await ActionPlanRemoveActivityPage.verifyOnPage(page)
-    await expect(removeActivityPage.hint).toHaveCount(0)
-    await removeActivityPage.noOption.check()
-    await removeActivityPage.saveAndContinueButton.click()
-
-    await ActionPlanViewActivitiesPage.verifyOnPage(page)
-    await expect(viewActivitiesPage.activityRows).toHaveCount(2)
-
-    await viewActivitiesPage.removeLinks.first().click()
-    await ActionPlanRemoveActivityPage.verifyOnPage(page)
     await removeActivityPage.yesOption.check()
     await removeActivityPage.saveAndContinueButton.click()
 
@@ -152,5 +172,6 @@ test.describe('Select an action plan need', () => {
     await expect(page).toHaveURL(ActionPlanViewActivitiesPage.url(caseReference))
     await expect(viewActivitiesPage.activityRows).toHaveCount(1)
     await expect(viewActivitiesPage.activityRows.first()).toContainText('Second provider')
+    await expect(viewActivitiesPage.activityRows.first()).not.toContainText('First provider')
   })
 })
