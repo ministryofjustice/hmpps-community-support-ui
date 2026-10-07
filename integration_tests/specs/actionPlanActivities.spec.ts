@@ -127,7 +127,9 @@ test.describe('Select an action plan need', () => {
     const viewActivitiesPage = await ActionPlanViewActivitiesPage.verifyOnPage(page)
     await viewActivitiesPage.removeLinks.first().click()
     const removeActivityPage = await ActionPlanRemoveActivityPage.verifyOnPage(page)
-    await expect(removeActivityPage.hint).toHaveCount(0)
+    await expect(removeActivityPage.hint).toHaveText(
+      'This is the only activity in the action plan. If you remove it, you will need to start the action plan again.',
+    )
     await removeActivityPage.noOption.check()
     await removeActivityPage.saveAndContinueButton.click()
 
