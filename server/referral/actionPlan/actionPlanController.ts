@@ -272,6 +272,9 @@ class ActionPlanController {
       if (activities.length === 1) {
         delete req.session.actionPlanActivities
         delete req.session.actionPlanAction
+        if (req.session.actionPlanSessionDelivery?.caseReference === caseReference) {
+          delete req.session.actionPlanSessionDelivery
+        }
         return res.redirect(`/referral/${caseReference}/action-plan/select-a-need`)
       }
 
