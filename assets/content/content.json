@@ -290,12 +290,17 @@
     "historySummary": "View ICS history"
   },
   "/referral/:id/action-plan": {
-    "pageHeader": "Action plan for {{ fullName }}",
-    "noActionPlanText": "{{ fullName }} does not have an action plan yet.",
-    "stepNameRowTitle": "Step name",
-    "needsRowTitle": "Needs",
-    "needsRowStatus": "Status",
-    "needsRowLinkText": "Complete",
+    "pageHeader": "Action plan",
+    "noActionPlanText": "{{ firstName }} does not have an action plan yet.",
+    "addAnotherOutcomeText": "Add another outcome",
+    "submitActionPlanText": "Submit Action plan",
+    "addOrChangeActivitiesText": "Add or change activities",
+    "removeOutcomeText": "Remove",
+    "outcomePrefixText": "Outcome: ",
+    "whoWillDeliverHeaderText": "Who will do this",
+    "activityHeaderText": "Activity",
+    "moveOutcomeDownText": "Move outcome down",
+    "moveOutcomeUpText": "Move outcome up",
     "createButtonText": "Create an action plan"
   },
   "/referral/:id/action-plan/select-a-need": {
@@ -314,7 +319,14 @@
     "areaOfNeedLabel": "Area of need",
     "outcomeLabel": "Outcome",
     "activityProviderHeading": "Who will deliver this",
-    "activityDetailsHeading": "Activity details"
+    "activityDetailsHeading": "Activity details",
+    "actionsHeading": "Actions",
+    "changeActionText": "Change",
+    "removeActionText": "Remove",
+    "addAnotherActivityQuestion": "Do you want to add another activity?",
+    "yesOptionText": "Yes",
+    "noOptionText": "No",
+    "saveAndContinueButtonText": "Save and continue"
   },
   "/referral/:id/action-plan/session-delivery-details": {
     "pageTitle": "Session details – Session delivery details",
@@ -327,6 +339,22 @@
     "pageHeader": "Risks and adjustments",
     "continueButtonText": "Continue",
     "backLink": "/referral/{{ id }}/action-plan/session-delivery-details"
+  },
+  "/referral/:id/action-plan/activities/add": {
+    "pageHeader": "Add An Activity",
+    "areaOfNeedLabel": "Area of need",
+    "outcomeLabel": "Outcome",
+    "activityProviderLabel": "Who will deliver the activity?",
+    "activityProviderHint": "For example, the name of the organisation or person running the activity.",
+    "activityDescriptionLabel": "What does the activity involve?",
+    "saveAndContinueButtonText": "Save and continue"
+  },
+  "/referral/:id/action-plan/activities/:activityIndex/remove": {
+    "pageHeader": "Are you sure you want to remove this activity?",
+    "activityProviderLabel": "Who will deliver this",
+    "activityDetailsLabel": "Activity details",
+    "removeButtonText": "Remove activity",
+    "cancelLinkText": "Cancel"
   },
   "/ics-feedback/:id/did-session-take-place": {
     "submitButtonText": "Continue",

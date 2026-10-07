@@ -22,9 +22,7 @@
     "test:ci": "jest --runInBand",
     "security_audit": "npx audit-ci --config audit-ci.json",
     "int-test": "npx playwright test",
-    "int-test-all": "npx playwright test -c playwright.config.all.ts",
     "int-test:no-report-open": "PLAYWRIGHT_HTML_OPEN=never npx playwright test",
-    "int-test-all:no-report-open": "PLAYWRIGHT_HTML_OPEN=never npx playwright test -c playwright.config.all.ts",
     "int-test-ui": "npx playwright test --ui",
     "int-test-init": "npx playwright install",
     "int-test-init:ci": "npx playwright install",
@@ -38,7 +36,7 @@
     "npm": "^11"
   },
   "dependencies": {
-    "@aws-sdk/client-sqs": "^3.1143.0",
+    "@aws-sdk/client-sqs": "^3.1144.0",
     "@ministryofjustice/frontend": "^11.1.0",
     "@ministryofjustice/hmpps-auth-clients": "^3.0.0",
     "@ministryofjustice/hmpps-monitoring": "^2.1.0",
@@ -66,7 +64,7 @@
     "nunjucks": "^3.2.4",
     "passport": "^0.7.0",
     "passport-oauth2": "^1.8.0",
-    "redis": "^6.2.1",
+    "redis": "^6.3.0",
     "superagent": "^10.4.1",
     "ts-node": "^10.9.2",
     "zod": "^4.6.5"

@@ -1,20 +1,21 @@
 import {
   GovukFrontendBackLink,
   GovukFrontendButton,
+  GovukFrontendInput,
   GovukFrontendInsetText,
-  GovukFrontendRadios,
-  GovukFrontendTable,
+  GovukFrontendTextarea,
 } from '@govuk-frontend'
 import { GlobalContent } from '../../../../assets/content/GlobalContent'
 
-export type ActionPlanViewActivitiesViewModel = {
+export type ActionPlanAddActivityViewModel = {
   pageHeader: string
   backLink: GovukFrontendBackLink
   selectedNeedAndOutcomeInset: GovukFrontendInsetText
-  activitiesTable: GovukFrontendTable
-  addAnotherActivityRadio: GovukFrontendRadios
+  activityProviderInput: GovukFrontendInput
+  activityDescriptionTextarea: GovukFrontendTextarea
+  activityIndex?: number
   saveAndContinueButton: GovukFrontendButton
   saveAndContinueLink: string
 }
 
-export type ActionPlanViewActivitiesContent = GlobalContent['/referral/:id/action-plan/activities']
+export type ActionPlanAddActivityContent = GlobalContent['/referral/:id/action-plan/activities/add']
