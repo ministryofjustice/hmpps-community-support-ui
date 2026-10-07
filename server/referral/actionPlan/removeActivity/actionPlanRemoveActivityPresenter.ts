@@ -2,8 +2,6 @@ import { Response } from 'express'
 import PresenterBase from '../../../presenter/presenterBase'
 import { ActionPlanRemoveActivityContent, ActionPlanRemoveActivityViewModel } from './actionPlanRemoveActivityViewModel'
 
-type ActionPlanActivity = { activityProvider: string; activityDescription: string }
-
 export default class ActionPlanRemoveActivityPresenter extends PresenterBase<
   ActionPlanRemoveActivityViewModel,
   ActionPlanRemoveActivityContent
@@ -11,7 +9,7 @@ export default class ActionPlanRemoveActivityPresenter extends PresenterBase<
   constructor(
     private readonly caseReference: string,
     private readonly activityIndex: number,
-    private readonly activity: ActionPlanActivity,
+    private readonly isOnlyActivity: boolean,
   ) {
     super()
   }
@@ -21,18 +19,21 @@ export default class ActionPlanRemoveActivityPresenter extends PresenterBase<
 
     return {
       pageHeader: content.pageHeader,
-      activitySummary: {
-        rows: [
-          { key: { text: content.activityProviderLabel }, value: { text: this.activity.activityProvider } },
-          { key: { text: content.activityDetailsLabel }, value: { text: this.activity.activityDescription } },
+      backLink: { href: `/referral/${this.caseReference}/action-plan/activities` },
+      removeActivityRadio: {
+        name: 'removeActivity',
+        fieldset: {
+          legend: { text: content.pageHeader, isPageHeading: true, classes: 'govuk-fieldset__legend--l' },
+        },
+        hint: this.isOnlyActivity ? { text: content.onlyActivityHint } : null,
+        errorMessage: res.locals.errors?.messages.removeActivity,
+        items: [
+          { text: content.yesOptionText, value: 'yes' },
+          { text: content.noOptionText, value: 'no' },
         ],
       },
-      removeButton: { text: content.removeButtonText, type: 'submit' },
-      removeAction: `/referral/${this.caseReference}/action-plan/activities/${this.activityIndex}/remove`,
-      cancelLink: {
-        text: content.cancelLinkText,
-        href: `/referral/${this.caseReference}/action-plan/activities`,
-      },
+      saveAndContinueButton: { text: content.saveAndContinueButtonText, type: 'submit' },
+      formAction: `/referral/${this.caseReference}/action-plan/activities/remove?activityIndex=${this.activityIndex}`,
     }
   }
 

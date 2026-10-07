@@ -5,6 +5,7 @@ import communitySupport from '../mockApis/communitySupport'
 import ActionPlanSelectANeedPage from '../pages/actionPlanSelectANeedPage'
 import ActionPlanAddActivityPage from '../pages/actionPlanAddActivityPage'
 import ActionPlanViewActivitiesPage from '../pages/actionPlanViewActivitiesPage'
+import ActionPlanRemoveActivityPage from '../pages/actionPlanRemoveActivityPage'
 
 test.describe('Select an action plan need', () => {
   const caseReference = 'AB1234CD'
@@ -62,7 +63,10 @@ test.describe('Select an action plan need', () => {
     await selectANeedPage.continueButton.click()
 
     await expect(page).toHaveURL(ActionPlanSelectANeedPage.url(caseReference))
-    await expect(page.getByText('Select which need you are creating an action for', { exact: true })).toHaveCount(2)
+    await expect(page.locator('[data-testid="error-messages"]')).toContainText(
+      'Select which need you are creating an action for',
+    )
+    await expect(page.locator('.govuk-error-message')).toContainText('Select which need you are creating an action for')
   })
 
   test('redirects to select an outcome for a need with multiple outcomes', async ({ page }) => {
@@ -151,13 +155,64 @@ test.describe('Select an action plan need', () => {
 
     const populatedActivitiesPage = await ActionPlanViewActivitiesPage.verifyOnPage(page)
     await populatedActivitiesPage.removeLinks.first().click()
-    await expect(page.getByRole('heading', { name: 'Are you sure you want to remove this activity?' })).toBeVisible()
-    await expect(page.getByText('Updated support organisation')).toBeVisible()
-    await page.getByRole('button', { name: 'Remove activity', exact: true }).click()
-    await expect(populatedActivitiesPage.activityRows).toHaveCount(0)
+    const removeActivityPage = await ActionPlanRemoveActivityPage.verifyOnPage(page)
+    await expect(removeActivityPage.hint).toHaveText(
+      'This is the only activity in the action plan. If you remove it, you will need to start the action plan again.',
+    )
 
-    await populatedActivitiesPage.addAnotherActivityRadios.getByLabel('No').check()
-    await populatedActivitiesPage.saveAndContinueButton.click()
-    await expect(page).toHaveURL(`/referral/${caseReference}/action-plan`)
+    await removeActivityPage.saveAndContinueButton.click()
+    await expect(page.locator('[data-testid="error-messages"]')).toContainText(
+      'Select yes if you want to remove this activity',
+    )
+    await expect(page.locator('.govuk-error-message')).toContainText('Select yes if you want to remove this activity')
+
+    await removeActivityPage.yesOption.check()
+    await removeActivityPage.saveAndContinueButton.click()
+    await expect(page).toHaveURL(`/referral/${caseReference}/action-plan/select-a-need`)
+  })
+
+  test('keeps an activity when no is selected and removes one of several when yes is selected', async ({ page }) => {
+    await communitySupport.stubGetActionPlanNeedsAndOutcomes(needsAndOutcomes)
+
+    await page.goto(ActionPlanSelectANeedPage.url(caseReference))
+    const selectANeedPage = await ActionPlanSelectANeedPage.verifyOnPage(page)
+    await selectANeedPage.needs.select('Accommodation')
+    await selectANeedPage.continueButton.click()
+
+    const firstActivityPage = await ActionPlanAddActivityPage.verifyOnPage(page)
+    await firstActivityPage.activityProvider.fill('First provider')
+    await firstActivityPage.activityDescription.fill('First activity')
+    await firstActivityPage.saveAndContinueButton.click()
+
+    const viewActivitiesPage = await ActionPlanViewActivitiesPage.verifyOnPage(page)
+    await viewActivitiesPage.addAnotherActivityRadios.getByLabel('Yes').check()
+    await viewActivitiesPage.saveAndContinueButton.click()
+
+    const secondActivityPage = await ActionPlanAddActivityPage.verifyOnPage(page)
+    await secondActivityPage.activityProvider.fill('Second provider')
+    await secondActivityPage.activityDescription.fill('Second activity')
+    await secondActivityPage.saveAndContinueButton.click()
+
+    await ActionPlanViewActivitiesPage.verifyOnPage(page)
+    await expect(viewActivitiesPage.activityRows).toHaveCount(2)
+
+    await viewActivitiesPage.removeLinks.first().click()
+    const removeActivityPage = await ActionPlanRemoveActivityPage.verifyOnPage(page)
+    await expect(removeActivityPage.hint).toHaveCount(0)
+    await removeActivityPage.noOption.check()
+    await removeActivityPage.saveAndContinueButton.click()
+
+    await ActionPlanViewActivitiesPage.verifyOnPage(page)
+    await expect(viewActivitiesPage.activityRows).toHaveCount(2)
+
+    await viewActivitiesPage.removeLinks.first().click()
+    await ActionPlanRemoveActivityPage.verifyOnPage(page)
+    await removeActivityPage.yesOption.check()
+    await removeActivityPage.saveAndContinueButton.click()
+
+    await ActionPlanViewActivitiesPage.verifyOnPage(page)
+    await expect(page).toHaveURL(ActionPlanViewActivitiesPage.url(caseReference))
+    await expect(viewActivitiesPage.activityRows).toHaveCount(1)
+    await expect(viewActivitiesPage.activityRows.first()).toContainText('Second provider')
   })
 })

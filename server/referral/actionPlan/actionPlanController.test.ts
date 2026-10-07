@@ -8,6 +8,7 @@ import ActionPlanSelectANeedPresenter from './selectANeed/actionPlanSelectANeedP
 import ActionPlanSelectOutcomePresenter from './selectOutcome/actionPlanSelectOutcomePresenter'
 import ActionPlanAddActivityPresenter from './addActivity/actionPlanAddActivityPresenter'
 import ActionPlanViewActivitiesPresenter from './viewActivities/actionPlanViewActivitiesPresenter'
+import ActionPlanRemoveActivityPresenter from './removeActivity/actionPlanRemoveActivityPresenter'
 import ActionPlanSessionDeliveryDetailsPresenter from './sessionDeliveryDetails/actionPlanSessionDeliveryDetailsPresenter'
 
 jest.mock('../../services/referralService')
@@ -16,6 +17,7 @@ jest.mock('./selectANeed/actionPlanSelectANeedPresenter')
 jest.mock('./selectOutcome/actionPlanSelectOutcomePresenter')
 jest.mock('./addActivity/actionPlanAddActivityPresenter')
 jest.mock('./viewActivities/actionPlanViewActivitiesPresenter')
+jest.mock('./removeActivity/actionPlanRemoveActivityPresenter')
 jest.mock('./sessionDeliveryDetails/actionPlanSessionDeliveryDetailsPresenter')
 
 describe('ActionPlanController', () => {
@@ -370,8 +372,75 @@ describe('ActionPlanController', () => {
       expect(res.redirect).toHaveBeenCalledWith('/referral/ZZ9876YY/action-plan/activities')
     })
 
-    it('shows the confirmation page for the selected activity', async () => {
-      req.params = { id: 'AB1234CD', activityIndex: '0' }
+    it('shows the remove page without the only-activity hint when there are several activities', async () => {
+      req.query = { activityIndex: '0' }
+      req.session.actionPlanActivities = {
+        caseReference: 'AB1234CD',
+        activities: [
+          { activityProvider: 'Remove provider', activityDescription: 'Remove details' },
+          { activityProvider: 'Keep provider', activityDescription: 'Keep details' },
+        ],
+      }
+
+      await actionPlanController.showRemoveActivityPage(req, res)
+
+      expect(ActionPlanRemoveActivityPresenter).toHaveBeenCalledWith('AB1234CD', 0, false)
+      expect(ActionPlanRemoveActivityPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+    })
+
+    it('shows the only-activity hint when it is the only activity', async () => {
+      req.query = { activityIndex: '0' }
+      req.session.actionPlanActivities = {
+        caseReference: 'AB1234CD',
+        activities: [{ activityProvider: 'Only provider', activityDescription: 'Only details' }],
+      }
+
+      await actionPlanController.showRemoveActivityPage(req, res)
+
+      expect(ActionPlanRemoveActivityPresenter).toHaveBeenCalledWith('AB1234CD', 0, true)
+    })
+
+    it('redirects to activities when the activity index is invalid', async () => {
+      req.query = { activityIndex: '5' }
+
+      await actionPlanController.showRemoveActivityPage(req, res)
+
+      expect(res.render).not.toHaveBeenCalled()
+      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/activities')
+    })
+
+    it('requires an option to be selected before removing', async () => {
+      req.query = { activityIndex: '0' }
+      req.url = '/referral/AB1234CD/action-plan/activities/remove?activityIndex=0'
+      req.session.actionPlanActivities = {
+        caseReference: 'AB1234CD',
+        activities: [{ activityProvider: 'Only provider', activityDescription: 'Only details' }],
+      }
+
+      await actionPlanController.removeActivity(req, res)
+
+      expect(req.flash).toHaveBeenCalledWith('removeActivityError', 'Select yes if you want to remove this activity')
+      expect(req.session.actionPlanActivities?.activities).toHaveLength(1)
+      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/activities/remove?activityIndex=0')
+    })
+
+    it('keeps the activity when no is selected', async () => {
+      req.query = { activityIndex: '0' }
+      req.body = { removeActivity: 'no' }
+      req.session.actionPlanActivities = {
+        caseReference: 'AB1234CD',
+        activities: [{ activityProvider: 'Only provider', activityDescription: 'Only details' }],
+      }
+
+      await actionPlanController.removeActivity(req, res)
+
+      expect(req.session.actionPlanActivities?.activities).toHaveLength(1)
+      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/activities')
+    })
+
+    it('removes the selected activity when yes is selected and others remain', async () => {
+      req.query = { activityIndex: '0' }
+      req.body = { removeActivity: 'yes' }
       req.session.actionPlanActivities = {
         caseReference: 'AB1234CD',
         activities: [
@@ -382,27 +451,27 @@ describe('ActionPlanController', () => {
 
       await actionPlanController.removeActivity(req, res)
 
-      expect(req.session.actionPlanActivities?.activities).toHaveLength(2)
-      expect(res.render).toHaveBeenCalled()
-    })
-
-    it('removes an activity after confirmation', async () => {
-      req.params = { id: 'AB1234CD', activityIndex: '0' }
-      req.session.actionPlanActivities = {
-        caseReference: 'AB1234CD',
-        activities: [
-          { activityProvider: 'Remove provider', activityDescription: 'Remove details' },
-          { activityProvider: 'Keep provider', activityDescription: 'Keep details' },
-        ],
-      }
-
-      await actionPlanController.confirmRemoveActivity(req, res)
-
       expect(req.session.actionPlanActivities).toEqual({
         caseReference: 'AB1234CD',
         activities: [{ activityProvider: 'Keep provider', activityDescription: 'Keep details' }],
       })
       expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/activities')
+    })
+
+    it('removes the need and outcome and returns to select a need when the only activity is removed', async () => {
+      req.query = { activityIndex: '0' }
+      req.body = { removeActivity: 'yes' }
+      req.session.actionPlanAction = { needId: 'need-1', outcomeId: 'outcome-1' }
+      req.session.actionPlanActivities = {
+        caseReference: 'AB1234CD',
+        activities: [{ activityProvider: 'Only provider', activityDescription: 'Only details' }],
+      }
+
+      await actionPlanController.removeActivity(req, res)
+
+      expect(req.session.actionPlanActivities).toBeUndefined()
+      expect(req.session.actionPlanAction).toBeUndefined()
+      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/select-a-need')
     })
   })
 
