@@ -881,7 +881,7 @@ describe('ActionPlanController', () => {
       )
     })
 
-    it('redirects to the action plan page when the submitted form is valid', async () => {
+    it('redirects to the person involvement page when the service end date is unchanged', async () => {
       req.method = 'POST'
       req.body = { SERVICE_END_DATE_CHECK: 'YES' }
       referralService.getServiceEndDateCheck.mockResolvedValue(serviceEndDateCheckDetails)
@@ -889,12 +889,31 @@ describe('ActionPlanController', () => {
 
       await actionPlanController.showServiceEndDateCheckPage(req, res)
 
-      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan')
+      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/person-involvement')
       expect(req.session.actionPlanSessionDelivery).toEqual({
         caseReference: 'AB1234CD',
         sessionDeliveryDetails: {
           answers: [
             { questionId: 'question-1', incomingAnswerDetails: [{ value: 'YES', additionalDetails: undefined }] },
+          ],
+        },
+      })
+    })
+
+    it('redirects to the update service end date page when the service end date has changed', async () => {
+      req.method = 'POST'
+      req.body = { SERVICE_END_DATE_CHECK: 'NO' }
+      referralService.getServiceEndDateCheck.mockResolvedValue(serviceEndDateCheckDetails)
+      res.redirect = jest.fn()
+
+      await actionPlanController.showServiceEndDateCheckPage(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/update-service-end-date')
+      expect(req.session.actionPlanSessionDelivery).toEqual({
+        caseReference: 'AB1234CD',
+        sessionDeliveryDetails: {
+          answers: [
+            { questionId: 'question-1', incomingAnswerDetails: [{ value: 'NO', additionalDetails: undefined }] },
           ],
         },
       })
@@ -911,7 +930,7 @@ describe('ActionPlanController', () => {
 
       expect(req.flash).toHaveBeenCalledWith(
         'SERVICE_END_DATE_CHECKError',
-        'Select yes if the service end date is still REPLACE WITH API DATE',
+        'Select yes if the service end date is still 24 May 2026',
       )
       expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/service-end-date-check')
     })

@@ -5,6 +5,14 @@ const buildNothingSelectedError = (endDate: string) => ({
   error: `Select yes if the service end date is still ${endDate}`,
 })
 
+export const getServiceEndDateValue = (sessionDeliveryDetails: ActionPlanSessionDeliveryDetailsResponse): string => {
+  const serviceEndDateCheckQuestion = sessionDeliveryDetails.questions.find(
+    question => question.key === 'SERVICE_END_DATE_CHECK',
+  )
+  const match = serviceEndDateCheckQuestion?.label.match(/(\d{1,2}\s+[A-Za-z]+\s+\d{4})/)
+  return match?.[1] ?? 'the service end date'
+}
+
 const choiceValuesForKey = (
   sessionDeliveryDetails: ActionPlanSessionDeliveryDetailsResponse,
   key: string,
@@ -19,7 +27,7 @@ export const ActionPlanServiceEndDateCheckFormDataSchemaBuilder = (
 ) => {
   const serviceEndDateCheckChoices = choiceValuesForKey(sessionDeliveryDetails, 'SERVICE_END_DATE_CHECK')
 
-  const nothingSelectedError = buildNothingSelectedError(endDate)
+  const nothingSelectedError = buildNothingSelectedError(endDate || 'the service end date')
 
   return z
     .object({

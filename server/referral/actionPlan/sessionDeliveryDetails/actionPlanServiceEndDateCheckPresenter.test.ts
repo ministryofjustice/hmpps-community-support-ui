@@ -138,10 +138,8 @@ describe('ActionPlanServiceEndDateCheckPresenter', () => {
   it('builds the inset text with the service end date message', () => {
     const content = renderAndGetContent('AB1234CD', sessionDeliveryDetails)
 
-    // NB: source text still contains the "GET THIS FROM API" placeholder - update this
-    // assertion once the presenter sources the real end date instead of a hardcoded string.
     expect(content.insetTextArgs).toEqual({
-      text: 'This referral states the service should be completed by 24 May 2026 GET THIS FROM API',
+      text: 'This referral states the service should be completed by 24 May 2026',
     })
   })
 })

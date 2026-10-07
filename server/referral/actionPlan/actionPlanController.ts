@@ -22,7 +22,10 @@ import { ActionPlanRisksAndAdjustmentsFormDataSchemaBuilder } from '../../valida
 import { ActionPlanActivityFormDataSchema } from '../../validation/ActionPlanActivityFormData'
 import { ActionPlanRemoveActivityFormDataSchema } from '../../validation/ActionPlanRemoveActivityFormData'
 import ActionPlanServiceEndDateCheckPresenter from './sessionDeliveryDetails/actionPlanServiceEndDateCheckPresenter'
-import { ActionPlanServiceEndDateCheckFormDataSchemaBuilder } from '../../validation/ActionPlanServiceEndDateCheckFormData'
+import {
+  ActionPlanServiceEndDateCheckFormDataSchemaBuilder,
+  getServiceEndDateValue,
+} from '../../validation/ActionPlanServiceEndDateCheckFormData'
 
 class ActionPlanController {
   constructor(private readonly referralService: ReferralService) {}
@@ -384,7 +387,7 @@ class ActionPlanController {
         const existingSessionDelivery = this.getActionPlanSessionDelivery(req, caseReference)?.sessionDeliveryDetails
         const mergedSessionDelivery = this.mergeSessionDeliveryDetailsAnswers(existingSessionDelivery, request)
         this.setActionPlanSessionDelivery(req, caseReference, { sessionDeliveryDetails: mergedSessionDelivery })
-        return res.redirect(`/referral/${caseReference}/action-plan`)
+        return res.redirect(`/referral/${caseReference}/action-plan/service-end-date-check`)
       })
     }
     const sessionDelivery = this.getActionPlanSessionDelivery(req, caseReference)?.sessionDeliveryDetails
@@ -408,13 +411,19 @@ class ActionPlanController {
     const userInputData = flashData.length > 0 ? JSON.parse(flashData[0]) : undefined
 
     if (req.method === 'POST') {
-      const schema = ActionPlanServiceEndDateCheckFormDataSchemaBuilder(sessionDeliveryDetails, 'REPLACE WITH API DATE')
+      const serviceEndDate = getServiceEndDateValue(sessionDeliveryDetails)
+      const schema = ActionPlanServiceEndDateCheckFormDataSchemaBuilder(sessionDeliveryDetails, serviceEndDate)
       return validateRequestBodyAgainstSchema(schema, req, res, async form => {
         const request = buildSessionDeliveryDetailsRequestFromForm(sessionDeliveryDetails, form)
         const existingSessionDelivery = this.getActionPlanSessionDelivery(req, caseReference)?.sessionDeliveryDetails
         const mergedSessionDelivery = this.mergeSessionDeliveryDetailsAnswers(existingSessionDelivery, request)
         this.setActionPlanSessionDelivery(req, caseReference, { sessionDeliveryDetails: mergedSessionDelivery })
-        return res.redirect(`/referral/${caseReference}/action-plan`)
+
+        if (form.SERVICE_END_DATE_CHECK === 'YES') {
+          return res.redirect(`/referral/${caseReference}/action-plan/person-involvement`)
+        }
+
+        return res.redirect(`/referral/${caseReference}/action-plan/update-service-end-date`)
       })
     }
 

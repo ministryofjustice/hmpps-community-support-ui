@@ -708,6 +708,22 @@ export default {
         jsonBody: needsAndOutcomes,
       },
     }),
+  stubGetCheckServiceEndDate: (
+    caseReference: string,
+    checkServiceEndDate: ActionPlanSessionDeliveryDetailsResponse,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: `/community-support/bff/referral/${caseReference}/action-plan/service-delivery-details/service-end-date-check`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: checkServiceEndDate,
+      },
+    }),
   stubGetWithdrawalReasons: (
     withdrawalReasons: WithdrawalReasonsGroupedBffResponseDto,
     httpStatus = 200,

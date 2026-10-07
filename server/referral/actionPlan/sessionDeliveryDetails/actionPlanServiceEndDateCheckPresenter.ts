@@ -3,6 +3,7 @@ import { Response } from 'express'
 import { GovukFrontendInsetText, GovukFrontendRadios, GovukFrontendRadiosItem } from '@govuk-frontend'
 import PresenterBase from '../../../presenter/presenterBase'
 import { ErrorMiddlewareErrors } from '../../../@types/express'
+import { getServiceEndDateValue } from '../../../validation/ActionPlanServiceEndDateCheckFormData'
 import { ServiceEndDateCheckContent, ServiceEndDateCheckViewModel } from './serviceEndDateCheckViewModel'
 import SessionDeliveryDetailsQuestions from './sessionDeliveryDetailsQuestions'
 
@@ -56,8 +57,10 @@ export default class ActionPlanServiceEndDateCheckPresenter extends PresenterBas
   }
 
   private generateInsetText(): GovukFrontendInsetText {
+    const serviceEndDate = getServiceEndDateValue(this.sessionDeliveryDetails)
+
     return {
-      text: 'This referral states the service should be completed by 24 May 2026 GET THIS FROM API',
+      text: `This referral states the service should be completed by ${serviceEndDate}`,
     }
   }
 
