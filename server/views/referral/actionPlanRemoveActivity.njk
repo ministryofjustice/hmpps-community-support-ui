@@ -1,19 +1,15 @@
 {% extends "../partials/layout.njk" %}
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
 
 {% set pageTitle = content.pageHeader + " – " + applicationName %}
 {% set mainClasses = "govuk-body" %}
 
 {% block contentBody %}
-  <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
-
-  {{ govukSummaryList(content.activitySummary) }}
-
-  <form method="post" action="{{ content.removeAction }}">
+  <form method="post" action="{{ content.formAction }}" novalidate>
     <input type="hidden" name="_csrf" value="{{csrfToken}}">
-    {{ govukButton(content.removeButton) }}
-    <a class="govuk-link govuk-!-margin-left-3" href="{{ content.cancelLink.href }}">{{ content.cancelLink.text }}</a>
+    {{ govukRadios(content.removeActivityRadio) }}
+    {{ govukButton(content.saveAndContinueButton) }}
   </form>
 {% endblock %}

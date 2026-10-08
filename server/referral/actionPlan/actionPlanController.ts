@@ -20,6 +20,7 @@ import { ActionPlanSessionDeliveryDetailsFormDataSchemaBuilder } from '../../val
 import ActionPlanRisksAndAdjustmentsPresenter from './sessionDeliveryDetails/actionPlanRisksAndAdjustmentsPresenter'
 import { ActionPlanRisksAndAdjustmentsFormDataSchemaBuilder } from '../../validation/ActionPlanRisksAndAdjustmentsFormData'
 import { ActionPlanActivityFormDataSchema } from '../../validation/ActionPlanActivityFormData'
+import { ActionPlanRemoveActivityFormDataSchema } from '../../validation/ActionPlanRemoveActivityFormData'
 
 class ActionPlanController {
   constructor(private readonly referralService: ReferralService) {}
@@ -232,37 +233,58 @@ class ActionPlanController {
     })
   }
 
-  async removeActivity(req: Request, res: Response) {
-    const { id: caseReference, activityIndex: activityIndexParam } = req.params as {
-      id: string
-      activityIndex: string
-    }
-    const activities = this.getActionPlanActivities(req, caseReference)
-    const activityIndex = Number(activityIndexParam)
-    const activity = Number.isInteger(activityIndex) ? activities[activityIndex] : undefined
+  private getRemoveActivityIndex(req: Request, activities: ActionPlanActivity[]): number | undefined {
+    const { activityIndex } = (req.query ?? {}) as { activityIndex?: string }
+    if (typeof activityIndex !== 'string' || !/^\d+$/.test(activityIndex)) return undefined
 
-    if (!activity || activityIndex < 0 || activityIndex >= activities.length) {
+    const index = Number(activityIndex)
+    return index < activities.length ? index : undefined
+  }
+
+  async showRemoveActivityPage(req: Request, res: Response) {
+    const { id: caseReference } = req.params as { id: string }
+    const activities = this.getActionPlanActivities(req, caseReference)
+    const activityIndex = this.getRemoveActivityIndex(req, activities)
+
+    if (activityIndex === undefined) {
       return res.redirect(`/referral/${caseReference}/action-plan/activities`)
     }
 
-    const presenter = new ActionPlanRemoveActivityPresenter(caseReference, activityIndex, activity)
+    const presenter = new ActionPlanRemoveActivityPresenter(caseReference, activityIndex, activities.length === 1)
     return presenter.renderPage(res)
   }
 
-  async confirmRemoveActivity(req: Request, res: Response) {
-    const { id: caseReference, activityIndex: activityIndexParam } = req.params as {
-      id: string
-      activityIndex: string
-    }
+  async removeActivity(req: Request, res: Response) {
+    const { id: caseReference } = req.params as { id: string }
+    const activitiesPath = `/referral/${caseReference}/action-plan/activities`
     const activities = this.getActionPlanActivities(req, caseReference)
-    const activityIndex = Number(activityIndexParam)
+    const activityIndex = this.getRemoveActivityIndex(req, activities)
 
-    if (Number.isInteger(activityIndex) && activityIndex >= 0 && activityIndex < activities.length) {
-      activities.splice(activityIndex, 1)
-      this.setActionPlanActivities(req, caseReference, activities)
+    if (activityIndex === undefined) {
+      return res.redirect(activitiesPath)
     }
 
-    return res.redirect(`/referral/${caseReference}/action-plan/activities`)
+    return validateRequestBodyAgainstSchema(ActionPlanRemoveActivityFormDataSchema, req, res, async form => {
+      if (form.removeActivity === 'no') {
+        return res.redirect(activitiesPath)
+      }
+
+      if (activities.length === 1) {
+        delete req.session.actionPlanActivities
+        delete req.session.actionPlanAction
+        if (req.session.actionPlanSessionDelivery?.caseReference === caseReference) {
+          delete req.session.actionPlanSessionDelivery
+        }
+        return res.redirect(`/referral/${caseReference}/action-plan/select-a-need`)
+      }
+
+      this.setActionPlanActivities(
+        req,
+        caseReference,
+        activities.filter((_, index) => index !== activityIndex),
+      )
+      return res.redirect(activitiesPath)
+    })
   }
 
   async saveActivities(req: Request, res: Response) {

@@ -23,7 +23,7 @@ export default class ActionPlanViewActivitiesPage extends AbstractPage {
     this.header = page.getByRole('heading', { level: 1 })
     this.addAnotherActivityRadios = page.locator('.govuk-radios')
     this.saveAndContinueButton = page.getByRole('button', { name: 'Save and continue', exact: true })
-    this.activitiesTable = page.getByTestId('action-plan-activities-table')
+    this.activitiesTable = page.locator('[data-testid="action-plan-activities-table"]')
     this.activityRows = this.activitiesTable.locator('tbody tr')
     this.removeLinks = this.activitiesTable.getByRole('link', { name: 'Remove', exact: true })
   }
