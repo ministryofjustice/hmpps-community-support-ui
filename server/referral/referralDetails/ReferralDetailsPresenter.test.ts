@@ -23,6 +23,7 @@ describe('ReferralDetailsPresenter', () => {
       items: [
         { text: 'Case details', href: `/referral-details/${inputDto.referenceNumber}`, active: true },
         { text: 'Progress', href: `/progress/${inputDto.referenceNumber}`, active: false },
+        { text: 'Appointments', href: `/referral/${inputDto.referenceNumber}/appointments`, active: false },
         { text: 'Change log', href: `/change-log/${inputDto.referenceNumber}`, active: false },
       ],
     },

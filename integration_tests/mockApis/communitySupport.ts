@@ -14,6 +14,7 @@ import {
   ProbationOffice,
   ProbationPractitionerDetails,
   ReferralInformation,
+  ReferralAppointmentsBffResponseDto,
   SubmitReferralResponse,
   TaskListStatusDto,
   CaseWorkerDto,
@@ -575,6 +576,22 @@ export default {
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: referralProgress,
         transformers: ['response-template'],
+      },
+    }),
+  stubGetReferralAppointments: (
+    appointments: ReferralAppointmentsBffResponseDto,
+    caseReference: string,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: `/community-support/bff/referral/${caseReference}/appointments`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: appointments,
       },
     }),
   stubIcsFeedbackSubmission: (

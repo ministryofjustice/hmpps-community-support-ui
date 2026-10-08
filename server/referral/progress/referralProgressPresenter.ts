@@ -14,7 +14,7 @@ import { ReferralProgressContent, ReferralProgressViewModel } from './referralPr
 import { ReferralProgressBannerContent } from './ReferralProgressBannerContent'
 import type { AuthSource } from '../../interfaces/hmppsUser'
 
-type TabKey = 'caseDetails' | 'progress' | 'changeLog'
+type TabKey = 'caseDetails' | 'progress' | 'appointments' | 'changeLog'
 type StatusKey = ReferralAppointmentHistory['status'] | 'NOT_SCHEDULED'
 type StatusConfig = { label: string; tagClass: string; actions: { label: string; href: string }[] }
 
@@ -120,6 +120,7 @@ export default class ReferralProgressPresenter extends PresenterBase<
     this.tabPaths = {
       caseDetails: `/referral-details/${this.caseReference}`,
       progress: `/progress/${this.caseReference}`,
+      appointments: `/referral/${this.caseReference}/appointments`,
       changeLog: '#',
     }
   }

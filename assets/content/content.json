@@ -182,6 +182,11 @@
         "href": "/progress"
       },
       {
+        "id": "appointments",
+        "text": "Appointments",
+        "href": "/referral/:id/appointments"
+      },
+      {
         "id": "changeLog",
         "text": "Change log",
         "href": "/change-log"
@@ -280,6 +285,11 @@
         "href": "/progress"
       },
       {
+        "id": "appointments",
+        "title": "Appointments",
+        "href": "/referral/appointments"
+      },
+      {
         "id": "changeLog",
         "title": "Change log",
         "href": "/change-log"
@@ -288,6 +298,32 @@
     "progressActiveColumnHeaders": ["Date and time", "Status", "Action"],
     "progressInactiveColumnHeaders": ["Status", "Action"],
     "historySummary": "View ICS history"
+  },
+  "/referral/:id/appointments": {
+    "pageHeader": "Referral for",
+    "subNavTitle": "Referral",
+    "appointmentsTitle": "Appointments",
+    "appointmentTypeColumnHeader": "Appointment",
+    "dateTimeColumnHeader": "Date and time",
+    "noAppointmentsMessage": "No appointments scheduled",
+    "createAppointmentText": "Create an Appointment",
+    "subNavItems": [
+      { "id": "caseDetails", "title": "Case details" },
+      { "id": "progress", "title": "Progress" },
+      { "id": "appointments", "title": "Appointments" },
+      { "id": "changeLog", "title": "Change log" }
+    ]
+  },
+  "/referral/:id/appointment/select-type": {
+    "pageTitle": "Select appointment type",
+    "pageHeader": "Select appointment type",
+    "appointmentTypes": [
+      { "value": "CONTACT_SESSION", "text": "Contact session" },
+      { "value": "PRE_RELEASE_SESSION", "text": "Pre-release session" },
+      { "value": "POST_RELEASE_SESSION", "text": "Post-release session" },
+      { "value": "HANDOVER_SESSION", "text": "Handover session" }
+    ],
+    "backLinkText": "Back to appointments"
   },
   "/referral/:id/action-plan": {
     "pageHeader": "Action plan",

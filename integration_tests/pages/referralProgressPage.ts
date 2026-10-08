@@ -29,6 +29,8 @@ export default class ReferralProgressPage extends AbstractPage {
 
   readonly actionPlanLink: Locator
 
+  readonly appointmentsLink: Locator
+
   static url(caseReference: string): string {
     return `/progress/${caseReference}`
   }
@@ -52,6 +54,7 @@ export default class ReferralProgressPage extends AbstractPage {
     this.actionPlanTitle = page.getByRole('heading', { name: 'Action plan', level: 3 })
     this.actionPlanTable = page.locator('[data-testid="action-plan-table"]')
     this.actionPlanLink = page.getByRole('link', { name: 'View action plan', exact: true })
+    this.appointmentsLink = page.getByRole('link', { name: 'Appointments', exact: true })
   }
 
   static async verifyOnPage(page: Page): Promise<ReferralProgressPage> {

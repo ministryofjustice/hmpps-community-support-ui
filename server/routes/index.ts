@@ -110,6 +110,12 @@ export default function routes({
 
   get('/progress/:caseReference', (req, res) => referralController.showReferralProgressDetails(req, res))
 
+  get('/referral/:caseReference/appointments', (req, res) => referralController.showReferralAppointments(req, res))
+
+  get('/referral/:caseReference/appointment/select-type', (req, res) =>
+    referralController.showSelectAppointmentType(req, res),
+  )
+
   get('/ics-feedback/:caseRefId/attendance', async (req, res) =>
     appointmentController.icsAppointmentAttendance(req, res),
   )
