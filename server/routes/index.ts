@@ -236,13 +236,11 @@ export default function routes({
 
   post('/referral/:id/action-plan/activities/add', (req, res) => actionPlanController.addActivity(req, res))
 
-  get('/referral/:id/action-plan/activities/:activityIndex/remove', (req, res) =>
-    actionPlanController.removeActivity(req, res),
+  get('/referral/:id/action-plan/activities/remove', (req, res) =>
+    actionPlanController.showRemoveActivityPage(req, res),
   )
 
-  post('/referral/:id/action-plan/activities/:activityIndex/remove', (req, res) =>
-    actionPlanController.confirmRemoveActivity(req, res),
-  )
+  post('/referral/:id/action-plan/activities/remove', (req, res) => actionPlanController.removeActivity(req, res))
 
   post('/referral/:id/action-plan/save-activities', (req, res) => actionPlanController.saveActivities(req, res))
 

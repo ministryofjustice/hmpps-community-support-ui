@@ -349,12 +349,12 @@
     "activityDescriptionLabel": "What does the activity involve?",
     "saveAndContinueButtonText": "Save and continue"
   },
-  "/referral/:id/action-plan/activities/:activityIndex/remove": {
+  "/referral/:id/action-plan/activities/remove": {
     "pageHeader": "Are you sure you want to remove this activity?",
-    "activityProviderLabel": "Who will deliver this",
-    "activityDetailsLabel": "Activity details",
-    "removeButtonText": "Remove activity",
-    "cancelLinkText": "Cancel"
+    "onlyActivityHint": "This is the only activity in the action plan. If you remove it, you will need to start the action plan again.",
+    "yesOptionText": "Yes",
+    "noOptionText": "No",
+    "saveAndContinueButtonText": "Save and continue"
   },
   "/ics-feedback/:id/did-session-take-place": {
     "submitButtonText": "Continue",
