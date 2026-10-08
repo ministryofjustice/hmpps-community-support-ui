@@ -4,7 +4,8 @@ import { ActionPlanSessionDeliveryDetailsResponse, ActionPlanSummaryDto } from '
 import { login, resetStubs } from '../testUtils'
 import communitySupport from '../mockApis/communitySupport'
 import ActionPlanRisksAndAdjustmentsPage from '../pages/actionPlanRisksAndAdjustmentsPage'
-import ActionPlanPage from '../pages/actionPlanPage'
+import ActionPlanCheckServiceEndDatePage from '../pages/actionPlanCheckServiceEndDatePage'
+import { serviceEndDateUnchangedResponse } from '../../server/testutils/factories/ActionPlanSessionDeliveryDetailsResponse'
 
 test.describe('Action Plan Risks and Adjustments Page', () => {
   const caseReference = 'AB1234CD'
@@ -97,9 +98,10 @@ test.describe('Action Plan Risks and Adjustments Page', () => {
     await expect(page.getByRole('radio', { name: 'No', exact: true }).last()).toBeChecked()
   })
 
-  test('submits answers and redirects to the action plan page', async ({ page }) => {
+  test('submits answers and redirects to the check service end date page', async ({ page }) => {
     await communitySupport.stubGetRisksAndAdjustments(caseReference, risksAndAdjustments)
     await communitySupport.stubGetActionPlanSummary(caseReference, actionPlanSummary)
+    await communitySupport.stubGetCheckServiceEndDate(caseReference, serviceEndDateUnchangedResponse)
 
     await page.goto(ActionPlanRisksAndAdjustmentsPage.url(caseReference))
     const risksAndAdjustmentsPage = await ActionPlanRisksAndAdjustmentsPage.verifyOnPage(page)
@@ -110,7 +112,7 @@ test.describe('Action Plan Risks and Adjustments Page', () => {
 
     await risksAndAdjustmentsPage.continueButton.click()
 
-    await ActionPlanPage.verifyOnPage(page)
-    await expect(page).toHaveURL(ActionPlanPage.url(caseReference))
+    await ActionPlanCheckServiceEndDatePage.verifyOnPage(page)
+    await expect(page).toHaveURL(ActionPlanCheckServiceEndDatePage.url(caseReference))
   })
 })

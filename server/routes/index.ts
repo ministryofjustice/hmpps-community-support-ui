@@ -252,6 +252,10 @@ export default function routes({
     actionPlanController.showRisksAndAdjustmentsPage(req, res),
   )
 
+  getOrPost('/referral/:id/action-plan/service-end-date-check', (req, res) =>
+    actionPlanController.showServiceEndDateCheckPage(req, res),
+  )
+
   get('/referral/:caseIdentifier/withdraw', (req, res) => withdrawalController.showReason(req, res))
 
   post('/referral/:caseIdentifier/withdraw', (req, res) => withdrawalController.submitReason(req, res))

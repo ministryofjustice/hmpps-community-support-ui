@@ -16,6 +16,7 @@ import {
   ActionPlanSessionDeliveryDetailsViewModel,
 } from './actionPlanSessionDeliveryDetailsViewModel'
 import { ErrorMiddlewareErrors } from '../../../@types/express'
+import SessionDeliveryDetailsQuestions from './sessionDeliveryDetailsQuestions'
 
 export default class ActionPlanSessionDeliveryDetailsPresenter extends PresenterBase<
   ActionPlanSessionDeliveryDetailsViewModel,
@@ -149,9 +150,15 @@ export default class ActionPlanSessionDeliveryDetailsPresenter extends Presenter
 
   protected buildViewModel(res: Response): ActionPlanSessionDeliveryDetailsViewModel {
     const content = this.buildStaticContent(res)
-    const frequencyQuestion = this.sessionDeliveryDetails.questions.find(q => q.key === 'SESSION_FREQUENCY')!
-    const deliveryMethodQuestion = this.sessionDeliveryDetails.questions.find(q => q.key === 'SESSION_DELIVERY_METHOD')!
-    const sessionFormatQuestion = this.sessionDeliveryDetails.questions.find(q => q.key === 'SESSION_FORMAT')!
+    const frequencyQuestion = this.sessionDeliveryDetails.questions.find(
+      q => q.key === SessionDeliveryDetailsQuestions.SESSION_FREQUENCY,
+    )!
+    const deliveryMethodQuestion = this.sessionDeliveryDetails.questions.find(
+      q => q.key === SessionDeliveryDetailsQuestions.SESSION_DELIVERY_METHOD,
+    )!
+    const sessionFormatQuestion = this.sessionDeliveryDetails.questions.find(
+      q => q.key === SessionDeliveryDetailsQuestions.SESSION_FORMAT,
+    )!
     const videoCallChoice = deliveryMethodQuestion.choices.find(c => c.value === 'VIDEO_CALL')!
     const phoneCallChoice = deliveryMethodQuestion.choices.find(c => c.value === 'PHONE_CALL')!
 
