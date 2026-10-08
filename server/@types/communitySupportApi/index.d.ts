@@ -47,6 +47,8 @@ type ServiceDaysPageDto = components['schemas']['ServiceDaysPageDto']
 type NeedsInterpreterBffResponseDto = components['schemas']['NeedsInterpreterBffResponseDto']
 type CommunitySupportRiskDto = components['schemas']['CommunitySupportRiskDto']
 type ActionPlanSummaryDto = components['schemas']['ActionPlanSummaryDto']
+type ActionPlanActionRequest = components['schemas']['ActionPlanActionRequest']
+type ActionPlanActionResponse = components['schemas']['ActionPlanActionResponse']
 type ActionPlanSelectANeedResponse = components['schemas']['ActionPlanSelectANeedResponse']
 type ActionPlanSelectANeedNeed = components['schemas']['ActionPlanSelectANeedNeed']
 type ActionPlanSelectANeedOutcome = components['schemas']['ActionPlanSelectANeedOutcome']
@@ -124,6 +126,8 @@ export type {
   Selection,
   CommunitySupportRiskDto,
   ActionPlanSummaryDto,
+  ActionPlanActionRequest,
+  ActionPlanActionResponse,
   ActionPlanSelectANeedResponse,
   ActionPlanSelectANeedNeed,
   ActionPlanSelectANeedOutcome,

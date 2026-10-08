@@ -13,6 +13,8 @@ import type {
   CommunitySupportRiskInformationDto,
   CommunitySupportRiskDto,
   ActionPlanSummaryDto,
+  ActionPlanActionRequest,
+  ActionPlanActionResponse,
   WithdrawalReasonsGroupedBffResponseDto,
   AreaConfirmationBffResponseDto,
   CommunityServiceProviderRequest,
@@ -359,6 +361,27 @@ describe('CommunitySupportApiClient tests', () => {
       const result = communitySupportApiClient.getActionPlanSummary(caseReference, 'user1')
 
       expect(result).resolves.toEqual(mockActionPlanSummary)
+    })
+  })
+  describe('submitAction tests', () => {
+    it('should submit the action plan action and return the API response', () => {
+      const caseReference = 'AB1234CD'
+      const request: ActionPlanActionRequest = {
+        needId: 'need-id',
+        outcomeId: 'outcome-id',
+        activities: [{ who: 'Local group', activityDetails: 'Weekly sessions', status: 'Active' }],
+      }
+      const response: ActionPlanActionResponse = { success: true, message: 'Action submitted successfully' }
+
+      nock('http://localhost:8080', {
+        reqheaders: { authorization: 'Bearer dummy-token' },
+      })
+        .post(`/referral/${caseReference}/action-plan/action`, request)
+        .reply(200, response)
+
+      const result = communitySupportApiClient.submitAction(caseReference, request, 'user1')
+
+      expect(result).resolves.toEqual(response)
     })
   })
   describe('getWithdrawalReasons tests', () => {

@@ -8,6 +8,7 @@ import {
   IcsFeedbackSubmission,
   IcsFeedbackSubmissionResponse,
   ActionPlanSummaryDto,
+  ActionPlanActionResponse,
   ActionPlanSessionDeliveryDetailsResponse,
   ActionPlanSelectANeedResponse,
   WithdrawalReasonsGroupedBffResponseDto,
@@ -646,6 +647,18 @@ export default {
         status: httpStatus,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: actionPlanSummary,
+      },
+    }),
+  stubSubmitAction: (caseReference: string, response: ActionPlanActionResponse, httpStatus = 200): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'POST',
+        urlPath: `/community-support/referral/${caseReference}/action-plan/action`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: response,
       },
     }),
   stubGetSessionDeliveryDetails: (
