@@ -15,6 +15,7 @@ import {
   ActionPlanRisksAndAdjustmentsContent,
   ActionPlanRisksAndAdjustmentsViewModel,
 } from './actionPlanRisksAndAdjustmentsViewModel'
+import SessionDeliveryDetailsQuestions from './sessionDeliveryDetailsQuestions'
 
 export default class ActionPlanRisksAndAdjustmentsPresenter extends PresenterBase<
   ActionPlanRisksAndAdjustmentsViewModel,
@@ -106,10 +107,10 @@ export default class ActionPlanRisksAndAdjustmentsPresenter extends PresenterBas
   protected buildViewModel(res: Response): ActionPlanRisksAndAdjustmentsViewModel {
     const content = this.buildStaticContent(res)
     const plannedActivitiesRiskQuestion = this.sessionDeliveryDetails.questions.find(
-      q => q.key === 'RISK_ASSOCIATED_WITH_PLANNED_ACTIVITIES',
+      q => q.key === SessionDeliveryDetailsQuestions.RISK_ASSOCIATED_WITH_PLANNED_ACTIVITIES,
     )!
     const plannedActivitiesAdjustmentsQuestion = this.sessionDeliveryDetails.questions.find(
-      q => q.key === 'REASONABLE_ADJUSTMENTS_FOR_PLANNED_ACTIVITIES',
+      q => q.key === SessionDeliveryDetailsQuestions.REASONABLE_ADJUSTMENTS_FOR_PLANNED_ACTIVITIES,
     )!
     const riskInfo = plannedActivitiesRiskQuestion.choices.find(c => c.value === 'YES')!
     const adjustmentInfo = plannedActivitiesAdjustmentsQuestion.choices.find(c => c.value === 'YES')!

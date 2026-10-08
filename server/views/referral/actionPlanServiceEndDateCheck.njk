@@ -1,0 +1,22 @@
+{% extends "../partials/layout.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+
+{% set pageTitle = content.pageTitle %}
+{% set mainClasses = "govuk-body" %}
+
+{% block contentBody %}
+  <h1 class="govuk-heading-xl">{{ content.pageHeader }}</h1>
+
+  <form method="post">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+
+    {{ govukInsetText(content.insetTextArgs) }}
+
+    {{ govukRadios(content.serviceEndDateCheckRadioArgs) }}
+
+    {{ govukButton(content.submitButton) }}
+  </form>
+{% endblock %}

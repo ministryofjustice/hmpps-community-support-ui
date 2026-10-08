@@ -21,6 +21,11 @@ import ActionPlanRisksAndAdjustmentsPresenter from './sessionDeliveryDetails/act
 import { ActionPlanRisksAndAdjustmentsFormDataSchemaBuilder } from '../../validation/ActionPlanRisksAndAdjustmentsFormData'
 import { ActionPlanActivityFormDataSchema } from '../../validation/ActionPlanActivityFormData'
 import { ActionPlanRemoveActivityFormDataSchema } from '../../validation/ActionPlanRemoveActivityFormData'
+import ActionPlanServiceEndDateCheckPresenter from './sessionDeliveryDetails/actionPlanServiceEndDateCheckPresenter'
+import {
+  ActionPlanServiceEndDateCheckFormDataSchemaBuilder,
+  getServiceEndDateValue,
+} from '../../validation/ActionPlanServiceEndDateCheckFormData'
 
 class ActionPlanController {
   constructor(private readonly referralService: ReferralService) {}
@@ -382,10 +387,9 @@ class ActionPlanController {
         const existingSessionDelivery = this.getActionPlanSessionDelivery(req, caseReference)?.sessionDeliveryDetails
         const mergedSessionDelivery = this.mergeSessionDeliveryDetailsAnswers(existingSessionDelivery, request)
         this.setActionPlanSessionDelivery(req, caseReference, { sessionDeliveryDetails: mergedSessionDelivery })
-        return res.redirect(`/referral/${caseReference}/action-plan`)
+        return res.redirect(`/referral/${caseReference}/action-plan/service-end-date-check`)
       })
     }
-
     const sessionDelivery = this.getActionPlanSessionDelivery(req, caseReference)?.sessionDeliveryDetails
     const validationErrors = res.locals.errors
     const presenter = new ActionPlanRisksAndAdjustmentsPresenter(
@@ -395,6 +399,42 @@ class ActionPlanController {
       userInputData,
     )
 
+    return presenter.renderPage(res)
+  }
+
+  async showServiceEndDateCheckPage(req: Request, res: Response) {
+    const { id: caseReference } = req.params as { id: string }
+    const { username } = res.locals.user
+
+    const sessionDeliveryDetails = await this.referralService.getServiceEndDateCheck(caseReference, username)
+    const flashData = req.flash('value')
+    const userInputData = flashData.length > 0 ? JSON.parse(flashData[0]) : undefined
+
+    if (req.method === 'POST') {
+      const serviceEndDate = getServiceEndDateValue(sessionDeliveryDetails)
+      const schema = ActionPlanServiceEndDateCheckFormDataSchemaBuilder(sessionDeliveryDetails, serviceEndDate)
+      return validateRequestBodyAgainstSchema(schema, req, res, async form => {
+        const request = buildSessionDeliveryDetailsRequestFromForm(sessionDeliveryDetails, form)
+        const existingSessionDelivery = this.getActionPlanSessionDelivery(req, caseReference)?.sessionDeliveryDetails
+        const mergedSessionDelivery = this.mergeSessionDeliveryDetailsAnswers(existingSessionDelivery, request)
+        this.setActionPlanSessionDelivery(req, caseReference, { sessionDeliveryDetails: mergedSessionDelivery })
+
+        if (form.SERVICE_END_DATE_CHECK === 'YES') {
+          return res.redirect(`/referral/${caseReference}/action-plan/person-involvement`)
+        }
+
+        return res.redirect(`/referral/${caseReference}/action-plan/update-service-end-date`)
+      })
+    }
+
+    const sessionDelivery = this.getActionPlanSessionDelivery(req, caseReference)?.sessionDeliveryDetails
+    const validationErrors = res.locals.errors
+    const presenter = new ActionPlanServiceEndDateCheckPresenter(
+      caseReference,
+      applySessionDeliveryDetailsData(sessionDeliveryDetails, sessionDelivery),
+      validationErrors,
+      userInputData,
+    )
     return presenter.renderPage(res)
   }
 }
