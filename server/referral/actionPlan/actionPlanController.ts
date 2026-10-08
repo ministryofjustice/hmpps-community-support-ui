@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import type { ActionPlanSessionDeliveryDetailsRequest } from '@community-support-api'
+import type { ActionPlanActionRequest, ActionPlanSessionDeliveryDetailsRequest } from '@community-support-api'
 import type { ActionPlanActivitiesData, ActionPlanActivity, ActionPlanSessionDeliveryData } from '../../@types/express'
 import ReferralService from '../../services/referralService'
 import logger from '../../../logger'
@@ -300,6 +300,29 @@ class ActionPlanController {
       req.flash('addAnotherActivityError', 'Select yes if you want to add another activity')
       return res.redirect(`/referral/${caseReference}/action-plan/activities`)
     }
+
+    const { username } = res.locals.user
+    const { needId, outcomeId } = req.session.actionPlanAction ?? {}
+    if (!needId || !outcomeId) {
+      return res.redirect(`/referral/${caseReference}/action-plan/select-a-need`)
+    }
+
+    const actionPlanAction: ActionPlanActionRequest = {
+      needId,
+      outcomeId,
+      activities: this.getActionPlanActivities(req, caseReference).map(activity => ({
+        who: activity.activityProvider,
+        activityDetails: activity.activityDescription,
+        status: 'Active',
+      })),
+    }
+    const result = await this.referralService.submitAction(caseReference, actionPlanAction, username)
+    if (!result.success) {
+      throw new Error(result.message || 'Unable to save action plan activities')
+    }
+
+    delete req.session.actionPlanAction
+    delete req.session.actionPlanActivities
 
     return res.redirect(`/referral/${caseReference}/action-plan`)
   }

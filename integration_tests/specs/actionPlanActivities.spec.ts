@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test'
 import { ActionPlanSelectANeedResponse, ActionPlanSummaryDto } from '@community-support-api'
 import { login, resetStubs } from '../testUtils'
+import { getMatchingRequests } from '../mockApis/wiremock'
 import communitySupport from '../mockApis/communitySupport'
 import ActionPlanAddActivityPage from '../pages/actionPlanAddActivityPage'
 import ActionPlanViewActivitiesPage from '../pages/actionPlanViewActivitiesPage'
@@ -175,5 +176,45 @@ test.describe('Select an action plan need', () => {
     await expect(viewActivitiesPage.activityRows).toHaveCount(1)
     await expect(viewActivitiesPage.activityRows.first()).toContainText('Second provider')
     await expect(viewActivitiesPage.activityRows.first()).not.toContainText('First provider')
+  })
+
+  test('submits the selected need, outcome and activities when no more activities are added', async ({ page }) => {
+    await communitySupport.stubGetActionPlanNeedsAndOutcomes(needsAndOutcomes)
+    await communitySupport.stubGetActionPlanSummary(caseReference, actionPlanSummary)
+    await communitySupport.stubSubmitAction(caseReference, { success: true, message: 'Action submitted successfully' })
+
+    await page.goto(`/referral/${caseReference}/action-plan/select-a-need`)
+    await page.getByLabel('Employment').check()
+    await page.getByRole('button', { name: 'Continue', exact: true }).click()
+    await page.getByLabel('Find employment').check()
+    await page.getByRole('button', { name: 'Continue', exact: true }).click()
+
+    const addActivityPage = await ActionPlanAddActivityPage.verifyOnPage(page)
+    await addActivityPage.activityProvider.fill('Local support organisation')
+    await addActivityPage.activityDescription.fill('Weekly employment support sessions')
+    await addActivityPage.saveAndContinueButton.click()
+
+    const viewActivitiesPage = await ActionPlanViewActivitiesPage.verifyOnPage(page)
+    await viewActivitiesPage.addAnotherActivityRadios.getByLabel('No').check()
+    await viewActivitiesPage.saveAndContinueButton.click()
+
+    await expect(page).toHaveURL(`/referral/${caseReference}/action-plan`)
+
+    const matchingRequests = await getMatchingRequests({
+      method: 'POST',
+      urlPath: `/community-support/referral/${caseReference}/action-plan/action`,
+    })
+    const [submittedAction] = matchingRequests.body.requests
+    expect(JSON.parse(submittedAction.body)).toEqual({
+      needId: 'need-multiple-outcomes',
+      outcomeId: 'outcome-one',
+      activities: [
+        {
+          who: 'Local support organisation',
+          activityDetails: 'Weekly employment support sessions',
+          status: 'Active',
+        },
+      ],
+    })
   })
 })

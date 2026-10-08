@@ -31,6 +31,7 @@ describe('ActionPlanController', () => {
       getActionPlanSummary: jest.fn(),
       getActionPlanNeedsAndOutcomes: jest.fn(),
       getSessionDeliveryDetails: jest.fn(),
+      submitAction: jest.fn(),
     } as unknown as jest.Mocked<ReferralService>
 
     actionPlanController = new ActionPlanController(referralService)
@@ -450,12 +451,42 @@ describe('ActionPlanController', () => {
       expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/activities/add')
     })
 
-    it('redirects to the action plan when no is selected', async () => {
+    it('submits the selected need, outcome and activities before redirecting when no is selected', async () => {
       req.body = { addAnotherActivity: 'no' }
+      req.session.actionPlanAction = { needId: 'need-1', outcomeId: 'outcome-1' }
+      req.session.actionPlanActivities = {
+        caseReference: 'AB1234CD',
+        activities: [{ activityProvider: 'Local group', activityDescription: 'Weekly sessions' }],
+      }
+      referralService.submitAction.mockResolvedValue({ success: true, message: 'Action submitted successfully' })
 
       await actionPlanController.saveActivities(req, res)
 
+      expect(referralService.submitAction).toHaveBeenCalledWith(
+        'AB1234CD',
+        {
+          needId: 'need-1',
+          outcomeId: 'outcome-1',
+          activities: [{ who: 'Local group', activityDetails: 'Weekly sessions', status: 'Active' }],
+        },
+        'user1',
+      )
+      expect(req.session.actionPlanAction).toBeUndefined()
+      expect(req.session.actionPlanActivities).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan')
+    })
+
+    it('does not redirect to the action plan when the API reports an unsuccessful submission', async () => {
+      req.body = { addAnotherActivity: 'no' }
+      req.session.actionPlanAction = { needId: 'need-1', outcomeId: 'outcome-1' }
+      req.session.actionPlanActivities = {
+        caseReference: 'AB1234CD',
+        activities: [{ activityProvider: 'Local group', activityDescription: 'Weekly sessions' }],
+      }
+      referralService.submitAction.mockResolvedValue({ success: false, message: 'Submission failed' })
+
+      await expect(actionPlanController.saveActivities(req, res)).rejects.toThrow('Submission failed')
+      expect(res.redirect).not.toHaveBeenCalled()
     })
 
     it('requires a yes or no selection', async () => {
