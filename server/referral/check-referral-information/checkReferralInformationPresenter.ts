@@ -507,7 +507,7 @@ const buildProbationPractitionersDetailsSummary = (
     govFrontendSummaryListRow(card.email, data.email || unknownValue),
     govFrontendSummaryListRow(card.phone, data.phoneNumber || unknownValue),
     govFrontendSummaryListRow(card.pdu, data.pdu || unknownValue),
-    govFrontendSummaryListRow(card.office, unknownValue), // to do
+    govFrontendSummaryListRow(card.office, data.office || unknownValue),
     govFrontendSummaryListRow(card.teamPhone, data.teamPhoneNumber || unknownValue),
   ],
 })

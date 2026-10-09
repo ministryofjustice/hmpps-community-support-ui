@@ -85,7 +85,7 @@ describe('CheckReferralInformationPresenter', () => {
           email: 'sarah.wilson@justice.gov.uk',
           phoneNumber: '0191 555 6789',
           pdu: 'Newcastle PDU',
-          isProbationOfficer: true,
+          office: 'Newcastle',
           teamPhoneNumber: '0191 555 6700',
         },
       } as CheckDraftReferralDetailsDto)
@@ -265,7 +265,7 @@ describe('CheckReferralInformationPresenter', () => {
       expect(probationPractitionersDetailsSummary.rows[5].key.text).toBe('PDU')
       expect(probationPractitionersDetailsSummary.rows[5].value.text).toBe('Newcastle PDU')
       expect(probationPractitionersDetailsSummary.rows[6].key.text).toBe('Probation office')
-      expect(probationPractitionersDetailsSummary.rows[6].value.text).toBe('Not available')
+      expect(probationPractitionersDetailsSummary.rows[6].value.text).toBe('Newcastle')
       expect(probationPractitionersDetailsSummary.rows[7].key.text).toBe('Team phone number')
       expect(probationPractitionersDetailsSummary.rows[7].value.text).toBe('0191 555 6700')
 
