@@ -1,7 +1,11 @@
-import { CheckDraftReferralDetailsDto } from '@community-support-api'
+import {
+  CheckDraftReferralDetailsDto,
+  DraftAdditionalReferralInformationTableDataDto,
+  DraftMainPOCDetailsTableDataDto,
+} from '@community-support-api'
 import { GovukFrontendSummaryList } from '@govuk-frontend'
 import { Response } from 'express'
-import { format, differenceInYears } from 'date-fns'
+import { format, differenceInYears, formatDate } from 'date-fns'
 import PresenterBase from '../../presenter/presenterBase'
 import formatFullName from '../../utils/presenterFormatters'
 import ViewUtils, { escapeSpecialHtmlCharacters, govFrontendSummaryListRow } from '../../utils/viewUtils'
@@ -15,7 +19,10 @@ import {
   AdditionalSupportNeedsCard,
   PersonsNeedsCard,
   ContactDetailsCard,
+  AdditionalReferralInformationCard,
+  ProbationPractitionerDetailsCard,
 } from './checkReferralInformationViewModel'
+import { booleanToTriState, showTriState, yesOrNo } from '../../utils/utils'
 
 type IdentifierRow = {
   label: string
@@ -128,47 +135,49 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
   }
 
   buildViewModel(res: Response): CheckReferralInformationViewModel {
-    const viewModel = {} as CheckReferralInformationViewModel
     const content = this.buildStaticContent(res)
-    viewModel.pageTitle = content.pageTitle
-    viewModel.pageHeader = resolveName(this.draftReferralDetails.personDetailsTableData.name)
-    viewModel.pageSubHeader = content.pageSubHeader
-    viewModel.personalDetailsHeader = `About ${this.draftReferralDetails.personDetailsTableData.name.firstName}`
-
-    viewModel.personalDetailsSummary = this.buildPersonalDetailsSummary(
-      content.personalDetailsCard,
-      content.notAvailable,
-      content.lastUpdatedLabel,
-    )
-    viewModel.equalityMonitoringSummary = this.buildEqualityMonitoringSummary(
-      content.equalityMonitoringCard,
-      content.notAvailable,
-    )
-    viewModel.additionalInformationSummary = this.buildAdditionalInformationSummary(content.additionalInformationCard)
-    viewModel.contactDetailsSummary = this.buildContactDetailsSummary(
-      content.contactDetailsCard,
-      content.notAvailable,
-      content.lastUpdatedLabel,
-    )
-    viewModel.riskInformationSummary = this.buildRiskInformationSummary(
-      content.riskInformationCard,
-      content.notAvailable,
-    )
-    viewModel.additionalSupportNeedsSummary = this.buildAdditionalSupportNeedsSummary(
-      content.additionalSupportNeedsCard,
-    )
-    viewModel.personsNeedsSummary = this.buildPersonsNeedsSummary(content.personsNeedsCard)
-
-    viewModel.referralDetailsHeader = content.referralDetailsHeader
-    viewModel.referralDetailsSummary = buildReferralDetailsSummary(
-      this.draftReferralDetails.referralAreaTableData?.area || '',
-    )
-    viewModel.referralContactDetailsHeader = content.referralContactDetailsHeader
-    viewModel.backLink = { href: content.backLink }
-    viewModel.submitButton = { text: content.submitButtonText, classes: 'govuk-!-margin-top-6' }
-
-    viewModel.submitHref = `/referral/${this.draftReferralDetails.id}/submit-referral-information`
-    return viewModel
+    return {
+      pageTitle: content.pageTitle,
+      pageHeader: resolveName(this.draftReferralDetails.personDetailsTableData.name),
+      pageSubHeader: content.pageSubHeader,
+      personalDetailsHeader: `About ${this.draftReferralDetails.personDetailsTableData.name.firstName}`,
+      personalDetailsSummary: this.buildPersonalDetailsSummary(
+        content.personalDetailsCard,
+        content.notAvailable,
+        content.lastUpdatedLabel,
+      ),
+      equalityMonitoringSummary: this.buildEqualityMonitoringSummary(
+        content.equalityMonitoringCard,
+        content.notAvailable,
+      ),
+      additionalInformationSummary: this.buildAdditionalInformationSummary(content.additionalInformationCard),
+      contactDetailsSummary: this.buildContactDetailsSummary(
+        content.contactDetailsCard,
+        content.notAvailable,
+        content.lastUpdatedLabel,
+      ),
+      riskInformationSummary: this.buildRiskInformationSummary(content.riskInformationCard, content.notAvailable),
+      additionalSupportNeedsSummary: this.buildAdditionalSupportNeedsSummary(content.additionalSupportNeedsCard),
+      personsNeedsSummary: this.buildPersonsNeedsSummary(content.personsNeedsCard),
+      referralDetailsHeader: content.referralDetailsHeader,
+      referralDetailsSummary: buildReferralDetailsSummary(this.draftReferralDetails.referralAreaTableData?.area || ''),
+      referralContactDetailsHeader: content.referralContactDetailsHeader,
+      additionalReferralInformationSummary: buildAdditionalReferralInformationSummary(
+        this.draftReferralDetails.personDetailsTableData.name.firstName,
+        this.draftReferralDetails.additionalReferralInformationTableData,
+        content.additionalReferralInformationCard,
+        content.notAvailable,
+      ),
+      probationPractitionersDetailsSummary: buildProbationPractitionersDetailsSummary(
+        this.draftReferralDetails.mainPocDetailsTableData,
+        content.probationPractitionerDetailsCard,
+        content.notAvailable,
+      ),
+      backLink: { href: content.backLink },
+      submitButton: { text: content.submitButtonText, classes: 'govuk-!-margin-top-6' },
+      submitHref: `/referral/${this.draftReferralDetails.id}/submit-referral-information`,
+      riskInformationHeader: undefined,
+    }
   }
 
   getTemplatePath(): string {
@@ -435,3 +444,70 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
     }
   }
 }
+
+const buildAdditionalReferralInformationSummary = (
+  name: string,
+  data: DraftAdditionalReferralInformationTableDataDto,
+  card: AdditionalReferralInformationCard,
+  unknownValue: string,
+): GovukFrontendSummaryList => ({
+  card: {
+    title: {
+      text: card.heading,
+    },
+    attributes: { 'data-testid': 'additional-referral-information' },
+  },
+  rows: [
+    govFrontendSummaryListRow(
+      card.completedBy,
+      data.serviceCompletionDate ? formatDate(data.serviceCompletionDate, 'dd/LL/uuuu') : unknownValue,
+    ),
+    govFrontendSummaryListRow(card.reason, data.serviceCompletionDateReason || unknownValue),
+    govFrontendSummaryListRow(card.days, data.serviceDays?.toString() || unknownValue),
+    govFrontendSummaryListRow(card.offence, data.offence || unknownValue),
+    govFrontendSummaryListRow(card.offenceSubCatagory, data.offenceSubCategory || unknownValue),
+    govFrontendSummaryListRow(card.outcome, data.outcome || unknownValue),
+    govFrontendSummaryListRow(
+      card.endDate,
+      data.sentenceEndDate ? formatDate(data.sentenceEndDate, 'd LLLL uuuu') : unknownValue,
+    ),
+    govFrontendSummaryListRow(
+      card.conditions,
+      data.licenceConditions
+        ? {
+            html: formatNeed(data.licenceConditions),
+          }
+        : unknownValue,
+    ),
+    govFrontendSummaryListRow(
+      card.anythingElse.replace('{{ name }}', name),
+      data.anythingElse ? { html: formatNeed(data.anythingElse) } : unknownValue,
+    ),
+  ],
+})
+
+const buildProbationPractitionersDetailsSummary = (
+  data: DraftMainPOCDetailsTableDataDto,
+  card: ProbationPractitionerDetailsCard,
+  unknownValue: string,
+): GovukFrontendSummaryList => ({
+  card: {
+    title: {
+      text: card.heading,
+    },
+    attributes: { 'data-testid': 'probation-practitioner-details' },
+  },
+  rows: [
+    govFrontendSummaryListRow(
+      card.correct,
+      showTriState(booleanToTriState(data.areTheseDetailsCorrect), { ...yesOrNo, nullValue: unknownValue }),
+    ),
+    govFrontendSummaryListRow(card.name, data.name || unknownValue),
+    govFrontendSummaryListRow(card.role, data.jobRole?.toString() || unknownValue),
+    govFrontendSummaryListRow(card.email, data.email || unknownValue),
+    govFrontendSummaryListRow(card.phone, data.phoneNumber || unknownValue),
+    govFrontendSummaryListRow(card.pdu, data.pdu || unknownValue),
+    govFrontendSummaryListRow(card.office, data.office || unknownValue),
+    govFrontendSummaryListRow(card.teamPhone, data.teamPhoneNumber || unknownValue),
+  ],
+})

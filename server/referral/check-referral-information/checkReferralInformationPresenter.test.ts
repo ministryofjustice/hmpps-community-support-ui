@@ -5,14 +5,17 @@ import type {
   CheckReferralInformationViewModel,
 } from './checkReferralInformationViewModel'
 import CheckReferralInformationPresenter from './checkReferralInformationPresenter'
-import CheckReferralInformationContentFactory from '../../testutils/factories/CheckReferralInformationContent'
 import DraftReferralDetailsFactory from '../../testutils/factories/DraftReferralDetails'
+import loadContentDataForTest from '../../testutils/loadContentDataForTest'
+
+jest.useFakeTimers()
+jest.setSystemTime(new Date('2026-10-07T00:00:00Z').getTime())
+
+const content = loadContentDataForTest('/referral/check-referral-information') as CheckReferralInformationContent
 
 describe('CheckReferralInformationPresenter', () => {
   let res: Response
-  let content: CheckReferralInformationContent
   beforeEach(() => {
-    content = CheckReferralInformationContentFactory.build()
     res = {
       locals: { content },
       render: jest.fn(),
@@ -53,7 +56,17 @@ describe('CheckReferralInformationPresenter', () => {
           riskToSelfVulnerability: 'Vulnerable',
           additionalInformation: 'Some additional risk info',
         },
-        additionalSupportNeedsDetailsTableData: {},
+        additionalSupportNeedsDetailsTableData: {
+          physicalHealth: 'Mild asthma managed with inhaler.',
+          mentalOrEmotionalHealth: 'Reports anxiety and occasional low mood.',
+          neurodiversity: 'Suspected ADHD awaiting assessment.',
+          locationAndTravel: 'Limited access to public transport.',
+          caringResponsibilities: 'None reported.',
+          employmentResponsibilities: 'Part-time warehouse role.',
+          diversity: 'No additional diversity needs identified.',
+          anyOtherNeeds: 'Requires support with appointment reminders.',
+          interpreterLanguage: null,
+        },
         personNeedsDetailsTableData: {
           hasAccommodationNeeds: true,
           accommodationDetails: 'Has suitable housing',
@@ -65,7 +78,16 @@ describe('CheckReferralInformationPresenter', () => {
           healthWellbeingDetails: 'Good',
           thinkingBehavioursAttitudeDetails: 'Responds well to prompts',
         },
-        mainPocDetailsTableData: {},
+        mainPocDetailsTableData: {
+          areTheseDetailsCorrect: true,
+          name: 'Sarah Wilson',
+          jobRole: 'Probation Officer',
+          email: 'sarah.wilson@justice.gov.uk',
+          phoneNumber: '0191 555 6789',
+          pdu: 'Newcastle PDU',
+          office: 'Newcastle',
+          teamPhoneNumber: '0191 555 6700',
+        },
       } as CheckDraftReferralDetailsDto)
 
       const presenter = new CheckReferralInformationPresenter(draftReferralDetails)
@@ -108,7 +130,7 @@ describe('CheckReferralInformationPresenter', () => {
         },
         value: { html: '<div>Dyslexia</div>' },
       })
-      expect(renderData.content.pageTitle).toBe('Check details and submit referral')
+      expect(renderData.content.pageTitle).toBe('Check details and submit referral – Community Support')
       expect(renderData.content.pageHeader).toBe('John Doe')
       expect(renderData.content.personalDetailsHeader).toBe('About John')
       expect(renderData.content.referralContactDetailsHeader).toBe('Referral contact details')
@@ -134,7 +156,7 @@ describe('CheckReferralInformationPresenter', () => {
 
       expect(renderData.content.riskInformationSummary.rows).toHaveLength(8)
       expect(renderData.content.riskInformationSummary.rows[0]).toMatchObject({
-        key: { text: 'Who is at risk' },
+        key: { text: 'Who is at risk?' },
         value: { text: 'Family members' },
       })
       expect(renderData.content.riskInformationSummary.rows[1]).toMatchObject({
@@ -200,6 +222,52 @@ describe('CheckReferralInformationPresenter', () => {
         key: { text: 'Thinking, behaviour and attitudes' },
         value: { html: expect.stringContaining('Responds well to prompts') },
       })
+
+      const { additionalReferralInformationSummary } = renderData.content
+      expect(additionalReferralInformationSummary?.card.title.text).toBe('Additional referral information')
+      expect(additionalReferralInformationSummary.rows[0].key.text).toBe(
+        'What date does the service need to be completed by?',
+      )
+      expect(additionalReferralInformationSummary.rows[0].value.text).toBe('27/10/2026')
+      expect(additionalReferralInformationSummary.rows[1].key.text).toBe(
+        'Why does it need to be completed by this date?',
+      )
+      expect(additionalReferralInformationSummary.rows[1].value.text).toBe('Reason')
+      expect(additionalReferralInformationSummary.rows[2].key.text).toBe('How many days will you use for this service?')
+      expect(additionalReferralInformationSummary.rows[2].value.text).toBe('5')
+      expect(additionalReferralInformationSummary.rows[3].key.text).toBe('Offence')
+      expect(additionalReferralInformationSummary.rows[3].value.text).toBe('offence')
+      expect(additionalReferralInformationSummary.rows[4].key.text).toBe('Offence subcategory')
+      expect(additionalReferralInformationSummary.rows[4].value.text).toBe('subcatagory')
+      expect(additionalReferralInformationSummary.rows[5].key.text).toBe('Outcome')
+      expect(additionalReferralInformationSummary.rows[5].value.text).toBe('outcome')
+      expect(additionalReferralInformationSummary.rows[6].key.text).toBe('Sentence end date')
+      expect(additionalReferralInformationSummary.rows[6].value.text).toBe('12 October 2026')
+      expect(additionalReferralInformationSummary.rows[7].key.text).toBe('Any licence conditions or exclusion zones')
+      expect(additionalReferralInformationSummary.rows[7].value.text).toBe('Not available')
+      expect(additionalReferralInformationSummary.rows[8].key.text).toBe(
+        'Anything else the delivery partner should know about John',
+      )
+      expect(additionalReferralInformationSummary.rows[8].value.text).toBe('Not available')
+
+      const { probationPractitionersDetailsSummary } = renderData.content
+      expect(probationPractitionersDetailsSummary?.card.title.text).toBe("Probation practitioner's details")
+      expect(probationPractitionersDetailsSummary.rows[0].key.text).toBe('Are these details correct?')
+      expect(probationPractitionersDetailsSummary.rows[0].value.text).toBe('Yes')
+      expect(probationPractitionersDetailsSummary.rows[1].key.text).toBe('Name')
+      expect(probationPractitionersDetailsSummary.rows[1].value.text).toBe('Sarah Wilson')
+      expect(probationPractitionersDetailsSummary.rows[2].key.text).toBe('Job role')
+      expect(probationPractitionersDetailsSummary.rows[2].value.text).toBe('Probation Officer')
+      expect(probationPractitionersDetailsSummary.rows[3].key.text).toBe('Email address')
+      expect(probationPractitionersDetailsSummary.rows[3].value.text).toBe('sarah.wilson@justice.gov.uk')
+      expect(probationPractitionersDetailsSummary.rows[4].key.text).toBe('Phone number')
+      expect(probationPractitionersDetailsSummary.rows[4].value.text).toBe('0191 555 6789')
+      expect(probationPractitionersDetailsSummary.rows[5].key.text).toBe('PDU')
+      expect(probationPractitionersDetailsSummary.rows[5].value.text).toBe('Newcastle PDU')
+      expect(probationPractitionersDetailsSummary.rows[6].key.text).toBe('Probation office')
+      expect(probationPractitionersDetailsSummary.rows[6].value.text).toBe('Newcastle')
+      expect(probationPractitionersDetailsSummary.rows[7].key.text).toBe('Team phone number')
+      expect(probationPractitionersDetailsSummary.rows[7].value.text).toBe('0191 555 6700')
 
       expect(res.render).toHaveBeenCalledWith(
         'referral/checkReferralInformation',
