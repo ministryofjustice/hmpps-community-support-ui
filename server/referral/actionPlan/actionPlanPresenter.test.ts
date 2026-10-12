@@ -13,7 +13,7 @@ describe('ActionPlanPresenter', () => {
         lastName: 'River',
       },
       needs: [],
-      lastUpdatedAt: ""
+      lastUpdatedAt: '',
     }
 
     const presenter = new ActionPlanPresenter(actionPlanSummary, 'AB1234CD')
@@ -67,7 +67,7 @@ describe('ActionPlanPresenter', () => {
           ],
         },
       ],
-      lastUpdatedAt: ""
+      lastUpdatedAt: '',
     }
 
     const presenter = new ActionPlanPresenter(actionPlanSummary, 'AB1234CD', true)
@@ -173,7 +173,7 @@ describe('ActionPlanPresenter', () => {
           ],
         },
       ],
-      lastUpdatedAt: ""
+      lastUpdatedAt: '',
     }
 
     const presenter = new ActionPlanPresenter(actionPlanSummary, 'AB1234CD')
@@ -229,7 +229,7 @@ describe('ActionPlanPresenter', () => {
         { id: 'need_id_1', label: 'Accommodation', orderNumber: 1, outcomes: [outcome] },
         { id: 'need_id_2', label: 'Finances', orderNumber: 2, outcomes: [{ ...outcome, id: 'outcome_id_2' }] },
       ],
-      lastUpdatedAt: ""
+      lastUpdatedAt: '',
     }
 
     it('is displayed and links to session details when all outcomes are added and ICS feedback is submitted', () => {
