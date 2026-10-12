@@ -110,6 +110,34 @@ describe('buildSessionDeliveryDetailsRequestFromForm', () => {
     })
   })
 
+  it('maps date answers into an ISO date value', () => {
+    const sessionDeliveryDetails: ActionPlanSessionDeliveryDetailsResponse = {
+      questions: [
+        {
+          id: 'question-date',
+          displayOrder: 1,
+          label: 'What is the new service end date?',
+          key: 'NEW_SERVICE_END_DATE',
+          hint: null,
+          answerType: 'DATE',
+          maximumNumberOfResponses: 1,
+          choices: null,
+          savedResponses: [],
+        },
+      ],
+    }
+
+    const request = buildSessionDeliveryDetailsRequestFromForm(sessionDeliveryDetails, {
+      'NEW_SERVICE_END_DATE-day': '28',
+      'NEW_SERVICE_END_DATE-month': '12',
+      'NEW_SERVICE_END_DATE-year': '2027',
+    })
+
+    expect(request).toEqual({
+      answers: [{ questionId: 'question-date', incomingAnswerDetails: [{ value: '2027-12-28' }] }],
+    })
+  })
+
   it('includes empty answer arrays when a previously answered question is cleared', () => {
     const sessionDeliveryDetails: ActionPlanSessionDeliveryDetailsResponse = {
       questions: [

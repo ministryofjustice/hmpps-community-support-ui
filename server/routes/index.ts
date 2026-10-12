@@ -250,16 +250,36 @@ export default function routes({
 
   post('/referral/:id/action-plan/save-activities', (req, res) => actionPlanController.saveActivities(req, res))
 
-  getOrPost('/referral/:id/action-plan/session-delivery-details', (req, res) =>
+  get('/referral/:id/action-plan/session-delivery-details', (req, res) =>
     actionPlanController.showSessionDeliveryDetailsPage(req, res),
   )
 
-  getOrPost('/referral/:id/action-plan/risks-and-adjustments', (req, res) =>
+  post('/referral/:id/action-plan/session-delivery-details', (req, res) =>
+    actionPlanController.submitSessionDeliveryDetailsPage(req, res),
+  )
+
+  get('/referral/:id/action-plan/risks-and-adjustments', (req, res) =>
     actionPlanController.showRisksAndAdjustmentsPage(req, res),
   )
 
-  getOrPost('/referral/:id/action-plan/service-end-date-check', (req, res) =>
+  post('/referral/:id/action-plan/risks-and-adjustments', (req, res) =>
+    actionPlanController.submitRisksAndAdjustmentsPage(req, res),
+  )
+
+  get('/referral/:id/action-plan/service-end-date-check', (req, res) =>
     actionPlanController.showServiceEndDateCheckPage(req, res),
+  )
+
+  post('/referral/:id/action-plan/service-end-date-check', (req, res) =>
+    actionPlanController.submitServiceEndDateCheckPage(req, res),
+  )
+
+  get('/referral/:id/action-plan/update-service-end-date', (req, res) =>
+    actionPlanController.showUpdateServiceEndDatePage(req, res),
+  )
+
+  post('/referral/:id/action-plan/update-service-end-date', (req, res) =>
+    actionPlanController.submitUpdateServiceEndDatePage(req, res),
   )
 
   get('/referral/:caseIdentifier/withdraw', (req, res) => withdrawalController.showReason(req, res))

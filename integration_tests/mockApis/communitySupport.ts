@@ -631,7 +631,6 @@ export default {
         transformers: ['response-template'],
       },
     }),
-
   stubGetCheckDraftReferralDetails: (
     referralId: string,
     draftReferralDetails: CheckDraftReferralDetailsDto,
@@ -649,7 +648,6 @@ export default {
         transformers: ['response-template'],
       },
     }),
-
   stubGetActionPlanSummary: (
     caseReference: string,
     actionPlanSummary: ActionPlanSummaryDto,
@@ -734,6 +732,22 @@ export default {
       request: {
         method: 'GET',
         urlPathPattern: `/community-support/bff/referral/${caseReference}/action-plan/service-delivery-details/service-end-date-check`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: checkServiceEndDate,
+      },
+    }),
+  stubGetUpdateServiceEndDate: (
+    caseReference: string,
+    checkServiceEndDate: ActionPlanSessionDeliveryDetailsResponse,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: `/community-support/bff/referral/${caseReference}/action-plan/service-delivery-details/update-service-end-date`,
       },
       response: {
         status: httpStatus,
