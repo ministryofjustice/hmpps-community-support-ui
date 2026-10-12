@@ -142,3 +142,26 @@ export const yesNoSelectionToTriState = (value: string | null | undefined): TriS
   if (value === 'No') return false
   return null
 }
+
+export interface TriStateShowConfig {
+  trueValue: string
+  falseValue: string
+  nullValue: string
+}
+
+export const yesOrNo = {
+  trueValue: 'Yes',
+  falseValue: 'No',
+  nullValue: 'None',
+} as const
+
+export const showTriState = (state: TriState, config: TriStateShowConfig = yesOrNo): string => {
+  switch (state) {
+    case true:
+      return config.trueValue
+    case false:
+      return config.falseValue
+    default:
+      return config.nullValue
+  }
+}

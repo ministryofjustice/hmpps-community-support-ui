@@ -70,7 +70,7 @@
     "riskInformationCard": {
       "heading": "Risk information",
       "whoIsAtRiskLabel": "Who is at risk?",
-      "riskNatureLabel": "What is the nature of the risk? ",
+      "riskNatureLabel": "What is the nature of the risk?",
       "riskCircumstancesLabel": "In what circumstances or situations would offending be most likely to occur?",
       "riskOfSelfHarmLabel": "Risk of self-harm",
       "riskOfSuicideLabel": "Risk of suicide",
@@ -103,10 +103,33 @@
       "healthAndWellbeingLabel": "Health and wellbeing",
       "thinkingBehaviourAndAttitudesLabel": "Thinking, behaviour and attitudes"
     },
+    "additionalReferralInformationCard": {
+      "heading": "Additional referral information",
+      "completedBy": "What date does the service need to be completed by?",
+      "reason": "Why does it need to be completed by this date?",
+      "days": "How many days will you use for this service?",
+      "offence": "Offence",
+      "offenceSubCatagory": "Offence subcategory",
+      "outcome": "Outcome",
+      "endDate": "Sentence end date",
+      "conditions": "Any licence conditions or exclusion zones",
+      "anythingElse": "Anything else the delivery partner should know about {{ name }}"
+    },
+    "probationPractitionerDetailsCard": {
+      "heading": "Probation practitioner's details",
+      "correct": "Are these details correct?",
+      "name": "Name",
+      "role": "Job role",
+      "email": "Email address",
+      "phone": "Phone number",
+      "pdu": "PDU",
+      "office": "Probation office",
+      "teamPhone": "Team phone number"
+    },
     "referralDetailsHeader": "Referral information",
     "referralContactDetailsHeader": "Referral contact details",
     "backLink": "/referral/task-list",
-    "submitButtonText": "Submit referral"
+    "submitButtonText": "Submit referral information"
   },
   "/referral/:id/confirmation": {
     "pageHeader": "The referral has been sent",

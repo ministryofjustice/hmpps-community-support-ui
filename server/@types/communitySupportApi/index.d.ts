@@ -70,6 +70,9 @@ type OffenceSentenceInfoBffResponseDto = components['schemas']['OffenceSentenceI
 type OffenceSentenceDto = components['schemas']['OffenceSentenceDto']
 type ProbationPractitionerDetails = components['schemas']['ProbationPractitionerDetailsBffResponseDto']
 type CheckDraftReferralDetailsDto = components['schemas']['CheckDraftReferralDetailsBffResponseDto']
+type DraftAdditionalReferralInformationTableDataDto =
+  components['schemas']['DraftAdditionalReferralInformationTableDataDto']
+type DraftMainPOCDetailsTableDataDto = components['schemas']['DraftMainPOCDetailsTableDataDto']
 type UpdateProbationPractitionerDetailsRequest = components['schemas']['UpdateProbationPractitionerDetailsRequest']
 
 type AdditionalInformationForTheDeliveryPartner =
@@ -152,4 +155,6 @@ export type {
   PDU,
   AdditionalInformationForTheDeliveryPartner,
   WithdrawReferralRequest,
+  DraftAdditionalReferralInformationTableDataDto,
+  DraftMainPOCDetailsTableDataDto,
 }

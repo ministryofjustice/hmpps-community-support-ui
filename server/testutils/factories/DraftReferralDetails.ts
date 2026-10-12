@@ -1,5 +1,6 @@
 import { Factory } from 'fishery'
 import type { CheckDraftReferralDetailsDto } from '@community-support-api'
+import { addDays } from 'date-fns'
 
 const DraftReferralDetailsFactory = new Factory<CheckDraftReferralDetailsDto>(() => ({
   id: 'referralId123',
@@ -20,7 +21,15 @@ const DraftReferralDetailsFactory = new Factory<CheckDraftReferralDetailsDto>(()
   additionalSupportNeedsDetailsTableData: {},
   personNeedsDetailsTableData: {},
   referralAreaTableData: { area: '' },
-  additionalReferralInformationTableData: {},
+  additionalReferralInformationTableData: {
+    serviceCompletionDate: addDays(new Date(), 20).toISOString(),
+    serviceCompletionDateReason: 'Reason',
+    serviceDays: 5,
+    offence: 'offence',
+    offenceSubCategory: 'subcatagory',
+    outcome: 'outcome',
+    sentenceEndDate: addDays(new Date(), 5).toISOString(),
+  },
   mainPocDetailsTableData: {},
 }))
 
