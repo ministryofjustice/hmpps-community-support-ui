@@ -13,6 +13,7 @@ describe('ActionPlanPresenter', () => {
         lastName: 'River',
       },
       needs: [],
+      lastUpdatedAt: ""
     }
 
     const presenter = new ActionPlanPresenter(actionPlanSummary, 'AB1234CD')
@@ -45,6 +46,7 @@ describe('ActionPlanPresenter', () => {
         {
           id: 'need_id_1',
           label: 'Accommodation',
+          orderNumber: 1,
           outcomes: [
             {
               id: 'outcome_id_1',
@@ -65,6 +67,7 @@ describe('ActionPlanPresenter', () => {
           ],
         },
       ],
+      lastUpdatedAt: ""
     }
 
     const presenter = new ActionPlanPresenter(actionPlanSummary, 'AB1234CD', true)
@@ -116,6 +119,7 @@ describe('ActionPlanPresenter', () => {
         {
           id: 'need_id_1',
           label: 'Accommodation',
+          orderNumber: 1,
           outcomes: [
             {
               id: 'outcome_id_1',
@@ -133,6 +137,7 @@ describe('ActionPlanPresenter', () => {
         {
           id: 'need_id_2',
           label: 'Employment and education',
+          orderNumber: 2,
           outcomes: [
             {
               id: 'outcome_id_2',
@@ -151,6 +156,7 @@ describe('ActionPlanPresenter', () => {
         {
           id: 'need_id_3',
           label: 'Finances',
+          orderNumber: 3,
           outcomes: [
             {
               id: 'outcome_id_3',
@@ -167,6 +173,7 @@ describe('ActionPlanPresenter', () => {
           ],
         },
       ],
+      lastUpdatedAt: ""
     }
 
     const presenter = new ActionPlanPresenter(actionPlanSummary, 'AB1234CD')
@@ -219,9 +226,10 @@ describe('ActionPlanPresenter', () => {
     const summaryWithAllOutcomes: ActionPlanSummaryDto = {
       personDetails: { firstName: 'Alex', lastName: 'Smith' },
       needs: [
-        { id: 'need_id_1', label: 'Accommodation', outcomes: [outcome] },
-        { id: 'need_id_2', label: 'Finances', outcomes: [{ ...outcome, id: 'outcome_id_2' }] },
+        { id: 'need_id_1', label: 'Accommodation', orderNumber: 1, outcomes: [outcome] },
+        { id: 'need_id_2', label: 'Finances', orderNumber: 2, outcomes: [{ ...outcome, id: 'outcome_id_2' }] },
       ],
+      lastUpdatedAt: ""
     }
 
     it('is displayed and links to session details when all outcomes are added and ICS feedback is submitted', () => {
@@ -241,7 +249,7 @@ describe('ActionPlanPresenter', () => {
     it('is not displayed when not all outcomes have been added', () => {
       const summary: ActionPlanSummaryDto = {
         ...summaryWithAllOutcomes,
-        needs: [summaryWithAllOutcomes.needs[0], { id: 'need_id_2', label: 'Finances', outcomes: [] }],
+        needs: [summaryWithAllOutcomes.needs[0], { id: 'need_id_2', label: 'Finances', orderNumber: 1, outcomes: [] }],
       }
 
       expect(render(summary, true).submitActionPlanButton).toBeUndefined()
