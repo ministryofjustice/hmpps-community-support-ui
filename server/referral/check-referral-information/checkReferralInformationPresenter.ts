@@ -176,7 +176,6 @@ export default class CheckReferralInformationPresenter extends PresenterBase<
       backLink: { href: content.backLink },
       submitButton: { text: content.submitButtonText, classes: 'govuk-!-margin-top-6' },
       submitHref: `/referral/${this.draftReferralDetails.id}/submit-referral-information`,
-      riskInformationHeader: undefined,
     }
   }
 

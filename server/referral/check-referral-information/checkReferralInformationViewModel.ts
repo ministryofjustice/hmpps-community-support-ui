@@ -9,7 +9,6 @@ export type CheckReferralInformationViewModel = {
   additionalSupportNeedsSummary: GovukFrontendSummaryList
   additionalReferralInformationSummary: GovukFrontendSummaryList
   personsNeedsSummary: GovukFrontendSummaryList
-  riskInformationHeader: string
   contactDetailsSummary: GovukFrontendSummaryList
   additionalInformationSummary?: GovukFrontendSummaryList
   riskInformationSummary: GovukFrontendSummaryList
