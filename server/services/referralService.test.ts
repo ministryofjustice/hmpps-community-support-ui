@@ -133,6 +133,7 @@ describe('Referral service tests', () => {
           lastName: 'River',
         },
         needs: [],
+        lastUpdatedAt: '',
       }
 
       communitySupportApiClient.getActionPlanSummary.mockResolvedValue(mockActionPlanSummary)

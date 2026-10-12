@@ -350,6 +350,7 @@ describe('CommunitySupportApiClient tests', () => {
           lastName: 'River',
         },
         needs: [],
+        lastUpdatedAt: '',
       }
 
       nock('http://localhost:8080', {

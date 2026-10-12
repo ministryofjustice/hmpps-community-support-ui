@@ -157,6 +157,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/referral/{referralReference}/action-plan/update-needs-order': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    /** Update the Action Plan needs order */
+    patch: operations['patchActionPlanNeedsOrder']
+    trace?: never
+  }
   '/referral/{referralReference}/action-plan/session-delivery-details': {
     parameters: {
       query?: never
@@ -1311,6 +1328,42 @@ export interface components {
       sessionCommunications?: string[] | null
       personFirstName: string
     }
+    ActionPlanNeedsOrderRequest: {
+      /** Format: uuid */
+      stepQuestionAnswerHeaderId: string
+      /** @enum {string} */
+      action: 'UP' | 'DOWN'
+    }
+    ActionPlanSummaryDto: {
+      personDetails: components['schemas']['ActionPlanSummaryPersonDetails']
+      needs: components['schemas']['ActionPlanSummaryNeed'][]
+      /** Format: date-time */
+      lastUpdatedAt: string
+    }
+    ActionPlanSummaryNeed: {
+      /** Format: uuid */
+      id: string
+      label: string
+      /** Format: int32 */
+      orderNumber: number
+      outcomes: components['schemas']['ActionPlanSummaryOutcome'][]
+    }
+    ActionPlanSummaryOutcome: {
+      /** Format: uuid */
+      id: string
+      label: string
+      activities: components['schemas']['ActionPlanSummaryOutcomeActivity'][]
+    }
+    ActionPlanSummaryOutcomeActivity: {
+      /** Format: uuid */
+      id: string
+      who: string
+      details: string
+    }
+    ActionPlanSummaryPersonDetails: {
+      firstName: string
+      lastName: string
+    }
     ActionPlanSessionDeliveryDetailsRequest: {
       answers: components['schemas']['SessionDeliveryDetailsQuestionAnswers'][]
     }
@@ -1560,32 +1613,6 @@ export interface components {
       selectAnAreaForReferralCompleted: components['schemas']['TaskListStatusItem']
       checkProbationPractitionerDetailsCompleted?: components['schemas']['TaskListStatusItem'] | null
       addMainPointOfContactCompleted?: components['schemas']['TaskListStatusItem'] | null
-    }
-    ActionPlanSummaryDto: {
-      personDetails: components['schemas']['ActionPlanSummaryPersonDetails']
-      needs: components['schemas']['ActionPlanSummaryNeed'][]
-    }
-    ActionPlanSummaryNeed: {
-      /** Format: uuid */
-      id: string
-      label: string
-      outcomes: components['schemas']['ActionPlanSummaryOutcome'][]
-    }
-    ActionPlanSummaryOutcome: {
-      /** Format: uuid */
-      id: string
-      label: string
-      activities: components['schemas']['ActionPlanSummaryOutcomeActivity'][]
-    }
-    ActionPlanSummaryOutcomeActivity: {
-      /** Format: uuid */
-      id: string
-      who: string
-      details: string
-    }
-    ActionPlanSummaryPersonDetails: {
-      firstName: string
-      lastName: string
     }
     AppointmentDetailsDto: {
       /** @enum {string|null} */
@@ -2423,6 +2450,50 @@ export interface operations {
       }
       /** @description Referral not found */
       404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  patchActionPlanNeedsOrder: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralReference: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ActionPlanNeedsOrderRequest']
+      }
+    }
+    responses: {
+      /** @description Action Plan needs order updated */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ActionPlanSummaryDto']
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+      /** @description Unrecoverable error occurred */
+      500: {
         headers: {
           [name: string]: unknown
         }
