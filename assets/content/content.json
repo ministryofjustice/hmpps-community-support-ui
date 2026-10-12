@@ -116,7 +116,8 @@
       "anythingElse": "Anything else the delivery partner should know about {{ name }}"
     },
     "probationPractitionerDetailsCard": {
-      "heading": "Probation practitioner's details",
+      "headingProbationPractitioner": "Probation practitioner's details",
+      "headingMainPointOfContact": "Main point of contact's details",
       "correct": "Are these details correct?",
       "name": "Name",
       "role": "Job role",
@@ -368,6 +369,12 @@
     "pageHeader": "Service end date",
     "continueButtonText": "Continue",
     "backLink": "/referral/{{ id }}/action-plan/risks-and-adjustments"
+  },
+  "/referral/:id/action-plan/update-service-end-date": {
+    "pageTitle": "Session details – Change the service end date",
+    "pageHeader": "Change the service end date",
+    "continueButtonText": "Continue",
+    "backLink": "/referral/{{ id }}/action-plan/service-end-date-check"
   },
   "/referral/:id/action-plan/activities/add": {
     "pageHeader": "Add An Activity",

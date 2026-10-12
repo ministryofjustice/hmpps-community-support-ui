@@ -22,10 +22,12 @@ import { ActionPlanRisksAndAdjustmentsFormDataSchemaBuilder } from '../../valida
 import { ActionPlanActivityFormDataSchema } from '../../validation/ActionPlanActivityFormData'
 import { ActionPlanRemoveActivityFormDataSchema } from '../../validation/ActionPlanRemoveActivityFormData'
 import ActionPlanServiceEndDateCheckPresenter from './sessionDeliveryDetails/actionPlanServiceEndDateCheckPresenter'
+import ActionPlanChangeServiceEndDatePresenter from './sessionDeliveryDetails/actionPlanChangeServiceEndDatePresenter'
 import {
   ActionPlanServiceEndDateCheckFormDataSchemaBuilder,
   getServiceEndDateValue,
 } from '../../validation/ActionPlanServiceEndDateCheckFormData'
+import { ActionPlanChangeServiceEndDateDataSchemaBuilder } from '../../validation/ActionPlanChangeServiceEndDateFormData'
 
 class ActionPlanController {
   constructor(private readonly referralService: ReferralService) {}
@@ -71,6 +73,21 @@ class ActionPlanController {
     const retainedAnswers = (existing?.answers ?? []).filter(answer => !incomingQuestionIds.has(answer.questionId))
 
     return { answers: [...retainedAnswers, ...incoming.answers] }
+  }
+
+  private getFlashedFormValues(req: Request) {
+    const flashData = req.flash('value')
+    return flashData.length > 0 ? JSON.parse(flashData[0]) : undefined
+  }
+
+  private saveSessionDeliveryDetails(
+    req: Request,
+    caseReference: string,
+    request: ActionPlanSessionDeliveryDetailsRequest,
+  ) {
+    const existingSessionDelivery = this.getActionPlanSessionDelivery(req, caseReference)?.sessionDeliveryDetails
+    const mergedSessionDelivery = this.mergeSessionDeliveryDetailsAnswers(existingSessionDelivery, request)
+    this.setActionPlanSessionDelivery(req, caseReference, { sessionDeliveryDetails: mergedSessionDelivery })
   }
 
   async showActionPlanPage(req: Request, res: Response) {
@@ -379,20 +396,7 @@ class ActionPlanController {
     const { username } = res.locals.user
 
     const sessionDeliveryDetails = await this.referralService.getSessionDeliveryDetails(caseReference, username)
-    const flashData = req.flash('value')
-    const userInputData = flashData.length > 0 ? JSON.parse(flashData[0]) : undefined
-
-    if (req.method === 'POST') {
-      const schema = ActionPlanSessionDeliveryDetailsFormDataSchemaBuilder(sessionDeliveryDetails)
-      return validateRequestBodyAgainstSchema(schema, req, res, async form => {
-        const request = buildSessionDeliveryDetailsRequestFromForm(sessionDeliveryDetails, form)
-        const existingSessionDelivery = this.getActionPlanSessionDelivery(req, caseReference)?.sessionDeliveryDetails
-        const mergedSessionDelivery = this.mergeSessionDeliveryDetailsAnswers(existingSessionDelivery, request)
-        this.setActionPlanSessionDelivery(req, caseReference, { sessionDeliveryDetails: mergedSessionDelivery })
-        return res.redirect(`/referral/${caseReference}/action-plan/risks-and-adjustments`)
-      })
-    }
-
+    const userInputData = this.getFlashedFormValues(req)
     const sessionDelivery = this.getActionPlanSessionDelivery(req, caseReference)?.sessionDeliveryDetails
     const validationErrors = res.locals.errors
     const presenter = new ActionPlanSessionDeliveryDetailsPresenter(
@@ -405,33 +409,27 @@ class ActionPlanController {
     return presenter.renderPage(res)
   }
 
+  async submitSessionDeliveryDetailsPage(req: Request, res: Response) {
+    const { id: caseReference } = req.params as { id: string }
+    const { username } = res.locals.user
+
+    const sessionDeliveryDetails = await this.referralService.getSessionDeliveryDetails(caseReference, username)
+    const schema = ActionPlanSessionDeliveryDetailsFormDataSchemaBuilder(sessionDeliveryDetails)
+
+    return validateRequestBodyAgainstSchema(schema, req, res, async form => {
+      const request = buildSessionDeliveryDetailsRequestFromForm(sessionDeliveryDetails, form)
+      this.saveSessionDeliveryDetails(req, caseReference, request)
+      return res.redirect(`/referral/${caseReference}/action-plan/risks-and-adjustments`)
+    })
+  }
+
   async showRisksAndAdjustmentsPage(req: Request, res: Response) {
     const { id: caseReference } = req.params as { id: string }
     const { username } = res.locals.user
 
     const sessionDeliveryDetails = await this.referralService.getRisksAndAdjustments(caseReference, username)
-    const flashData = req.flash('value')
-    const userInputData = flashData.length > 0 ? JSON.parse(flashData[0]) : undefined
+    const userInputData = this.getFlashedFormValues(req)
 
-    if (req.method === 'POST') {
-      const actionPlanSummary = await this.referralService.getActionPlanSummary(caseReference, username)
-      const { firstName } = actionPlanSummary.personDetails
-      const schema = ActionPlanRisksAndAdjustmentsFormDataSchemaBuilder(sessionDeliveryDetails, firstName)
-      return validateRequestBodyAgainstSchema(schema, req, res, async form => {
-        const request = buildSessionDeliveryDetailsRequestFromForm(
-          sessionDeliveryDetails,
-          form,
-          buildAdditionalDetailsFieldNameResolver({
-            RISK_ASSOCIATED_WITH_PLANNED_ACTIVITIES: 'RISK_INFO',
-            REASONABLE_ADJUSTMENTS_FOR_PLANNED_ACTIVITIES: 'ADJUSTMENT_INFO',
-          }),
-        )
-        const existingSessionDelivery = this.getActionPlanSessionDelivery(req, caseReference)?.sessionDeliveryDetails
-        const mergedSessionDelivery = this.mergeSessionDeliveryDetailsAnswers(existingSessionDelivery, request)
-        this.setActionPlanSessionDelivery(req, caseReference, { sessionDeliveryDetails: mergedSessionDelivery })
-        return res.redirect(`/referral/${caseReference}/action-plan/service-end-date-check`)
-      })
-    }
     const sessionDelivery = this.getActionPlanSessionDelivery(req, caseReference)?.sessionDeliveryDetails
     const validationErrors = res.locals.errors
     const presenter = new ActionPlanRisksAndAdjustmentsPresenter(
@@ -444,31 +442,35 @@ class ActionPlanController {
     return presenter.renderPage(res)
   }
 
+  async submitRisksAndAdjustmentsPage(req: Request, res: Response) {
+    const { id: caseReference } = req.params as { id: string }
+    const { username } = res.locals.user
+
+    const sessionDeliveryDetails = await this.referralService.getRisksAndAdjustments(caseReference, username)
+    const actionPlanSummary = await this.referralService.getActionPlanSummary(caseReference, username)
+    const { firstName } = actionPlanSummary.personDetails
+    const schema = ActionPlanRisksAndAdjustmentsFormDataSchemaBuilder(sessionDeliveryDetails, firstName)
+
+    return validateRequestBodyAgainstSchema(schema, req, res, async form => {
+      const request = buildSessionDeliveryDetailsRequestFromForm(
+        sessionDeliveryDetails,
+        form,
+        buildAdditionalDetailsFieldNameResolver({
+          RISK_ASSOCIATED_WITH_PLANNED_ACTIVITIES: 'RISK_INFO',
+          REASONABLE_ADJUSTMENTS_FOR_PLANNED_ACTIVITIES: 'ADJUSTMENT_INFO',
+        }),
+      )
+      this.saveSessionDeliveryDetails(req, caseReference, request)
+      return res.redirect(`/referral/${caseReference}/action-plan/service-end-date-check`)
+    })
+  }
+
   async showServiceEndDateCheckPage(req: Request, res: Response) {
     const { id: caseReference } = req.params as { id: string }
     const { username } = res.locals.user
 
     const sessionDeliveryDetails = await this.referralService.getServiceEndDateCheck(caseReference, username)
-    const flashData = req.flash('value')
-    const userInputData = flashData.length > 0 ? JSON.parse(flashData[0]) : undefined
-
-    if (req.method === 'POST') {
-      const serviceEndDate = getServiceEndDateValue(sessionDeliveryDetails)
-      const schema = ActionPlanServiceEndDateCheckFormDataSchemaBuilder(sessionDeliveryDetails, serviceEndDate)
-      return validateRequestBodyAgainstSchema(schema, req, res, async form => {
-        const request = buildSessionDeliveryDetailsRequestFromForm(sessionDeliveryDetails, form)
-        const existingSessionDelivery = this.getActionPlanSessionDelivery(req, caseReference)?.sessionDeliveryDetails
-        const mergedSessionDelivery = this.mergeSessionDeliveryDetailsAnswers(existingSessionDelivery, request)
-        this.setActionPlanSessionDelivery(req, caseReference, { sessionDeliveryDetails: mergedSessionDelivery })
-
-        if (form.SERVICE_END_DATE_CHECK === 'YES') {
-          return res.redirect(`/referral/${caseReference}/action-plan/person-involvement`)
-        }
-
-        return res.redirect(`/referral/${caseReference}/action-plan/update-service-end-date`)
-      })
-    }
-
+    const userInputData = this.getFlashedFormValues(req)
     const sessionDelivery = this.getActionPlanSessionDelivery(req, caseReference)?.sessionDeliveryDetails
     const validationErrors = res.locals.errors
     const presenter = new ActionPlanServiceEndDateCheckPresenter(
@@ -478,6 +480,57 @@ class ActionPlanController {
       userInputData,
     )
     return presenter.renderPage(res)
+  }
+
+  async submitServiceEndDateCheckPage(req: Request, res: Response) {
+    const { id: caseReference } = req.params as { id: string }
+    const { username } = res.locals.user
+
+    const sessionDeliveryDetails = await this.referralService.getServiceEndDateCheck(caseReference, username)
+    const serviceEndDate = getServiceEndDateValue(sessionDeliveryDetails)
+    const schema = ActionPlanServiceEndDateCheckFormDataSchemaBuilder(sessionDeliveryDetails, serviceEndDate)
+
+    return validateRequestBodyAgainstSchema(schema, req, res, async form => {
+      const request = buildSessionDeliveryDetailsRequestFromForm(sessionDeliveryDetails, form)
+      this.saveSessionDeliveryDetails(req, caseReference, request)
+
+      if (form.SERVICE_END_DATE_CHECK === 'YES') {
+        return res.redirect(`/referral/${caseReference}/action-plan/person-involvement`)
+      }
+
+      return res.redirect(`/referral/${caseReference}/action-plan/update-service-end-date`)
+    })
+  }
+
+  async showUpdateServiceEndDatePage(req: Request, res: Response) {
+    const { id: caseReference } = req.params as { id: string }
+    const { username } = res.locals.user
+
+    const sessionDeliveryDetails = await this.referralService.getServiceEndDateCheck(caseReference, username)
+    const userInputData = this.getFlashedFormValues(req)
+    const sessionDelivery = this.getActionPlanSessionDelivery(req, caseReference)?.sessionDeliveryDetails
+    const validationErrors = res.locals.errors
+    const presenter = new ActionPlanChangeServiceEndDatePresenter(
+      caseReference,
+      applySessionDeliveryDetailsData(sessionDeliveryDetails, sessionDelivery),
+      validationErrors,
+      userInputData,
+    )
+    return presenter.renderPage(res)
+  }
+
+  async submitUpdateServiceEndDatePage(req: Request, res: Response) {
+    const { id: caseReference } = req.params as { id: string }
+    const { username } = res.locals.user
+
+    const sessionDeliveryDetails = await this.referralService.getServiceEndDateCheck(caseReference, username)
+    const schema = ActionPlanChangeServiceEndDateDataSchemaBuilder()
+
+    return validateRequestBodyAgainstSchema(schema, req, res, async form => {
+      const request = buildSessionDeliveryDetailsRequestFromForm(sessionDeliveryDetails, form)
+      this.saveSessionDeliveryDetails(req, caseReference, request)
+      return res.redirect(`/referral/${caseReference}/action-plan/person-involvement`)
+    })
   }
 }
 

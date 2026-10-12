@@ -10,7 +10,9 @@ import ActionPlanAddActivityPresenter from './addActivity/actionPlanAddActivityP
 import ActionPlanViewActivitiesPresenter from './viewActivities/actionPlanViewActivitiesPresenter'
 import ActionPlanRemoveActivityPresenter from './removeActivity/actionPlanRemoveActivityPresenter'
 import ActionPlanSessionDeliveryDetailsPresenter from './sessionDeliveryDetails/actionPlanSessionDeliveryDetailsPresenter'
+import ActionPlanRisksAndAdjustmentsPresenter from './sessionDeliveryDetails/actionPlanRisksAndAdjustmentsPresenter'
 import ActionPlanServiceEndDateCheckPresenter from './sessionDeliveryDetails/actionPlanServiceEndDateCheckPresenter'
+import ActionPlanChangeServiceEndDatePresenter from './sessionDeliveryDetails/actionPlanChangeServiceEndDatePresenter'
 import buildReferralProgress from '../../testutils/buildReferralProgress'
 
 jest.mock('../../services/referralService')
@@ -21,7 +23,9 @@ jest.mock('./addActivity/actionPlanAddActivityPresenter')
 jest.mock('./viewActivities/actionPlanViewActivitiesPresenter')
 jest.mock('./removeActivity/actionPlanRemoveActivityPresenter')
 jest.mock('./sessionDeliveryDetails/actionPlanSessionDeliveryDetailsPresenter')
+jest.mock('./sessionDeliveryDetails/actionPlanRisksAndAdjustmentsPresenter')
 jest.mock('./sessionDeliveryDetails/actionPlanServiceEndDateCheckPresenter')
+jest.mock('./sessionDeliveryDetails/actionPlanChangeServiceEndDatePresenter')
 
 describe('ActionPlanController', () => {
   let referralService: jest.Mocked<ReferralService>
@@ -35,6 +39,7 @@ describe('ActionPlanController', () => {
       getReferralProgress: jest.fn(),
       getActionPlanNeedsAndOutcomes: jest.fn(),
       getSessionDeliveryDetails: jest.fn(),
+      getRisksAndAdjustments: jest.fn(),
       getServiceEndDateCheck: jest.fn(),
       submitAction: jest.fn(),
     } as unknown as jest.Mocked<ReferralService>
@@ -644,6 +649,137 @@ describe('ActionPlanController', () => {
     })
   })
 
+  it('renders the update service end date page with the presenter', async () => {
+    const sessionDeliveryDetails: ActionPlanSessionDeliveryDetailsResponse = {
+      questions: [],
+    }
+
+    referralService.getServiceEndDateCheck.mockResolvedValue(sessionDeliveryDetails)
+
+    await actionPlanController.showUpdateServiceEndDatePage(req, res)
+
+    expect(referralService.getServiceEndDateCheck).toHaveBeenCalledWith('AB1234CD', 'user1')
+    expect(ActionPlanChangeServiceEndDatePresenter).toHaveBeenCalledWith(
+      'AB1234CD',
+      sessionDeliveryDetails,
+      undefined,
+      undefined,
+    )
+    expect(ActionPlanChangeServiceEndDatePresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+  })
+
+  describe('risks and adjustments', () => {
+    const risksAndAdjustmentsDetails: ActionPlanSessionDeliveryDetailsResponse = {
+      questions: [
+        {
+          id: 'question-1',
+          displayOrder: 1,
+          label: 'Are there risks associated with the planned activities?',
+          key: 'RISK_ASSOCIATED_WITH_PLANNED_ACTIVITIES',
+          hint: null,
+          answerType: 'RADIO',
+          maximumNumberOfResponses: 1,
+          choices: [
+            {
+              value: 'YES',
+              label: 'Yes',
+              displayOrder: 1,
+              displayAdditionalDetailsOnSelect: true,
+              additionalDetailsLabel: 'Provide risk information',
+              additionalDetailsHint: null,
+            },
+            {
+              value: 'NO',
+              label: 'No',
+              displayOrder: 2,
+              displayAdditionalDetailsOnSelect: false,
+              additionalDetailsLabel: null,
+              additionalDetailsHint: null,
+            },
+          ],
+          savedResponses: [],
+        },
+        {
+          id: 'question-2',
+          displayOrder: 2,
+          label: 'Are reasonable adjustments needed for the planned activities?',
+          key: 'REASONABLE_ADJUSTMENTS_FOR_PLANNED_ACTIVITIES',
+          hint: null,
+          answerType: 'RADIO',
+          maximumNumberOfResponses: 1,
+          choices: [
+            {
+              value: 'YES',
+              label: 'Yes',
+              displayOrder: 1,
+              displayAdditionalDetailsOnSelect: true,
+              additionalDetailsLabel: 'Provide adjustment information',
+              additionalDetailsHint: null,
+            },
+            {
+              value: 'NO',
+              label: 'No',
+              displayOrder: 2,
+              displayAdditionalDetailsOnSelect: false,
+              additionalDetailsLabel: null,
+              additionalDetailsHint: null,
+            },
+          ],
+          savedResponses: [],
+        },
+      ],
+    }
+
+    it('renders the risks and adjustments page with backend questions', async () => {
+      referralService.getRisksAndAdjustments.mockResolvedValue(risksAndAdjustmentsDetails)
+
+      await actionPlanController.showRisksAndAdjustmentsPage(req, res)
+
+      expect(referralService.getRisksAndAdjustments).toHaveBeenCalledWith('AB1234CD', 'user1')
+      expect(ActionPlanRisksAndAdjustmentsPresenter).toHaveBeenCalledWith(
+        'AB1234CD',
+        risksAndAdjustmentsDetails,
+        undefined,
+        undefined,
+      )
+      expect(ActionPlanRisksAndAdjustmentsPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+    })
+
+    it('redirects to the service end date check page when the submitted form is valid', async () => {
+      req.body = {
+        RISK_ASSOCIATED_WITH_PLANNED_ACTIVITIES: 'YES',
+        RISK_INFO: 'Staff should be nearby',
+        REASONABLE_ADJUSTMENTS_FOR_PLANNED_ACTIVITIES: 'YES',
+        ADJUSTMENT_INFO: 'Use large print materials',
+      }
+      referralService.getRisksAndAdjustments.mockResolvedValue(risksAndAdjustmentsDetails)
+      referralService.getActionPlanSummary.mockResolvedValue({
+        personDetails: { firstName: 'Alex', lastName: 'River' },
+        needs: [],
+        lastUpdatedAt: '',
+      })
+
+      await actionPlanController.submitRisksAndAdjustmentsPage(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/service-end-date-check')
+      expect(req.session.actionPlanSessionDelivery).toEqual({
+        caseReference: 'AB1234CD',
+        sessionDeliveryDetails: {
+          answers: [
+            {
+              questionId: 'question-1',
+              incomingAnswerDetails: [{ value: 'YES', additionalDetails: 'Staff should be nearby' }],
+            },
+            {
+              questionId: 'question-2',
+              incomingAnswerDetails: [{ value: 'YES', additionalDetails: 'Use large print materials' }],
+            },
+          ],
+        },
+      })
+    })
+  })
+
   it('renders the session delivery details page with backend questions', async () => {
     const sessionDeliveryDetails: ActionPlanSessionDeliveryDetailsResponse = {
       questions: [],
@@ -809,7 +945,6 @@ describe('ActionPlanController', () => {
         },
       ],
     }
-    req.method = 'POST'
     req.body = {
       SESSION_FREQUENCY: 'Every week',
       SESSION_DELIVERY_METHOD: 'IN_PERSON',
@@ -818,7 +953,7 @@ describe('ActionPlanController', () => {
     referralService.getSessionDeliveryDetails.mockResolvedValue(sessionDeliveryDetails)
     res.redirect = jest.fn()
 
-    await actionPlanController.showSessionDeliveryDetailsPage(req, res)
+    await actionPlanController.submitSessionDeliveryDetailsPage(req, res)
 
     expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/risks-and-adjustments')
     expect(req.session.actionPlanSessionDelivery).toEqual({
@@ -840,13 +975,12 @@ describe('ActionPlanController', () => {
     const sessionDeliveryDetails: ActionPlanSessionDeliveryDetailsResponse = {
       questions: [],
     }
-    req.method = 'POST'
     req.url = '/referral/AB1234CD/action-plan/session-delivery-details'
     req.body = {}
     referralService.getSessionDeliveryDetails.mockResolvedValue(sessionDeliveryDetails)
     res.redirect = jest.fn()
 
-    await actionPlanController.showSessionDeliveryDetailsPage(req, res)
+    await actionPlanController.submitSessionDeliveryDetailsPage(req, res)
 
     expect(req.flash).toHaveBeenCalledWith('SESSION_DELIVERY_METHODError', 'Select how the sessions will take place')
     expect(req.flash).toHaveBeenCalledWith('SESSION_FORMATError', 'Select which format you will use for the sessions')
@@ -972,12 +1106,11 @@ describe('ActionPlanController', () => {
     })
 
     it('redirects to the person involvement page when the service end date is unchanged', async () => {
-      req.method = 'POST'
       req.body = { SERVICE_END_DATE_CHECK: 'YES' }
       referralService.getServiceEndDateCheck.mockResolvedValue(serviceEndDateCheckDetails)
       res.redirect = jest.fn()
 
-      await actionPlanController.showServiceEndDateCheckPage(req, res)
+      await actionPlanController.submitServiceEndDateCheckPage(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/person-involvement')
       expect(req.session.actionPlanSessionDelivery).toEqual({
@@ -991,12 +1124,11 @@ describe('ActionPlanController', () => {
     })
 
     it('redirects to the update service end date page when the service end date has changed', async () => {
-      req.method = 'POST'
       req.body = { SERVICE_END_DATE_CHECK: 'NO' }
       referralService.getServiceEndDateCheck.mockResolvedValue(serviceEndDateCheckDetails)
       res.redirect = jest.fn()
 
-      await actionPlanController.showServiceEndDateCheckPage(req, res)
+      await actionPlanController.submitServiceEndDateCheckPage(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/update-service-end-date')
       expect(req.session.actionPlanSessionDelivery).toEqual({
@@ -1010,13 +1142,12 @@ describe('ActionPlanController', () => {
     })
 
     it('flashes a validation error and redirects back when the submitted form is invalid', async () => {
-      req.method = 'POST'
       req.url = '/referral/AB1234CD/action-plan/service-end-date-check'
       req.body = {}
       referralService.getServiceEndDateCheck.mockResolvedValue(serviceEndDateCheckDetails)
       res.redirect = jest.fn()
 
-      await actionPlanController.showServiceEndDateCheckPage(req, res)
+      await actionPlanController.submitServiceEndDateCheckPage(req, res)
 
       expect(req.flash).toHaveBeenCalledWith(
         'SERVICE_END_DATE_CHECKError',

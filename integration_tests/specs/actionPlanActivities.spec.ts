@@ -27,6 +27,7 @@ test.describe('Select an action plan need', () => {
     lastUpdatedAt: '2026-10-12T09:00:00Z',
     personDetails: { firstName: 'Alex', lastName: 'River' },
     needs: [],
+    lastUpdatedAt: '',
   }
 
   test.beforeEach(async ({ page }) => {

@@ -19,6 +19,7 @@ test.describe('Action Plan Page', () => {
       lastName: 'River',
     },
     needs: [],
+    lastUpdatedAt: '',
   }
   test.beforeEach(async ({ page }) => {
     await resetStubs()
@@ -64,6 +65,7 @@ test.describe('Action Plan Page', () => {
           ],
         },
       ],
+      lastUpdatedAt: '',
     }
 
     const icsFeedbackSubmittedProgress = buildReferralProgress([
