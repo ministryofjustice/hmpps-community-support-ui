@@ -70,6 +70,26 @@ const buildTextareaAnswers = (
   return value ? [{ value }] : []
 }
 
+const buildDateAnswers = (
+  question: SessionDeliveryQuestion,
+  formData: SessionDeliveryDetailsFormData,
+): SessionDeliveryDetailsQuestionAnswer[] => {
+  const directValue = normalizeSingleValue(formData[question.key])
+  if (directValue) {
+    return [{ value: directValue }]
+  }
+
+  const day = normalizeSingleValue(formData[`${question.key}-day`])
+  const month = normalizeSingleValue(formData[`${question.key}-month`])
+  const year = normalizeSingleValue(formData[`${question.key}-year`])
+
+  if (!day || !month || !year) {
+    return []
+  }
+
+  return [{ value: `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}` }]
+}
+
 const buildRadioAnswers = (
   question: SessionDeliveryQuestion,
   formData: SessionDeliveryDetailsFormData,
@@ -120,6 +140,13 @@ const buildAnswersForQuestion = (
     return {
       questionId: question.id,
       incomingAnswerDetails: buildTextareaAnswers(question, formData),
+    }
+  }
+
+  if (question.answerType === 'DATE') {
+    return {
+      questionId: question.id,
+      incomingAnswerDetails: buildDateAnswers(question, formData),
     }
   }
 

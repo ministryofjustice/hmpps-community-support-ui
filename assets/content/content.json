@@ -369,6 +369,12 @@
     "continueButtonText": "Continue",
     "backLink": "/referral/{{ id }}/action-plan/risks-and-adjustments"
   },
+  "/referral/:id/action-plan/update-service-end-date": {
+    "pageTitle": "Session details – Change the service end date",
+    "pageHeader": "Change the service end date",
+    "continueButtonText": "Continue",
+    "backLink": "/referral/{{ id }}/action-plan/service-end-date-check"
+  },
   "/referral/:id/action-plan/activities/add": {
     "pageHeader": "Add An Activity",
     "areaOfNeedLabel": "Area of need",
