@@ -3,8 +3,9 @@ import { randomUUID } from 'crypto'
 import type { ActionPlanSessionDeliveryDetailsResponse } from '@community-support-api'
 
 type SavedAnswer = 'YES' | 'NO' | 'EMPTY'
+type SavedResponses = ActionPlanSessionDeliveryDetailsResponse['questions'][number]['savedResponses']
 
-const actionPlanSessionDeliveryDetailsFactory = Factory.define<
+const actionPlanCheckServiceEndDateFactory = Factory.define<
   ActionPlanSessionDeliveryDetailsResponse,
   { savedAnswer: SavedAnswer }
 >(({ transientParams }) => {
@@ -43,17 +44,75 @@ const actionPlanSessionDeliveryDetailsFactory = Factory.define<
   }
 })
 
-export const serviceEndDateUnchangedResponse = actionPlanSessionDeliveryDetailsFactory.build(
+const buildSavedResponses = (value: string | null): SavedResponses =>
+  value === null ? [] : [{ value, additionalDetails: null }]
+
+export const actionPlanUpdateServiceEndDateFactory = Factory.define<
+  ActionPlanSessionDeliveryDetailsResponse,
+  {
+    newServiceEndDate?: string | null
+    serviceEndDateChangeReason?: string | null
+  }
+>(({ transientParams }) => {
+  const { newServiceEndDate, serviceEndDateChangeReason } = transientParams
+
+  return {
+    questions: [
+      {
+        id: randomUUID(),
+        displayOrder: 1,
+        label: 'What is the new service end date?',
+        key: 'NEW_SERVICE_END_DATE',
+        answerType: 'DATE',
+        maximumNumberOfResponses: 1,
+        choices: null,
+        savedResponses: buildSavedResponses(newServiceEndDate ?? null),
+      },
+      {
+        id: randomUUID(),
+        displayOrder: 2,
+        label: 'Why are you changing the service end date?',
+        key: 'SERVICE_END_DATE_CHANGE_REASON',
+        answerType: 'TEXTAREA',
+        maximumNumberOfResponses: 1,
+        choices: null,
+        savedResponses: buildSavedResponses(serviceEndDateChangeReason ?? null),
+      },
+    ],
+  }
+})
+
+export const serviceEndDateUnchangedResponse = actionPlanCheckServiceEndDateFactory.build(
   {},
   { transient: { savedAnswer: 'YES' } },
 )
 
-export const serviceEndDateChangedResponse = actionPlanSessionDeliveryDetailsFactory.build(
+export const serviceEndDateChangedResponse = actionPlanCheckServiceEndDateFactory.build(
   {},
   { transient: { savedAnswer: 'NO' } },
 )
 
-export const serviceEndDateEmptyResponse = actionPlanSessionDeliveryDetailsFactory.build(
+export const serviceEndDateEmptyResponse = actionPlanCheckServiceEndDateFactory.build(
   {},
   { transient: { savedAnswer: 'EMPTY' } },
+)
+
+export const updateServiceEndDateResponse = actionPlanUpdateServiceEndDateFactory.build(
+  {},
+  {
+    transient: {
+      newServiceEndDate: '2026-06-24',
+      serviceEndDateChangeReason: 'Some reasons',
+    },
+  },
+)
+
+export const updateServiceEndDateEmptyResponse = actionPlanUpdateServiceEndDateFactory.build(
+  {},
+  {
+    transient: {
+      newServiceEndDate: null,
+      serviceEndDateChangeReason: null,
+    },
+  },
 )
