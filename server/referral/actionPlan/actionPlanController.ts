@@ -189,6 +189,42 @@ class ActionPlanController {
 
   async showViewActivitiesPage(req: Request, res: Response) {
     const { id: caseReference } = req.params as { id: string }
+    const { needId, outcomeAnswerId } = req.query ?? {}
+
+    if (needId !== undefined || outcomeAnswerId !== undefined) {
+      if (typeof needId !== 'string' || typeof outcomeAnswerId !== 'string') {
+        return res.redirect(`/referral/${caseReference}/action-plan`)
+      }
+
+      const { username } = res.locals.user
+      const [actionPlanSummary, needsAndOutcomes] = await Promise.all([
+        this.referralService.getActionPlanSummary(caseReference, username),
+        this.referralService.getActionPlanNeedsAndOutcomes(username),
+      ])
+      const selectedNeed = actionPlanSummary.needs.find(need => need.id === needId)
+      const selectedOutcome = selectedNeed?.outcomes.find(outcome => outcome.id === outcomeAnswerId)
+      const selectableNeed = needsAndOutcomes.needs.find(need => need.id === needId)
+      const selectableOutcome = selectableNeed?.outcomes.find(
+        outcome => outcome.id === selectedOutcome?.label || outcome.text === selectedOutcome?.label,
+      )
+
+      if (!selectedNeed || !selectedOutcome || !selectableNeed || !selectableOutcome) {
+        return res.redirect(`/referral/${caseReference}/action-plan`)
+      }
+
+      req.session.actionPlan = {
+        needs: needsAndOutcomes.needs,
+      }
+      req.session.actionPlanAction = { needId, outcomeId: selectableOutcome.id }
+      this.setActionPlanActivities(
+        req,
+        caseReference,
+        selectedOutcome.activities.map(activity => ({
+          activityProvider: activity.who,
+          activityDescription: activity.details,
+        })),
+      )
+    }
 
     const { needId: selectedNeedId, outcomeId: selectedOutcomeId } = req.session.actionPlanAction ?? {}
     const selectedNeed = req.session.actionPlan?.needs?.find(need => need.id === selectedNeedId)

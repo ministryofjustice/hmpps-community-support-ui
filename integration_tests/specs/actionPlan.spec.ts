@@ -13,6 +13,7 @@ test.describe('Action Plan Page', () => {
   const caseReference = 'AB1234CD'
 
   const actionPlanSummary: ActionPlanSummaryDto = {
+    lastUpdatedAt: '2026-10-12T09:00:00Z',
     personDetails: {
       firstName: 'Alex',
       lastName: 'River',
@@ -44,6 +45,7 @@ test.describe('Action Plan Page', () => {
 
   test.describe('Submit Action plan', () => {
     const actionPlanSummaryWithOutcomes: ActionPlanSummaryDto = {
+      lastUpdatedAt: '2026-10-12T09:00:00Z',
       personDetails: {
         firstName: 'Alex',
         lastName: 'River',
@@ -52,6 +54,7 @@ test.describe('Action Plan Page', () => {
         {
           id: randomUUID(),
           label: 'Accommodation',
+          orderNumber: 1,
           outcomes: [
             {
               id: randomUUID(),
@@ -100,7 +103,10 @@ test.describe('Action Plan Page', () => {
     test('does not display the Submit Action plan button when not all outcomes have been added', async ({ page }) => {
       await communitySupport.stubGetActionPlanSummary(caseReference, {
         ...actionPlanSummaryWithOutcomes,
-        needs: [...actionPlanSummaryWithOutcomes.needs, { id: randomUUID(), label: 'Finances', outcomes: [] }],
+        needs: [
+          ...actionPlanSummaryWithOutcomes.needs,
+          { id: randomUUID(), label: 'Finances', orderNumber: 2, outcomes: [] },
+        ],
       })
       await communitySupport.stubGetReferralProgress(icsFeedbackSubmittedProgress, caseReference)
 

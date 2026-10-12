@@ -24,6 +24,7 @@ test.describe('Select an action plan need', () => {
   }
 
   const actionPlanSummary: ActionPlanSummaryDto = {
+    lastUpdatedAt: '2026-10-12T09:00:00Z',
     personDetails: { firstName: 'Alex', lastName: 'River' },
     needs: [],
   }
@@ -216,5 +217,60 @@ test.describe('Select an action plan need', () => {
         },
       ],
     })
+  })
+
+  test('opens existing activities from the action plan summary for the selected need and outcome', async ({ page }) => {
+    const referenceNeedId = '00000000-0000-4000-8000-000000000001'
+    const referenceOutcomeId = '00000000-0000-4000-8000-000000000002'
+    const outcomeAnswerId = '00000000-0000-4000-8000-000000000003'
+    const populatedActionPlanSummary: ActionPlanSummaryDto = {
+      lastUpdatedAt: '2026-10-12T09:00:00Z',
+      personDetails: { firstName: 'Alex', lastName: 'River' },
+      needs: [
+        {
+          id: referenceNeedId,
+          label: 'Accommodation',
+          orderNumber: 1,
+          outcomes: [
+            {
+              id: outcomeAnswerId,
+              label: referenceOutcomeId,
+              activities: [
+                { id: 'activity-existing', who: 'Local housing service', details: 'Attend weekly appointments' },
+              ],
+            },
+          ],
+        },
+      ],
+    }
+    await communitySupport.stubGetActionPlanSummary(caseReference, populatedActionPlanSummary)
+    await communitySupport.stubGetActionPlanNeedsAndOutcomes({
+      needs: [
+        {
+          id: referenceNeedId,
+          label: 'Accommodation',
+          outcomes: [{ id: referenceOutcomeId, text: 'Find suitable housing' }],
+        },
+      ],
+    })
+
+    await page.goto(`/referral/${caseReference}/action-plan`)
+    await page.getByRole('link', { name: 'Add or change activities' }).click()
+
+    await expect(page).toHaveURL(
+      `/referral/${caseReference}/action-plan/activities?needId=${referenceNeedId}&outcomeAnswerId=${outcomeAnswerId}`,
+    )
+    await expect(page.locator('.govuk-inset-text')).toContainText('Area of need: Accommodation')
+    await expect(page.locator('.govuk-inset-text')).toContainText('Outcome: Find suitable housing')
+
+    const viewActivitiesPage = await ActionPlanViewActivitiesPage.verifyOnPage(page)
+    await expect(viewActivitiesPage.activityRows).toHaveCount(1)
+    await expect(viewActivitiesPage.activityRows.first()).toContainText('Local housing service')
+    await expect(viewActivitiesPage.activityRows.first()).toContainText('Attend weekly appointments')
+
+    await viewActivitiesPage.activityRows.first().getByRole('link', { name: 'Change' }).click()
+    const editActivityPage = await ActionPlanAddActivityPage.verifyOnPage(page)
+    await expect(editActivityPage.activityProvider).toHaveValue('Local housing service')
+    await expect(editActivityPage.activityDescription).toHaveValue('Attend weekly appointments')
   })
 })

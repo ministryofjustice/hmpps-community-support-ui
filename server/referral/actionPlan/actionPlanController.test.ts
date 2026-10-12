@@ -541,6 +541,62 @@ describe('ActionPlanController', () => {
   })
 
   describe('view activities', () => {
+    it('loads the selected need, outcome and activities from the action-plan summary', async () => {
+      req.query = { needId: 'need-1', outcomeAnswerId: 'outcome-answer-1' }
+      referralService.getActionPlanSummary.mockResolvedValue({
+        personDetails: { firstName: 'Alex', lastName: 'River' },
+        lastUpdatedAt: '2026-10-12T09:00:00Z',
+        needs: [
+          {
+            id: 'need-1',
+            label: 'Accommodation',
+            orderNumber: 1,
+            outcomes: [
+              {
+                id: 'outcome-answer-1',
+                label: 'reference-outcome-1',
+                activities: [{ id: 'activity-1', who: 'Local group', details: 'Weekly sessions' }],
+              },
+            ],
+          },
+        ],
+      })
+      const selectableNeeds = [
+        { id: 'need-1', label: 'Accommodation', outcomes: [{ id: 'reference-outcome-1', text: 'Find housing' }] },
+      ]
+      referralService.getActionPlanNeedsAndOutcomes.mockResolvedValue({ needs: selectableNeeds })
+
+      await actionPlanController.showViewActivitiesPage(req, res)
+
+      expect(referralService.getActionPlanSummary).toHaveBeenCalledWith('AB1234CD', 'user1')
+      expect(referralService.getActionPlanNeedsAndOutcomes).toHaveBeenCalledWith('user1')
+      expect(req.session.actionPlanAction).toEqual({ needId: 'need-1', outcomeId: 'reference-outcome-1' })
+      expect(req.session.actionPlan).toEqual({ needs: selectableNeeds })
+      expect(req.session.actionPlanActivities).toEqual({
+        caseReference: 'AB1234CD',
+        activities: [{ activityProvider: 'Local group', activityDescription: 'Weekly sessions' }],
+      })
+      expect(ActionPlanViewActivitiesPresenter).toHaveBeenCalledWith('AB1234CD', 'Accommodation', 'Find housing', [
+        { activityProvider: 'Local group', activityDescription: 'Weekly sessions' },
+      ])
+    })
+
+    it('redirects to the action plan when the requested need or outcome is not found', async () => {
+      req.query = { needId: 'missing-need', outcomeAnswerId: 'missing-outcome-answer' }
+      referralService.getActionPlanSummary.mockResolvedValue({
+        personDetails: { firstName: 'Alex', lastName: 'River' },
+        lastUpdatedAt: '2026-10-12T09:00:00Z',
+        needs: [],
+      })
+      referralService.getActionPlanNeedsAndOutcomes.mockResolvedValue({ needs: [] })
+      jest.clearAllMocks()
+
+      await actionPlanController.showViewActivitiesPage(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan')
+      expect(ActionPlanViewActivitiesPresenter).not.toHaveBeenCalled()
+    })
+
     it('renders the selected need, outcome, and session activities', async () => {
       req.session.actionPlan = {
         needs: [{ id: 'need-1', label: 'Accommodation', outcomes: [{ id: 'outcome-1', text: 'Find housing' }] }],
