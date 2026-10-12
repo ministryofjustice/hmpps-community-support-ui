@@ -1,9 +1,7 @@
-import { randomUUID } from 'node:crypto'
 import { test, expect } from '@playwright/test'
-import { ActionPlanSessionDeliveryDetailsResponse } from '@community-support-api'
 import { login, resetStubs } from '../testUtils'
 import communitySupport from '../mockApis/communitySupport'
-import { sessionDeliveryDetails } from '../mockData/actionPlanData'
+import sessionDeliveryDetails from '../mockData/actionPlanData'
 import ActionPlanSessionDeliveryDetailsPage from '../pages/actionPlanSessionDeliveryDetailsPage'
 
 test.describe('Action Plan Session Delivery Details Page', () => {

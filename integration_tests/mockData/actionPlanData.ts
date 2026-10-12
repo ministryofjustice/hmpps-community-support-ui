@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto'
 import type { ActionPlanSessionDeliveryDetailsResponse } from '@community-support-api'
 
-export const sessionDeliveryDetails: ActionPlanSessionDeliveryDetailsResponse = {
+const sessionDeliveryDetails: ActionPlanSessionDeliveryDetailsResponse = {
   questions: [
     {
       id: randomUUID(),
@@ -80,3 +80,5 @@ export const sessionDeliveryDetails: ActionPlanSessionDeliveryDetailsResponse = 
     },
   ],
 }
+
+export default sessionDeliveryDetails
