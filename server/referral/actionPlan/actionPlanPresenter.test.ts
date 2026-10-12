@@ -67,7 +67,7 @@ describe('ActionPlanPresenter', () => {
       ],
     }
 
-    const presenter = new ActionPlanPresenter(actionPlanSummary, 'AB1234CD')
+    const presenter = new ActionPlanPresenter(actionPlanSummary, 'AB1234CD', true)
     const res = {
       locals: {
         content: globalContent['/referral/:id/action-plan'],
@@ -81,8 +81,10 @@ describe('ActionPlanPresenter', () => {
     expect(renderData.content.pageHeader).toBe('Action plan')
     expect(renderData.content.addAnotherOutcomeButton).toBeDefined()
     expect(renderData.content.addAnotherOutcomeButton.text).toBe('Add another outcome')
-    expect(renderData.content.submitActionPlanButton).toBeDefined()
-    expect(renderData.content.submitActionPlanButton.text).toBe('Submit Action plan')
+    expect(renderData.content.submitActionPlanButton).toEqual({
+      href: '/referral/AB1234CD/action-plan/session-delivery-details',
+      text: 'Submit Action plan',
+    })
 
     expect(renderData.content.needsSummary.length).toBe(1)
     const need = renderData.content.needsSummary[0]
@@ -193,5 +195,62 @@ describe('ActionPlanPresenter', () => {
     expect(needs[2].moveUpButton).toBeDefined()
     expect(needs[2].moveUpButton.text).toBe('Move outcome up')
     expect(needs[2].moveDownButton).toBeUndefined()
+  })
+
+  describe('submit action plan button', () => {
+    const outcome = {
+      id: 'outcome_id_1',
+      label: 'I want to secure and maintain settled and suitable accommodation.',
+      activities: [{ id: 'activity_id_1', who: 'Delivery practitioner', details: 'Some details' }],
+    }
+
+    const render = (actionPlanSummary: ActionPlanSummaryDto, icsFeedbackSubmitted?: boolean) => {
+      const presenter = new ActionPlanPresenter(actionPlanSummary, 'AB1234CD', icsFeedbackSubmitted)
+      const res = {
+        locals: {
+          content: globalContent['/referral/:id/action-plan'],
+        },
+        render: jest.fn(),
+      } as unknown as Response
+      presenter.renderPage(res)
+      return ((res.render as jest.Mock).mock.calls[0][1] as { content: ActionPlanViewModel }).content
+    }
+
+    const summaryWithAllOutcomes: ActionPlanSummaryDto = {
+      personDetails: { firstName: 'Alex', lastName: 'Smith' },
+      needs: [
+        { id: 'need_id_1', label: 'Accommodation', outcomes: [outcome] },
+        { id: 'need_id_2', label: 'Finances', outcomes: [{ ...outcome, id: 'outcome_id_2' }] },
+      ],
+    }
+
+    it('is displayed and links to session details when all outcomes are added and ICS feedback is submitted', () => {
+      const content = render(summaryWithAllOutcomes, true)
+
+      expect(content.submitActionPlanButton).toEqual({
+        href: '/referral/AB1234CD/action-plan/session-delivery-details',
+        text: 'Submit Action plan',
+      })
+    })
+
+    it('is not displayed when the ICS feedback has not been submitted', () => {
+      expect(render(summaryWithAllOutcomes, false).submitActionPlanButton).toBeUndefined()
+      expect(render(summaryWithAllOutcomes).submitActionPlanButton).toBeUndefined()
+    })
+
+    it('is not displayed when not all outcomes have been added', () => {
+      const summary: ActionPlanSummaryDto = {
+        ...summaryWithAllOutcomes,
+        needs: [summaryWithAllOutcomes.needs[0], { id: 'need_id_2', label: 'Finances', outcomes: [] }],
+      }
+
+      expect(render(summary, true).submitActionPlanButton).toBeUndefined()
+    })
+
+    it('is not displayed when there are no needs', () => {
+      const summary: ActionPlanSummaryDto = { ...summaryWithAllOutcomes, needs: [] }
+
+      expect(render(summary, true).submitActionPlanButton).toBeUndefined()
+    })
   })
 })

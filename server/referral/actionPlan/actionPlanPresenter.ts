@@ -10,6 +10,7 @@ export default class ActionPlanPresenter extends PresenterBase<ActionPlanViewMod
   constructor(
     private readonly actionPlanSummary: ActionPlanSummaryDto,
     private readonly caseReference: string,
+    private readonly icsFeedbackSubmitted: boolean = false,
   ) {
     super()
   }
@@ -21,6 +22,7 @@ export default class ActionPlanPresenter extends PresenterBase<ActionPlanViewMod
     const needsSummary = this.buildNeedsSummary(content, this.actionPlanSummary.needs)
 
     const hasNeeds = needsSummary.length > 0
+    const allOutcomesAdded = hasNeeds && this.actionPlanSummary.needs.every(need => need.outcomes.length > 0)
 
     // TODO get updatedAt from actionPlanSummary
     const updatedAtText = hasNeeds ? this.formatUpdatedAtText(new Date()) : undefined
@@ -32,7 +34,13 @@ export default class ActionPlanPresenter extends PresenterBase<ActionPlanViewMod
           classes: 'govuk-button--secondary govuk-!-margin-right-2',
         }
       : undefined
-    const submitActionPlanButton: GovukFrontendButton = hasNeeds ? { text: content.submitActionPlanText } : undefined
+    const submitActionPlanButton: GovukFrontendButton =
+      allOutcomesAdded && this.icsFeedbackSubmitted
+        ? {
+            href: `/referral/${this.caseReference}/action-plan/session-delivery-details`,
+            text: content.submitActionPlanText,
+          }
+        : undefined
     const createButton: GovukFrontendButton = hasNeeds
       ? undefined
       : {

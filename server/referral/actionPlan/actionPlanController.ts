@@ -77,8 +77,14 @@ class ActionPlanController {
     const { id: caseReference } = req.params as { id: string }
     const { username } = res.locals.user
 
-    const actionPlanSummary = await this.referralService.getActionPlanSummary(caseReference, username)
-    const presenter = new ActionPlanPresenter(actionPlanSummary, caseReference)
+    const [actionPlanSummary, referralProgress] = await Promise.all([
+      this.referralService.getActionPlanSummary(caseReference, username),
+      this.referralService.getReferralProgress(caseReference, username),
+    ])
+    const icsFeedbackSubmitted = referralProgress.appointments.some(
+      appointment => appointment.type === 'ICS' && Boolean(appointment.icsFeedbackId),
+    )
+    const presenter = new ActionPlanPresenter(actionPlanSummary, caseReference, icsFeedbackSubmitted)
 
     return presenter.renderPage(res)
   }

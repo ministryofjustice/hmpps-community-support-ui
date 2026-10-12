@@ -11,6 +11,7 @@ import ActionPlanViewActivitiesPresenter from './viewActivities/actionPlanViewAc
 import ActionPlanRemoveActivityPresenter from './removeActivity/actionPlanRemoveActivityPresenter'
 import ActionPlanSessionDeliveryDetailsPresenter from './sessionDeliveryDetails/actionPlanSessionDeliveryDetailsPresenter'
 import ActionPlanServiceEndDateCheckPresenter from './sessionDeliveryDetails/actionPlanServiceEndDateCheckPresenter'
+import buildReferralProgress from '../../testutils/buildReferralProgress'
 
 jest.mock('../../services/referralService')
 jest.mock('./actionPlanPresenter')
@@ -31,6 +32,7 @@ describe('ActionPlanController', () => {
   beforeEach(() => {
     referralService = {
       getActionPlanSummary: jest.fn(),
+      getReferralProgress: jest.fn(),
       getActionPlanNeedsAndOutcomes: jest.fn(),
       getSessionDeliveryDetails: jest.fn(),
       getServiceEndDateCheck: jest.fn(),
@@ -60,7 +62,7 @@ describe('ActionPlanController', () => {
     } as unknown as Response
   })
 
-  it('renders action plan page with summary data', async () => {
+  describe('action plan page', () => {
     const actionPlanSummary: ActionPlanSummaryDto = {
       personDetails: {
         firstName: 'Alex',
@@ -69,12 +71,40 @@ describe('ActionPlanController', () => {
       needs: [],
     }
 
-    referralService.getActionPlanSummary.mockResolvedValue(actionPlanSummary)
+    beforeEach(() => {
+      referralService.getActionPlanSummary.mockResolvedValue(actionPlanSummary)
+    })
 
-    await actionPlanController.showActionPlanPage(req, res)
+    it('renders action plan page with summary data', async () => {
+      referralService.getReferralProgress.mockResolvedValue(buildReferralProgress([]))
 
-    expect(referralService.getActionPlanSummary).toHaveBeenCalledWith('AB1234CD', 'user1')
-    expect(ActionPlanPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+      await actionPlanController.showActionPlanPage(req, res)
+
+      expect(referralService.getActionPlanSummary).toHaveBeenCalledWith('AB1234CD', 'user1')
+      expect(referralService.getReferralProgress).toHaveBeenCalledWith('AB1234CD', 'user1')
+      expect(ActionPlanPresenter).toHaveBeenLastCalledWith(actionPlanSummary, 'AB1234CD', false)
+      expect(ActionPlanPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+    })
+
+    it('passes icsFeedbackSubmitted as true when the ICS feedback has been submitted', async () => {
+      referralService.getReferralProgress.mockResolvedValue(
+        buildReferralProgress([{ event: { status: 'COMPLETED', icsFeedbackId: 'feedback-1' } }]),
+      )
+
+      await actionPlanController.showActionPlanPage(req, res)
+
+      expect(ActionPlanPresenter).toHaveBeenLastCalledWith(actionPlanSummary, 'AB1234CD', true)
+    })
+
+    it('passes icsFeedbackSubmitted as false when the ICS feedback has not been submitted', async () => {
+      referralService.getReferralProgress.mockResolvedValue(
+        buildReferralProgress([{ event: { status: 'NEEDS_FEEDBACK' } }]),
+      )
+
+      await actionPlanController.showActionPlanPage(req, res)
+
+      expect(ActionPlanPresenter).toHaveBeenLastCalledWith(actionPlanSummary, 'AB1234CD', false)
+    })
   })
 
   describe('select a need', () => {
