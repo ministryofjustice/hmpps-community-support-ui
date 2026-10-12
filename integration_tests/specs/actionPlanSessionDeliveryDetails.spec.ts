@@ -9,7 +9,6 @@ import ActionPlanSessionDeliveryDetailsPage from '../pages/actionPlanSessionDeli
 test.describe('Action Plan Session Delivery Details Page', () => {
   const caseReference = 'AB1234CD'
 
-
   test.beforeEach(async ({ page }) => {
     await resetStubs()
     await page.goto('/')

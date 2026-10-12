@@ -19,7 +19,6 @@ test.describe('Action Plan Page', () => {
     },
     needs: [],
   }
-  
   test.beforeEach(async ({ page }) => {
     await resetStubs()
     await page.goto('/')
