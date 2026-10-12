@@ -74,6 +74,7 @@ describe('ActionPlanController', () => {
         lastName: 'River',
       },
       needs: [],
+      lastUpdatedAt: '',
     }
 
     beforeEach(() => {
@@ -198,6 +199,7 @@ describe('ActionPlanController', () => {
       referralService.getActionPlanSummary.mockResolvedValue({
         personDetails: { firstName: 'Alex', lastName: 'River' },
         needs: [],
+        lastUpdatedAt: '',
       })
 
       await actionPlanController.showSelectOutcomePage(req, res)
@@ -218,6 +220,7 @@ describe('ActionPlanController', () => {
       referralService.getActionPlanSummary.mockResolvedValue({
         personDetails: { firstName: 'Alex', lastName: 'River' },
         needs: [],
+        lastUpdatedAt: '',
       })
 
       await actionPlanController.showSelectOutcomePage(req, res)
@@ -235,6 +238,7 @@ describe('ActionPlanController', () => {
       referralService.getActionPlanSummary.mockResolvedValue({
         personDetails: { firstName: 'Alex', lastName: 'River' },
         needs: [],
+        lastUpdatedAt: '',
       })
 
       await actionPlanController.submitOutcome(req, res)
