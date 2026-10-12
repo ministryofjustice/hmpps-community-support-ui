@@ -2002,7 +2002,7 @@ export interface components {
       email?: string | null
       phoneNumber?: string | null
       pdu?: string | null
-      isProbationOfficer?: boolean | null
+      office?: string | null
       teamPhoneNumber?: string | null
     }
     DraftPersonDetailsTableDataDto: {
