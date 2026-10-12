@@ -565,6 +565,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/bff/referral/{caseReference}/create-an-appointment/appointment-type': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get create appointment page data for a referral */
+    get: operations['getCreateAppointmentReferenceData']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/bff/referral/{caseReference}/appointments': {
     parameters: {
       query?: never
@@ -1624,6 +1641,14 @@ export interface components {
       fullName: string
       appointmentDetails?: components['schemas']['AppointmentDetailsDto'] | null
       otherAppointmentMethods?: string[] | null
+    }
+    CreateAppointmentReferenceDataBffDto: {
+      appointmentTypes: components['schemas']['CreateAppointmentTypeOptionDto'][]
+      probationOfficeLocations: components['schemas']['ProbationOfficeSummary'][]
+    }
+    CreateAppointmentTypeOptionDto: {
+      name: string
+      value: string
     }
     ReferralAppointmentSummaryDto: {
       /** Format: uuid */
@@ -3252,6 +3277,37 @@ export interface operations {
         }
       }
       /** @description Appointment not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getCreateAppointmentReferenceData: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        caseReference: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Create appointment data found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['CreateAppointmentReferenceDataBffDto']
+        }
+      }
+      /** @description Referral not found */
       404: {
         headers: {
           [name: string]: unknown
