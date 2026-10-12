@@ -6,6 +6,8 @@ export default class ActionPlanPage extends AbstractPage {
 
   readonly backLink: Locator
 
+  readonly submitActionPlanButton: Locator
+
   static url(caseReference: string): string {
     return `/referral/${caseReference}/action-plan`
   }
@@ -14,6 +16,7 @@ export default class ActionPlanPage extends AbstractPage {
     super(page)
     this.header = page.getByRole('heading', { level: 1 })
     this.backLink = page.getByRole('link', { name: 'Back', exact: true })
+    this.submitActionPlanButton = page.getByRole('button', { name: 'Submit Action plan' })
   }
 
   static async verifyOnPage(page: Page): Promise<ActionPlanPage> {
