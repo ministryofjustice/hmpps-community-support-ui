@@ -18,6 +18,7 @@ test.describe('Action Plan Page', () => {
       lastName: 'River',
     },
     needs: [],
+    lastUpdatedAt: '',
   }
   test.beforeEach(async ({ page }) => {
     await resetStubs()
@@ -52,6 +53,7 @@ test.describe('Action Plan Page', () => {
         {
           id: randomUUID(),
           label: 'Accommodation',
+          orderNumber: 1,
           outcomes: [
             {
               id: randomUUID(),
@@ -61,6 +63,7 @@ test.describe('Action Plan Page', () => {
           ],
         },
       ],
+      lastUpdatedAt: '',
     }
 
     const icsFeedbackSubmittedProgress = buildReferralProgress([
@@ -100,7 +103,10 @@ test.describe('Action Plan Page', () => {
     test('does not display the Submit Action plan button when not all outcomes have been added', async ({ page }) => {
       await communitySupport.stubGetActionPlanSummary(caseReference, {
         ...actionPlanSummaryWithOutcomes,
-        needs: [...actionPlanSummaryWithOutcomes.needs, { id: randomUUID(), label: 'Finances', outcomes: [] }],
+        needs: [
+          ...actionPlanSummaryWithOutcomes.needs,
+          { id: randomUUID(), label: 'Finances', orderNumber: 2, outcomes: [] },
+        ],
       })
       await communitySupport.stubGetReferralProgress(icsFeedbackSubmittedProgress, caseReference)
 

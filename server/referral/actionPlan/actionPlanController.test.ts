@@ -700,6 +700,7 @@ describe('ActionPlanController', () => {
       referralService.getActionPlanSummary.mockResolvedValue({
         personDetails: { firstName: 'Alex', lastName: 'River' },
         needs: [],
+        lastUpdatedAt: '',
       })
 
       await actionPlanController.submitRisksAndAdjustmentsPage(req, res)

@@ -26,6 +26,7 @@ test.describe('Select an action plan need', () => {
   const actionPlanSummary: ActionPlanSummaryDto = {
     personDetails: { firstName: 'Alex', lastName: 'River' },
     needs: [],
+    lastUpdatedAt: '',
   }
 
   test.beforeEach(async ({ page }) => {
