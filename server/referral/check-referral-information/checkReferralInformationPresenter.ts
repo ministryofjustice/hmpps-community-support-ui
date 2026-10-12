@@ -489,24 +489,36 @@ const buildProbationPractitionersDetailsSummary = (
   data: DraftMainPOCDetailsTableDataDto,
   card: ProbationPractitionerDetailsCard,
   unknownValue: string,
-): GovukFrontendSummaryList => ({
-  card: {
-    title: {
-      text: card.heading,
+): GovukFrontendSummaryList => {
+  const isInformionCorrectValue = showTriState(booleanToTriState(data.areTheseDetailsCorrect), {
+    ...yesOrNo,
+    nullValue: unknownValue,
+  })
+  const isInformionCorrectRow = data.areTheseDetailsCorrect
+    ? [govFrontendSummaryListRow(card.correct, isInformionCorrectValue)]
+    : []
+  const phoneNumberRow = data.areTheseDetailsCorrect
+    ? []
+    : [govFrontendSummaryListRow(card.phone, data.phoneNumber || unknownValue)]
+  const rows = isInformionCorrectRow
+    .concat([
+      govFrontendSummaryListRow(card.name, data.name || unknownValue),
+      govFrontendSummaryListRow(card.role, data.jobRole?.toString() || unknownValue),
+      govFrontendSummaryListRow(card.email, data.email || unknownValue),
+    ])
+    .concat(phoneNumberRow)
+    .concat([
+      govFrontendSummaryListRow(card.pdu, data.pdu || unknownValue),
+      govFrontendSummaryListRow(card.office, data.office || unknownValue),
+      govFrontendSummaryListRow(card.teamPhone, data.teamPhoneNumber || unknownValue),
+    ])
+  return {
+    card: {
+      title: {
+        text: data.areTheseDetailsCorrect ? card.headingProbationPractitioner : card.headingMainPointOfContact,
+      },
+      attributes: { 'data-testid': 'probation-practitioner-details' },
     },
-    attributes: { 'data-testid': 'probation-practitioner-details' },
-  },
-  rows: [
-    govFrontendSummaryListRow(
-      card.correct,
-      showTriState(booleanToTriState(data.areTheseDetailsCorrect), { ...yesOrNo, nullValue: unknownValue }),
-    ),
-    govFrontendSummaryListRow(card.name, data.name || unknownValue),
-    govFrontendSummaryListRow(card.role, data.jobRole?.toString() || unknownValue),
-    govFrontendSummaryListRow(card.email, data.email || unknownValue),
-    govFrontendSummaryListRow(card.phone, data.phoneNumber || unknownValue),
-    govFrontendSummaryListRow(card.pdu, data.pdu || unknownValue),
-    govFrontendSummaryListRow(card.office, data.office || unknownValue),
-    govFrontendSummaryListRow(card.teamPhone, data.teamPhoneNumber || unknownValue),
-  ],
-})
+    rows,
+  }
+}
