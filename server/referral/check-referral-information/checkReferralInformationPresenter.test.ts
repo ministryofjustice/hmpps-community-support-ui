@@ -260,19 +260,102 @@ describe('CheckReferralInformationPresenter', () => {
       expect(probationPractitionersDetailsSummary.rows[2].value.text).toBe('Probation Officer')
       expect(probationPractitionersDetailsSummary.rows[3].key.text).toBe('Email address')
       expect(probationPractitionersDetailsSummary.rows[3].value.text).toBe('sarah.wilson@justice.gov.uk')
-      expect(probationPractitionersDetailsSummary.rows[4].key.text).toBe('Phone number')
-      expect(probationPractitionersDetailsSummary.rows[4].value.text).toBe('0191 555 6789')
-      expect(probationPractitionersDetailsSummary.rows[5].key.text).toBe('PDU')
-      expect(probationPractitionersDetailsSummary.rows[5].value.text).toBe('Newcastle PDU')
-      expect(probationPractitionersDetailsSummary.rows[6].key.text).toBe('Probation office')
-      expect(probationPractitionersDetailsSummary.rows[6].value.text).toBe('Newcastle')
-      expect(probationPractitionersDetailsSummary.rows[7].key.text).toBe('Team phone number')
-      expect(probationPractitionersDetailsSummary.rows[7].value.text).toBe('0191 555 6700')
+      expect(probationPractitionersDetailsSummary.rows[4].key.text).toBe('PDU')
+      expect(probationPractitionersDetailsSummary.rows[4].value.text).toBe('Newcastle PDU')
+      expect(probationPractitionersDetailsSummary.rows[5].key.text).toBe('Probation office')
+      expect(probationPractitionersDetailsSummary.rows[5].value.text).toBe('Newcastle')
+      expect(probationPractitionersDetailsSummary.rows[6].key.text).toBe('Team phone number')
+      expect(probationPractitionersDetailsSummary.rows[6].value.text).toBe('0191 555 6700')
 
       expect(res.render).toHaveBeenCalledWith(
         'referral/checkReferralInformation',
         expect.objectContaining({} as CheckReferralInformationViewModel),
       )
+    })
+
+    it('should render draft referral details for main point of contact', () => {
+      const draftReferralDetails = DraftReferralDetailsFactory.build({
+        personDetailsTableData: {
+          name: { firstName: 'John', lastName: 'Doe' },
+          crn: 'X123456',
+          dateOfBirth: '1975-02-20',
+          preferredLanguage: 'English',
+          disabilities: [{ description: 'Dyslexia', updatedAt: '2026-02-03T00:00:00Z' }],
+          personalCircumstances: [
+            { description: 'Employment', subDescription: 'Full-time employed', updatedAt: '2026-01-05T00:00:00Z' },
+          ],
+        },
+        referralAreaTableData: { area: 'London' },
+        equalityDetailsTableData: { ethnicity: 'White British', religionOrBelief: 'None', sex: 'Male' },
+        additionalInformationDetailsTableData: {
+          ofHomeOfficeInterest: true,
+          homeOfficeInterestNotes: 'Claiming asylum from Iran',
+          offenderPersonalityDisorderPathway: 'Assessment ongoing',
+        },
+        contactDetailsTableData: {},
+        riskInformationDetailsTableData: {
+          whoIsAtRisk: 'Family members',
+          natureOfRisk: 'Violence',
+          riskImminence: 'When intoxicated',
+          riskOfSelfHarm: 'Low',
+          riskOfSuicide: 'Low',
+          riskToSelfHostelSetting: 'No concerns',
+          riskToSelfVulnerability: 'Vulnerable',
+          additionalInformation: 'Some additional risk info',
+        },
+        additionalSupportNeedsDetailsTableData: {
+          physicalHealth: 'Mild asthma managed with inhaler.',
+          mentalOrEmotionalHealth: 'Reports anxiety and occasional low mood.',
+          neurodiversity: 'Suspected ADHD awaiting assessment.',
+          locationAndTravel: 'Limited access to public transport.',
+          caringResponsibilities: 'None reported.',
+          employmentResponsibilities: 'Part-time warehouse role.',
+          diversity: 'No additional diversity needs identified.',
+          anyOtherNeeds: 'Requires support with appointment reminders.',
+          interpreterLanguage: null,
+        },
+        personNeedsDetailsTableData: {
+          hasAccommodationNeeds: true,
+          accommodationDetails: 'Has suitable housing',
+          employmentAndEducation: 'Seeking part-time work',
+          financialDetails: 'On benefits',
+          personalRelationshipsCommunityDetails: 'Has supportive family',
+          drugUseDetails: 'No current use',
+          alcoholUseDetails: 'Occasional',
+          healthWellbeingDetails: 'Good',
+          thinkingBehavioursAttitudeDetails: 'Responds well to prompts',
+        },
+        mainPocDetailsTableData: {
+          areTheseDetailsCorrect: false,
+          name: 'Sarah Wilson',
+          jobRole: 'Probation Officer',
+          email: 'sarah.wilson@justice.gov.uk',
+          phoneNumber: '0191 555 6789',
+          pdu: 'Newcastle PDU',
+          office: 'Newcastle',
+          teamPhoneNumber: '0191 555 6700',
+        },
+      } as CheckDraftReferralDetailsDto)
+
+      const presenter = new CheckReferralInformationPresenter(draftReferralDetails)
+      const viewModel = presenter.buildViewModel(res)
+
+      const { probationPractitionersDetailsSummary } = viewModel
+      expect(probationPractitionersDetailsSummary?.card.title.text).toBe("Main point of contact's details")
+      expect(probationPractitionersDetailsSummary.rows[0].key.text).toBe('Name')
+      expect(probationPractitionersDetailsSummary.rows[0].value.text).toBe('Sarah Wilson')
+      expect(probationPractitionersDetailsSummary.rows[1].key.text).toBe('Job role')
+      expect(probationPractitionersDetailsSummary.rows[1].value.text).toBe('Probation Officer')
+      expect(probationPractitionersDetailsSummary.rows[2].key.text).toBe('Email address')
+      expect(probationPractitionersDetailsSummary.rows[2].value.text).toBe('sarah.wilson@justice.gov.uk')
+      expect(probationPractitionersDetailsSummary.rows[3].key.text).toBe('Phone number')
+      expect(probationPractitionersDetailsSummary.rows[3].value.text).toBe('0191 555 6789')
+      expect(probationPractitionersDetailsSummary.rows[4].key.text).toBe('PDU')
+      expect(probationPractitionersDetailsSummary.rows[4].value.text).toBe('Newcastle PDU')
+      expect(probationPractitionersDetailsSummary.rows[5].key.text).toBe('Probation office')
+      expect(probationPractitionersDetailsSummary.rows[5].value.text).toBe('Newcastle')
+      expect(probationPractitionersDetailsSummary.rows[6].key.text).toBe('Team phone number')
+      expect(probationPractitionersDetailsSummary.rows[6].value.text).toBe('0191 555 6700')
     })
 
     it('should render main address when person is not in custody', () => {

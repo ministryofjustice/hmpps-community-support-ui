@@ -116,7 +116,8 @@
       "anythingElse": "Anything else the delivery partner should know about {{ name }}"
     },
     "probationPractitionerDetailsCard": {
-      "heading": "Probation practitioner's details",
+      "headingProbationPractitioner": "Probation practitioner's details",
+      "headingMainPointOfContact": "Main point of contact's details",
       "correct": "Are these details correct?",
       "name": "Name",
       "role": "Job role",
