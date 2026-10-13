@@ -157,6 +157,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/referral/{caseIdentifier}/appointment': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Book an appointment of a given type for a referral */
+    post: operations['createAppointment']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/referral/{referralReference}/action-plan/update-needs-order': {
     parameters: {
       query?: never
@@ -1075,16 +1092,20 @@ export interface components {
       reasonForChange?: string | null
     }
     CreateAppointmentRequest: {
+      /** @enum {string|null} */
+      appointmentType?:
+        'ICS' | 'CONTACT_SESSION' | 'POST_RELEASE_SESSION' | 'PRE_RELEASE_SESSION' | 'HANDOVER_SESSION' | null
       /** Format: date */
       date: string
       time: components['schemas']['AppointmentTimeRequest']
       sessionMethodRequest: components['schemas']['SessionMethodRequest']
       sessionCommunication: string[]
+      meetAtTheGate?: boolean | null
       changeAppointmentDetails?: components['schemas']['ChangeAppointmentDetails'] | null
     }
     SessionMethodRequest: {
       /** @enum {string} */
-      type: 'PHONE' | 'VIDEO' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION'
+      type: 'PHONE' | 'VIDEO' | 'IN_PERSON' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION'
       additionalDetails?: string | null
       pdu?: string | null
       addressLine1?: string | null
@@ -1110,6 +1131,7 @@ export interface components {
       appointmentStatus: 'SCHEDULED' | 'NEEDS_FEEDBACK' | 'COMPLETED' | 'CHANGED' | 'DID_NOT_ATTEND' | 'DID_NOT_HAPPEN'
       sessionMethod: components['schemas']['SessionMethod']
       sessionCommunications: string[]
+      meetAtTheGate?: boolean | null
       referralFirstName: string
       referralLastName: string
       /** Format: date-time */
@@ -1289,7 +1311,7 @@ export interface components {
       /** Format: uuid */
       id: string
       /** @enum {string} */
-      method: 'PHONE_CALL' | 'VIDEO_CALL' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION'
+      method: 'PHONE_CALL' | 'VIDEO_CALL' | 'IN_PERSON' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION'
       methodDetails?: string | null
       addressLine1?: string | null
       addressLine2?: string | null
@@ -1633,7 +1655,8 @@ export interface components {
     }
     AppointmentDetailsDto: {
       /** @enum {string|null} */
-      method?: 'PHONE_CALL' | 'VIDEO_CALL' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION' | null
+      method?:
+        'PHONE_CALL' | 'VIDEO_CALL' | 'IN_PERSON' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION' | null
       date?: string | null
       time?: string | null
     }
@@ -2441,6 +2464,50 @@ export interface operations {
     }
   }
   createIcsAppointment: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        caseIdentifier: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateAppointmentRequest']
+      }
+    }
+    responses: {
+      /** @description Appointment created successfully */
+      201: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['AppointmentIcsResponse']
+        }
+      }
+      /** @description Invalid request body */
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  createAppointment: {
     parameters: {
       query?: never
       header?: never
