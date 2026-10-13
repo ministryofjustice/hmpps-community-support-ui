@@ -176,7 +176,14 @@ export default class CommunitySupportApiClient extends RestClient {
 
   getServiceEndDateCheck(caseReference: string, username: string): Promise<ActionPlanSessionDeliveryDetailsResponse> {
     return this.get(
-      { path: `/bff/referral/${caseReference}/action-plan/service-delivery-details/service-end-date-check` },
+      { path: `/bff/referral/${caseReference}/action-plan/service-delivery-details/confirm-service-end-date` },
+      asSystem(username),
+    )
+  }
+
+  getUpdateServiceEndDate(caseReference: string, username: string): Promise<ActionPlanSessionDeliveryDetailsResponse> {
+    return this.get(
+      { path: `/bff/referral/${caseReference}/action-plan/service-delivery-details/update-service-end-date` },
       asSystem(username),
     )
   }

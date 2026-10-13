@@ -41,6 +41,7 @@ describe('ActionPlanController', () => {
       getSessionDeliveryDetails: jest.fn(),
       getRisksAndAdjustments: jest.fn(),
       getServiceEndDateCheck: jest.fn(),
+      getUpdateServiceEndDate: jest.fn(),
       submitAction: jest.fn(),
     } as unknown as jest.Mocked<ReferralService>
 
@@ -654,11 +655,11 @@ describe('ActionPlanController', () => {
       questions: [],
     }
 
-    referralService.getServiceEndDateCheck.mockResolvedValue(sessionDeliveryDetails)
+    referralService.getUpdateServiceEndDate.mockResolvedValue(sessionDeliveryDetails)
 
     await actionPlanController.showUpdateServiceEndDatePage(req, res)
 
-    expect(referralService.getServiceEndDateCheck).toHaveBeenCalledWith('AB1234CD', 'user1')
+    expect(referralService.getUpdateServiceEndDate).toHaveBeenCalledWith('AB1234CD', 'user1')
     expect(ActionPlanChangeServiceEndDatePresenter).toHaveBeenCalledWith(
       'AB1234CD',
       sessionDeliveryDetails,
