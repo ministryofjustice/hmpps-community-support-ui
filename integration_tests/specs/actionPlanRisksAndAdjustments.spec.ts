@@ -11,6 +11,7 @@ test.describe('Action Plan Risks and Adjustments Page', () => {
   const caseReference = 'AB1234CD'
 
   const actionPlanSummary: ActionPlanSummaryDto = {
+    lastUpdatedAt: '2026-10-12T09:00:00Z',
     personDetails: {
       firstName: 'Alex',
       lastName: 'River',

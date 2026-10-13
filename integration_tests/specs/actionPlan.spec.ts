@@ -13,6 +13,7 @@ test.describe('Action Plan Page', () => {
   const caseReference = 'AB1234CD'
 
   const actionPlanSummary: ActionPlanSummaryDto = {
+    lastUpdatedAt: '2026-10-12T09:00:00Z',
     personDetails: {
       firstName: 'Alex',
       lastName: 'River',
@@ -45,6 +46,7 @@ test.describe('Action Plan Page', () => {
 
   test.describe('Submit Action plan', () => {
     const actionPlanSummaryWithOutcomes: ActionPlanSummaryDto = {
+      lastUpdatedAt: '2026-10-12T09:00:00Z',
       personDetails: {
         firstName: 'Alex',
         lastName: 'River',
