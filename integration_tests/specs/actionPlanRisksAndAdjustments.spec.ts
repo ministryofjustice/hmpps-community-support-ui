@@ -17,7 +17,6 @@ test.describe('Action Plan Risks and Adjustments Page', () => {
       lastName: 'River',
     },
     needs: [],
-    lastUpdatedAt: '',
   }
 
   const risksAndAdjustments: ActionPlanSessionDeliveryDetailsResponse = {

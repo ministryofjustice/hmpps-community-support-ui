@@ -731,7 +731,7 @@ export default {
     stubFor({
       request: {
         method: 'GET',
-        urlPathPattern: `/community-support/bff/referral/${caseReference}/action-plan/service-delivery-details/service-end-date-check`,
+        urlPathPattern: `/community-support/bff/referral/${caseReference}/action-plan/service-delivery-details/confirm-service-end-date`,
       },
       response: {
         status: httpStatus,

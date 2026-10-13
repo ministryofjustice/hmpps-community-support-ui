@@ -19,7 +19,7 @@ test.describe('Action Plan Change Service End Date Page', () => {
   })
 
   test('displays the split date inputs and saved values', async ({ page }) => {
-    await communitySupport.stubGetCheckServiceEndDate(caseReference, updateServiceEndDateResponse)
+    await communitySupport.stubGetUpdateServiceEndDate(caseReference, updateServiceEndDateResponse)
 
     await page.goto(ActionPlanChangeServiceEndDatePage.url(caseReference))
 
@@ -33,7 +33,7 @@ test.describe('Action Plan Change Service End Date Page', () => {
   })
 
   test('submits a valid split-date and reason and redirects to person involvement', async ({ page }) => {
-    await communitySupport.stubGetCheckServiceEndDate(caseReference, updateServiceEndDateResponse)
+    await communitySupport.stubGetUpdateServiceEndDate(caseReference, updateServiceEndDateResponse)
 
     await page.goto(ActionPlanChangeServiceEndDatePage.url(caseReference))
     await ActionPlanChangeServiceEndDatePage.verifyOnPage(page)
@@ -51,7 +51,7 @@ test.describe('Action Plan Change Service End Date Page', () => {
   })
 
   test('shows an error when no date is entered', async ({ page }) => {
-    await communitySupport.stubGetCheckServiceEndDate(caseReference, updateServiceEndDateEmptyResponse)
+    await communitySupport.stubGetUpdateServiceEndDate(caseReference, updateServiceEndDateEmptyResponse)
 
     await page.goto(ActionPlanChangeServiceEndDatePage.url(caseReference))
     const actionPlanChangeServiceEndDatePage = await ActionPlanChangeServiceEndDatePage.verifyOnPage(page)
@@ -64,7 +64,7 @@ test.describe('Action Plan Change Service End Date Page', () => {
   })
 
   test('shows an error when the date is invalid', async ({ page }) => {
-    await communitySupport.stubGetCheckServiceEndDate(caseReference, updateServiceEndDateResponse)
+    await communitySupport.stubGetUpdateServiceEndDate(caseReference, updateServiceEndDateResponse)
 
     await page.goto(ActionPlanChangeServiceEndDatePage.url(caseReference))
     const actionPlanChangeServiceEndDatePage = await ActionPlanChangeServiceEndDatePage.verifyOnPage(page)
@@ -80,7 +80,7 @@ test.describe('Action Plan Change Service End Date Page', () => {
   })
 
   test('shows an error when one date field is missing', async ({ page }) => {
-    await communitySupport.stubGetCheckServiceEndDate(caseReference, updateServiceEndDateResponse)
+    await communitySupport.stubGetUpdateServiceEndDate(caseReference, updateServiceEndDateResponse)
 
     await page.goto(ActionPlanChangeServiceEndDatePage.url(caseReference))
     const actionPlanChangeServiceEndDatePage = await ActionPlanChangeServiceEndDatePage.verifyOnPage(page)
@@ -97,7 +97,7 @@ test.describe('Action Plan Change Service End Date Page', () => {
   })
 
   test('shows an error when two date fields are missing', async ({ page }) => {
-    await communitySupport.stubGetCheckServiceEndDate(caseReference, updateServiceEndDateResponse)
+    await communitySupport.stubGetUpdateServiceEndDate(caseReference, updateServiceEndDateResponse)
 
     await page.goto(ActionPlanChangeServiceEndDatePage.url(caseReference))
     const actionPlanChangeServiceEndDatePage = await ActionPlanChangeServiceEndDatePage.verifyOnPage(page)
@@ -115,7 +115,7 @@ test.describe('Action Plan Change Service End Date Page', () => {
   })
 
   test('shows an error when a past date is entered', async ({ page }) => {
-    await communitySupport.stubGetCheckServiceEndDate(caseReference, updateServiceEndDateResponse)
+    await communitySupport.stubGetUpdateServiceEndDate(caseReference, updateServiceEndDateResponse)
 
     await page.goto(ActionPlanChangeServiceEndDatePage.url(caseReference))
     const actionPlanChangeServiceEndDatePage = await ActionPlanChangeServiceEndDatePage.verifyOnPage(page)
@@ -134,7 +134,7 @@ test.describe('Action Plan Change Service End Date Page', () => {
   })
 
   test('shows an error when the date is more than 10 years in the future', async ({ page }) => {
-    await communitySupport.stubGetCheckServiceEndDate(caseReference, updateServiceEndDateResponse)
+    await communitySupport.stubGetUpdateServiceEndDate(caseReference, updateServiceEndDateResponse)
 
     await page.goto(ActionPlanChangeServiceEndDatePage.url(caseReference))
     const actionPlanChangeServiceEndDatePage = await ActionPlanChangeServiceEndDatePage.verifyOnPage(page)

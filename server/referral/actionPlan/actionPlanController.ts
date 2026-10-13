@@ -506,7 +506,7 @@ class ActionPlanController {
     const { id: caseReference } = req.params as { id: string }
     const { username } = res.locals.user
 
-    const sessionDeliveryDetails = await this.referralService.getServiceEndDateCheck(caseReference, username)
+    const sessionDeliveryDetails = await this.referralService.getUpdateServiceEndDate(caseReference, username)
     const userInputData = this.getFlashedFormValues(req)
     const sessionDelivery = this.getActionPlanSessionDelivery(req, caseReference)?.sessionDeliveryDetails
     const validationErrors = res.locals.errors
@@ -523,7 +523,7 @@ class ActionPlanController {
     const { id: caseReference } = req.params as { id: string }
     const { username } = res.locals.user
 
-    const sessionDeliveryDetails = await this.referralService.getServiceEndDateCheck(caseReference, username)
+    const sessionDeliveryDetails = await this.referralService.getUpdateServiceEndDate(caseReference, username)
     const schema = ActionPlanChangeServiceEndDateDataSchemaBuilder()
 
     return validateRequestBodyAgainstSchema(schema, req, res, async form => {
