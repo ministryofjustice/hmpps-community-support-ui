@@ -3,6 +3,7 @@ import { ActionPlanSelectANeedResponse, ActionPlanSummaryDto } from '@community-
 import { login, resetStubs } from '../testUtils'
 import { getMatchingRequests } from '../mockApis/wiremock'
 import communitySupport from '../mockApis/communitySupport'
+import buildReferralProgress from '../../server/testutils/buildReferralProgress'
 import ActionPlanAddActivityPage from '../pages/actionPlanAddActivityPage'
 import ActionPlanViewActivitiesPage from '../pages/actionPlanViewActivitiesPage'
 import ActionPlanRemoveActivityPage from '../pages/actionPlanRemoveActivityPage'
@@ -254,6 +255,7 @@ test.describe('Select an action plan need', () => {
         },
       ],
     })
+    await communitySupport.stubGetReferralProgress(buildReferralProgress([]), caseReference)
 
     await page.goto(`/referral/${caseReference}/action-plan`)
     await page.getByRole('link', { name: 'Add or change activities' }).click()
