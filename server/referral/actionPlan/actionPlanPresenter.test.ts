@@ -96,6 +96,9 @@ describe('ActionPlanPresenter', () => {
     expect(need.card.actions.items.length).toBe(2)
     const cardActions = need.card.actions.items
     expect(cardActions[0].text).toBe('Add or change activities')
+    expect(cardActions[0].href).toBe(
+      '/referral/AB1234CD/action-plan/activities?needId=need_id_1&outcomeAnswerId=outcome_id_1',
+    )
     expect(cardActions[1].text).toBe('Remove')
     expect(need.rows.length).toBe(3)
     const activities = need.rows

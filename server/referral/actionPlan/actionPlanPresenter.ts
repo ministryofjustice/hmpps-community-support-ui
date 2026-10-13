@@ -80,7 +80,7 @@ export default class ActionPlanPresenter extends PresenterBase<ActionPlanViewMod
       return summaryList.push({
         card: {
           title: { text: need.label },
-          actions: this.buildActions(content),
+          actions: this.buildActions(content, need.id, outcome.id),
         },
         preText: `<b>${content.outcomePrefixText}</b>${outcome.label}`,
         rows: this.buildActivityList(content, outcome),
@@ -110,11 +110,15 @@ export default class ActionPlanPresenter extends PresenterBase<ActionPlanViewMod
     return activityList
   }
 
-  private buildActions(content: ActionPlanContent): GovukFrontendSummaryListCardActions {
+  private buildActions(
+    content: ActionPlanContent,
+    needId: string,
+    outcomeId: string,
+  ): GovukFrontendSummaryListCardActions {
     return {
       items: [
         {
-          href: '#',
+          href: `/referral/${this.caseReference}/action-plan/activities?needId=${encodeURIComponent(needId)}&outcomeAnswerId=${encodeURIComponent(outcomeId)}`,
           text: content.addOrChangeActivitiesText,
         },
         {
