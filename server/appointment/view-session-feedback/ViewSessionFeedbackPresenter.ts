@@ -49,12 +49,12 @@ export interface SessionFeedbackSummaryRowInput {
 
 const REMOTE_SESSION_METHODS = new Set(['Phone call', 'Video call'])
 
-const APPOINTMENT_DELIVERY_METHOD_DISPLAY = {
+const APPOINTMENT_DELIVERY_METHOD_DISPLAY: Record<string, string> = {
   PHONE_CALL: 'Phone call',
   VIDEO_CALL: 'Video call',
   IN_PERSON_PROBATION_OFFICE: 'In person (probation office)',
   IN_PERSON_OTHER_LOCATION: 'In person (other location)',
-} as const
+}
 
 const SESSION_COMMUNICATION_DISPLAY: Record<string, string> = {
   informedByPhone: 'Phone call',
@@ -151,7 +151,9 @@ export default class ViewSessionFeedbackPresenter extends PresenterBase<ViewSess
       startTime: isoToFormattedTime(startDateTime),
       sessionMethod:
         this.icsFeedbackSubmissionResponse.recordSessionHowSessionTookPlace ??
-        APPOINTMENT_DELIVERY_METHOD_DISPLAY[appointmentDeliveryDetails?.method],
+        (appointmentDeliveryDetails?.method
+          ? APPOINTMENT_DELIVERY_METHOD_DISPLAY[appointmentDeliveryDetails.method]
+          : undefined),
       reasonForSessionNotInPerson:
         this.icsFeedbackSubmissionResponse.recordSessionNotInPersonReason ?? appointmentDeliveryDetails?.methodDetails,
       location: this.buildLocation(
