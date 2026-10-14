@@ -1652,6 +1652,7 @@ export interface components {
       selectAnAreaForReferralCompleted: components['schemas']['TaskListStatusItem']
       checkProbationPractitionerDetailsCompleted?: components['schemas']['TaskListStatusItem'] | null
       addMainPointOfContactCompleted?: components['schemas']['TaskListStatusItem'] | null
+      checkYourAnswersCompleted: components['schemas']['TaskListStatusItem']
     }
     AppointmentDetailsDto: {
       /** @enum {string|null} */
