@@ -84,6 +84,7 @@ const buildTaskListStatus = (taskListStatus: TaskListStatusStub): TaskListStatus
     taskListStatus.addDetailsOfMainPointOfContactCompleted ??
     incompleteTaskStatus,
   checkProbationPractitionerDetailsCompleted: taskListStatus.checkProbationPractitionerDetailsCompleted ?? null,
+  checkYourAnswersCompleted: { completed: false, statusText: 'Cannot Start Yet', tag: 'govuk-tag--blue' },
 })
 
 export default {
