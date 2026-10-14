@@ -10,8 +10,6 @@ export default class ConfirmAnAreaForReferralPage extends AbstractPage {
 
   readonly deliveryPartner: Locator
 
-  readonly areaCovered: Locator
-
   readonly pdus: Locator
 
   readonly saveAndContinueButton: Locator
@@ -24,7 +22,6 @@ export default class ConfirmAnAreaForReferralPage extends AbstractPage {
     this.cardHeading = page.locator('h1.moj-interruption-card__heading')
     this.pageCaption = page.getByTestId('person-summary')
     this.deliveryPartner = page.getByTestId('delivery-partner')
-    this.areaCovered = page.getByTestId('area-covered')
     this.pdus = page.getByTestId('pdus')
     this.saveAndContinueButton = page.getByRole('button', { name: 'Save and continue' })
     this.selectDifferentAreaLink = page.getByRole('link', { name: 'Select a different area' })

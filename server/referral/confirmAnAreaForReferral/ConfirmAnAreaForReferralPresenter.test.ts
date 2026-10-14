@@ -28,7 +28,7 @@ describe('ConfirmAnAreaForReferralPresenter', () => {
         pageTitle: 'Make a referral to {{ areaName }} – Community Support',
         pageCaption: 'CRN: {{ CRN }} | Date of birth: {{ DOB }}',
         defaultFieldValue: 'Not available',
-        cardHeading: 'Start a Community Support referral',
+        cardHeading: 'Make a Community Support referral to {{ areaName }}',
         deliveryPartnerLabel: 'Delivery partner',
         areaCoveredLabel: 'Area covered',
         pdusLabel: 'PDUs in this area',
@@ -52,7 +52,7 @@ describe('ConfirmAnAreaForReferralPresenter', () => {
     expect(viewModel.submitHref).toBe('/referral/task-list/confirm-an-area-for-referral')
 
     expect(viewModel.card).toEqual({
-      heading: 'Start a Community Support referral',
+      heading: 'Make a Community Support referral to Avon and Somerset, Gloucestershire, Wiltshire.',
       primaryAction: { text: 'Save and continue' },
       secondaryAction: {
         text: 'Select a different area',
@@ -62,7 +62,6 @@ describe('ConfirmAnAreaForReferralPresenter', () => {
     })
 
     expect(viewModel.deliveryPartner).toBe('Ingeus UK Limited')
-    expect(viewModel.areaCovered).toBe('Avon and Somerset, Gloucestershire, Wiltshire.')
     expect(viewModel.pdus).toEqual(['Bath and North Somerset', 'Bristol and South Gloucestershire', 'Gloucestershire'])
   })
 
@@ -75,9 +74,9 @@ describe('ConfirmAnAreaForReferralPresenter', () => {
     const viewModel = presenter.buildViewModel(res)
 
     expect(viewModel.deliveryPartner).toBe('Not available')
-    expect(viewModel.areaCovered).toBe('Not available')
     expect(viewModel.pdus).toEqual([])
     expect(viewModel.pageTitle).toBe('Make a referral to Not available – Community Support')
+    expect(viewModel.card.heading).toBe('Make a Community Support referral to Not available')
   })
 
   test('falls back to default values when person identifier or date of birth are missing', () => {

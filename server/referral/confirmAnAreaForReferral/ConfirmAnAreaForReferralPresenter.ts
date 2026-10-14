@@ -34,7 +34,7 @@ export default class ConfirmAnAreaForReferralPresenter extends PresenterBase<
       pageCaption: content.pageCaption.replace('{{ CRN }}', crn).replace('{{ DOB }}', dateOfBirth),
       submitHref: '/referral/task-list/confirm-an-area-for-referral',
       card: {
-        heading: content.cardHeading,
+        heading: content.cardHeading.replace('{{ areaName }}', areaCovered),
         primaryAction: { text: content.buttonText },
         secondaryAction: {
           text: content.selectDifferentAreaText,
@@ -44,8 +44,6 @@ export default class ConfirmAnAreaForReferralPresenter extends PresenterBase<
       },
       deliveryPartnerLabel: content.deliveryPartnerLabel,
       deliveryPartner: trimOrDefault(this.providerDetails.deliveryPartner, content.defaultFieldValue),
-      areaCoveredLabel: content.areaCoveredLabel,
-      areaCovered,
       pdusLabel: content.pdusLabel,
       pdus: this.providerDetails.associatedPdus ?? [],
     }
