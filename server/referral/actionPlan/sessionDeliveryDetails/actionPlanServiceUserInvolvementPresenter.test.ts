@@ -80,7 +80,7 @@ describe('ActionPlanServiceUserInvolvementPresenter', () => {
     const { viewModel } = renderAndGetContent(sessionDeliveryDetails)
 
     expect(viewModel.pageTitle).toBe('Session details – Person involvement')
-    expect(viewModel.backLink).toEqual({ href: '/referral/AB1234CD/action-plan/update-service-end-date' })
+    expect(viewModel.backLink).toEqual({ href: '/referral/AB1234CD/action-plan/service-end-date-check' })
     expect(viewModel.submitButton).toEqual({ text: 'Continue' })
   })
 
