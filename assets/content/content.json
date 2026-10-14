@@ -987,6 +987,7 @@
     "buttonText": "Save and continue"
   },
   "/referral/task-list/edit-risk-summary": {
+    "pageTitle": "Change OASys risk information - Community Support",
     "pageHeader": "Edit OASys risk information",
     "backLink": "/referral/task-list/view-risk-summary",
     "crnLabel": "CRN",

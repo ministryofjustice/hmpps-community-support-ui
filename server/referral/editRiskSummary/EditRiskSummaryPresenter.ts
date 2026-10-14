@@ -84,6 +84,7 @@ export default class EditRiskSummaryPresenter extends PresenterBase<EditRiskSumm
     const age = differenceInYears(new Date(), dobDate)
 
     return {
+      pageTitle: content.pageTitle,
       backLink: { href: content.backLink },
       heading: this.getFullName(),
       subheading: content.pageHeader,

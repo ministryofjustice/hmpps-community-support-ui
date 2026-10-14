@@ -1,8 +1,11 @@
 import { Response } from 'express'
 import { CommunitySupportRiskDto } from '@community-support-api'
 import EditRiskSummaryPresenter from './EditRiskSummaryPresenter'
+import loadContentDataForTest from '../../testutils/loadContentDataForTest'
 
 jest.useFakeTimers().setSystemTime(new Date('2026-07-15'))
+
+const content = loadContentDataForTest("/referral/task-list/edit-risk-summary")
 
 describe('EditRiskSummaryPresenter', () => {
   const risk: CommunitySupportRiskDto = {
@@ -66,42 +69,13 @@ describe('EditRiskSummaryPresenter', () => {
   }
 
   const res = {
-    locals: {
-      content: {
-        pageHeader: 'Edit OASys risk information',
-        backLink: '/referral/task-list/view-risk-summary',
-        crnLabel: 'CRN',
-        dateOfBirthLabel: 'Date of birth',
-        lastUpdatedLabel: 'Last updated (OASys)',
-        defaultFieldValue: 'Not available',
-        yesText: 'Yes',
-        noText: 'No',
-        dontKnowText: `Don't know`,
-        noAdditionalInformationText: 'None',
-        submitHref: '/referral/task-list/edit-risk-summary',
-        buttonText: 'Save and continue',
-        whoIsAtRiskField: { id: 'riskSummaryWhoIsAtRisk', label: 'Who is at risk' },
-        natureOfRiskField: { id: 'riskSummaryNatureOfRisk', label: 'What is the nature of the risk' },
-        riskImminenceField: {
-          id: 'riskSummaryRiskImminence',
-          label: 'In what circumstances or situations would offending be most likely to occur?',
-        },
-        selfHarmField: { id: 'riskToSelfSelfHarm', label: 'Risk of self-harm' },
-        suicideField: { id: 'riskToSelfSuicide', label: 'Risk of suicide' },
-        hostelSettingField: {
-          id: 'riskToSelfHostelSetting',
-          label: 'Concerns in relation to coping in a hostel setting',
-        },
-        vulnerabilityField: { id: 'riskToSelfVulnerability', label: 'Concerns in relation to vulnerability' },
-        additionalInformationField: { id: 'additionalInformation', label: 'Additional information' },
-      },
-    },
+    locals: {content},
   } as unknown as Response
 
   test('builds correct view model', () => {
     const presenter = new EditRiskSummaryPresenter(risk)
     const viewModel = presenter.buildViewModel(res)
-
+    expect(viewModel.pageTitle).toBe('Change OASys risk information - Community Support')
     expect(viewModel.backLink.href).toBe('/referral/task-list/view-risk-summary')
     expect(viewModel.heading).toBe('Alex River')
     expect(viewModel.subheading).toBe('Edit OASys risk information')
