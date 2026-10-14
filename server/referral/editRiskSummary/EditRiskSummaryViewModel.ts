@@ -3,14 +3,13 @@ import {
   GovukFrontendButton,
   GovukFrontendInsetText,
   GovukFrontendTextarea,
-} from '@govuk-frontend' 
+} from '@govuk-frontend'
 import { GlobalContent } from '../../../assets/content/GlobalContent'
 
 export interface EditRiskSummaryFieldContent {
   id: string
   label: string
 }
-
 
 export interface EditRiskSummaryViewModel {
   pageTitle: string
