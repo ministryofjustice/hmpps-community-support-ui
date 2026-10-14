@@ -1,8 +1,11 @@
 import { Response } from 'express'
 import { CommunitySupportRiskDto } from '@community-support-api'
 import RiskSummaryPresenter from './RiskSummaryPresenter'
+import loadContentDataForTest from '../../testutils/loadContentDataForTest'
 
 jest.useFakeTimers().setSystemTime(new Date('2026-07-15'))
+
+const content = loadContentDataForTest('/referral/task-list/view-risk-summary')
 
 describe('RiskSummaryPresenter', () => {
   const risk: CommunitySupportRiskDto = {
@@ -66,32 +69,7 @@ describe('RiskSummaryPresenter', () => {
 
   const res = {
     locals: {
-      content: {
-        pageSubHeader: 'OASys risk information',
-        backLink: '/referral/task-list',
-        crnLabel: 'CRN',
-        dateOfBirthLabel: 'Date of birth',
-        lastUpdatedLabel: 'Last updated (OASys)',
-        defaultFieldValue: 'Not available',
-        yesText: 'Yes',
-        noText: 'No',
-        dontKnowText: `Don't know`,
-        noAdditionalInformationText: 'None',
-        changeHref: '/referral/task-list/edit-risk-summary',
-        whoIsAtRiskCard: { heading: 'Who is at risk', changeLinkText: 'Change' },
-        natureOfRiskCard: { heading: 'What is the nature of the risk', changeLinkText: 'Change' },
-        riskImminenceCard: {
-          heading: 'In what circumstances or situations would offending be most likely to occur?',
-          changeLinkText: 'Change',
-        },
-        selfHarmCard: { heading: 'Risk of self-harm', changeLinkText: 'Change' },
-        suicideCard: { heading: 'Risk of suicide', changeLinkText: 'Change' },
-        hostelSettingCard: { heading: 'Concerns in relation to coping in a hostel setting', changeLinkText: 'Change' },
-        vulnerabilityCard: { heading: 'Concerns in relation to vulnerability', changeLinkText: 'Change' },
-        additionalInformationCard: { heading: 'Additional information', changeLinkText: 'Change' },
-        buttonText: 'Save and continue',
-        postHref: '/referral/task-list/view-risk-summary',
-      },
+      content,
     },
   } as unknown as Response
 
@@ -100,6 +78,7 @@ describe('RiskSummaryPresenter', () => {
     const presenter = new RiskSummaryPresenter(risk, 'referral-uuid-1')
     const viewModel = presenter.buildViewModel(res)
 
+    expect(viewModel.pageTile).toBe('OASys risk information - Community Support')
     expect(viewModel.backLink.href).toBe('/referral/task-list')
     expect(viewModel.heading).toBe('Alex River')
     expect(viewModel.subheading).toBe('OASys risk information')
