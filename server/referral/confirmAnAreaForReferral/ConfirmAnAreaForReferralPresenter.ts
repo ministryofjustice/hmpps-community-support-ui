@@ -44,8 +44,6 @@ export default class ConfirmAnAreaForReferralPresenter extends PresenterBase<
       },
       deliveryPartnerLabel: content.deliveryPartnerLabel,
       deliveryPartner: trimOrDefault(this.providerDetails.deliveryPartner, content.defaultFieldValue),
-      areaCoveredLabel: content.areaCoveredLabel,
-      areaCovered,
       pdusLabel: content.pdusLabel,
       pdus: this.providerDetails.associatedPdus ?? [],
     }

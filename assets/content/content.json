@@ -1039,7 +1039,6 @@
     "defaultFieldValue": "Not available",
     "cardHeading": "Refer to {{ areaName }}",
     "deliveryPartnerLabel": "Delivery partner",
-    "areaCoveredLabel": "Area covered",
     "pdusLabel": "PDUs in this area",
     "buttonText": "Save and continue",
     "selectDifferentAreaText": "Select a different area",
