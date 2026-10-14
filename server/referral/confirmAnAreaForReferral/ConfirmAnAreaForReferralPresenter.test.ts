@@ -28,7 +28,7 @@ describe('ConfirmAnAreaForReferralPresenter', () => {
         pageTitle: 'Make a referral to {{ areaName }} – Community Support',
         pageCaption: 'CRN: {{ CRN }} | Date of birth: {{ DOB }}',
         defaultFieldValue: 'Not available',
-        cardHeading: 'Refer to {{ areaName }}',
+        cardHeading: 'Make a Community Support referral to {{ areaName }}',
         deliveryPartnerLabel: 'Delivery partner',
         areaCoveredLabel: 'Area covered',
         pdusLabel: 'PDUs in this area',
@@ -52,7 +52,7 @@ describe('ConfirmAnAreaForReferralPresenter', () => {
     expect(viewModel.submitHref).toBe('/referral/task-list/confirm-an-area-for-referral')
 
     expect(viewModel.card).toEqual({
-      heading: 'Refer to Avon and Somerset, Gloucestershire, Wiltshire.',
+      heading: 'Make a Community Support referral to Avon and Somerset, Gloucestershire, Wiltshire.',
       primaryAction: { text: 'Save and continue' },
       secondaryAction: {
         text: 'Select a different area',
@@ -76,7 +76,7 @@ describe('ConfirmAnAreaForReferralPresenter', () => {
     expect(viewModel.deliveryPartner).toBe('Not available')
     expect(viewModel.pdus).toEqual([])
     expect(viewModel.pageTitle).toBe('Make a referral to Not available – Community Support')
-    expect(viewModel.card.heading).toBe('Refer to Not available')
+    expect(viewModel.card.heading).toBe('Make a Community Support referral to Not available')
   })
 
   test('falls back to default values when person identifier or date of birth are missing', () => {

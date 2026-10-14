@@ -56,7 +56,7 @@ test.describe('Confirm An Area For Referral Page', () => {
 
     await expect(confirmAnAreaForReferralPage.heading).toHaveText('Alex River')
     await expect(confirmAnAreaForReferralPage.cardHeading).toHaveText(
-      'Refer to Avon and Somerset, Gloucestershire, Wiltshire.',
+      'Make a Community Support referral to Avon and Somerset, Gloucestershire, Wiltshire.',
     )
     await expect(confirmAnAreaForReferralPage.pageCaption).toHaveText(
       `CRN: ${mockCrn} | Date of birth: ${mockFormattedDateOfBirth}`,
