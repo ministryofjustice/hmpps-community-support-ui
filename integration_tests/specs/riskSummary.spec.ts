@@ -58,17 +58,19 @@ test.describe('Risk Summary Page', () => {
 
   const mockTaskListStatus: TaskListStatusDto = {
     fullName: 'Alex River',
-    confirmPersonalDetailsCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-    checkRiskInformationCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-    selectAnAreaForReferralCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-    selectThePersonsNeedsCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-    addDetailsOfAnyAdditionalSupportNeedsCompleted: {
+    confirmPersonalDetailsStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+    checkRiskInformationStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+    selectAnAreaForReferralStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+    selectThePersonsNeedsStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+    addDetailsOfAnyAdditionalSupportNeedsStatus: {
       completed: false,
       statusText: 'Incomplete',
       tag: 'govuk-tag--blue',
     },
-    addAdditionalInformationCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-    addDetailsOfMainPointOfContactCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+    addAdditionalInformationStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+    checkYourAnswersStatus: { completed: false, statusText: 'Cannot Start Yet', tag: 'govuk-tag--blue' },
+    checkProbationPractitionerDetailsStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+    addMainPointOfContactStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
   }
 
   test.beforeEach(async ({ page }) => {

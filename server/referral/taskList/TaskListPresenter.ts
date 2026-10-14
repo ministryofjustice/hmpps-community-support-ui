@@ -4,42 +4,32 @@ import { TaskListStatusDto, TaskListStatusItem } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
 import { TaskListViewModel, TaskListPageContent, TaskListContent } from './TaskListViewModel'
 
-const getStatusTag = (status: TaskListStatusItem | null): GovukFrontendTaskListItemStatus => {
-  if (!status) {
-    return { tag: { text: 'Not Started', classes: 'govuk-tag--grey' } }
-  }
-  return { tag: { text: status.statusText, classes: status.tag } }
-}
-
-const completedStatusTag: GovukFrontendTaskListItemStatus = {
-  tag: { text: 'Completed', classes: 'govuk-tag--green' },
-}
+const getStatusTag = (status: TaskListStatusItem): GovukFrontendTaskListItemStatus => ({
+  tag: { text: status.statusText, classes: status.tag || '' },
+})
 
 const getTaskListStatus = (data: TaskListStatusDto) => {
   return {
-    // Personal details is treated as completed in the UI regardless of backend completion records.
-    personalDetails: completedStatusTag,
-    riskInformation: getStatusTag(data.checkRiskInformationCompleted),
-    personNeeds: getStatusTag(data.selectThePersonsNeedsCompleted),
-    supportNeeds: getStatusTag(data.addDetailsOfAnyAdditionalSupportNeedsCompleted),
-    contactDetails: getStatusTag(data.addMainPointOfContactCompleted),
-    checkPPDetails: getStatusTag(data.checkProbationPractitionerDetailsCompleted),
-    additionalReferralInformation: getStatusTag(data.addAdditionalInformationCompleted),
-    selectAnAreaForReferral: getStatusTag(data.selectAnAreaForReferralCompleted),
-    checkAnswers: getStatusTag(null),
+    personalDetails: getStatusTag(data.confirmPersonalDetailsStatus),
+    riskInformation: getStatusTag(data.checkRiskInformationStatus),
+    personNeeds: getStatusTag(data.selectThePersonsNeedsStatus),
+    supportNeeds: getStatusTag(data.addDetailsOfAnyAdditionalSupportNeedsStatus),
+    contactDetails: getStatusTag(data.addMainPointOfContactStatus),
+    checkPPDetails: getStatusTag(data.checkProbationPractitionerDetailsStatus),
+    additionalReferralInformation: getStatusTag(data.addAdditionalInformationStatus),
+    selectAnAreaForReferral: getStatusTag(data.selectAnAreaForReferralStatus),
+    checkAnswers: getStatusTag(data.checkYourAnswersStatus),
   }
 }
 
 export default class TaskListPresenter extends PresenterBase<TaskListViewModel, TaskListPageContent> {
-  constructor(
-    private readonly data: TaskListStatusDto,
-    private readonly referralId: string,
-  ) {
+  constructor(private readonly data: TaskListStatusDto) {
     super()
   }
 
   private buildTaskList(content: TaskListContent) {
     const status = getTaskListStatus(this.data)
+    const canCheckAnswers = this.data.checkYourAnswersStatus.statusText !== 'Cannot Start Yet'
     return {
       personalDetails: {
         title: content.personalDetails.title,
@@ -89,7 +79,7 @@ export default class TaskListPresenter extends PresenterBase<TaskListViewModel, 
         title: content.contactDetails.title,
         taskList: {
           items: [
-            this.data.addMainPointOfContactCompleted === null || this.data.addMainPointOfContactCompleted === undefined
+            this.data.addMainPointOfContactStatus === null || this.data.addMainPointOfContactStatus === undefined
               ? {
                   title: { text: content.contactDetails.subTasks.checkPPDetails.text },
                   href: content.contactDetails.subTasks.checkPPDetails.href,
@@ -109,7 +99,7 @@ export default class TaskListPresenter extends PresenterBase<TaskListViewModel, 
           items: [
             {
               title: { text: content.checkAnswers.subTasks.checkAnswersAndSubmit.text },
-              href: content.checkAnswers.subTasks.checkAnswersAndSubmit.href,
+              href: canCheckAnswers ? content.checkAnswers.subTasks.checkAnswersAndSubmit.href : undefined,
               status: status.checkAnswers,
             },
           ],

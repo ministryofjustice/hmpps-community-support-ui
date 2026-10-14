@@ -1660,15 +1660,15 @@ export interface components {
     }
     TaskListStatusResponseDto: {
       fullName: string
-      confirmPersonalDetailsCompleted: components['schemas']['TaskListStatusItem']
-      checkRiskInformationCompleted: components['schemas']['TaskListStatusItem']
-      selectThePersonsNeedsCompleted: components['schemas']['TaskListStatusItem']
-      addDetailsOfAnyAdditionalSupportNeedsCompleted: components['schemas']['TaskListStatusItem']
-      addAdditionalInformationCompleted: components['schemas']['TaskListStatusItem']
-      addDetailsOfMainPointOfContactCompleted: components['schemas']['TaskListStatusItem']
-      selectAnAreaForReferralCompleted: components['schemas']['TaskListStatusItem']
-      checkProbationPractitionerDetailsCompleted?: components['schemas']['TaskListStatusItem'] | null
-      addMainPointOfContactCompleted?: components['schemas']['TaskListStatusItem'] | null
+      confirmPersonalDetailsStatus: components['schemas']['TaskListStatusItem']
+      checkRiskInformationStatus: components['schemas']['TaskListStatusItem']
+      selectThePersonsNeedsStatus: components['schemas']['TaskListStatusItem']
+      addDetailsOfAnyAdditionalSupportNeedsStatus: components['schemas']['TaskListStatusItem']
+      addAdditionalInformationStatus: components['schemas']['TaskListStatusItem']
+      selectAnAreaForReferralStatus: components['schemas']['TaskListStatusItem']
+      checkProbationPractitionerDetailsStatus: components['schemas']['TaskListStatusItem']
+      addMainPointOfContactStatus: components['schemas']['TaskListStatusItem']
+      checkYourAnswersStatus: components['schemas']['TaskListStatusItem']
     }
     AppointmentDetailsDto: {
       /** @enum {string|null} */

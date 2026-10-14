@@ -60,7 +60,9 @@ export default class TaskListPage extends AbstractPage {
   }
 
   get checkAnswersTask() {
-    return this.checkAnswersSection.getByRole('link', { name: 'Check answers and submit' })
+    return this.checkAnswersSection
+      .getByRole('link', { name: 'Check answers and submit' })
+      .or(this.checkAnswersSection.getByText('Check answers and submit').nth(1))
   }
 
   async clickPersonalDetailsTask() {
