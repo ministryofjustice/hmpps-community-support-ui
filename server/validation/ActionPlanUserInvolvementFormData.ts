@@ -27,7 +27,7 @@ export const ActionPlanUserInvolvementFormDataSchemaBuilder = (
   sessionDeliveryDetails: ActionPlanSessionDeliveryDetailsResponse,
   firstName: string,
 ) => {
-  const riskWithActivitiesChoices = choiceValuesForKey(sessionDeliveryDetails, 'USER_INVOLVEMENT_IN_ACTION_PLAN')
+  const userInvolvementChoices = choiceValuesForKey(sessionDeliveryDetails, 'USER_INVOLVEMENT_IN_ACTION_PLAN')
 
   return z
     .object({
@@ -41,7 +41,7 @@ export const ActionPlanUserInvolvementFormDataSchemaBuilder = (
           path: ['USER_INVOLVEMENT_IN_ACTION_PLAN'],
           message: buildNothingSelectedError(firstName).error,
         })
-      } else if (!riskWithActivitiesChoices.includes(data.USER_INVOLVEMENT_IN_ACTION_PLAN)) {
+      } else if (!userInvolvementChoices.includes(data.USER_INVOLVEMENT_IN_ACTION_PLAN)) {
         ctx.addIssue({
           code: 'custom',
           path: ['USER_INVOLVEMENT_IN_ACTION_PLAN'],
