@@ -5,7 +5,7 @@ import loadContentDataForTest from '../../testutils/loadContentDataForTest'
 
 jest.useFakeTimers().setSystemTime(new Date('2026-07-15'))
 
-const content = loadContentDataForTest("/referral/task-list/edit-risk-summary")
+const content = loadContentDataForTest('/referral/task-list/edit-risk-summary')
 
 describe('EditRiskSummaryPresenter', () => {
   const risk: CommunitySupportRiskDto = {
@@ -69,7 +69,9 @@ describe('EditRiskSummaryPresenter', () => {
   }
 
   const res = {
-    locals: {content},
+    locals: {
+      content,
+    },
   } as unknown as Response
 
   test('builds correct view model', () => {
