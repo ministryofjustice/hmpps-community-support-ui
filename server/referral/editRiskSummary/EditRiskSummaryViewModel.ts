@@ -11,6 +11,7 @@ export interface EditRiskSummaryFieldContent {
 }
 
 export interface EditRiskSummaryContent {
+  pageTitle: string
   pageHeader: string
   backLink: string
   crnLabel: string
@@ -34,6 +35,7 @@ export interface EditRiskSummaryContent {
 }
 
 export interface EditRiskSummaryViewModel {
+  pageTitle: string
   backLink: GovukFrontendBackLink
   heading: string
   subheading: string

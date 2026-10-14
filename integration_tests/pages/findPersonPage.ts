@@ -12,7 +12,7 @@ interface FindPersonContent {
 }
 
 const pageContent: FindPersonContent = {
-  pageTitle: 'Community Support - Find a Person',
+  pageTitle: 'Enter a CRN or prison number - Make a referral - Community Support',
   pageHeader: 'Enter a CRN or prison number',
   errorMessages: {
     nothingEntered: 'Enter a CRN or prison number',
