@@ -49,20 +49,19 @@ test.describe('Confirm An Area For Referral Page', () => {
   const selectProviderInSession = (page: Parameters<typeof seedSessionRiskSummary>[0]) =>
     seedSessionRiskSummary(page, mockReferralId, undefined, mockProviderId)
 
-  test('should display the delivery partner, area covered, PDUs and person summary', async ({ page }) => {
+  test('should display the delivery partner, PDUs and person summary', async ({ page }) => {
     await selectProviderInSession(page)
     await page.goto(ConfirmAnAreaForReferralPage.url())
     const confirmAnAreaForReferralPage = await ConfirmAnAreaForReferralPage.verifyOnPage(page)
 
     await expect(confirmAnAreaForReferralPage.heading).toHaveText('Alex River')
-    await expect(confirmAnAreaForReferralPage.cardHeading).toHaveText('Start a Community Support referral')
+    await expect(confirmAnAreaForReferralPage.cardHeading).toHaveText(
+      'Make a Community Support referral to Avon and Somerset, Gloucestershire, Wiltshire.',
+    )
     await expect(confirmAnAreaForReferralPage.pageCaption).toHaveText(
       `CRN: ${mockCrn} | Date of birth: ${mockFormattedDateOfBirth}`,
     )
     await expect(confirmAnAreaForReferralPage.deliveryPartner).toContainText('Ingeus UK Limited')
-    await expect(confirmAnAreaForReferralPage.areaCovered).toContainText(
-      'Avon and Somerset, Gloucestershire, Wiltshire.',
-    )
     await expect(confirmAnAreaForReferralPage.pdus).toContainText('Bath and North Somerset')
     await expect(confirmAnAreaForReferralPage.pdus).toContainText('Swindon and Wiltshire')
   })

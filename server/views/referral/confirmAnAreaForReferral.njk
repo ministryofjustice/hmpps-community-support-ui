@@ -16,11 +16,8 @@
       <p class="govuk-body" data-qa="delivery-partner">
         <strong>{{ content.deliveryPartnerLabel }}:</strong> {{ content.deliveryPartner }}
       </p>
-      <p class="govuk-body" data-qa="area-covered">
-        <strong>{{ content.areaCoveredLabel }}:</strong> {{ content.areaCovered }}
-      </p>
-      <p class="govuk-body">{{ content.pdusLabel }}:</p>
-      <ul class="govuk-list govuk-list--bullet" data-qa="pdus">
+      <p class="govuk-body govuk-!-margin-bottom-0">{{ content.pdusLabel }}:</p>
+      <ul class="govuk-list govuk-list--bullet govuk-!-margin-left-3" data-qa="pdus">
         {% for pdu in content.pdus %}
           <li>{{ pdu }}</li>
         {% endfor %}
