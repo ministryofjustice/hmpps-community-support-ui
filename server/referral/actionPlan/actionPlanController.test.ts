@@ -657,33 +657,44 @@ describe('ActionPlanController', () => {
         firstName: 'Alex',
         lastName: 'River',
       },
-      needs: [{
-        id: 'need-1',
-        label: 'Accomodation',
-        orderNumber: 1,
-        outcomes: [{
-          id: 'outcome-1',
-          label: 'Find housing',
-          activities: [{
-            id: 'activity-1',
-            who: 'Service provider',
-            details: 'activity for need-1',
-          }]
-        }]
-      }, {
-        id: 'need-2',
-        label: 'Employment',
-        orderNumber: 2,
-        outcomes: [{
-          id: 'outcome-2',
-          label: 'Get a job',
-          activities: [{
-            id: 'activity-2',
-            who: 'Alex',
-            details: 'activity for need-2',
-          }]
-        }]
-      }],
+      needs: [
+        {
+          id: 'need-1',
+          label: 'Accomodation',
+          orderNumber: 1,
+          outcomes: [
+            {
+              id: 'outcome-1',
+              label: 'Find housing',
+              activities: [
+                {
+                  id: 'activity-1',
+                  who: 'Service provider',
+                  details: 'activity for need-1',
+                },
+              ],
+            },
+          ],
+        },
+        {
+          id: 'need-2',
+          label: 'Employment',
+          orderNumber: 2,
+          outcomes: [
+            {
+              id: 'outcome-2',
+              label: 'Get a job',
+              activities: [
+                {
+                  id: 'activity-2',
+                  who: 'Alex',
+                  details: 'activity for need-2',
+                },
+              ],
+            },
+          ],
+        },
+      ],
       lastUpdatedAt: '2026-15-10',
     }
 
@@ -697,7 +708,11 @@ describe('ActionPlanController', () => {
 
       await actionPlanController.moveNeed(req, res)
 
-      expect(referralService.moveNeed).toHaveBeenCalledWith('AB1234CD', { stepQuestionAnswerHeaderId: 'outcome-1', action: 'DOWN' }, 'user1')
+      expect(referralService.moveNeed).toHaveBeenCalledWith(
+        'AB1234CD',
+        { stepQuestionAnswerHeaderId: 'outcome-1', action: 'DOWN' },
+        'user1',
+      )
       expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan')
     })
 

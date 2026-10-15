@@ -374,6 +374,9 @@ export default class CommunitySupportApiClient extends RestClient {
   }
 
   moveNeed(referralReference: string, data: ActionPlanNeedsOrderRequest, username: string) {
-    return this.patch({ path: `/referral/${referralReference}/action-plan/update-needs-order`, data }, asSystem(username))
+    return this.patch(
+      { path: `/referral/${referralReference}/action-plan/update-needs-order`, data },
+      asSystem(username),
+    )
   }
 }

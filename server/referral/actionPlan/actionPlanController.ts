@@ -538,12 +538,16 @@ class ActionPlanController {
   }
 
   async moveNeed(req: Request, res: Response) {
-    const { id: caseReference, outcomeId: outcomeId, action: action } = req.params as { id: string; outcomeId: string, action: 'UP' | 'DOWN' }
+    const {
+      id: caseReference,
+      outcomeId,
+      action,
+    } = req.params as { id: string; outcomeId: string; action: 'UP' | 'DOWN' }
     const { username } = res.locals.user
 
     const moveNeedRequest: ActionPlanNeedsOrderRequest = {
       stepQuestionAnswerHeaderId: outcomeId,
-      action: action,
+      action,
     }
 
     await this.referralService.moveNeed(caseReference, moveNeedRequest, username)
