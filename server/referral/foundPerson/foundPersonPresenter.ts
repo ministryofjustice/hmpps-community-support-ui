@@ -93,7 +93,9 @@ export default class FoundPersonPresenter extends PresenterBase<FoundPersonViewM
     const disabilitiesLastUpdated = getLatestUpdatedAt(foundPerson.personDetailsAndCircumstances?.disabilities)
 
     const viewModel = {} as FoundPersonViewModel
+    
     viewModel.staticContent = this.buildStaticContent(res)
+    viewModel.pageTitle = viewModel.staticContent.pageTitle
     viewModel.backLink = { href: viewModel.staticContent.backLink }
 
     const personSummaryItems = [

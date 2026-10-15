@@ -4,6 +4,7 @@ import {
   GovukFrontendSummaryList,
   GovukFrontendWarningText,
 } from '@govuk-frontend'
+import { GlobalContent } from '../../../assets/content/GlobalContent'
 
 export interface PersonalDetailsCard {
   heading: string
@@ -32,18 +33,6 @@ export interface ContactDetailsCard {
   mainAddressLabel: string
 }
 
-export interface ConfirmPersonalDetailsContent {
-  pageHeader: string
-  pageSubHeader: string
-  backLink: string
-  defaultFieldValue: string
-  personalDetailsCard: PersonalDetailsCard
-  equalityMonitoringCard: EqualityMonitoringCard
-  contactDetailsCard: ContactDetailsCard
-  warningText: string
-  buttonText: string
-}
-
 export interface ConfirmPersonalDetailsViewModel {
   backLink: GovukFrontendBackLink
   heading: string
@@ -54,3 +43,5 @@ export interface ConfirmPersonalDetailsViewModel {
   warning: GovukFrontendWarningText
   button: GovukFrontendButton
 }
+
+export type ConfirmPersonalDetailsContent = GlobalContent['/referral/task-list/confirm-personal-details']
