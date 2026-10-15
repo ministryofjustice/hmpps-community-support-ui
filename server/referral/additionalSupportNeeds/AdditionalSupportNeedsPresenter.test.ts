@@ -11,6 +11,7 @@ const firstName = 'Alex' as const
 const lastName = 'Rivers' as const
 
 const pageContent = {
+  pageTitle: 'What additional support do they need to attend or take part in sessions? - Community Support',
   h1: `What does ${firstName} need support with to attend or take part in sessions?`,
   hint: 'Select all that apply.',
   checkbox1: {
@@ -146,9 +147,7 @@ describe('AdditionalSupportNeedsPresenter', () => {
   }
 
   const checkPageContent = (viewModel: AdditionalSuportNeedsViewModel) => {
-    expect(viewModel.pageTitle).toBe(
-      'What additional support do they need to attend or take part in sessions? - Community Support',
-    )
+    expect(viewModel.pageTitle).toBe(pageContent.pageTitle)
     expect(viewModel.heading).toBe(`${firstName} ${lastName}`)
     expect(viewModel.button).toStrictEqual({ text: pageContent.button })
     expect(viewModel.checkList.name).toBe('AdditionalNeeds')
