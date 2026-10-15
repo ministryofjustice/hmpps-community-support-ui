@@ -1,9 +1,11 @@
 import { Response } from 'express'
 import { ConfirmPersonDetailsBffDto } from '@community-support-api'
 import ConfirmPersonalDetailsPresenter from './ConfirmPersonalDetailsPresenter'
+import loadContentDataForTest from '../../testutils/loadContentDataForTest'
 
 jest.useFakeTimers().setSystemTime(new Date('2026-07-03'))
 
+const content = loadContentDataForTest('/referral/task-list/confirm-personal-details')
 const singleLineHtml = (str: string) => str.replaceAll(/>\s+/g, '>').replaceAll(/\s+</g, '<')
 
 describe('ConfirmPersonalDetailsPresenter', () => {
@@ -46,47 +48,17 @@ describe('ConfirmPersonalDetailsPresenter', () => {
       },
     },
   }
+  
   const res = {
     locals: {
-      content: {
-        pageHeader: '{{ name }}',
-        pageSubHeader: 'Confirm personal details',
-        backLink: '/referral/task-list',
-        defaultFieldValue: 'Not available',
-        personalDetailsCard: {
-          heading: 'Personal details',
-          nameLabel: 'Name',
-          crnLabel: 'CRN',
-          prisonLabel: 'Prison number',
-          dobLabel: 'Date of birth',
-          languageLabel: 'Preferred language',
-          circumstancesLabel: 'Current circumstances',
-          disabilitiesLabel: 'Disabilities',
-        },
-        equalityMonitoringCard: {
-          heading: 'Equality monitoring',
-          nationalityLabel: 'Nationality',
-          ethnicityLabel: 'Ethnicity',
-          religionLabel: 'Religion or belief',
-          sexLabel: 'Sex',
-        },
-        contactDetailsCard: {
-          heading: 'Contact details',
-          phoneNumberLabel: 'Phone number',
-          mobileNumberLabel: 'Mobile number',
-          emailAddressLabel: 'Email address',
-          mainAddressLabel: 'Main address',
-        },
-        warningText: 'If this information is out of date or incorrect, you must update the information in NOMIS',
-        buttonText: 'Save and continue',
-        postHref: '/referral/task-list/confirm-personal-details',
-      },
+      content,
     },
   } as unknown as Response
 
   test('builds correct view model', () => {
     const presenter = new ConfirmPersonalDetailsPresenter(data)
     const viewModel = presenter.buildViewModel(res)
+    expect(viewModel.pageTitle).toBe('Check and confirm personal details - Make a referral - Community Support')
     expect(viewModel.backLink.href).toBe('/referral/task-list')
     expect(viewModel.heading).toBe('Charlie Robert Smith')
     expect(viewModel.subheading).toBe('Confirm personal details')

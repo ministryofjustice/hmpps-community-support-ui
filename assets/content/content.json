@@ -910,6 +910,7 @@
     }
   },
   "/referral/task-list/confirm-personal-details": {
+    "pageTitle": "Check and confirm personal details - Make a referral - Community Support",
     "pageHeader": "{{ name }}",
     "pageSubHeader": "Confirm personal details",
     "backLink": "/referral/task-list",
@@ -939,7 +940,7 @@
       "mainAddressLabel": "Main address"
     },
     "warningText": "If this information is out of date or incorrect, you must update the information in NOMIS",
-    "buttonText": "Continue"
+    "buttonText": "Save and continue"
   },
   "/referral/task-list/view-risk-summary": {
     "pageTitle": "OASys risk information - Community Support",

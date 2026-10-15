@@ -7,6 +7,7 @@ import {
 import { GlobalContent } from '../../../assets/content/GlobalContent'
 
 export interface ConfirmPersonalDetailsViewModel {
+  pageTitle: string
   backLink: GovukFrontendBackLink
   heading: string
   subheading: string
