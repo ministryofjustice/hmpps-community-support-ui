@@ -1,11 +1,18 @@
 import { Request, Response } from 'express'
-import { AppointmentIcsResponse, ChangeAppointmentDetails, CreateAppointmentRequest } from '@community-support-api'
+import {
+  AppointmentIcsResponse,
+  ChangeAppointmentDetails,
+  CreateAppointmentReferenceDataBffDto,
+  CreateAppointmentRequest,
+} from '@community-support-api'
 import { randomUUID } from 'crypto'
 import AppointmentController from './appointmentController'
 import ConfirmIcsPresenter, { type AdditionalInformation } from './confirm-ics/confirmIcsPresenter'
 import ScheduleIcsPresenter from './schedule-ics/scheduleIcsPresenter'
 import IcsFeedbackHowSessionTookPlacePresenter from './ics-feedback/icsFeedbackHowSessionTookPlacePresenter'
+import AppointmentTypePresenter from './create-an-appointment/appointment-type/AppointmentTypePresenter'
 import ConfirmIcsContentFactory from '../testutils/factories/ConfirmIcsContent'
+import AppointmentTypeContentFactory from '../testutils/factories/AppointmentTypeContent'
 import ReferralService from '../services/referralService'
 import AppointmentService from '../services/AppointmentService'
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
@@ -27,6 +34,7 @@ jest.mock('./confirm-ics/confirmIcsPresenter')
 jest.mock('../services/AppointmentService')
 jest.mock('./schedule-ics/scheduleIcsPresenter')
 jest.mock('./ics-feedback/icsFeedbackHowSessionTookPlacePresenter')
+jest.mock('./create-an-appointment/appointment-type/AppointmentTypePresenter')
 jest.mock('../services/referralService')
 jest.mock('../services/referenceDataService')
 jest.mock('./view-change-session-details/ViewChangeSessionDetailsPresenter')
@@ -88,6 +96,15 @@ describe('AppointmentController', () => {
 
   const mockReferralInformationInCommunity = referralInformationInCommunity
   const mockReferralInformationInPrison = referralInformationInPrison
+  const mockCreateAppointmentReferenceData: CreateAppointmentReferenceDataBffDto = {
+    appointmentTypes: [
+      { name: 'Contact session', value: 'CONTACT_SESSION' },
+      { name: 'Pre-release session', value: 'PRE_RELEASE_SESSION' },
+      { name: 'Post-release session', value: 'POST_RELEASE_SESSION' },
+      { name: 'Handover session', value: 'HANDOVER_SESSION' },
+    ],
+    probationOfficeLocations: [],
+  }
 
   beforeEach(() => {
     referralService = {
@@ -113,7 +130,7 @@ describe('AppointmentController', () => {
     req = {
       params: { caseRefId },
       session: { createAppointmentRequest: null, icsFeedbackSubmission: null },
-      flash: jest.fn(),
+      flash: jest.fn().mockReturnValue([]),
     } as unknown as Request
 
     res = {
@@ -123,6 +140,7 @@ describe('AppointmentController', () => {
     } as unknown as Response
 
     ScheduleIcsPresenter.prototype.renderPage = jest.fn()
+    AppointmentTypePresenter.prototype.renderPage = jest.fn()
 
     scheduleIcsCommunityReq = {
       params: {
@@ -133,7 +151,7 @@ describe('AppointmentController', () => {
         formData: {},
       },
       session: { createAppointmentRequest: null },
-      flash: jest.fn(),
+      flash: jest.fn().mockReturnValue([]),
     } as unknown as Request
 
     scheduleIcsPrisonReq = {
@@ -145,7 +163,7 @@ describe('AppointmentController', () => {
         formData: {},
       },
       session: { createAppointmentRequest: null },
-      flash: jest.fn(),
+      flash: jest.fn().mockReturnValue([]),
     } as unknown as Request
 
     scheduleIcsRes = {
@@ -170,6 +188,101 @@ describe('AppointmentController', () => {
 
       expect(ConfirmIcsPresenter).toHaveBeenCalledWith(mockCreateAppointmentRequest, mockAdditionalDetails)
       expect(ConfirmIcsPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+    })
+  })
+
+  describe('showAppointmentType', () => {
+    it('should load appointment types from the BFF and render the presenter', async () => {
+      req = {
+        params: { id: caseRefId },
+        session: {},
+        flash: jest.fn().mockReturnValue([]),
+      } as unknown as Request
+      res = {
+        locals: { user: { username: 'user1' }, content: AppointmentTypeContentFactory.build(), errors: undefined },
+        render: jest.fn(),
+        redirect: jest.fn(),
+      } as unknown as Response
+
+      referralService.getReferralInformation.mockResolvedValue(mockReferralInformationInCommunity)
+      jest
+        .spyOn(appointmentService, 'getCreateAppointmentReferenceData')
+        .mockResolvedValue(mockCreateAppointmentReferenceData as never)
+
+      await appointmentController.showAppointmentType(req, res)
+
+      expect(appointmentService.getCreateAppointmentReferenceData).toHaveBeenCalledWith(caseRefId, 'user1')
+      expect(AppointmentTypePresenter).toHaveBeenCalledWith(
+        caseRefId,
+        mockReferralInformationInCommunity,
+        mockCreateAppointmentReferenceData.appointmentTypes,
+        undefined,
+        undefined,
+      )
+      expect(AppointmentTypePresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+    })
+
+    it('should prioritise flashed values over session values when preselecting the appointment type', async () => {
+      req = {
+        params: { id: caseRefId },
+        session: { appointmentSessionData: { appointmentType: 'ICS' } },
+        flash: jest.fn().mockReturnValue([JSON.stringify({ appointmentType: 'POST_RELEASE_SESSION' })]),
+      } as unknown as Request
+      res = {
+        locals: { user: { username: 'user1' }, content: AppointmentTypeContentFactory.build(), errors: undefined },
+        render: jest.fn(),
+        redirect: jest.fn(),
+      } as unknown as Response
+
+      referralService.getReferralInformation.mockResolvedValue(mockReferralInformationInCommunity)
+      jest
+        .spyOn(appointmentService, 'getCreateAppointmentReferenceData')
+        .mockResolvedValue(mockCreateAppointmentReferenceData as never)
+
+      await appointmentController.showAppointmentType(req, res)
+
+      expect(AppointmentTypePresenter).toHaveBeenCalledWith(
+        caseRefId,
+        mockReferralInformationInCommunity,
+        mockCreateAppointmentReferenceData.appointmentTypes,
+        undefined,
+        'POST_RELEASE_SESSION',
+      )
+    })
+  })
+
+  describe('submitAppointmentType', () => {
+    it('should save the selected appointment type in session and redirect to appointment details', async () => {
+      req = {
+        params: { id: caseRefId },
+        session: { appointmentSessionData: { date: '2026-10-15' } },
+        body: { appointmentType: 'CONTACT_SESSION' },
+        url: `/referral/${caseRefId}/create-an-appointment/appointment-type`,
+        flash: jest.fn().mockReturnValue([]),
+      } as unknown as Request
+
+      await appointmentController.submitAppointmentType(req, res)
+
+      expect(req.session.appointmentSessionData).toEqual({
+        date: '2026-10-15',
+        appointmentType: 'CONTACT_SESSION',
+      })
+      expect(res.redirect).toHaveBeenCalledWith(`/referral/${caseRefId}/create-an-appointment/appointment-details`)
+    })
+
+    it('should flash an error and redirect back to the appointment type page when nothing is selected', async () => {
+      req = {
+        params: { id: caseRefId },
+        session: {},
+        body: {},
+        url: `/referral/${caseRefId}/create-an-appointment/appointment-type`,
+        flash: jest.fn().mockReturnValue([]),
+      } as unknown as Request
+
+      await appointmentController.submitAppointmentType(req, res)
+
+      expect(req.flash).toHaveBeenCalledWith('appointmentTypeError', 'Select the appointment type')
+      expect(res.redirect).toHaveBeenCalledWith(`/referral/${caseRefId}/create-an-appointment/appointment-type`)
     })
   })
 

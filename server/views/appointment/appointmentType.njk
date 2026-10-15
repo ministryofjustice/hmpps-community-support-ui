@@ -1,0 +1,17 @@
+{% extends "../partials/layout.njk" %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = content.pageTitle + " - " + applicationName %}
+{% set mainClasses = "govuk-body" %}
+
+{% block contentBody %}
+  <h1 class="govuk-heading-l">{{ content.heading }}</h1>
+  <hr class="govuk-section-break govuk-section-break--visible govuk-section-break--m">
+
+  <form method="post" novalidate>
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    {{ govukRadios(content.radios) }}
+    {{ govukButton(content.button) }}
+  </form>
+{% endblock %}

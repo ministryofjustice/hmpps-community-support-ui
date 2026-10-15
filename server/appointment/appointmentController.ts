@@ -45,6 +45,8 @@ import { ChangeIcsDetailsReasonSchema } from '../validation/ChangeIcsDetailsReas
 import { saveFormToSession, ScheduledIcsFormDataResolver } from './schedule-ics/ScheduledIcsFormDataResolver'
 import IssuesOrConcernsPresenter from './issues-or-concerns/IssuesOrConcernsPresenter'
 import { IssuesOrConcernsFormDataSchema } from '../validation/IssuesOrConcernsFormData'
+import AppointmentTypePresenter from './create-an-appointment/appointment-type/AppointmentTypePresenter'
+import { AppointmentTypeSchema } from '../validation/AppointmentTypeFormData'
 import logger from '../../logger'
 
 const recordAttendanceRedirectUrl = (data: RecordSessionAttendanceFormData, caseRefId: string): string => {
@@ -187,6 +189,11 @@ const storePending = (req: Request) => {
   req.session.pending = req.body as Record<string, string>
 }
 
+const getFlashedFormValues = (req: Request): Record<string, string> | undefined => {
+  const flashData = req.flash('value')
+  return flashData.length > 0 ? JSON.parse(flashData[0]) : undefined
+}
+
 class AppointmentController {
   private readonly resolver: ScheduledIcsFormDataResolver
 
@@ -214,6 +221,42 @@ class AppointmentController {
     }
     const presenter = new ConfirmIcsPresenter(createAppointmentRequest, additionalDetails)
     return presenter.renderPage(res)
+  }
+
+  async showAppointmentType(req: Request, res: Response): Promise<void> {
+    const { username } = res.locals.user
+    const { id: caseRefId } = req.params as { id: string }
+    const [referralInformation, referenceData] = await Promise.all([
+      this.referralService.getReferralInformation(caseRefId, username),
+      this.appointmentService.getCreateAppointmentReferenceData(caseRefId, username),
+    ])
+
+    const flashedFormValues = getFlashedFormValues(req)
+    const selectedAppointmentType =
+      flashedFormValues?.appointmentType ?? req.session.appointmentSessionData?.appointmentType
+
+    const presenter = new AppointmentTypePresenter(
+      caseRefId,
+      referralInformation,
+      referenceData.appointmentTypes,
+      res.locals.errors,
+      selectedAppointmentType,
+    )
+
+    return presenter.renderPage(res)
+  }
+
+  submitAppointmentType(req: Request, res: Response): Promise<void> {
+    const { id: caseRefId } = req.params as { id: string }
+
+    return validateRequestBodyAgainstSchema(AppointmentTypeSchema, req, res, form => {
+      req.session.appointmentSessionData = {
+        ...req.session.appointmentSessionData,
+        appointmentType: form.appointmentType,
+      }
+
+      return res.redirect(`/referral/${caseRefId}/create-an-appointment/appointment-details`)
+    })
   }
 
   async showScheduleIcs(req: Request, res: Response): Promise<void> {
