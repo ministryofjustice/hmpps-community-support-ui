@@ -376,6 +376,11 @@
     "continueButtonText": "Continue",
     "backLink": "/referral/{{ id }}/action-plan/service-end-date-check"
   },
+  "/referral/:id/action-plan/person-involvement": {
+    "pageTitle": "Session details – Person involvement",
+    "continueButtonText": "Continue",
+    "backLink": "/referral/{{ id }}/action-plan/service-end-date-check"
+  },
   "/referral/:id/action-plan/activities/add": {
     "pageHeader": "Add An Activity",
     "areaOfNeedLabel": "Area of need",
