@@ -52,6 +52,7 @@ type ActionPlanActionResponse = components['schemas']['ActionPlanActionResponse'
 type ActionPlanSelectANeedResponse = components['schemas']['ActionPlanSelectANeedResponse']
 type ActionPlanSelectANeedNeed = components['schemas']['ActionPlanSelectANeedNeed']
 type ActionPlanSelectANeedOutcome = components['schemas']['ActionPlanSelectANeedOutcome']
+type ActionPlanNeedsOrderRequest = components['schemas']['ActionPlanNeedsOrderRequest']
 type WithdrawalReasonsGroupedBffResponseDto = components['schemas']['WithdrawalReasonsGroupedBffResponseDto']
 type ArnsRiskConcernsToSelfDto = components['schemas']['ArnsRiskConcernsToSelfDto']
 type ArnsRiskDto = components['schemas']['ArnsRiskDto']
@@ -138,6 +139,7 @@ export type {
   ActionPlanSelectANeedResponse,
   ActionPlanSelectANeedNeed,
   ActionPlanSelectANeedOutcome,
+  ActionPlanNeedsOrderRequest,
   WithdrawalReasonsGroupedBffResponseDto,
   ArnsRiskConcernsToSelfDto,
   ArnsRiskDto,
