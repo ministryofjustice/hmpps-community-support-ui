@@ -3,6 +3,9 @@ import { randomUUID } from 'node:crypto'
 import { GovukFrontendCheckboxesItem, GovukFrontendErrorSummaryErrorListElement } from '@govuk-frontend'
 import PersonNeedsPresenter, { personNeedsFormData } from './PersonNeedsPresenter'
 import { WithConditional } from '../../@types/govukFrontend/derived'
+import loadContentDataForTest from '../../testutils/loadContentDataForTest'
+
+const content = loadContentDataForTest('/referral/task-list/select-person-needs')
 
 describe('PersonNeedsPresenter', () => {
   const firstName = 'Alex'
@@ -49,31 +52,7 @@ describe('PersonNeedsPresenter', () => {
 
   const res = {
     locals: {
-      content: {
-        heading: `${firstName} ${lastName}`,
-        hint: 'Select all that apply.',
-        checkboxes: {
-          accommodationLabel: 'Accommodation',
-          accommodationHint: "Give details about {{ firstName }}'s accommodation needs",
-          employmentLabel: 'Employment and education',
-          employmentHint: "Give details about {{ firstName }}'s employment and education needs",
-          financesLabel: 'Finances',
-          financesHint: "Give details about {{ firstName }}'s finance needs",
-          relationshipsLabel: 'Personal relationships and community',
-          relationshipsHint: "Give details about {{ firstName }}'s personal relationships and community needs",
-          drugUseLabel: 'Drug use',
-          drugUseHint: "Give details about {{ firstName }}'s drug use needs",
-          alcoholUseLabel: 'Alcohol use',
-          alcoholUseHint: "Give details about {{ firstName }}'s alcohol use needs",
-          healthLabel: 'Health and wellbeing',
-          healthHint: "Give details about {{ firstName }}'s health and wellbeing needs",
-          thinkingLabel: 'Thinking, behaviours and attitudes',
-          thinkingHint: "Give details about {{ firstName }}'s thinking, behaviours and attitudes needs",
-        },
-        backLink: '/referral/task-list',
-        submitHref: '/referral/task-list/select-person-needs',
-        submitButton: 'Save and continue',
-      },
+      content,
     },
   } as unknown as Response
 
@@ -178,6 +157,7 @@ describe('PersonNeedsPresenter', () => {
     const presenter = new PersonNeedsPresenter(emptyForm, noErrors)
     const viewModel = presenter.buildViewModel(res)
 
+    expect(viewModel.pageTitle).toBe('Select what needs the referral should focus on - Community Support')
     expect(viewModel.backLink.href).toBe('/referral/task-list')
     expect(viewModel.heading).toBe('Alex Smith')
     expect(viewModel.checkboxes.hint.text).toBe('Select all that apply.')
