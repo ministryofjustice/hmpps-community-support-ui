@@ -940,7 +940,7 @@
       "mainAddressLabel": "Main address"
     },
     "warningText": "If this information is out of date or incorrect, you must update the information in NOMIS",
-    "buttonText": "Save and continue"
+    "buttonText": "Continue"
   },
   "/referral/task-list/view-risk-summary": {
     "pageTitle": "OASys risk information - Community Support",

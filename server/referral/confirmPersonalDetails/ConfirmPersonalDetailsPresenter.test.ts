@@ -127,7 +127,7 @@ describe('ConfirmPersonalDetailsPresenter', () => {
       'If this information is out of date or incorrect, you must update the information in NOMIS',
     )
     // check button
-    expect(viewModel.button.text).toBe('Save and continue')
+    expect(viewModel.button.text).toBe('Continue')
   })
   test('shows "No fixed abode" when address contains the no fixed abode postcode', () => {
     const presenter = new ConfirmPersonalDetailsPresenter({
