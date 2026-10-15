@@ -31,6 +31,7 @@ import {
   Selection,
   WithdrawReferralRequest,
   WithdrawalReasonsGroupedBffResponseDto,
+  ActionPlanNeedsOrderRequest,
 } from '@community-support-api'
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
 import { NeedsAnInterpreterFormData } from '../validation/NeedsAnInterpreterFormDataSchema'
@@ -253,5 +254,9 @@ export default class ReferralService {
 
   async withdrawReferral(caseReference: string, request: WithdrawReferralRequest, username: string): Promise<void> {
     await this.communitySupportApiClient.withdrawReferral(caseReference, request, username)
+  }
+
+  moveNeed(caseReference: string, request: ActionPlanNeedsOrderRequest, username: string) {
+    return this.communitySupportApiClient.moveNeed(caseReference, request, username)
   }
 }

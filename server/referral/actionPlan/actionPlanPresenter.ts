@@ -24,8 +24,7 @@ export default class ActionPlanPresenter extends PresenterBase<ActionPlanViewMod
     const hasNeeds = needsSummary.length > 0
     const allOutcomesAdded = hasNeeds && this.actionPlanSummary.needs.every(need => need.outcomes.length > 0)
 
-    // TODO get updatedAt from actionPlanSummary
-    const updatedAtText = hasNeeds ? this.formatUpdatedAtText(new Date()) : undefined
+    const updatedAtText = hasNeeds ? this.formatUpdatedAtText(this.actionPlanSummary.lastUpdatedAt) : undefined
 
     const addAnotherOutcomeButton: GovukFrontendButton = hasNeeds
       ? {
@@ -71,11 +70,19 @@ export default class ActionPlanPresenter extends PresenterBase<ActionPlanViewMod
       const outcome = need.outcomes[0]
       const moveUpButton: GovukFrontendButton =
         index > 0
-          ? { text: content.moveOutcomeUpText, href: '#', classes: 'govuk-button--secondary govuk-!-margin-right-3' }
+          ? {
+              text: content.moveOutcomeUpText,
+              href: `/referral/${this.caseReference}/action-plan/header/${outcome.id}/move/UP`,
+              classes: 'govuk-button--secondary govuk-!-margin-right-3',
+            }
           : undefined
       const moveDownButton: GovukFrontendButton =
         index < needs.length - 1
-          ? { text: content.moveOutcomeDownText, href: '#', classes: 'govuk-button--secondary' }
+          ? {
+              text: content.moveOutcomeDownText,
+              href: `/referral/${this.caseReference}/action-plan/header/${outcome.id}/move/DOWN`,
+              classes: 'govuk-button--secondary',
+            }
           : undefined
       return summaryList.push({
         card: {
@@ -129,7 +136,7 @@ export default class ActionPlanPresenter extends PresenterBase<ActionPlanViewMod
     }
   }
 
-  private formatUpdatedAtText(updatedAt: Date): string {
+  private formatUpdatedAtText(updatedAt: string): string {
     return `Last updated ${formatDate(updatedAt, "dd MMMM yyyy 'at' h:mmaaa")}`
   }
 
