@@ -22,4 +22,3 @@ export interface ServiceEndDatePageViewModel {
 }
 
 export type ServiceEndDatePageContent = GlobalContent['/referral/task-list/service-end-date']
-
