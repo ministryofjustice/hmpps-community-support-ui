@@ -50,6 +50,7 @@ import type {
   OffenceSentenceRequest,
   OffenceSentenceInfoBffResponseDto,
   WithdrawReferralRequest,
+  ActionPlanNeedsOrderRequest,
 } from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
@@ -370,5 +371,9 @@ export default class CommunitySupportApiClient extends RestClient {
 
   withdrawReferral(referralReference: string, data: WithdrawReferralRequest, username: string): Promise<void> {
     return this.post({ path: `/referral/${referralReference}/withdraw`, data }, asSystem(username))
+  }
+
+  moveNeed(referralReference: string, data: ActionPlanNeedsOrderRequest, username: string) {
+    return this.patch({ path: `/referral/${referralReference}/action-plan/update-needs-order`, data }, asSystem(username))
   }
 }

@@ -1,5 +1,9 @@
 import { Request, Response } from 'express'
-import type { ActionPlanActionRequest, ActionPlanSessionDeliveryDetailsRequest } from '@community-support-api'
+import type {
+  ActionPlanActionRequest,
+  ActionPlanNeedsOrderRequest,
+  ActionPlanSessionDeliveryDetailsRequest,
+} from '@community-support-api'
 import type { ActionPlanActivitiesData, ActionPlanActivity, ActionPlanSessionDeliveryData } from '../../@types/express'
 import ReferralService from '../../services/referralService'
 import logger from '../../../logger'
@@ -531,6 +535,19 @@ class ActionPlanController {
       this.saveSessionDeliveryDetails(req, caseReference, request)
       return res.redirect(`/referral/${caseReference}/action-plan/person-involvement`)
     })
+  }
+
+  async moveNeed(req: Request, res: Response) {
+    const { id: caseReference, outcomeId: outcomeId, action: action } = req.params as { id: string; outcomeId: string, action: 'UP' | 'DOWN' }
+    const { username } = res.locals.user
+
+    const moveNeedRequest: ActionPlanNeedsOrderRequest = {
+      stepQuestionAnswerHeaderId: outcomeId,
+      action: action,
+    }
+
+    await this.referralService.moveNeed(caseReference, moveNeedRequest, username)
+    return res.redirect(`/referral/${caseReference}/action-plan`)
   }
 }
 
