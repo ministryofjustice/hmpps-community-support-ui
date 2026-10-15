@@ -1281,11 +1281,16 @@ export interface components {
       fullName?: string | null
       emailAddress: string
     }
+    AdditionalSupportNeedsRequest: {
+      additionalSupportNeedsIdentified?: boolean | null
+      additionalSupportNeedsDetails?: string | null
+    }
     CreateIcsFeedbackRequest: {
       record: components['schemas']['RecordSessionRequest']
       sessionDetails?: components['schemas']['SessionDetailsRequest'] | null
       sessionFeedback?: components['schemas']['SessionFeedbackRequest'] | null
       issuesAndConcerns?: components['schemas']['IssuesAndConcernsRequest'] | null
+      additionalSupportNeeds?: components['schemas']['AdditionalSupportNeedsRequest'] | null
       nextSteps?: components['schemas']['NextStepsRequest'] | null
     }
     IssuesAndConcernsRequest: {
@@ -1622,17 +1627,6 @@ export interface components {
       /** Format: uuid */
       communityServiceProviderId: string
       communityServiceProviderName: string
-    }
-    AdditionalSupportNeedsRequest: {
-      physicalHealth?: string | null
-      mentalEmotionalHealth?: string | null
-      neurodiversity?: string | null
-      locationTravel?: string | null
-      caringResponsibilities?: string | null
-      employmentResponsibilities?: string | null
-      diversity?: string | null
-      anythingElse?: string | null
-      needsAdditionalSupport?: boolean | null
     }
     AdditionalSupportNeedsBffResponseDto: {
       refereeName: components['schemas']['RefereeNameDto']
