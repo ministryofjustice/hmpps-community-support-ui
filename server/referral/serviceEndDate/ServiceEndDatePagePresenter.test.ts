@@ -12,6 +12,7 @@ const buildContent = (): ServiceEndDatePageContent => ({
   reasonHint: 'Explain why this date was chosen',
   backLink: '/referral/task-list',
   continueButton: 'Save and continue',
+  updateError: "Something has gone wrong updating the service end date"
 })
 
 const buildResponse = (content: ServiceEndDatePageContent): Response =>

@@ -1,16 +1,5 @@
 import { GovukFrontendBackLink } from '@govuk-frontend'
-
-export interface ServiceEndDatePageContent {
-  pageTitle: string
-  pageHeader: string
-  hint: string
-  dateLabel: string
-  dateHint?: string
-  reasonLabel: string
-  reasonHint: string
-  backLink: string
-  continueButton: string
-}
+import { GlobalContent } from '../../../assets/content/GlobalContent'
 
 export interface ServiceEndDateFormValues {
   day?: string
@@ -31,3 +20,6 @@ export interface ServiceEndDatePageViewModel {
   backLink: GovukFrontendBackLink
   formValues: ServiceEndDateFormValues
 }
+
+export type ServiceEndDatePageContent = GlobalContent['/referral/task-list/service-end-date']
+
