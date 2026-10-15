@@ -18,7 +18,6 @@ const baseTaskListState: TaskListStatusDto = {
   addDetailsOfMainPointOfContactCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
   checkProbationPractitionerDetailsCompleted: null,
   addMainPointOfContactCompleted: null,
-  checkYourAnswersCompleted: { completed: false, statusText: 'Cannot Start Yet', tag: 'govuk-tag--blue' },
 }
 
 describe('TaskListPresenter - Page Rendering', () => {
