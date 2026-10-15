@@ -2,7 +2,7 @@ import { Response } from 'express'
 import { AdditionalSupportNeedsDto } from '@community-support-api'
 import { GovukFrontendCheckboxesItem } from '@govuk-frontend'
 import AdditionalSuportNeedsPresenter from './AdditionalSupportNeedsPresenter'
-import { AdditionalSuportNeedsViewModel } from './AdditionalSupportNeedsModel'
+import { AdditionalSuportNeedsViewModel } from './AdditionalSupportNeedsViewModel'
 import { ErrorMiddlewareErrors } from '../../@types/express'
 import { WithConditional } from '../../@types/govukFrontend/derived'
 import loadContentDataForTest from '../../testutils/loadContentDataForTest'
@@ -146,6 +146,9 @@ describe('AdditionalSupportNeedsPresenter', () => {
   }
 
   const checkPageContent = (viewModel: AdditionalSuportNeedsViewModel) => {
+    expect(viewModel.pageTitle).toBe(
+      'What additional support do they need to attend or take part in sessions? - Community Support',
+    )
     expect(viewModel.heading).toBe(`${firstName} ${lastName}`)
     expect(viewModel.button).toStrictEqual({ text: pageContent.button })
     expect(viewModel.checkList.name).toBe('AdditionalNeeds')

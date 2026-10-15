@@ -1072,6 +1072,7 @@
     "backLink": "/referral/task-list"
   },
   "/referral/task-list/additional-support-needs": {
+    "pageTitle": "What additional support do they need to attend or take part in sessions? - Community Support",
     "header": "What does {{ firstName }} need support with to attend or take part in sessions?",
     "hint": "Select all that apply.",
     "items": [
