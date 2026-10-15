@@ -1,4 +1,4 @@
-import type { ProbationOffice } from '@community-support-api'
+import type { CreateAppointmentReferenceDataBffDto, ProbationOffice } from '@community-support-api'
 import type { Prison } from '@prison-api'
 
 const probationOfficesData: ProbationOffice[] = [
@@ -1909,4 +1909,14 @@ const prisonsData: Prison[] = [
   },
 ]
 
-export { prisonsData, probationOfficesData }
+const createAppointmentReferenceData: CreateAppointmentReferenceDataBffDto = {
+  appointmentTypes: [
+    { name: 'Contact session', value: 'CONTACT_SESSION' },
+    { name: 'Pre-release session', value: 'PRE_RELEASE_SESSION' },
+    { name: 'Post-release session', value: 'POST_RELEASE_SESSION' },
+    { name: 'Handover session', value: 'HANDOVER_SESSION' },
+  ],
+  probationOfficeLocations: [],
+}
+
+export { createAppointmentReferenceData, prisonsData, probationOfficesData }

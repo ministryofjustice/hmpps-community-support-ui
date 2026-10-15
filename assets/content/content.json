@@ -290,6 +290,12 @@
     "pageHeader": "Check the details before scheduling the ICS",
     "submitButtonText": "Submit"
   },
+  "/referral/:id/create-an-appointment/appointment-type": {
+    "pageTitle": "Select the appointment type",
+    "heading": "Create an appointment for {{ personName }}",
+    "appointmentTypeLabel": "Select the appointment type",
+    "buttonText": "Save and continue"
+  },
   "/progress/:id": {
     "pageHeader": "Referral for",
     "progressSubNavTitle": "Progress",

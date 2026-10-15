@@ -72,6 +72,8 @@ type OffenceSentenceInfoBffResponseDto = components['schemas']['OffenceSentenceI
 type OffenceSentenceDto = components['schemas']['OffenceSentenceDto']
 type ProbationPractitionerDetails = components['schemas']['ProbationPractitionerDetailsBffResponseDto']
 type CheckDraftReferralDetailsDto = components['schemas']['CheckDraftReferralDetailsBffResponseDto']
+type CreateAppointmentReferenceDataBffDto = components['schemas']['CreateAppointmentReferenceDataBffDto']
+type CreateAppointmentTypeOptionDto = components['schemas']['CreateAppointmentTypeOptionDto']
 type DraftAdditionalReferralInformationTableDataDto =
   components['schemas']['DraftAdditionalReferralInformationTableDataDto']
 type DraftMainPOCDetailsTableDataDto = components['schemas']['DraftMainPOCDetailsTableDataDto']
@@ -129,6 +131,8 @@ export type {
   ServiceDaysPageDto,
   NeedsInterpreterBffResponseDto,
   CheckDraftReferralDetailsDto,
+  CreateAppointmentReferenceDataBffDto,
+  CreateAppointmentTypeOptionDto,
   Selection,
   CommunitySupportRiskDto,
   ActionPlanSummaryDto,

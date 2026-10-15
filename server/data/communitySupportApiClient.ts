@@ -45,6 +45,7 @@ import type {
   ProbationPractitionerDetails,
   UpdateProbationPractitionerDetailsRequest,
   CheckDraftReferralDetailsDto,
+  CreateAppointmentReferenceDataBffDto,
   PDU,
   AdditionalInformationForTheDeliveryPartner,
   Selection,
@@ -126,6 +127,16 @@ export default class CommunitySupportApiClient extends RestClient {
 
   getICS(caseRefId: string, username: string): Promise<AppointmentIcsResponse> {
     return this.get({ path: `/bff/referral-details/${caseRefId}/ics` }, asSystem(username))
+  }
+
+  getCreateAppointmentReferenceData(
+    caseReference: string,
+    username: string,
+  ): Promise<CreateAppointmentReferenceDataBffDto> {
+    return this.get(
+      { path: `/bff/referral/${caseReference}/create-an-appointment/appointment-type` },
+      asSystem(username),
+    )
   }
 
   async submitICS(

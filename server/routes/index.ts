@@ -110,6 +110,14 @@ export default function routes({
 
   get('/progress/:caseReference', (req, res) => referralController.showReferralProgressDetails(req, res))
 
+  get('/referral/:caseReference/create-an-appointment/appointment-type', (req, res) =>
+    appointmentController.showAppointmentType(req, res),
+  )
+
+  post('/referral/:caseReference/create-an-appointment/appointment-type', (req, res) =>
+    appointmentController.submitAppointmentType(req, res),
+  )
+
   get('/referral/:caseReference/appointments', (req, res) => referralController.showReferralAppointments(req, res))
 
   get('/referral/:caseReference/appointment/select-type', (req, res) =>
