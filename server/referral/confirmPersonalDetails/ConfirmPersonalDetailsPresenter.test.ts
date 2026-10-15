@@ -48,7 +48,7 @@ describe('ConfirmPersonalDetailsPresenter', () => {
       },
     },
   }
-  
+
   const res = {
     locals: {
       content,

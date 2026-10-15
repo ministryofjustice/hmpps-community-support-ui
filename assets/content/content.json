@@ -1049,6 +1049,7 @@
     "selectDifferentAreaHref": "/referral/task-list/select-an-area-for-referral"
   },
   "/referral/task-list/select-person-needs": {
+    "pageTitle": "Select what needs the referral should focus on - Community Support",
     "pageHeader": "Select what needs the referral should focus on",
     "hint": "Select all that apply.",
     "checkboxes": {
