@@ -2,7 +2,6 @@ import { expect, type Locator, type Page } from '@playwright/test'
 import AbstractPage from './abstractPage'
 
 interface FindPersonContent {
-  pageTitle: string
   pageHeader: string
   errorMessages: {
     nothingEntered: string
@@ -12,7 +11,6 @@ interface FindPersonContent {
 }
 
 const pageContent: FindPersonContent = {
-  pageTitle: 'Enter a CRN or prison number - Make a referral - Community Support',
   pageHeader: 'Enter a CRN or prison number',
   errorMessages: {
     nothingEntered: 'Enter a CRN or prison number',

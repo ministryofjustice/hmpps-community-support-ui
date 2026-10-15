@@ -2,6 +2,7 @@ import { GovukFrontendBackLink, GovukFrontendSummaryList } from '@govuk-frontend
 import { GlobalContent } from '../../../assets/content/GlobalContent'
 
 export type FoundPersonViewModel = {
+  pageTitle: string
   staticContent: FoundPersonContent
   personSummary: GovukFrontendSummaryList
   equalityMonitoring: GovukFrontendSummaryList
