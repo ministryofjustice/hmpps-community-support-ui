@@ -236,6 +236,8 @@ export default function routes({
 
   post('/referral/:id/action-plan/select-an-outcome', (req, res) => actionPlanController.submitOutcome(req, res))
 
+  get('/referral/:id/action-plan/header/:outcomeId/move/:action', (req, res) => actionPlanController.moveNeed(req, res))
+
   get('/referral/:id/action-plan/activities', (req, res) => actionPlanController.showViewActivitiesPage(req, res))
 
   get('/referral/:id/action-plan/activities/add', (req, res) => actionPlanController.showAddActivityPage(req, res))
