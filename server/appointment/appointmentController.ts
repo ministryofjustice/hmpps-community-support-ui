@@ -225,10 +225,10 @@ class AppointmentController {
 
   async showAppointmentType(req: Request, res: Response): Promise<void> {
     const { username } = res.locals.user
-    const { id: caseRefId } = req.params as { id: string }
+    const { caseReference } = req.params as { caseReference: string }
     const [referralInformation, referenceData] = await Promise.all([
-      this.referralService.getReferralInformation(caseRefId, username),
-      this.appointmentService.getCreateAppointmentReferenceData(caseRefId, username),
+      this.referralService.getReferralInformation(caseReference, username),
+      this.appointmentService.getCreateAppointmentReferenceData(caseReference, username),
     ])
 
     const flashedFormValues = getFlashedFormValues(req)
@@ -236,7 +236,7 @@ class AppointmentController {
       flashedFormValues?.appointmentType ?? req.session.appointmentSessionData?.appointmentType
 
     const presenter = new AppointmentTypePresenter(
-      caseRefId,
+      caseReference,
       referralInformation,
       referenceData.appointmentTypes,
       res.locals.errors,
@@ -247,7 +247,7 @@ class AppointmentController {
   }
 
   submitAppointmentType(req: Request, res: Response): Promise<void> {
-    const { id: caseRefId } = req.params as { id: string }
+    const { caseReference } = req.params as { caseReference: string }
 
     return validateRequestBodyAgainstSchema(AppointmentTypeSchema, req, res, form => {
       req.session.appointmentSessionData = {
@@ -255,7 +255,7 @@ class AppointmentController {
         appointmentType: form.appointmentType,
       }
 
-      return res.redirect(`/referral/${caseRefId}/create-an-appointment/appointment-details`)
+      return res.redirect(`/referral/${caseReference}/create-an-appointment/appointment-details`)
     })
   }
 

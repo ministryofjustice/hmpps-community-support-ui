@@ -194,7 +194,7 @@ describe('AppointmentController', () => {
   describe('showAppointmentType', () => {
     it('should load appointment types from the BFF and render the presenter', async () => {
       req = {
-        params: { id: caseRefId },
+        params: { caseReference: caseRefId },
         session: {},
         flash: jest.fn().mockReturnValue([]),
       } as unknown as Request
@@ -224,7 +224,7 @@ describe('AppointmentController', () => {
 
     it('should prioritise flashed values over session values when preselecting the appointment type', async () => {
       req = {
-        params: { id: caseRefId },
+        params: { caseReference: caseRefId },
         session: { appointmentSessionData: { appointmentType: 'ICS' } },
         flash: jest.fn().mockReturnValue([JSON.stringify({ appointmentType: 'POST_RELEASE_SESSION' })]),
       } as unknown as Request
@@ -254,7 +254,7 @@ describe('AppointmentController', () => {
   describe('submitAppointmentType', () => {
     it('should save the selected appointment type in session and redirect to appointment details', async () => {
       req = {
-        params: { id: caseRefId },
+        params: { caseReference: caseRefId },
         session: { appointmentSessionData: { date: '2026-10-15' } },
         body: { appointmentType: 'CONTACT_SESSION' },
         url: `/referral/${caseRefId}/create-an-appointment/appointment-type`,
@@ -272,7 +272,7 @@ describe('AppointmentController', () => {
 
     it('should flash an error and redirect back to the appointment type page when nothing is selected', async () => {
       req = {
-        params: { id: caseRefId },
+        params: { caseReference: caseRefId },
         session: {},
         body: {},
         url: `/referral/${caseRefId}/create-an-appointment/appointment-type`,
