@@ -10,6 +10,7 @@ import {
 import { GovukFrontendErrorSummaryErrorListElement } from '@govuk-frontend'
 import { HmppsUser } from '../../interfaces/hmppsUser'
 import { ChangeAppointmentDetails } from '../../appointment/change-ics-details-reason/ChangeAppointmentDetails'
+import AppointmentSessionData from '../../appointment/create-an-appointment/AppointmentSessionData'
 import { ReferralProgressBannerContent } from '../../referral/progress/ReferralProgressBannerContent'
 import { ReferralCreationDetails } from '../../referral/referralDetails/ReferralCreationDetails'
 import { ReferralDetailsNotification } from '../../referral/referralDetails/ReferralDetailsNotification'
@@ -53,6 +54,7 @@ export declare module 'express-session' {
     referralCreationDetails: ReferralCreationDetails
     assignmentResults: ReferralUserAssignmentResponse
     createAppointmentRequest: CreateAppointmentRequest
+    appointmentSessionData?: AppointmentSessionData
     ChangeAppointmentDetails: ChangeAppointmentDetails
     referralInformation: ReferralInformationDto
     pending: Record<string, string>
