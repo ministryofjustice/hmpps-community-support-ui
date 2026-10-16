@@ -460,9 +460,53 @@ describe('ActionPlanController', () => {
         undefined,
         undefined,
         undefined,
+        '/referral/AB1234CD/action-plan/select-a-need',
       )
       expect(ActionPlanAddActivityPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
     })
+
+    it.each([
+      { outcomeCount: 1, savedCaseReference: undefined, destination: 'select-a-need' },
+      { outcomeCount: 2, savedCaseReference: undefined, destination: 'select-an-outcome' },
+      { outcomeCount: 1, savedCaseReference: 'AB1234CD', destination: 'activities' },
+      { outcomeCount: 2, savedCaseReference: 'AB1234CD', destination: 'activities' },
+      { outcomeCount: 1, savedCaseReference: 'ZZ9876YY', destination: 'select-a-need' },
+    ])(
+      'links back to $destination with $outcomeCount outcomes and activities for $savedCaseReference',
+      async ({ outcomeCount, savedCaseReference, destination }) => {
+        req.session.actionPlan = {
+          needs: [
+            {
+              id: 'need-1',
+              label: 'Employment',
+              outcomes: Array.from({ length: outcomeCount }, (_, index) => ({
+                id: `outcome-${index + 1}`,
+                text: `Outcome ${index + 1}`,
+              })),
+            },
+          ],
+        }
+        req.session.actionPlanAction = { needId: 'need-1', outcomeId: 'outcome-1' }
+        if (savedCaseReference) {
+          req.session.actionPlanActivities = {
+            caseReference: savedCaseReference,
+            activities: [{ activityProvider: 'Provider', activityDescription: 'Saved activity' }],
+          }
+        }
+
+        await actionPlanController.showAddActivityPage(req, res)
+
+        expect(ActionPlanAddActivityPresenter).toHaveBeenLastCalledWith(
+          'AB1234CD',
+          'Employment',
+          'Outcome 1',
+          undefined,
+          undefined,
+          undefined,
+          destination === 'activities' ? undefined : `/referral/AB1234CD/action-plan/${destination}`,
+        )
+      },
+    )
 
     it('stores the submitted activity and returns to the activities page', async () => {
       req.session.actionPlanActivities = {
@@ -530,6 +574,7 @@ describe('ActionPlanController', () => {
         { activityProvider: 'Old provider', activityDescription: 'Old details' },
         0,
         { activityProvider: 'Community group', activityDescription: '   ' },
+        undefined,
       )
     })
 
@@ -802,6 +847,7 @@ describe('ActionPlanController', () => {
         undefined,
         undefined,
         undefined,
+        '/referral/ZZ9876YY/action-plan/select-a-need',
       )
     })
   })
