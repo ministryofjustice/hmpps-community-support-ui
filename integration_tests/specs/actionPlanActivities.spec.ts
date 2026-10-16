@@ -1,9 +1,10 @@
 import { test, expect } from '@playwright/test'
 import { ActionPlanSelectANeedResponse, ActionPlanSummaryDto } from '@community-support-api'
 import { login, resetStubs } from '../testUtils'
-import { getMatchingRequests } from '../mockApis/wiremock'
+import { getMatchingRequests, stubFor } from '../mockApis/wiremock'
 import communitySupport from '../mockApis/communitySupport'
 import buildReferralProgress from '../../server/testutils/buildReferralProgress'
+import ActionPlanPage from '../pages/actionPlanPage'
 import ActionPlanAddActivityPage from '../pages/actionPlanAddActivityPage'
 import ActionPlanViewActivitiesPage from '../pages/actionPlanViewActivitiesPage'
 import ActionPlanRemoveActivityPage from '../pages/actionPlanRemoveActivityPage'
@@ -183,7 +184,11 @@ test.describe('Select an action plan need', () => {
   test('submits the selected need, outcome and activities when no more activities are added', async ({ page }) => {
     await communitySupport.stubGetActionPlanNeedsAndOutcomes(needsAndOutcomes)
     await communitySupport.stubGetActionPlanSummary(caseReference, actionPlanSummary)
-    await communitySupport.stubSubmitAction(caseReference, { success: true, message: 'Action submitted successfully' })
+    await communitySupport.stubSubmitAction(caseReference, {
+      success: true,
+      message: 'Action submitted successfully',
+    })
+    await communitySupport.stubGetReferralProgress(buildReferralProgress([]), caseReference)
 
     await page.goto(`/referral/${caseReference}/action-plan/select-a-need`)
     await page.getByLabel('Employment').check()
@@ -201,6 +206,7 @@ test.describe('Select an action plan need', () => {
     await viewActivitiesPage.saveAndContinueButton.click()
 
     await expect(page).toHaveURL(`/referral/${caseReference}/action-plan`)
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Action plan')
 
     const matchingRequests = await getMatchingRequests({
       method: 'POST',
@@ -274,5 +280,84 @@ test.describe('Select an action plan need', () => {
     const editActivityPage = await ActionPlanAddActivityPage.verifyOnPage(page)
     await expect(editActivityPage.activityProvider).toHaveValue('Local housing service')
     await expect(editActivityPage.activityDescription).toHaveValue('Attend weekly appointments')
+  })
+
+  test('removes an outcome and its activities from the action plan', async ({ page }) => {
+    const needId = '00000000-0000-4000-8000-000000000011'
+    const outcomeId = '00000000-0000-4000-8000-000000000012'
+    const outcomeAnswerId = '00000000-0000-4000-8000-000000000013'
+    const summaryWithOutcome: ActionPlanSummaryDto = {
+      lastUpdatedAt: '2026-10-12T09:00:00Z',
+      personDetails: { firstName: 'Alex', lastName: 'River' },
+      needs: [
+        {
+          id: needId,
+          label: 'Accommodation',
+          orderNumber: 1,
+          outcomes: [
+            {
+              id: outcomeAnswerId,
+              label: 'Find suitable housing',
+              activities: [{ id: 'activity-1', who: 'Housing service', details: 'Attend weekly appointments' }],
+            },
+          ],
+        },
+      ],
+    }
+    await communitySupport.stubGetActionPlanSummary(caseReference, summaryWithOutcome)
+    await communitySupport.stubGetActionPlanNeedsAndOutcomes({
+      needs: [{ id: needId, label: 'Accommodation', outcomes: [{ id: outcomeId, text: 'Find suitable housing' }] }],
+    })
+    await communitySupport.stubGetReferralProgress(buildReferralProgress([]), caseReference)
+    await stubFor({
+      request: {
+        method: 'DELETE',
+        urlPath: `/community-support/referral/${caseReference}/action-plan/action/${outcomeAnswerId}`,
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: { success: true, message: 'Action deleted successfully' },
+      },
+    })
+
+    await page.goto(ActionPlanPage.url(caseReference))
+    await page.getByRole('link', { name: /^Remove/ }).click()
+
+    await expect(page).toHaveURL(
+      `/referral/${caseReference}/action-plan/remove-outcome?needId=${needId}&outcomeAnswerId=${outcomeAnswerId}`,
+    )
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(
+      "Confirm you want to remove this outcome from Alex's plan",
+    )
+    await expect(page.locator('.govuk-summary-card')).toContainText('Accommodation')
+    await expect(page.locator('.govuk-summary-card')).toContainText('Find suitable housing')
+    await expect(page.locator('.govuk-summary-card')).toContainText('Housing service')
+    await expect(page.locator('.govuk-summary-card')).toContainText('Attend weekly appointments')
+    await expect(page.locator('.govuk-summary-card').getByRole('link')).toHaveCount(0)
+    await expect(page.locator('.govuk-inset-text')).toHaveText(
+      'If you remove this outcome from the plan, all activities added to this outcome will also be removed.',
+    )
+    await expect(page.getByRole('button', { name: 'Remove this outcome', exact: true })).toHaveClass(
+      /govuk-button--warning/,
+    )
+
+    await page.getByRole('link', { name: 'Cancel', exact: true }).click()
+    await expect(page).toHaveURL(ActionPlanPage.url(caseReference))
+    const requestsAfterCancel = await getMatchingRequests({
+      method: 'DELETE',
+      urlPath: `/community-support/referral/${caseReference}/action-plan/action/${outcomeAnswerId}`,
+    })
+    expect(requestsAfterCancel.body.requests).toHaveLength(0)
+
+    await page.getByRole('link', { name: /^Remove/ }).click()
+    await page.getByRole('button', { name: 'Remove this outcome', exact: true }).click()
+    await expect(page).toHaveURL(ActionPlanPage.url(caseReference))
+
+    const matchingRequests = await getMatchingRequests({
+      method: 'DELETE',
+      urlPath: `/community-support/referral/${caseReference}/action-plan/action/${outcomeAnswerId}`,
+    })
+    expect(matchingRequests.body.requests).toHaveLength(1)
   })
 })
