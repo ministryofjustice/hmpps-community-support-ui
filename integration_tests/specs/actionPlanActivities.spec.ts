@@ -23,6 +23,7 @@ test.describe('Select an action plan need', () => {
         ],
       },
     ],
+    selectedNeeds: [],
   }
 
   const actionPlanSummary: ActionPlanSummaryDto = {
@@ -259,6 +260,7 @@ test.describe('Select an action plan need', () => {
           outcomes: [{ id: referenceOutcomeId, text: 'Find suitable housing' }],
         },
       ],
+      selectedNeeds: [],
     })
     await communitySupport.stubGetReferralProgress(buildReferralProgress([]), caseReference)
 
@@ -307,6 +309,7 @@ test.describe('Select an action plan need', () => {
     await communitySupport.stubGetActionPlanSummary(caseReference, summaryWithOutcome)
     await communitySupport.stubGetActionPlanNeedsAndOutcomes({
       needs: [{ id: needId, label: 'Accommodation', outcomes: [{ id: outcomeId, text: 'Find suitable housing' }] }],
+      selectedNeeds: [],
     })
     await communitySupport.stubGetReferralProgress(buildReferralProgress([]), caseReference)
     await stubFor({

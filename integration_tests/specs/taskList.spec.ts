@@ -38,37 +38,32 @@ test.describe('Task List Journey', () => {
     })
     await communitySupport.stubGetTaskListStatus(referralId, {
       fullName: `${firstName} ${lastName}`,
-      confirmPersonalDetailsCompleted: {
+      confirmPersonalDetailsStatus: {
+        completed: true,
+        statusText: 'Completed',
+        tag: 'govuk-tag--blue',
+      },
+      checkRiskInformationStatus: {
         completed: false,
         statusText: 'Incomplete',
         tag: 'govuk-tag--blue',
       },
-      checkRiskInformationCompleted: {
+      selectAnAreaForReferralStatus: {
         completed: false,
         statusText: 'Incomplete',
         tag: 'govuk-tag--blue',
       },
-      selectAnAreaForReferralCompleted: {
+      selectThePersonsNeedsStatus: {
         completed: false,
         statusText: 'Incomplete',
         tag: 'govuk-tag--blue',
       },
-      selectThePersonsNeedsCompleted: {
+      addDetailsOfAnyAdditionalSupportNeedsStatus: {
         completed: false,
         statusText: 'Incomplete',
         tag: 'govuk-tag--blue',
       },
-      addDetailsOfAnyAdditionalSupportNeedsCompleted: {
-        completed: false,
-        statusText: 'Incomplete',
-        tag: 'govuk-tag--blue',
-      },
-      addAdditionalInformationCompleted: {
-        completed: false,
-        statusText: 'Incomplete',
-        tag: 'govuk-tag--blue',
-      },
-      addDetailsOfMainPointOfContactCompleted: {
+      addAdditionalInformationStatus: {
         completed: false,
         statusText: 'Incomplete',
         tag: 'govuk-tag--blue',
@@ -151,37 +146,32 @@ test.describe('Task List Journey', () => {
     await test.step('return to task list', async () => {
       await communitySupport.stubGetTaskListStatus(referralId, {
         fullName: 'Alex Rivers',
-        confirmPersonalDetailsCompleted: {
+        confirmPersonalDetailsStatus: {
           completed: true,
           statusText: '',
           tag: undefined,
         },
-        checkRiskInformationCompleted: {
+        checkRiskInformationStatus: {
           completed: false,
           statusText: '',
           tag: undefined,
         },
-        selectAnAreaForReferralCompleted: {
+        selectAnAreaForReferralStatus: {
           completed: false,
           statusText: '',
           tag: undefined,
         },
-        selectThePersonsNeedsCompleted: {
+        selectThePersonsNeedsStatus: {
           completed: false,
           statusText: '',
           tag: undefined,
         },
-        addDetailsOfAnyAdditionalSupportNeedsCompleted: {
+        addDetailsOfAnyAdditionalSupportNeedsStatus: {
           completed: false,
           statusText: '',
           tag: undefined,
         },
-        addAdditionalInformationCompleted: {
-          completed: false,
-          statusText: '',
-          tag: undefined,
-        },
-        addDetailsOfMainPointOfContactCompleted: {
+        addAdditionalInformationStatus: {
           completed: false,
           statusText: '',
           tag: undefined,
@@ -230,17 +220,16 @@ test.describe('Task List Journey', () => {
   }) => {
     await communitySupport.stubGetTaskListStatus(referralId, {
       fullName: 'Alex Rivers',
-      confirmPersonalDetailsCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-      checkRiskInformationCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-      selectAnAreaForReferralCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-      selectThePersonsNeedsCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-      addDetailsOfAnyAdditionalSupportNeedsCompleted: {
+      confirmPersonalDetailsStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+      checkRiskInformationStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+      selectAnAreaForReferralStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+      selectThePersonsNeedsStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+      addDetailsOfAnyAdditionalSupportNeedsStatus: {
         completed: true,
         statusText: 'Completed',
         tag: undefined,
       },
-      addAdditionalInformationCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-      addDetailsOfMainPointOfContactCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+      addAdditionalInformationStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
     })
     await page.goto('/referral/task-list')
     const taskListPom = await TaskListPage.verifyOnPage(page)
@@ -255,17 +244,16 @@ test.describe('Task List Journey', () => {
   test('should maintain Completed status when revisiting additional support needs task', async ({ page }) => {
     await communitySupport.stubGetTaskListStatus(referralId, {
       fullName: 'Alex Rivers',
-      confirmPersonalDetailsCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-      checkRiskInformationCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-      selectAnAreaForReferralCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-      selectThePersonsNeedsCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-      addDetailsOfAnyAdditionalSupportNeedsCompleted: {
+      confirmPersonalDetailsStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+      checkRiskInformationStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+      selectAnAreaForReferralStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+      selectThePersonsNeedsStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+      addDetailsOfAnyAdditionalSupportNeedsStatus: {
         completed: true,
         statusText: 'Completed',
         tag: undefined,
       },
-      addAdditionalInformationCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-      addDetailsOfMainPointOfContactCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+      addAdditionalInformationStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
     })
     await communitySupport.stubGetAdditionalSupportNeeds(referralId, {
       refereeName: { firstName: 'Alex', lastName: 'Rivers' },
