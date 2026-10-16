@@ -32,6 +32,7 @@ import {
   getServiceEndDateValue,
 } from '../../validation/ActionPlanServiceEndDateCheckFormData'
 import { ActionPlanChangeServiceEndDateDataSchemaBuilder } from '../../validation/ActionPlanChangeServiceEndDateFormData'
+import ActionPlanRemoveOutcomePresenter from './removeOutcome/actionPlanRemoveOutcomePresenter'
 
 class ActionPlanController {
   constructor(private readonly referralService: ReferralService) {}
@@ -108,6 +109,79 @@ class ActionPlanController {
     const presenter = new ActionPlanPresenter(actionPlanSummary, caseReference, icsFeedbackSubmitted)
 
     return presenter.renderPage(res)
+  }
+
+  private async resolveActionPlanOutcome(
+    caseReference: string,
+    needId: string,
+    outcomeAnswerId: string,
+    username: string,
+  ) {
+    const [actionPlanSummary, needsAndOutcomes] = await Promise.all([
+      this.referralService.getActionPlanSummary(caseReference, username),
+      this.referralService.getActionPlanNeedsAndOutcomes(username),
+    ])
+    const selectedNeed = actionPlanSummary.needs.find(need => need.id === needId)
+    const selectedOutcome = selectedNeed?.outcomes.find(outcome => outcome.id === outcomeAnswerId)
+    const selectableNeed = needsAndOutcomes.needs.find(need => need.id === needId)
+    const selectableOutcome = selectableNeed?.outcomes.find(
+      outcome => outcome.id === selectedOutcome?.label || outcome.text === selectedOutcome?.label,
+    )
+
+    if (!selectedNeed || !selectedOutcome || !selectableNeed || !selectableOutcome) return undefined
+
+    return { actionPlanSummary, selectedNeed, selectedOutcome, selectableOutcome }
+  }
+
+  async showRemoveOutcomePage(req: Request, res: Response) {
+    const { id: caseReference } = req.params as { id: string }
+    const { needId, outcomeAnswerId } = req.query ?? {}
+    const { username } = res.locals.user
+
+    if (typeof needId !== 'string' || typeof outcomeAnswerId !== 'string') {
+      return res.redirect(`/referral/${caseReference}/action-plan`)
+    }
+
+    const resolved = await this.resolveActionPlanOutcome(caseReference, needId, outcomeAnswerId, username)
+    if (!resolved) return res.redirect(`/referral/${caseReference}/action-plan`)
+
+    const presenter = new ActionPlanRemoveOutcomePresenter(
+      caseReference,
+      resolved.actionPlanSummary.personDetails.firstName,
+      resolved.selectedNeed,
+      outcomeAnswerId,
+    )
+
+    return presenter.renderPage(res)
+  }
+
+  async removeOutcome(req: Request, res: Response) {
+    const { id: caseReference } = req.params as { id: string }
+    const { username } = res.locals.user
+    const { needId, outcomeAnswerId } = req.body as { needId?: string; outcomeAnswerId?: string }
+
+    if (!needId || !outcomeAnswerId) return res.redirect(`/referral/${caseReference}/action-plan`)
+
+    const resolved = await this.resolveActionPlanOutcome(caseReference, needId, outcomeAnswerId, username)
+    if (!resolved) return res.redirect(`/referral/${caseReference}/action-plan`)
+
+    const result = await this.referralService.deleteAction(caseReference, outcomeAnswerId, username)
+    if (!result.success) {
+      throw new Error(result.message || 'Unable to remove action plan outcome')
+    }
+
+    const removesSelectedAction =
+      req.session.actionPlanActivities?.caseReference === caseReference &&
+      req.session.actionPlanAction?.needId === needId &&
+      req.session.actionPlanAction?.outcomeId === resolved.selectableOutcome.id
+    if (removesSelectedAction) {
+      delete req.session.actionPlanAction
+      if (req.session.actionPlanActivities?.caseReference === caseReference) {
+        delete req.session.actionPlanActivities
+      }
+    }
+
+    return res.redirect(`/referral/${caseReference}/action-plan`)
   }
 
   async createActionPlan(req: Request, res: Response) {
