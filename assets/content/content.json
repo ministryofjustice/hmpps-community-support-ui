@@ -334,6 +334,15 @@
     "moveOutcomeUpText": "Move outcome up",
     "createButtonText": "Create an action plan"
   },
+  "/referral/:id/action-plan/remove-outcome": {
+    "pageHeader": "Confirm you want to remove this outcome from {{ firstName }}'s plan",
+    "outcomePrefixText": "Outcome: ",
+    "whoWillDeliverHeaderText": "Who will do this",
+    "activityHeaderText": "Activity",
+    "removeOutcomeWarningText": "If you remove this outcome from the plan, all activities added to this outcome will also be removed.",
+    "removeOutcomeButtonText": "Remove this outcome",
+    "cancelLinkText": "Cancel"
+  },
   "/referral/:id/action-plan/select-a-need": {
     "pageHeader": "Area of Need",
     "whichNeedTitle": "Which need are you creating an action for?",
