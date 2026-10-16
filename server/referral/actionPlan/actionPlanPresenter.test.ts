@@ -67,7 +67,7 @@ describe('ActionPlanPresenter', () => {
           ],
         },
       ],
-      lastUpdatedAt: '',
+      lastUpdatedAt: '2026-10-15',
     }
 
     const presenter = new ActionPlanPresenter(actionPlanSummary, 'AB1234CD', true)
@@ -100,6 +100,9 @@ describe('ActionPlanPresenter', () => {
       '/referral/AB1234CD/action-plan/activities?needId=need_id_1&outcomeAnswerId=outcome_id_1',
     )
     expect(cardActions[1].text).toBe('Remove')
+    expect(cardActions[1].href).toBe(
+      '/referral/AB1234CD/action-plan/remove-outcome?needId=need_id_1&outcomeAnswerId=outcome_id_1',
+    )
     expect(need.rows.length).toBe(3)
     const activities = need.rows
     expect(activities[0].key.text).toBe('Who will do this')
@@ -110,6 +113,32 @@ describe('ActionPlanPresenter', () => {
     expect(activities[2].value.text).toBe('Details about what Alex can do to achieve the outcome')
     expect(need.moveDownButton).toBeUndefined()
     expect(need.moveUpButton).toBeUndefined()
+  })
+
+  it('encodes need and outcome answer identifiers in the remove outcome link', () => {
+    const actionPlanSummary: ActionPlanSummaryDto = {
+      personDetails: { firstName: 'Alex', lastName: 'River' },
+      needs: [
+        {
+          id: 'need/id',
+          label: 'Accommodation',
+          orderNumber: 1,
+          outcomes: [{ id: 'outcome answer/id', label: 'Find housing', activities: [] }],
+        },
+      ],
+      lastUpdatedAt: '2026-10-15T09:00:00Z',
+    }
+    const res = {
+      locals: { content: globalContent['/referral/:id/action-plan'] },
+      render: jest.fn(),
+    } as unknown as Response
+
+    new ActionPlanPresenter(actionPlanSummary, 'AB1234CD').renderPage(res)
+
+    const renderData = (res.render as jest.Mock).mock.calls[0][1] as { content: ActionPlanViewModel }
+    expect(renderData.content.needsSummary[0].card.actions.items[1].href).toBe(
+      '/referral/AB1234CD/action-plan/remove-outcome?needId=need%2Fid&outcomeAnswerId=outcome%20answer%2Fid',
+    )
   })
 
   it('renders the need movement buttons correctly', () => {
@@ -176,7 +205,7 @@ describe('ActionPlanPresenter', () => {
           ],
         },
       ],
-      lastUpdatedAt: '',
+      lastUpdatedAt: '2026-10-15',
     }
 
     const presenter = new ActionPlanPresenter(actionPlanSummary, 'AB1234CD')
@@ -232,7 +261,7 @@ describe('ActionPlanPresenter', () => {
         { id: 'need_id_1', label: 'Accommodation', orderNumber: 1, outcomes: [outcome] },
         { id: 'need_id_2', label: 'Finances', orderNumber: 2, outcomes: [{ ...outcome, id: 'outcome_id_2' }] },
       ],
-      lastUpdatedAt: '',
+      lastUpdatedAt: '2026-10-15',
     }
 
     it('is displayed and links to session details when all outcomes are added and ICS feedback is submitted', () => {

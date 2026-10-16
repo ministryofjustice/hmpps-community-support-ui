@@ -83,7 +83,6 @@ const buildTaskListStatus = (taskListStatus: TaskListStatusStub): TaskListStatus
     taskListStatus.addDetailsOfMainPointOfContactCompleted ??
     incompleteTaskStatus,
   checkProbationPractitionerDetailsCompleted: taskListStatus.checkProbationPractitionerDetailsCompleted ?? null,
-  checkYourAnswersCompleted: { completed: false, statusText: 'Cannot Start Yet', tag: 'govuk-tag--blue' },
 })
 
 export default {
@@ -494,6 +493,19 @@ export default {
         status: httpStatus,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: mockData,
+      },
+    }),
+  stubGetCreateAppointmentReferenceData: (caseRefId: string, mockData: unknown, httpStatus = 200): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: `/community-support/bff/referral/${caseRefId}/create-an-appointment/appointment-type`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: mockData,
+        transformers: ['response-template'],
       },
     }),
   stubGetICS: (caseRefId: string, mockData: AppointmentIcsResponse, httpStatus = 200): SuperAgentRequest =>

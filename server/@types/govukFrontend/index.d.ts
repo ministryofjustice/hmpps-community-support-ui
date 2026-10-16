@@ -744,6 +744,26 @@ export interface GovukFrontendDateInput {
   fieldset?: GovukFrontendFieldset | null
 
   /*
+    Options for the day input within the date input component. See items.
+  */
+  day?: Record<string, unknown> | null
+
+  /*
+    Options for the month input within the date input component. See items.
+  */
+  month?: Record<string, unknown> | null
+
+  /*
+    Options for the year input within the date input component. See items.
+  */
+  year?: Record<string, unknown> | null
+
+  /*
+    Specify `value` attributes for the date parts without setting items. You can also use the `name` for the fields as keys, including any `namePrefix`.
+  */
+  values?: GovukFrontendDateInputValues | null
+
+  /*
     Classes to add to the date-input container.
   */
   classes?: string | null
@@ -774,6 +794,11 @@ export interface GovukFrontendDateInputItem {
     If provided, it will be used as the initial value of the input.
   */
   value?: string | null
+
+  /*
+    If set to `true`, it will show a red error border on the item input. If provided, you must set the top-level `errorMessage` option to add an error message to the date input component.
+  */
+  error?: boolean | null
 
   /*
     Attribute to meet [WCAG success criterion 1.3.5: Identify input purpose](https://www.w3.org/WAI/WCAG22/Understanding/identify-input-purpose.html), for instance `"bday-day"`. See the [Autofill section in the HTML standard](https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#autofill) section in the HTML standard for full list of attributes that can be used.
@@ -840,6 +865,23 @@ export interface GovukFrontendDateInputFormGroupAfterInputs {
     HTML to add after the inputs. If `html` is provided, the `text` option will be ignored.
   */
   html?: string | null
+}
+
+export interface GovukFrontendDateInputValues {
+  /*
+    The `value` attribute for the day input.
+  */
+  day?: string | null
+
+  /*
+    The `value` attribute for the month input.
+  */
+  month?: string | null
+
+  /*
+    The `value` attribute for the year input.
+  */
+  year?: string | null
 }
 
 // The details component is described at https://design-system.service.gov.uk/components/details.
@@ -1046,6 +1088,49 @@ export interface GovukFrontendExitThisPage {
   pressOneMoreTimeText?: string | null
 }
 
+// The feedback component is described at https://design-system.service.gov.uk/components/feedback.
+export interface GovukFrontendFeedback {
+  /*
+    Text to use within the title of the Feedback component. If `titleHtml` is provided, the `titleText` option will be ignored.
+  */
+  titleText?: string | null
+
+  /*
+    HTML to use within the title of the Feedback component. If `titleHtml` is provided, the `titleText` option will be ignored.
+  */
+  titleHtml?: string | null
+
+  /*
+    Heading level, from `1` to `6`. Default is `2`.
+  */
+  headingLevel?: number | null // integer
+
+  /*
+    Text to use within the Feedback component content. If `html` is provided, the `text` option will be ignored.
+  */
+  text?: string | null
+
+  /*
+    HTML to use within the Feedback component content. If `html` is provided, the `text` option will be ignored.
+  */
+  html?: string | null
+
+  /*
+    Not strictly a parameter but a [Nunjucks code convention](https://mozilla.github.io/nunjucks/templating.html#call). Using a `call` block lets you call a macro with all the text inside the tag. This is helpful if you want to pass a lot of content into a macro. To use it, you'll need to wrap the entire Feedback component in a `call` block.
+  */
+  caller?: unknown | null // nunjucks-block
+
+  /*
+    Classes to add to the Feedback component container.
+  */
+  classes?: string | null
+
+  /*
+    HTML attributes (for example, data attributes) to add to the Feedback component container.
+  */
+  attributes?: Record<string, unknown> | null
+}
+
 // The fieldset component is described at https://design-system.service.gov.uk/components/fieldset.
 export interface GovukFrontendFieldset {
   /*
@@ -1114,7 +1199,7 @@ export interface GovukFrontendFileUpload {
   name: string
 
   /*
-    The ID of the input. Defaults to the value of `name`.
+    The ID of the input. Defaults to the value of `name`. If `javascript` is provided, this ID will be on the button of the improved version, and the hidden input's ID will get the suffix "-input".
   */
   id?: string | null
 
@@ -1189,14 +1274,24 @@ export interface GovukFrontendFileUpload {
   leftDropZoneText?: string | null
 
   /*
-    Classes to add to the file upload component.
+    Classes to add to the file upload `<input>` element. If `javascript` is provided, these are not copied to the visible button. To use classes for the visible button, use the `wrapperClasses` option.
   */
   classes?: string | null
 
   /*
-    HTML attributes (for example data attributes) to add to the file upload component.
+    HTML attributes (for example data attributes) to add to the file upload  `<input>` element. If `javascript` is provided, these are not copied to the visible button. To add attributes to the container, use the `wrapperAttributes` option instead.
   */
   attributes?: Record<string, unknown> | null
+
+  /*
+    Classes to add to the improved file upload component's wrapper. If `javascript` is not provided, this option will be ignored.
+  */
+  wrapperClasses?: string | null
+
+  /*
+    HTML attributes (for example data attributes) to add to the improved file upload component's wrapper. If `javascript` is not provided, this option will be ignored.
+  */
+  wrapperAttributes?: Record<string, unknown> | null
 }
 
 export interface GovukFrontendFileUploadFormGroup {
@@ -1383,6 +1478,39 @@ export interface GovukFrontendFooterCopyright {
     If `text` is set, this is not required. If `html` is provided, the `text` option will be ignored. If neither are provided, `"© Crown copyright"` is used. The copyright notice is inside an `<a>` element, so you can only use text formatting elements within it.
   */
   html?: string | null
+}
+
+// The generic header component is described at https://design-system.service.gov.uk/components/generic-header.
+export interface GovukFrontendGenericHeader {
+  /*
+    The URL of the logo link. Defaults to the root of the current web domain ("/").
+  */
+  url?: string | null
+
+  /*
+    If `logoHtml` is set, this is not required. Text content for the logo section of the Generic header.
+  */
+  logoText?: string | null
+
+  /*
+    If `logoText` is set, this is not required. HTML content for the logo section of the Generic header.
+  */
+  logoHtml?: string | null
+
+  /*
+    Classes for the container. Useful if you want to make the Generic header fixed width.
+  */
+  containerClasses?: string | null
+
+  /*
+    Classes to add to the Generic header container.
+  */
+  classes?: string | null
+
+  /*
+    HTML attributes (for example, data attributes) to add to the Generic header container.
+  */
+  attributes?: Record<string, unknown> | null
 }
 
 // The header component is described at https://design-system.service.gov.uk/components/header.
@@ -1712,6 +1840,81 @@ export interface GovukFrontendLabel {
   attributes?: Record<string, unknown> | null
 }
 
+// The language navigation component is described at https://design-system.service.gov.uk/components/language-navigation.
+export interface GovukFrontendLanguageNavigation {
+  /*
+    The languages to display within the language navigation.
+  */
+  items: GovukFrontendLanguageNavigationItem[]
+
+  /*
+    Plain text label identifying the navigation landmark to screen readers. Write it in the language of the current page. Defaults to "Language".
+  */
+  ariaLabel?: string | null
+
+  /*
+    Classes to add to the language navigation container.
+  */
+  classes?: string | null
+
+  /*
+    HTML attributes to add to the language navigation container.
+  */
+  attributes?: Record<string, unknown> | null
+}
+
+export interface GovukFrontendLanguageNavigationItem {
+  /*
+    If `html` is set, this is not required. Name of the language, written in that language (for example, <span lang="cy">"Cymraeg"</span> for Welsh). If `html` is provided, the `text` option will be ignored.
+  */
+  text?: string | null
+
+  /*
+    If `text` is set, this is not required. HTML to use for the language item. If `html` is provided, the `text` option will be ignored.
+  */
+  html?: string | null
+
+  /*
+    The language tag for the language item text (for example, `cy` for Welsh). Added as a `lang` attribute so that assistive technologies pronounce the language name correctly.
+  */
+  lang: string
+
+  /*
+    The language tag for the linked page (for example, `cy` for Welsh). Added as an `hreflang` attribute for search engines and other machine readers. Defaults to `lang` when omitted.
+  */
+  hrefLang?: string | null
+
+  /*
+    The text direction of the script the language name is written in (`ltr` for left-to-right scripts or `rtl` for right-to-left). Set this on every item if the navigation includes scripts written in different directions.
+  */
+  dir?: string | null
+
+  /*
+    Link to the current page in this language.
+  */
+  href?: string | null
+
+  /*
+    Whether this is the language of the current page. Defaults to `true` when `href` is not provided.
+  */
+  current?: boolean | null
+
+  /*
+    Visually hidden text after a language link to indicate what the link will do. Write it in the language of the link (for example, "Change the language to English").
+  */
+  languageDescriptionText?: string | null
+
+  /*
+    Classes to add to the language item anchor.
+  */
+  classes?: string | null
+
+  /*
+    HTML attributes to add to the language item anchor.
+  */
+  attributes?: Record<string, unknown> | null
+}
+
 // The notification banner component is described at https://design-system.service.gov.uk/components/notification-banner.
 export interface GovukFrontendNotificationBanner {
   /*
@@ -1937,6 +2140,55 @@ export interface GovukFrontendPanel {
 
   /*
     HTML attributes (for example data attributes) to add to the panel container.
+  */
+  attributes?: Record<string, unknown> | null
+
+  /*
+    Can be used when creating an [interruption panel](https://design-system.service.gov.uk/components/panel/#interruption-panel) which will add a button or link. Default is `button` unless you set `href` which will show the action as a link.
+  */
+  actions?: GovukFrontendPanelActions | null
+}
+
+export interface GovukFrontendPanelActions {
+  /*
+    The list of buttons or links to display at the end of an Interruption panel.
+  */
+  items?: GovukFrontendPanelActionsItem[] | null
+
+  /*
+    The additional classes that you want to add to the `govuk-panel__actions` element that wraps the buttons or links.
+  */
+  classes?: string | null
+
+  /*
+    The additional attributes that you want to add to the `govuk-panel__actions` element that wraps the buttons or links. For example, data attributes.
+  */
+  attributes?: Record<string, unknown> | null
+}
+
+export interface GovukFrontendPanelActionsItem {
+  /*
+    The button or link text.
+  */
+  text?: string | null
+
+  /*
+    The type of button – `"button"` or `"submit"`. If `href` is provided, set `type` to `"button"` render a link styled as a button.
+  */
+  type?: string | null
+
+  /*
+    The `href` for a link. Set `type` to `"button"` and set `href` to render a link styled as a button.
+  */
+  href?: string | null
+
+  /*
+    The additional classes that you want to add to the button or link.
+  */
+  classes?: string | null
+
+  /*
+    The additional attributes that you want to add to the button or link. For example, data attributes.
   */
   attributes?: Record<string, unknown> | null
 }
@@ -2519,6 +2771,11 @@ export interface GovukFrontendServiceNavigationSlots {
   end?: string | null
 
   /*
+    Options for injecting HTML at the end of the service header container.
+  */
+  end?: GovukFrontendServiceNavigationSlotsEnd | null
+
+  /*
     HTML injected before the first list item in the navigation list. Requires `navigation` to be set.
   */
   navigationStart?: string | null
@@ -2527,6 +2784,18 @@ export interface GovukFrontendServiceNavigationSlots {
     HTML injected after the last list item in the navigation list. Requires `navigation` to be set.
   */
   navigationEnd?: string | null
+}
+
+export interface GovukFrontendServiceNavigationSlotsEnd {
+  /*
+    HTML injected at the end of the service header container.
+  */
+  html?: string | null
+
+  /*
+    By default, the `end` slot renders below the navigation items. Use `inline` to render it on the same line as the navigation items when space is available.
+  */
+  align?: string | null
 }
 
 // The skip link component is described at https://design-system.service.gov.uk/components/skip-link.

@@ -101,6 +101,7 @@ export default class PersonNeedsPresenter extends PresenterBase<PersonNeedsViewM
   buildViewModel(res: Response): PersonNeedsViewModel {
     const content = this.buildStaticContent(res)
     return {
+      pageTitle: content.pageTitle,
       heading: formatFullName(this.data.refereeName.firstName, this.data.refereeName.lastName),
       backLink: {
         href: content.backLink,

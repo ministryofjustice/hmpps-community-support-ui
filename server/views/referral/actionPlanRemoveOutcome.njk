@@ -1,0 +1,23 @@
+{% extends "../partials/layout.njk" %}
+
+{% from "components/action-plan-summary-list/macro.njk" import actionPlanSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+
+{% set pageTitle = content.pageHeader + " – " + applicationName %}
+{% set mainClasses = "govuk-body" %}
+
+{% block contentBody %}
+  <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
+
+  {{ actionPlanSummaryList(content.needSummary) }}
+  {{ govukInsetText(content.warningInset) }}
+
+  <form method="post" action="{{ content.removeAction }}">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    <input type="hidden" name="needId" value="{{ content.needId }}">
+    <input type="hidden" name="outcomeAnswerId" value="{{ content.outcomeAnswerId }}">
+    {{ govukButton(content.removeOutcomeButton) }}
+    <a class="govuk-link govuk-!-margin-left-3" href="{{ content.cancelLink.href }}">{{ content.cancelLink.text }}</a>
+  </form>
+{% endblock %}

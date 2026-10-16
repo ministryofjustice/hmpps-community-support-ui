@@ -1075,6 +1075,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/referral/{referralReference}/action-plan/action/{actionId}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    /** Delete an action from an action plan */
+    delete: operations['deleteAction']
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
 }
 export type webhooks = Record<string, never>
 export interface components {
@@ -1652,7 +1669,6 @@ export interface components {
       selectAnAreaForReferralCompleted: components['schemas']['TaskListStatusItem']
       checkProbationPractitionerDetailsCompleted?: components['schemas']['TaskListStatusItem'] | null
       addMainPointOfContactCompleted?: components['schemas']['TaskListStatusItem'] | null
-      checkYourAnswersCompleted: components['schemas']['TaskListStatusItem']
     }
     AppointmentDetailsDto: {
       /** @enum {string|null} */
@@ -4250,6 +4266,38 @@ export interface operations {
         }
         content: {
           '*/*': components['schemas']['ErrorResponse']
+        }
+      }
+    }
+  }
+  deleteAction: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralReference: string
+        actionId: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Action deleted successfully */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ActionPlanActionResponse']
+        }
+      }
+      /** @description Referral or action not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
         }
       }
     }

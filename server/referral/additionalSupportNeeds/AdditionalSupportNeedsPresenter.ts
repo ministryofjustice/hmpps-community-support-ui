@@ -6,7 +6,7 @@ import {
   ItemContent,
   AdditionalSuportNeedsContent,
   AdditionalSuportNeedsViewModel,
-} from './AdditionalSupportNeedsModel'
+} from './AdditionalSupportNeedsViewModel'
 import { GovukFrontendCheckboxesWithConditional, WithConditional } from '../../@types/govukFrontend/derived'
 import { buildTextarea, not } from '../../utils/utils'
 import { ErrorMiddlewareErrors } from '../../@types/express'
@@ -106,6 +106,7 @@ export default class AdditionalSuportNeedsPresenter extends PresenterBase<
     const { firstName, lastName } = this.data.refereeName
     const name = formatFullName(firstName, lastName)
     return {
+      pageTitle: content.pageTitle,
       heading: name,
       checkList: buildChecklist(
         content,

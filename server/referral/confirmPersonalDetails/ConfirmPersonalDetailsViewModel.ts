@@ -4,47 +4,10 @@ import {
   GovukFrontendSummaryList,
   GovukFrontendWarningText,
 } from '@govuk-frontend'
-
-export interface PersonalDetailsCard {
-  heading: string
-  nameLabel: string
-  crnLabel: string
-  prisonLabel: string
-  dobLabel: string
-  languageLabel: string
-  circumstancesLabel: string
-  disabilitiesLabel: string
-}
-
-export interface EqualityMonitoringCard {
-  heading: string
-  nationalityLabel: string
-  ethnicityLabel: string
-  religionLabel: string
-  sexLabel: string
-}
-
-export interface ContactDetailsCard {
-  heading: string
-  phoneNumberLabel: string
-  mobileNumberLabel: string
-  emailAddressLabel: string
-  mainAddressLabel: string
-}
-
-export interface ConfirmPersonalDetailsContent {
-  pageHeader: string
-  pageSubHeader: string
-  backLink: string
-  defaultFieldValue: string
-  personalDetailsCard: PersonalDetailsCard
-  equalityMonitoringCard: EqualityMonitoringCard
-  contactDetailsCard: ContactDetailsCard
-  warningText: string
-  buttonText: string
-}
+import { GlobalContent } from '../../../assets/content/GlobalContent'
 
 export interface ConfirmPersonalDetailsViewModel {
+  pageTitle: string
   backLink: GovukFrontendBackLink
   heading: string
   subheading: string
@@ -54,3 +17,8 @@ export interface ConfirmPersonalDetailsViewModel {
   warning: GovukFrontendWarningText
   button: GovukFrontendButton
 }
+
+export type ConfirmPersonalDetailsContent = GlobalContent['/referral/task-list/confirm-personal-details']
+export type PersonalDetailsCard = ConfirmPersonalDetailsContent['personalDetailsCard']
+export type EqualityMonitoringCard = ConfirmPersonalDetailsContent['equalityMonitoringCard']
+export type ContactDetailsCard = ConfirmPersonalDetailsContent['contactDetailsCard']
