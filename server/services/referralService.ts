@@ -101,6 +101,10 @@ export default class ReferralService {
     return this.communitySupportApiClient.submitAction(caseReference, actionPlanAction, username)
   }
 
+  deleteAction(caseReference: string, actionId: string, username: string): Promise<ActionPlanActionResponse> {
+    return this.communitySupportApiClient.deleteAction(caseReference, actionId, username)
+  }
+
   getSessionDeliveryDetails(
     caseReference: string,
     username: string,

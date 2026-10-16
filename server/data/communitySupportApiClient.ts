@@ -174,6 +174,10 @@ export default class CommunitySupportApiClient extends RestClient {
     )
   }
 
+  deleteAction(caseReference: string, actionId: string, username: string): Promise<ActionPlanActionResponse> {
+    return this.delete({ path: `/referral/${caseReference}/action-plan/action/${actionId}` }, asSystem(username))
+  }
+
   getSessionDeliveryDetails(
     caseReference: string,
     username: string,
