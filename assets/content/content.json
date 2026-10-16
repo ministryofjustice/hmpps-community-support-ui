@@ -17,6 +17,7 @@
     ]
   },
   "/referral/new/find-a-person": {
+    "pageTitle": "Enter a CRN or prison number - Make a referral - Community Support",
     "pageHeader": "Confirm this is the correct person for referral",
     "continueButtonText": "Continue",
     "continueButtonLink": "/referral/new/confirm-person",
@@ -285,6 +286,12 @@
     "pageHeader": "Check the details before scheduling the ICS",
     "submitButtonText": "Submit"
   },
+  "/referral/:id/create-an-appointment/appointment-type": {
+    "pageTitle": "Select the appointment type",
+    "heading": "Create an appointment for {{ personName }}",
+    "appointmentTypeLabel": "Select the appointment type",
+    "buttonText": "Save and continue"
+  },
   "/progress/:id": {
     "pageHeader": "Referral for",
     "progressSubNavTitle": "Progress",
@@ -326,6 +333,15 @@
     "moveOutcomeDownText": "Move outcome down",
     "moveOutcomeUpText": "Move outcome up",
     "createButtonText": "Create an action plan"
+  },
+  "/referral/:id/action-plan/remove-outcome": {
+    "pageHeader": "Confirm you want to remove this outcome from {{ firstName }}'s plan",
+    "outcomePrefixText": "Outcome: ",
+    "whoWillDeliverHeaderText": "Who will do this",
+    "activityHeaderText": "Activity",
+    "removeOutcomeWarningText": "If you remove this outcome from the plan, all activities added to this outcome will also be removed.",
+    "removeOutcomeButtonText": "Remove this outcome",
+    "cancelLinkText": "Cancel"
   },
   "/referral/:id/action-plan/select-a-need": {
     "pageHeader": "Area of Need",
@@ -909,6 +925,7 @@
     }
   },
   "/referral/task-list/confirm-personal-details": {
+    "pageTitle": "Check and confirm personal details - Make a referral - Community Support",
     "pageHeader": "{{ name }}",
     "pageSubHeader": "Confirm personal details",
     "backLink": "/referral/task-list",
@@ -941,6 +958,7 @@
     "buttonText": "Continue"
   },
   "/referral/task-list/view-risk-summary": {
+    "pageTitle": "OASys risk information - Community Support",
     "pageSubHeader": "OASys risk information",
     "backLink": "/referral/task-list",
     "crnLabel": "CRN",
@@ -987,6 +1005,7 @@
     "buttonText": "Save and continue"
   },
   "/referral/task-list/edit-risk-summary": {
+    "pageTitle": "Change OASys risk information - Community Support",
     "pageHeader": "Edit OASys risk information",
     "backLink": "/referral/task-list/view-risk-summary",
     "crnLabel": "CRN",
@@ -1045,6 +1064,7 @@
     "selectDifferentAreaHref": "/referral/task-list/select-an-area-for-referral"
   },
   "/referral/task-list/select-person-needs": {
+    "pageTitle": "Select what needs the referral should focus on - Community Support",
     "pageHeader": "Select what needs the referral should focus on",
     "hint": "Select all that apply.",
     "checkboxes": {
@@ -1069,6 +1089,7 @@
     "backLink": "/referral/task-list"
   },
   "/referral/task-list/additional-support-needs": {
+    "pageTitle": "What additional support do they need to attend or take part in sessions? - Community Support",
     "header": "What does {{ firstName }} need support with to attend or take part in sessions?",
     "hint": "Select all that apply.",
     "items": [
@@ -1118,6 +1139,7 @@
     "backlink": "/referral/task-list"
   },
   "/referral/task-list/needs-an-interpreter": {
+    "pageTitle": "Do they need an interpreter? - Community Support",
     "pageHeader": "Does {{ name }} need an interpreter?",
     "yesOptionLabel": "Yes",
     "yesCoditional": "What language does {{ name }} need an interpreter for?",

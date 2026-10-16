@@ -6,6 +6,7 @@ export interface RiskSummaryRowCard {
 }
 
 export interface RiskSummaryContent {
+  pageTitle: string
   pageSubHeader: string
   backLink: string
   crnLabel: string
@@ -40,6 +41,7 @@ export interface RiskSummaryRow {
 }
 
 export interface RiskSummaryViewModel {
+  pageTile: string
   backLink: GovukFrontendBackLink
   heading: string
   subheading: string

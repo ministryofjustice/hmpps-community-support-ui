@@ -7,6 +7,7 @@ import loadContentDataForTest from '../../testutils/loadContentDataForTest'
 const firstName = 'Alex' as const
 
 const pageContent = {
+  pageTitle: 'Do they need an interpreter? - Community Support',
   h2: `Does ${firstName} need an interpreter?`,
   radio1: {
     label: 'Yes',
@@ -41,7 +42,7 @@ describe('NeedsAnInterpreterPresenter', () => {
 
       const presenter = new NeedsAnInterpreterPresenter(dto, { list: [], messages: {} })
       const viewModel = presenter.buildViewModel(res)
-
+      expect(viewModel.pageTitle).toBe(pageContent.pageTitle)
       expect(viewModel.backLink.href).toBe('/referral/task-list/additional-support-needs')
       expect(viewModel.button).toStrictEqual({ text: pageContent.button })
       expect(viewModel.radios.name).toBe('needsInterpreter')
