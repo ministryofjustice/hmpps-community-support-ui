@@ -1,5 +1,9 @@
 import { Request, Response } from 'express'
-import type { ActionPlanSessionDeliveryDetailsResponse, ActionPlanSummaryDto } from '@community-support-api'
+import type {
+  ActionPlanSelectANeedResponse,
+  ActionPlanSessionDeliveryDetailsResponse,
+  ActionPlanSummaryDto,
+} from '@community-support-api'
 import type { ErrorMiddlewareErrors } from '../../@types/express'
 import ReferralService from '../../services/referralService'
 import ActionPlanController from './actionPlanController'
@@ -146,7 +150,7 @@ describe('ActionPlanController', () => {
       req.query = { needId: 'need-1', outcomeAnswerId: 'answer-outcome-1' }
       req.body = { needId: 'need-1', outcomeAnswerId: 'answer-outcome-1' }
       referralService.getActionPlanSummary.mockResolvedValue(summary)
-      referralService.getActionPlanNeedsAndOutcomes.mockResolvedValue(selectableNeeds)
+      referralService.getActionPlanNeedsAndOutcomes.mockResolvedValue(selectableNeeds as ActionPlanSelectANeedResponse)
     })
 
     it('renders the selected need, first name and summary outcome answer', async () => {
@@ -284,7 +288,7 @@ describe('ActionPlanController', () => {
     ]
 
     it('stores the needs and outcomes in session and renders the page', async () => {
-      referralService.getActionPlanNeedsAndOutcomes.mockResolvedValue({ needs })
+      referralService.getActionPlanNeedsAndOutcomes.mockResolvedValue({ needs } as ActionPlanSelectANeedResponse)
 
       await actionPlanController.showSelectANeedPage(req, res)
 
@@ -726,7 +730,9 @@ describe('ActionPlanController', () => {
       const selectableNeeds = [
         { id: 'need-1', label: 'Accommodation', outcomes: [{ id: 'reference-outcome-1', text: 'Find housing' }] },
       ]
-      referralService.getActionPlanNeedsAndOutcomes.mockResolvedValue({ needs: selectableNeeds })
+      referralService.getActionPlanNeedsAndOutcomes.mockResolvedValue({
+        needs: selectableNeeds,
+      } as ActionPlanSelectANeedResponse)
 
       await actionPlanController.showViewActivitiesPage(req, res)
 
@@ -750,7 +756,7 @@ describe('ActionPlanController', () => {
         lastUpdatedAt: '2026-10-12T09:00:00Z',
         needs: [],
       })
-      referralService.getActionPlanNeedsAndOutcomes.mockResolvedValue({ needs: [] })
+      referralService.getActionPlanNeedsAndOutcomes.mockResolvedValue({ needs: [] } as ActionPlanSelectANeedResponse)
       jest.clearAllMocks()
 
       await actionPlanController.showViewActivitiesPage(req, res)

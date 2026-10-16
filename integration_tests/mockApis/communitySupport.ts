@@ -77,9 +77,10 @@ const buildTaskListStatus = (taskListStatus: TaskListStatusStub): TaskListStatus
     taskListStatus.addDetailsOfAnyAdditionalSupportNeedsStatus || incompleteTaskStatus,
   addAdditionalInformationStatus: taskListStatus.addAdditionalInformationStatus || incompleteTaskStatus,
   selectAnAreaForReferralStatus: taskListStatus.selectAnAreaForReferralStatus || incompleteTaskStatus,
-  addMainPointOfContactStatus: taskListStatus.addMainPointOfContactStatus || incompleteTaskStatus,
-  checkProbationPractitionerDetailsStatus:
-    taskListStatus.checkProbationPractitionerDetailsStatus || incompleteTaskStatus,
+  contactDetailsStatus: taskListStatus.contactDetailsStatus || {
+    isProbationPractitioner: true,
+    status: incompleteTaskStatus,
+  },
   checkYourAnswersStatus: taskListStatus.checkYourAnswersStatus || cannotStartTaskStatus,
 })
 

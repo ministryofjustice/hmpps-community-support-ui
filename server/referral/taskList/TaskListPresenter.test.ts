@@ -15,8 +15,10 @@ const baseTaskListState: TaskListStatusDto = {
     tag: 'govuk-tag--blue',
   },
   addAdditionalInformationStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-  checkProbationPractitionerDetailsStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-  addMainPointOfContactStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+  contactDetailsStatus: {
+    isProbationPractitioner: false,
+    status: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+  },
   checkYourAnswersStatus: { completed: false, statusText: 'Cannot Start Yet', tag: null },
 }
 
@@ -82,7 +84,10 @@ describe('TaskListPresenter - Page Rendering', () => {
     test('shows the add contact details task when the main point of contact has been added', () => {
       const taskListState: TaskListStatusDto = {
         ...baseTaskListState,
-        addMainPointOfContactStatus: { completed: true, statusText: 'Completed', tag: 'govuk-tag--green' },
+        contactDetailsStatus: {
+          isProbationPractitioner: false,
+          status: { completed: true, statusText: 'Completed', tag: 'govuk-tag--green' },
+        },
       }
       const presenter = new TaskListPresenter(taskListState)
       const content = TaskListContent.build()
@@ -99,7 +104,10 @@ describe('TaskListPresenter - Page Rendering', () => {
     test('derives the contact details status from addMainPointOfContactCompleted, not addDetailsOfMainPointOfContactCompleted', () => {
       const taskListState: TaskListStatusDto = {
         ...baseTaskListState,
-        addMainPointOfContactStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+        contactDetailsStatus: {
+          isProbationPractitioner: false,
+          status: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+        },
       }
       const presenter = new TaskListPresenter(taskListState)
       const content = TaskListContent.build()
