@@ -18,12 +18,8 @@ test.describe('FindPerson', () => {
     await page.goto('/referral/new/find-a-person')
     const findPersonPage = await FindPersonPage.verifyOnPage(page)
     const expectedHeader = FindPersonPage.content().pageHeader
-    const expectedTitle = FindPersonPage.content().pageTitle
     await test.step('header matches content', async () => {
       await expect(findPersonPage.header).toHaveText(expectedHeader)
-    })
-    await test.step('title matches content', async () => {
-      await expect(page).toHaveTitle(expectedTitle)
     })
   })
 

@@ -17,6 +17,7 @@
     ]
   },
   "/referral/new/find-a-person": {
+    "pageTitle": "Enter a CRN or prison number - Make a referral - Community Support",
     "pageHeader": "Confirm this is the correct person for referral",
     "continueButtonText": "Continue",
     "continueButtonLink": "/referral/new/confirm-person",
@@ -284,6 +285,12 @@
   "/referral/:id/appointment/confirm-ics": {
     "pageHeader": "Check the details before scheduling the ICS",
     "submitButtonText": "Submit"
+  },
+  "/referral/:id/create-an-appointment/appointment-type": {
+    "pageTitle": "Select the appointment type",
+    "heading": "Create an appointment for {{ personName }}",
+    "appointmentTypeLabel": "Select the appointment type",
+    "buttonText": "Save and continue"
   },
   "/progress/:id": {
     "pageHeader": "Referral for",
@@ -909,6 +916,7 @@
     }
   },
   "/referral/task-list/confirm-personal-details": {
+    "pageTitle": "Check and confirm personal details - Make a referral - Community Support",
     "pageHeader": "{{ name }}",
     "pageSubHeader": "Confirm personal details",
     "backLink": "/referral/task-list",
@@ -1047,6 +1055,7 @@
     "selectDifferentAreaHref": "/referral/task-list/select-an-area-for-referral"
   },
   "/referral/task-list/select-person-needs": {
+    "pageTitle": "Select what needs the referral should focus on - Community Support",
     "pageHeader": "Select what needs the referral should focus on",
     "hint": "Select all that apply.",
     "checkboxes": {
@@ -1071,6 +1080,7 @@
     "backLink": "/referral/task-list"
   },
   "/referral/task-list/additional-support-needs": {
+    "pageTitle": "What additional support do they need to attend or take part in sessions? - Community Support",
     "header": "What does {{ firstName }} need support with to attend or take part in sessions?",
     "hint": "Select all that apply.",
     "items": [
@@ -1120,6 +1130,7 @@
     "backlink": "/referral/task-list"
   },
   "/referral/task-list/needs-an-interpreter": {
+    "pageTitle": "Do they need an interpreter? - Community Support",
     "pageHeader": "Does {{ name }} need an interpreter?",
     "yesOptionLabel": "Yes",
     "yesCoditional": "What language does {{ name }} need an interpreter for?",

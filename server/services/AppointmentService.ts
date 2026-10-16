@@ -1,6 +1,7 @@
 import {
   CreateAppointmentRequest,
   AppointmentIcsResponse,
+  CreateAppointmentReferenceDataBffDto,
   IcsFeedbackSubmission,
   IcsFeedbackSubmissionResponse,
   ChangeAppointmentDetails,
@@ -12,6 +13,13 @@ export default class AppointmentService {
 
   getICS(icsId: string, username: string): Promise<AppointmentIcsResponse> {
     return this.communitySupportApiClient.getICS(icsId, username)
+  }
+
+  getCreateAppointmentReferenceData(
+    caseReference: string,
+    username: string,
+  ): Promise<CreateAppointmentReferenceDataBffDto> {
+    return this.communitySupportApiClient.getCreateAppointmentReferenceData(caseReference, username)
   }
 
   submitICS(

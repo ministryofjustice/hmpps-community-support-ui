@@ -121,6 +121,7 @@ describe('FoundPersonPresenter', () => {
         },
       })
 
+      expect(renderData.content.pageTitle).toEqual(content.pageTitle)
       expect(renderData.content.backLink).toEqual({ href: '/referral/new/find-a-person' })
       expect(renderData.content.staticContent.enterDifferentIdentifierLinkText).toBe(
         'Enter a different CRN or prison number',
