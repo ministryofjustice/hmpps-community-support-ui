@@ -14,6 +14,7 @@ export default class ActionPlanAddActivityPresenter extends PresenterBase<
     private readonly activity?: { activityProvider: string; activityDescription: string },
     private readonly activityIndex?: number,
     private readonly userInputData?: Record<string, string>,
+    private readonly backLink = `/referral/${caseReference}/action-plan/activities`,
   ) {
     super()
   }
@@ -23,7 +24,7 @@ export default class ActionPlanAddActivityPresenter extends PresenterBase<
 
     return {
       pageHeader: content.pageHeader,
-      backLink: { href: `/referral/${this.caseReference}/action-plan/activities` },
+      backLink: { href: this.backLink },
       selectedNeedAndOutcomeInset: {
         html: `${content.areaOfNeedLabel}: <strong>${escapeHtml(this.selectedNeedLabel)}</strong><br>${content.outcomeLabel}: <strong>${escapeHtml(this.selectedOutcomeText)}</strong>`,
       },
