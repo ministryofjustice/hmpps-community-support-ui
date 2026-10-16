@@ -67,7 +67,7 @@
     "redis": "^6.3.0",
     "superagent": "^10.4.1",
     "ts-node": "^10.9.2",
-    "zod": "^4.6.5"
+    "zod": "^4.6.6"
   },
   "overrides": {
     "moment": "^2.31.0"
