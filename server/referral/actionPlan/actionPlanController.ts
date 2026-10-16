@@ -171,6 +171,7 @@ class ActionPlanController {
     }
 
     const removesSelectedAction =
+      req.session.actionPlanActivities?.caseReference === caseReference &&
       req.session.actionPlanAction?.needId === needId &&
       req.session.actionPlanAction?.outcomeId === resolved.selectableOutcome.id
     if (removesSelectedAction) {
