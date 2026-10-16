@@ -271,7 +271,7 @@ class ActionPlanController {
     const activity = Number.isInteger(activityIndex) ? activities[activityIndex] : undefined
     const flashData = req.flash('value')
     const userInputData = flashData.length > 0 ? (JSON.parse(flashData[0]) as Record<string, string>) : undefined
-    let backLink = `/referral/${caseReference}/action-plan/activities`
+    let backLink: string | undefined
     if (activities.length === 0) {
       backLink =
         (selectedNeed?.outcomes?.length ?? 0) > 1

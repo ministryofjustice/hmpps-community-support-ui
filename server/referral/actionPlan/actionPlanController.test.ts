@@ -348,7 +348,7 @@ describe('ActionPlanController', () => {
           undefined,
           undefined,
           undefined,
-          `/referral/AB1234CD/action-plan/${destination}`,
+          destination === 'activities' ? undefined : `/referral/AB1234CD/action-plan/${destination}`,
         )
       },
     )
@@ -419,7 +419,7 @@ describe('ActionPlanController', () => {
         { activityProvider: 'Old provider', activityDescription: 'Old details' },
         0,
         { activityProvider: 'Community group', activityDescription: '   ' },
-        '/referral/AB1234CD/action-plan/activities',
+        undefined,
       )
     })
 
