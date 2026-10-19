@@ -216,6 +216,13 @@ export default class CommunitySupportApiClient extends RestClient {
     )
   }
 
+  getPersonInvolvement(caseReference: string, username: string): Promise<ActionPlanSessionDeliveryDetailsResponse> {
+    return this.get(
+      { path: `/bff/referral/${caseReference}/action-plan/service-delivery-details/person-involvement` },
+      asSystem(username),
+    )
+  }
+
   getIcsById(referralId: string, icsId: string, username: string): Promise<AppointmentIcsResponse> {
     return this.get({ path: `/bff/referral/${referralId}/ics/${icsId}` }, asSystem(username))
   }

@@ -14,6 +14,7 @@ import ActionPlanSessionDeliveryDetailsPresenter from './sessionDeliveryDetails/
 import ActionPlanRisksAndAdjustmentsPresenter from './sessionDeliveryDetails/actionPlanRisksAndAdjustmentsPresenter'
 import ActionPlanServiceEndDateCheckPresenter from './sessionDeliveryDetails/actionPlanServiceEndDateCheckPresenter'
 import ActionPlanChangeServiceEndDatePresenter from './sessionDeliveryDetails/actionPlanChangeServiceEndDatePresenter'
+import ActionPlanServiceUserInvolvementPresenter from './sessionDeliveryDetails/actionPlanServiceUserInvolvementPresenter'
 import buildReferralProgress from '../../testutils/buildReferralProgress'
 
 jest.mock('../../services/referralService')
@@ -28,6 +29,7 @@ jest.mock('./sessionDeliveryDetails/actionPlanSessionDeliveryDetailsPresenter')
 jest.mock('./sessionDeliveryDetails/actionPlanRisksAndAdjustmentsPresenter')
 jest.mock('./sessionDeliveryDetails/actionPlanServiceEndDateCheckPresenter')
 jest.mock('./sessionDeliveryDetails/actionPlanChangeServiceEndDatePresenter')
+jest.mock('./sessionDeliveryDetails/actionPlanServiceUserInvolvementPresenter')
 
 describe('ActionPlanController', () => {
   let referralService: jest.Mocked<ReferralService>
@@ -44,6 +46,7 @@ describe('ActionPlanController', () => {
       getRisksAndAdjustments: jest.fn(),
       getServiceEndDateCheck: jest.fn(),
       getUpdateServiceEndDate: jest.fn(),
+      getPersonInvolvement: jest.fn(),
       submitAction: jest.fn(),
       moveNeed: jest.fn(),
       deleteAction: jest.fn(),
@@ -1462,6 +1465,211 @@ describe('ActionPlanController', () => {
         'Select yes if the service end date is still 24 May 2026',
       )
       expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/service-end-date-check')
+    })
+  })
+
+  describe('user involvement', () => {
+    const userInvolvementDetails: ActionPlanSessionDeliveryDetailsResponse = {
+      questions: [
+        {
+          id: 'question-1',
+          displayOrder: 1,
+          label: 'Was the person involved in creating the action plan?',
+          key: 'USER_INVOLVEMENT_IN_ACTION_PLAN',
+          hint: null,
+          answerType: 'RADIO',
+          maximumNumberOfResponses: 1,
+          choices: [
+            {
+              value: 'YES',
+              label: 'Yes',
+              displayOrder: 1,
+              displayAdditionalDetailsOnSelect: false,
+              additionalDetailsLabel: null,
+              additionalDetailsHint: null,
+            },
+            {
+              value: 'NO',
+              label: 'No',
+              displayOrder: 2,
+              displayAdditionalDetailsOnSelect: true,
+              additionalDetailsLabel: 'Why were they not involved?',
+              additionalDetailsHint: null,
+            },
+          ],
+          savedResponses: [],
+        },
+      ],
+    }
+
+    beforeEach(() => {
+      jest.spyOn(console, 'log').mockImplementation(() => {})
+      referralService.getPersonInvolvement.mockResolvedValue(userInvolvementDetails)
+      referralService.getActionPlanSummary.mockResolvedValue({
+        personDetails: { firstName: 'Alex', lastName: 'River' },
+        needs: [],
+        lastUpdatedAt: '',
+      })
+    })
+
+    afterEach(() => {
+      jest.restoreAllMocks()
+    })
+
+    describe('showUserInvolvementPage', () => {
+      it('renders the page with backend questions', async () => {
+        await actionPlanController.showUserInvolvementPage(req, res)
+
+        expect(referralService.getPersonInvolvement).toHaveBeenCalledWith('AB1234CD', 'user1')
+        expect(ActionPlanServiceUserInvolvementPresenter).toHaveBeenCalledWith(
+          'AB1234CD',
+          userInvolvementDetails,
+          undefined,
+          undefined,
+        )
+        expect(ActionPlanServiceUserInvolvementPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+      })
+
+      it('merges a saved session-delivery draft for the current referral into the questions', async () => {
+        req.session = {
+          actionPlanSessionDelivery: {
+            caseReference: 'AB1234CD',
+            sessionDeliveryDetails: {
+              answers: [{ questionId: 'question-1', incomingAnswerDetails: [{ value: 'YES' }] }],
+            },
+          },
+        } as Request['session']
+
+        await actionPlanController.showUserInvolvementPage(req, res)
+
+        expect(ActionPlanServiceUserInvolvementPresenter).toHaveBeenCalledWith(
+          'AB1234CD',
+          {
+            questions: [
+              { ...userInvolvementDetails.questions[0], savedResponses: [{ value: 'YES', additionalDetails: null }] },
+            ],
+          },
+          undefined,
+          undefined,
+        )
+      })
+
+      it('ignores a saved session-delivery draft from a different referral', async () => {
+        req.session = {
+          actionPlanSessionDelivery: {
+            caseReference: 'ZZ9999ZZ',
+            sessionDeliveryDetails: {
+              answers: [{ questionId: 'question-1', incomingAnswerDetails: [{ value: 'YES' }] }],
+            },
+          },
+        } as Request['session']
+
+        await actionPlanController.showUserInvolvementPage(req, res)
+
+        expect(ActionPlanServiceUserInvolvementPresenter).toHaveBeenCalledWith(
+          'AB1234CD',
+          userInvolvementDetails,
+          undefined,
+          undefined,
+        )
+      })
+
+      it('passes flashed form values and validation errors through to the presenter', async () => {
+        const validationErrors: ErrorMiddlewareErrors = {
+          list: [],
+          messages: { USER_INVOLVEMENT_IN_ACTION_PLAN: { text: 'Select an option' } },
+        }
+        const flashedValue = { USER_INVOLVEMENT_IN_ACTION_PLAN: 'NO' }
+        req.flash = jest.fn().mockReturnValue([JSON.stringify(flashedValue)])
+        res.locals.errors = validationErrors
+
+        await actionPlanController.showUserInvolvementPage(req, res)
+
+        expect(ActionPlanServiceUserInvolvementPresenter).toHaveBeenCalledWith(
+          'AB1234CD',
+          userInvolvementDetails,
+          validationErrors,
+          flashedValue,
+        )
+      })
+    })
+
+    describe('submitUserInvolvementPage', () => {
+      it('saves the answer to the session when the submitted form is valid', async () => {
+        req.body = { USER_INVOLVEMENT_IN_ACTION_PLAN: 'YES' }
+
+        await actionPlanController.submitUserInvolvementPage(req, res)
+
+        expect(referralService.getPersonInvolvement).toHaveBeenCalledWith('AB1234CD', 'user1')
+        expect(referralService.getActionPlanSummary).toHaveBeenCalledWith('AB1234CD', 'user1')
+        expect(req.session.actionPlanSessionDelivery).toEqual({
+          caseReference: 'AB1234CD',
+          sessionDeliveryDetails: {
+            answers: [
+              { questionId: 'question-1', incomingAnswerDetails: [{ value: 'YES', additionalDetails: undefined }] },
+            ],
+          },
+        })
+        expect(res.redirect).toHaveBeenCalledTimes(1)
+      })
+
+      it('saves the why not involved details against the NO answer', async () => {
+        req.body = { USER_INVOLVEMENT_IN_ACTION_PLAN: 'NO', WHY_NOT_INVOLVED: 'They were unavailable' }
+
+        await actionPlanController.submitUserInvolvementPage(req, res)
+
+        expect(req.session.actionPlanSessionDelivery).toEqual({
+          caseReference: 'AB1234CD',
+          sessionDeliveryDetails: {
+            answers: [
+              {
+                questionId: 'question-1',
+                incomingAnswerDetails: [{ value: 'NO', additionalDetails: 'They were unavailable' }],
+              },
+            ],
+          },
+        })
+      })
+
+      it('flashes an error against WHY_NOT_INVOLVED when NO is selected without details', async () => {
+        req.url = '/referral/AB1234CD/action-plan/person-involvement'
+        req.body = { USER_INVOLVEMENT_IN_ACTION_PLAN: 'NO' }
+
+        await actionPlanController.submitUserInvolvementPage(req, res)
+
+        expect(req.flash).toHaveBeenCalledWith(
+          'WHY_NOT_INVOLVEDError',
+          'Enter details about why Alex was not involved in creating the action plan',
+        )
+        expect(req.session.actionPlanSessionDelivery).toBeUndefined()
+      })
+
+      it('flashes a validation error naming the person and redirects back when nothing is selected', async () => {
+        req.url = '/referral/AB1234CD/action-plan/person-involvement'
+        req.body = {}
+
+        await actionPlanController.submitUserInvolvementPage(req, res)
+
+        expect(req.flash).toHaveBeenCalledWith(
+          'USER_INVOLVEMENT_IN_ACTION_PLANError',
+          'Select yes if Alex was involved in creating the action plan',
+        )
+        expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/person-involvement')
+        expect(req.session.actionPlanSessionDelivery).toBeUndefined()
+      })
+
+      it('flashes a validation error when the selected value is not one of the choices', async () => {
+        req.url = '/referral/AB1234CD/action-plan/person-involvement'
+        req.body = { USER_INVOLVEMENT_IN_ACTION_PLAN: 'MAYBE' }
+
+        await actionPlanController.submitUserInvolvementPage(req, res)
+
+        expect(req.flash).toHaveBeenCalledWith(
+          'USER_INVOLVEMENT_IN_ACTION_PLANError',
+          'Select yes if Alex was involved in creating the action plan',
+        )
+        expect(req.session.actionPlanSessionDelivery).toBeUndefined()
+      })
     })
   })
 })

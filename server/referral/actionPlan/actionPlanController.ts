@@ -33,6 +33,8 @@ import {
 } from '../../validation/ActionPlanServiceEndDateCheckFormData'
 import { ActionPlanChangeServiceEndDateDataSchemaBuilder } from '../../validation/ActionPlanChangeServiceEndDateFormData'
 import ActionPlanRemoveOutcomePresenter from './removeOutcome/actionPlanRemoveOutcomePresenter'
+import ActionPlanServiceUserInvolvementPresenter from './sessionDeliveryDetails/actionPlanServiceUserInvolvementPresenter'
+import { ActionPlanUserInvolvementFormDataSchemaBuilder } from '../../validation/ActionPlanUserInvolvementFormData'
 
 class ActionPlanController {
   constructor(private readonly referralService: ReferralService) {}
@@ -644,6 +646,43 @@ class ActionPlanController {
 
     await this.referralService.moveNeed(caseReference, moveNeedRequest, username)
     return res.redirect(`/referral/${caseReference}/action-plan`)
+  }
+
+  async showUserInvolvementPage(req: Request, res: Response) {
+    const { id: caseReference } = req.params as { id: string }
+    const { username } = res.locals.user
+
+    const sessionDeliveryDetails = await this.referralService.getPersonInvolvement(caseReference, username)
+    const userInputData = this.getFlashedFormValues(req)
+    const sessionDelivery = this.getActionPlanSessionDelivery(req, caseReference)?.sessionDeliveryDetails
+    const validationErrors = res.locals.errors
+    const presenter = new ActionPlanServiceUserInvolvementPresenter(
+      caseReference,
+      applySessionDeliveryDetailsData(sessionDeliveryDetails, sessionDelivery),
+      validationErrors,
+      userInputData,
+    )
+    return presenter.renderPage(res)
+  }
+
+  async submitUserInvolvementPage(req: Request, res: Response) {
+    const { id: caseReference } = req.params as { id: string }
+    const { username } = res.locals.user
+
+    const sessionDeliveryDetails = await this.referralService.getPersonInvolvement(caseReference, username)
+    const actionPlanSummary = await this.referralService.getActionPlanSummary(caseReference, username)
+    const { firstName } = actionPlanSummary.personDetails
+    const schema = ActionPlanUserInvolvementFormDataSchemaBuilder(sessionDeliveryDetails, firstName)
+
+    return validateRequestBodyAgainstSchema(schema, req, res, async form => {
+      const request = buildSessionDeliveryDetailsRequestFromForm(
+        sessionDeliveryDetails,
+        form,
+        buildAdditionalDetailsFieldNameResolver({ USER_INVOLVEMENT_IN_ACTION_PLAN: 'WHY_NOT_INVOLVED' }),
+      )
+      this.saveSessionDeliveryDetails(req, caseReference, request)
+      return res.redirect(`/referral/${caseReference}/action-plan/person-involvement`)
+    })
   }
 }
 
