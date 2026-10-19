@@ -74,6 +74,7 @@ export declare module 'express-session' {
     actionPlan?: {
       needs: ActionPlanSelectANeedNeed[]
     }
+    actionPlanAlertType?: 'ADD' | 'REMOVE'
     actionPlanAction?: {
       needId: string
       outcomeId?: string

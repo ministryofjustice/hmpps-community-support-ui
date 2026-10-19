@@ -47,3 +47,10 @@ export interface MojDatePicker {
   excludedDays?: string
   weekStartDay?: string
 }
+
+export interface MojAlert {
+  variant: 'success' | 'information' | 'warning' | 'error'
+  title?: string
+  html?: string
+  dismissible?: boolean
+}
