@@ -1,9 +1,5 @@
 import { Request, Response } from 'express'
-import type {
-  ActionPlanSelectANeedResponse,
-  ActionPlanSessionDeliveryDetailsResponse,
-  ActionPlanSummaryDto,
-} from '@community-support-api'
+import type { ActionPlanSessionDeliveryDetailsResponse, ActionPlanSummaryDto } from '@community-support-api'
 import type { ErrorMiddlewareErrors } from '../../@types/express'
 import ReferralService from '../../services/referralService'
 import ActionPlanController from './actionPlanController'
@@ -151,7 +147,7 @@ describe('ActionPlanController', () => {
       req.query = { needId: 'need-1', outcomeAnswerId: 'answer-outcome-1' }
       req.body = { needId: 'need-1', outcomeAnswerId: 'answer-outcome-1' }
       referralService.getActionPlanSummary.mockResolvedValue(summary)
-      referralService.getActionPlanNeedsAndOutcomes.mockResolvedValue(selectableNeeds as ActionPlanSelectANeedResponse)
+      referralService.getActionPlanNeedsAndOutcomes.mockResolvedValue(selectableNeeds)
     })
 
     it('renders the selected need, first name and summary outcome answer', async () => {
