@@ -27,6 +27,8 @@ export interface ScheduledIcsFormData {
   addressPostcode?: string
   informedMethods?: string[]
   otherMethodOfContact?: string
+  meetAtTheGate?: string
+  appointmentType?: CreateAppointmentRequest['appointmentType']
 }
 
 const getReasonKey = (sessionTakePlace: string): string | null => {
@@ -50,6 +52,8 @@ const mapTypeToSessionTakePlace = (type: SessionMethodRequest['type']): string =
       return 'InProbationOffice'
     case 'IN_PERSON_OTHER_LOCATION':
       return 'InSomewhereElse'
+    case 'IN_PERSON':
+      return 'InPerson'
     default:
       return 'InSomewhereElse'
   }
@@ -181,6 +185,10 @@ const loadFormFromSession = (
     formData.informedMethods = []
   }
 
+  if (typeof createAppointmentRequest.meetAtTheGate === 'boolean') {
+    formData.meetAtTheGate = createAppointmentRequest.meetAtTheGate ? 'yes' : 'no'
+  }
+
   return formData
 }
 
@@ -225,6 +233,8 @@ const mapSessionTakePlaceToType = (takePlace: string): SessionMethodRequest['typ
       return 'IN_PERSON_PROBATION_OFFICE'
     case 'InSomewhereElse':
       return 'IN_PERSON_OTHER_LOCATION'
+    case 'InPerson':
+      return 'IN_PERSON'
     default:
       return 'IN_PERSON_OTHER_LOCATION'
   }
@@ -299,7 +309,13 @@ export const saveFormToSession = (formData: ScheduledIcsFormData): CreateAppoint
     }
   }
   createAppointmentRequest.sessionMethodRequest = getSessionMethodFromFormData(formData)
-  createAppointmentRequest.sessionCommunication = getInformedMethodsFromFormData(formData)
+  createAppointmentRequest.sessionCommunication = getInformedMethodsFromFormData(formData) ?? []
+  if (formData.appointmentType) {
+    createAppointmentRequest.appointmentType = formData.appointmentType
+  }
+  if (formData.meetAtTheGate) {
+    createAppointmentRequest.meetAtTheGate = formData.meetAtTheGate === 'yes'
+  }
   return createAppointmentRequest
 }
 
@@ -308,6 +324,11 @@ export class ScheduledIcsFormDataResolver {
     private readonly appointmentService: AppointmentService,
     private readonly validator: AppointmentValidator,
   ) {}
+
+  resolveFromSession(req: Request): ScheduledIcsFormData | undefined {
+    const existing = req.session?.createAppointmentRequest
+    return existing ? loadFormFromSession(existing, this.validator) : undefined
+  }
 
   resolve(req: Request, res: Response): Promise<ScheduledIcsFormData | undefined> {
     const existing = req.session?.createAppointmentRequest

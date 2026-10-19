@@ -4,6 +4,8 @@ import { GlobalContent } from '../../../../assets/content/GlobalContent'
 export type ActionPlanSelectANeedViewModel = {
   pageHeader: string
   backLink: GovukFrontendBackLink
+  identifiedNeedsDetailsTitle: string
+  identifiedNeeds: { id: string; label: string }[]
   whichNeedsRadio: GovukFrontendRadios
   continueButton: GovukFrontendButton
   continueButtonLink: string

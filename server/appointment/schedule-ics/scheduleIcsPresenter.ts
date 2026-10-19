@@ -1,6 +1,11 @@
 import { Response } from 'express'
 import { ProbationOffice, ReferralInformation } from '@community-support-api'
-import { GovukFrontendButton, GovukFrontendRadiosItem, GovukFrontendSelectItem } from '@govuk-frontend'
+import {
+  GovukFrontendButton,
+  GovukFrontendRadios,
+  GovukFrontendRadiosItem,
+  GovukFrontendSelectItem,
+} from '@govuk-frontend'
 import { MojDatePicker } from '@moj-frontend'
 import { Prison } from '@prison-api'
 import PresenterBase from '../../presenter/presenterBase'
@@ -15,6 +20,7 @@ import { buildInput, buildSelect } from '../../utils/utils'
 import { ComponentsTimeInput } from '../../@types/components'
 import isIdentifierACrn from '../../utils/isIdentifierACrn'
 import { ScheduledIcsFormData } from './ScheduledIcsFormDataResolver'
+import { appointmentTypeRules, AppointmentTypeRules, SessionAppointmentType } from '../appointmentTypeRules'
 
 export interface ValidationError {
   key: string
@@ -64,6 +70,8 @@ const buildPrisonOfficesSelectItems = (
 export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewModel, ScheduleIcsContent> {
   private readonly inCustody: boolean
 
+  private readonly rules: AppointmentTypeRules | undefined
+
   constructor(
     private readonly caseReference: string,
     private readonly probationOffices: ProbationOffice[],
@@ -71,8 +79,10 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
     private readonly referralInformation: ReferralInformation,
     private readonly formData?: ScheduledIcsFormData,
     private readonly validationErrors?: ErrorMiddlewareErrors,
+    private readonly appointmentType?: SessionAppointmentType,
   ) {
     super()
+    this.rules = appointmentType ? appointmentTypeRules[appointmentType] : undefined
     this.inCustody = !isIdentifierACrn(this.referralInformation.personIdentifier)
   }
 
@@ -134,7 +144,7 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
   }
 
   private buildInCommunityRadioItems(content: ScheduleIcsContent): WithConditional<GovukFrontendRadiosItem>[] {
-    return [
+    const items = [
       {
         value: 'InProbationOffice',
         text: content.howSessionTakePlace.radioItems.probation.text,
@@ -155,10 +165,17 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
         conditional: { html: this.buildAddressInput(content) },
       },
     ]
+    return items.filter(item =>
+      item.value === 'InProbationOffice' ? (this.rules?.probationOffice ?? true) : (this.rules?.somewhereElse ?? true),
+    )
+  }
+
+  private buildInPersonRadioItems(content: ScheduleIcsContent): WithConditional<GovukFrontendRadiosItem>[] {
+    return [{ value: 'InPerson', text: content.howSessionTakePlace.radioItems.inPerson?.text }]
   }
 
   private buildInCustodyRadioItems(content: ScheduleIcsContent): WithConditional<GovukFrontendRadiosItem>[] {
-    return [
+    const items = [
       {
         value: 'InPrison',
         text: content.howSessionTakePlace.radioItems.prison.text,
@@ -174,6 +191,7 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
         },
       },
     ]
+    return this.rules && !this.rules.probationOffice && !this.rules.somewhereElse ? [] : items
   }
 
   private buildRadioItems(content: ScheduleIcsContent): WithConditional<GovukFrontendRadiosItem>[] {
@@ -215,9 +233,10 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
         },
       },
     ]
-    return items.concat(
-      this.inCustody ? this.buildInCustodyRadioItems(content) : this.buildInCommunityRadioItems(content),
-    )
+    const locationItems = this.inCustody
+      ? this.buildInCustodyRadioItems(content)
+      : this.buildInCommunityRadioItems(content)
+    return items.concat(locationItems, this.rules?.inPerson ? this.buildInPersonRadioItems(content) : [])
   }
 
   private buildHowWillTheSessionTakePlaceRadios(content: ScheduleIcsContent): GovukFrontendRadiosWithConditional {
@@ -352,25 +371,52 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
     }
   }
 
+  private buildMeetAtTheGateInput(content: ScheduleIcsContent): GovukFrontendRadios | undefined {
+    if (!this.rules?.meetAtTheGate || !content.meetAtTheGate) {
+      return undefined
+    }
+    return {
+      name: 'meetAtTheGate',
+      classes: 'govuk-radios--inline',
+      fieldset: {
+        legend: {
+          text: content.meetAtTheGate.label,
+          isPageHeading: false,
+          classes: 'govuk-fieldset__legend govuk-fieldset__legend--m',
+        },
+      },
+      value: this.formData?.meetAtTheGate || '',
+      errorMessage: this.validationErrors?.messages?.meetAtTheGate,
+      items: [
+        { value: 'yes', text: content.meetAtTheGate.yes },
+        { value: 'no', text: content.meetAtTheGate.no },
+      ],
+    }
+  }
+
   private buildSubmit({ submitButtonText }: ScheduleIcsContent): GovukFrontendButton {
     return { text: submitButtonText, classes: 'govuk-!-margin-top-6' }
   }
 
   buildViewModel(res: Response): ScheduleIcsViewModel {
     const content = this.buildStaticContent(res)
-    const submitHref = content.submitHref.replace('{{ caseRef }}', this.caseReference)
+    const submitHref =
+      content.submitHref.replace('{{ caseRef }}', this.caseReference) +
+      (this.appointmentType ? `?session=${this.appointmentType}` : '')
     const backLinkHref = content.backLink.replace('{{ caseRef }}', this.caseReference)
     return {
-      pageHeader: content.pageHeader,
+      pageHeader: (this.appointmentType && content.pageHeaders?.[this.appointmentType]) || content.pageHeader,
       submitButton: this.buildSubmit(content),
       submitHref,
       backLink: { href: backLinkHref },
       dateInput: this.buildDateInput(content),
       timeInput: this.buildTimeInput(content),
       howWillTheSessionTakePlaceInput: this.buildHowWillTheSessionTakePlaceRadios(content),
-      howWasTheyInformedAboutTheSessionInput: this.inCustody
-        ? undefined
-        : this.buildHowWasTheyInformedAboutTheSession(content),
+      meetAtTheGateInput: this.buildMeetAtTheGateInput(content),
+      howWasTheyInformedAboutTheSessionInput:
+        this.inCustody || this.rules?.informed === false
+          ? undefined
+          : this.buildHowWasTheyInformedAboutTheSession(content),
     }
   }
 

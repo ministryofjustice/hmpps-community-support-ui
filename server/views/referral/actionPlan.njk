@@ -2,6 +2,7 @@
 
 {% from "components/action-plan-summary-list/macro.njk" import actionPlanSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "moj/components/alert/macro.njk" import mojAlert %}
 
 {% set pageTitle = "Action plan – " + applicationName %}
 {% set mainClasses = "govuk-body" %}
@@ -18,6 +19,19 @@
   <div class="actionplan-summary__title">
     <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
   </div>
+
+  {% if content.alert %}
+    {{ mojAlert({
+      variant: content.alert.variant,
+      title: content.alert.title,
+      html: content.alert.html,
+      dismissible: content.alert.dismissible,
+      attributes: {
+        "data-testid": "action-plan-alert"
+      }
+    }) }}
+  {% endif %}
+
   <p>{{ content.updatedAtText }}</p>
   <p>{{ content.noActionPlanText }}</p>
   {% if content.needsSummary %}
