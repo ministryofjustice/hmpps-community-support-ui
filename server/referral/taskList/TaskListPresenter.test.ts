@@ -31,7 +31,7 @@ describe('TaskListPresenter - Page Rendering', () => {
       const viewModel = presenter.buildViewModel(response)
 
       const { checkAnswers } = viewModel.taskListItemsBySection
-      expect(checkAnswers.taskList.items[0].status.tag.text).toBe('Cannot Start Yet')
+      expect(checkAnswers.taskList.items[0].status).toEqual({ text: 'Cannot Start Yet' })
       expect(checkAnswers.taskList.items[0].href).toBeUndefined()
     })
     test('check answers shows Incomplete', () => {
@@ -45,7 +45,9 @@ describe('TaskListPresenter - Page Rendering', () => {
       const viewModel = presenter.buildViewModel(response)
 
       const { checkAnswers } = viewModel.taskListItemsBySection
-      expect(checkAnswers.taskList.items[0].status.tag.text).toBe('Incomplete')
+      expect(checkAnswers.taskList.items[0].status).toEqual({
+        tag: { text: 'Incomplete', classes: 'govuk-tag--blue' },
+      })
       expect(checkAnswers.taskList.items[0].href).toBeDefined()
     })
   })

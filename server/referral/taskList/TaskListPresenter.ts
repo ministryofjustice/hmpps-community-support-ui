@@ -4,9 +4,8 @@ import { TaskListStatusDto, TaskListStatusItem } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
 import { TaskListViewModel, TaskListPageContent, TaskListContent } from './TaskListViewModel'
 
-const getStatusTag = (status: TaskListStatusItem): GovukFrontendTaskListItemStatus => ({
-  tag: { text: status.statusText, classes: status.tag || '' },
-})
+const getStatusTag = (status: TaskListStatusItem): GovukFrontendTaskListItemStatus =>
+  status.tag ? { tag: { text: status.statusText, classes: status.tag } } : { text: status.statusText }
 
 const getTaskListStatus = (data: TaskListStatusDto) => {
   return {
