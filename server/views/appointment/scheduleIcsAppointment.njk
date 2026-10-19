@@ -26,6 +26,9 @@
     {{ mojDatePicker(content.dateInput) }}
     {{ timeInput(content.timeInput) }}
     {{ govukRadios(content.howWillTheSessionTakePlaceInput) }}
+    {% if content.meetAtTheGateInput %}
+      {{ govukRadios(content.meetAtTheGateInput) }}
+    {% endif %}
     {% if content.howWasTheyInformedAboutTheSessionInput %}
       {{ govukCheckboxes(content.howWasTheyInformedAboutTheSessionInput) }}
     {% endif %}
