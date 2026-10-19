@@ -59,6 +59,10 @@ export default class TaskListPage extends AbstractPage {
     return this.contactDetailsSection.getByRole('link', { name: 'Add details of main point of contact' })
   }
 
+  get checkProbationPractitionerDetailsTask() {
+    return this.contactDetailsSection.getByRole('link', { name: "Check probation practitioner's details" })
+  }
+
   get checkAnswersTask() {
     return this.checkAnswersSection
       .getByRole('link', { name: 'Check answers and submit' })
@@ -109,7 +113,9 @@ export default class TaskListPage extends AbstractPage {
     await expect(taskListPage.addSupportNeedsTask).toBeVisible()
     await expect(taskListPage.additionalReferralInformationTask).toBeVisible()
     await expect(taskListPage.contactDetailsSection).toBeVisible()
-    await expect(taskListPage.addContactDetailsTask).toBeVisible()
+    await expect(
+      taskListPage.addContactDetailsTask.or(taskListPage.checkProbationPractitionerDetailsTask),
+    ).toBeVisible()
     await expect(taskListPage.checkAnswersSection).toBeVisible()
     await expect(taskListPage.checkAnswersTask).toBeVisible()
 
