@@ -2,12 +2,22 @@
 
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
 
 {% set pageTitle = "Action plan – " + applicationName %}
 {% set mainClasses = "govuk-body" %}
 
 {% block contentBody %}
   <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
+
+  {% set identifiedNeedsHtml %}
+    <ul class="govuk-list govuk-list--bullet">
+      {% for need in content.identifiedNeeds %}
+        <li>{{ need.label }}</li>
+      {% endfor %}
+    </ul>
+  {% endset %}
+  {{ govukDetails({ summaryText: content.identifiedNeedsDetailsTitle, html: identifiedNeedsHtml }) }}
 
   <form method="post" action="{{ content.continueButtonLink }}">
     <input type="hidden" name="_csrf" value="{{csrfToken}}">
