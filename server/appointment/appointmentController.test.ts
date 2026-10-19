@@ -428,6 +428,160 @@ describe('AppointmentController', () => {
     })
   })
 
+  describe('create appointment details', () => {
+    let createReq: Request
+
+    const validBody = {
+      sessionDate: '20/6/2026',
+      'sessionTime-hour': '11',
+      'sessionTime-minute': '30',
+      'sessionTime-meridiem': 'AM',
+      sessionTakePlace: 'ByPhone',
+      ByPhone: 'reason',
+      informedMethods: 'informedByPhone',
+      meetAtTheGate: 'yes',
+    }
+
+    beforeEach(() => {
+      jest.useFakeTimers().setSystemTime(new Date('2026-06-18'))
+      referralService.getReferralInformation.mockResolvedValue(mockReferralInformationInCommunity)
+      createReq = {
+        params: { caseRefId },
+        query: { session: 'POST_RELEASE_SESSION' },
+        body: { ...validBody },
+        url: `/referral/${caseRefId}/create-an-appointment/appointment-details?session=POST_RELEASE_SESSION`,
+        session: { createAppointmentRequest: null },
+        flash: jest.fn(),
+      } as unknown as Request
+    })
+
+    afterEach(() => {
+      jest.useRealTimers()
+    })
+
+    it('redirects to the appointment type page when no type is available', async () => {
+      createReq.query = {}
+      await appointmentController.showCreateAppointmentDetails(createReq, scheduleIcsRes)
+      expect(scheduleIcsRes.redirect).toHaveBeenCalledWith(
+        `/referral/${caseRefId}/create-an-appointment/appointment-type`,
+      )
+      expect(ScheduleIcsPresenter.prototype.renderPage).not.toHaveBeenCalled()
+    })
+
+    it('redirects to the appointment type page when posting without a type', async () => {
+      createReq.query = {}
+      await appointmentController.createAppointmentDetails(createReq, scheduleIcsRes)
+      expect(scheduleIcsRes.redirect).toHaveBeenCalledWith(
+        `/referral/${caseRefId}/create-an-appointment/appointment-type`,
+      )
+    })
+
+    it('reads the appointment type chosen on the previous page from the session', async () => {
+      createReq.query = {}
+      createReq.session.appointmentSessionData = { appointmentType: 'HANDOVER_SESSION' }
+      await appointmentController.showCreateAppointmentDetails(createReq, scheduleIcsRes)
+      expect(ScheduleIcsPresenter).toHaveBeenCalledWith(
+        caseRefId,
+        probationOfficesData,
+        prisonsData,
+        mockReferralInformationInCommunity,
+        undefined,
+        expect.any(Object),
+        'HANDOVER_SESSION',
+      )
+    })
+
+    it('renders the page with the appointment type', async () => {
+      await appointmentController.showCreateAppointmentDetails(createReq, scheduleIcsRes)
+      expect(ScheduleIcsPresenter).toHaveBeenCalledWith(
+        caseRefId,
+        probationOfficesData,
+        prisonsData,
+        mockReferralInformationInCommunity,
+        undefined,
+        expect.any(Object),
+        'POST_RELEASE_SESSION',
+      )
+      expect(ScheduleIcsPresenter.prototype.renderPage).toHaveBeenCalledWith(scheduleIcsRes)
+    })
+
+    it('does not reuse session data saved for a different appointment type', async () => {
+      createReq.session.createAppointmentRequest = {
+        ...mockCreateAppointmentRequest,
+        appointmentType: 'CONTACT_SESSION',
+      }
+      await appointmentController.showCreateAppointmentDetails(createReq, scheduleIcsRes)
+      expect(ScheduleIcsPresenter).toHaveBeenCalledWith(
+        caseRefId,
+        probationOfficesData,
+        prisonsData,
+        mockReferralInformationInCommunity,
+        undefined,
+        expect.any(Object),
+        'POST_RELEASE_SESSION',
+      )
+    })
+
+    it('saves the request to the session and redirects to confirm-ics', async () => {
+      await appointmentController.createAppointmentDetails(createReq, scheduleIcsRes)
+      expect(createReq.session.createAppointmentRequest).toMatchObject({
+        appointmentType: 'POST_RELEASE_SESSION',
+        meetAtTheGate: true,
+        date: '2026-06-20',
+        time: { hour: 11, minute: 30, amPm: 'AM' },
+        sessionMethodRequest: { type: 'PHONE', additionalDetails: 'reason' },
+        sessionCommunication: ['informedByPhone'],
+      })
+      expect(createReq.session.appointmentSessionData).toMatchObject({
+        appointmentType: 'POST_RELEASE_SESSION',
+        date: '20/6/2026',
+        startTime: '11:30:am',
+        method: 'ByPhone',
+        informedBy: ['informedByPhone'],
+      })
+      expect(scheduleIcsRes.redirect).toHaveBeenCalledWith(`/referral/${caseRefId}/appointment/confirm-ics`)
+    })
+
+    it('saves a handover in-person appointment without informed methods', async () => {
+      createReq.query = { session: 'HANDOVER_SESSION' }
+      createReq.body = {
+        ...validBody,
+        sessionTakePlace: 'InPerson',
+        informedMethods: undefined,
+        meetAtTheGate: undefined,
+      }
+      await appointmentController.createAppointmentDetails(createReq, scheduleIcsRes)
+      expect(createReq.session.createAppointmentRequest).toMatchObject({
+        appointmentType: 'HANDOVER_SESSION',
+        sessionMethodRequest: { type: 'IN_PERSON' },
+        sessionCommunication: [],
+      })
+      expect(scheduleIcsRes.redirect).toHaveBeenCalledWith(`/referral/${caseRefId}/appointment/confirm-ics`)
+    })
+
+    it('redirects back with errors when meet at the gate is missing for post-release', async () => {
+      createReq.body = { ...validBody, meetAtTheGate: undefined }
+      await appointmentController.createAppointmentDetails(createReq, scheduleIcsRes)
+      expect(createReq.flash).toHaveBeenCalledWith(
+        'meetAtTheGateError',
+        'Select whether this is a meet at the gate session',
+      )
+      expect(scheduleIcsRes.redirect).toHaveBeenCalledWith(createReq.url)
+    })
+
+    it('checkIcs sends the change link back to the create-an-appointment page for typed appointments', async () => {
+      referralService.getReferralInformation.mockResolvedValue(mockReferralInformationInCommunity)
+      req.session.createAppointmentRequest = { ...mockCreateAppointmentRequest, appointmentType: 'CONTACT_SESSION' }
+      await appointmentController.checkIcs(req, res)
+      expect(ConfirmIcsPresenter).toHaveBeenCalledWith(
+        req.session.createAppointmentRequest,
+        expect.objectContaining({
+          scheduleIcsHref: `/referral/${caseRefId}/create-an-appointment/appointment-details`,
+        }),
+      )
+    })
+  })
+
   describe('recordAttendance', () => {
     beforeEach(() => {
       res.locals.content = {
