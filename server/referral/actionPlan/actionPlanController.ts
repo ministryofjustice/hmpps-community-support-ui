@@ -194,13 +194,20 @@ class ActionPlanController {
     const { id: caseReference } = req.params as { id: string }
     const { username } = res.locals.user
 
-    const { needs, selectedNeeds } = await this.referralService.getActionPlanNeedsAndOutcomes(caseReference, username)
+    const [{ needs, selectedNeeds }, actionPlanSummary] = await Promise.all([
+      this.referralService.getActionPlanNeedsAndOutcomes(caseReference, username),
+      this.referralService.getActionPlanSummary(caseReference, username),
+    ])
+    const needsWithSavedOutcomes = new Set(
+      actionPlanSummary.needs.filter(need => need.outcomes.length > 0).map(need => need.id),
+    )
+    const availableNeeds = needs.filter(need => !needsWithSavedOutcomes.has(need.id))
 
-    req.session.actionPlan = { ...req.session.actionPlan, needs }
+    req.session.actionPlan = { ...req.session.actionPlan, needs: availableNeeds }
 
     const presenter = new ActionPlanSelectANeedPresenter(
       caseReference,
-      needs,
+      availableNeeds,
       selectedNeeds,
       req.session.actionPlanAction?.needId,
     )

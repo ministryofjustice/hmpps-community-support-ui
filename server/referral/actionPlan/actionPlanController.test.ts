@@ -284,6 +284,14 @@ describe('ActionPlanController', () => {
       },
     ]
 
+    beforeEach(() => {
+      referralService.getActionPlanSummary.mockResolvedValue({
+        personDetails: { firstName: 'Alex', lastName: 'River' },
+        needs: [],
+        lastUpdatedAt: '',
+      })
+    })
+
     it('stores the needs and outcomes in session and renders the page', async () => {
       const selectedNeeds = [{ id: 'selected-need-1', label: 'Accommodation' }]
       referralService.getActionPlanNeedsAndOutcomes.mockResolvedValue({ needs, selectedNeeds })
@@ -291,9 +299,58 @@ describe('ActionPlanController', () => {
       await actionPlanController.showSelectANeedPage(req, res)
 
       expect(referralService.getActionPlanNeedsAndOutcomes).toHaveBeenCalledWith('AB1234CD', 'user1')
+      expect(referralService.getActionPlanSummary).toHaveBeenCalledWith('AB1234CD', 'user1')
       expect(req.session.actionPlan).toEqual({ needs })
       expect(ActionPlanSelectANeedPresenter).toHaveBeenCalledWith('AB1234CD', needs, selectedNeeds, undefined)
       expect(ActionPlanSelectANeedPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+    })
+
+    it.each([{ activities: [] }, { activities: [{ id: 'activity-1', who: 'Provider', details: 'Activity' }] }])(
+      'excludes needs with saved outcomes regardless of activities ($activities)',
+      async ({ activities }) => {
+        const selectedNeeds = [{ id: 'selected-need-1', label: 'Employment' }]
+        referralService.getActionPlanNeedsAndOutcomes.mockResolvedValue({ needs, selectedNeeds })
+        referralService.getActionPlanSummary.mockResolvedValue({
+          personDetails: { firstName: 'Alex', lastName: 'River' },
+          lastUpdatedAt: '',
+          needs: [
+            {
+              id: 'need-2',
+              label: 'Employment',
+              orderNumber: 1,
+              outcomes: [{ id: 'saved-outcome-2', label: 'Outcome two', activities }],
+            },
+          ],
+        })
+        req.session.actionPlanAction = { needId: 'need-2' }
+
+        await actionPlanController.showSelectANeedPage(req, res)
+
+        expect(req.session.actionPlan?.needs).toEqual([needs[0]])
+        expect(ActionPlanSelectANeedPresenter).toHaveBeenLastCalledWith('AB1234CD', [needs[0]], selectedNeeds, 'need-2')
+      },
+    )
+
+    it('keeps needs without saved outcomes and matches existing actions by ID rather than label', async () => {
+      referralService.getActionPlanNeedsAndOutcomes.mockResolvedValue({ needs, selectedNeeds: [] })
+      referralService.getActionPlanSummary.mockResolvedValue({
+        personDetails: { firstName: 'Alex', lastName: 'River' },
+        lastUpdatedAt: '',
+        needs: [
+          { id: 'need-1', label: 'Accommodation', orderNumber: 1, outcomes: [] },
+          {
+            id: 'another-need',
+            label: 'Employment',
+            orderNumber: 2,
+            outcomes: [{ id: 'saved-outcome', label: 'Outcome', activities: [] }],
+          },
+        ],
+      })
+
+      await actionPlanController.showSelectANeedPage(req, res)
+
+      expect(req.session.actionPlan?.needs).toEqual(needs)
+      expect(ActionPlanSelectANeedPresenter).toHaveBeenLastCalledWith('AB1234CD', needs, [], undefined)
     })
 
     it('redirects to select an outcome when the selected need has more than one outcome', async () => {
