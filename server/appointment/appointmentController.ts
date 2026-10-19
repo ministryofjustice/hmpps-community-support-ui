@@ -716,7 +716,7 @@ class AppointmentController {
 
   async checkIcsFeedback(req: Request, res: Response): Promise<void> {
     const caseRefId = req.params.caseRefId as string
-    const { username } = res.locals
+    const { username } = res.locals.user
     const { icsFeedbackSubmission } = req.session
     const appointmentData = await this.appointmentService.getICS(caseRefId, username)
 
