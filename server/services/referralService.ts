@@ -123,6 +123,10 @@ export default class ReferralService {
     return this.communitySupportApiClient.getActionPlanNeedsAndOutcomes(referralReference, username)
   }
 
+  getPersonInvolvement(caseReference: string, username: string): Promise<ActionPlanSessionDeliveryDetailsResponse> {
+    return this.communitySupportApiClient.getPersonInvolvement(caseReference, username)
+  }
+
   getPersonalDetails(id: string, username: string): Promise<ConfirmPersonDetailsBffDto> {
     return this.communitySupportApiClient.getPersonalDetails(id, username)
   }

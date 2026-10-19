@@ -298,6 +298,14 @@ export default function routes({
     actionPlanController.submitUpdateServiceEndDatePage(req, res),
   )
 
+  get('/referral/:id/action-plan/person-involvement', (req, res) =>
+    actionPlanController.showUserInvolvementPage(req, res),
+  )
+
+  post('/referral/:id/action-plan/person-involvement', (req, res) =>
+    actionPlanController.submitUserInvolvementPage(req, res),
+  )
+
   get('/referral/:caseIdentifier/withdraw', (req, res) => withdrawalController.showReason(req, res))
 
   post('/referral/:caseIdentifier/withdraw', (req, res) => withdrawalController.submitReason(req, res))
