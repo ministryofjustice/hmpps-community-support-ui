@@ -204,15 +204,17 @@ export default class CommunitySupportApiClient extends RestClient {
     )
   }
 
+  getActionPlanNeedsAndOutcomes(referralReference: string, username: string): Promise<ActionPlanSelectANeedResponse> {
+    return this.get(
+      { path: `/bff/referral/action-plan/select-a-need?referralReference=${encodeURIComponent(referralReference)}` },
+      asSystem(username),
+    )
+  }
   getPersonInvolvement(caseReference: string, username: string): Promise<ActionPlanSessionDeliveryDetailsResponse> {
     return this.get(
       { path: `/bff/referral/${caseReference}/action-plan/service-delivery-details/person-involvement` },
       asSystem(username),
     )
-  }
-
-  getActionPlanNeedsAndOutcomes(username: string): Promise<ActionPlanSelectANeedResponse> {
-    return this.get({ path: `/bff/referral/action-plan/select-a-need` }, asSystem(username))
   }
 
   getIcsById(referralId: string, icsId: string, username: string): Promise<AppointmentIcsResponse> {

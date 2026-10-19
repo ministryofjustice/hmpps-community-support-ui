@@ -463,6 +463,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/bff/referral/{referralReference}/action-plan/session-delivery-details/check-your-answers': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get the check your answers questions and saved answers of the service delivery details */
+    get: operations['getSessionDeliveryCheckYourAnswers']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/bff/referral/{referralReference}/action-plan/service-delivery-details/update-service-end-date': {
     parameters: {
       query?: never
@@ -1286,11 +1303,17 @@ export interface components {
       sessionDetails?: components['schemas']['SessionDetailsRequest'] | null
       sessionFeedback?: components['schemas']['SessionFeedbackRequest'] | null
       issuesAndConcerns?: components['schemas']['IssuesAndConcernsRequest'] | null
+      newlyIdentifiedAdditionalSupportNeeds?:
+        components['schemas']['NewlyIdentifiedAdditionalSupportNeedsRequest'] | null
       nextSteps?: components['schemas']['NextStepsRequest'] | null
     }
     IssuesAndConcernsRequest: {
       identified?: string | null
       notifyProbationPractitioner?: boolean | null
+    }
+    NewlyIdentifiedAdditionalSupportNeedsRequest: {
+      newlyIdentifiedAdditionalSupportNeedsIdentified?: boolean | null
+      newlyIdentifiedAdditionalSupportNeedsDetails?: string | null
     }
     NextStepsRequest: {
       plannedForNextSession?: string | null
@@ -1363,6 +1386,8 @@ export interface components {
       sessionFeedbackStrengthsIdentified?: string | null
       issuesOrConcernsIdentified?: string | null
       issuesOrConcernsNotifyProbationPractitioner?: boolean | null
+      newlyIdentifiedAdditionalSupportNeedsIdentified?: boolean | null
+      newlyIdentifiedAdditionalSupportNeedsDetails?: string | null
       nextStepsPlannedForNextSession?: string | null
       nextStepsActionsBeforeNextSession?: string | null
       sessionFeedbackAppointmentDetails?: components['schemas']['SessionFeedbackAppointmentDetailsDto'] | null
@@ -1736,6 +1761,12 @@ export interface components {
     }
     ActionPlanSelectANeedResponse: {
       needs: components['schemas']['ActionPlanSelectANeedNeed'][]
+      selectedNeeds: components['schemas']['ActionPlanSelectANeedSelectedNeed'][]
+    }
+    ActionPlanSelectANeedSelectedNeed: {
+      /** Format: uuid */
+      id: string
+      label: string
     }
     CommunitySupportServiceDto: {
       id: string
@@ -3153,6 +3184,49 @@ export interface operations {
       }
     }
   }
+  getSessionDeliveryCheckYourAnswers: {
+    parameters: {
+      query: {
+        /** @description Include change-service-end-date questions when the current frontend session answer requires a date change */
+        isServiceEndDateChanged: boolean
+      }
+      header?: never
+      path: {
+        referralReference: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Session Delivery Check your answers questions and saved answers returned */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ActionPlanSessionDeliveryDetailsResponse']
+        }
+      }
+      /** @description Missing or invalid isServiceEndDateChanged query parameter */
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
   getUpdateServiceEndDate: {
     parameters: {
       query?: never
@@ -3486,7 +3560,10 @@ export interface operations {
   }
   getNeedsAndOutcomes: {
     parameters: {
-      query?: never
+      query: {
+        /** @description Referral reference used to return needs already added to the referral */
+        referralReference: string
+      }
       header?: never
       path?: never
       cookie?: never

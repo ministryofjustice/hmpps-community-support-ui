@@ -23,6 +23,7 @@ test.describe('Select an action plan need', () => {
         ],
       },
     ],
+    selectedNeeds: [{ id: 'selected-need-1', label: 'Accommodation' }],
   }
 
   const actionPlanSummary: ActionPlanSummaryDto = {
@@ -37,6 +38,43 @@ test.describe('Select an action plan need', () => {
     await login(page)
   })
 
+  test('hides needs with saved outcomes and offers them again once removed', async ({ page }) => {
+    const accommodationNeed = {
+      id: 'need-accommodation',
+      label: 'Accommodation',
+      outcomes: [{ id: 'outcome-housing', text: 'Find housing' }],
+    }
+    await communitySupport.stubGetActionPlanNeedsAndOutcomes({
+      ...needsAndOutcomes,
+      needs: [...needsAndOutcomes.needs, accommodationNeed],
+    })
+    await communitySupport.stubGetActionPlanSummary(caseReference, {
+      ...actionPlanSummary,
+      needs: [
+        {
+          id: 'need-multiple-outcomes',
+          label: 'Employment',
+          orderNumber: 1,
+          outcomes: [{ id: 'saved-outcome-one', label: 'Find employment', activities: [] }],
+        },
+      ],
+    })
+
+    await page.goto(`/referral/${caseReference}/action-plan/select-a-need`)
+    await expect(page.getByRole('radio', { name: 'Employment', exact: true })).toHaveCount(0)
+    await expect(page.getByRole('radio', { name: 'Accommodation', exact: true })).toBeVisible()
+    await page.getByText('Show the needs identified in the referral').click()
+    await expect(page.locator('.govuk-details__text')).toContainText('Accommodation')
+    await page.getByRole('radio', { name: 'Accommodation', exact: true }).check()
+    await page.getByRole('button', { name: 'Continue', exact: true }).click()
+    await ActionPlanAddActivityPage.verifyOnPage(page)
+
+    await communitySupport.stubGetActionPlanSummary(caseReference, actionPlanSummary)
+    await page.goto(`/referral/${caseReference}/action-plan/select-a-need`)
+    await expect(page.getByRole('radio', { name: 'Employment', exact: true })).toBeVisible()
+    await expect(page.getByRole('radio', { name: 'Accommodation', exact: true })).toBeChecked()
+  })
+
   test('adds, edits, and removes the last activity from an action plan and returns user back to start of add need and outcome process', async ({
     page,
   }) => {
@@ -44,6 +82,8 @@ test.describe('Select an action plan need', () => {
     await communitySupport.stubGetActionPlanSummary(caseReference, actionPlanSummary)
 
     await page.goto(`/referral/${caseReference}/action-plan/select-a-need`)
+    await page.getByText('Show the needs identified in the referral').click()
+    await expect(page.locator('.govuk-details__text')).toContainText('Accommodation')
     await page.getByLabel('Employment').check()
     await page.getByRole('button', { name: 'Continue', exact: true }).click()
 
@@ -259,6 +299,7 @@ test.describe('Select an action plan need', () => {
           outcomes: [{ id: referenceOutcomeId, text: 'Find suitable housing' }],
         },
       ],
+      selectedNeeds: [{ id: 'selected-need-1', label: 'Accommodation' }],
     })
     await communitySupport.stubGetReferralProgress(buildReferralProgress([]), caseReference)
 
@@ -307,6 +348,7 @@ test.describe('Select an action plan need', () => {
     await communitySupport.stubGetActionPlanSummary(caseReference, summaryWithOutcome)
     await communitySupport.stubGetActionPlanNeedsAndOutcomes({
       needs: [{ id: needId, label: 'Accommodation', outcomes: [{ id: outcomeId, text: 'Find suitable housing' }] }],
+      selectedNeeds: [{ id: needId, label: 'Accommodation' }],
     })
     await communitySupport.stubGetReferralProgress(buildReferralProgress([]), caseReference)
     await stubFor({

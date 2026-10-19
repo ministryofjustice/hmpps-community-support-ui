@@ -84,6 +84,14 @@ export default function routes({
 
   post('/referral/:caseRefId/appointment/schedule-ics', (req, res) => appointmentController.scheduleIcs(req, res))
 
+  get('/referral/:caseRefId/create-an-appointment/appointment-details', (req, res) =>
+    appointmentController.showCreateAppointmentDetails(req, res),
+  )
+
+  post('/referral/:caseRefId/create-an-appointment/appointment-details', (req, res) =>
+    appointmentController.createAppointmentDetails(req, res),
+  )
+
   get('/referral-details/:caseRefId/ics-view-or-change', (req, res) => appointmentController.viewOrChangeIcs(req, res))
 
   get('/referral-details/:caseRefId/changed-ics-details/:icsId', (req, res) =>
