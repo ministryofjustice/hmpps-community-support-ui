@@ -236,6 +236,10 @@ export default function routes({
 
   get('/referral/:id/action-plan', (req, res) => actionPlanController.showActionPlanPage(req, res))
 
+  get('/referral/:id/action-plan/remove-outcome', (req, res) => actionPlanController.showRemoveOutcomePage(req, res))
+
+  post('/referral/:id/action-plan/remove-outcome', (req, res) => actionPlanController.removeOutcome(req, res))
+
   post('/referral/:id/action-plan/create', (req, res) => actionPlanController.createActionPlan(req, res))
 
   get('/referral/:id/action-plan/select-a-need', (req, res) => actionPlanController.showSelectANeedPage(req, res))

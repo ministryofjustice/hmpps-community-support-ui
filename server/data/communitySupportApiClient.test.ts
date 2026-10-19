@@ -385,6 +385,23 @@ describe('CommunitySupportApiClient tests', () => {
       expect(result).resolves.toEqual(response)
     })
   })
+  describe('deleteAction tests', () => {
+    it('deletes the action-plan action and returns the API response', () => {
+      const caseReference = 'AB1234CD'
+      const actionId = 'outcome-answer-id'
+      const response: ActionPlanActionResponse = { success: true, message: 'Action deleted successfully' }
+
+      nock('http://localhost:8080', {
+        reqheaders: { authorization: 'Bearer dummy-token' },
+      })
+        .delete(`/referral/${caseReference}/action-plan/action/${actionId}`)
+        .reply(200, response)
+
+      const result = communitySupportApiClient.deleteAction(caseReference, actionId, 'user1')
+
+      expect(result).resolves.toEqual(response)
+    })
+  })
   describe('getWithdrawalReasons tests', () => {
     it('should return withdrawal reasons grouped by heading with a 200 response', () => {
       const mockWithdrawalReasons: WithdrawalReasonsGroupedBffResponseDto = {

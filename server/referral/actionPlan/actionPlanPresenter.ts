@@ -129,7 +129,7 @@ export default class ActionPlanPresenter extends PresenterBase<ActionPlanViewMod
           text: content.addOrChangeActivitiesText,
         },
         {
-          href: '#',
+          href: `/referral/${this.caseReference}/action-plan/remove-outcome?needId=${encodeURIComponent(needId)}&outcomeAnswerId=${encodeURIComponent(outcomeId)}`,
           text: content.removeOutcomeText,
         },
       ],
