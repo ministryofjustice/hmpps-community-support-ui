@@ -1,8 +1,4 @@
-import {
-  GovukFrontendBackLink,
-  GovukFrontendButton,
-  GovukFrontendSummaryList,
-} from '@govuk-frontend'
+import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendSummaryList } from '@govuk-frontend'
 import { MojAlert } from '@moj-frontend'
 import { GlobalContent } from '../../../assets/content/GlobalContent'
 

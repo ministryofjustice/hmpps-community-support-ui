@@ -1,15 +1,11 @@
 import { ActionPlanSummaryDto } from '@community-support-api'
 import { Response } from 'express'
-import {
-  GovukFrontendButton,
-  GovukFrontendSummaryListCardActions,
-  GovukFrontendSummaryListRow,
-} from '@govuk-frontend'
+import { GovukFrontendButton, GovukFrontendSummaryListCardActions, GovukFrontendSummaryListRow } from '@govuk-frontend'
 import { formatDate } from 'date-fns'
+import { MojAlert } from '@moj-frontend'
 import PresenterBase from '../../presenter/presenterBase'
 import { ActionPlanContent, ActionPlanSummaryList, ActionPlanViewModel } from './actionPlanViewModel'
 import { components } from '../../@types/communitySupportApi/imported'
-import { MojAlert } from '@moj-frontend'
 
 export default class ActionPlanPresenter extends PresenterBase<ActionPlanViewModel, ActionPlanContent> {
   constructor(
@@ -143,11 +139,7 @@ export default class ActionPlanPresenter extends PresenterBase<ActionPlanViewMod
     }
   }
 
-  private getAlert(
-    content: ActionPlanContent,
-    name: string,
-    type?: 'ADD' | 'REMOVE',
-  ): MojAlert | null {
+  private getAlert(content: ActionPlanContent, name: string, type?: 'ADD' | 'REMOVE'): MojAlert | null {
     switch (type) {
       case 'ADD':
         return {
