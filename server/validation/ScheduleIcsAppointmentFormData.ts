@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { addMonths, isBefore, isAfter, startOfDay, isExists } from 'date-fns'
 import { britishDateFormat } from '../utils/dateFormat'
+import { appointmentTypeRules, SessionAppointmentType } from '../appointment/appointmentTypeRules'
 
 const validCharRegex: RegExp = /^[a-zA-Z0-9\s\-']*$/
 const dateRegex: RegExp = /^$|^(\d{1,2})\/(\d{1,2})\/(\d{4})$/
@@ -205,6 +206,35 @@ const howSessionTookPlaceSchema = z.discriminatedUnion(
   [byPhoneSchema, byVideoSchema, inProbationOfficeSchema, inSomewhereElseSchema],
   { error: 'Select how the session will take place' },
 )
+
+const inPersonSchema = z.object({
+  sessionTakePlace: z.literal('InPerson'),
+})
+
+const meetAtTheGateSchema = z.object({
+  meetAtTheGate: z.enum(['yes', 'no'], { error: 'Select whether this is a meet at the gate session' }),
+})
+
+export const buildCreateAppointmentFormData = (referralDate: Date, appointmentType: SessionAppointmentType) => {
+  const rules = appointmentTypeRules[appointmentType]
+  const methodSchemas = [
+    byPhoneSchema,
+    byVideoSchema,
+    ...(rules.probationOffice ? [inProbationOfficeSchema] : []),
+    ...(rules.somewhereElse ? [inSomewhereElseSchema] : []),
+    ...(rules.inPerson ? [inPersonSchema] : []),
+  ]
+  const howSessionTookPlace = z.discriminatedUnion(
+    'sessionTakePlace',
+    methodSchemas as [typeof byPhoneSchema, ...(typeof methodSchemas)[number][]],
+    { error: 'Select how the session will take place' },
+  )
+  const schema: z.ZodType = buildSessionDateSchema(referralDate, addMonths(new Date(), 6))
+    .and(timeSchema)
+    .and(howSessionTookPlace)
+  const withGate = rules.meetAtTheGate ? schema.and(meetAtTheGateSchema) : schema
+  return rules.informed ? withGate.and(informedMethodSchema) : withGate
+}
 
 const buildScheduleIcsAppointmentFormData = (referralDate: Date) =>
   buildSessionDateSchema(referralDate, addMonths(new Date(), 6))

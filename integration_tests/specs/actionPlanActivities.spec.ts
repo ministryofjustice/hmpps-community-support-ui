@@ -23,7 +23,7 @@ test.describe('Select an action plan need', () => {
         ],
       },
     ],
-    selectedNeeds: [],
+    selectedNeeds: [{ id: 'selected-need-1', label: 'Accommodation' }],
   }
 
   const actionPlanSummary: ActionPlanSummaryDto = {
@@ -45,6 +45,8 @@ test.describe('Select an action plan need', () => {
     await communitySupport.stubGetActionPlanSummary(caseReference, actionPlanSummary)
 
     await page.goto(`/referral/${caseReference}/action-plan/select-a-need`)
+    await page.getByText('Show the needs identified in the referral').click()
+    await expect(page.locator('.govuk-details__text')).toContainText('Accommodation')
     await page.getByLabel('Employment').check()
     await page.getByRole('button', { name: 'Continue', exact: true }).click()
 
@@ -260,7 +262,7 @@ test.describe('Select an action plan need', () => {
           outcomes: [{ id: referenceOutcomeId, text: 'Find suitable housing' }],
         },
       ],
-      selectedNeeds: [],
+      selectedNeeds: [{ id: 'selected-need-1', label: 'Accommodation' }],
     })
     await communitySupport.stubGetReferralProgress(buildReferralProgress([]), caseReference)
 
@@ -309,7 +311,7 @@ test.describe('Select an action plan need', () => {
     await communitySupport.stubGetActionPlanSummary(caseReference, summaryWithOutcome)
     await communitySupport.stubGetActionPlanNeedsAndOutcomes({
       needs: [{ id: needId, label: 'Accommodation', outcomes: [{ id: outcomeId, text: 'Find suitable housing' }] }],
-      selectedNeeds: [],
+      selectedNeeds: [{ id: needId, label: 'Accommodation' }],
     })
     await communitySupport.stubGetReferralProgress(buildReferralProgress([]), caseReference)
     await stubFor({
