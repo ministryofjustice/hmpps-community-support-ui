@@ -4,36 +4,15 @@ import {
   GovukFrontendInsetText,
   GovukFrontendTextarea,
 } from '@govuk-frontend'
+import { GlobalContent } from '../../../assets/content/GlobalContent'
 
 export interface EditRiskSummaryFieldContent {
   id: string
   label: string
 }
 
-export interface EditRiskSummaryContent {
-  pageHeader: string
-  backLink: string
-  crnLabel: string
-  dateOfBirthLabel: string
-  lastUpdatedLabel: string
-  defaultFieldValue: string
-  yesText: string
-  noText: string
-  dontKnowText: string
-  noAdditionalInformationText: string
-  submitHref: string
-  buttonText: string
-  whoIsAtRiskField: EditRiskSummaryFieldContent
-  natureOfRiskField: EditRiskSummaryFieldContent
-  riskImminenceField: EditRiskSummaryFieldContent
-  selfHarmField: EditRiskSummaryFieldContent
-  suicideField: EditRiskSummaryFieldContent
-  hostelSettingField: EditRiskSummaryFieldContent
-  vulnerabilityField: EditRiskSummaryFieldContent
-  additionalInformationField: EditRiskSummaryFieldContent
-}
-
 export interface EditRiskSummaryViewModel {
+  pageTitle: string
   backLink: GovukFrontendBackLink
   heading: string
   subheading: string
@@ -46,3 +25,5 @@ export interface EditRiskSummaryViewModel {
   button: GovukFrontendButton
   submitHref: string
 }
+
+export type EditRiskSummaryContent = GlobalContent['/referral/task-list/edit-risk-summary']

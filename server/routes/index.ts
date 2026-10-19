@@ -110,6 +110,14 @@ export default function routes({
 
   get('/progress/:caseReference', (req, res) => referralController.showReferralProgressDetails(req, res))
 
+  get('/referral/:caseReference/create-an-appointment/appointment-type', (req, res) =>
+    appointmentController.showAppointmentType(req, res),
+  )
+
+  post('/referral/:caseReference/create-an-appointment/appointment-type', (req, res) =>
+    appointmentController.submitAppointmentType(req, res),
+  )
+
   get('/ics-feedback/:caseRefId/attendance', async (req, res) =>
     appointmentController.icsAppointmentAttendance(req, res),
   )
@@ -220,6 +228,10 @@ export default function routes({
 
   get('/referral/:id/action-plan', (req, res) => actionPlanController.showActionPlanPage(req, res))
 
+  get('/referral/:id/action-plan/remove-outcome', (req, res) => actionPlanController.showRemoveOutcomePage(req, res))
+
+  post('/referral/:id/action-plan/remove-outcome', (req, res) => actionPlanController.removeOutcome(req, res))
+
   post('/referral/:id/action-plan/create', (req, res) => actionPlanController.createActionPlan(req, res))
 
   get('/referral/:id/action-plan/select-a-need', (req, res) => actionPlanController.showSelectANeedPage(req, res))
@@ -229,6 +241,8 @@ export default function routes({
   get('/referral/:id/action-plan/select-an-outcome', (req, res) => actionPlanController.showSelectOutcomePage(req, res))
 
   post('/referral/:id/action-plan/select-an-outcome', (req, res) => actionPlanController.submitOutcome(req, res))
+
+  get('/referral/:id/action-plan/header/:outcomeId/move/:action', (req, res) => actionPlanController.moveNeed(req, res))
 
   get('/referral/:id/action-plan/activities', (req, res) => actionPlanController.showViewActivitiesPage(req, res))
 

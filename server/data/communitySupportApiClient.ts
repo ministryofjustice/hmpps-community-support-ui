@@ -44,12 +44,14 @@ import type {
   ProbationPractitionerDetails,
   UpdateProbationPractitionerDetailsRequest,
   CheckDraftReferralDetailsDto,
+  CreateAppointmentReferenceDataBffDto,
   PDU,
   AdditionalInformationForTheDeliveryPartner,
   Selection,
   OffenceSentenceRequest,
   OffenceSentenceInfoBffResponseDto,
   WithdrawReferralRequest,
+  ActionPlanNeedsOrderRequest,
 } from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
@@ -126,6 +128,16 @@ export default class CommunitySupportApiClient extends RestClient {
     return this.get({ path: `/bff/referral-details/${caseRefId}/ics` }, asSystem(username))
   }
 
+  getCreateAppointmentReferenceData(
+    caseReference: string,
+    username: string,
+  ): Promise<CreateAppointmentReferenceDataBffDto> {
+    return this.get(
+      { path: `/bff/referral/${caseReference}/create-an-appointment/appointment-type` },
+      asSystem(username),
+    )
+  }
+
   async submitICS(
     caseRefId: string,
     createAppointmentRequest: CreateAppointmentRequest,
@@ -155,6 +167,10 @@ export default class CommunitySupportApiClient extends RestClient {
       { path: `/referral/${caseReference}/action-plan/action`, data: actionPlanAction },
       asSystem(username),
     )
+  }
+
+  deleteAction(caseReference: string, actionId: string, username: string): Promise<ActionPlanActionResponse> {
+    return this.delete({ path: `/referral/${caseReference}/action-plan/action/${actionId}` }, asSystem(username))
   }
 
   getSessionDeliveryDetails(
@@ -377,5 +393,12 @@ export default class CommunitySupportApiClient extends RestClient {
 
   withdrawReferral(referralReference: string, data: WithdrawReferralRequest, username: string): Promise<void> {
     return this.post({ path: `/referral/${referralReference}/withdraw`, data }, asSystem(username))
+  }
+
+  moveNeed(referralReference: string, data: ActionPlanNeedsOrderRequest, username: string) {
+    return this.patch(
+      { path: `/referral/${referralReference}/action-plan/update-needs-order`, data },
+      asSystem(username),
+    )
   }
 }

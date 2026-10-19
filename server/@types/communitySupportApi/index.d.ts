@@ -52,6 +52,7 @@ type ActionPlanActionResponse = components['schemas']['ActionPlanActionResponse'
 type ActionPlanSelectANeedResponse = components['schemas']['ActionPlanSelectANeedResponse']
 type ActionPlanSelectANeedNeed = components['schemas']['ActionPlanSelectANeedNeed']
 type ActionPlanSelectANeedOutcome = components['schemas']['ActionPlanSelectANeedOutcome']
+type ActionPlanNeedsOrderRequest = components['schemas']['ActionPlanNeedsOrderRequest']
 type WithdrawalReasonsGroupedBffResponseDto = components['schemas']['WithdrawalReasonsGroupedBffResponseDto']
 type ArnsRiskConcernsToSelfDto = components['schemas']['ArnsRiskConcernsToSelfDto']
 type ArnsRiskDto = components['schemas']['ArnsRiskDto']
@@ -70,6 +71,8 @@ type OffenceSentenceInfoBffResponseDto = components['schemas']['OffenceSentenceI
 type OffenceSentenceDto = components['schemas']['OffenceSentenceDto']
 type ProbationPractitionerDetails = components['schemas']['ProbationPractitionerDetailsBffResponseDto']
 type CheckDraftReferralDetailsDto = components['schemas']['CheckDraftReferralDetailsBffResponseDto']
+type CreateAppointmentReferenceDataBffDto = components['schemas']['CreateAppointmentReferenceDataBffDto']
+type CreateAppointmentTypeOptionDto = components['schemas']['CreateAppointmentTypeOptionDto']
 type DraftAdditionalReferralInformationTableDataDto =
   components['schemas']['DraftAdditionalReferralInformationTableDataDto']
 type DraftMainPOCDetailsTableDataDto = components['schemas']['DraftMainPOCDetailsTableDataDto']
@@ -126,6 +129,8 @@ export type {
   ServiceDaysPageDto,
   NeedsInterpreterBffResponseDto,
   CheckDraftReferralDetailsDto,
+  CreateAppointmentReferenceDataBffDto,
+  CreateAppointmentTypeOptionDto,
   Selection,
   CommunitySupportRiskDto,
   ActionPlanSummaryDto,
@@ -134,6 +139,7 @@ export type {
   ActionPlanSelectANeedResponse,
   ActionPlanSelectANeedNeed,
   ActionPlanSelectANeedOutcome,
+  ActionPlanNeedsOrderRequest,
   WithdrawalReasonsGroupedBffResponseDto,
   ArnsRiskConcernsToSelfDto,
   ArnsRiskDto,

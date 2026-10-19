@@ -2,7 +2,7 @@ import { Response } from 'express'
 import { NeedsInterpreterBffResponseDto } from '@community-support-api'
 import { GovukFrontendErrorMessage } from '@govuk-frontend'
 import PresenterBase from '../../presenter/presenterBase'
-import { NeedsAnInterpreterContent, NeedsAnInterpreterViewModel } from './NeedsAnInterpreterModel'
+import { NeedsAnInterpreterContent, NeedsAnInterpreterViewModel } from './NeedsAnInterpreterViewModel'
 import { GovukFrontendRadiosWithConditional } from '../../@types/govukFrontend/derived'
 import { buildTextarea, not, TriState, yesNoSelectionToTriState } from '../../utils/utils'
 import { ErrorMiddlewareErrors } from '../../@types/express'
@@ -91,6 +91,7 @@ export default class NeedsAnInterpreterPresenter extends PresenterBase<
     const content = this.buildStaticContent(res)
     const { firstName } = this.data.refereeName
     return {
+      pageTitle: content.pageTitle,
       backLink: {
         href: content.backlink,
       },
