@@ -293,4 +293,70 @@ describe('ActionPlanPresenter', () => {
       expect(render(summary, true).submitActionPlanButton).toBeUndefined()
     })
   })
+
+  describe('alert banner', () => {
+    const actionPlanSummary: ActionPlanSummaryDto = {
+      personDetails: { firstName: 'Alex', lastName: 'River' },
+      needs: [
+        {
+          id: 'need/id',
+          label: 'Accommodation',
+          orderNumber: 1,
+          outcomes: [{ id: 'outcome answer/id', label: 'Find housing', activities: [] }],
+        },
+      ],
+      lastUpdatedAt: '2026-10-15T09:00:00Z',
+    }
+
+    it('renders the correct alert when adding an outcome', () => {
+      const presenter = new ActionPlanPresenter(actionPlanSummary, 'AB1234CD', false, 'ADD')
+      const res = {
+        locals: {
+          content: globalContent['/referral/:id/action-plan'],
+        },
+        render: jest.fn(),
+      } as unknown as Response
+
+      presenter.renderPage(res)
+      const renderData = (res.render as jest.Mock).mock.calls[0][1] as { content: ActionPlanViewModel }
+
+      expect(renderData.content.alert).toBeDefined()
+      expect(renderData.content.alert.variant).toBe('success')
+      expect(renderData.content.alert.html).toContain("You added an outcome to Alex's plan.")
+      expect(renderData.content.alert.dismissible).toBeTruthy()
+    })
+
+    it('renders the correct alert when removing an outcome', () => {
+      const presenter = new ActionPlanPresenter(actionPlanSummary, 'AB1234CD', false, 'REMOVE')
+      const res = {
+        locals: {
+          content: globalContent['/referral/:id/action-plan'],
+        },
+        render: jest.fn(),
+      } as unknown as Response
+
+      presenter.renderPage(res)
+      const renderData = (res.render as jest.Mock).mock.calls[0][1] as { content: ActionPlanViewModel }
+
+      expect(renderData.content.alert).toBeDefined()
+      expect(renderData.content.alert.variant).toBe('success')
+      expect(renderData.content.alert.html).toContain("You removed an outcome from Alex's plan.")
+      expect(renderData.content.alert.dismissible).toBeTruthy()
+    })
+
+    it('does not render an alert when alertType is not provided', () => {
+      const presenter = new ActionPlanPresenter(actionPlanSummary, 'AB1234CD', false)
+      const res = {
+        locals: {
+          content: globalContent['/referral/:id/action-plan'],
+        },
+        render: jest.fn(),
+      } as unknown as Response
+
+      presenter.renderPage(res)
+      const renderData = (res.render as jest.Mock).mock.calls[0][1] as { content: ActionPlanViewModel }
+
+      expect(renderData.content.alert).toBeNull()
+    })
+  })
 })

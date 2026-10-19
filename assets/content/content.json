@@ -332,7 +332,9 @@
     "activityHeaderText": "Activity",
     "moveOutcomeDownText": "Move outcome down",
     "moveOutcomeUpText": "Move outcome up",
-    "createButtonText": "Create an action plan"
+    "createButtonText": "Create an action plan",
+    "addOutcomeNotificationText": "You added an outcome to {{ firstName }}'s plan.",
+    "removeOutcomeNotificationText": "You removed an outcome from {{ firstName }}'s plan."
   },
   "/referral/:id/action-plan/remove-outcome": {
     "pageHeader": "Confirm you want to remove this outcome from {{ firstName }}'s plan",
@@ -345,6 +347,7 @@
   },
   "/referral/:id/action-plan/select-a-need": {
     "pageHeader": "Area of Need",
+    "identifiedNeedsDetailsTitle": "Show the needs identified in the referral",
     "whichNeedTitle": "Which need are you creating an action for?",
     "whichNeedHint": "Select one option. You can select more needs later.",
     "continueButtonText": "Continue"
@@ -795,6 +798,80 @@
     "submitButtonText": "Save and continue",
     "submitHref": "/referral/{{ caseRef }}/appointment/schedule-ics",
     "backLink": "/progress/{{ caseRef }}"
+  },
+  "/referral/:id/create-an-appointment/appointment-details": {
+    "pageHeader": "Schedule the session",
+    "date": {
+      "label": "What is the date of the session?",
+      "hint": "Enter a date, for example 10/7/2025, or select one from the calendar."
+    },
+    "time": {
+      "label": "What time does the session start?",
+      "hint": "Use the 12-hour clock, for example 11:30am or 3pm.",
+      "AMorPM": "AM or PM"
+    },
+    "howSessionTakePlace": {
+      "label": "How will the session take place?",
+      "hint": "Select one option.",
+      "radioItems": {
+        "phone": {
+          "text": "Phone call",
+          "label": "Why is this session not in person?"
+        },
+        "video": {
+          "text": "Video call",
+          "label": "Why is this session not in person?"
+        },
+        "prison": {
+          "text": "In-person meeting - prison establishment",
+          "label": "Select prison"
+        },
+        "probation": {
+          "text": "In-person meeting - probation office",
+          "label": "Select a probation office"
+        },
+        "somewhereElse": {
+          "text": "In-person meeting - somewhere else",
+          "addressLabels": {
+            "address1": "Address line 1",
+            "address2": "Address line 2 (optional)",
+            "townOrCity": "Town or city",
+            "county": "County (optional)",
+            "postcode": "Postcode"
+          }
+        },
+        "inPerson": {
+          "text": "In-person meeting"
+        }
+      }
+    },
+    "informed": {
+      "label": "How was {{ firstname }} informed about the session?",
+      "hint": "Select all that apply.",
+      "selectionItems": {
+        "phone": "Phone call",
+        "text": "Text message",
+        "email": "Email",
+        "other": {
+          "text": "Other",
+          "label": "Other method of contact"
+        }
+      }
+    },
+    "submitButtonText": "Save and continue",
+    "submitHref": "/referral/{{ caseRef }}/create-an-appointment/appointment-details",
+    "backLink": "/referral/{{ caseRef }}/create-an-appointment/appointment-type",
+    "pageHeaders": {
+      "CONTACT_SESSION": "Schedule the contact session",
+      "PRE_RELEASE_SESSION": "Schedule the pre-release session",
+      "POST_RELEASE_SESSION": "Schedule the post-release session",
+      "HANDOVER_SESSION": "Schedule the handover session"
+    },
+    "meetAtTheGate": {
+      "label": "Is this a meet at the gate session?",
+      "yes": "Yes",
+      "no": "No"
+    }
   },
   "/referral/:id/ics-change-details": {
     "pageHeader": "Change session details",
