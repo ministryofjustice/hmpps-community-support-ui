@@ -1711,7 +1711,11 @@ export interface components {
       /** Format: uuid */
       id: string
       label: string
-      time: string
+      /** Format: date */
+      appointmentDate: string
+      appointmentTime: components['schemas']['AppointmentTimeResponse']
+      /** @enum {string} */
+      appointmentStatus: 'SCHEDULED' | 'NEEDS_FEEDBACK' | 'COMPLETED' | 'CHANGED' | 'DID_NOT_ATTEND' | 'DID_NOT_HAPPEN'
     }
     ReferralAppointmentsBffResponseDto: {
       personDetails: components['schemas']['ReferralAppointmentsPersonDetailsDto']
