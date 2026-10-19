@@ -93,7 +93,7 @@ describe('ActionPlanController', () => {
 
       expect(referralService.getActionPlanSummary).toHaveBeenCalledWith('AB1234CD', 'user1')
       expect(referralService.getReferralProgress).toHaveBeenCalledWith('AB1234CD', 'user1')
-      expect(ActionPlanPresenter).toHaveBeenLastCalledWith(actionPlanSummary, 'AB1234CD', false)
+      expect(ActionPlanPresenter).toHaveBeenLastCalledWith(actionPlanSummary, 'AB1234CD', false, undefined)
       expect(ActionPlanPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
     })
 
@@ -104,7 +104,7 @@ describe('ActionPlanController', () => {
 
       await actionPlanController.showActionPlanPage(req, res)
 
-      expect(ActionPlanPresenter).toHaveBeenLastCalledWith(actionPlanSummary, 'AB1234CD', true)
+      expect(ActionPlanPresenter).toHaveBeenLastCalledWith(actionPlanSummary, 'AB1234CD', true, undefined)
     })
 
     it('passes icsFeedbackSubmitted as false when the ICS feedback has not been submitted', async () => {
@@ -114,7 +114,7 @@ describe('ActionPlanController', () => {
 
       await actionPlanController.showActionPlanPage(req, res)
 
-      expect(ActionPlanPresenter).toHaveBeenLastCalledWith(actionPlanSummary, 'AB1234CD', false)
+      expect(ActionPlanPresenter).toHaveBeenLastCalledWith(actionPlanSummary, 'AB1234CD', false, undefined)
     })
   })
 
@@ -168,6 +168,7 @@ describe('ActionPlanController', () => {
       await actionPlanController.removeOutcome(req, res)
 
       expect(referralService.deleteAction).not.toHaveBeenCalled()
+      expect(req.session.actionPlanAlertType).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan')
     })
 
@@ -177,6 +178,7 @@ describe('ActionPlanController', () => {
       await actionPlanController.showRemoveOutcomePage(req, res)
 
       expect(res.render).not.toHaveBeenCalled()
+      expect(req.session.actionPlanAlertType).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan')
     })
 
@@ -201,6 +203,7 @@ describe('ActionPlanController', () => {
         caseReference: 'AB1234CD',
         sessionDeliveryDetails: { answers: [] },
       })
+      expect(req.session.actionPlanAlertType).toBe('REMOVE')
       expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan')
     })
 
@@ -219,6 +222,7 @@ describe('ActionPlanController', () => {
         caseReference: 'OTHER123',
         activities: [{ activityProvider: 'Other provider', activityDescription: 'Other activity' }],
       })
+      expect(req.session.actionPlanAlertType).toBe('REMOVE')
     })
 
     it('preserves same-case activity drafts for a different selected outcome', async () => {
@@ -236,6 +240,7 @@ describe('ActionPlanController', () => {
         caseReference: 'AB1234CD',
         activities: [{ activityProvider: 'Other provider', activityDescription: 'Other outcome activity' }],
       })
+      expect(req.session.actionPlanAlertType).toBe('REMOVE')
     })
 
     it('preserves activity and selection data for another referral', async () => {
@@ -253,6 +258,7 @@ describe('ActionPlanController', () => {
         caseReference: 'OTHER123',
         activities: [{ activityProvider: 'Other service', activityDescription: 'Other activities' }],
       })
+      expect(req.session.actionPlanAlertType).toBe('REMOVE')
     })
 
     it('preserves session drafts when the API submission fails', async () => {
@@ -267,6 +273,7 @@ describe('ActionPlanController', () => {
 
       expect(req.session.actionPlanAction).toEqual({ needId: 'need-1', outcomeId: 'outcome-1' })
       expect(req.session.actionPlanActivities?.activities).toHaveLength(1)
+      expect(req.session.actionPlanAlertType).toBeUndefined()
       expect(res.redirect).not.toHaveBeenCalled()
     })
   })
@@ -651,6 +658,7 @@ describe('ActionPlanController', () => {
       await actionPlanController.saveActivities(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/activities/add')
+      expect(req.session.actionPlanAlertType).toBeUndefined()
     })
 
     it('submits the selected need, outcome and activities before redirecting when no is selected', async () => {
@@ -675,6 +683,7 @@ describe('ActionPlanController', () => {
       )
       expect(req.session.actionPlanAction).toBeUndefined()
       expect(req.session.actionPlanActivities).toBeUndefined()
+      expect(req.session.actionPlanAlertType).toBe('ADD')
       expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan')
     })
 
@@ -688,6 +697,7 @@ describe('ActionPlanController', () => {
       referralService.submitAction.mockResolvedValue({ success: false, message: 'Submission failed' })
 
       await expect(actionPlanController.saveActivities(req, res)).rejects.toThrow('Submission failed')
+      expect(req.session.actionPlanAlertType).toBeUndefined()
       expect(res.redirect).not.toHaveBeenCalled()
     })
 
@@ -701,6 +711,7 @@ describe('ActionPlanController', () => {
         'addAnotherActivityError',
         'Select yes if you want to add another activity',
       )
+      expect(req.session.actionPlanAlertType).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/activities')
     })
   })

@@ -1,16 +1,22 @@
 import { ActionPlanSummaryDto } from '@community-support-api'
 import { Response } from 'express'
-import { GovukFrontendButton, GovukFrontendSummaryListCardActions, GovukFrontendSummaryListRow } from '@govuk-frontend'
+import {
+  GovukFrontendButton,
+  GovukFrontendSummaryListCardActions,
+  GovukFrontendSummaryListRow,
+} from '@govuk-frontend'
 import { formatDate } from 'date-fns'
 import PresenterBase from '../../presenter/presenterBase'
 import { ActionPlanContent, ActionPlanSummaryList, ActionPlanViewModel } from './actionPlanViewModel'
 import { components } from '../../@types/communitySupportApi/imported'
+import { MojAlert } from '@moj-frontend'
 
 export default class ActionPlanPresenter extends PresenterBase<ActionPlanViewModel, ActionPlanContent> {
   constructor(
     private readonly actionPlanSummary: ActionPlanSummaryDto,
     private readonly caseReference: string,
     private readonly icsFeedbackSubmitted: boolean = false,
+    private readonly alertType?: 'ADD' | 'REMOVE',
   ) {
     super()
   }
@@ -57,6 +63,7 @@ export default class ActionPlanPresenter extends PresenterBase<ActionPlanViewMod
       createButton,
       createLink: `/referral/${this.caseReference}/action-plan/create`,
       noActionPlanText: hasNeeds ? undefined : content.noActionPlanText.replace('{{ firstName }}', firstName),
+      alert: this.getAlert(content, firstName, this.alertType),
     }
   }
 
@@ -133,6 +140,29 @@ export default class ActionPlanPresenter extends PresenterBase<ActionPlanViewMod
           text: content.removeOutcomeText,
         },
       ],
+    }
+  }
+
+  private getAlert(
+    content: ActionPlanContent,
+    name: string,
+    type?: 'ADD' | 'REMOVE',
+  ): MojAlert | null {
+    switch (type) {
+      case 'ADD':
+        return {
+          variant: 'success',
+          html: `<p class="govuk-body">${content.addOutcomeNotificationText.replace('{{ firstName }}', name)}</p>`,
+          dismissible: true,
+        }
+      case 'REMOVE':
+        return {
+          variant: 'success',
+          html: `<p class="govuk-body">${content.removeOutcomeNotificationText.replace('{{ firstName }}', name)}</p>`,
+          dismissible: true,
+        }
+      default:
+        return null
     }
   }
 

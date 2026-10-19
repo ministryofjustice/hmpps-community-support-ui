@@ -1,4 +1,9 @@
-import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendSummaryList } from '@govuk-frontend'
+import {
+  GovukFrontendBackLink,
+  GovukFrontendButton,
+  GovukFrontendSummaryList,
+} from '@govuk-frontend'
+import { MojAlert } from '@moj-frontend'
 import { GlobalContent } from '../../../assets/content/GlobalContent'
 
 export type ActionPlanSummaryList = GovukFrontendSummaryList & {
@@ -17,6 +22,7 @@ export type ActionPlanViewModel = {
   createButton: GovukFrontendButton
   createLink: string
   noActionPlanText: string
+  alert?: MojAlert
 }
 
 export type ActionPlanContent = GlobalContent['/referral/:id/action-plan']

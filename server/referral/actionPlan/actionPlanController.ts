@@ -98,6 +98,9 @@ class ActionPlanController {
   async showActionPlanPage(req: Request, res: Response) {
     const { id: caseReference } = req.params as { id: string }
     const { username } = res.locals.user
+    const bannerType = req.session.actionPlanAlertType
+
+    delete req.session.actionPlanAlertType
 
     const [actionPlanSummary, referralProgress] = await Promise.all([
       this.referralService.getActionPlanSummary(caseReference, username),
@@ -106,7 +109,7 @@ class ActionPlanController {
     const icsFeedbackSubmitted = referralProgress.appointments.some(
       appointment => appointment.type === 'ICS' && Boolean(appointment.icsFeedbackId),
     )
-    const presenter = new ActionPlanPresenter(actionPlanSummary, caseReference, icsFeedbackSubmitted)
+    const presenter = new ActionPlanPresenter(actionPlanSummary, caseReference, icsFeedbackSubmitted, bannerType)
 
     return presenter.renderPage(res)
   }
@@ -180,6 +183,7 @@ class ActionPlanController {
         delete req.session.actionPlanActivities
       }
     }
+    req.session.actionPlanAlertType = 'REMOVE'
 
     return res.redirect(`/referral/${caseReference}/action-plan`)
   }
@@ -470,6 +474,8 @@ class ActionPlanController {
 
     delete req.session.actionPlanAction
     delete req.session.actionPlanActivities
+
+    req.session.actionPlanAlertType = 'ADD'
 
     return res.redirect(`/referral/${caseReference}/action-plan`)
   }
