@@ -1,6 +1,6 @@
 import { Response } from 'express'
 import { GovukFrontendRadios } from '@govuk-frontend'
-import { ActionPlanSelectANeedNeed } from '@community-support-api'
+import type { ActionPlanSelectANeedNeed, ActionPlanSelectANeedResponse } from '@community-support-api'
 import PresenterBase from '../../../presenter/presenterBase'
 import { ActionPlanSelectANeedContent, ActionPlanSelectANeedViewModel } from './actionPlanSelectANeedViewModel'
 
@@ -11,6 +11,7 @@ export default class ActionPlanSelectANeedPresenter extends PresenterBase<
   constructor(
     private readonly caseReference: string,
     private readonly needs: ActionPlanSelectANeedNeed[],
+    private readonly selectedNeeds: ActionPlanSelectANeedResponse['selectedNeeds'],
     private readonly selectedNeedId?: string,
   ) {
     super()
@@ -47,6 +48,8 @@ export default class ActionPlanSelectANeedPresenter extends PresenterBase<
     return {
       pageHeader: content.pageHeader,
       backLink: { href: `/referral/${this.caseReference}/action-plan` },
+      identifiedNeedsDetailsTitle: content.identifiedNeedsDetailsTitle,
+      identifiedNeeds: this.selectedNeeds,
       whichNeedsRadio: this.buildWhichNeedsRadio(content, res.locals.errors?.messages.needId),
       continueButton: { text: content.continueButtonText },
       continueButtonLink: `/referral/${this.caseReference}/action-plan/select-a-need`,

@@ -119,7 +119,7 @@ class ActionPlanController {
   ) {
     const [actionPlanSummary, needsAndOutcomes] = await Promise.all([
       this.referralService.getActionPlanSummary(caseReference, username),
-      this.referralService.getActionPlanNeedsAndOutcomes(username),
+      this.referralService.getActionPlanNeedsAndOutcomes(caseReference, username),
     ])
     const selectedNeed = actionPlanSummary.needs.find(need => need.id === needId)
     const selectedOutcome = selectedNeed?.outcomes.find(outcome => outcome.id === outcomeAnswerId)
@@ -194,11 +194,16 @@ class ActionPlanController {
     const { id: caseReference } = req.params as { id: string }
     const { username } = res.locals.user
 
-    const { needs } = await this.referralService.getActionPlanNeedsAndOutcomes(username)
+    const { needs, selectedNeeds } = await this.referralService.getActionPlanNeedsAndOutcomes(caseReference, username)
 
     req.session.actionPlan = { ...req.session.actionPlan, needs }
 
-    const presenter = new ActionPlanSelectANeedPresenter(caseReference, needs, req.session.actionPlanAction?.needId)
+    const presenter = new ActionPlanSelectANeedPresenter(
+      caseReference,
+      needs,
+      selectedNeeds,
+      req.session.actionPlanAction?.needId,
+    )
 
     return presenter.renderPage(res)
   }
@@ -294,7 +299,7 @@ class ActionPlanController {
       const { username } = res.locals.user
       const [actionPlanSummary, needsAndOutcomes] = await Promise.all([
         this.referralService.getActionPlanSummary(caseReference, username),
-        this.referralService.getActionPlanNeedsAndOutcomes(username),
+        this.referralService.getActionPlanNeedsAndOutcomes(caseReference, username),
       ])
       const selectedNeed = actionPlanSummary.needs.find(need => need.id === needId)
       const selectedOutcome = selectedNeed?.outcomes.find(outcome => outcome.id === outcomeAnswerId)

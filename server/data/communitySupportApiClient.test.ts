@@ -14,6 +14,7 @@ import type {
   CommunitySupportRiskInformationDto,
   CommunitySupportRiskDto,
   ActionPlanSummaryDto,
+  ActionPlanSelectANeedResponse,
   ActionPlanActionRequest,
   ActionPlanActionResponse,
   WithdrawalReasonsGroupedBffResponseDto,
@@ -382,6 +383,22 @@ describe('CommunitySupportApiClient tests', () => {
       const result = communitySupportApiClient.getActionPlanSummary(caseReference, 'user1')
 
       expect(result).resolves.toEqual(mockActionPlanSummary)
+    })
+  })
+  describe('getActionPlanNeedsAndOutcomes tests', () => {
+    it('includes the referral reference required by the BFF endpoint', () => {
+      const referralReference = 'AB1234CD'
+      const response: ActionPlanSelectANeedResponse = { needs: [], selectedNeeds: [] }
+
+      nock('http://localhost:8080', {
+        reqheaders: { authorization: 'Bearer dummy-token' },
+      })
+        .get(`/bff/referral/action-plan/select-a-need?referralReference=${referralReference}`)
+        .reply(200, response)
+
+      const result = communitySupportApiClient.getActionPlanNeedsAndOutcomes(referralReference, 'user1')
+
+      expect(result).resolves.toEqual(response)
     })
   })
   describe('submitAction tests', () => {
