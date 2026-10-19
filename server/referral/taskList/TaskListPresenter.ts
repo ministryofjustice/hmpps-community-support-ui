@@ -96,8 +96,11 @@ export default class TaskListPresenter extends PresenterBase<TaskListViewModel, 
         taskList: {
           items: [
             {
-              title: { text: content.checkAnswers.subTasks.checkAnswersAndSubmit.text },
-              href: canCheckAnswers ? content.checkAnswers.subTasks.checkAnswersAndSubmit.href : undefined,
+              title: {
+                text: content.checkAnswers.subTasks.checkAnswersAndSubmit.text,
+                classes: canCheckAnswers ? undefined : 'task-list-entry-link-disabled',
+              },
+              href: content.checkAnswers.subTasks.checkAnswersAndSubmit.href,
               status: status.checkAnswers,
             },
           ],

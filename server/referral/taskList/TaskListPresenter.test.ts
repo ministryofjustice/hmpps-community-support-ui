@@ -32,7 +32,10 @@ describe('TaskListPresenter - Page Rendering', () => {
 
       const { checkAnswers } = viewModel.taskListItemsBySection
       expect(checkAnswers.taskList.items[0].status).toEqual({ text: 'Cannot Start Yet' })
-      expect(checkAnswers.taskList.items[0].href).toBeUndefined()
+      expect(checkAnswers.taskList.items[0].title.classes).toBe('task-list-entry-link-disabled')
+      expect(checkAnswers.taskList.items[0].href).toBe(
+        content.taskList.checkAnswers.subTasks.checkAnswersAndSubmit.href,
+      )
     })
     test('check answers shows Incomplete', () => {
       const taskListState = {
@@ -48,7 +51,10 @@ describe('TaskListPresenter - Page Rendering', () => {
       expect(checkAnswers.taskList.items[0].status).toEqual({
         tag: { text: 'Incomplete', classes: 'govuk-tag--blue' },
       })
-      expect(checkAnswers.taskList.items[0].href).toBeDefined()
+      expect(checkAnswers.taskList.items[0].title.classes).toBeUndefined()
+      expect(checkAnswers.taskList.items[0].href).toBe(
+        content.taskList.checkAnswers.subTasks.checkAnswersAndSubmit.href,
+      )
     })
   })
 
@@ -78,7 +84,7 @@ describe('TaskListPresenter - Page Rendering', () => {
       expect(sections.checkAnswers.title).toBe('Check answers and submit')
 
       const checkAnswersLink = sections.checkAnswers.taskList.items[0].href
-      expect(checkAnswersLink).toBeUndefined()
+      expect(checkAnswersLink).toBe(content.taskList.checkAnswers.subTasks.checkAnswersAndSubmit.href)
 
       expect(sections.personalDetails.taskList.items[0].status.tag.text).toBe('Incomplete')
       expect(sections.referralInformation.taskList.items[0].status.tag.text).toBe('Incomplete')
