@@ -139,6 +139,7 @@ describe('ActionPlanController', () => {
     }
     const selectableNeeds = {
       needs: [{ id: 'need-1', label: 'Accommodation', outcomes: [{ id: 'outcome-1', text: 'Find housing' }] }],
+      selectedNeeds: [{ id: 'selected-need-1', label: 'Accommodation' }],
     }
 
     beforeEach(() => {
@@ -284,12 +285,14 @@ describe('ActionPlanController', () => {
     ]
 
     it('stores the needs and outcomes in session and renders the page', async () => {
-      referralService.getActionPlanNeedsAndOutcomes.mockResolvedValue({ needs })
+      const selectedNeeds = [{ id: 'selected-need-1', label: 'Accommodation' }]
+      referralService.getActionPlanNeedsAndOutcomes.mockResolvedValue({ needs, selectedNeeds })
 
       await actionPlanController.showSelectANeedPage(req, res)
 
-      expect(referralService.getActionPlanNeedsAndOutcomes).toHaveBeenCalledWith('user1')
+      expect(referralService.getActionPlanNeedsAndOutcomes).toHaveBeenCalledWith('AB1234CD', 'user1')
       expect(req.session.actionPlan).toEqual({ needs })
+      expect(ActionPlanSelectANeedPresenter).toHaveBeenCalledWith('AB1234CD', needs, selectedNeeds, undefined)
       expect(ActionPlanSelectANeedPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
     })
 
@@ -726,12 +729,12 @@ describe('ActionPlanController', () => {
       const selectableNeeds = [
         { id: 'need-1', label: 'Accommodation', outcomes: [{ id: 'reference-outcome-1', text: 'Find housing' }] },
       ]
-      referralService.getActionPlanNeedsAndOutcomes.mockResolvedValue({ needs: selectableNeeds })
+      referralService.getActionPlanNeedsAndOutcomes.mockResolvedValue({ needs: selectableNeeds, selectedNeeds: [] })
 
       await actionPlanController.showViewActivitiesPage(req, res)
 
       expect(referralService.getActionPlanSummary).toHaveBeenCalledWith('AB1234CD', 'user1')
-      expect(referralService.getActionPlanNeedsAndOutcomes).toHaveBeenCalledWith('user1')
+      expect(referralService.getActionPlanNeedsAndOutcomes).toHaveBeenCalledWith('AB1234CD', 'user1')
       expect(req.session.actionPlanAction).toEqual({ needId: 'need-1', outcomeId: 'reference-outcome-1' })
       expect(req.session.actionPlan).toEqual({ needs: selectableNeeds })
       expect(req.session.actionPlanActivities).toEqual({
@@ -750,7 +753,7 @@ describe('ActionPlanController', () => {
         lastUpdatedAt: '2026-10-12T09:00:00Z',
         needs: [],
       })
-      referralService.getActionPlanNeedsAndOutcomes.mockResolvedValue({ needs: [] })
+      referralService.getActionPlanNeedsAndOutcomes.mockResolvedValue({ needs: [], selectedNeeds: [] })
       jest.clearAllMocks()
 
       await actionPlanController.showViewActivitiesPage(req, res)
