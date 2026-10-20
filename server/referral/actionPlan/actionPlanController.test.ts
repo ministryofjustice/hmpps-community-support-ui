@@ -65,6 +65,7 @@ describe('ActionPlanController', () => {
         user: { username: 'user1' },
         content: {
           pageHeader: 'Action plan',
+          backLink: '/referral/{{ caseReference }}/action-plan/activities',
         },
       },
       render: jest.fn(),
@@ -527,8 +528,8 @@ describe('ActionPlanController', () => {
         undefined,
         undefined,
         undefined,
-        '/referral/AB1234CD/action-plan/select-a-need',
       )
+      expect(res.locals.content.backLink).toBe('/referral/{{ caseReference }}/action-plan/select-a-need')
       expect(ActionPlanAddActivityPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
     })
 
@@ -570,8 +571,8 @@ describe('ActionPlanController', () => {
           undefined,
           undefined,
           undefined,
-          destination === 'activities' ? undefined : `/referral/AB1234CD/action-plan/${destination}`,
         )
+        expect(res.locals.content.backLink).toBe(`/referral/{{ caseReference }}/action-plan/${destination}`)
       },
     )
 
@@ -641,7 +642,6 @@ describe('ActionPlanController', () => {
         { activityProvider: 'Old provider', activityDescription: 'Old details' },
         0,
         { activityProvider: 'Community group', activityDescription: '   ' },
-        undefined,
       )
     })
 
@@ -918,8 +918,8 @@ describe('ActionPlanController', () => {
         undefined,
         undefined,
         undefined,
-        '/referral/ZZ9876YY/action-plan/select-a-need',
       )
+      expect(res.locals.content.backLink).toBe('/referral/{{ caseReference }}/action-plan/select-a-need')
     })
   })
 

@@ -14,14 +14,13 @@ export default class ActionPlanAddActivityPresenter extends PresenterBase<
     private readonly activity?: { activityProvider: string; activityDescription: string },
     private readonly activityIndex?: number,
     private readonly userInputData?: Record<string, string>,
-    private readonly backLink?: string,
   ) {
     super()
   }
 
   protected buildViewModel(res: Response): ActionPlanAddActivityViewModel {
     const content = this.buildStaticContent(res)
-    const href = this.backLink ?? content.backlinkHref.replace('{{ caseReference }}', this.caseReference)
+    const href = content.backLink.replace('{{ caseReference }}', this.caseReference)
 
     return {
       pageHeader: content.pageHeader,
