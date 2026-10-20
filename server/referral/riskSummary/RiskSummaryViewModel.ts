@@ -41,7 +41,7 @@ export interface RiskSummaryRow {
 }
 
 export interface RiskSummaryViewModel {
-  pageTile: string
+  pageTitle: string
   backLink: GovukFrontendBackLink
   heading: string
   subheading: string
