@@ -332,7 +332,9 @@
     "activityHeaderText": "Activity",
     "moveOutcomeDownText": "Move outcome down",
     "moveOutcomeUpText": "Move outcome up",
-    "createButtonText": "Create an action plan"
+    "createButtonText": "Create an action plan",
+    "addOutcomeNotificationText": "You added an outcome to {{ firstName }}'s plan.",
+    "removeOutcomeNotificationText": "You removed an outcome from {{ firstName }}'s plan."
   },
   "/referral/:id/action-plan/remove-outcome": {
     "pageHeader": "Confirm you want to remove this outcome from {{ firstName }}'s plan",
@@ -390,6 +392,11 @@
   "/referral/:id/action-plan/update-service-end-date": {
     "pageTitle": "Session details – Change the service end date",
     "pageHeader": "Change the service end date",
+    "continueButtonText": "Continue",
+    "backLink": "/referral/{{ id }}/action-plan/service-end-date-check"
+  },
+  "/referral/:id/action-plan/person-involvement": {
+    "pageTitle": "Session details – Person involvement",
     "continueButtonText": "Continue",
     "backLink": "/referral/{{ id }}/action-plan/service-end-date-check"
   },

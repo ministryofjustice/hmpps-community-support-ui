@@ -1303,11 +1303,17 @@ export interface components {
       sessionDetails?: components['schemas']['SessionDetailsRequest'] | null
       sessionFeedback?: components['schemas']['SessionFeedbackRequest'] | null
       issuesAndConcerns?: components['schemas']['IssuesAndConcernsRequest'] | null
+      newlyIdentifiedAdditionalSupportNeeds?:
+        components['schemas']['NewlyIdentifiedAdditionalSupportNeedsRequest'] | null
       nextSteps?: components['schemas']['NextStepsRequest'] | null
     }
     IssuesAndConcernsRequest: {
       identified?: string | null
       notifyProbationPractitioner?: boolean | null
+    }
+    NewlyIdentifiedAdditionalSupportNeedsRequest: {
+      newlyIdentifiedAdditionalSupportNeedsIdentified?: boolean | null
+      newlyIdentifiedAdditionalSupportNeedsDetails?: string | null
     }
     NextStepsRequest: {
       plannedForNextSession?: string | null
@@ -1380,6 +1386,8 @@ export interface components {
       sessionFeedbackStrengthsIdentified?: string | null
       issuesOrConcernsIdentified?: string | null
       issuesOrConcernsNotifyProbationPractitioner?: boolean | null
+      newlyIdentifiedAdditionalSupportNeedsIdentified?: boolean | null
+      newlyIdentifiedAdditionalSupportNeedsDetails?: string | null
       nextStepsPlannedForNextSession?: string | null
       nextStepsActionsBeforeNextSession?: string | null
       sessionFeedbackAppointmentDetails?: components['schemas']['SessionFeedbackAppointmentDetailsDto'] | null
@@ -1714,7 +1722,11 @@ export interface components {
       /** Format: uuid */
       id: string
       label: string
-      time: string
+      /** Format: date */
+      appointmentDate: string
+      appointmentTime: components['schemas']['AppointmentTimeResponse']
+      /** @enum {string} */
+      appointmentStatus: 'SCHEDULED' | 'NEEDS_FEEDBACK' | 'COMPLETED' | 'CHANGED' | 'DID_NOT_ATTEND' | 'DID_NOT_HAPPEN'
     }
     ReferralAppointmentsBffResponseDto: {
       personDetails: components['schemas']['ReferralAppointmentsPersonDetailsDto']

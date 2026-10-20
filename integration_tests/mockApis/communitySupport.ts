@@ -750,6 +750,22 @@ export default {
         jsonBody: checkServiceEndDate,
       },
     }),
+  stubGetPersonInvolvement: (
+    caseReference: string,
+    personInvolvement: ActionPlanSessionDeliveryDetailsResponse,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: `/community-support/bff/referral/${caseReference}/action-plan/service-delivery-details/person-involvement`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: personInvolvement,
+      },
+    }),
   stubGetWithdrawalReasons: (
     withdrawalReasons: WithdrawalReasonsGroupedBffResponseDto,
     httpStatus = 200,
