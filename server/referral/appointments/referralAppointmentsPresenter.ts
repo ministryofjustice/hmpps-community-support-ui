@@ -3,6 +3,7 @@ import type { GovukFrontendTable } from '@govuk-frontend'
 import type { MojSubNavigation } from '@moj-frontend'
 import type { ReferralAppointmentsBffResponseDto } from '@community-support-api'
 import { formatDate } from 'date-fns'
+import { formatTime12Hr } from '../../utils/timeFormat'
 import PresenterBase from '../../presenter/presenterBase'
 import type { ReferralAppointmentsContent, ReferralAppointmentsViewModel } from './referralAppointmentsViewModel'
 
@@ -39,7 +40,10 @@ export default class ReferralAppointmentsPresenter extends PresenterBase<
     return {
       pageHeader: `${content.pageHeader} ${firstName} ${lastName}`,
       navBar: this.buildSubNav(content),
-      createAppointmentHref: `/referral/${this.caseReference}/appointment/select-type`,
+      appointmentsTitle: content.appointmentsTitle,
+      createAppointmentText: content.createAppointmentText,
+      noAppointmentsMessage: content.noAppointmentsMessage,
+      createAppointmentHref: `/referral/${this.caseReference}/create-an-appointment/appointment-type`,
       appointmentsTable: this.buildAppointmentsTable(content),
       hasAppointments: appointments.length > 0,
     }
@@ -65,7 +69,13 @@ export default class ReferralAppointmentsPresenter extends PresenterBase<
       head: [{ text: content.appointmentTypeColumnHeader }, { text: content.dateTimeColumnHeader }],
       rows: this.referralAppointments.appointments.map(appointment => [
         { text: appointment.label },
-        { text: formatDate(appointment.time, "dd MMMM yyyy 'at' h:mmaaa") },
+        {
+          text: `${formatDate(new Date(appointment.appointmentDate), 'dd MMMM yyyy')} at ${formatTime12Hr(
+            appointment.appointmentTime.hour,
+            appointment.appointmentTime.minute,
+            appointment.appointmentTime.amPm,
+          )}`,
+        },
       ]),
     }
   }

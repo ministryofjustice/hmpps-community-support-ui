@@ -26,7 +26,15 @@ describe('ReferralAppointmentsPresenter', () => {
   it('renders appointments and activates the appointments tab', () => {
     const response: ReferralAppointmentsBffResponseDto = {
       personDetails: { firstName: 'Alex', lastName: 'Example', dateOfBirth: '1980-01-01', crn: 'X123456' },
-      appointments: [{ id: 'appointment-id', label: 'Contact session', time: '2026-10-09T13:30:00Z' }],
+      appointments: [
+        {
+          id: 'appointment-id',
+          label: 'Contact session',
+          appointmentDate: '2026-10-09',
+          appointmentTime: { hour: 2, minute: 30, amPm: 'pm' },
+          appointmentStatus: 'SCHEDULED',
+        },
+      ],
     }
 
     const viewModel = new ReferralAppointmentsPresenter(response, caseReference).buildViewModel(makeResponse())
@@ -42,7 +50,10 @@ describe('ReferralAppointmentsPresenter', () => {
       text: 'Appointments',
       href: `/referral/${caseReference}/appointments`,
     })
-    expect(viewModel.createAppointmentHref).toBe(`/referral/${caseReference}/appointment/select-type`)
+    expect(viewModel.appointmentsTitle).toBe('Appointments')
+    expect(viewModel.createAppointmentText).toBe('Create an Appointment')
+    expect(viewModel.noAppointmentsMessage).toBe('No appointments scheduled')
+    expect(viewModel.createAppointmentHref).toBe(`/referral/${caseReference}/create-an-appointment/appointment-type`)
   })
 
   it('renders an empty appointment list when the API returns no appointments', () => {

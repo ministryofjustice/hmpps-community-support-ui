@@ -4,7 +4,10 @@ import type { MojSubNavigation } from '@moj-frontend'
 export type ReferralAppointmentsViewModel = {
   pageHeader: string
   navBar: MojSubNavigation
+  appointmentsTitle: string
+  createAppointmentText: string
   createAppointmentHref: string
+  noAppointmentsMessage: string
   appointmentsTable: GovukFrontendTable
   hasAppointments: boolean
 }

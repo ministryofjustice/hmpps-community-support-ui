@@ -106,10 +106,6 @@ export default function routes({
     appointmentController.recordDidSessionTakePlace(req, res),
   )
 
-  get('/referral-details/:caseReference/progress', async (req, res) =>
-    referralController.showReferralProgressDetails(req, res),
-  )
-
   get('/referral/:referralId/ics/:icsId/view-session-details', async (req, res) =>
     appointmentController.viewChangeSessionDetails(req, res),
   )
