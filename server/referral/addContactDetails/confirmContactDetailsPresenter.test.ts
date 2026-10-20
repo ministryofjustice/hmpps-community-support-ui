@@ -1,6 +1,8 @@
 import { Response } from 'express'
 import { Person, UpdateProbationPractitionerDetailsRequest } from '@community-support-api'
 import ConfirmContactDetailsPresenter from './confirmContactDetailsPresenter'
+import { ConfirmContactDetailsContent } from './confirmContactDetailsViewModel'
+import loadContentDataForTest from '../../testutils/loadContentDataForTest'
 
 const personalDetails: Person = {
   firstName: 'Referral',
@@ -29,25 +31,7 @@ const ppDetails: PPDetails = {
   teamPhoneNumber: '11111 222 333',
 }
 
-const content = {
-  pageTitle: 'Check contact details',
-  backLinkText: 'Back',
-  backLinkHref: '/referral/new/add-contact-details',
-  buttonText: 'Save and continue',
-  heading: '{{ personName }}',
-  pageCaption: 'CRN: {{ CRN }} | Date of birth: {{ DOB }}',
-  subHeading: 'Check contact details',
-  summaryHeading: 'Contact details',
-  nameLabel: 'Name',
-  emailAddressLabel: 'Email address',
-  jobRoleLabel: 'Job role',
-  phoneNumberLabel: 'Phone number',
-  pduLabel: 'PDU',
-  probationOfficeLabel: 'Probation office',
-  teamPhoneNumberLabel: 'Team phone number',
-  changeLabel: 'Change',
-  notEnteredText: 'Not entered',
-}
+const content = loadContentDataForTest('/referral/new/confirm-contact-details') as ConfirmContactDetailsContent
 
 const res = {
   locals: { content },
