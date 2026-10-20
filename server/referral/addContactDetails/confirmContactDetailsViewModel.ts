@@ -4,6 +4,7 @@ import { GlobalContent } from '../../../assets/content/GlobalContent'
 export type ConfirmContactDetailsContent = GlobalContent['/referral/new/confirm-contact-details']
 
 export interface ConfirmContactDetailsViewModel {
+  pageTitle: string,
   heading: string
   pageCaption: string
   backLinkArgs: GovukFrontendBackLink
