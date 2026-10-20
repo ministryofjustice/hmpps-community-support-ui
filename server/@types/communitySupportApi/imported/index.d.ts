@@ -1303,17 +1303,12 @@ export interface components {
       sessionDetails?: components['schemas']['SessionDetailsRequest'] | null
       sessionFeedback?: components['schemas']['SessionFeedbackRequest'] | null
       issuesAndConcerns?: components['schemas']['IssuesAndConcernsRequest'] | null
-      newlyIdentifiedAdditionalSupportNeeds?:
-        components['schemas']['NewlyIdentifiedAdditionalSupportNeedsRequest'] | null
+      newlyIdentifiedAdditionalSupportNeeds?: string | null
       nextSteps?: components['schemas']['NextStepsRequest'] | null
     }
     IssuesAndConcernsRequest: {
       identified?: string | null
       notifyProbationPractitioner?: boolean | null
-    }
-    NewlyIdentifiedAdditionalSupportNeedsRequest: {
-      newlyIdentifiedAdditionalSupportNeedsIdentified?: boolean | null
-      newlyIdentifiedAdditionalSupportNeedsDetails?: string | null
     }
     NextStepsRequest: {
       plannedForNextSession?: string | null
@@ -1386,8 +1381,7 @@ export interface components {
       sessionFeedbackStrengthsIdentified?: string | null
       issuesOrConcernsIdentified?: string | null
       issuesOrConcernsNotifyProbationPractitioner?: boolean | null
-      newlyIdentifiedAdditionalSupportNeedsIdentified?: boolean | null
-      newlyIdentifiedAdditionalSupportNeedsDetails?: string | null
+      additionalSupportNeeds?: string | null
       nextStepsPlannedForNextSession?: string | null
       nextStepsActionsBeforeNextSession?: string | null
       sessionFeedbackAppointmentDetails?: components['schemas']['SessionFeedbackAppointmentDetailsDto'] | null
