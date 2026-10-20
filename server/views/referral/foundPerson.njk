@@ -4,7 +4,8 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 
-{% set pageTitle = applicationName + " - Found a Person" %}
+{% set pageTitle = content.pageTitle + " - " + applicationName %}
+
 {% set mainClasses = "govuk-body" %}
 
 {% block contentBody %}
