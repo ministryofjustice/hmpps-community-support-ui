@@ -355,6 +355,7 @@
       { "value": "HANDOVER_SESSION", "text": "Handover session" }
     ],
     "backLinkText": "Back to appointments"
+  },
   "/referral/:id": {
     "subNavigationLabel": "Sub navigation",
     "actionPlanTabText": "Action plan"
