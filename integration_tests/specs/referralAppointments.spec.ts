@@ -51,7 +51,7 @@ test.describe('Referral Appointments Page', () => {
     const appointmentsPage = new ReferralAppointmentsPage(page)
     await appointmentsPage.verifyOnPage()
     await expect(appointmentsPage.header).toHaveText('Referral for Alex Example')
-    await expect(page.getByRole('heading', { name: 'Contact sessions', level: 2 })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Appointments', level: 2 })).toBeVisible()
     await expect(page.getByText('Referral progress')).toHaveCount(0)
     await expect(appointmentsPage.appointmentsTable).toContainText('Contact session')
     await expect(appointmentsPage.appointmentsTable).toContainText('Handover session')
