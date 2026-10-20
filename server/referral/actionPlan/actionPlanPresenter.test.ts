@@ -36,6 +36,26 @@ describe('ActionPlanPresenter', () => {
     expect(renderData.content.createButton.text).toBe('Create an action plan')
   })
 
+  it('builds the sub navigation with the action plan item active for the referral', () => {
+    const actionPlanSummary: ActionPlanSummaryDto = {
+      personDetails: { firstName: 'Alex', lastName: 'River' },
+      needs: [],
+      lastUpdatedAt: '',
+    }
+    const res = {
+      locals: { content: globalContent['/referral/:id/action-plan'] },
+      render: jest.fn(),
+    } as unknown as Response
+
+    new ActionPlanPresenter(actionPlanSummary, 'AB1234CD').renderPage(res)
+
+    const renderData = (res.render as jest.Mock).mock.calls[0][1] as { content: ActionPlanViewModel }
+    expect(renderData.content.subNavigationArgs).toEqual({
+      label: 'Sub navigation',
+      items: [{ href: '/referral/AB1234CD/action-plan', text: 'Action plan', active: true }],
+    })
+  })
+
   it('builds the needs summary from data', () => {
     const actionPlanSummary: ActionPlanSummaryDto = {
       personDetails: {
