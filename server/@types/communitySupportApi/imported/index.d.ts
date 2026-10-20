@@ -1292,6 +1292,10 @@ export interface components {
       identified?: string | null
       notifyProbationPractitioner?: boolean | null
     }
+    IdentityRequest: {
+      didYouIdentity?: boolean | null
+      identityDetails?: string | null
+    }
     NextStepsRequest: {
       plannedForNextSession?: string | null
       actionsBeforeNextSession?: string | null
