@@ -3,6 +3,7 @@ import {
   CaseWorkerDto,
   AssignmentFailureDto,
   ReferralProgress,
+  ReferralAppointmentsBffResponseDto,
   ReferralInformation,
   CommunitySupportRiskInformationDto,
   ActionPlanSummaryDto,
@@ -109,6 +110,22 @@ describe('Referral service tests', () => {
       const result = await referralService.getReferralProgress(caseReference, 'user1')
       expect(result).toStrictEqual(mockReferralProgress)
       expect(communitySupportApiClient.getReferralProgress).toHaveBeenCalledWith(caseReference, 'user1')
+    })
+  })
+
+  describe('getReferralAppointments', () => {
+    it('should return referral appointments from API client', async () => {
+      const caseReference = 'AB1234CD'
+      const appointments: ReferralAppointmentsBffResponseDto = {
+        personDetails: { firstName: 'Alex', lastName: 'Example', dateOfBirth: '1980-01-01', crn: 'X123456' },
+        appointments: [],
+      }
+
+      communitySupportApiClient.getReferralAppointments.mockResolvedValue(appointments)
+      const result = await referralService.getReferralAppointments(caseReference, 'user1')
+
+      expect(result).toStrictEqual(appointments)
+      expect(communitySupportApiClient.getReferralAppointments).toHaveBeenCalledWith(caseReference, 'user1')
     })
   })
 
