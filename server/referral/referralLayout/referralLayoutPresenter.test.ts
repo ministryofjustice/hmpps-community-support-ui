@@ -1,4 +1,5 @@
 import { Response } from 'express'
+import { globalContent } from '../../../assets/content/GlobalContent'
 import ReferralLayoutPresenter, { ReferralNavigationValues } from './referralLayoutPresenter'
 
 class TestReferralLayoutPresenter extends ReferralLayoutPresenter<{ title: string }, Record<string, string>> {
@@ -16,20 +17,34 @@ class TestReferralLayoutPresenter extends ReferralLayoutPresenter<{ title: strin
 }
 
 describe('ReferralLayoutPresenter', () => {
+  const content = globalContent['/referral/:id']
+
   describe('getMojSubNavigationArgs', () => {
     it('builds the action plan item linking to the referral', () => {
       const presenter = new TestReferralLayoutPresenter(ReferralNavigationValues.actionPlanTab, 'AB1234CD')
 
-      expect(presenter.getMojSubNavigationArgs()).toEqual({
+      expect(presenter.getMojSubNavigationArgs(content)).toEqual({
         label: 'Sub navigation',
         items: [{ href: '/referral/AB1234CD/action-plan', text: 'Action plan', active: true }],
       })
     })
 
+    it('takes the label and tab text from the content', () => {
+      const presenter = new TestReferralLayoutPresenter(ReferralNavigationValues.actionPlanTab, 'AB1234CD')
+
+      const args = presenter.getMojSubNavigationArgs({
+        subNavigationLabel: 'Custom label',
+        actionPlanTabText: 'Custom tab',
+      })
+
+      expect(args.label).toBe('Custom label')
+      expect(args.items[0].text).toBe('Custom tab')
+    })
+
     it('marks the action plan item as inactive when another page is active', () => {
       const presenter = new TestReferralLayoutPresenter('somethingElse' as ReferralNavigationValues, 'AB1234CD')
 
-      expect(presenter.getMojSubNavigationArgs().items[0].active).toBe(false)
+      expect(presenter.getMojSubNavigationArgs(content).items[0].active).toBe(false)
     })
   })
 

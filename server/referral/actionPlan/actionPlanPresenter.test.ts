@@ -5,6 +5,8 @@ import ActionPlanPresenter from './actionPlanPresenter'
 import { ActionPlanViewModel } from './actionPlanViewModel'
 import { globalContent } from '../../../assets/content/GlobalContent'
 
+const actionPlanContent = { ...globalContent['/referral/:id'], ...globalContent['/referral/:id/action-plan'] }
+
 describe('ActionPlanPresenter', () => {
   it('builds the page header and back link from summary data', () => {
     const actionPlanSummary: ActionPlanSummaryDto = {
@@ -19,7 +21,7 @@ describe('ActionPlanPresenter', () => {
     const presenter = new ActionPlanPresenter(actionPlanSummary, 'AB1234CD')
     const res = {
       locals: {
-        content: globalContent['/referral/:id/action-plan'],
+        content: actionPlanContent,
       },
       render: jest.fn(),
     } as unknown as Response
@@ -43,7 +45,7 @@ describe('ActionPlanPresenter', () => {
       lastUpdatedAt: '',
     }
     const res = {
-      locals: { content: globalContent['/referral/:id/action-plan'] },
+      locals: { content: actionPlanContent },
       render: jest.fn(),
     } as unknown as Response
 
@@ -93,7 +95,7 @@ describe('ActionPlanPresenter', () => {
     const presenter = new ActionPlanPresenter(actionPlanSummary, 'AB1234CD', true)
     const res = {
       locals: {
-        content: globalContent['/referral/:id/action-plan'],
+        content: actionPlanContent,
       },
       render: jest.fn(),
     } as unknown as Response
@@ -149,7 +151,7 @@ describe('ActionPlanPresenter', () => {
       lastUpdatedAt: '2026-10-15T09:00:00Z',
     }
     const res = {
-      locals: { content: globalContent['/referral/:id/action-plan'] },
+      locals: { content: actionPlanContent },
       render: jest.fn(),
     } as unknown as Response
 
@@ -231,7 +233,7 @@ describe('ActionPlanPresenter', () => {
     const presenter = new ActionPlanPresenter(actionPlanSummary, 'AB1234CD')
     const res = {
       locals: {
-        content: globalContent['/referral/:id/action-plan'],
+        content: actionPlanContent,
       },
       render: jest.fn(),
     } as unknown as Response
@@ -267,7 +269,7 @@ describe('ActionPlanPresenter', () => {
       const presenter = new ActionPlanPresenter(actionPlanSummary, 'AB1234CD', icsFeedbackSubmitted)
       const res = {
         locals: {
-          content: globalContent['/referral/:id/action-plan'],
+          content: actionPlanContent,
         },
         render: jest.fn(),
       } as unknown as Response
@@ -332,7 +334,7 @@ describe('ActionPlanPresenter', () => {
       const presenter = new ActionPlanPresenter(actionPlanSummary, 'AB1234CD', false, 'ADD')
       const res = {
         locals: {
-          content: globalContent['/referral/:id/action-plan'],
+          content: actionPlanContent,
         },
         render: jest.fn(),
       } as unknown as Response
@@ -350,7 +352,7 @@ describe('ActionPlanPresenter', () => {
       const presenter = new ActionPlanPresenter(actionPlanSummary, 'AB1234CD', false, 'REMOVE')
       const res = {
         locals: {
-          content: globalContent['/referral/:id/action-plan'],
+          content: actionPlanContent,
         },
         render: jest.fn(),
       } as unknown as Response
@@ -368,7 +370,7 @@ describe('ActionPlanPresenter', () => {
       const presenter = new ActionPlanPresenter(actionPlanSummary, 'AB1234CD', false)
       const res = {
         locals: {
-          content: globalContent['/referral/:id/action-plan'],
+          content: actionPlanContent,
         },
         render: jest.fn(),
       } as unknown as Response

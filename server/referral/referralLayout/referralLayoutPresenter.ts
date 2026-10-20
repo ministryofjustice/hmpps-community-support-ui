@@ -1,5 +1,6 @@
 import { MojSubNavigation } from '@moj-frontend'
 import PresenterBase from '../../presenter/presenterBase'
+import { ReferralLayoutContent } from './referralLayoutViewModel'
 
 export enum ReferralNavigationValues {
   actionPlanTab = 'actionPlan',
@@ -13,13 +14,13 @@ export default abstract class ReferralLayoutPresenter<ViewModel, Content> extend
     super()
   }
 
-  getMojSubNavigationArgs(): MojSubNavigation {
+  getMojSubNavigationArgs(content: ReferralLayoutContent): MojSubNavigation {
     return {
-      label: 'Sub navigation',
+      label: content.subNavigationLabel,
       items: [
         {
           href: `/referral/${this.referralId}/action-plan`,
-          text: 'Action plan',
+          text: content.actionPlanTabText,
           active: this.activePage === ReferralNavigationValues.actionPlanTab,
         },
       ],

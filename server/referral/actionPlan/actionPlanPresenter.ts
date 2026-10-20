@@ -28,7 +28,7 @@ export default class ActionPlanPresenter extends ReferralLayoutPresenter<ActionP
 
     const updatedAtText = hasNeeds ? this.formatUpdatedAtText(this.actionPlanSummary.lastUpdatedAt) : undefined
 
-    const subNavigationArgs = this.getMojSubNavigationArgs()
+    const subNavigationArgs = this.getMojSubNavigationArgs(content)
 
     const addAnotherOutcomeButton: GovukFrontendButton = hasNeeds
       ? {
