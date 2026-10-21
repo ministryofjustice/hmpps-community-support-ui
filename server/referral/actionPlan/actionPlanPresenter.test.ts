@@ -58,6 +58,43 @@ describe('ActionPlanPresenter', () => {
     })
   })
 
+  describe('side navigation', () => {
+    const buildSummary = (hasNeeds: boolean): ActionPlanSummaryDto => ({
+      personDetails: { firstName: 'Alex', lastName: 'River' },
+      needs: hasNeeds
+        ? [
+            {
+              id: 'need_id_1',
+              label: 'Accommodation',
+              orderNumber: 1,
+              outcomes: [{ id: 'outcome_id_1', label: 'Find housing', activities: [] }],
+            },
+          ]
+        : [],
+      lastUpdatedAt: '2026-10-15T09:00:00Z',
+    })
+
+    const render = (summary: ActionPlanSummaryDto) => {
+      const res = { locals: { content: actionPlanContent }, render: jest.fn() } as unknown as Response
+      new ActionPlanPresenter(summary, 'AB1234CD').renderPage(res)
+      return (res.render as jest.Mock).mock.calls[0][1] as { content: ActionPlanViewModel }
+    }
+
+    it('builds the side navigation with the action plan item active when there are needs', () => {
+      expect(render(buildSummary(true)).content.horizontalSubNavArgs).toEqual({
+        label: 'Side navigation',
+        items: [
+          { href: '/referral/AB1234CD/action-plan', text: 'Action plan', active: true },
+          { href: '/referral/AB1234CD/service-details', text: 'Service details', active: false },
+        ],
+      })
+    })
+
+    it('does not build the side navigation when there are no needs', () => {
+      expect(render(buildSummary(false)).content.horizontalSubNavArgs).toBeUndefined()
+    })
+  })
+
   it('builds the needs summary from data', () => {
     const actionPlanSummary: ActionPlanSummaryDto = {
       personDetails: {

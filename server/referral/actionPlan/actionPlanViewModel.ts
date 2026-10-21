@@ -21,6 +21,7 @@ export type ActionPlanViewModel = {
   noActionPlanText: string
   alert?: MojAlert
   subNavigationArgs: MojSubNavigation
+  horizontalSubNavArgs?: MojSubNavigation
 }
 
 export type ActionPlanContent = GlobalContent['/referral/:id/action-plan'] & ReferralLayoutContent

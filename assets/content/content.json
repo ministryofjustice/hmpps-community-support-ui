@@ -322,9 +322,15 @@
   },
   "/referral/:id": {
     "subNavigationLabel": "Sub navigation",
-    "actionPlanTabText": "Action plan"
+    "actionPlanTabText": "Action plan",
+    "actionPlanTabHref": "/referral/{{ id }}/action-plan"
   },
   "/referral/:id/action-plan": {
+    "sideNavigationLabel": "Side navigation",
+    "actionPlanSideTabText": "Action plan",
+    "actionPlanSideTabHref": "/referral/{{ id }}/action-plan",
+    "serviceDetailsSideTabText": "Service details",
+    "serviceDetailsSideTabHref": "/referral/{{ id }}/service-details",
     "pageHeader": "Action plan",
     "noActionPlanText": "{{ firstName }} does not have an action plan yet.",
     "addAnotherOutcomeText": "Add another outcome",

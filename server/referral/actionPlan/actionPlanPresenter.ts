@@ -5,16 +5,17 @@ import { formatDate } from 'date-fns'
 import { MojAlert } from '@moj-frontend'
 import { ActionPlanContent, ActionPlanSummaryList, ActionPlanViewModel } from './actionPlanViewModel'
 import { components } from '../../@types/communitySupportApi/imported'
-import ReferralLayoutPresenter, { ReferralNavigationValues } from '../referralLayout/referralLayoutPresenter'
+import { ReferralNavigationValues } from '../referralLayout/referralLayoutPresenter'
+import ActionPlanLayoutPresenter, { ActionPlanNavigationValues } from './actionPlanLayoutPresenter'
 
-export default class ActionPlanPresenter extends ReferralLayoutPresenter<ActionPlanViewModel, ActionPlanContent> {
+export default class ActionPlanPresenter extends ActionPlanLayoutPresenter<ActionPlanViewModel, ActionPlanContent> {
   constructor(
     private readonly actionPlanSummary: ActionPlanSummaryDto,
     private readonly caseReference: string,
     private readonly icsFeedbackSubmitted: boolean = false,
     private readonly alertType?: 'ADD' | 'REMOVE',
   ) {
-    super(ReferralNavigationValues.actionPlanTab, caseReference)
+    super(ReferralNavigationValues.actionPlanTab, ActionPlanNavigationValues.actionPlanTab, caseReference)
   }
 
   protected buildViewModel(res: Response): ActionPlanViewModel {
@@ -24,11 +25,14 @@ export default class ActionPlanPresenter extends ReferralLayoutPresenter<ActionP
     const needsSummary = this.buildNeedsSummary(content, this.actionPlanSummary.needs)
 
     const hasNeeds = needsSummary.length > 0
+
     const allOutcomesAdded = hasNeeds && this.actionPlanSummary.needs.every(need => need.outcomes.length > 0)
 
     const updatedAtText = hasNeeds ? this.formatUpdatedAtText(this.actionPlanSummary.lastUpdatedAt) : undefined
 
     const subNavigationArgs = this.getMojSubNavigationArgs(content)
+
+    const horizontalSubNavArgs = hasNeeds ? this.getHorizontalSubNavArgs(content) : undefined
 
     const addAnotherOutcomeButton: GovukFrontendButton = hasNeeds
       ? {
@@ -63,6 +67,7 @@ export default class ActionPlanPresenter extends ReferralLayoutPresenter<ActionP
       noActionPlanText: hasNeeds ? undefined : content.noActionPlanText.replace('{{ firstName }}', firstName),
       alert: this.getAlert(content, firstName, this.alertType),
       subNavigationArgs,
+      horizontalSubNavArgs,
     }
   }
 

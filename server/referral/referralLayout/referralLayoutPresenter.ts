@@ -19,7 +19,7 @@ export default abstract class ReferralLayoutPresenter<ViewModel, Content> extend
       label: content.subNavigationLabel,
       items: [
         {
-          href: `/referral/${this.referralId}/action-plan`,
+          href: content.actionPlanTabHref.replace('{{ id }}', this.referralId),
           text: content.actionPlanTabText,
           active: this.activePage === ReferralNavigationValues.actionPlanTab,
         },
