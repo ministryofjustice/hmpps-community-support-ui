@@ -452,6 +452,7 @@
   },
   "/referral/:id/action-plan/activities/add": {
     "pageHeader": "Add An Activity",
+    "backLink": "/referral/{{ caseReference }}/action-plan/activities",
     "areaOfNeedLabel": "Area of need",
     "outcomeLabel": "Outcome",
     "activityProviderLabel": "Who will deliver the activity?",

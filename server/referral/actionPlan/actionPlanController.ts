@@ -386,6 +386,13 @@ class ActionPlanController {
     const activity = Number.isInteger(activityIndex) ? activities[activityIndex] : undefined
     const flashData = req.flash('value')
     const userInputData = flashData.length > 0 ? (JSON.parse(flashData[0]) as Record<string, string>) : undefined
+    if (activities.length === 0) {
+      const destination = (selectedNeed?.outcomes?.length ?? 0) > 1 ? 'select-an-outcome' : 'select-a-need'
+      res.locals.content = {
+        ...res.locals.content,
+        backLink: `/referral/{{ caseReference }}/action-plan/${destination}`,
+      }
+    }
 
     const presenter = new ActionPlanAddActivityPresenter(
       caseReference,
