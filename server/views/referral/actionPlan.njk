@@ -1,5 +1,6 @@
 {% extends "../partials/layout.njk" %}
 
+{%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
 {% from "components/action-plan-summary-list/macro.njk" import actionPlanSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "moj/components/alert/macro.njk" import mojAlert %}
@@ -8,6 +9,7 @@
 {% set mainClasses = "govuk-body" %}
 
 {% block content %}
+  {{ mojSubNavigation(content.subNavigationArgs) }}
   <div class="actionplan-summary__actions">
     {% if content.addAnotherOutcomeButton %}
     {{ govukButton(content.addAnotherOutcomeButton) }}
