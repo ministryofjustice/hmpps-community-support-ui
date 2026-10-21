@@ -3,18 +3,19 @@ import { Response } from 'express'
 import { GovukFrontendButton, GovukFrontendSummaryListCardActions, GovukFrontendSummaryListRow } from '@govuk-frontend'
 import { formatDate } from 'date-fns'
 import { MojAlert } from '@moj-frontend'
-import PresenterBase from '../../presenter/presenterBase'
 import { ActionPlanContent, ActionPlanSummaryList, ActionPlanViewModel } from './actionPlanViewModel'
 import { components } from '../../@types/communitySupportApi/imported'
+import { ReferralNavigationValues } from '../referralLayout/referralLayoutPresenter'
+import ActionPlanLayoutPresenter, { ActionPlanNavigationValues } from './actionPlanLayoutPresenter'
 
-export default class ActionPlanPresenter extends PresenterBase<ActionPlanViewModel, ActionPlanContent> {
+export default class ActionPlanPresenter extends ActionPlanLayoutPresenter<ActionPlanViewModel, ActionPlanContent> {
   constructor(
     private readonly actionPlanSummary: ActionPlanSummaryDto,
     private readonly caseReference: string,
     private readonly icsFeedbackSubmitted: boolean = false,
     private readonly alertType?: 'ADD' | 'REMOVE',
   ) {
-    super()
+    super(ReferralNavigationValues.actionPlanTab, ActionPlanNavigationValues.actionPlanTab, caseReference)
   }
 
   protected buildViewModel(res: Response): ActionPlanViewModel {
@@ -24,9 +25,14 @@ export default class ActionPlanPresenter extends PresenterBase<ActionPlanViewMod
     const needsSummary = this.buildNeedsSummary(content, this.actionPlanSummary.needs)
 
     const hasNeeds = needsSummary.length > 0
+
     const allOutcomesAdded = hasNeeds && this.actionPlanSummary.needs.every(need => need.outcomes.length > 0)
 
     const updatedAtText = hasNeeds ? this.formatUpdatedAtText(this.actionPlanSummary.lastUpdatedAt) : undefined
+
+    const subNavigationArgs = this.getMojSubNavigationArgs(content)
+
+    const horizontalSubNavArgs = hasNeeds ? this.getHorizontalSubNavArgs(content) : undefined
 
     const addAnotherOutcomeButton: GovukFrontendButton = hasNeeds
       ? {
@@ -60,6 +66,8 @@ export default class ActionPlanPresenter extends PresenterBase<ActionPlanViewMod
       createLink: `/referral/${this.caseReference}/action-plan/create`,
       noActionPlanText: hasNeeds ? undefined : content.noActionPlanText.replace('{{ firstName }}', firstName),
       alert: this.getAlert(content, firstName, this.alertType),
+      subNavigationArgs,
+      horizontalSubNavArgs,
     }
   }
 

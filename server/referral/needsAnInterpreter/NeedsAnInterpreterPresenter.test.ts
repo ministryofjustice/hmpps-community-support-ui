@@ -7,7 +7,7 @@ import loadContentDataForTest from '../../testutils/loadContentDataForTest'
 const firstName = 'Alex' as const
 
 const pageContent = {
-  pageTitle: 'Do they need an interpreter? - Community Support',
+  pageTitle: 'Do they need an interpreter?',
   h2: `Does ${firstName} need an interpreter?`,
   radio1: {
     label: 'Yes',

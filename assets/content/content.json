@@ -17,7 +17,7 @@
     ]
   },
   "/referral/new/find-a-person": {
-    "pageTitle": "Enter a CRN or prison number - Make a referral - Community Support",
+    "pageTitle": "Confirm this is the correct person for referral - Make a referral",
     "pageHeader": "Confirm this is the correct person for referral",
     "continueButtonText": "Continue",
     "continueButtonLink": "/referral/new/confirm-person",
@@ -27,7 +27,7 @@
     "enterDifferentIdentifierLinkHref": "/referral/new/find-a-person"
   },
   "/referral/check-referral-information": {
-    "pageTitle": "Check details and submit referral – Community Support",
+    "pageTitle": "Check details and submit referral",
     "pageHeader": "{{ fullName }}",
     "pageSubHeader": "Check details and submit referral",
     "personalDetailsHeader": "About {{ firstName }}",
@@ -207,6 +207,11 @@
         "href": "/progress"
       },
       {
+        "id": "appointments",
+        "text": "Appointments",
+        "href": "/referral/:id/appointments"
+      },
+      {
         "id": "changeLog",
         "text": "Change log",
         "href": "/change-log"
@@ -311,6 +316,11 @@
         "href": "/progress"
       },
       {
+        "id": "appointments",
+        "title": "Appointments",
+        "href": "/referral/appointments"
+      },
+      {
         "id": "changeLog",
         "title": "Change log",
         "href": "/change-log"
@@ -319,6 +329,46 @@
     "progressActiveColumnHeaders": ["Date and time", "Status", "Action"],
     "progressInactiveColumnHeaders": ["Status", "Action"],
     "historySummary": "View ICS history"
+  },
+  "/referral/:id": {
+    "subNavigationLabel": "Sub navigation",
+    "actionPlanTabText": "Action plan",
+    "actionPlanTabHref": "/referral/{{ id }}/action-plan",
+    "sideNavigationLabel": "Side navigation",
+    "actionPlanSideTabText": "Action plan",
+    "actionPlanSideTabHref": "/referral/{{ id }}/action-plan",
+    "serviceDeliverySideTabText": "Service details",
+    "serviceDeliverySideTabHref": "/referral/{{ id }}/service-delivery"
+  },
+  "/referral/:id/service-delivery": {
+    "pageHeader": "Action plan",
+    "addAnotherOutcomeText": "Add another outcome"
+  },
+  "/referral/:id/appointments": {
+    "pageHeader": "Referral for",
+    "subNavTitle": "Referral",
+    "appointmentsTitle": "Appointments",
+    "appointmentTypeColumnHeader": "Appointment",
+    "dateTimeColumnHeader": "Date and time",
+    "noAppointmentsMessage": "No appointments scheduled",
+    "createAppointmentText": "Create an Appointment",
+    "subNavItems": [
+      { "id": "caseDetails", "title": "Case details" },
+      { "id": "progress", "title": "Progress" },
+      { "id": "appointments", "title": "Appointments" },
+      { "id": "changeLog", "title": "Change log" }
+    ]
+  },
+  "/referral/:id/appointment/select-type": {
+    "pageTitle": "Select appointment type",
+    "pageHeader": "Select appointment type",
+    "appointmentTypes": [
+      { "value": "CONTACT_SESSION", "text": "Contact session" },
+      { "value": "PRE_RELEASE_SESSION", "text": "Pre-release session" },
+      { "value": "POST_RELEASE_SESSION", "text": "Post-release session" },
+      { "value": "HANDOVER_SESSION", "text": "Handover session" }
+    ],
+    "backLinkText": "Back to appointments"
   },
   "/referral/:id/action-plan": {
     "pageHeader": "Action plan",
@@ -944,7 +994,7 @@
     "submitButtonText": "Submit"
   },
   "/referral/task-list": {
-    "pageTitle": "Make a referral - [service name]",
+    "pageTitle": "Make a referral",
     "pageHeader": "{{ fullName }}",
     "pageSubHeader": "Make a referral",
     "backLink": "/referral/new/find-a-person",
@@ -1008,7 +1058,7 @@
     }
   },
   "/referral/task-list/confirm-personal-details": {
-    "pageTitle": "Check and confirm personal details - Make a referral - Community Support",
+    "pageTitle": "Confirm personal details - Make a referral",
     "pageHeader": "{{ name }}",
     "pageSubHeader": "Confirm personal details",
     "backLink": "/referral/task-list",
@@ -1041,7 +1091,7 @@
     "buttonText": "Continue"
   },
   "/referral/task-list/view-risk-summary": {
-    "pageTitle": "OASys risk information - Community Support",
+    "pageTitle": "OASys risk information",
     "pageSubHeader": "OASys risk information",
     "backLink": "/referral/task-list",
     "crnLabel": "CRN",
@@ -1088,7 +1138,7 @@
     "buttonText": "Save and continue"
   },
   "/referral/task-list/edit-risk-summary": {
-    "pageTitle": "Change OASys risk information - Community Support",
+    "pageTitle": "Change OASys risk information",
     "pageHeader": "Edit OASys risk information",
     "backLink": "/referral/task-list/view-risk-summary",
     "crnLabel": "CRN",
@@ -1147,7 +1197,7 @@
     "selectDifferentAreaHref": "/referral/task-list/select-an-area-for-referral"
   },
   "/referral/task-list/select-person-needs": {
-    "pageTitle": "Select what needs the referral should focus on - Community Support",
+    "pageTitle": "Select what needs the referral should focus on",
     "pageHeader": "Select what needs the referral should focus on",
     "hint": "Select all that apply.",
     "checkboxes": {
@@ -1172,7 +1222,7 @@
     "backLink": "/referral/task-list"
   },
   "/referral/task-list/additional-support-needs": {
-    "pageTitle": "What additional support do they need to attend or take part in sessions? - Community Support",
+    "pageTitle": "What additional support do they need to attend or take part in sessions?",
     "header": "What does {{ firstName }} need support with to attend or take part in sessions?",
     "hint": "Select all that apply.",
     "items": [
@@ -1222,7 +1272,7 @@
     "backlink": "/referral/task-list"
   },
   "/referral/task-list/needs-an-interpreter": {
-    "pageTitle": "Do they need an interpreter? - Community Support",
+    "pageTitle": "Do they need an interpreter?",
     "pageHeader": "Does {{ name }} need an interpreter?",
     "yesOptionLabel": "Yes",
     "yesCoditional": "What language does {{ name }} need an interpreter for?",
@@ -1231,7 +1281,7 @@
     "backlink": "/referral/task-list/additional-support-needs"
   },
   "/referral/task-list/service-end-date": {
-    "pageTitle": "What date does the service need to be completed by? - Community Support",
+    "pageTitle": "What date does the service need to be completed by?",
     "pageHeader": "What date does the service need to be completed by?",
     "hint": "This is the date by which the service should be completed.",
     "dateLabel": "Date",
@@ -1243,7 +1293,7 @@
     "updateError": "Something has gone wrong updating the service end date"
   },
   "/referral/task-list/service-days": {
-    "pageTitle": "How many days will you use for this service? - Community Support",
+    "pageTitle": "How many days will you use for this service?",
     "pageHeader": "How many days will you use for this service?",
     "bodyText1": "Enter the maximum number of days you want to use for this service. Any unused days will be given back. For community orders or suspended sentences, consider how many RAR days to allocate.",
     "bodyText2": "Sessions delivered in the community are enforceable.",
@@ -1251,7 +1301,7 @@
     "continueButton": "Save and continue"
   },
   "/referral/task-list/offence-sentence": {
-    "pageTitle": "Check offence and sentence information - Community Support",
+    "pageTitle": "Check offence and sentence information",
     "crnLabel": "CRN",
     "dateOfBirthLabel": "Date of birth",
     "pageSubHeader": "Check offence and sentence information",
@@ -1274,6 +1324,7 @@
     "submitHref": "/referral/task-list/offence-sentence"
   },
   "/referral/task-list/select-an-area-for-referral": {
+    "pageTitle": "Select the area you want to make a referral to",
     "areaLabel": "Select the area you want to make a referral to",
     "backLinkText": "Back",
     "backLinkHref": "/referral/task-list",
@@ -1300,6 +1351,7 @@
     "radioNo": "No"
   },
   "/referral/new/add-contact-details": {
+    "pageTitle": "Add details of the main point of contact",
     "backLinkText": "Back",
     "backLinkHref": "/referral/task-list",
     "ppBackLinkHref": "/referral/task-list/check-probation-practitioner-details",
@@ -1318,6 +1370,7 @@
     "insetText": "These contact details will be sent to the delivery partner for the referral. They should also be updated in NDelius."
   },
   "/referral/new/confirm-contact-details": {
+    "pageTitle": "Check contact details",
     "backLinkText": "Back",
     "backLinkHref": "/referral/new/add-contact-details",
     "buttonText": "Save and continue",
@@ -1336,7 +1389,7 @@
     "notEnteredText": "Not entered"
   },
   "/referral/task-list/additional-information-for-the-delivery-partner": {
-    "pageTitle": "Is there anything else the delivery partner should know? - Community Support",
+    "pageTitle": "Is there anything else the delivery partner should know?",
     "pageHeader": "Is there anything else the delivery partner should know about {{ firstName }}?",
     "detailsLink": "What you should consider and include",
     "detailsHeader": "You should consider letting the delivery partner know if:",

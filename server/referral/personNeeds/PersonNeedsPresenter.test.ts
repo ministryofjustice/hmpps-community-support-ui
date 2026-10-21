@@ -157,7 +157,7 @@ describe('PersonNeedsPresenter', () => {
     const presenter = new PersonNeedsPresenter(emptyForm, noErrors)
     const viewModel = presenter.buildViewModel(res)
 
-    expect(viewModel.pageTitle).toBe('Select what needs the referral should focus on - Community Support')
+    expect(viewModel.pageTitle).toBe('Select what needs the referral should focus on')
     expect(viewModel.backLink.href).toBe('/referral/task-list')
     expect(viewModel.heading).toBe('Alex Smith')
     expect(viewModel.checkboxes.hint.text).toBe('Select all that apply.')

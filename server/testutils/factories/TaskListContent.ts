@@ -4,7 +4,7 @@ import { TaskListPageContent } from '../../referral/taskList/TaskListViewModel'
 class TaskListContentFactory extends Factory<TaskListPageContent> {}
 
 export default TaskListContentFactory.define(({ transientParams }) => ({
-  pageTitle: 'Make a referral - [service name]',
+  pageTitle: 'Make a referral',
   pageHeader: transientParams.pageHeader || '{{ fullName }}',
   pageSubHeader: transientParams.pageSubHeader || 'Make a referral',
   backLink: '/referral/new/find-a-person',

@@ -15,10 +15,12 @@ import ActionPlanRisksAndAdjustmentsPresenter from './sessionDeliveryDetails/act
 import ActionPlanServiceEndDateCheckPresenter from './sessionDeliveryDetails/actionPlanServiceEndDateCheckPresenter'
 import ActionPlanChangeServiceEndDatePresenter from './sessionDeliveryDetails/actionPlanChangeServiceEndDatePresenter'
 import ActionPlanServiceUserInvolvementPresenter from './sessionDeliveryDetails/actionPlanServiceUserInvolvementPresenter'
+import ServiceDeliveryPresenter from './serviceDelivery/serviceDeliveryPresenter'
 import buildReferralProgress from '../../testutils/buildReferralProgress'
 
 jest.mock('../../services/referralService')
 jest.mock('./actionPlanPresenter')
+jest.mock('./serviceDelivery/serviceDeliveryPresenter')
 jest.mock('./selectANeed/actionPlanSelectANeedPresenter')
 jest.mock('./selectOutcome/actionPlanSelectOutcomePresenter')
 jest.mock('./addActivity/actionPlanAddActivityPresenter')
@@ -279,6 +281,15 @@ describe('ActionPlanController', () => {
       expect(req.session.actionPlanActivities?.activities).toHaveLength(1)
       expect(req.session.actionPlanAlertType).toBeUndefined()
       expect(res.redirect).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('service delivery page', () => {
+    it('renders the service delivery page for the referral', async () => {
+      await actionPlanController.showServiceDeliveryPage(req, res)
+
+      expect(ServiceDeliveryPresenter).toHaveBeenCalledWith('AB1234CD')
+      expect(ServiceDeliveryPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
     })
   })
 
@@ -818,6 +829,27 @@ describe('ActionPlanController', () => {
       )
       expect(req.session.actionPlanAlertType).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/activities')
+    })
+
+    it("doesn't show the alert banner if nothing has changed", async () => {
+      req.body = { addAnotherActivity: 'no' }
+      req.session.actionPlanAction = { needId: 'need-1', outcomeId: 'outcome-1' }
+      req.session.actionPlanActivities = {
+        caseReference: 'AB1234CD',
+        activities: [{ activityProvider: 'Local group', activityDescription: 'Weekly sessions' }],
+      }
+      req.session.preChangeActivities = {
+        caseReference: 'AB1234CD',
+        activities: [{ activityProvider: 'Local group', activityDescription: 'Weekly sessions' }],
+      }
+
+      await actionPlanController.saveActivities(req, res)
+
+      expect(referralService.submitAction).not.toHaveBeenCalled()
+      expect(req.session.actionPlanAction).toBeUndefined()
+      expect(req.session.actionPlanActivities).toBeUndefined()
+      expect(req.session.actionPlanAlertType).toBeUndefined()
+      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan')
     })
   })
 
