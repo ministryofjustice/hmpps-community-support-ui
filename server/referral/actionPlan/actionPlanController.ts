@@ -60,7 +60,7 @@ class ActionPlanController {
   private getActionPlanActivities(req: Request, caseReference: string): [ActionPlanActivity[], ActionPlanActivity[]] {
     return req.session.actionPlanActivities?.caseReference === caseReference
       ? [req.session.actionPlanActivities.activities, req.session.preChangeActivities?.activities || []]
-      : [[],[]]
+      : [[], []]
   }
 
   private setActionPlanActivities(req: Request, caseReference: string, activities: ActionPlanActivity[]) {
@@ -150,7 +150,7 @@ class ActionPlanController {
   ) {
     const [actionPlanSummary, needsAndOutcomes] = await Promise.all([
       this.referralService.getActionPlanSummary(caseReference, username),
-      this.referralService.getActionPlanNeedsAndOutcomes(caseReference, username)
+      this.referralService.getActionPlanNeedsAndOutcomes(caseReference, username),
     ])
     const selectedNeed = actionPlanSummary.needs.find(need => need.id === needId)
     const selectedOutcome = selectedNeed?.outcomes.find(outcome => outcome.id === outcomeAnswerId)
@@ -359,11 +359,7 @@ class ActionPlanController {
         activityProvider: activity.who,
         activityDescription: activity.details,
       }))
-      this.setActionPlanActivities(
-        req,
-        caseReference,
-        activities,
-      )
+      this.setActionPlanActivities(req, caseReference, activities)
       req.session.preChangeActivities = {
         caseReference,
         activities,
