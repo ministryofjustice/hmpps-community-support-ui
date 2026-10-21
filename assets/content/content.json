@@ -330,6 +330,20 @@
     "progressInactiveColumnHeaders": ["Status", "Action"],
     "historySummary": "View ICS history"
   },
+  "/referral/:id": {
+    "subNavigationLabel": "Sub navigation",
+    "actionPlanTabText": "Action plan",
+    "actionPlanTabHref": "/referral/{{ id }}/action-plan",
+    "sideNavigationLabel": "Side navigation",
+    "actionPlanSideTabText": "Action plan",
+    "actionPlanSideTabHref": "/referral/{{ id }}/action-plan",
+    "serviceDeliverySideTabText": "Service details",
+    "serviceDeliverySideTabHref": "/referral/{{ id }}/service-delivery"
+  },
+  "/referral/:id/service-delivery": {
+    "pageHeader": "Action plan",
+    "addAnotherOutcomeText": "Add another outcome"
+  },
   "/referral/:id/appointments": {
     "pageHeader": "Referral for",
     "subNavTitle": "Referral",
@@ -355,10 +369,6 @@
       { "value": "HANDOVER_SESSION", "text": "Handover session" }
     ],
     "backLinkText": "Back to appointments"
-  },
-  "/referral/:id": {
-    "subNavigationLabel": "Sub navigation",
-    "actionPlanTabText": "Action plan"
   },
   "/referral/:id/action-plan": {
     "pageHeader": "Action plan",

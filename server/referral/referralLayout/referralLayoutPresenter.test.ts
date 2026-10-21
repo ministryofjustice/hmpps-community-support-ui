@@ -35,10 +35,12 @@ describe('ReferralLayoutPresenter', () => {
       const args = presenter.getMojSubNavigationArgs({
         subNavigationLabel: 'Custom label',
         actionPlanTabText: 'Custom tab',
+        actionPlanTabHref: '/custom/{{ id }}/path',
       })
 
       expect(args.label).toBe('Custom label')
       expect(args.items[0].text).toBe('Custom tab')
+      expect(args.items[0].href).toBe('/custom/AB1234CD/path')
     })
 
     it('marks the action plan item as inactive when another page is active', () => {

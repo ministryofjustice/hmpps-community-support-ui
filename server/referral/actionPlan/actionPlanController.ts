@@ -35,6 +35,7 @@ import { ActionPlanChangeServiceEndDateDataSchemaBuilder } from '../../validatio
 import ActionPlanRemoveOutcomePresenter from './removeOutcome/actionPlanRemoveOutcomePresenter'
 import ActionPlanServiceUserInvolvementPresenter from './sessionDeliveryDetails/actionPlanServiceUserInvolvementPresenter'
 import { ActionPlanUserInvolvementFormDataSchemaBuilder } from '../../validation/ActionPlanUserInvolvementFormData'
+import ServiceDeliveryPresenter from './serviceDelivery/serviceDeliveryPresenter'
 
 class ActionPlanController {
   constructor(private readonly referralService: ReferralService) {}
@@ -112,6 +113,14 @@ class ActionPlanController {
       appointment => appointment.type === 'ICS' && Boolean(appointment.icsFeedbackId),
     )
     const presenter = new ActionPlanPresenter(actionPlanSummary, caseReference, icsFeedbackSubmitted, bannerType)
+
+    return presenter.renderPage(res)
+  }
+
+  async showServiceDeliveryPage(req: Request, res: Response) {
+    const { id: caseReference } = req.params as { id: string }
+
+    const presenter = new ServiceDeliveryPresenter(caseReference)
 
     return presenter.renderPage(res)
   }
