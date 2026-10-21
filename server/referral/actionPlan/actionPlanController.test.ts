@@ -785,6 +785,27 @@ describe('ActionPlanController', () => {
       expect(req.session.actionPlanAlertType).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/activities')
     })
+
+    it("doesn't show the alert banner if nothing has changed", async () => {
+      req.body = { addAnotherActivity: 'no' }
+      req.session.actionPlanAction = { needId: 'need-1', outcomeId: 'outcome-1' }
+      req.session.actionPlanActivities = {
+        caseReference: 'AB1234CD',
+        activities: [{ activityProvider: 'Local group', activityDescription: 'Weekly sessions' }],
+      }
+      req.session.preChangeActivities = {
+        caseReference: 'AB1234CD',
+        activities: [{ activityProvider: 'Local group', activityDescription: 'Weekly sessions' }],
+      }
+
+      await actionPlanController.saveActivities(req, res)
+
+      expect(referralService.submitAction).not.toHaveBeenCalled()
+      expect(req.session.actionPlanAction).toBeUndefined()
+      expect(req.session.actionPlanActivities).toBeUndefined()
+      expect(req.session.actionPlanAlertType).toBeUndefined()
+      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan')
+    })
   })
 
   describe('view activities', () => {
