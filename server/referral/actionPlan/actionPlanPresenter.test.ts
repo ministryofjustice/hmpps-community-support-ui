@@ -85,7 +85,7 @@ describe('ActionPlanPresenter', () => {
         label: 'Side navigation',
         items: [
           { href: '/referral/AB1234CD/action-plan', text: 'Action plan', active: true },
-          { href: '/referral/AB1234CD/service-details', text: 'Service details', active: false },
+          { href: '/referral/AB1234CD/service-delivery', text: 'Service details', active: false },
         ],
       })
     })

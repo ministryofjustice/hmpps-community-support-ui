@@ -1,5 +1,5 @@
 import { MojSubNavigation } from '@moj-frontend'
-import { ActionPlanContent } from './actionPlanViewModel'
+import { ActionPlanSideNavContent } from './actionPlanViewModel'
 import ReferralLayoutPresenter, { ReferralNavigationValues } from '../referralLayout/referralLayoutPresenter'
 
 export enum ActionPlanNavigationValues {
@@ -19,7 +19,7 @@ export default abstract class ActionPlanLayoutPresenter<ViewModel, Content> exte
     super(activePage, referralId)
   }
 
-  getHorizontalSubNavArgs(content: ActionPlanContent): MojSubNavigation {
+  getHorizontalSubNavArgs(content: ActionPlanSideNavContent): MojSubNavigation {
     return {
       label: content.sideNavigationLabel,
       items: [
@@ -29,8 +29,8 @@ export default abstract class ActionPlanLayoutPresenter<ViewModel, Content> exte
           active: this.activeTab === ActionPlanNavigationValues.actionPlanTab,
         },
         {
-          href: content.serviceDetailsSideTabHref.replace('{{ id }}', this.referralId),
-          text: content.serviceDetailsSideTabText,
+          href: content.serviceDeliverySideTabHref.replace('{{ id }}', this.referralId),
+          text: content.serviceDeliverySideTabText,
           active: this.activeTab === ActionPlanNavigationValues.serviceDeliveryTab,
         },
       ],

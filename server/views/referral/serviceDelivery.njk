@@ -1,0 +1,33 @@
+{% extends "../partials/layout.njk" %}
+
+{%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
+{%- from "moj/components/side-navigation/macro.njk" import mojSideNavigation -%}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = "Action plan – " + applicationName %}
+{% set mainClasses = "govuk-body" %}
+
+{% block content %}
+  {{ mojSubNavigation(content.subNavigationArgs) }}
+  <div class="actionplan-summary__actions">
+    {% if content.addAnotherOutcomeButton %}
+    {{ govukButton(content.addAnotherOutcomeButton) }}
+    {% endif %}
+  </div>
+  <div class="actionplan-summary__title">
+    <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
+  </div>
+
+  <div class="govuk-grid-row">
+
+    <div class="govuk-grid-column-one-third">
+      {{ mojSideNavigation(content.horizontalSubNavArgs) }}
+    </div>
+
+    <div class="govuk-grid-column-two-thirds govuk-!-padding-4">
+      <p>{{ content.updatedAtText }}</p>
+      <p>Service Delivery Content</p>
+
+    </div>
+  </div>
+{% endblock %}

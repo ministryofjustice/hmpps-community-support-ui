@@ -15,10 +15,12 @@ import ActionPlanRisksAndAdjustmentsPresenter from './sessionDeliveryDetails/act
 import ActionPlanServiceEndDateCheckPresenter from './sessionDeliveryDetails/actionPlanServiceEndDateCheckPresenter'
 import ActionPlanChangeServiceEndDatePresenter from './sessionDeliveryDetails/actionPlanChangeServiceEndDatePresenter'
 import ActionPlanServiceUserInvolvementPresenter from './sessionDeliveryDetails/actionPlanServiceUserInvolvementPresenter'
+import ServiceDeliveryPresenter from './serviceDelivery/serviceDeliveryPresenter'
 import buildReferralProgress from '../../testutils/buildReferralProgress'
 
 jest.mock('../../services/referralService')
 jest.mock('./actionPlanPresenter')
+jest.mock('./serviceDelivery/serviceDeliveryPresenter')
 jest.mock('./selectANeed/actionPlanSelectANeedPresenter')
 jest.mock('./selectOutcome/actionPlanSelectOutcomePresenter')
 jest.mock('./addActivity/actionPlanAddActivityPresenter')
@@ -278,6 +280,15 @@ describe('ActionPlanController', () => {
       expect(req.session.actionPlanActivities?.activities).toHaveLength(1)
       expect(req.session.actionPlanAlertType).toBeUndefined()
       expect(res.redirect).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('service delivery page', () => {
+    it('renders the service delivery page for the referral', async () => {
+      await actionPlanController.showServiceDeliveryPage(req, res)
+
+      expect(ServiceDeliveryPresenter).toHaveBeenCalledWith('AB1234CD')
+      expect(ServiceDeliveryPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
     })
   })
 

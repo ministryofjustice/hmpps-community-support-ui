@@ -32,7 +32,7 @@ describe('ActionPlanLayoutPresenter', () => {
         label: 'Side navigation',
         items: [
           { href: '/referral/AB1234CD/action-plan', text: 'Action plan', active: true },
-          { href: '/referral/AB1234CD/service-details', text: 'Service details', active: false },
+          { href: '/referral/AB1234CD/service-delivery', text: 'Service details', active: false },
         ],
       })
     })
@@ -52,7 +52,7 @@ describe('ActionPlanLayoutPresenter', () => {
 
       expect(items.map(item => item.href)).toEqual([
         '/referral/ZZ9876YY/action-plan',
-        '/referral/ZZ9876YY/service-details',
+        '/referral/ZZ9876YY/service-delivery',
       ])
     })
 
@@ -63,7 +63,7 @@ describe('ActionPlanLayoutPresenter', () => {
         ...content,
         sideNavigationLabel: 'Custom label',
         actionPlanSideTabText: 'Custom plan',
-        serviceDetailsSideTabText: 'Custom service',
+        serviceDeliverySideTabText: 'Custom service',
       })
 
       expect(args.label).toBe('Custom label')
