@@ -76,15 +76,11 @@ class ActionPlanController {
   ): boolean {
     if (!preChangeActivities) return true
     if (preChangeActivities.length !== activities.length) return true
-    // eslint-disable-next-line no-plusplus
-    for (let i = 0; i < activities.length; i++) {
-      if (
-        preChangeActivities[i].activityProvider !== activities[i].activityProvider ||
-        preChangeActivities[i].activityDescription !== activities[i].activityDescription
-      )
-        return true
-    }
-    return false
+    return activities.some(
+      (activity, index) =>
+        preChangeActivities[index].activityProvider !== activity.activityProvider ||
+        preChangeActivities[index].activityDescription !== activity.activityDescription,
+    )
   }
 
   // Merges answers for the questions just submitted into any already-saved session-delivery
