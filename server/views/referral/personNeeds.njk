@@ -3,7 +3,7 @@
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
-{% set pageTitle = content.pageTitle %}
+{% set pageTitle = content.pageTitle + " - " + applicationName %}
 {% set mainClasses = "govuk-body" %}
 
 {% block contentBody %}

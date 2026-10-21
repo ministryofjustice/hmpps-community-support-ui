@@ -80,6 +80,7 @@ export declare module 'express-session' {
       outcomeId?: string
     }
     actionPlanActivities?: ActionPlanActivitiesData
+    preChangeActivities?: ActionPlanActivitiesData
     actionPlanSessionDelivery?: ActionPlanSessionDeliveryData
     ppDetails?: UpdateProbationPractitionerDetailsRequest & {
       pduName: string

@@ -4,6 +4,7 @@ import {
   ReferralDetailsResponseDto,
   ReferralInformation,
   ReferralProgress,
+  ReferralAppointmentsBffResponseDto,
   ConfirmPersonDetailsBffDto,
   AdditionalSupportNeedsDto,
   TaskListStatusDto,
@@ -78,6 +79,10 @@ export default class ReferralService {
 
   getReferralProgress(caseReference: string, username: string): Promise<ReferralProgress> {
     return this.communitySupportApiClient.getReferralProgress(caseReference, username)
+  }
+
+  getReferralAppointments(caseReference: string, username: string): Promise<ReferralAppointmentsBffResponseDto> {
+    return this.communitySupportApiClient.getReferralAppointments(caseReference, username)
   }
 
   getReferralInformation(caseIdentifier: string, username: string): Promise<ReferralInformation> {

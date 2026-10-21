@@ -20,7 +20,7 @@ describe('ServiceEndDatePagePresenter', () => {
     const presenter = new ServiceEndDatePagePresenter(data)
     const viewModel = presenter.buildViewModel(res)
 
-    expect(viewModel.pageTitle).toBe('What date does the service need to be completed by? - Community Support')
+    expect(viewModel.pageTitle).toBe('What date does the service need to be completed by?')
     expect(viewModel.pageHeader).toBe('What date does the service need to be completed by?')
     expect(viewModel.hint).toBe('This is the date by which the service should be completed.')
     expect(viewModel.dateLabel).toBe('Date')
