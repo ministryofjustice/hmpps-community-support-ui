@@ -10,6 +10,7 @@ export default referralDetailsContentFactory.define(({ transientParams }) => ({
   subNavItems: transientParams.subNavItems || [
     { text: 'Case details', href: '/referral-details' },
     { text: 'Progress', href: '/progress' },
+    { text: 'Appointments', href: '/referral/:id/appointments' },
     { text: 'Change log', href: '/change-log' },
   ],
   backLink: '/unassigned-cases',
