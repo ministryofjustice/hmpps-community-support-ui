@@ -66,6 +66,11 @@ test.describe('View ICS Session Feedback', () => {
     sessionDetailsWasPersonLate: false,
     sessionDetailsLateReason: 'No reason provided',
     sessionFeedbackWhatHappened: 'Alex discussed his current situation and was open to new possibilities',
+    sessionFeedbackBehaviour: 'Engaged and positive',
+    sessionFeedbackStrengthsIdentified: 'Strong family support',
+    issuesOrConcernsIdentified: 'No immediate concerns identified',
+    nextStepsPlannedForNextSession: 'Continue with action plan',
+    nextStepsActionsBeforeNextSession: 'Complete CV template',
   })
 
   const sessionDidNotHappenFeedback = IcsFeedbackResponseFactory.build({
@@ -174,6 +179,21 @@ test.describe('View ICS Session Feedback', () => {
     await expect(sessionFeedbackCard).toContainText(
       'Alex discussed his current situation and was open to new possibilities',
     )
+    await expect(sessionFeedbackCard).toContainText("What was Alex's engagement like during the session?")
+    await expect(sessionFeedbackCard).toContainText('Engaged and positive')
+    await expect(sessionFeedbackCard).toContainText('What strengths did you identify?')
+    await expect(sessionFeedbackCard).toContainText('Strong family support')
+
+    const attendanceCard = page.locator('.govuk-summary-card', { hasText: 'Record session attendance' })
+    await expect(attendanceCard).toContainText('Did the session happen?')
+    await expect(attendanceCard).toContainText('Yes')
+
+    const issuesCard = page.locator('.govuk-summary-card', { hasText: 'Issues or concerns' })
+    await expect(issuesCard).toContainText('No immediate concerns identified')
+
+    const nextStepsCard = page.locator('.govuk-summary-card', { hasText: 'Next steps' })
+    await expect(nextStepsCard).toContainText('Continue with action plan')
+    await expect(nextStepsCard).toContainText('Complete CV template')
   })
 
   test('shows session feedback why the session did not happen', async ({ page }) => {
@@ -186,7 +206,12 @@ test.describe('View ICS Session Feedback', () => {
     const sessionFeedbackCard = page.locator('.govuk-summary-card', { hasText: 'Session feedback' })
 
     await expect(sessionFeedbackCard).toContainText('Why the session did not happen')
+    await expect(sessionFeedbackCard).toContainText('Service provider issue')
     await expect(sessionFeedbackCard).toContainText('Room booking was cancelled due to a fire alarm.')
+
+    const attendanceCard = page.locator('.govuk-summary-card', { hasText: 'Record session attendance' })
+    await expect(attendanceCard).toContainText('Did the session happen?')
+    await expect(attendanceCard).toContainText('No')
   })
 
   test('shows session feedback when the user did not attend', async ({ page }) => {
@@ -202,5 +227,9 @@ test.describe('View ICS Session Feedback', () => {
       'Details about how you tried to contact Alex and why they did not attend',
     )
     await expect(sessionFeedbackCard).toContainText('Called Alex twice but no answer, left voicemail')
+
+    const attendanceCard = page.locator('.govuk-summary-card', { hasText: 'Record session attendance' })
+    await expect(attendanceCard).toContainText('Did Alex come to the appointment?')
+    await expect(attendanceCard).toContainText('No')
   })
 })

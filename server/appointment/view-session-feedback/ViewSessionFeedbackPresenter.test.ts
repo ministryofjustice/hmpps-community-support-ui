@@ -2,6 +2,7 @@ import { Response } from 'express'
 import ViewSessionFeedbackPresenter from './ViewSessionFeedbackPresenter'
 import { ViewSessionFeedbackViewModel } from './ViewSessionFeedbackViewModel'
 import IcsFeedbackResponseFactory from '../../testutils/factories/IcsFeedbackSubmissionResponse'
+import { globalContent } from '../../../assets/content/GlobalContent'
 
 describe('ViewSessionFeedbackPresenter', () => {
   let res: Response
@@ -22,7 +23,7 @@ describe('ViewSessionFeedbackPresenter', () => {
 
   beforeEach(() => {
     res = {
-      locals: { content: {} },
+      locals: { content: globalContent['/ics-feedback/:id/session/:id'] },
       render: jest.fn(),
       redirect: jest.fn(),
     } as unknown as Response
@@ -397,10 +398,13 @@ describe('ViewSessionFeedbackPresenter', () => {
         expect(viewModel.recordSessionAttendanceSummary.card?.title?.text).toBe('Record session attendance')
       })
 
-      it('omits the record session attendance summary when the session happened', () => {
+      it('includes the record session attendance summary when the session happened', () => {
         const viewModel = renderViewModel()
 
-        expect(viewModel.recordSessionAttendanceSummary).toBeUndefined()
+        expect(viewModel.recordSessionAttendanceSummary.rows).toContainEqual({
+          key: { text: 'Did the session happen?' },
+          value: { text: 'Yes' },
+        })
       })
 
       it('shows the attendance status when the person did not attend', () => {
@@ -444,6 +448,8 @@ describe('ViewSessionFeedbackPresenter', () => {
           IcsFeedbackResponseFactory.build({
             recordSessionDidSessionHappen: true,
             sessionFeedbackWhatHappened: undefined,
+            sessionFeedbackBehaviour: undefined,
+            sessionFeedbackStrengthsIdentified: undefined,
           }),
         )
 
@@ -464,6 +470,19 @@ describe('ViewSessionFeedbackPresenter', () => {
         })
       })
 
+      it('shows behaviour and strengths when the session happened', () => {
+        const viewModel = renderViewModel()
+
+        expect(viewModel.sessionFeedbackSummary.rows).toContainEqual({
+          key: { text: "What was Alex's engagement like during the session?" },
+          value: { text: 'Engaged and positive' },
+        })
+        expect(viewModel.sessionFeedbackSummary.rows).toContainEqual({
+          key: { text: 'What strengths did you identify?' },
+          value: { text: 'Strong family support' },
+        })
+      })
+
       it('shows why the session did not happen when a reason is provided', () => {
         const viewModel = renderViewModel(
           IcsFeedbackResponseFactory.build({
@@ -476,7 +495,7 @@ describe('ViewSessionFeedbackPresenter', () => {
 
         expect(viewModel.sessionFeedbackSummary.rows[0]).toEqual({
           key: { text: 'Why the session did not happen' },
-          value: { text: 'Room booking was cancelled due to a fire alarm.' },
+          value: { text: 'Service provider issue: Room booking was cancelled due to a fire alarm.' },
         })
       })
 
@@ -494,6 +513,38 @@ describe('ViewSessionFeedbackPresenter', () => {
           key: { text: 'Details about how you tried to contact Alex and why they did not attend' },
           value: { text: 'Called and left voicemail' },
         })
+      })
+    })
+
+    describe('Issues and next steps', () => {
+      it('shows issues or concerns when provided', () => {
+        const viewModel = renderViewModel(
+          IcsFeedbackResponseFactory.build({ issuesOrConcernsIdentified: 'No concerns identified' }),
+        )
+
+        expect(viewModel.issuesAndConcernsSummary.card?.title?.text).toBe('Issues or concerns')
+        expect(viewModel.issuesAndConcernsSummary.rows).toEqual([
+          {
+            key: { text: 'What issues or concerns did you identify?' },
+            value: { text: 'No concerns identified' },
+          },
+        ])
+      })
+
+      it('shows next steps and replaces the person placeholder', () => {
+        const viewModel = renderViewModel()
+
+        expect(viewModel.nextStepsSummary.card?.title?.text).toBe('Next steps')
+        expect(viewModel.nextStepsSummary.rows).toEqual([
+          {
+            key: { text: 'What do you have planned for the next session?' },
+            value: { text: 'Continue with action plan' },
+          },
+          {
+            key: { text: 'What actions do you and Alex have before the next session takes place?' },
+            value: { text: 'Complete CV template' },
+          },
+        ])
       })
     })
   })

@@ -1,7 +1,7 @@
 {% extends "../partials/layout.njk" %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 
-{% set pageTitle = "View session feedback - " + applicationName %}
+{% set pageTitle = content.pageTitle + " - " + applicationName %}
 {% set mainClasses = "govuk-body" %}
 
 {% block contentBody %}
@@ -18,6 +18,16 @@
       {{ govukSummaryList(content.recordSessionAttendanceSummary) }}
     {% endif %}
 
-    {{ govukSummaryList(content.sessionFeedbackSummary) }}
+    {% if content.sessionFeedbackSummary %}
+      {{ govukSummaryList(content.sessionFeedbackSummary) }}
+    {% endif %}
+
+    {% if content.issuesAndConcernsSummary %}
+      {{ govukSummaryList(content.issuesAndConcernsSummary) }}
+    {% endif %}
+
+    {% if content.nextStepsSummary %}
+      {{ govukSummaryList(content.nextStepsSummary) }}
+    {% endif %}
 
 {% endblock %}

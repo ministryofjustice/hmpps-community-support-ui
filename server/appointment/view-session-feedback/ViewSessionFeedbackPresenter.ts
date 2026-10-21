@@ -6,7 +6,7 @@ import {
 } from '@community-support-api'
 import { GovukFrontendSummaryList } from '@govuk-frontend'
 import PresenterBase from '../../presenter/presenterBase'
-import { ViewSessionFeedbackViewModel } from './ViewSessionFeedbackViewModel'
+import { ViewSessionFeedbackContent, ViewSessionFeedbackViewModel } from './ViewSessionFeedbackViewModel'
 import { isoToFormattedDate } from '../../utils/dateFormat'
 import { isoToFormattedTime } from '../../utils/timeFormat'
 import { createMailtoLink } from '../../utils/viewUtils'
@@ -14,6 +14,7 @@ import { createMailtoLink } from '../../utils/viewUtils'
 type AppointmentDeliveryDetails = SessionFeedbackAppointmentDetails['appointmentDeliveryDetails']
 
 export interface AppointmentDetailsSummaryRowInput {
+  content: ViewSessionFeedbackContent['appointmentDetails']
   currentCaseworkers: CaseWorkerSummary[]
   feedbackSubmittedBy: CaseWorkerSummary
   date: string
@@ -26,6 +27,9 @@ export interface AppointmentDetailsSummaryRowInput {
 }
 
 export interface SessionDetailsSummaryRowInput {
+  content: ViewSessionFeedbackContent['sessionDetails']
+  yesText: string
+  noText: string
   isLate: boolean
   whyWereTheyLate: string
   sessionDuration: string
@@ -33,36 +37,34 @@ export interface SessionDetailsSummaryRowInput {
 }
 
 export interface RecordSessionAttendanceSummaryRowInput {
+  content: ViewSessionFeedbackContent['recordSessionAttendance']
+  yesText: string
+  noText: string
   didSessionHappen: boolean
   attendedAppointment?: boolean | null
   personFirstName: string
 }
 
 export interface SessionFeedbackSummaryRowInput {
+  content: ViewSessionFeedbackContent['sessionFeedback']
+  didNotHappenReasonLabels: ViewSessionFeedbackContent['didNotHappenReasonLabels']
   didSessionHappen: boolean
   didPersonAttend?: boolean | null
   whatHappenedInSession?: string
   whySessionDidNotHappen?: string
+  whySessionDidNotHappenDetails?: string
   triedToContactDidNotAttend?: string
+  behaviourIdentified?: string
+  strengthsIdentified?: string
   personFirstName: string
 }
 
 const REMOTE_SESSION_METHODS = new Set(['Phone call', 'Video call'])
 
-const APPOINTMENT_DELIVERY_METHOD_DISPLAY: Record<string, string> = {
-  PHONE_CALL: 'Phone call',
-  VIDEO_CALL: 'Video call',
-  IN_PERSON_PROBATION_OFFICE: 'In person (probation office)',
-  IN_PERSON_OTHER_LOCATION: 'In person (other location)',
-}
-
-const SESSION_COMMUNICATION_DISPLAY: Record<string, string> = {
-  informedByPhone: 'Phone call',
-  informedByTextMessage: 'Text message',
-  informedByEmail: 'Email',
-}
-
-export default class ViewSessionFeedbackPresenter extends PresenterBase<ViewSessionFeedbackViewModel, object> {
+export default class ViewSessionFeedbackPresenter extends PresenterBase<
+  ViewSessionFeedbackViewModel,
+  ViewSessionFeedbackContent
+> {
   constructor(
     private readonly icsFeedbackSubmissionResponse: IcsFeedbackSubmissionResponse,
     private readonly caseRefId: string,
@@ -71,15 +73,19 @@ export default class ViewSessionFeedbackPresenter extends PresenterBase<ViewSess
   }
 
   buildViewModel(res: Response): ViewSessionFeedbackViewModel {
+    const content = this.buildStaticContent(res)
     const didSessionHappen = this.icsFeedbackSubmissionResponse.recordSessionDidSessionHappen === true
 
     return {
-      pageHeader: 'View session feedback',
-      backLink: { href: `/progress/${this.caseRefId}` },
-      appointmentDetailsSummary: this.buildAppointmentDetailsSummary(),
-      sessionDetailsSummary: didSessionHappen ? this.buildSessionDetailsSummary() : undefined,
-      recordSessionAttendanceSummary: didSessionHappen ? undefined : this.buildRecordSessionAttendanceSummary(),
-      sessionFeedbackSummary: this.buildSessionFeedbackSummary(),
+      pageTitle: content.pageTitle,
+      pageHeader: content.pageHeader,
+      backLink: { href: content.backLink.replace('{{ id }}', this.caseRefId) },
+      appointmentDetailsSummary: this.buildAppointmentDetailsSummary(content),
+      sessionDetailsSummary: didSessionHappen ? this.buildSessionDetailsSummary(content) : undefined,
+      recordSessionAttendanceSummary: this.buildRecordSessionAttendanceSummary(content),
+      sessionFeedbackSummary: this.buildSessionFeedbackSummary(content),
+      issuesAndConcernsSummary: this.buildIssuesAndConcernsSummary(content),
+      nextStepsSummary: this.buildNextStepsSummary(content),
     }
   }
 
@@ -87,8 +93,8 @@ export default class ViewSessionFeedbackPresenter extends PresenterBase<ViewSess
     return 'appointment/viewSessionFeedback'
   }
 
-  private formatSessionCommunication(input: string): string {
-    return SESSION_COMMUNICATION_DISPLAY[input] ?? input
+  private formatSessionCommunication(input: string, content: ViewSessionFeedbackContent['appointmentDetails']): string {
+    return (content.sessionCommunicationDisplay as Record<string, string>)[input] ?? input
   }
 
   private formatLocation(parts: (string | null | undefined)[]): string | undefined {
@@ -134,7 +140,7 @@ export default class ViewSessionFeedbackPresenter extends PresenterBase<ViewSess
     return undefined
   }
 
-  private buildAppointmentDetailsSummary(): GovukFrontendSummaryList {
+  private buildAppointmentDetailsSummary(content: ViewSessionFeedbackContent): GovukFrontendSummaryList {
     const {
       currentCaseworkers,
       feedbackSubmittedBy,
@@ -145,6 +151,7 @@ export default class ViewSessionFeedbackPresenter extends PresenterBase<ViewSess
     } = this.icsFeedbackSubmissionResponse.sessionFeedbackAppointmentDetails
 
     const rows = buildAppointmentDetailsRows({
+      content: content.appointmentDetails,
       currentCaseworkers,
       feedbackSubmittedBy,
       date: isoToFormattedDate(startDateTime),
@@ -152,7 +159,8 @@ export default class ViewSessionFeedbackPresenter extends PresenterBase<ViewSess
       sessionMethod:
         this.icsFeedbackSubmissionResponse.recordSessionHowSessionTookPlace ??
         (appointmentDeliveryDetails?.method
-          ? APPOINTMENT_DELIVERY_METHOD_DISPLAY[appointmentDeliveryDetails.method]
+          ? (content.appointmentDetails.methodDisplay as Record<string, string>)[appointmentDeliveryDetails.method] ??
+            appointmentDeliveryDetails.method
           : undefined),
       reasonForSessionNotInPerson:
         this.icsFeedbackSubmissionResponse.recordSessionNotInPersonReason ?? appointmentDeliveryDetails?.methodDetails,
@@ -161,18 +169,21 @@ export default class ViewSessionFeedbackPresenter extends PresenterBase<ViewSess
         appointmentDeliveryDetails,
       ),
       howWasUserInformedAboutSession:
-        sessionCommunications?.map(c => this.formatSessionCommunication(c)).join(', ') ?? '',
+        sessionCommunications?.map(c => this.formatSessionCommunication(c, content.appointmentDetails)).join(', ') ?? '',
       personFirstName,
     })
 
     return {
-      card: { title: { text: 'Appointment details' } },
+      card: { title: { text: content.appointmentDetails.title } },
       rows,
     }
   }
 
-  private buildSessionDetailsSummary(): GovukFrontendSummaryList {
+  private buildSessionDetailsSummary(content: ViewSessionFeedbackContent): GovukFrontendSummaryList {
     const rows = buildSessionDetailsRows({
+      content: content.sessionDetails,
+      yesText: content.yesText,
+      noText: content.noText,
       isLate: this.icsFeedbackSubmissionResponse.sessionDetailsWasPersonLate,
       whyWereTheyLate: this.icsFeedbackSubmissionResponse.sessionDetailsLateReason,
       sessionDuration: this.icsFeedbackSubmissionResponse.sessionDetailsDuration,
@@ -180,30 +191,38 @@ export default class ViewSessionFeedbackPresenter extends PresenterBase<ViewSess
     })
 
     return {
-      card: { title: { text: 'Session details' } },
+      card: { title: { text: content.sessionDetails.title } },
       rows,
     }
   }
 
-  private buildRecordSessionAttendanceSummary(): GovukFrontendSummaryList {
+  private buildRecordSessionAttendanceSummary(content: ViewSessionFeedbackContent): GovukFrontendSummaryList {
     const rows = buildRecordSessionAttendanceRows({
+      content: content.recordSessionAttendance,
+      yesText: content.yesText,
+      noText: content.noText,
       didSessionHappen: this.icsFeedbackSubmissionResponse.recordSessionDidSessionHappen,
       attendedAppointment: this.icsFeedbackSubmissionResponse.recordSessionDidPersonAttend,
       personFirstName: this.icsFeedbackSubmissionResponse.sessionFeedbackAppointmentDetails.personFirstName,
     })
 
     return {
-      card: { title: { text: 'Record session attendance' } },
+      card: { title: { text: content.recordSessionAttendance.title } },
       rows,
     }
   }
 
-  private buildSessionFeedbackSummary(): GovukFrontendSummaryList {
+  private buildSessionFeedbackSummary(content: ViewSessionFeedbackContent): GovukFrontendSummaryList {
     const rows = buildSessionFeedbackRows({
+      content: content.sessionFeedback,
+      didNotHappenReasonLabels: content.didNotHappenReasonLabels,
       didSessionHappen: this.icsFeedbackSubmissionResponse.recordSessionDidSessionHappen,
       didPersonAttend: this.icsFeedbackSubmissionResponse.recordSessionDidPersonAttend,
       whatHappenedInSession: this.icsFeedbackSubmissionResponse.sessionFeedbackWhatHappened,
-      whySessionDidNotHappen: this.icsFeedbackSubmissionResponse.recordSessionNotHappenReasonDetails,
+      behaviourIdentified: this.icsFeedbackSubmissionResponse.sessionFeedbackBehaviour,
+      strengthsIdentified: this.icsFeedbackSubmissionResponse.sessionFeedbackStrengthsIdentified,
+      whySessionDidNotHappen: this.icsFeedbackSubmissionResponse.recordSessionNotHappenReason,
+      whySessionDidNotHappenDetails: this.icsFeedbackSubmissionResponse.recordSessionNotHappenReasonDetails,
       triedToContactDidNotAttend: this.icsFeedbackSubmissionResponse.recordSessionNoAttendanceInformation,
       personFirstName: this.icsFeedbackSubmissionResponse.sessionFeedbackAppointmentDetails.personFirstName,
     })
@@ -211,8 +230,55 @@ export default class ViewSessionFeedbackPresenter extends PresenterBase<ViewSess
     if (rows.length === 0) return undefined
 
     return {
-      card: { title: { text: 'Session feedback' } },
+      card: { title: { text: content.sessionFeedback.title } },
       rows,
+    }
+  }
+
+  private buildIssuesAndConcernsSummary(content: ViewSessionFeedbackContent): GovukFrontendSummaryList | undefined {
+    const identified = this.icsFeedbackSubmissionResponse.issuesOrConcernsIdentified
+    if (!identified) return undefined
+
+    return {
+      card: { title: { text: content.issuesAndConcerns.title } },
+      rows: [{ key: { text: content.issuesAndConcerns.identified }, value: { text: identified } }],
+    }
+  }
+
+  private buildNextStepsSummary(content: ViewSessionFeedbackContent): GovukFrontendSummaryList | undefined {
+    const { nextStepsPlannedForNextSession, nextStepsActionsBeforeNextSession } = this.icsFeedbackSubmissionResponse
+    const rows = [
+      ...(nextStepsPlannedForNextSession
+        ? [
+            {
+              key: { text: content.nextSteps.plannedForNextSession },
+              value: { text: nextStepsPlannedForNextSession },
+            },
+          ]
+        : []),
+      ...(nextStepsActionsBeforeNextSession
+        ? [
+            {
+              key: { text: content.nextSteps.actionsBeforeNextSession },
+              value: { text: nextStepsActionsBeforeNextSession },
+            },
+          ]
+        : []),
+    ]
+
+    if (rows.length === 0) return undefined
+
+    return {
+      card: { title: { text: content.nextSteps.title } },
+      rows: rows.map(row => ({
+        ...row,
+        key: {
+          text: row.key.text.replace(
+            '{{ firstname }}',
+            this.icsFeedbackSubmissionResponse.sessionFeedbackAppointmentDetails.personFirstName,
+          ),
+        },
+      })),
     }
   }
 }
@@ -233,54 +299,66 @@ export function buildAppointmentDetailsRows(
     location,
     howWasUserInformedAboutSession,
     personFirstName,
+    content,
   } = input
 
-  const currentCaseworkerLabel = currentCaseworkers.length > 1 ? 'Current caseworkers' : 'Current caseworker'
+  const currentCaseworkerLabel = currentCaseworkers.length > 1 ? content.currentCaseworkers : content.currentCaseworker
   const currentCaseworkersHtml = currentCaseworkers.map(formatCaseWorkerHtml).join('<br>')
   const feedbackSubmittedByHtml = formatCaseWorkerHtml(feedbackSubmittedBy)
   const isRemoteSession = REMOTE_SESSION_METHODS.has(sessionMethod)
 
   return [
     { key: { text: currentCaseworkerLabel }, value: { html: currentCaseworkersHtml } },
-    { key: { text: 'Feedback submitted by' }, value: { html: feedbackSubmittedByHtml } },
-    { key: { text: 'Date' }, value: { text: date } },
-    { key: { text: 'Start time' }, value: { text: startTime } },
-    { key: { text: 'Method' }, value: { text: sessionMethod } },
+    { key: { text: content.feedbackSubmittedBy }, value: { html: feedbackSubmittedByHtml } },
+    { key: { text: content.date }, value: { text: date } },
+    { key: { text: content.startTime }, value: { text: startTime } },
+    { key: { text: content.method }, value: { text: sessionMethod } },
     ...(isRemoteSession
-      ? [{ key: { text: 'Reason session was not in-person' }, value: { text: reasonForSessionNotInPerson } }]
-      : [{ key: { text: 'Location' }, value: { text: location } }]),
+      ? [{ key: { text: content.reasonSessionNotInPerson }, value: { text: reasonForSessionNotInPerson } }]
+      : [{ key: { text: content.location }, value: { text: location } }]),
     {
-      key: { text: `How ${personFirstName} was informed about the session` },
+      key: { text: content.howPersonWasInformed.replace('{{ firstname }}', personFirstName) },
       value: { text: howWasUserInformedAboutSession },
     },
   ]
 }
 
 export function buildSessionDetailsRows(input: SessionDetailsSummaryRowInput): GovukFrontendSummaryList['rows'] {
-  const { isLate, whyWereTheyLate, sessionDuration, personFirstName } = input
+  const { isLate, whyWereTheyLate, sessionDuration, personFirstName, content } = input
 
   return [
-    { key: { text: `Was ${personFirstName} late?` }, value: { text: isLate ? 'Yes' : 'No' } },
+    {
+      key: { text: content.wasPersonLate.replace('{{ firstname }}', personFirstName) },
+      value: { text: isLate ? input.yesText : input.noText },
+    },
     ...(isLate && whyWereTheyLate
-      ? [{ key: { text: `Why ${personFirstName} was late` }, value: { text: whyWereTheyLate } }]
+      ? [
+          {
+            key: { text: content.whyWereTheyLate.replace('{{ firstname }}', personFirstName) },
+            value: { text: whyWereTheyLate },
+          },
+        ]
       : []),
 
-    ...(sessionDuration ? [{ key: { text: 'Session duration' }, value: { text: sessionDuration } }] : []),
+    ...(sessionDuration ? [{ key: { text: content.duration }, value: { text: sessionDuration } }] : []),
   ]
 }
 
 export function buildRecordSessionAttendanceRows(
   input: RecordSessionAttendanceSummaryRowInput,
 ): GovukFrontendSummaryList['rows'] {
-  const { didSessionHappen, attendedAppointment, personFirstName } = input
+  const { didSessionHappen, attendedAppointment, personFirstName, content } = input
 
   return [
-    { key: { text: 'Did the session happen?' }, value: { text: didSessionHappen ? 'Yes' : 'No' } },
+    {
+      key: { text: content.didSessionHappen },
+      value: { text: didSessionHappen ? input.yesText : input.noText },
+    },
     ...(attendedAppointment != null
       ? [
           {
-            key: { text: `Did ${personFirstName} come to the appointment?` },
-            value: { text: attendedAppointment ? 'Yes' : 'No' },
+            key: { text: content.didPersonAttend.replace('{{ firstname }}', personFirstName) },
+            value: { text: attendedAppointment ? input.yesText : input.noText },
           },
         ]
       : []),
@@ -299,22 +377,50 @@ export function buildSessionFeedbackRows(
     didPersonAttend,
     whatHappenedInSession,
     whySessionDidNotHappen,
+    whySessionDidNotHappenDetails,
     triedToContactDidNotAttend,
     personFirstName,
+    content,
+    didNotHappenReasonLabels,
   } = input
 
   if (didSessionHappen) {
     return [
       ...(whatHappenedInSession
-        ? [{ key: { text: 'What happened in the session' }, value: { text: whatHappenedInSession } }]
+        ? [{ key: { text: content.whatHappened }, value: { text: whatHappenedInSession } }]
+        : []),
+      ...(input.behaviourIdentified
+        ? [
+            {
+              key: { text: content.behaviour.replace('{{ firstname }}', personFirstName) },
+              value: { text: input.behaviourIdentified },
+            },
+          ]
+        : []),
+      ...(input.strengthsIdentified
+        ? [{ key: { text: content.strengths }, value: { text: input.strengthsIdentified } }]
         : []),
     ]
   }
 
   if (didPersonAttend) {
     return [
-      ...(whySessionDidNotHappen
-        ? [{ key: { text: 'Why the session did not happen' }, value: { text: whySessionDidNotHappen } }]
+      ...(whySessionDidNotHappen || whySessionDidNotHappenDetails
+        ? [
+            {
+              key: { text: content.whySessionDidNotHappen },
+              value: {
+                text: [
+                  whySessionDidNotHappen
+                    ? getSessionNotHappenReasonLabel(whySessionDidNotHappen, personFirstName, didNotHappenReasonLabels)
+                    : '',
+                  whySessionDidNotHappenDetails,
+                ]
+                  .filter(Boolean)
+                  .join(': '),
+              },
+            },
+          ]
         : []),
     ]
   }
@@ -323,10 +429,29 @@ export function buildSessionFeedbackRows(
     ...(triedToContactDidNotAttend
       ? [
           {
-            key: { text: `Details about how you tried to contact ${personFirstName} and why they did not attend` },
+            key: {
+              text: content.triedToContactDidNotAttend.replace('{{ firstname }}', personFirstName),
+            },
             value: { text: triedToContactDidNotAttend },
           },
         ]
       : []),
   ]
+}
+
+function getSessionNotHappenReasonLabel(
+  reason: string,
+  personFirstName: string,
+  labels: ViewSessionFeedbackContent['didNotHappenReasonLabels'],
+): string {
+  switch (reason) {
+    case 'SERVICE_PROVIDER_ISSUE':
+      return labels.serviceProviderIssue
+    case 'REFERRAL_COULD_NOT_TAKE_PART':
+      return labels.referralCouldNotTakePart.replace('{{ firstname }}', personFirstName)
+    case 'REFERRAL_DID_NOT_COMPLY':
+      return labels.referralDidNotComply.replace('{{ firstname }}', personFirstName)
+    default:
+      return reason
+  }
 }

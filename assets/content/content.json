@@ -573,6 +573,69 @@
     "submitButtonText": "Continue",
     "backLinkHref": "/ics-feedback/{{ id }}/issues-or-concerns"
   },
+  "/ics-feedback/:id/session/:id": {
+    "pageTitle": "View session feedback",
+    "pageHeader": "View session feedback",
+    "backLink": "/progress/{{ id }}",
+    "yesText": "Yes",
+    "noText": "No",
+    "appointmentDetails": {
+      "title": "Appointment details",
+      "currentCaseworker": "Current caseworker",
+      "currentCaseworkers": "Current caseworkers",
+      "feedbackSubmittedBy": "Feedback submitted by",
+      "date": "Date",
+      "startTime": "Start time",
+      "method": "Method",
+      "reasonSessionNotInPerson": "Reason session was not in-person",
+      "location": "Location",
+      "howPersonWasInformed": "How {{ firstname }} was informed about the session",
+      "methodDisplay": {
+        "PHONE_CALL": "Phone call",
+        "VIDEO_CALL": "Video call",
+        "IN_PERSON_PROBATION_OFFICE": "In person (probation office)",
+        "IN_PERSON_OTHER_LOCATION": "In person (other location)"
+      },
+      "sessionCommunicationDisplay": {
+        "informedByPhone": "Phone call",
+        "informedByTextMessage": "Text message",
+        "informedByEmail": "Email"
+      }
+    },
+    "recordSessionAttendance": {
+      "title": "Record session attendance",
+      "didSessionHappen": "Did the session happen?",
+      "didPersonAttend": "Did {{ firstname }} come to the appointment?"
+    },
+    "sessionDetails": {
+      "title": "Session details",
+      "wasPersonLate": "Was {{ firstname }} late?",
+      "whyWereTheyLate": "Why {{ firstname }} was late",
+      "duration": "Session duration"
+    },
+    "sessionFeedback": {
+      "title": "Session feedback",
+      "whatHappened": "What happened in the session",
+      "behaviour": "What was {{ firstname }}'s engagement like during the session?",
+      "strengths": "What strengths did you identify?",
+      "whySessionDidNotHappen": "Why the session did not happen",
+      "triedToContactDidNotAttend": "Details about how you tried to contact {{ firstname }} and why they did not attend"
+    },
+    "didNotHappenReasonLabels": {
+      "serviceProviderIssue": "Service provider issue",
+      "referralCouldNotTakePart": "{{ firstname }} could not take part",
+      "referralDidNotComply": "{{ firstname }} did not comply"
+    },
+    "issuesAndConcerns": {
+      "title": "Issues or concerns",
+      "identified": "What issues or concerns did you identify?"
+    },
+    "nextSteps": {
+      "title": "Next steps",
+      "plannedForNextSession": "What do you have planned for the next session?",
+      "actionsBeforeNextSession": "What actions do you and {{ firstname }} have before the next session takes place?"
+    }
+  },
   "/ics-feedback/:id/check-answers": {
     "pageHeader": "Check your answers before submitting feedback",
     "summaryLists": [
