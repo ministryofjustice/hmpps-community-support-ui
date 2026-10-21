@@ -1,4 +1,3 @@
-import nock from 'nock'
 import type {
   CommunitySupportServicesProvider,
   CreateReferralRequest,
@@ -7,6 +6,7 @@ import type {
   ReferralUserAssignmentsResponse,
   CaseWorkerDto,
   ReferralProgress,
+  ReferralAppointmentsBffResponseDto,
   ReferralInformation,
   ProbationOffice,
   IcsFeedbackSubmissionResponse,
@@ -26,6 +26,7 @@ import type {
 } from '@community-support-api'
 import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import { AgentConfig, ApiConfig } from '@ministryofjustice/hmpps-rest-client'
+import nock from 'nock'
 import { randomUUID } from 'node:crypto'
 import CommunitySupportApiClient from './communitySupportApiClient'
 import ReferralProgressFactory from '../testutils/factories/ReferralProgress'
@@ -47,6 +48,10 @@ describe('CommunitySupportApiClient tests', () => {
   } as ApiConfig
   const mockAuthClient = { getToken: async () => 'dummy-token' } as AuthenticationClient
 
+  afterAll(() => {
+    nock.restore()
+  })
+
   beforeEach(() => {
     communitySupportApiClient = new CommunitySupportApiClient(mockAuthClient, mockApiConfig)
   })
@@ -62,7 +67,7 @@ describe('CommunitySupportApiClient tests', () => {
 
       const result = communitySupportApiClient.getReferralById('referral123', 'user1')
 
-      expect(result).resolves.toEqual(mockReferral)
+      return expect(result).resolves.toEqual(mockReferral)
     })
   })
   describe('getCommunitySupportServiceProviders tests', () => {
@@ -101,7 +106,7 @@ describe('CommunitySupportApiClient tests', () => {
 
       const result = communitySupportApiClient.getCommunitySupportServiceProviders('provider123', 'user1')
 
-      expect(result).resolves.toEqual(mockCommunityServiceProviderData)
+      return expect(result).resolves.toEqual(mockCommunityServiceProviderData)
     })
   })
 
@@ -129,7 +134,7 @@ describe('CommunitySupportApiClient tests', () => {
 
       const result = communitySupportApiClient.createReferral(referralRequestData, 'user1')
 
-      expect(result).resolves.toEqual(referralInformationDto)
+      return expect(result).resolves.toEqual(referralInformationDto)
     })
   })
   describe('submitReferralById tests', () => {
@@ -147,7 +152,7 @@ describe('CommunitySupportApiClient tests', () => {
 
       const result = communitySupportApiClient.submitReferralById('referral-id-123', 'user1')
 
-      expect(result).resolves.toEqual(submitReferralResponseDto)
+      return expect(result).resolves.toEqual(submitReferralResponseDto)
     })
   })
   describe('getCaseList tests', () => {
@@ -172,7 +177,7 @@ describe('CommunitySupportApiClient tests', () => {
 
       const result = communitySupportApiClient.getCaseList('user1', page, false)
 
-      expect(result).resolves.toEqual(caseListDto)
+      return expect(result).resolves.toEqual(caseListDto)
     })
     it('should return an in progress case list on a 200 response', () => {
       const caseListDto = {
@@ -195,7 +200,7 @@ describe('CommunitySupportApiClient tests', () => {
 
       const result = communitySupportApiClient.getCaseList('user1', page, true)
 
-      expect(result).resolves.toEqual(caseListDto)
+      return expect(result).resolves.toEqual(caseListDto)
     })
   })
   describe('getReferralUserAssignments tests', () => {
@@ -216,7 +221,7 @@ describe('CommunitySupportApiClient tests', () => {
 
       const result = communitySupportApiClient.getReferralUserAssignments('referral-id-1', 'user1')
 
-      expect(result).resolves.toEqual(mockCaseWorkers)
+      return expect(result).resolves.toEqual(mockCaseWorkers)
     })
   })
   describe('postReferralUserAssignments tests', () => {
@@ -249,7 +254,7 @@ describe('CommunitySupportApiClient tests', () => {
         'user1',
       )
 
-      expect(result).resolves.toEqual(mockReferralUserAssignmentsResponseData)
+      return expect(result).resolves.toEqual(mockReferralUserAssignmentsResponseData)
     })
   })
   describe('getProbationOffices tests', () => {
@@ -286,7 +291,7 @@ describe('CommunitySupportApiClient tests', () => {
 
       const result = communitySupportApiClient.getProbationOffices('user1')
 
-      expect(result).resolves.toEqual(mockProbationOffices)
+      return expect(result).resolves.toEqual(mockProbationOffices)
     })
   })
 
@@ -307,7 +312,7 @@ describe('CommunitySupportApiClient tests', () => {
 
       const result = communitySupportApiClient.getWithdrawalReasons('user1')
 
-      expect(result).resolves.toEqual(response)
+      return expect(result).resolves.toEqual(response)
     })
   })
   describe('getReferralProgress tests', () => {
@@ -323,7 +328,34 @@ describe('CommunitySupportApiClient tests', () => {
 
       const result = communitySupportApiClient.getReferralProgress(caseReference, 'user1')
 
-      expect(result).resolves.toEqual(mockReferralProgress)
+      return expect(result).resolves.toEqual(mockReferralProgress)
+    })
+  })
+  describe('getReferralAppointments tests', () => {
+    it('should return appointments for a referral with a 200 response', () => {
+      const caseReference = 'AB1234CD'
+      const appointments: ReferralAppointmentsBffResponseDto = {
+        personDetails: { firstName: 'Alex', lastName: 'Example', dateOfBirth: '1980-01-01', crn: 'X123456' },
+        appointments: [
+          {
+            id: randomUUID(),
+            label: 'Contact session',
+            appointmentDate: '2026-10-09',
+            appointmentTime: { hour: 2, minute: 30, amPm: 'pm' },
+            appointmentStatus: 'SCHEDULED',
+          },
+        ],
+      }
+
+      nock('http://localhost:8080', {
+        reqheaders: { authorization: 'Bearer dummy-token' },
+      })
+        .get(`/bff/referral/${caseReference}/appointments`)
+        .reply(200, appointments)
+
+      const result = communitySupportApiClient.getReferralAppointments(caseReference, 'user1')
+
+      expect(result).resolves.toEqual(appointments)
     })
   })
   describe('getReferralInformation tests', () => {
@@ -339,7 +371,7 @@ describe('CommunitySupportApiClient tests', () => {
 
       const result = communitySupportApiClient.getReferralInformation(caseReference, 'user1')
 
-      expect(result).resolves.toEqual(mockReferralInformation)
+      return expect(result).resolves.toEqual(mockReferralInformation)
     })
   })
   describe('getActionPlanSummary tests', () => {
@@ -362,7 +394,7 @@ describe('CommunitySupportApiClient tests', () => {
 
       const result = communitySupportApiClient.getActionPlanSummary(caseReference, 'user1')
 
-      expect(result).resolves.toEqual(mockActionPlanSummary)
+      return expect(result).resolves.toEqual(mockActionPlanSummary)
     })
   })
   describe('getActionPlanNeedsAndOutcomes tests', () => {
@@ -378,7 +410,7 @@ describe('CommunitySupportApiClient tests', () => {
 
       const result = communitySupportApiClient.getActionPlanNeedsAndOutcomes(referralReference, 'user1')
 
-      expect(result).resolves.toEqual(response)
+      return expect(result).resolves.toEqual(response)
     })
   })
   describe('submitAction tests', () => {
@@ -399,7 +431,7 @@ describe('CommunitySupportApiClient tests', () => {
 
       const result = communitySupportApiClient.submitAction(caseReference, request, 'user1')
 
-      expect(result).resolves.toEqual(response)
+      return expect(result).resolves.toEqual(response)
     })
   })
   describe('deleteAction tests', () => {
@@ -416,7 +448,7 @@ describe('CommunitySupportApiClient tests', () => {
 
       const result = communitySupportApiClient.deleteAction(caseReference, actionId, 'user1')
 
-      expect(result).resolves.toEqual(response)
+      return expect(result).resolves.toEqual(response)
     })
   })
   describe('getWithdrawalReasons tests', () => {
@@ -433,7 +465,7 @@ describe('CommunitySupportApiClient tests', () => {
 
       const result = communitySupportApiClient.getWithdrawalReasons('user1')
 
-      expect(result).resolves.toEqual(mockWithdrawalReasons)
+      return expect(result).resolves.toEqual(mockWithdrawalReasons)
     })
   })
   describe('getIcsFeedbackSubmissionResponse tests', () => {
@@ -449,7 +481,7 @@ describe('CommunitySupportApiClient tests', () => {
 
       const result = communitySupportApiClient.getIcsSessionFeedback(icsFeedbackId, 'user1')
 
-      expect(result).resolves.toEqual(mockIcsFeedbackResponse)
+      return expect(result).resolves.toEqual(mockIcsFeedbackResponse)
     })
   })
   describe('saveRiskInformation tests', () => {
@@ -472,7 +504,7 @@ describe('CommunitySupportApiClient tests', () => {
 
       const result = communitySupportApiClient.saveRiskInformation('referral-id-123', riskInformation, 'user1')
 
-      expect(result).resolves.toEqual(riskInformation)
+      return expect(result).resolves.toEqual(riskInformation)
     })
   })
   describe('getRoshRisksByReferralId tests', () => {
@@ -493,7 +525,7 @@ describe('CommunitySupportApiClient tests', () => {
 
       const result = communitySupportApiClient.getRoshRisksByReferralId('referral-id-123', 'user1')
 
-      expect(result).resolves.toEqual(riskDto)
+      return expect(result).resolves.toEqual(riskDto)
     })
   })
 
@@ -518,7 +550,7 @@ describe('CommunitySupportApiClient tests', () => {
         'user1',
       )
 
-      expect(result).resolves.toEqual(providerDetails)
+      return expect(result).resolves.toEqual(providerDetails)
     })
   })
 
@@ -565,7 +597,7 @@ describe('CommunitySupportApiClient tests', () => {
 
       const result = communitySupportApiClient.getOffenceSentencePage(referralId, 'user1')
 
-      expect(result).resolves.toEqual(response)
+      return expect(result).resolves.toEqual(response)
     })
   })
 
@@ -595,7 +627,7 @@ describe('CommunitySupportApiClient tests', () => {
 
       const result = communitySupportApiClient.updateOffenceSentencePage(referralId, request, 'user1')
 
-      expect(result).resolves.toEqual(response)
+      return expect(result).resolves.toEqual(response)
     })
   })
 
@@ -615,7 +647,7 @@ describe('CommunitySupportApiClient tests', () => {
 
       const result = communitySupportApiClient.withdrawReferral(referralReference, request, 'user1')
 
-      expect(result).resolves.toEqual({})
+      return expect(result).resolves.toEqual({})
     })
   })
 })
