@@ -6,6 +6,7 @@ import type {
   ReferralUserAssignmentsResponse,
   CaseWorkerDto,
   ReferralProgress,
+  ReferralAppointmentsBffResponseDto,
   ReferralInformation,
   ProbationOffice,
   IcsFeedbackSubmissionResponse,
@@ -328,6 +329,33 @@ describe('CommunitySupportApiClient tests', () => {
       const result = communitySupportApiClient.getReferralProgress(caseReference, 'user1')
 
       return expect(result).resolves.toEqual(mockReferralProgress)
+    })
+  })
+  describe('getReferralAppointments tests', () => {
+    it('should return appointments for a referral with a 200 response', () => {
+      const caseReference = 'AB1234CD'
+      const appointments: ReferralAppointmentsBffResponseDto = {
+        personDetails: { firstName: 'Alex', lastName: 'Example', dateOfBirth: '1980-01-01', crn: 'X123456' },
+        appointments: [
+          {
+            id: randomUUID(),
+            label: 'Contact session',
+            appointmentDate: '2026-10-09',
+            appointmentTime: { hour: 2, minute: 30, amPm: 'pm' },
+            appointmentStatus: 'SCHEDULED',
+          },
+        ],
+      }
+
+      nock('http://localhost:8080', {
+        reqheaders: { authorization: 'Bearer dummy-token' },
+      })
+        .get(`/bff/referral/${caseReference}/appointments`)
+        .reply(200, appointments)
+
+      const result = communitySupportApiClient.getReferralAppointments(caseReference, 'user1')
+
+      expect(result).resolves.toEqual(appointments)
     })
   })
   describe('getReferralInformation tests', () => {

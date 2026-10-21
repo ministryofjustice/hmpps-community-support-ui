@@ -6,7 +6,7 @@ import loadContentDataForTest from '../../testutils/loadContentDataForTest'
 
 const content = loadContentDataForTest('/referral/task-list/service-days')
 const pageContent = {
-  pageTitle: 'How many days will you use for this service? - Community Support',
+  pageTitle: 'How many days will you use for this service?',
   h2: 'How many days will you use for this service?',
   bodyText1:
     'Enter the maximum number of days you want to use for this service. Any unused days will be given back. For community orders or suspended sentences, consider how many RAR days to allocate.',

@@ -1,0 +1,17 @@
+{% extends "../partials/layout.njk" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+
+{% set pageTitle = content.pageTitle + " – " + applicationName %}
+{% set mainClasses = "govuk-body" %}
+
+{% block contentBody %}
+  <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
+
+  {{ govukRadios({
+    idPrefix: "appointmentType",
+    name: "appointmentType",
+    fieldset: { legend: { text: content.pageHeader, classes: "govuk-fieldset__legend--m", isPageHeading: false } },
+    items: content.appointmentTypes
+  }) }}
+{% endblock %}

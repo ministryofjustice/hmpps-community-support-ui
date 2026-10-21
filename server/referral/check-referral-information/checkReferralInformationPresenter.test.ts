@@ -130,7 +130,7 @@ describe('CheckReferralInformationPresenter', () => {
         },
         value: { html: '<div>Dyslexia</div>' },
       })
-      expect(renderData.content.pageTitle).toBe('Check details and submit referral – Community Support')
+      expect(renderData.content.pageTitle).toBe('Check details and submit referral')
       expect(renderData.content.pageHeader).toBe('John Doe')
       expect(renderData.content.personalDetailsHeader).toBe('About John')
       expect(renderData.content.referralContactDetailsHeader).toBe('Referral contact details')
