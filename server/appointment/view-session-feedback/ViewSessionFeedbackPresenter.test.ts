@@ -317,7 +317,7 @@ describe('ViewSessionFeedbackPresenter', () => {
         expect(viewModel.sessionDetailsSummary).toBeDefined()
       })
 
-      it('omits the session details summary when the session did not happen', () => {
+      it('shows why session details do not apply when the session did not happen', () => {
         const viewModel = renderViewModel(
           IcsFeedbackResponseFactory.build({
             recordSessionDidSessionHappen: false,
@@ -326,7 +326,10 @@ describe('ViewSessionFeedbackPresenter', () => {
           }),
         )
 
-        expect(viewModel.sessionDetailsSummary).toBeUndefined()
+        expect(viewModel.sessionDetailsSummary.rows).toContainEqual({
+          key: { text: 'Session details' },
+          value: { text: 'Not applicable because the session did not happen' },
+        })
       })
 
       it('shows the late reason when the person was late', () => {
@@ -369,7 +372,7 @@ describe('ViewSessionFeedbackPresenter', () => {
         })
       })
 
-      it('does not show the late reason when no reason is provided', () => {
+      it('shows None for the late reason when no reason is provided', () => {
         const viewModel = renderViewModel(
           IcsFeedbackResponseFactory.build({
             recordSessionDidSessionHappen: true,
@@ -383,7 +386,10 @@ describe('ViewSessionFeedbackPresenter', () => {
           value: { text: 'Yes' },
         })
 
-        expect(viewModel.sessionDetailsSummary.rows.find(r => r.key.text.includes('Why Alex was late'))).toBeUndefined()
+        expect(viewModel.sessionDetailsSummary.rows).toContainEqual({
+          key: { text: 'Why Alex was late' },
+          value: { text: 'None' },
+        })
       })
     })
 
@@ -420,7 +426,7 @@ describe('ViewSessionFeedbackPresenter', () => {
         expect(row).toEqual({ key: { text: 'Did Alex come to the appointment?' }, value: { text: 'No' } })
       })
 
-      it('omits the attendance row when attendance is unknown', () => {
+      it('shows None when attendance is unknown', () => {
         const viewModel = renderViewModel(
           IcsFeedbackResponseFactory.build({
             recordSessionDidSessionHappen: false,
@@ -428,10 +434,14 @@ describe('ViewSessionFeedbackPresenter', () => {
           }),
         )
 
-        expect(viewModel.recordSessionAttendanceSummary.rows).toHaveLength(1)
+        expect(viewModel.recordSessionAttendanceSummary.rows).toHaveLength(2)
         expect(viewModel.recordSessionAttendanceSummary.rows[0]).toEqual({
           key: { text: 'Did the session happen?' },
           value: { text: 'No' },
+        })
+        expect(viewModel.recordSessionAttendanceSummary.rows[1]).toEqual({
+          key: { text: 'Did Alex come to the appointment?' },
+          value: { text: 'None' },
         })
       })
     })
@@ -443,7 +453,7 @@ describe('ViewSessionFeedbackPresenter', () => {
         expect(viewModel.sessionFeedbackSummary.card?.title?.text).toBe('Session feedback')
       })
 
-      it('omits the session feedback summary when no feedback information exists', () => {
+      it('shows a fallback when no session feedback information exists', () => {
         const viewModel = renderViewModel(
           IcsFeedbackResponseFactory.build({
             recordSessionDidSessionHappen: true,
@@ -453,7 +463,11 @@ describe('ViewSessionFeedbackPresenter', () => {
           }),
         )
 
-        expect(viewModel.sessionFeedbackSummary).toBeUndefined()
+        expect(viewModel.sessionFeedbackSummary.rows).toEqual([
+          { key: { text: 'What happened in the session' }, value: { text: 'None' } },
+          { key: { text: "What was Alex's engagement like during the session?" }, value: { text: 'None' } },
+          { key: { text: 'What strengths did you identify?' }, value: { text: 'None' } },
+        ])
       })
 
       it('shows what happened in the session when the session happened', () => {
@@ -545,6 +559,26 @@ describe('ViewSessionFeedbackPresenter', () => {
             value: { text: 'Complete CV template' },
           },
         ])
+      })
+
+      it('shows additional support needs when provided', () => {
+        const viewModel = renderViewModel(
+          IcsFeedbackResponseFactory.build({ additionalSupportNeeds: 'Needs a quiet room for sessions' }),
+        )
+
+        expect(viewModel.additionalSupportNeedsSummary.card?.title?.text).toBe('Additional support needs')
+        expect(viewModel.additionalSupportNeedsSummary.rows).toEqual([
+          {
+            key: { text: 'What additional support needs did you identify?' },
+            value: { text: 'Needs a quiet room for sessions' },
+          },
+        ])
+      })
+
+      it('shows a fallback when no additional support needs were identified', () => {
+        const viewModel = renderViewModel(IcsFeedbackResponseFactory.build({ additionalSupportNeeds: null }))
+
+        expect(viewModel.additionalSupportNeedsSummary.rows[0].value.text).toBe('None')
       })
     })
   })

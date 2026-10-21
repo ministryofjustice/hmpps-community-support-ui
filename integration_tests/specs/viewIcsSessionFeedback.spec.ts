@@ -69,6 +69,7 @@ test.describe('View ICS Session Feedback', () => {
     sessionFeedbackBehaviour: 'Engaged and positive',
     sessionFeedbackStrengthsIdentified: 'Strong family support',
     issuesOrConcernsIdentified: 'No immediate concerns identified',
+    additionalSupportNeeds: 'Needs a quiet room for sessions',
     nextStepsPlannedForNextSession: 'Continue with action plan',
     nextStepsActionsBeforeNextSession: 'Complete CV template',
   })
@@ -191,6 +192,11 @@ test.describe('View ICS Session Feedback', () => {
     const issuesCard = page.locator('.govuk-summary-card', { hasText: 'Issues or concerns' })
     await expect(issuesCard).toContainText('No immediate concerns identified')
 
+    const additionalSupportNeedsCard = page.locator('.govuk-summary-card', {
+      hasText: 'Additional support needs',
+    })
+    await expect(additionalSupportNeedsCard).toContainText('Needs a quiet room for sessions')
+
     const nextStepsCard = page.locator('.govuk-summary-card', { hasText: 'Next steps' })
     await expect(nextStepsCard).toContainText('Continue with action plan')
     await expect(nextStepsCard).toContainText('Complete CV template')
@@ -203,6 +209,9 @@ test.describe('View ICS Session Feedback', () => {
     await page.goto(`/progress/${caseRefId}`)
     await page.getByRole('link', { name: 'View feedback' }).click()
 
+    const sessionDetailsCard = page.locator('.govuk-summary-card', { hasText: 'Session details' })
+    await expect(sessionDetailsCard).toContainText('Not applicable because the session did not happen')
+
     const sessionFeedbackCard = page.locator('.govuk-summary-card', { hasText: 'Session feedback' })
 
     await expect(sessionFeedbackCard).toContainText('Why the session did not happen')
@@ -212,6 +221,10 @@ test.describe('View ICS Session Feedback', () => {
     const attendanceCard = page.locator('.govuk-summary-card', { hasText: 'Record session attendance' })
     await expect(attendanceCard).toContainText('Did the session happen?')
     await expect(attendanceCard).toContainText('No')
+
+    const additionalSupportNeedsCard = page.locator('.govuk-summary-card', { hasText: 'Additional support needs' })
+    await expect(additionalSupportNeedsCard).toContainText('What additional support needs did you identify?')
+    await expect(additionalSupportNeedsCard).toContainText('None')
   })
 
   test('shows session feedback when the user did not attend', async ({ page }) => {

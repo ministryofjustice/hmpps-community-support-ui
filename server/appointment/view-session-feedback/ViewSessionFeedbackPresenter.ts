@@ -15,6 +15,7 @@ type AppointmentDeliveryDetails = SessionFeedbackAppointmentDetails['appointment
 
 export interface AppointmentDetailsSummaryRowInput {
   content: ViewSessionFeedbackContent['appointmentDetails']
+  noneText: string
   currentCaseworkers: CaseWorkerSummary[]
   feedbackSubmittedBy: CaseWorkerSummary
   date: string
@@ -28,9 +29,10 @@ export interface AppointmentDetailsSummaryRowInput {
 
 export interface SessionDetailsSummaryRowInput {
   content: ViewSessionFeedbackContent['sessionDetails']
+  noneText: string
   yesText: string
   noText: string
-  isLate: boolean
+  isLate?: boolean | null
   whyWereTheyLate: string
   sessionDuration: string
   personFirstName: string
@@ -38,6 +40,7 @@ export interface SessionDetailsSummaryRowInput {
 
 export interface RecordSessionAttendanceSummaryRowInput {
   content: ViewSessionFeedbackContent['recordSessionAttendance']
+  noneText: string
   yesText: string
   noText: string
   didSessionHappen: boolean
@@ -48,6 +51,7 @@ export interface RecordSessionAttendanceSummaryRowInput {
 export interface SessionFeedbackSummaryRowInput {
   content: ViewSessionFeedbackContent['sessionFeedback']
   didNotHappenReasonLabels: ViewSessionFeedbackContent['didNotHappenReasonLabels']
+  noneText: string
   didSessionHappen: boolean
   didPersonAttend?: boolean | null
   whatHappenedInSession?: string
@@ -81,10 +85,11 @@ export default class ViewSessionFeedbackPresenter extends PresenterBase<
       pageHeader: content.pageHeader,
       backLink: { href: content.backLink.replace('{{ id }}', this.caseRefId) },
       appointmentDetailsSummary: this.buildAppointmentDetailsSummary(content),
-      sessionDetailsSummary: didSessionHappen ? this.buildSessionDetailsSummary(content) : undefined,
+      sessionDetailsSummary: this.buildSessionDetailsSummary(content, didSessionHappen),
       recordSessionAttendanceSummary: this.buildRecordSessionAttendanceSummary(content),
       sessionFeedbackSummary: this.buildSessionFeedbackSummary(content),
       issuesAndConcernsSummary: this.buildIssuesAndConcernsSummary(content),
+      additionalSupportNeedsSummary: this.buildAdditionalSupportNeedsSummary(content),
       nextStepsSummary: this.buildNextStepsSummary(content),
     }
   }
@@ -152,6 +157,7 @@ export default class ViewSessionFeedbackPresenter extends PresenterBase<
 
     const rows = buildAppointmentDetailsRows({
       content: content.appointmentDetails,
+      noneText: content.noneText,
       currentCaseworkers,
       feedbackSubmittedBy,
       date: isoToFormattedDate(startDateTime),
@@ -179,16 +185,22 @@ export default class ViewSessionFeedbackPresenter extends PresenterBase<
     }
   }
 
-  private buildSessionDetailsSummary(content: ViewSessionFeedbackContent): GovukFrontendSummaryList {
-    const rows = buildSessionDetailsRows({
-      content: content.sessionDetails,
-      yesText: content.yesText,
-      noText: content.noText,
-      isLate: this.icsFeedbackSubmissionResponse.sessionDetailsWasPersonLate,
-      whyWereTheyLate: this.icsFeedbackSubmissionResponse.sessionDetailsLateReason,
-      sessionDuration: this.icsFeedbackSubmissionResponse.sessionDetailsDuration,
-      personFirstName: this.icsFeedbackSubmissionResponse.sessionFeedbackAppointmentDetails.personFirstName,
-    })
+  private buildSessionDetailsSummary(
+    content: ViewSessionFeedbackContent,
+    didSessionHappen: boolean,
+  ): GovukFrontendSummaryList {
+    const rows = didSessionHappen
+      ? buildSessionDetailsRows({
+          content: content.sessionDetails,
+          noneText: content.noneText,
+          yesText: content.yesText,
+          noText: content.noText,
+           isLate: this.icsFeedbackSubmissionResponse.sessionDetailsWasPersonLate ?? null,
+          whyWereTheyLate: this.icsFeedbackSubmissionResponse.sessionDetailsLateReason,
+          sessionDuration: this.icsFeedbackSubmissionResponse.sessionDetailsDuration,
+          personFirstName: this.icsFeedbackSubmissionResponse.sessionFeedbackAppointmentDetails.personFirstName,
+        })
+      : [{ key: { text: content.sessionDetails.title }, value: { text: content.sessionDetails.notApplicable } }]
 
     return {
       card: { title: { text: content.sessionDetails.title } },
@@ -199,6 +211,7 @@ export default class ViewSessionFeedbackPresenter extends PresenterBase<
   private buildRecordSessionAttendanceSummary(content: ViewSessionFeedbackContent): GovukFrontendSummaryList {
     const rows = buildRecordSessionAttendanceRows({
       content: content.recordSessionAttendance,
+      noneText: content.noneText,
       yesText: content.yesText,
       noText: content.noText,
       didSessionHappen: this.icsFeedbackSubmissionResponse.recordSessionDidSessionHappen,
@@ -216,6 +229,7 @@ export default class ViewSessionFeedbackPresenter extends PresenterBase<
     const rows = buildSessionFeedbackRows({
       content: content.sessionFeedback,
       didNotHappenReasonLabels: content.didNotHappenReasonLabels,
+      noneText: content.noneText,
       didSessionHappen: this.icsFeedbackSubmissionResponse.recordSessionDidSessionHappen,
       didPersonAttend: this.icsFeedbackSubmissionResponse.recordSessionDidPersonAttend,
       whatHappenedInSession: this.icsFeedbackSubmissionResponse.sessionFeedbackWhatHappened,
@@ -227,58 +241,60 @@ export default class ViewSessionFeedbackPresenter extends PresenterBase<
       personFirstName: this.icsFeedbackSubmissionResponse.sessionFeedbackAppointmentDetails.personFirstName,
     })
 
-    if (rows.length === 0) return undefined
-
     return {
       card: { title: { text: content.sessionFeedback.title } },
       rows,
     }
   }
 
-  private buildIssuesAndConcernsSummary(content: ViewSessionFeedbackContent): GovukFrontendSummaryList | undefined {
+  private buildIssuesAndConcernsSummary(content: ViewSessionFeedbackContent): GovukFrontendSummaryList {
     const identified = this.icsFeedbackSubmissionResponse.issuesOrConcernsIdentified
-    if (!identified) return undefined
 
     return {
       card: { title: { text: content.issuesAndConcerns.title } },
-      rows: [{ key: { text: content.issuesAndConcerns.identified }, value: { text: identified } }],
+      rows: [
+        {
+          key: { text: content.issuesAndConcerns.identified },
+          value: { text: identified || content.noneText },
+        },
+      ],
     }
   }
 
-  private buildNextStepsSummary(content: ViewSessionFeedbackContent): GovukFrontendSummaryList | undefined {
-    const { nextStepsPlannedForNextSession, nextStepsActionsBeforeNextSession } = this.icsFeedbackSubmissionResponse
-    const rows = [
-      ...(nextStepsPlannedForNextSession
-        ? [
-            {
-              key: { text: content.nextSteps.plannedForNextSession },
-              value: { text: nextStepsPlannedForNextSession },
-            },
-          ]
-        : []),
-      ...(nextStepsActionsBeforeNextSession
-        ? [
-            {
-              key: { text: content.nextSteps.actionsBeforeNextSession },
-              value: { text: nextStepsActionsBeforeNextSession },
-            },
-          ]
-        : []),
-    ]
+  private buildAdditionalSupportNeedsSummary(content: ViewSessionFeedbackContent): GovukFrontendSummaryList {
+    return {
+      card: { title: { text: content.additionalSupportNeeds.title } },
+      rows: [
+        {
+          key: { text: content.additionalSupportNeeds.identified },
+          value: {
+            text: this.icsFeedbackSubmissionResponse.additionalSupportNeeds || content.noneText,
+          },
+        },
+      ],
+    }
+  }
 
-    if (rows.length === 0) return undefined
+  private buildNextStepsSummary(content: ViewSessionFeedbackContent): GovukFrontendSummaryList {
+    const { nextStepsPlannedForNextSession, nextStepsActionsBeforeNextSession } = this.icsFeedbackSubmissionResponse
 
     return {
       card: { title: { text: content.nextSteps.title } },
-      rows: rows.map(row => ({
-        ...row,
-        key: {
-          text: row.key.text.replace(
-            '{{ firstname }}',
-            this.icsFeedbackSubmissionResponse.sessionFeedbackAppointmentDetails.personFirstName,
-          ),
+      rows: [
+        {
+          key: { text: content.nextSteps.plannedForNextSession },
+          value: { text: nextStepsPlannedForNextSession || content.noneText },
         },
-      })),
+        {
+          key: {
+            text: content.nextSteps.actionsBeforeNextSession.replace(
+              '{{ firstname }}',
+              this.icsFeedbackSubmissionResponse.sessionFeedbackAppointmentDetails.personFirstName,
+            ),
+          },
+          value: { text: nextStepsActionsBeforeNextSession || content.noneText },
+        },
+      ],
     }
   }
 }
@@ -300,6 +316,7 @@ export function buildAppointmentDetailsRows(
     howWasUserInformedAboutSession,
     personFirstName,
     content,
+    noneText,
   } = input
 
   const currentCaseworkerLabel = currentCaseworkers.length > 1 ? content.currentCaseworkers : content.currentCaseworker
@@ -310,58 +327,61 @@ export function buildAppointmentDetailsRows(
   return [
     { key: { text: currentCaseworkerLabel }, value: { html: currentCaseworkersHtml } },
     { key: { text: content.feedbackSubmittedBy }, value: { html: feedbackSubmittedByHtml } },
-    { key: { text: content.date }, value: { text: date } },
-    { key: { text: content.startTime }, value: { text: startTime } },
-    { key: { text: content.method }, value: { text: sessionMethod } },
+    { key: { text: content.date }, value: { text: date || noneText } },
+    { key: { text: content.startTime }, value: { text: startTime || noneText } },
+    { key: { text: content.method }, value: { text: sessionMethod || noneText } },
     ...(isRemoteSession
-      ? [{ key: { text: content.reasonSessionNotInPerson }, value: { text: reasonForSessionNotInPerson } }]
-      : [{ key: { text: content.location }, value: { text: location } }]),
+      ? [{ key: { text: content.reasonSessionNotInPerson }, value: { text: reasonForSessionNotInPerson || noneText } }]
+      : [{ key: { text: content.location }, value: { text: location || noneText } }]),
     {
       key: { text: content.howPersonWasInformed.replace('{{ firstname }}', personFirstName) },
-      value: { text: howWasUserInformedAboutSession },
+      value: { text: howWasUserInformedAboutSession || noneText },
     },
   ]
 }
 
 export function buildSessionDetailsRows(input: SessionDetailsSummaryRowInput): GovukFrontendSummaryList['rows'] {
-  const { isLate, whyWereTheyLate, sessionDuration, personFirstName, content } = input
+  const { isLate, whyWereTheyLate, sessionDuration, personFirstName, content, noneText } = input
 
   return [
     {
       key: { text: content.wasPersonLate.replace('{{ firstname }}', personFirstName) },
-      value: { text: isLate ? input.yesText : input.noText },
+      value: { text: isLate == null ? noneText : isLate ? input.yesText : input.noText },
     },
-    ...(isLate && whyWereTheyLate
+    ...(isLate !== false
       ? [
           {
             key: { text: content.whyWereTheyLate.replace('{{ firstname }}', personFirstName) },
-            value: { text: whyWereTheyLate },
+            value: { text: whyWereTheyLate || noneText },
           },
         ]
       : []),
 
-    ...(sessionDuration ? [{ key: { text: content.duration }, value: { text: sessionDuration } }] : []),
+    { key: { text: content.duration }, value: { text: sessionDuration || noneText } },
   ]
 }
 
 export function buildRecordSessionAttendanceRows(
   input: RecordSessionAttendanceSummaryRowInput,
 ): GovukFrontendSummaryList['rows'] {
-  const { didSessionHappen, attendedAppointment, personFirstName, content } = input
+  const { didSessionHappen, attendedAppointment, personFirstName, content, noneText } = input
 
   return [
     {
       key: { text: content.didSessionHappen },
       value: { text: didSessionHappen ? input.yesText : input.noText },
     },
-    ...(attendedAppointment != null
-      ? [
-          {
-            key: { text: content.didPersonAttend.replace('{{ firstname }}', personFirstName) },
-            value: { text: attendedAppointment ? input.yesText : input.noText },
-          },
-        ]
-      : []),
+    {
+      key: { text: content.didPersonAttend.replace('{{ firstname }}', personFirstName) },
+      value: {
+        text:
+          attendedAppointment == null
+            ? noneText
+            : attendedAppointment
+              ? input.yesText
+              : input.noText,
+      },
+    },
   ]
 }
 
@@ -382,60 +402,46 @@ export function buildSessionFeedbackRows(
     personFirstName,
     content,
     didNotHappenReasonLabels,
+    noneText,
   } = input
 
   if (didSessionHappen) {
     return [
-      ...(whatHappenedInSession
-        ? [{ key: { text: content.whatHappened }, value: { text: whatHappenedInSession } }]
-        : []),
-      ...(input.behaviourIdentified
-        ? [
-            {
-              key: { text: content.behaviour.replace('{{ firstname }}', personFirstName) },
-              value: { text: input.behaviourIdentified },
-            },
-          ]
-        : []),
-      ...(input.strengthsIdentified
-        ? [{ key: { text: content.strengths }, value: { text: input.strengthsIdentified } }]
-        : []),
+      { key: { text: content.whatHappened }, value: { text: whatHappenedInSession || noneText } },
+      {
+        key: { text: content.behaviour.replace('{{ firstname }}', personFirstName) },
+        value: { text: input.behaviourIdentified || noneText },
+      },
+      { key: { text: content.strengths }, value: { text: input.strengthsIdentified || noneText } },
     ]
   }
 
   if (didPersonAttend) {
     return [
-      ...(whySessionDidNotHappen || whySessionDidNotHappenDetails
-        ? [
-            {
-              key: { text: content.whySessionDidNotHappen },
-              value: {
-                text: [
-                  whySessionDidNotHappen
-                    ? getSessionNotHappenReasonLabel(whySessionDidNotHappen, personFirstName, didNotHappenReasonLabels)
-                    : '',
-                  whySessionDidNotHappenDetails,
-                ]
-                  .filter(Boolean)
-                  .join(': '),
-              },
-            },
-          ]
-        : []),
+      {
+        key: { text: content.whySessionDidNotHappen },
+        value: {
+          text:
+            [
+              whySessionDidNotHappen
+                ? getSessionNotHappenReasonLabel(whySessionDidNotHappen, personFirstName, didNotHappenReasonLabels)
+                : '',
+              whySessionDidNotHappenDetails || '',
+            ]
+              .filter(Boolean)
+              .join(': ') || noneText,
+        },
+      },
     ]
   }
 
   return [
-    ...(triedToContactDidNotAttend
-      ? [
-          {
-            key: {
-              text: content.triedToContactDidNotAttend.replace('{{ firstname }}', personFirstName),
-            },
-            value: { text: triedToContactDidNotAttend },
-          },
-        ]
-      : []),
+    {
+      key: {
+        text: content.triedToContactDidNotAttend.replace('{{ firstname }}', personFirstName),
+      },
+      value: { text: triedToContactDidNotAttend || noneText },
+    },
   ]
 }
 

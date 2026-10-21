@@ -12,6 +12,7 @@
         "heading": "View cases",
         "description": "View your cases and other cases in progress.",
         "href": "/cases-in-progress",
+          "noneText": "None",
         "dataTestId": "view-cases-tile"
       }
     ]
@@ -577,6 +578,7 @@
     "pageTitle": "View session feedback",
     "pageHeader": "View session feedback",
     "backLink": "/progress/{{ id }}",
+    "noneText": "None",
     "yesText": "Yes",
     "noText": "No",
     "appointmentDetails": {
@@ -611,7 +613,8 @@
       "title": "Session details",
       "wasPersonLate": "Was {{ firstname }} late?",
       "whyWereTheyLate": "Why {{ firstname }} was late",
-      "duration": "Session duration"
+      "duration": "Session duration",
+      "notApplicable": "Not applicable because the session did not happen"
     },
     "sessionFeedback": {
       "title": "Session feedback",
@@ -629,6 +632,10 @@
     "issuesAndConcerns": {
       "title": "Issues or concerns",
       "identified": "What issues or concerns did you identify?"
+    },
+    "additionalSupportNeeds": {
+      "title": "Additional support needs",
+      "identified": "What additional support needs did you identify?"
     },
     "nextSteps": {
       "title": "Next steps",
