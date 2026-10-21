@@ -10,6 +10,7 @@ import { ViewSessionFeedbackViewModel } from './ViewSessionFeedbackViewModel'
 import { isoToFormattedDate } from '../../utils/dateFormat'
 import { isoToFormattedTime } from '../../utils/timeFormat'
 import { createMailtoLink } from '../../utils/viewUtils'
+import { getInformedByLabel } from '../informedByLabels'
 
 type AppointmentDeliveryDetails = SessionFeedbackAppointmentDetails['appointmentDeliveryDetails']
 
@@ -56,12 +57,6 @@ const APPOINTMENT_DELIVERY_METHOD_DISPLAY: Record<string, string> = {
   IN_PERSON_OTHER_LOCATION: 'In person (other location)',
 }
 
-const SESSION_COMMUNICATION_DISPLAY: Record<string, string> = {
-  informedByPhone: 'Phone call',
-  informedByTextMessage: 'Text message',
-  informedByEmail: 'Email',
-}
-
 export default class ViewSessionFeedbackPresenter extends PresenterBase<ViewSessionFeedbackViewModel, object> {
   constructor(
     private readonly icsFeedbackSubmissionResponse: IcsFeedbackSubmissionResponse,
@@ -88,7 +83,7 @@ export default class ViewSessionFeedbackPresenter extends PresenterBase<ViewSess
   }
 
   private formatSessionCommunication(input: string): string {
-    return SESSION_COMMUNICATION_DISPLAY[input] ?? input
+    return getInformedByLabel(input)
   }
 
   private formatLocation(parts: (string | null | undefined)[]): string | undefined {
