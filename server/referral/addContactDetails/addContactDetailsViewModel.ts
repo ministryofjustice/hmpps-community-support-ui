@@ -4,6 +4,7 @@ import { GlobalContent } from '../../../assets/content/GlobalContent'
 export type AddContactDetailsContent = GlobalContent['/referral/new/add-contact-details']
 
 export interface AddContactDetailsViewModel {
+  pageTitle: string
   heading: string
   pageCaption: string
   backLinkArgs: GovukFrontendBackLink

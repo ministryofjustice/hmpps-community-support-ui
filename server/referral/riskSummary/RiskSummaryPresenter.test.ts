@@ -78,7 +78,7 @@ describe('RiskSummaryPresenter', () => {
     const presenter = new RiskSummaryPresenter(risk, 'referral-uuid-1')
     const viewModel = presenter.buildViewModel(res)
 
-    expect(viewModel.pageTile).toBe('OASys risk information - Community Support')
+    expect(viewModel.pageTitle).toBe('OASys risk information')
     expect(viewModel.backLink.href).toBe('/referral/task-list')
     expect(viewModel.heading).toBe('Alex River')
     expect(viewModel.subheading).toBe('OASys risk information')
