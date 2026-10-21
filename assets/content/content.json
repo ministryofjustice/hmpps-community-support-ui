@@ -1047,7 +1047,7 @@
     }
   },
   "/referral/task-list/confirm-personal-details": {
-    "pageTitle": "Check and confirm personal details - Make a referral",
+    "pageTitle": "Confirm personal details - Make a referral",
     "pageHeader": "{{ name }}",
     "pageSubHeader": "Confirm personal details",
     "backLink": "/referral/task-list",
