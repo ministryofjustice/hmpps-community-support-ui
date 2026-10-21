@@ -3,18 +3,18 @@ import { Response } from 'express'
 import { GovukFrontendButton, GovukFrontendSummaryListCardActions, GovukFrontendSummaryListRow } from '@govuk-frontend'
 import { formatDate } from 'date-fns'
 import { MojAlert } from '@moj-frontend'
-import PresenterBase from '../../presenter/presenterBase'
 import { ActionPlanContent, ActionPlanSummaryList, ActionPlanViewModel } from './actionPlanViewModel'
 import { components } from '../../@types/communitySupportApi/imported'
+import ReferralLayoutPresenter, { ReferralNavigationValues } from '../referralLayout/referralLayoutPresenter'
 
-export default class ActionPlanPresenter extends PresenterBase<ActionPlanViewModel, ActionPlanContent> {
+export default class ActionPlanPresenter extends ReferralLayoutPresenter<ActionPlanViewModel, ActionPlanContent> {
   constructor(
     private readonly actionPlanSummary: ActionPlanSummaryDto,
     private readonly caseReference: string,
     private readonly icsFeedbackSubmitted: boolean = false,
     private readonly alertType?: 'ADD' | 'REMOVE',
   ) {
-    super()
+    super(ReferralNavigationValues.actionPlanTab, caseReference)
   }
 
   protected buildViewModel(res: Response): ActionPlanViewModel {
@@ -27,6 +27,8 @@ export default class ActionPlanPresenter extends PresenterBase<ActionPlanViewMod
     const allOutcomesAdded = hasNeeds && this.actionPlanSummary.needs.every(need => need.outcomes.length > 0)
 
     const updatedAtText = hasNeeds ? this.formatUpdatedAtText(this.actionPlanSummary.lastUpdatedAt) : undefined
+
+    const subNavigationArgs = this.getMojSubNavigationArgs(content)
 
     const addAnotherOutcomeButton: GovukFrontendButton = hasNeeds
       ? {
@@ -60,6 +62,7 @@ export default class ActionPlanPresenter extends PresenterBase<ActionPlanViewMod
       createLink: `/referral/${this.caseReference}/action-plan/create`,
       noActionPlanText: hasNeeds ? undefined : content.noActionPlanText.replace('{{ firstName }}', firstName),
       alert: this.getAlert(content, firstName, this.alertType),
+      subNavigationArgs,
     }
   }
 
