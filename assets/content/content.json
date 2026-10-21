@@ -983,7 +983,7 @@
     "submitButtonText": "Submit"
   },
   "/referral/task-list": {
-    "pageTitle": "Make a referral - [service name]",
+    "pageTitle": "Make a referral",
     "pageHeader": "{{ fullName }}",
     "pageSubHeader": "Make a referral",
     "backLink": "/referral/new/find-a-person",
