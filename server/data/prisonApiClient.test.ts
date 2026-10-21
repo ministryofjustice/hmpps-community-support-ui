@@ -17,6 +17,11 @@ describe('PrisonApiClient tests', () => {
   } as ApiConfig
   const mockAuthClient = { getToken: async () => 'dummy-token' } as AuthenticationClient
 
+  beforeAll(() => {
+    nock.restore()
+    nock.activate()
+  })
+
   beforeEach(() => {
     prisonApiClient = new PrisonApiClient(mockAuthClient, mockApiConfig)
   })
@@ -47,7 +52,7 @@ describe('PrisonApiClient tests', () => {
 
       const result = prisonApiClient.getPrisons('user1')
 
-      expect(result).resolves.toEqual(mockPrisons)
+      return expect(result).resolves.toEqual(mockPrisons)
     })
   })
 })
