@@ -370,10 +370,6 @@
     ],
     "backLinkText": "Back to appointments"
   },
-  "/referral/:id": {
-    "subNavigationLabel": "Sub navigation",
-    "actionPlanTabText": "Action plan"
-  },
   "/referral/:id/action-plan": {
     "pageHeader": "Action plan",
     "noActionPlanText": "{{ firstName }} does not have an action plan yet.",

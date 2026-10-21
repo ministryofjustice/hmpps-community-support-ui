@@ -34,8 +34,6 @@ export default class ActionPlanPresenter extends ActionPlanLayoutPresenter<Actio
 
     const horizontalSubNavArgs = hasNeeds ? this.getHorizontalSubNavArgs(content) : undefined
 
-    const subNavigationArgs = this.getMojSubNavigationArgs(content)
-
     const addAnotherOutcomeButton: GovukFrontendButton = hasNeeds
       ? {
           href: `/referral/${this.caseReference}/action-plan/select-a-need`,
