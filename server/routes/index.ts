@@ -316,6 +316,10 @@ export default function routes({
     actionPlanController.submitUserInvolvementPage(req, res),
   )
 
+  get('/referral/:id/action-plan/service-delivery-check-your-answers', (req, res) =>
+    actionPlanController.showServiceDeliveryCheckYourAnswersPage(req, res),
+  )
+
   get('/referral/:caseIdentifier/withdraw', (req, res) => withdrawalController.showReason(req, res))
 
   post('/referral/:caseIdentifier/withdraw', (req, res) => withdrawalController.submitReason(req, res))

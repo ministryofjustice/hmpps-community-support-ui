@@ -34,6 +34,7 @@ export interface IcsFeedbackHowSessionTookPlaceSession {
 export interface ActionPlanSessionDeliveryData {
   caseReference: string
   sessionDeliveryDetails?: ActionPlanSessionDeliveryDetailsRequest
+  isServiceEndDateChanged?: boolean
 }
 
 export interface ActionPlanActivity {

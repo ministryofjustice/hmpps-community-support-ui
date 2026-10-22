@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import type { ActionPlanSessionDeliveryDetailsResponse, ActionPlanSummaryDto } from '@community-support-api'
 import type { ErrorMiddlewareErrors } from '../../@types/express'
+import type { ActionPlanCheckYourAnswersDetails } from '../../services/referralService'
 import ReferralService from '../../services/referralService'
 import ActionPlanController from './actionPlanController'
 import ActionPlanPresenter from './actionPlanPresenter'
@@ -16,6 +17,7 @@ import ActionPlanServiceEndDateCheckPresenter from './sessionDeliveryDetails/act
 import ActionPlanChangeServiceEndDatePresenter from './sessionDeliveryDetails/actionPlanChangeServiceEndDatePresenter'
 import ActionPlanServiceUserInvolvementPresenter from './sessionDeliveryDetails/actionPlanServiceUserInvolvementPresenter'
 import ServiceDeliveryPresenter from './serviceDelivery/serviceDeliveryPresenter'
+import ServiceDeliveryCheckYourAnswersPresenter from './sessionDeliveryDetails/serviceDeliveryCheckYourAnswersPresenter'
 import buildReferralProgress from '../../testutils/buildReferralProgress'
 
 jest.mock('../../services/referralService')
@@ -32,6 +34,7 @@ jest.mock('./sessionDeliveryDetails/actionPlanRisksAndAdjustmentsPresenter')
 jest.mock('./sessionDeliveryDetails/actionPlanServiceEndDateCheckPresenter')
 jest.mock('./sessionDeliveryDetails/actionPlanChangeServiceEndDatePresenter')
 jest.mock('./sessionDeliveryDetails/actionPlanServiceUserInvolvementPresenter')
+jest.mock('./sessionDeliveryDetails/serviceDeliveryCheckYourAnswersPresenter')
 
 describe('ActionPlanController', () => {
   let referralService: jest.Mocked<ReferralService>
@@ -49,6 +52,7 @@ describe('ActionPlanController', () => {
       getServiceEndDateCheck: jest.fn(),
       getUpdateServiceEndDate: jest.fn(),
       getPersonInvolvement: jest.fn(),
+      getCheckYourAnswers: jest.fn(),
       submitAction: jest.fn(),
       moveNeed: jest.fn(),
       deleteAction: jest.fn(),
@@ -1464,7 +1468,7 @@ describe('ActionPlanController', () => {
             },
             {
               value: 'NO',
-              label: 'No, I need to change the date',
+              label: 'No',
               displayOrder: 2,
               displayAdditionalDetailsOnSelect: false,
               additionalDetailsLabel: null,
@@ -1575,6 +1579,7 @@ describe('ActionPlanController', () => {
             { questionId: 'question-1', incomingAnswerDetails: [{ value: 'YES', additionalDetails: undefined }] },
           ],
         },
+        isServiceEndDateChanged: false,
       })
     })
 
@@ -1593,6 +1598,7 @@ describe('ActionPlanController', () => {
             { questionId: 'question-1', incomingAnswerDetails: [{ value: 'NO', additionalDetails: undefined }] },
           ],
         },
+        isServiceEndDateChanged: true,
       })
     })
 
@@ -1813,6 +1819,110 @@ describe('ActionPlanController', () => {
           'Select yes if Alex was involved in creating the action plan',
         )
         expect(req.session.actionPlanSessionDelivery).toBeUndefined()
+      })
+    })
+
+    describe('session delivery check your answers', () => {
+      const question = (id: string, label: string): ActionPlanSessionDeliveryDetailsResponse['questions'][number] => ({
+        id,
+        displayOrder: 1,
+        label,
+        key: id,
+        hint: null,
+        answerType: 'TEXTAREA',
+        maximumNumberOfResponses: 1,
+        choices: null,
+        savedResponses: [],
+      })
+
+      const checkYourAnswers: ActionPlanCheckYourAnswersDetails = {
+        sessionDetails: { questions: [question('session-details', 'Session details')] },
+        risksAndAdjustments: { questions: [question('risks', 'Risks and adjustments')] },
+        serviceEndDate: { questions: [question('service-end-date', 'Service end date')] },
+        personInvolvement: { questions: [question('person-involvement', 'Person involvement')] },
+      }
+
+      beforeEach(() => {
+        referralService.getCheckYourAnswers.mockResolvedValue(checkYourAnswers)
+      })
+
+      it('loads all answer sections and renders the page', async () => {
+        await actionPlanController.showServiceDeliveryCheckYourAnswersPage(req, res)
+
+        expect(referralService.getCheckYourAnswers).toHaveBeenCalledWith('AB1234CD', 'user1', false)
+        expect(ServiceDeliveryCheckYourAnswersPresenter).toHaveBeenCalledWith(
+          [
+            checkYourAnswers.sessionDetails.questions,
+            checkYourAnswers.risksAndAdjustments.questions,
+            checkYourAnswers.serviceEndDate.questions,
+            checkYourAnswers.personInvolvement.questions,
+          ],
+          'AB1234CD',
+        )
+        expect(ServiceDeliveryCheckYourAnswersPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+      })
+
+      it('applies saved answers from this referral draft', async () => {
+        req.session.actionPlanSessionDelivery = {
+          caseReference: 'AB1234CD',
+          sessionDeliveryDetails: {
+            answers: [
+              {
+                questionId: 'risks',
+                incomingAnswerDetails: [{ value: 'Risk answer', additionalDetails: 'More details' }],
+              },
+            ],
+          },
+        }
+
+        await actionPlanController.showServiceDeliveryCheckYourAnswersPage(req, res)
+
+        expect(ServiceDeliveryCheckYourAnswersPresenter).toHaveBeenCalledWith(
+          [
+            checkYourAnswers.sessionDetails.questions,
+            [
+              {
+                ...checkYourAnswers.risksAndAdjustments.questions[0],
+                savedResponses: [{ value: 'Risk answer', additionalDetails: 'More details' }],
+              },
+            ],
+            checkYourAnswers.serviceEndDate.questions,
+            checkYourAnswers.personInvolvement.questions,
+          ],
+          'AB1234CD',
+        )
+      })
+
+      it('requests changed service-end-date questions when the saved answer requires a date change', async () => {
+        req.session.actionPlanSessionDelivery = {
+          caseReference: 'AB1234CD',
+          isServiceEndDateChanged: true,
+        }
+
+        await actionPlanController.showServiceDeliveryCheckYourAnswersPage(req, res)
+
+        expect(referralService.getCheckYourAnswers).toHaveBeenCalledWith('AB1234CD', 'user1', true)
+      })
+
+      it('ignores a saved answer draft belonging to a different referral', async () => {
+        req.session.actionPlanSessionDelivery = {
+          caseReference: 'ZZ9999ZZ',
+          sessionDeliveryDetails: {
+            answers: [{ questionId: 'risks', incomingAnswerDetails: [{ value: 'Other referral answer' }] }],
+          },
+        }
+
+        await actionPlanController.showServiceDeliveryCheckYourAnswersPage(req, res)
+
+        expect(ServiceDeliveryCheckYourAnswersPresenter).toHaveBeenCalledWith(
+          [
+            checkYourAnswers.sessionDetails.questions,
+            checkYourAnswers.risksAndAdjustments.questions,
+            checkYourAnswers.serviceEndDate.questions,
+            checkYourAnswers.personInvolvement.questions,
+          ],
+          'AB1234CD',
+        )
       })
     })
   })

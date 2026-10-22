@@ -7,6 +7,7 @@ import {
   ReferralInformation,
   CommunitySupportRiskInformationDto,
   ActionPlanSummaryDto,
+  ActionPlanSessionDeliveryDetailsResponse,
   WithdrawalReasonsGroupedBffResponseDto,
   OffenceSentenceInfoBffResponseDto,
   OffenceSentenceRequest,
@@ -59,6 +60,56 @@ describe('Referral service tests', () => {
       const result = await referralService.getReferralUserAssignments('referral123', 'user1')
       expect(result).toBe(mockReferralUserAssignments)
       expect(communitySupportApiClient.getReferralUserAssignments).toHaveBeenCalledWith('referral123', 'user1')
+    })
+  })
+
+  describe('getCheckYourAnswers', () => {
+    it('groups questions from the aggregate response into action-plan delivery sections', async () => {
+      const buildQuestion = (
+        id: string,
+        key: string,
+      ): ActionPlanSessionDeliveryDetailsResponse['questions'][number] => ({
+        id,
+        displayOrder: 1,
+        label: key,
+        key,
+        answerType: 'TEXTAREA',
+        maximumNumberOfResponses: 1,
+        choices: null,
+        savedResponses: [],
+      })
+      const questions = [
+        buildQuestion('session-frequency', 'SESSION_FREQUENCY'),
+        buildQuestion('session-delivery-method', 'SESSION_DELIVERY_METHOD'),
+        buildQuestion('session-format', 'SESSION_FORMAT'),
+        buildQuestion('risk-associated-with-planned-activities', 'RISK_ASSOCIATED_WITH_PLANNED_ACTIVITIES'),
+        buildQuestion('reasonable-adjustments-for-planned-activities', 'REASONABLE_ADJUSTMENTS_FOR_PLANNED_ACTIVITIES'),
+        buildQuestion('service-end-date-check', 'SERVICE_END_DATE_CHECK'),
+        buildQuestion('new-service-end-date', 'NEW_SERVICE_END_DATE'),
+        buildQuestion('service-end-date-change-reason', 'SERVICE_END_DATE_CHANGE_REASON'),
+        buildQuestion('user-involvement-in-action-plan', 'USER_INVOLVEMENT_IN_ACTION_PLAN'),
+      ]
+      const response = { questions }
+      communitySupportApiClient.getSessionDeliveryCheckYourAnswers.mockResolvedValue(response)
+
+      await expect(referralService.getCheckYourAnswers('AB1234CD', 'user1', true)).resolves.toEqual({
+        sessionDetails: { questions: questions.slice(0, 3) },
+        risksAndAdjustments: { questions: questions.slice(3, 5) },
+        serviceEndDate: {
+          questions: questions.slice(5, 8),
+        },
+        personInvolvement: { questions: questions.slice(8) },
+      })
+      expect(communitySupportApiClient.getSessionDeliveryCheckYourAnswers).toHaveBeenCalledWith(
+        'AB1234CD',
+        'user1',
+        true,
+      )
+      expect(communitySupportApiClient.getSessionDeliveryDetails).not.toHaveBeenCalled()
+      expect(communitySupportApiClient.getRisksAndAdjustments).not.toHaveBeenCalled()
+      expect(communitySupportApiClient.getServiceEndDateCheck).not.toHaveBeenCalled()
+      expect(communitySupportApiClient.getUpdateServiceEndDate).not.toHaveBeenCalled()
+      expect(communitySupportApiClient.getPersonInvolvement).not.toHaveBeenCalled()
     })
   })
 
