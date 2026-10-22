@@ -3,14 +3,14 @@ import { GlobalContent } from '../../../assets/content/GlobalContent'
 import { GovukFrontendRadiosWithConditional } from '../../@types/govukFrontend/derived'
 
 export interface IdentifiedAdditionalNeedsFormData {
-  didYouIndentity?: boolean
+  didYouIdentity?: boolean
   identityDetails?: string
 }
 export type DidYouIndentityRadioItemsContent = {
   yesText: string
   noText: string
-  identityName: string
-  identityLabel: string
+  identityDetailsName: string
+  identityDetailsLabel: string
 }
 
 export type DidYouIndentityRadioContent = {
@@ -25,7 +25,7 @@ export type IdentifiedAdditionalNeedsViewModel = {
   pageSubHeader: string
   firstname: string
   alreadyIdentifiedNeedsDetails: GovukFrontendSummaryList
-  didYouIndentityRadio: GovukFrontendRadiosWithConditional
+  didYouIdentityRadio: GovukFrontendRadiosWithConditional
   submitButton: GovukFrontendButton
   submitHref: string
   backLink: GovukFrontendBackLink

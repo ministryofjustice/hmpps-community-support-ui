@@ -342,7 +342,7 @@
     "removeOutcomeWarningText": "If you remove this outcome from the plan, all activities added to this outcome will also be removed.",
     "removeOutcomeButtonText": "Remove this outcome",
     "cancelLinkText": "Cancel"
-  },  
+  },
   "/referral/:id/action-plan/select-a-need": {
     "pageHeader": "Area of Need",
     "whichNeedTitle": "Which need are you creating an action for?",
@@ -513,40 +513,23 @@
     "issuesOrConcernsLabel": "What issues or concerns did you identify?",
     "issuesOrConcernsHint": "Give details of anything that concerned you about {{ firstname }}, or any issues they raised that might impact their engagement in future sessions.",
     "submitButtonText": "Continue",
-    "submitHref": "/ics-feedback/{{ caseRef }}/identified-additional-support-needs",
     "backLinkHref": "/ics-feedback/{{ id }}/session-feedback"
   },
   "/ics-feedback/:id/identified-additional-support-needs": {
     "pageTitle": "Additional support needs – ICS feedback – Community Support",
     "pageHeader": "Additional support needs",
     "pageSubHeader": "These are the support needs identified in {{ firstname }}’s referral.",
-    "appointmentDetails": {
-      "alreadyIdentifiedLabel": "Additional support needs already identified",
-      "items": [
-      {
-        "label": "Physical health",
-        "hint": "For example, physical disabilities or illnesses that affect their daily life.",
-        "detailsLabel": "Give details of any physical health issues and how the delivery partner can support {{ firstName }}"
-      },
-      {
-        "label": "Mental or emotional health",
-        "hint": "For example, depression, anxiety, behavioural issues or learning difficulties.",
-        "detailsLabel": "Give details of any mental or emotional health issues and how the delivery partner can support {{ firstName }}"
-      }
-    ]
-    },
-    "didYouIndentityRadio": {
-      "name": "didYouIndentity",
+    "didYouIdentityRadio": {
+      "name": "didYouIdentity",
       "title": "Did you identity anything else {{ firstname }} needs support with?",
       "items": {
         "yesText": "Yes",
         "noText": "No",
-        "identityName": "identityName",
-        "identityLabel": "Give details of anything else {{ firstname }} needs support with"
+        "identityDetailsName": "identityDetails",
+        "identityDetailsLabel": "Give details of anything else {{ firstname }} needs support with"
       }
     },
     "submitButtonText": "Continue",
-    "submitHref": "/ics-feedback/{{ caseRef }}/identified-additional-support-needs",
     "backLinkHref": "/ics-feedback/{{ id }}/issues-or-concerns"
   },
   "/ics-feedback/:id/next-steps": {
@@ -557,7 +540,7 @@
     "actionsBeforeNextSessionLabel": "What actions do you and {{ firstname }} have before the next session takes place?",
     "actionsBeforeNextSessionHint": "Give details of any actions or next steps you and {{ firstname }} have agreed to do ahead of your next session.",
     "submitButtonText": "Continue",
-    "backLinkHref": "/ics-feedback/{{ id }}/check-answers"
+    "backLinkHref": "/ics-feedback/{{ id }}/identified-additional-support-needs"
   },
   "/ics-feedback/:id/check-answers": {
     "pageHeader": "Check your answers before submitting feedback",

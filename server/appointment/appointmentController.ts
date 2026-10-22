@@ -49,6 +49,7 @@ import { IssuesOrConcernsFormDataSchema } from '../validation/IssuesOrConcernsFo
 import AppointmentTypePresenter from './create-an-appointment/appointment-type/AppointmentTypePresenter'
 import { AppointmentTypeSchema } from '../validation/AppointmentTypeFormData'
 import logger from '../../logger'
+import { IdentifiedAdditionalNeedsFormDataSchema } from '../validation/IdentifiedAdditonalNeedsFormData'
 
 const recordAttendanceRedirectUrl = (data: RecordSessionAttendanceFormData, caseRefId: string): string => {
   if (data.happened === 'Yes') {
@@ -714,18 +715,18 @@ class AppointmentController {
       res.redirect(`/progress/${caseRefId}`)
       return
     }
-
-    req.session.icsFeedbackSubmission = {
-      ...icsFeedbackSubmission,
-      identifiedAdditionalNeeds: {
-        identified: req.body.identifiedAdditionalNeedsData,
-      },
-      caseReferenceId: caseRefId,
-    } as IcsFeedbackSubmission & { caseReferenceId: string }
-
-    validateRequestBodyAgainstSchema(IssuesOrConcernsFormDataSchema, req, res, () => {
+    console.log(req.body.didYouIdentity)
+    console.log(req.body.identityDetails)
+    icsFeedbackSubmission.identifiedAdditionalNeeds = {
+      didYouIdentity: req.body.didYouIdentity ? req.body.didYouIdentity === 'Yes' : null,
+      identityDetails: req.body.identityDetails,
+    }
+    console.log(icsFeedbackSubmission)
+    req.session.icsFeedbackSubmission = icsFeedbackSubmission
+    validateRequestBodyAgainstSchema(IdentifiedAdditionalNeedsFormDataSchema, req, res, () => {
       res.redirect(`/ics-feedback/${caseRefId}/next-steps`)
     })
+
   }
 
   async getNextSteps(req: Request, res: Response): Promise<void> {
