@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test'
 import { ActionPlanSummaryDto } from '@community-support-api'
 import { login, resetStubs } from '../testUtils'
 import communitySupport from '../mockApis/communitySupport'
-import sessionDeliveryDetails from '../mockData/actionPlanData'
+import { actionPlanSessionDeliveryDetailsFactory } from '../../server/testutils/factories/ActionPlanSessionDeliveryDetailsResponse'
 import buildReferralProgress from '../../server/testutils/buildReferralProgress'
 import ActionPlanPage from '../pages/actionPlanPage'
 import ReferralProgressPage from '../pages/referralProgressPage'
@@ -120,7 +120,10 @@ test.describe('Action Plan Page', () => {
     test('navigates to the Session details page when Submit Action plan is selected', async ({ page }) => {
       await communitySupport.stubGetActionPlanSummary(caseReference, actionPlanSummaryWithOutcomes)
       await communitySupport.stubGetReferralProgress(icsFeedbackSubmittedProgress, caseReference)
-      await communitySupport.stubGetSessionDeliveryDetails(caseReference, sessionDeliveryDetails)
+      await communitySupport.stubGetSessionDeliveryDetails(
+        caseReference,
+        actionPlanSessionDeliveryDetailsFactory.build(),
+      )
 
       await page.goto(ActionPlanPage.url(caseReference))
 
