@@ -56,10 +56,10 @@ class ActionPlanController {
     }
   }
 
-  private getActionPlanActivities(req: Request, caseReference: string): ActionPlanActivity[] {
+  private getActionPlanActivities(req: Request, caseReference: string): [ActionPlanActivity[], ActionPlanActivity[]] {
     return req.session.actionPlanActivities?.caseReference === caseReference
-      ? req.session.actionPlanActivities.activities
-      : []
+      ? [req.session.actionPlanActivities.activities, req.session.preChangeActivities?.activities || []]
+      : [[], []]
   }
 
   private setActionPlanActivities(req: Request, caseReference: string, activities: ActionPlanActivity[]) {
@@ -67,6 +67,19 @@ class ActionPlanController {
       caseReference,
       activities,
     } satisfies ActionPlanActivitiesData
+  }
+
+  private actionPlanActivitiesHasChanges(
+    preChangeActivities: ActionPlanActivity[],
+    activities: ActionPlanActivity[],
+  ): boolean {
+    if (!preChangeActivities) return true
+    if (preChangeActivities.length !== activities.length) return true
+    return activities.some(
+      (activity, index) =>
+        preChangeActivities[index].activityProvider !== activity.activityProvider ||
+        preChangeActivities[index].activityDescription !== activity.activityDescription,
+    )
   }
 
   // Merges answers for the questions just submitted into any already-saved session-delivery
@@ -255,7 +268,7 @@ class ActionPlanController {
 
     req.session.actionPlanAction = { needId, outcomeId }
 
-    const activitiesPath = this.getActionPlanActivities(req, caseReference).length
+    const activitiesPath = this.getActionPlanActivities(req, caseReference)[0].length
       ? `/referral/${caseReference}/action-plan/activities`
       : `/referral/${caseReference}/action-plan/activities/add`
 
@@ -296,7 +309,7 @@ class ActionPlanController {
 
     req.session.actionPlanAction = { needId: req.session.actionPlanAction?.needId, outcomeId: selectOutcomeRadio }
 
-    const activitiesPath = this.getActionPlanActivities(req, caseReference).length
+    const activitiesPath = this.getActionPlanActivities(req, caseReference)[0].length
       ? `/referral/${caseReference}/action-plan/activities`
       : `/referral/${caseReference}/action-plan/activities/add`
 
@@ -337,11 +350,8 @@ class ActionPlanController {
       this.setActionPlanActivities(
         req,
         caseReference,
-        selectedOutcome.activities.map(activity => ({
-          activityProvider: activity.who,
-          activityDescription: activity.details,
-        })),
-      )
+        activities,
+      } satisfies ActionPlanActivitiesData
     }
 
     const activityAlertType = req.session.actionPlanActivityAlertType
@@ -373,7 +383,7 @@ class ActionPlanController {
     const selectedNeed = req.session.actionPlan?.needs?.find(need => need.id === selectedNeedId)
     const selectedOutcome = selectedNeed?.outcomes?.find(outcome => outcome.id === selectedOutcomeId)
     const activityIndex = Number(req.query?.activityIndex)
-    const activities = this.getActionPlanActivities(req, caseReference)
+    const activities = this.getActionPlanActivities(req, caseReference)[0]
     const activity = Number.isInteger(activityIndex) ? activities[activityIndex] : undefined
     const flashData = req.flash('value')
     const userInputData = flashData.length > 0 ? (JSON.parse(flashData[0]) as Record<string, string>) : undefined
@@ -394,7 +404,7 @@ class ActionPlanController {
     const { id: caseReference } = req.params as { id: string }
     return validateRequestBodyAgainstSchema(ActionPlanActivityFormDataSchema, req, res, async form => {
       const { activityIndex: submittedActivityIndex, ...actionPlanActivity } = form
-      const activities = this.getActionPlanActivities(req, caseReference)
+      const activities = this.getActionPlanActivities(req, caseReference)[0]
       const activityIndex = Number(submittedActivityIndex)
       if (submittedActivityIndex !== undefined && Number.isInteger(activityIndex) && activities[activityIndex]) {
         activities[activityIndex] = actionPlanActivity
@@ -418,7 +428,7 @@ class ActionPlanController {
 
   async showRemoveActivityPage(req: Request, res: Response) {
     const { id: caseReference } = req.params as { id: string }
-    const activities = this.getActionPlanActivities(req, caseReference)
+    const activities = this.getActionPlanActivities(req, caseReference)[0]
     const activityIndex = this.getRemoveActivityIndex(req, activities)
 
     if (activityIndex === undefined) {
@@ -432,7 +442,7 @@ class ActionPlanController {
   async removeActivity(req: Request, res: Response) {
     const { id: caseReference } = req.params as { id: string }
     const activitiesPath = `/referral/${caseReference}/action-plan/activities`
-    const activities = this.getActionPlanActivities(req, caseReference)
+    const activities = this.getActionPlanActivities(req, caseReference)[0]
     const activityIndex = this.getRemoveActivityIndex(req, activities)
 
     if (activityIndex === undefined) {
@@ -493,24 +503,28 @@ class ActionPlanController {
       return res.redirect(`/referral/${caseReference}/action-plan/select-a-need`)
     }
 
-    const actionPlanAction: ActionPlanActionRequest = {
-      needId,
-      outcomeId,
-      activities: this.getActionPlanActivities(req, caseReference).map(activity => ({
-        who: activity.activityProvider,
-        activityDetails: activity.activityDescription,
-        status: 'Active',
-      })),
-    }
-    const result = await this.referralService.submitAction(caseReference, actionPlanAction, username)
-    if (!result.success) {
-      throw new Error(result.message || 'Unable to save action plan activities')
+    const [activities, preChangeActivities] = this.getActionPlanActivities(req, caseReference)
+
+    if (this.actionPlanActivitiesHasChanges(preChangeActivities, activities)) {
+      const actionPlanAction: ActionPlanActionRequest = {
+        needId,
+        outcomeId,
+        activities: activities.map(activity => ({
+          who: activity.activityProvider,
+          activityDetails: activity.activityDescription,
+          status: 'Active',
+        })),
+      }
+      const result = await this.referralService.submitAction(caseReference, actionPlanAction, username)
+      if (!result.success) {
+        throw new Error(result.message || 'Unable to save action plan activities')
+      }
+      req.session.actionPlanAlertType = 'ADD'
     }
 
     delete req.session.actionPlanAction
     delete req.session.actionPlanActivities
-
-    req.session.actionPlanAlertType = 'ADD'
+    delete req.session.preChangeActivities
 
     return res.redirect(`/referral/${caseReference}/action-plan`)
   }
