@@ -347,11 +347,12 @@ class ActionPlanController {
         needs: needsAndOutcomes.needs,
       }
       req.session.actionPlanAction = { needId, outcomeId: selectableOutcome.id, outcomeAnswerId }
-      this.setActionPlanActivities(
-        req,
-        caseReference,
-        activities,
-      } satisfies ActionPlanActivitiesData
+      const activities = selectedOutcome.activities.map(activity => ({
+        activityProvider: activity.who,
+        activityDescription: activity.details,
+      }))
+      req.session.preChangeActivities = { caseReference, activities }
+      this.setActionPlanActivities(req, caseReference, activities)
     }
 
     const activityAlertType = req.session.actionPlanActivityAlertType
@@ -369,7 +370,7 @@ class ActionPlanController {
       caseReference,
       selectedNeed?.label ?? '',
       selectedOutcome?.text ?? '',
-      this.getActionPlanActivities(req, caseReference),
+      this.getActionPlanActivities(req, caseReference)[0],
       activityAlertType,
       firstName,
     )
