@@ -112,7 +112,7 @@ test.describe('Select an action plan need', () => {
     await expect(viewActivitiesPage.addAnotherActivityRadios.getByLabel('No')).toBeVisible()
     await expect(viewActivitiesPage.activitiesTable.locator('thead')).toContainText('Who will deliver this')
     await expect(viewActivitiesPage.activitiesTable.locator('thead')).toContainText('Activity details')
-    await expect(viewActivitiesPage.activitiesTable.locator('thead')).toContainText('Actions')
+    await expect(viewActivitiesPage.activitiesTable.locator('thead')).toContainText('Action')
     await expect(viewActivitiesPage.activityRows).toHaveCount(1)
     await expect(viewActivitiesPage.activityRows.first()).toContainText('Local support organisation')
     await expect(viewActivitiesPage.activityRows.first()).toContainText('Weekly employment support sessions')
