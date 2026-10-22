@@ -7,7 +7,6 @@ import type {
 import type { ActionPlanActivitiesData, ActionPlanActivity, ActionPlanSessionDeliveryData } from '../../@types/express'
 import ReferralService from '../../services/referralService'
 import logger from '../../../logger'
-import formatFullName from '../../utils/presenterFormatters'
 import ActionPlanPresenter from './actionPlanPresenter'
 import ActionPlanSelectANeedPresenter from './selectANeed/actionPlanSelectANeedPresenter'
 import ActionPlanSelectOutcomePresenter from './selectOutcome/actionPlanSelectOutcomePresenter'
@@ -251,7 +250,7 @@ class ActionPlanController {
     const needs = req.session.actionPlan?.needs ?? []
     if (!needId) {
       req.session.formKeys = ['needId']
-      req.flash('needIdError', 'Select which need you are creating an action for')
+      req.flash('needIdError', 'Select which need you want to address')
       return res.redirect(`/referral/${caseReference}/action-plan/select-a-need`)
     }
 
@@ -289,13 +288,8 @@ class ActionPlanController {
     const outcomes = req.session.actionPlan?.needs?.find(need => need.id === selectedNeedId)?.outcomes ?? []
 
     const actionPlanSummary = await this.referralService.getActionPlanSummary(caseReference, username)
-    const { firstName, lastName } = actionPlanSummary.personDetails
-    const presenter = new ActionPlanSelectOutcomePresenter(
-      caseReference,
-      formatFullName(firstName, lastName),
-      outcomes,
-      selectedOutcomeId,
-    )
+    const { firstName } = actionPlanSummary.personDetails
+    const presenter = new ActionPlanSelectOutcomePresenter(caseReference, firstName, outcomes, selectedOutcomeId)
 
     return presenter.renderPage(res)
   }
@@ -326,6 +320,7 @@ class ActionPlanController {
   async showViewActivitiesPage(req: Request, res: Response) {
     const { id: caseReference } = req.params as { id: string }
     const { needId, outcomeAnswerId } = req.query ?? {}
+    let firstName: string | undefined
 
     if (needId !== undefined || outcomeAnswerId !== undefined) {
       if (typeof needId !== 'string' || typeof outcomeAnswerId !== 'string') {
@@ -337,6 +332,7 @@ class ActionPlanController {
         this.referralService.getActionPlanSummary(caseReference, username),
         this.referralService.getActionPlanNeedsAndOutcomes(caseReference, username),
       ])
+      firstName = actionPlanSummary.personDetails.firstName
       const selectedNeed = actionPlanSummary.needs.find(need => need.id === needId)
       const selectedOutcome = selectedNeed?.outcomes.find(outcome => outcome.id === outcomeAnswerId)
       const selectableNeed = needsAndOutcomes.needs.find(need => need.id === needId)
@@ -351,16 +347,20 @@ class ActionPlanController {
       req.session.actionPlan = {
         needs: needsAndOutcomes.needs,
       }
-      req.session.actionPlanAction = { needId, outcomeId: selectableOutcome.id }
+      req.session.actionPlanAction = { needId, outcomeId: selectableOutcome.id, outcomeAnswerId }
       const activities = selectedOutcome.activities.map(activity => ({
         activityProvider: activity.who,
         activityDescription: activity.details,
       }))
+      req.session.preChangeActivities = { caseReference, activities }
       this.setActionPlanActivities(req, caseReference, activities)
-      req.session.preChangeActivities = {
-        caseReference,
-        activities,
-      } satisfies ActionPlanActivitiesData
+    }
+
+    const activityAlertType = req.session.actionPlanActivityAlertType
+    delete req.session.actionPlanActivityAlertType
+    if (activityAlertType && !firstName) {
+      const actionPlanSummary = await this.referralService.getActionPlanSummary(caseReference, res.locals.user.username)
+      firstName = actionPlanSummary.personDetails.firstName
     }
 
     const { needId: selectedNeedId, outcomeId: selectedOutcomeId } = req.session.actionPlanAction ?? {}
@@ -372,6 +372,8 @@ class ActionPlanController {
       selectedNeed?.label ?? '',
       selectedOutcome?.text ?? '',
       this.getActionPlanActivities(req, caseReference)[0],
+      activityAlertType,
+      firstName,
     )
     return presenter.renderPage(res)
   }
@@ -411,6 +413,7 @@ class ActionPlanController {
         this.setActionPlanActivities(req, caseReference, activities)
       } else {
         this.setActionPlanActivities(req, caseReference, [...activities, actionPlanActivity])
+        req.session.actionPlanActivityAlertType = 'ADD'
       }
 
       return res.redirect(`/referral/${caseReference}/action-plan/activities`)
@@ -454,6 +457,16 @@ class ActionPlanController {
       }
 
       if (activities.length === 1) {
+        delete req.session.actionPlanActivityAlertType
+        const outcomeAnswerId = req.session.actionPlanAction?.outcomeAnswerId
+        if (outcomeAnswerId) {
+          const { username } = res.locals.user
+          const result = await this.referralService.deleteAction(caseReference, outcomeAnswerId, username)
+          if (!result.success) {
+            throw new Error(result.message || 'Unable to remove action plan outcome')
+          }
+        }
+
         delete req.session.actionPlanActivities
         delete req.session.actionPlanAction
         if (req.session.actionPlanSessionDelivery?.caseReference === caseReference) {
@@ -467,6 +480,7 @@ class ActionPlanController {
         caseReference,
         activities.filter((_, index) => index !== activityIndex),
       )
+      req.session.actionPlanActivityAlertType = 'REMOVE'
       return res.redirect(activitiesPath)
     })
   }

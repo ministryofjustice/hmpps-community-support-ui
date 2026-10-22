@@ -393,7 +393,7 @@ describe('ActionPlanController', () => {
 
       await actionPlanController.submitSelectedNeed(req, res)
 
-      expect(req.flash).toHaveBeenCalledWith('needIdError', 'Select which need you are creating an action for')
+      expect(req.flash).toHaveBeenCalledWith('needIdError', 'Select which need you want to address')
       expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/select-a-need')
     })
 
@@ -448,7 +448,7 @@ describe('ActionPlanController', () => {
 
       expect(ActionPlanSelectOutcomePresenter).toHaveBeenCalledWith(
         'AB1234CD',
-        'Alex River',
+        'Alex',
         [{ id: 'outcome-2', text: 'Outcome two' }],
         'outcome-2',
       )
@@ -469,7 +469,7 @@ describe('ActionPlanController', () => {
 
       expect(ActionPlanSelectOutcomePresenter).toHaveBeenCalledWith(
         'AB1234CD',
-        'Alex River',
+        'Alex',
         [{ id: 'outcome-2', text: 'Outcome two' }],
         undefined,
       )
@@ -565,6 +565,7 @@ describe('ActionPlanController', () => {
           { activityProvider: 'Local charity', activityDescription: 'Weekly support sessions' },
         ],
       })
+      expect(req.session.actionPlanActivityAlertType).toBe('ADD')
       expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/activities')
     })
 
@@ -637,6 +638,7 @@ describe('ActionPlanController', () => {
           { activityProvider: 'Other provider', activityDescription: 'Other details' },
         ],
       })
+      expect(req.session.actionPlanActivityAlertType).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/activities')
     })
 
@@ -723,6 +725,69 @@ describe('ActionPlanController', () => {
       expect(req.session.actionPlanActivities).toBeUndefined()
       expect(req.session.actionPlanAction).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/select-a-need')
+    })
+
+    it('sets a remove alert when one of several activities is removed', async () => {
+      req.query = { activityIndex: '0' }
+      req.body = { removeActivity: 'yes' }
+      req.session.actionPlanActivities = {
+        caseReference: 'AB1234CD',
+        activities: [
+          { activityProvider: 'Remove provider', activityDescription: 'Remove details' },
+          { activityProvider: 'Keep provider', activityDescription: 'Keep details' },
+        ],
+      }
+
+      await actionPlanController.removeActivity(req, res)
+
+      expect(req.session.actionPlanActivities?.activities).toEqual([
+        { activityProvider: 'Keep provider', activityDescription: 'Keep details' },
+      ])
+      expect(req.session.actionPlanActivityAlertType).toBe('REMOVE')
+      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/activities')
+    })
+
+    it('deletes a saved outcome when its last activity is removed', async () => {
+      req.query = { activityIndex: '0' }
+      req.body = { removeActivity: 'yes' }
+      req.session.actionPlanAction = {
+        needId: 'need-1',
+        outcomeId: 'outcome-1',
+        outcomeAnswerId: 'answer-outcome-1',
+      }
+      req.session.actionPlanActivities = {
+        caseReference: 'AB1234CD',
+        activities: [{ activityProvider: 'Only provider', activityDescription: 'Only details' }],
+      }
+      referralService.deleteAction.mockResolvedValue({ success: true, message: 'Action deleted successfully' })
+
+      await actionPlanController.removeActivity(req, res)
+
+      expect(referralService.deleteAction).toHaveBeenCalledWith('AB1234CD', 'answer-outcome-1', 'user1')
+      expect(req.session.actionPlanActivities).toBeUndefined()
+      expect(req.session.actionPlanAction).toBeUndefined()
+      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/select-a-need')
+    })
+
+    it('preserves the saved outcome and activities when deleting the last activity fails', async () => {
+      req.query = { activityIndex: '0' }
+      req.body = { removeActivity: 'yes' }
+      req.session.actionPlanAction = {
+        needId: 'need-1',
+        outcomeId: 'outcome-1',
+        outcomeAnswerId: 'answer-outcome-1',
+      }
+      req.session.actionPlanActivities = {
+        caseReference: 'AB1234CD',
+        activities: [{ activityProvider: 'Only provider', activityDescription: 'Only details' }],
+      }
+      referralService.deleteAction.mockResolvedValue({ success: false, message: 'Removal failed' })
+
+      await actionPlanController.removeActivity(req, res)
+
+      expect(req.session.actionPlanActivities?.activities).toHaveLength(1)
+      expect(req.session.actionPlanAction?.outcomeAnswerId).toBe('answer-outcome-1')
+      expect(res.redirect).toHaveBeenCalledWith('/error')
     })
   })
 
@@ -842,15 +907,24 @@ describe('ActionPlanController', () => {
 
       expect(referralService.getActionPlanSummary).toHaveBeenCalledWith('AB1234CD', 'user1')
       expect(referralService.getActionPlanNeedsAndOutcomes).toHaveBeenCalledWith('AB1234CD', 'user1')
-      expect(req.session.actionPlanAction).toEqual({ needId: 'need-1', outcomeId: 'reference-outcome-1' })
+      expect(req.session.actionPlanAction).toEqual({
+        needId: 'need-1',
+        outcomeId: 'reference-outcome-1',
+        outcomeAnswerId: 'outcome-answer-1',
+      })
       expect(req.session.actionPlan).toEqual({ needs: selectableNeeds })
       expect(req.session.actionPlanActivities).toEqual({
         caseReference: 'AB1234CD',
         activities: [{ activityProvider: 'Local group', activityDescription: 'Weekly sessions' }],
       })
-      expect(ActionPlanViewActivitiesPresenter).toHaveBeenCalledWith('AB1234CD', 'Accommodation', 'Find housing', [
-        { activityProvider: 'Local group', activityDescription: 'Weekly sessions' },
-      ])
+      expect(ActionPlanViewActivitiesPresenter).toHaveBeenCalledWith(
+        'AB1234CD',
+        'Accommodation',
+        'Find housing',
+        [{ activityProvider: 'Local group', activityDescription: 'Weekly sessions' }],
+        undefined,
+        'Alex',
+      )
     })
 
     it('redirects to the action plan when the requested need or outcome is not found', async () => {
@@ -881,10 +955,41 @@ describe('ActionPlanController', () => {
 
       await actionPlanController.showViewActivitiesPage(req, res)
 
-      expect(ActionPlanViewActivitiesPresenter).toHaveBeenCalledWith('AB1234CD', 'Accommodation', 'Find housing', [
-        { activityProvider: 'Local group', activityDescription: 'Weekly sessions' },
-      ])
+      expect(ActionPlanViewActivitiesPresenter).toHaveBeenCalledWith(
+        'AB1234CD',
+        'Accommodation',
+        'Find housing',
+        [{ activityProvider: 'Local group', activityDescription: 'Weekly sessions' }],
+        undefined,
+        undefined,
+      )
       expect(ActionPlanViewActivitiesPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+    })
+
+    it('loads the first name and consumes the activity alert when displaying the page', async () => {
+      req.session.actionPlan = {
+        needs: [{ id: 'need-1', label: 'Accommodation', outcomes: [{ id: 'outcome-1', text: 'Find housing' }] }],
+      }
+      req.session.actionPlanAction = { needId: 'need-1', outcomeId: 'outcome-1' }
+      req.session.actionPlanActivityAlertType = 'ADD'
+      referralService.getActionPlanSummary.mockResolvedValue({
+        personDetails: { firstName: 'Alex', lastName: 'River' },
+        lastUpdatedAt: '',
+        needs: [],
+      })
+
+      await actionPlanController.showViewActivitiesPage(req, res)
+
+      expect(referralService.getActionPlanSummary).toHaveBeenCalledWith('AB1234CD', 'user1')
+      expect(req.session.actionPlanActivityAlertType).toBeUndefined()
+      expect(ActionPlanViewActivitiesPresenter).toHaveBeenCalledWith(
+        'AB1234CD',
+        'Accommodation',
+        'Find housing',
+        [],
+        'ADD',
+        'Alex',
+      )
     })
 
     it('does not display or edit activities belonging to a different referral', async () => {
@@ -900,7 +1005,14 @@ describe('ActionPlanController', () => {
 
       await actionPlanController.showViewActivitiesPage(req, res)
 
-      expect(ActionPlanViewActivitiesPresenter).toHaveBeenCalledWith('ZZ9876YY', 'Employment', 'Find work', [])
+      expect(ActionPlanViewActivitiesPresenter).toHaveBeenCalledWith(
+        'ZZ9876YY',
+        'Employment',
+        'Find work',
+        [],
+        undefined,
+        undefined,
+      )
 
       req.query = { activityIndex: '0' }
       await actionPlanController.showAddActivityPage(req, res)

@@ -374,11 +374,11 @@
     "pageHeader": "Action plan",
     "noActionPlanText": "{{ firstName }} does not have an action plan yet.",
     "addAnotherOutcomeText": "Add another outcome",
-    "submitActionPlanText": "Submit Action plan",
+    "submitActionPlanText": "Submit action plan",
     "addOrChangeActivitiesText": "Add or change activities",
     "removeOutcomeText": "Remove",
     "outcomePrefixText": "Outcome: ",
-    "whoWillDeliverHeaderText": "Who will do this",
+    "whoWillDeliverHeaderText": "Who will deliver this",
     "activityHeaderText": "Activity",
     "moveOutcomeDownText": "Move outcome down",
     "moveOutcomeUpText": "Move outcome up",
@@ -396,14 +396,14 @@
     "cancelLinkText": "Cancel"
   },
   "/referral/:id/action-plan/select-a-need": {
-    "pageHeader": "Area of Need",
+    "pageHeader": "Area of need",
     "identifiedNeedsDetailsTitle": "Show the needs identified in the referral",
-    "whichNeedTitle": "Which need are you creating an action for?",
+    "whichNeedTitle": "Which need do you want to address?",
     "whichNeedHint": "Select one option. You can select more needs later.",
     "continueButtonText": "Continue"
   },
   "/referral/:id/action-plan/select-an-outcome": {
-    "pageHeader": "Which outcome is appropriate for {{ fullName }}?",
+    "pageHeader": "Which outcome is appropriate for {{ firstName }}?",
     "selectOutcomeHint": "Select one option.",
     "continueButtonText": "Continue"
   },
@@ -411,9 +411,11 @@
     "pageHeader": "Activities",
     "areaOfNeedLabel": "Area of need",
     "outcomeLabel": "Outcome",
+    "addActivityNotificationText": "You added an activity to {{ firstName }}'s plan",
+    "removeActivityNotificationText": "You removed an activity from {{ firstName }}'s plan",
     "activityProviderHeading": "Who will deliver this",
     "activityDetailsHeading": "Activity details",
-    "actionsHeading": "Actions",
+    "actionsHeading": "Action",
     "changeActionText": "Change",
     "removeActionText": "Remove",
     "addAnotherActivityQuestion": "Do you want to add another activity?",
@@ -476,7 +478,7 @@
     "backLink": "/referral/{{ id }}/action-plan/person-involvement"
   },
   "/referral/:id/action-plan/activities/add": {
-    "pageHeader": "Add An Activity",
+    "pageHeader": "Add an activity",
     "areaOfNeedLabel": "Area of need",
     "outcomeLabel": "Outcome",
     "activityProviderLabel": "Who will deliver the activity?",
