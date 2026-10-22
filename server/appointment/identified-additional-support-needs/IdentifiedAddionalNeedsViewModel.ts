@@ -32,4 +32,4 @@ export type IdentifiedAdditionalNeedsViewModel = {
   formData: IdentifiedAdditionalNeedsFormData
 }
 
-export type IdentifiedAdditionalNeedsContent = GlobalContent['/ics-feedback/:id/identified-additional-support-needs']
+export type IdentifiedAdditionalNeedsContent = GlobalContent['/ics-feedback/:id/identified-additional-needs']

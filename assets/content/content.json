@@ -515,7 +515,7 @@
     "submitButtonText": "Continue",
     "backLinkHref": "/ics-feedback/{{ id }}/session-feedback"
   },
-  "/ics-feedback/:id/identified-additional-support-needs": {
+  "/ics-feedback/:id/identified-additional-needs": {
     "pageTitle": "Additional support needs – ICS feedback – Community Support",
     "pageHeader": "Additional support needs",
     "pageSubHeader": "These are the support needs identified in {{ firstname }}’s referral.",
@@ -540,7 +540,7 @@
     "actionsBeforeNextSessionLabel": "What actions do you and {{ firstname }} have before the next session takes place?",
     "actionsBeforeNextSessionHint": "Give details of any actions or next steps you and {{ firstname }} have agreed to do ahead of your next session.",
     "submitButtonText": "Continue",
-    "backLinkHref": "/ics-feedback/{{ id }}/identified-additional-support-needs"
+    "backLinkHref": "/ics-feedback/{{ id }}/identified-additional-needs"
   },
   "/ics-feedback/:id/check-answers": {
     "pageHeader": "Check your answers before submitting feedback",

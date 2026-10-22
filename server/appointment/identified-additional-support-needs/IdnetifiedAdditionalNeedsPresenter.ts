@@ -119,7 +119,7 @@ export default class IdnetifiedAdditionalSupportNeedsPresenter extends Presenter
         this.validationErrors?.messages,
       ),
       submitButton: { text: content.submitButtonText },
-      submitHref: `/ics-feedback/${this.caseRefId}/identified-additional-support-needs`,
+      submitHref: `/ics-feedback/${this.caseRefId}/identified-additional-needs`,
       backLink: { href: content.backLinkHref.replace('{{ id }}', this.caseRefId) },
       alreadyIdentifiedNeedsDetails: buildAlreadyIdentifiedDetails(
         {

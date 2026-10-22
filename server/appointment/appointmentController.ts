@@ -44,7 +44,7 @@ import ChangeIcsDetailsReasonPresenter from './change-ics-details-reason/ChangeI
 import { ChangeIcsDetailsReasonSchema } from '../validation/ChangeIcsDetailsReasonFormData'
 import { saveFormToSession, ScheduledIcsFormDataResolver } from './schedule-ics/ScheduledIcsFormDataResolver'
 import IssuesOrConcernsPresenter from './issues-or-concerns/IssuesOrConcernsPresenter'
-import IdentifiedAdditionalNeedsPresenter from './identified-additional-support-needs/IdnetifiedAdditionalNeedsPresenter'
+import IdentifiedAdditionalNeedsPresenter from './identified-additional-needs/IdnetifiedAdditionalNeedsPresenter'
 import { IssuesOrConcernsFormDataSchema } from '../validation/IssuesOrConcernsFormData'
 import AppointmentTypePresenter from './create-an-appointment/appointment-type/AppointmentTypePresenter'
 import { AppointmentTypeSchema } from '../validation/AppointmentTypeFormData'
@@ -693,7 +693,7 @@ class AppointmentController {
     } as IcsFeedbackSubmission & { caseReferenceId: string }
 
     validateRequestBodyAgainstSchema(IssuesOrConcernsFormDataSchema, req, res, () => {
-      res.redirect(`/ics-feedback/${caseRefId}/identified-additional-support-needs`)
+      res.redirect(`/ics-feedback/${caseRefId}/identified-additional-needs`)
     })
   }
 
@@ -705,7 +705,7 @@ class AppointmentController {
     if (!icsAppointment) {
       logger.info(`Appointment for Case '${caseRefId}' not found for user '${username}'`)
       req.flash('error', 'Appointment not found.')
-      res.redirect(`/ics-feedback/${caseRefId}/identified-additional-support-needs`)
+      res.redirect(`/ics-feedback/${caseRefId}/identified-additional-needs`)
       return
     }
 
@@ -715,13 +715,10 @@ class AppointmentController {
       res.redirect(`/progress/${caseRefId}`)
       return
     }
-    console.log(req.body.didYouIdentity)
-    console.log(req.body.identityDetails)
     icsFeedbackSubmission.identifiedAdditionalNeeds = {
       didYouIdentity: req.body.didYouIdentity ? req.body.didYouIdentity === 'Yes' : null,
       identityDetails: req.body.identityDetails,
     }
-    console.log(icsFeedbackSubmission)
     req.session.icsFeedbackSubmission = icsFeedbackSubmission
     validateRequestBodyAgainstSchema(IdentifiedAdditionalNeedsFormDataSchema, req, res, () => {
       res.redirect(`/ics-feedback/${caseRefId}/next-steps`)

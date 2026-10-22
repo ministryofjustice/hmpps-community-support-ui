@@ -40,8 +40,6 @@ export const validateRequestBodyAgainstSchema = <Schema extends ZodType>(
       if (!(error instanceof ZodError)) {
         return res.redirect('/error')
       }
-      console.log('schema ' + schema)
-      console.log('req ' + req)
       const errors = z.flattenError(error).fieldErrors
       req.session.formKeys = []
       Object.entries(errors).forEach(([field, errorMessage]) => {
