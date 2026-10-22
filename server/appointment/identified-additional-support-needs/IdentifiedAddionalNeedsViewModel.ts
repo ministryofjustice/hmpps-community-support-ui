@@ -1,10 +1,6 @@
-import { GlobalContent } from "../../../assets/content/GlobalContent";
-import {
-  GovukFrontendBackLink,
-  GovukFrontendButton,
-  GovukFrontendSummaryList,
-} from '@govuk-frontend'
-import { GovukFrontendRadiosWithConditional } from "../../@types/govukFrontend/derived";
+import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendSummaryList } from '@govuk-frontend'
+import { GlobalContent } from '../../../assets/content/GlobalContent'
+import { GovukFrontendRadiosWithConditional } from '../../@types/govukFrontend/derived'
 
 export interface IdentifiedAdditionalNeedsFormData {
   didYouIndentity?: boolean
@@ -24,7 +20,7 @@ export type DidYouIndentityRadioContent = {
 }
 
 export type IdentifiedAdditionalNeedsViewModel = {
-  pageTitle: string  
+  pageTitle: string
   pageHeader: string
   pageSubHeader: string
   firstname: string
@@ -37,4 +33,3 @@ export type IdentifiedAdditionalNeedsViewModel = {
 }
 
 export type IdentifiedAdditionalNeedsContent = GlobalContent['/ics-feedback/:id/identified-additional-support-needs']
-

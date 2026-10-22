@@ -44,7 +44,7 @@ import ChangeIcsDetailsReasonPresenter from './change-ics-details-reason/ChangeI
 import { ChangeIcsDetailsReasonSchema } from '../validation/ChangeIcsDetailsReasonFormData'
 import { saveFormToSession, ScheduledIcsFormDataResolver } from './schedule-ics/ScheduledIcsFormDataResolver'
 import IssuesOrConcernsPresenter from './issues-or-concerns/IssuesOrConcernsPresenter'
-import identifiedAdditionalNeedsPresenter from './identified-additional-support-needs/IdnetifiedAdditionalNeedsPresenter'
+import IdentifiedAdditionalNeedsPresenter from './identified-additional-support-needs/IdnetifiedAdditionalNeedsPresenter'
 import { IssuesOrConcernsFormDataSchema } from '../validation/IssuesOrConcernsFormData'
 import AppointmentTypePresenter from './create-an-appointment/appointment-type/AppointmentTypePresenter'
 import { AppointmentTypeSchema } from '../validation/AppointmentTypeFormData'
@@ -622,7 +622,6 @@ class AppointmentController {
     presenter.renderPage(res)
   }
 
-
   async getIdentifiedAdditionalNeeds(req: Request, res: Response): Promise<void> {
     const caseRefId = req.params.caseRefId as string
     const { username } = res.locals.user
@@ -649,8 +648,6 @@ class AppointmentController {
 
     const identifiedAdditionalNeeds = icsFeedbackSubmission ? icsFeedbackSubmission.identifiedAdditionalNeeds : null
     const appointmentData = await this.appointmentService.getICS(caseRefId.toString(), username)
-    console.log('appointmentData')
-    console.log(appointmentData)
     const validationErrors = formatDynamicErrorMessages(
       res.locals.errors,
       '{{ firstname }}',
@@ -658,10 +655,13 @@ class AppointmentController {
     )
     res.locals.errors = validationErrors
 
-     const presenter = new identifiedAdditionalNeedsPresenter(caseRefId, appointmentData, identifiedAdditionalNeeds, validationErrors)
-     return presenter.renderPage(res)
-
-
+    const presenter = new IdentifiedAdditionalNeedsPresenter(
+      caseRefId,
+      appointmentData,
+      identifiedAdditionalNeeds,
+      validationErrors,
+    )
+    presenter.renderPage(res)
   }
 
   async submitIssuesOrConcerns(req: Request, res: Response): Promise<void> {
@@ -696,7 +696,7 @@ class AppointmentController {
     })
   }
 
-async submitIdentifiedAdditionalNeeds(req: Request, res: Response): Promise<void> {
+  async submitIdentifiedAdditionalNeeds(req: Request, res: Response): Promise<void> {
     const caseRefId = req.params.caseRefId as string
     const { username } = res.locals.user
     const icsAppointment = await this.appointmentService.getICS(caseRefId, username)

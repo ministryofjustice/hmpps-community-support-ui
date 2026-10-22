@@ -1,19 +1,17 @@
 import { Response } from 'express'
-import {
-  GovukFrontendErrorMessage
-} from '@govuk-frontend'
+import { GovukFrontendErrorMessage } from '@govuk-frontend'
 import PresenterBase from '../../presenter/presenterBase'
-import { IdentifiedAdditionalNeedsContent,
-  IdentifiedAdditionalNeedsViewModel, 
-  IdentifiedAdditionalNeedsFormData, 
+import {
+  IdentifiedAdditionalNeedsContent,
+  IdentifiedAdditionalNeedsViewModel,
+  IdentifiedAdditionalNeedsFormData,
   DidYouIndentityRadioItemsContent,
-  DidYouIndentityRadioContent} 
-from './IdentifiedAddionalNeedsViewModel'
+  DidYouIndentityRadioContent,
+} from './IdentifiedAddionalNeedsViewModel'
 import {
   GovukFrontendRadiosItemWithConditional,
   GovukFrontendRadiosWithConditional,
 } from '../../@types/govukFrontend/derived'
-import buildAppointmentDetails, { RecordSessionAttendancePresenterData } from '../record-ics/AppointmentDetailsModel'
 import { components } from '../../@types/communitySupportApi/imported'
 import { escapeHtml } from '../../utils/utils'
 import { ErrorMiddlewareErrors } from '../../@types/express'
@@ -95,48 +93,48 @@ export default class IdnetifiedAdditionalSupportNeedsPresenter extends Presenter
           classes: 'govuk-fieldset__legend govuk-fieldset__legend--m',
         },
       },
-      //errorMessage: errorMessages.didYouIdentity,
-      //errorMessage: errorMessages.lateReason,
+      // errorMessage: errorMessages.didYouIdentity,
+      // errorMessage: errorMessages.lateReason,
       attributes: { 'data-testid': content.name },
-      //items: this.buildDidYouIdentityRadioItems(content.items, formData, errorMessages.lateReason),
+      // items: this.buildDidYouIdentityRadioItems(content.items, formData, errorMessages.lateReason),
       items: this.buildDidYouIdentityRadioItems(content.items, formData, errorMessages),
     }
   }
 
+  buildViewModel(res: Response): IdentifiedAdditionalNeedsViewModel {
+    const content = this.buildStaticContent(res)
+    const formData: IdentifiedAdditionalNeedsFormData = this.identifiedAdditionalNeeds
+      ? {
+          didYouIndentity: this.identifiedAdditionalNeeds.didYouIdentity,
+          identityDetails: this.identifiedAdditionalNeeds.identityDetails,
+        }
+      : {}
 
-    buildViewModel(res: Response): IdentifiedAdditionalNeedsViewModel {
-      console.log('buildViewModel calling')
-      const content = this.buildStaticContent(res)
-      const formData: IdentifiedAdditionalNeedsFormData = this.identifiedAdditionalNeeds
-        ? {
-            didYouIndentity: this.identifiedAdditionalNeeds.didYouIdentity,
-            identityDetails: this.identifiedAdditionalNeeds.identityDetails
-          }
-        : {}
-
-        console.log(this.data)
-      return {
-        pageTitle: content.pageTitle,
-        pageHeader: content.pageHeader,
-        pageSubHeader: content.pageSubHeader.replace('{{ firstname }}', this.data.referralFirstName),
-        firstname: this.data.referralFirstName,
-        didYouIndentityRadio: this.buildDidYouIdnetityRadio(
-          content.didYouIndentityRadio,
-          formData,
-          this.validationErrors?.messages,
-        ),
-        submitButton: { text: content.submitButtonText },
-        submitHref: `/ics-feedback/${this.caseRefId}/identified-additional-support-needs`,
-        backLink: { href: content.backLinkHref.replace('{{ id }}', this.caseRefId) },
-        alreadyIdentifiedNeedsDetails: buildAlreadyIdentifiedDetails({         
-            identityName: 'identityName',identityDetails: 'identityDetails'}, this.data),
-        formData
-      }
+    return {
+      pageTitle: content.pageTitle,
+      pageHeader: content.pageHeader,
+      pageSubHeader: content.pageSubHeader.replace('{{ firstname }}', this.data.referralFirstName),
+      firstname: this.data.referralFirstName,
+      didYouIndentityRadio: this.buildDidYouIdnetityRadio(
+        content.didYouIndentityRadio,
+        formData,
+        this.validationErrors?.messages,
+      ),
+      submitButton: { text: content.submitButtonText },
+      submitHref: `/ics-feedback/${this.caseRefId}/identified-additional-support-needs`,
+      backLink: { href: content.backLinkHref.replace('{{ id }}', this.caseRefId) },
+      alreadyIdentifiedNeedsDetails: buildAlreadyIdentifiedDetails(
+        {
+          identityName: 'identityName',
+          identityDetails: 'identityDetails',
+        },
+        this.data,
+      ),
+      formData,
     }
-  
-    getTemplatePath(): string {
-      return 'appointment/identifiedAdditionalNeeds'
-    }
+  }
 
+  getTemplatePath(): string {
+    return 'appointment/identifiedAdditionalNeeds'
+  }
 }
-

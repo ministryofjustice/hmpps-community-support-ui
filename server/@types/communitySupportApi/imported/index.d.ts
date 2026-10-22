@@ -1131,7 +1131,7 @@ export interface components {
       county?: string | null
       postcode?: string | null
     }
-    
+
     AlreadyIdentifiedResponse: {
       identityName: string | null
       identityDetails: string | null
@@ -3319,7 +3319,7 @@ export interface operations {
       }
     }
   }
-  
+
   getAlreadyIdentified: {
     parameters: {
       query?: never

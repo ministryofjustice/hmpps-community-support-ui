@@ -4,7 +4,6 @@ import { govFrontendSummaryListRow } from '../../utils/viewUtils'
 import dateFormat from '../../utils/dateFormat'
 import timeFormat from '../../utils/timeFormat'
 
-
 export interface AlreadyIdentifiedDetailsContent {
   identityName: string
   identityDetails: string
