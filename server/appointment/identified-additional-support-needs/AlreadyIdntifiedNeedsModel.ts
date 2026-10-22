@@ -4,23 +4,20 @@ import { govFrontendSummaryListRow } from '../../utils/viewUtils'
 import dateFormat from '../../utils/dateFormat'
 import timeFormat from '../../utils/timeFormat'
 
-// export interface AppointmentDetailsContent {
-//   dateLabel: string
-//   startTimeLabel: string
-// }
+
 export interface AlreadyIdentifiedDetailsContent {
   identityName: string
   identityDetails: string
 }
 
-export type IdentifiedAdditionalSupportNeedsPresenterData = Pick<
+export type AlreadyIdentifiedNeedsPresenterData = Pick<
   AppointmentIcsResponse,
   'appointmentDate' | 'appointmentTime' | 'referralFirstName'
 >
 
 const buildAlreadyIdentifiedDetails = (
   content: AlreadyIdentifiedDetailsContent,
-  data: IdentifiedAdditionalSupportNeedsPresenterData,
+  data: AlreadyIdentifiedNeedsPresenterData,
 ): GovukFrontendSummaryList => {
   return {
     rows: [

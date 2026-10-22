@@ -3,12 +3,12 @@ import {
   GovukFrontendErrorMessage
 } from '@govuk-frontend'
 import PresenterBase from '../../presenter/presenterBase'
-import { IdentifiedAdditionalSupportNeedsContent,
-  IdentifiedAdditionalSupportNeedsViewModel, 
-  IdentifiedAdditionalSupportNeedsFormData, 
+import { IdentifiedAdditionalNeedsContent,
+  IdentifiedAdditionalNeedsViewModel, 
+  IdentifiedAdditionalNeedsFormData, 
   DidYouIndentityRadioItemsContent,
   DidYouIndentityRadioContent} 
-from './IdentifiedAddionalSupportNeedsViewModel'
+from './IdentifiedAddionalNeedsViewModel'
 import {
   GovukFrontendRadiosItemWithConditional,
   GovukFrontendRadiosWithConditional,
@@ -17,16 +17,16 @@ import buildAppointmentDetails, { RecordSessionAttendancePresenterData } from '.
 import { components } from '../../@types/communitySupportApi/imported'
 import { escapeHtml } from '../../utils/utils'
 import { ErrorMiddlewareErrors } from '../../@types/express'
-import buildAlreadyIdentifiedDetails, { IdentifiedAdditionalSupportNeedsPresenterData } from './IdntifiedDetailsModel'
+import buildAlreadyIdentifiedDetails, { AlreadyIdentifiedNeedsPresenterData } from './AlreadyIdntifiedNeedsModel'
 
 export default class IdnetifiedAdditionalSupportNeedsPresenter extends PresenterBase<
-  IdentifiedAdditionalSupportNeedsViewModel,
-  IdentifiedAdditionalSupportNeedsContent
+  IdentifiedAdditionalNeedsViewModel,
+  IdentifiedAdditionalNeedsContent
 > {
   constructor(
     private readonly caseRefId: string,
-    private readonly data: IdentifiedAdditionalSupportNeedsPresenterData,
-    private readonly identityAdditionalSupportNeeds: components['schemas']['IdentityAdditionalSupportNeedsRequest'],
+    private readonly data: AlreadyIdentifiedNeedsPresenterData,
+    private readonly identifiedAdditionalNeeds: components['schemas']['IdentifiedAdditionalNeedsRequest'],
     private readonly validationErrors?: ErrorMiddlewareErrors,
   ) {
     super()
@@ -34,7 +34,7 @@ export default class IdnetifiedAdditionalSupportNeedsPresenter extends Presenter
 
   private buildIdentityTextArea(
     content: DidYouIndentityRadioItemsContent,
-    formData: IdentifiedAdditionalSupportNeedsFormData,
+    formData: IdentifiedAdditionalNeedsFormData,
     errorMessage?: GovukFrontendErrorMessage,
   ): string {
     const errorText: string = errorMessage ? errorMessage.text : undefined
@@ -59,7 +59,7 @@ export default class IdnetifiedAdditionalSupportNeedsPresenter extends Presenter
 
   private buildDidYouIdentityRadioItems(
     content: DidYouIndentityRadioItemsContent,
-    formData: IdentifiedAdditionalSupportNeedsFormData,
+    formData: IdentifiedAdditionalNeedsFormData,
     errorMessage?: GovukFrontendErrorMessage,
   ): GovukFrontendRadiosItemWithConditional[] {
     const htmlString = this.buildIdentityTextArea(content, formData, errorMessage)
@@ -82,7 +82,7 @@ export default class IdnetifiedAdditionalSupportNeedsPresenter extends Presenter
 
   private buildDidYouIdnetityRadio(
     content: DidYouIndentityRadioContent,
-    formData: IdentifiedAdditionalSupportNeedsFormData,
+    formData: IdentifiedAdditionalNeedsFormData,
     errorMessages?: Record<string, GovukFrontendErrorMessage>,
   ): GovukFrontendRadiosWithConditional {
     return {
@@ -104,13 +104,13 @@ export default class IdnetifiedAdditionalSupportNeedsPresenter extends Presenter
   }
 
 
-    buildViewModel(res: Response): IdentifiedAdditionalSupportNeedsViewModel {
+    buildViewModel(res: Response): IdentifiedAdditionalNeedsViewModel {
       console.log('buildViewModel calling')
       const content = this.buildStaticContent(res)
-      const formData: IdentifiedAdditionalSupportNeedsFormData = this.identityAdditionalSupportNeeds
+      const formData: IdentifiedAdditionalNeedsFormData = this.identifiedAdditionalNeeds
         ? {
-            didYouIndentity: this.identityAdditionalSupportNeeds.didYouIdentity,
-            identityDetails: this.identityAdditionalSupportNeeds.identityDetails
+            didYouIndentity: this.identifiedAdditionalNeeds.didYouIdentity,
+            identityDetails: this.identifiedAdditionalNeeds.identityDetails
           }
         : {}
 
@@ -128,14 +128,14 @@ export default class IdnetifiedAdditionalSupportNeedsPresenter extends Presenter
         submitButton: { text: content.submitButtonText },
         submitHref: `/ics-feedback/${this.caseRefId}/identified-additional-support-needs`,
         backLink: { href: content.backLinkHref.replace('{{ id }}', this.caseRefId) },
-        alreadyIdentifiedDetails: buildAlreadyIdentifiedDetails({         
+        alreadyIdentifiedNeedsDetails: buildAlreadyIdentifiedDetails({         
             identityName: 'identityName',identityDetails: 'identityDetails'}, this.data),
         formData
       }
     }
   
     getTemplatePath(): string {
-      return 'appointment/identifiedAdditionalSupportNeeds'
+      return 'appointment/identifiedAdditionalNeeds'
     }
 
 }

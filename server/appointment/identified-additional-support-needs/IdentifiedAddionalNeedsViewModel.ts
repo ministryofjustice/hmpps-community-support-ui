@@ -6,7 +6,7 @@ import {
 } from '@govuk-frontend'
 import { GovukFrontendRadiosWithConditional } from "../../@types/govukFrontend/derived";
 
-export interface IdentifiedAdditionalSupportNeedsFormData {
+export interface IdentifiedAdditionalNeedsFormData {
   didYouIndentity?: boolean
   identityDetails?: string
 }
@@ -23,18 +23,18 @@ export type DidYouIndentityRadioContent = {
   items: DidYouIndentityRadioItemsContent
 }
 
-export type IdentifiedAdditionalSupportNeedsViewModel = {
+export type IdentifiedAdditionalNeedsViewModel = {
   pageTitle: string  
   pageHeader: string
   pageSubHeader: string
   firstname: string
-  alreadyIdentifiedDetails: GovukFrontendSummaryList
+  alreadyIdentifiedNeedsDetails: GovukFrontendSummaryList
   didYouIndentityRadio: GovukFrontendRadiosWithConditional
   submitButton: GovukFrontendButton
   submitHref: string
   backLink: GovukFrontendBackLink
-  formData: IdentifiedAdditionalSupportNeedsFormData
+  formData: IdentifiedAdditionalNeedsFormData
 }
 
-export type IdentifiedAdditionalSupportNeedsContent = GlobalContent['/ics-feedback/:id/identified-additional-support-needs']
+export type IdentifiedAdditionalNeedsContent = GlobalContent['/ics-feedback/:id/identified-additional-support-needs']
 

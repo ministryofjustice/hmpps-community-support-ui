@@ -1292,14 +1292,14 @@ export interface components {
       sessionDetails?: components['schemas']['SessionDetailsRequest'] | null
       sessionFeedback?: components['schemas']['SessionFeedbackRequest'] | null
       issuesAndConcerns?: components['schemas']['IssuesAndConcernsRequest'] | null
-      identityAdditionalSupportNeeds?: components['schemas']['IdentityAdditionalSupportNeedsRequest'] | null
+      identifiedAdditionalNeeds?: components['schemas']['IdentifiedAdditionalNeedsRequest'] | null
       nextSteps?: components['schemas']['NextStepsRequest'] | null
     }
     IssuesAndConcernsRequest: {
       identified?: string | null
       notifyProbationPractitioner?: boolean | null
     }
-    IdentityAdditionalSupportNeedsRequest: {
+    IdentifiedAdditionalNeedsRequest: {
       didYouIdentity?: boolean | null
       identityDetails?: string | null
     }

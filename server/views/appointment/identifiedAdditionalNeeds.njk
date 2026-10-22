@@ -14,7 +14,7 @@
   <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
   <p class="govuk-body" data-testid="subheading">{{ content.pageSubHeader }} </p>
 
-  {{ govukSummaryList(content.alreadyIdentifiedDetails) }}
+  {{ govukSummaryList(content.alreadyIdentifiedNeedsDetails) }}
 
   <form method="post" action="{{ content.submitHref }}">
   <input type="hidden" name="_csrf" value="{{csrfToken}}">
