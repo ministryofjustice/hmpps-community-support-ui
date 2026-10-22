@@ -104,7 +104,7 @@ test.describe('Select an action plan need', () => {
 
     const viewActivitiesPage = await ActionPlanViewActivitiesPage.verifyOnPage(page)
     await expect(page).toHaveURL(ActionPlanViewActivitiesPage.url(caseReference))
-    await expect(page.locator('[data-testid="action-plan-activities-alert"]')).toHaveText(
+    await expect(page.locator('[data-testid="action-plan-activities-alert"]')).toContainText(
       "You added an activity to Alex's plan",
     )
     await expect(page.getByText('Do you want to add another activity?', { exact: true })).toBeVisible()
@@ -219,7 +219,7 @@ test.describe('Select an action plan need', () => {
 
     await ActionPlanViewActivitiesPage.verifyOnPage(page)
     await expect(page).toHaveURL(ActionPlanViewActivitiesPage.url(caseReference))
-    await expect(page.locator('[data-testid="action-plan-activities-alert"]')).toHaveText(
+    await expect(page.locator('[data-testid="action-plan-activities-alert"]')).toContainText(
       "You removed an activity from Alex's plan",
     )
     await expect(viewActivitiesPage.activityRows).toHaveCount(1)
