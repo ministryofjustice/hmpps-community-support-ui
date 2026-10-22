@@ -16,6 +16,7 @@ import type {
   ActionPlanSelectANeedResponse,
   ActionPlanActionRequest,
   ActionPlanActionResponse,
+  ActionPlanSessionDeliveryDetailsResponse,
   WithdrawalReasonsGroupedBffResponseDto,
   AreaConfirmationBffResponseDto,
   CommunityServiceProviderRequest,
@@ -432,6 +433,35 @@ describe('CommunitySupportApiClient tests', () => {
       const result = communitySupportApiClient.submitAction(caseReference, request, 'user1')
 
       return expect(result).resolves.toEqual(response)
+    })
+  })
+  describe('getPersonInvolvement tests', () => {
+    it('should return person involvement questions and answers', async () => {
+      const caseReference = 'AB1234CD'
+      const response: ActionPlanSessionDeliveryDetailsResponse = { questions: [] }
+
+      nock('http://localhost:8080')
+        .get(`/bff/referral/${caseReference}/action-plan/service-delivery-details/person-involvement`)
+        .reply(200, response)
+
+      const result = communitySupportApiClient.getPersonInvolvement(caseReference, 'user1')
+
+      await expect(result).resolves.toEqual(response)
+    })
+  })
+  describe('getSessionDeliveryCheckYourAnswers tests', () => {
+    it('sends whether the service end date has changed and returns the combined questions', async () => {
+      const caseReference = 'AB1234CD'
+      const response: ActionPlanSessionDeliveryDetailsResponse = { questions: [] }
+
+      nock('http://localhost:8080')
+        .get(`/bff/referral/${caseReference}/action-plan/session-delivery-details/check-your-answers`)
+        .query({ isServiceEndDateChanged: 'true' })
+        .reply(200, response)
+
+      const result = communitySupportApiClient.getSessionDeliveryCheckYourAnswers(caseReference, 'user1', true)
+
+      await expect(result).resolves.toEqual(response)
     })
   })
   describe('deleteAction tests', () => {

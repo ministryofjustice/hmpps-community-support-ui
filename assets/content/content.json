@@ -452,6 +452,31 @@
     "continueButtonText": "Continue",
     "backLink": "/referral/{{ id }}/action-plan/service-end-date-check"
   },
+  "/referral/:id/action-plan/service-delivery-check-your-answers": {
+    "pageTitle": "Session details – Check your answers",
+    "pageHeader": "Check service delivery details",
+    "summaryLists": [
+      {
+        "summaryTitle": "Session details",
+        "changeHref": "/referral/{{ id }}/action-plan/session-delivery-details"
+      },
+      {
+        "summaryTitle": "Risks and adjustments",
+        "changeHref": "/referral/{{ id }}/action-plan/risks-and-adjustments"
+      },
+      {
+        "summaryTitle": "Service end date",
+        "changeHref": "/referral/{{ id }}/action-plan/service-end-date-check"
+      },
+      {
+        "summaryTitle": "Involvement in creating action plan",
+        "changeHref": "/referral/{{ id }}/action-plan/person-involvement"
+      }
+    ],
+    "submitButtonText": "Submit action plan",
+    "submitHref": "/referral/{{ id }}/action-plan/submit",
+    "backLink": "/referral/{{ id }}/action-plan/person-involvement"
+  },
   "/referral/:id/action-plan/activities/add": {
     "pageHeader": "Add an activity",
     "areaOfNeedLabel": "Area of need",

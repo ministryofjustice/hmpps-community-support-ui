@@ -705,6 +705,26 @@ export default {
         jsonBody: sessionDeliveryDetails,
       },
     }),
+  stubGetSessionDeliveryCheckYourAnswers: (
+    caseReference: string,
+    checkYourAnswers: ActionPlanSessionDeliveryDetailsResponse,
+    isServiceEndDateChanged = false,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPath: `/community-support/bff/referral/${caseReference}/action-plan/session-delivery-details/check-your-answers`,
+        queryParameters: {
+          isServiceEndDateChanged: { equalTo: String(isServiceEndDateChanged) },
+        },
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: checkYourAnswers,
+      },
+    }),
   stubGetRisksAndAdjustments: (
     caseReference: string,
     risksAndAdjustments: ActionPlanSessionDeliveryDetailsResponse,
