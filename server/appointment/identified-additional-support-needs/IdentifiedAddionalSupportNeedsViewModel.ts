@@ -27,12 +27,13 @@ export type IdentifiedAdditionalSupportNeedsViewModel = {
   pageTitle: string  
   pageHeader: string
   pageSubHeader: string
-  //alreadyIdentifiedDetails: GovukFrontendSummaryList
+  firstname: string
+  alreadyIdentifiedDetails: GovukFrontendSummaryList
   didYouIndentityRadio: GovukFrontendRadiosWithConditional
   submitButton: GovukFrontendButton
   submitHref: string
   backLink: GovukFrontendBackLink
-  //formData: IdentifiedAdditionalSupportNeedsFormData
+  formData: IdentifiedAdditionalSupportNeedsFormData
 }
 
 export type IdentifiedAdditionalSupportNeedsContent = GlobalContent['/ics-feedback/:id/identified-additional-support-needs']

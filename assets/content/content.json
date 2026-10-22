@@ -519,8 +519,8 @@
   "/ics-feedback/:id/identified-additional-support-needs": {
     "pageTitle": "Additional support needs – ICS feedback – Community Support",
     "pageHeader": "Additional support needs",
-    "pageSubHeader": "These are the support needs identified in {{ firstname}}’s referral.",
-    "alreadyIdentifiedDetails": {
+    "pageSubHeader": "These are the support needs identified in {{ firstname }}’s referral.",
+    "appointmentDetails": {
       "alreadyIdentifiedLabel": "Additional support needs already identified",
       "items": [
       {
@@ -537,12 +537,12 @@
     },
     "didYouIndentityRadio": {
       "name": "didYouIndentity",
-      "title": "Did you identity anything else {{ firstNsame }} needs support with?",
+      "title": "Did you identity anything else {{ firstname }} needs support with?",
       "items": {
         "yesText": "Yes",
         "noText": "No",
         "identityName": "identityName",
-        "identityLabel": "Give details of anything else {{ firstName }} needs support with"
+        "identityLabel": "Give details of anything else {{ firstname }} needs support with"
       }
     },
     "submitButtonText": "Continue",

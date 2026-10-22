@@ -634,21 +634,34 @@ class AppointmentController {
       res.redirect(`/ics-feedback/${caseRefId}/identified-additional-supprt-needs`)
       return
     }
-
-    const { icsFeedbackSubmission } = req.session
     res.locals.errors = formatDynamicErrorMessages(
       res.locals.errors,
       '{{ firstname }}',
       icsAppointment.referralFirstName,
     )
 
-    const presenter = new identifiedAdditionalSupportNeedsPresenter(
-      caseRefId.toString(),
-      icsAppointment.referralFirstName,
-      //icsAppointment?.identifiedAdditionalSupportNeedsData,
+    const { icsFeedbackSubmission } = req.session
+    res.locals.errors = formatDynamicErrorMessages(
       res.locals.errors,
+      '{{ firstName }}',
+      icsAppointment.referralFirstName,
     )
-    presenter.renderPage(res)
+
+    const identityAdditionalSupportNeeds = icsFeedbackSubmission ? icsFeedbackSubmission.identityAdditionalSupportNeeds : null
+    const appointmentData = await this.appointmentService.getICS(caseRefId.toString(), username)
+    console.log('appointmentData')
+    console.log(appointmentData)
+    const validationErrors = formatDynamicErrorMessages(
+      res.locals.errors,
+      '{{ firstname }}',
+      appointmentData.referralFirstName,
+    )
+    res.locals.errors = validationErrors
+
+     const presenter = new identifiedAdditionalSupportNeedsPresenter(caseRefId, appointmentData, identityAdditionalSupportNeeds, validationErrors)
+     return presenter.renderPage(res)
+
+
   }
 
   async submitIssuesOrConcerns(req: Request, res: Response): Promise<void> {

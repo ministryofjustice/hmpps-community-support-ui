@@ -1,10 +1,6 @@
 import { Response } from 'express'
 import {
-  // GovukFrontendBackLink,
-  // GovukFrontendButton,
   GovukFrontendErrorMessage
-  // GovukFrontendFieldset,
-  // GovukFrontendInput,
 } from '@govuk-frontend'
 import PresenterBase from '../../presenter/presenterBase'
 import { IdentifiedAdditionalSupportNeedsContent,
@@ -21,6 +17,7 @@ import buildAppointmentDetails, { RecordSessionAttendancePresenterData } from '.
 import { components } from '../../@types/communitySupportApi/imported'
 import { escapeHtml } from '../../utils/utils'
 import { ErrorMiddlewareErrors } from '../../@types/express'
+import buildAlreadyIdentifiedDetails, { IdentifiedAdditionalSupportNeedsPresenterData } from './IdntifiedDetailsModel'
 
 export default class IdnetifiedAdditionalSupportNeedsPresenter extends PresenterBase<
   IdentifiedAdditionalSupportNeedsViewModel,
@@ -28,8 +25,8 @@ export default class IdnetifiedAdditionalSupportNeedsPresenter extends Presenter
 > {
   constructor(
     private readonly caseRefId: string,
-    private readonly data: RecordSessionAttendancePresenterData,
-    private readonly session: components['schemas']['IdentityRequest'],
+    private readonly data: IdentifiedAdditionalSupportNeedsPresenterData,
+    private readonly identityAdditionalSupportNeeds: components['schemas']['IdentityAdditionalSupportNeedsRequest'],
     private readonly validationErrors?: ErrorMiddlewareErrors,
   ) {
     super()
@@ -108,18 +105,21 @@ export default class IdnetifiedAdditionalSupportNeedsPresenter extends Presenter
 
 
     buildViewModel(res: Response): IdentifiedAdditionalSupportNeedsViewModel {
+      console.log('buildViewModel calling')
       const content = this.buildStaticContent(res)
-      const formData: IdentifiedAdditionalSupportNeedsFormData = this.session
+      const formData: IdentifiedAdditionalSupportNeedsFormData = this.identityAdditionalSupportNeeds
         ? {
-            didYouIndentity: this.session.didYouIdentity,
-            identityDetails: this.session.identityDetails
+            didYouIndentity: this.identityAdditionalSupportNeeds.didYouIdentity,
+            identityDetails: this.identityAdditionalSupportNeeds.identityDetails
           }
         : {}
 
+        console.log(this.data)
       return {
         pageTitle: content.pageTitle,
         pageHeader: content.pageHeader,
-        pageSubHeader: content.pageSubHeader,
+        pageSubHeader: content.pageSubHeader.replace('{{ firstname }}', this.data.referralFirstName),
+        firstname: this.data.referralFirstName,
         didYouIndentityRadio: this.buildDidYouIdnetityRadio(
           content.didYouIndentityRadio,
           formData,
@@ -128,6 +128,9 @@ export default class IdnetifiedAdditionalSupportNeedsPresenter extends Presenter
         submitButton: { text: content.submitButtonText },
         submitHref: `/ics-feedback/${this.caseRefId}/identified-additional-support-needs`,
         backLink: { href: content.backLinkHref.replace('{{ id }}', this.caseRefId) },
+        alreadyIdentifiedDetails: buildAlreadyIdentifiedDetails({         
+            identityName: 'identityName',identityDetails: 'identityDetails'}, this.data),
+        formData
       }
     }
   

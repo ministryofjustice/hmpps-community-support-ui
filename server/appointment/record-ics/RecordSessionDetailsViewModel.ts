@@ -77,7 +77,7 @@ export type SessionDurationTimeInputContent = {
 
 export type RecordSessionDetailsContent = {
   pageHeader: string
-  //appointmentDetails: AppointmentDetailsContent
+  appointmentDetails: AppointmentDetailsContent
   wasPersonLateRadio: WasPersonLateRadioContent
   sessionDurationTimeInput: SessionDurationTimeInputContent
   submitButtonText: string

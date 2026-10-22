@@ -1131,6 +1131,12 @@ export interface components {
       county?: string | null
       postcode?: string | null
     }
+    
+    AlreadyIdentifiedResponse: {
+      identityName: string | null
+      identityDetails: string | null
+    }
+
     AppointmentIcsResponse: {
       /** Format: uuid */
       appointmentIcsId: string
@@ -1286,13 +1292,14 @@ export interface components {
       sessionDetails?: components['schemas']['SessionDetailsRequest'] | null
       sessionFeedback?: components['schemas']['SessionFeedbackRequest'] | null
       issuesAndConcerns?: components['schemas']['IssuesAndConcernsRequest'] | null
+      identityAdditionalSupportNeeds?: components['schemas']['IdentityAdditionalSupportNeedsRequest'] | null
       nextSteps?: components['schemas']['NextStepsRequest'] | null
     }
     IssuesAndConcernsRequest: {
       identified?: string | null
       notifyProbationPractitioner?: boolean | null
     }
-    IdentityRequest: {
+    IdentityAdditionalSupportNeedsRequest: {
       didYouIdentity?: boolean | null
       identityDetails?: string | null
     }
@@ -3312,6 +3319,39 @@ export interface operations {
       }
     }
   }
+  
+  getAlreadyIdentified: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        caseReference: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description List of ICS appointments */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['AlreadyIdentifiedResponse'][]
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+
   getIcsAppointments: {
     parameters: {
       query?: never
