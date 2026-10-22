@@ -34,6 +34,7 @@ import {
 import { ActionPlanChangeServiceEndDateDataSchemaBuilder } from '../../validation/ActionPlanChangeServiceEndDateFormData'
 import ActionPlanRemoveOutcomePresenter from './removeOutcome/actionPlanRemoveOutcomePresenter'
 import ActionPlanServiceUserInvolvementPresenter from './sessionDeliveryDetails/actionPlanServiceUserInvolvementPresenter'
+import ServiceDeliveryCheckYourAnswersPresenter from './sessionDeliveryDetails/serviceDeliveryCheckYourAnswersPresenter'
 import { ActionPlanUserInvolvementFormDataSchemaBuilder } from '../../validation/ActionPlanUserInvolvementFormData'
 import ServiceDeliveryPresenter from './serviceDelivery/serviceDeliveryPresenter'
 
@@ -618,6 +619,9 @@ class ActionPlanController {
     return validateRequestBodyAgainstSchema(schema, req, res, async form => {
       const request = buildSessionDeliveryDetailsRequestFromForm(sessionDeliveryDetails, form)
       this.saveSessionDeliveryDetails(req, caseReference, request)
+      this.setActionPlanSessionDelivery(req, caseReference, {
+        isServiceEndDateChanged: form.SERVICE_END_DATE_CHECK === 'NO',
+      })
 
       if (form.SERVICE_END_DATE_CHECK === 'YES') {
         return res.redirect(`/referral/${caseReference}/action-plan/person-involvement`)
@@ -656,6 +660,30 @@ class ActionPlanController {
       this.saveSessionDeliveryDetails(req, caseReference, request)
       return res.redirect(`/referral/${caseReference}/action-plan/person-involvement`)
     })
+  }
+
+  async showServiceDeliveryCheckYourAnswersPage(req: Request, res: Response) {
+    const { id: caseReference } = req.params as { id: string }
+    const { username } = res.locals.user
+
+    const sessionDelivery = this.getActionPlanSessionDelivery(req, caseReference)
+    const checkYourAnswers = await this.referralService.getCheckYourAnswers(
+      caseReference,
+      username,
+      sessionDelivery?.isServiceEndDateChanged ?? false,
+    )
+    const sessionDeliveryDraft = sessionDelivery?.sessionDeliveryDetails
+    const presenter = new ServiceDeliveryCheckYourAnswersPresenter(
+      [
+        applySessionDeliveryDetailsData(checkYourAnswers.sessionDetails, sessionDeliveryDraft).questions,
+        applySessionDeliveryDetailsData(checkYourAnswers.risksAndAdjustments, sessionDeliveryDraft).questions,
+        applySessionDeliveryDetailsData(checkYourAnswers.serviceEndDate, sessionDeliveryDraft).questions,
+        applySessionDeliveryDetailsData(checkYourAnswers.personInvolvement, sessionDeliveryDraft).questions,
+      ],
+      caseReference,
+    )
+
+    return presenter.renderPage(res)
   }
 
   async moveNeed(req: Request, res: Response) {

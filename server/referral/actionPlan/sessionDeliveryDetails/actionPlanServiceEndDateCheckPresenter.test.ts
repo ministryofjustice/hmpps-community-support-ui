@@ -26,7 +26,7 @@ describe('ActionPlanServiceEndDateCheckPresenter', () => {
           },
           {
             value: 'NO',
-            label: 'No, I need to change the date',
+            label: 'No',
             displayOrder: 2,
             displayAdditionalDetailsOnSelect: false,
             additionalDetailsLabel: null,

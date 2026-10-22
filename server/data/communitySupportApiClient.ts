@@ -223,6 +223,19 @@ export default class CommunitySupportApiClient extends RestClient {
     )
   }
 
+  getSessionDeliveryCheckYourAnswers(
+    caseReference: string,
+    username: string,
+    isServiceEndDateChanged: boolean,
+  ): Promise<ActionPlanSessionDeliveryDetailsResponse> {
+    return this.get(
+      {
+        path: `/bff/referral/${caseReference}/action-plan/session-delivery-details/check-your-answers?isServiceEndDateChanged=${isServiceEndDateChanged}`,
+      },
+      asSystem(username),
+    )
+  }
+
   getIcsById(referralId: string, icsId: string, username: string): Promise<AppointmentIcsResponse> {
     return this.get({ path: `/bff/referral/${referralId}/ics/${icsId}` }, asSystem(username))
   }
