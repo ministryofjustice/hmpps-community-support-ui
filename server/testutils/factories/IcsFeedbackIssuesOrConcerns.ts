@@ -11,5 +11,6 @@ export default IcsFeedbackIssuesOrConcernsFactory.define(({ transientParams }) =
     transientParams.issuesOrConcernsHint ||
     'Give details of anything that concerned you about {{ firstname }}, or any issues they raised that might impact their engagement in future sessions.',
   submitButtonText: transientParams.submitButtonText || 'Continue',
+  submitHref: transientParams.submitHref || '/ics-feedback/{{ id }}/identified-additional-support-needs',
   backLinkHref: transientParams.backLinkHref || '/ics-feedback/{{ id }}/session-feedback',
 }))
