@@ -44,7 +44,6 @@ import ChangeIcsDetailsReasonPresenter from './change-ics-details-reason/ChangeI
 import { ChangeIcsDetailsReasonSchema } from '../validation/ChangeIcsDetailsReasonFormData'
 import { saveFormToSession, ScheduledIcsFormDataResolver } from './schedule-ics/ScheduledIcsFormDataResolver'
 import IssuesOrConcernsPresenter from './issues-or-concerns/IssuesOrConcernsPresenter'
-import IdentifiedAdditionalNeedsPresenter from './identified-additional-needs/IdnetifiedAdditionalNeedsPresenter'
 import { IssuesOrConcernsFormDataSchema } from '../validation/IssuesOrConcernsFormData'
 import AppointmentTypePresenter from './create-an-appointment/appointment-type/AppointmentTypePresenter'
 import { AppointmentTypeSchema } from '../validation/AppointmentTypeFormData'
@@ -723,7 +722,6 @@ class AppointmentController {
     validateRequestBodyAgainstSchema(IdentifiedAdditionalNeedsFormDataSchema, req, res, () => {
       res.redirect(`/ics-feedback/${caseRefId}/next-steps`)
     })
-
   }
 
   async getNextSteps(req: Request, res: Response): Promise<void> {
