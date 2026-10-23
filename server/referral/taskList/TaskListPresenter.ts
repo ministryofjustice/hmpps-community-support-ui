@@ -96,6 +96,10 @@ export default class TaskListPresenter extends PresenterBase<TaskListViewModel, 
           items: [
             {
               title: { text: content.checkAnswers.subTasks.checkAnswersAndSubmit.text },
+              href:
+                this.data.checkYourAnswersStatus.statusText === 'Cannot Start Yet'
+                  ? undefined
+                  : content.checkAnswers.subTasks.checkAnswersAndSubmit.href,
               status: status.checkAnswers,
             },
           ],

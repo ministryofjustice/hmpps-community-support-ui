@@ -24,7 +24,7 @@ const baseTaskListState: TaskListStatusDto = {
 
 describe('TaskListPresenter - Page Rendering', () => {
   describe('check your answers', () => {
-    test('check answers shows Cannot Start Yet', () => {
+    test('check answers is plain text when it shows Cannot Start Yet', () => {
       const presenter = new TaskListPresenter(baseTaskListState)
       const content = TaskListContent.build()
       const response = { locals: { content } } as unknown as Response
@@ -35,7 +35,7 @@ describe('TaskListPresenter - Page Rendering', () => {
       expect(checkAnswers.taskList.items[0].title.text).toBe('Check answers and submit')
       expect(checkAnswers.taskList.items[0].href).toBeUndefined()
     })
-    test('check answers shows Incomplete', () => {
+    test('check answers is a link when it shows Incomplete', () => {
       const taskListState = {
         ...baseTaskListState,
         checkYourAnswersStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
@@ -50,7 +50,7 @@ describe('TaskListPresenter - Page Rendering', () => {
         tag: { text: 'Incomplete', classes: 'govuk-tag--blue' },
       })
       expect(checkAnswers.taskList.items[0].title.text).toBe('Check answers and submit')
-      expect(checkAnswers.taskList.items[0].href).toBeUndefined()
+      expect(checkAnswers.taskList.items[0].href).toBe('/referral/check-referral-information')
     })
   })
 
