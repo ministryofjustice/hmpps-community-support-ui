@@ -27,7 +27,7 @@ export interface TaskListContent {
   checkAnswers: {
     title: string
     subTasks: {
-      checkAnswersAndSubmit: { text: string; href: string }
+      checkAnswersAndSubmit: { text: string }
     }
   }
 }

@@ -50,7 +50,7 @@ export default TaskListContentFactory.define(({ transientParams }) => ({
     checkAnswers: {
       title: 'Check answers and submit',
       subTasks: {
-        checkAnswersAndSubmit: { text: 'Check answers and submit', href: '/referral/new/check-answers/{{ id }}' },
+        checkAnswersAndSubmit: { text: 'Check answers and submit' },
       },
     },
   },

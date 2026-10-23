@@ -27,7 +27,6 @@ export default class TaskListPresenter extends PresenterBase<TaskListViewModel, 
 
   private buildTaskList(content: TaskListContent) {
     const status = getTaskListStatus(this.data)
-    const canCheckAnswers = this.data.checkYourAnswersStatus.statusText !== 'Cannot Start Yet'
     return {
       personalDetails: {
         title: content.personalDetails.title,
@@ -96,11 +95,7 @@ export default class TaskListPresenter extends PresenterBase<TaskListViewModel, 
         taskList: {
           items: [
             {
-              title: {
-                text: content.checkAnswers.subTasks.checkAnswersAndSubmit.text,
-                classes: canCheckAnswers ? undefined : 'task-list-entry-link-disabled',
-              },
-              href: content.checkAnswers.subTasks.checkAnswersAndSubmit.href,
+              title: { text: content.checkAnswers.subTasks.checkAnswersAndSubmit.text },
               status: status.checkAnswers,
             },
           ],
