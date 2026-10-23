@@ -8,6 +8,7 @@ import {
   CommunitySupportRiskInformationDto,
   ActionPlanSummaryDto,
   ActionPlanSessionDeliveryDetailsResponse,
+  ActionPlanSessionDeliveryDetailsRequest,
   WithdrawalReasonsGroupedBffResponseDto,
   OffenceSentenceInfoBffResponseDto,
   OffenceSentenceRequest,
@@ -60,6 +61,21 @@ describe('Referral service tests', () => {
       const result = await referralService.getReferralUserAssignments('referral123', 'user1')
       expect(result).toBe(mockReferralUserAssignments)
       expect(communitySupportApiClient.getReferralUserAssignments).toHaveBeenCalledWith('referral123', 'user1')
+    })
+  })
+
+  describe('submitServiceDeliveryDetails', () => {
+    it('passes the complete answers to the API client and returns the saved response', async () => {
+      const request: ActionPlanSessionDeliveryDetailsRequest = {
+        answers: [{ questionId: 'question-id', incomingAnswerDetails: [{ value: 'YES' }] }],
+      }
+      const response: ActionPlanSessionDeliveryDetailsResponse = { questions: [] }
+      communitySupportApiClient.submitServiceDeliveryDetails.mockResolvedValue(response)
+
+      await expect(referralService.submitServiceDeliveryDetails('AB1234CD', request, 'user1')).resolves.toEqual(
+        response,
+      )
+      expect(communitySupportApiClient.submitServiceDeliveryDetails).toHaveBeenCalledWith('AB1234CD', request, 'user1')
     })
   })
 

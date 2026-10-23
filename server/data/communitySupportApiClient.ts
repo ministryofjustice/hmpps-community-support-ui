@@ -33,6 +33,7 @@ import type {
   ActionPlanActionRequest,
   ActionPlanActionResponse,
   ActionPlanSessionDeliveryDetailsResponse,
+  ActionPlanSessionDeliveryDetailsRequest,
   ActionPlanSelectANeedResponse,
   WithdrawalReasonsGroupedBffResponseDto,
   AreaConfirmationBffResponseDto,
@@ -184,6 +185,17 @@ export default class CommunitySupportApiClient extends RestClient {
   ): Promise<ActionPlanSessionDeliveryDetailsResponse> {
     return this.get(
       { path: `/bff/referral/${caseReference}/action-plan/session-delivery-details/session-delivery` },
+      asSystem(username),
+    )
+  }
+
+  submitServiceDeliveryDetails(
+    caseReference: string,
+    request: ActionPlanSessionDeliveryDetailsRequest,
+    username: string,
+  ): Promise<ActionPlanSessionDeliveryDetailsResponse> {
+    return this.patch(
+      { path: `/referral/${caseReference}/action-plan/session-delivery-details`, data: request },
       asSystem(username),
     )
   }
