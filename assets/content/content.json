@@ -1076,7 +1076,7 @@
         "title": "Check answers and submit",
         "subTasks": {
           "checkAnswersAndSubmit": {
-            "text": "Check answers and submit",
+            "text": "Check answers and submit the referral",
             "href": "/referral/check-referral-information"
           }
         }
