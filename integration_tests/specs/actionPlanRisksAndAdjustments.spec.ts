@@ -1,11 +1,13 @@
-import { randomUUID } from 'node:crypto'
 import { test, expect } from '@playwright/test'
-import { ActionPlanSessionDeliveryDetailsResponse, ActionPlanSummaryDto } from '@community-support-api'
+import { ActionPlanSummaryDto } from '@community-support-api'
 import { login, resetStubs } from '../testUtils'
 import communitySupport from '../mockApis/communitySupport'
 import ActionPlanRisksAndAdjustmentsPage from '../pages/actionPlanRisksAndAdjustmentsPage'
 import ActionPlanCheckServiceEndDatePage from '../pages/actionPlanCheckServiceEndDatePage'
-import { serviceEndDateUnchangedResponse } from '../../server/testutils/factories/ActionPlanSessionDeliveryDetailsResponse'
+import {
+  actionPlanRisksAndAdjustmentsFactory,
+  serviceEndDateUnchangedResponse,
+} from '../../server/testutils/factories/ActionPlanSessionDeliveryDetailsResponse'
 
 test.describe('Action Plan Risks and Adjustments Page', () => {
   const caseReference = 'AB1234CD'
@@ -19,67 +21,6 @@ test.describe('Action Plan Risks and Adjustments Page', () => {
     needs: [],
   }
 
-  const risksAndAdjustments: ActionPlanSessionDeliveryDetailsResponse = {
-    questions: [
-      {
-        id: randomUUID(),
-        displayOrder: 1,
-        label: 'Is there a risk associated with the planned activities?',
-        key: 'RISK_ASSOCIATED_WITH_PLANNED_ACTIVITIES',
-        hint: 'Select one option.',
-        answerType: 'RADIO',
-        maximumNumberOfResponses: 1,
-        choices: [
-          {
-            value: 'YES',
-            label: 'Yes',
-            displayOrder: 1,
-            displayAdditionalDetailsOnSelect: true,
-            additionalDetailsLabel: 'Give details of the risk',
-            additionalDetailsHint: null,
-          },
-          {
-            value: 'NO',
-            label: 'No',
-            displayOrder: 2,
-            displayAdditionalDetailsOnSelect: false,
-            additionalDetailsLabel: null,
-            additionalDetailsHint: null,
-          },
-        ],
-        savedResponses: [{ value: 'YES', additionalDetails: 'Risk of harm to staff' }],
-      },
-      {
-        id: randomUUID(),
-        displayOrder: 2,
-        label: 'Will you put reasonable adjustments in place?',
-        key: 'REASONABLE_ADJUSTMENTS_FOR_PLANNED_ACTIVITIES',
-        hint: 'Select one option.',
-        answerType: 'RADIO',
-        maximumNumberOfResponses: 1,
-        choices: [
-          {
-            value: 'YES',
-            label: 'Yes',
-            displayOrder: 1,
-            displayAdditionalDetailsOnSelect: true,
-            additionalDetailsLabel: 'Give details of the adjustments',
-            additionalDetailsHint: null,
-          },
-          {
-            value: 'NO',
-            label: 'No',
-            displayOrder: 2,
-            displayAdditionalDetailsOnSelect: false,
-            additionalDetailsLabel: null,
-            additionalDetailsHint: null,
-          },
-        ],
-        savedResponses: [{ value: 'NO', additionalDetails: null }],
-      },
-    ],
-  }
-
   test.beforeEach(async ({ page }) => {
     await resetStubs()
     await page.goto('/')
@@ -87,6 +28,15 @@ test.describe('Action Plan Risks and Adjustments Page', () => {
   })
 
   test('displays risk and adjustment questions with saved answers', async ({ page }) => {
+    const risksAndAdjustments = actionPlanRisksAndAdjustmentsFactory.build(
+      {},
+      {
+        transient: {
+          risks: [{ value: 'YES', additionalDetails: 'Risk of harm to staff' }],
+          reasonableAdjustments: [{ value: 'NO', additionalDetails: null }],
+        },
+      },
+    )
     await communitySupport.stubGetRisksAndAdjustments(caseReference, risksAndAdjustments)
 
     await page.goto(ActionPlanRisksAndAdjustmentsPage.url(caseReference))
@@ -100,7 +50,7 @@ test.describe('Action Plan Risks and Adjustments Page', () => {
   })
 
   test('submits answers and redirects to the check service end date page', async ({ page }) => {
-    await communitySupport.stubGetRisksAndAdjustments(caseReference, risksAndAdjustments)
+    await communitySupport.stubGetRisksAndAdjustments(caseReference, actionPlanRisksAndAdjustmentsFactory.build())
     await communitySupport.stubGetActionPlanSummary(caseReference, actionPlanSummary)
     await communitySupport.stubGetCheckServiceEndDate(caseReference, serviceEndDateUnchangedResponse)
 

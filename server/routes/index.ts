@@ -244,6 +244,8 @@ export default function routes({
 
   get('/referral/:id/action-plan', (req, res) => actionPlanController.showActionPlanPage(req, res))
 
+  get('/referral/:id/service-delivery', (req, res) => actionPlanController.showServiceDeliveryPage(req, res))
+
   get('/referral/:id/action-plan/remove-outcome', (req, res) => actionPlanController.showRemoveOutcomePage(req, res))
 
   post('/referral/:id/action-plan/remove-outcome', (req, res) => actionPlanController.removeOutcome(req, res))
@@ -312,6 +314,10 @@ export default function routes({
 
   post('/referral/:id/action-plan/person-involvement', (req, res) =>
     actionPlanController.submitUserInvolvementPage(req, res),
+  )
+
+  get('/referral/:id/action-plan/service-delivery-check-your-answers', (req, res) =>
+    actionPlanController.showServiceDeliveryCheckYourAnswersPage(req, res),
   )
 
   get('/referral/:caseIdentifier/withdraw', (req, res) => withdrawalController.showReason(req, res))
