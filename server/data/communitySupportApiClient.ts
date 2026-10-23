@@ -52,6 +52,7 @@ import type {
   OffenceSentenceInfoBffResponseDto,
   WithdrawReferralRequest,
   ActionPlanNeedsOrderRequest,
+  ExisingSupportNeedsBffResponseDto,
 } from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
@@ -239,6 +240,10 @@ export default class CommunitySupportApiClient extends RestClient {
 
   getAdditionalSupportNeeds(id: string, username: string): Promise<AdditionalSupportNeedsDto> {
     return this.get({ path: `/bff/draft-referral/additional-support-needs/${id}` }, asSystem(username))
+  }
+
+  getExistingSupportNeeds(caseReference: string, username: string): Promise<ExisingSupportNeedsBffResponseDto> {
+    return this.get({ path: `/bff/referral/${caseReference}/existing-support-needs` }, asSystem(username))
   }
 
   getTaskListStatus(referralId: string, username: string): Promise<TaskListStatusDto> {

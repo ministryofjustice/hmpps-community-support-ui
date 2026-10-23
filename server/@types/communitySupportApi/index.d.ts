@@ -83,7 +83,7 @@ type AdditionalInformationForTheDeliveryPartner =
 
 type Selection = components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
 type WithdrawReferralRequest = components['schemas']['WithdrawReferralRequest']
-
+type ExisingSupportNeedsBffResponseDto = components['schemas']['ExistingSupportNeedsBffResponseDto']
 export type {
   Referral,
   CommunitySupportServicesProvider,
@@ -163,4 +163,5 @@ export type {
   WithdrawReferralRequest,
   DraftAdditionalReferralInformationTableDataDto,
   DraftMainPOCDetailsTableDataDto,
+  ExisingSupportNeedsBffResponseDto,
 }

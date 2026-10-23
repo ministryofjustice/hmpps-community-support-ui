@@ -599,6 +599,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/bff/referral/{caseReference}/existing_support_needs': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get Already identified support needs */
+    get: operations['getIcsFeedbackSession2']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/bff/referral/{caseReference}/create-an-appointment/appointment-type': {
     parameters: {
       query?: never
@@ -1705,6 +1722,14 @@ export interface components {
       fullName: string
       appointmentDetails?: components['schemas']['AppointmentDetailsDto'] | null
       otherAppointmentMethods?: string[] | null
+    }
+    ExistingSupportNeedsBffResponseDto: {
+      supportNeeds?: components['schemas']['SupportNeed'][] | null
+      referralFirstName: string
+    }
+    SupportNeed: {
+      needName: string
+      needDetails: string
     }
     CreateAppointmentReferenceDataBffDto: {
       appointmentTypes: components['schemas']['CreateAppointmentTypeOptionDto'][]
@@ -3438,6 +3463,37 @@ export interface operations {
         }
       }
       /** @description Appointment not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getIcsFeedbackSession2: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        caseReference: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Already identified support needs found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ExistingSupportNeedsBffResponseDto']
+        }
+      }
+      /** @description Already identified support needs foun */
       404: {
         headers: {
           [name: string]: unknown

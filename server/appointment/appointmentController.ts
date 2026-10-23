@@ -45,6 +45,7 @@ import { ChangeIcsDetailsReasonSchema } from '../validation/ChangeIcsDetailsReas
 import { saveFormToSession, ScheduledIcsFormDataResolver } from './schedule-ics/ScheduledIcsFormDataResolver'
 import IssuesOrConcernsPresenter from './issues-or-concerns/IssuesOrConcernsPresenter'
 import { IssuesOrConcernsFormDataSchema } from '../validation/IssuesOrConcernsFormData'
+import { IdentifiedAdditionalNeedsPresenter } from './identified-additional-support-needs/IdentifiedAdditionalNeedsPresenter'
 import AppointmentTypePresenter from './create-an-appointment/appointment-type/AppointmentTypePresenter'
 import { AppointmentTypeSchema } from '../validation/AppointmentTypeFormData'
 import logger from '../../logger'
@@ -648,6 +649,10 @@ class AppointmentController {
 
     const identifiedAdditionalNeeds = icsFeedbackSubmission ? icsFeedbackSubmission.identifiedAdditionalNeeds : null
     const appointmentData = await this.appointmentService.getICS(caseRefId.toString(), username)
+    const existingSupportNeeedsData = await this.appointmentService.getExistingSupportNeeds(
+      caseRefId.toString(),
+      username,
+    )
     const validationErrors = formatDynamicErrorMessages(
       res.locals.errors,
       '{{ firstname }}',
@@ -657,7 +662,7 @@ class AppointmentController {
 
     const presenter = new IdentifiedAdditionalNeedsPresenter(
       caseRefId,
-      appointmentData,
+      existingSupportNeeedsData,
       identifiedAdditionalNeeds,
       validationErrors,
     )

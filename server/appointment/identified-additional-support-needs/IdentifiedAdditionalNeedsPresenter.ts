@@ -15,15 +15,15 @@ import {
 import { components } from '../../@types/communitySupportApi/imported'
 import { escapeHtml } from '../../utils/utils'
 import { ErrorMiddlewareErrors } from '../../@types/express'
-import buildAlreadyIdentifiedDetails, { AlreadyIdentifiedNeedsPresenterData } from './AlreadyIdntifiedNeedsModel'
+import buildExistingSuppportNeedsDetails, { ExistingSupportNeedsPresenterData } from './ExisingSupportNeedsNeedsModel'
 
-export default class IdnetifiedAdditionalSupportNeedsPresenter extends PresenterBase<
+export default class IdentifiedAdditionalSupportNeedsPresenter extends PresenterBase<
   IdentifiedAdditionalNeedsViewModel,
   IdentifiedAdditionalNeedsContent
 > {
   constructor(
     private readonly caseRefId: string,
-    private readonly data: AlreadyIdentifiedNeedsPresenterData,
+    private readonly data: ExistingSupportNeedsPresenterData,
     private readonly identifiedAdditionalNeeds: components['schemas']['IdentifiedAdditionalNeedsRequest'],
     private readonly validationErrors?: ErrorMiddlewareErrors,
   ) {
@@ -121,10 +121,10 @@ export default class IdnetifiedAdditionalSupportNeedsPresenter extends Presenter
       submitButton: { text: content.submitButtonText },
       submitHref: `/ics-feedback/${this.caseRefId}/identified-additional-needs`,
       backLink: { href: content.backLinkHref.replace('{{ id }}', this.caseRefId) },
-      alreadyIdentifiedNeedsDetails: buildAlreadyIdentifiedDetails(
+      alreadyIdentifiedNeedsDetails: buildExistingSuppportNeedsDetails(
         {
-          identityName: 'identityName',
-          identityDetails: 'identityDetails',
+          needName: 'needName',
+          needDetails: 'needDetails',
         },
         this.data,
       ),
