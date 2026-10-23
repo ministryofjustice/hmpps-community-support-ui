@@ -19,7 +19,7 @@ const stubTaskListStatus = async (confirmPersonalDetailsStatus?: TaskStatus) => 
     confirmPersonalDetailsStatus,
     checkRiskInformationStatus: incompleteStatus,
     selectThePersonsNeedsStatus: incompleteStatus,
-    addDetailsOfAnyAdditionalSupportNeedsStatus: incompleteStatus,
+    addAdditionalSupportNeedsStatus: incompleteStatus,
     addAdditionalInformationStatus: incompleteStatus,
     selectAnAreaForReferralStatus: incompleteStatus,
   })

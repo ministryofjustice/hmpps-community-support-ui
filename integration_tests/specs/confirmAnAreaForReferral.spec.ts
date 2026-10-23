@@ -90,7 +90,7 @@ test.describe('Confirm An Area For Referral Page', () => {
       checkRiskInformationStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
       selectAnAreaForReferralStatus: { completed: true, statusText: 'Completed', tag: 'govuk-tag--green' },
       selectThePersonsNeedsStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-      addDetailsOfAnyAdditionalSupportNeedsStatus: {
+      addAdditionalSupportNeedsStatus: {
         completed: false,
         statusText: 'Incomplete',
         tag: 'govuk-tag--blue',

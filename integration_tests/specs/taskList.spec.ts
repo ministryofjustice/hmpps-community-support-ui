@@ -58,7 +58,7 @@ test.describe('Task List Journey', () => {
         statusText: 'Incomplete',
         tag: 'govuk-tag--blue',
       },
-      addDetailsOfAnyAdditionalSupportNeedsStatus: {
+      addAdditionalSupportNeedsStatus: {
         completed: false,
         statusText: 'Incomplete',
         tag: 'govuk-tag--blue',
@@ -166,7 +166,7 @@ test.describe('Task List Journey', () => {
           statusText: '',
           tag: undefined,
         },
-        addDetailsOfAnyAdditionalSupportNeedsStatus: {
+        addAdditionalSupportNeedsStatus: {
           completed: false,
           statusText: '',
           tag: undefined,
@@ -224,7 +224,7 @@ test.describe('Task List Journey', () => {
       checkRiskInformationStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
       selectAnAreaForReferralStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
       selectThePersonsNeedsStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-      addDetailsOfAnyAdditionalSupportNeedsStatus: {
+      addAdditionalSupportNeedsStatus: {
         completed: true,
         statusText: 'Completed',
         tag: undefined,
@@ -248,7 +248,7 @@ test.describe('Task List Journey', () => {
       checkRiskInformationStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
       selectAnAreaForReferralStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
       selectThePersonsNeedsStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-      addDetailsOfAnyAdditionalSupportNeedsStatus: {
+      addAdditionalSupportNeedsStatus: {
         completed: true,
         statusText: 'Completed',
         tag: undefined,

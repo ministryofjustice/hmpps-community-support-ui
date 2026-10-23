@@ -74,8 +74,8 @@ const buildTaskListStatus = (taskListStatus: TaskListStatusStub): TaskListStatus
   confirmPersonalDetailsStatus: taskListStatus.confirmPersonalDetailsStatus || completeTaskStatus,
   checkRiskInformationStatus: taskListStatus.checkRiskInformationStatus || incompleteTaskStatus,
   selectThePersonsNeedsStatus: taskListStatus.selectThePersonsNeedsStatus || incompleteTaskStatus,
-  addDetailsOfAnyAdditionalSupportNeedsStatus:
-    taskListStatus.addDetailsOfAnyAdditionalSupportNeedsStatus || incompleteTaskStatus,
+  addAdditionalSupportNeedsStatus:
+    taskListStatus.addAdditionalSupportNeedsStatus || incompleteTaskStatus,
   addAdditionalInformationStatus: taskListStatus.addAdditionalInformationStatus || incompleteTaskStatus,
   selectAnAreaForReferralStatus: taskListStatus.selectAnAreaForReferralStatus || incompleteTaskStatus,
   contactDetailsStatus: taskListStatus.contactDetailsStatus || {

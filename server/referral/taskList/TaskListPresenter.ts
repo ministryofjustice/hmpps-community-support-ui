@@ -12,7 +12,7 @@ const getTaskListStatus = (data: TaskListStatusDto) => {
     personalDetails: getStatusTag(data.confirmPersonalDetailsStatus),
     riskInformation: getStatusTag(data.checkRiskInformationStatus),
     personNeeds: getStatusTag(data.selectThePersonsNeedsStatus),
-    supportNeeds: getStatusTag(data.addDetailsOfAnyAdditionalSupportNeedsStatus),
+    supportNeeds: getStatusTag(data.addAdditionalSupportNeedsStatus),
     contactDetails: getStatusTag(data.contactDetailsStatus.status),
     additionalReferralInformation: getStatusTag(data.addAdditionalInformationStatus),
     selectAnAreaForReferral: getStatusTag(data.selectAnAreaForReferralStatus),

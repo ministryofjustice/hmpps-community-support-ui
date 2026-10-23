@@ -24,7 +24,7 @@ test.describe('Task List E2E Journey Regression', () => {
     checkRiskInformationStatus: incompleteStatus,
     selectAnAreaForReferralStatus: incompleteStatus,
     selectThePersonsNeedsStatus: incompleteStatus,
-    addDetailsOfAnyAdditionalSupportNeedsStatus: incompleteStatus,
+    addAdditionalSupportNeedsStatus: incompleteStatus,
     addAdditionalInformationStatus: incompleteStatus,
     addDetailsOfMainPointOfContactStatus: incompleteStatus,
   }
@@ -126,7 +126,7 @@ test.describe('Task List E2E Journey Regression', () => {
   }) => {
     await communitySupport.stubGetTaskListStatus(referralId, {
       ...defaultTaskListStatus,
-      addDetailsOfAnyAdditionalSupportNeedsStatus: completedStatus,
+      addAdditionalSupportNeedsStatus: completedStatus,
     })
     await page.goto(TaskListPage.url())
     const taskListPom = await TaskListPage.verifyOnPage(page)
@@ -155,7 +155,7 @@ test.describe('Task List E2E Journey Regression', () => {
   }) => {
     await communitySupport.stubGetTaskListStatus(referralId, {
       ...defaultTaskListStatus,
-      addDetailsOfAnyAdditionalSupportNeedsStatus: completedStatus,
+      addAdditionalSupportNeedsStatus: completedStatus,
     })
     await communitySupport.stubGetAdditionalSupportNeeds(referralId, supportNeedsStubData)
 

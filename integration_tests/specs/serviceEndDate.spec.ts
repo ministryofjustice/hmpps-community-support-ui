@@ -23,7 +23,7 @@ test.describe('Service End Date Page', () => {
       confirmPersonalDetailsStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
       checkRiskInformationStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
       selectThePersonsNeedsStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-      addDetailsOfAnyAdditionalSupportNeedsStatus: {
+      addAdditionalSupportNeedsStatus: {
         completed: false,
         statusText: 'Incomplete',
         tag: 'govuk-tag--blue',
