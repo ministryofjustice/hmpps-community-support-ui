@@ -349,7 +349,7 @@ export default function routes({
   )
 
   post('/referral/:id/action-plan/change-person-involvement', (req, res) =>
-    actionPlanController.submitUserInvolvementPage(req, res, true),
+    actionPlanController.submitUserInvolvementPage(req, res),
   )
 
   get('/referral/:id/action-plan/service-delivery-check-your-answers', (req, res) =>

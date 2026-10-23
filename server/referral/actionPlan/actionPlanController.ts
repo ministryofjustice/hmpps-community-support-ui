@@ -792,7 +792,7 @@ class ActionPlanController {
     return presenter.renderPage(res)
   }
 
-  async submitUserInvolvementPage(req: Request, res: Response, _isCheckAnswersEdit = false) {
+  async submitUserInvolvementPage(req: Request, res: Response) {
     const { id: caseReference } = req.params as { id: string }
     const { username } = res.locals.user
 

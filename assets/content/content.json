@@ -415,7 +415,7 @@
     "removeActivityNotificationText": "You removed an activity from {{ firstName }}'s plan",
     "activityProviderHeading": "Who will deliver this",
     "activityDetailsHeading": "Activity details",
-    "actionsHeading": "Actions",
+    "actionsHeading": "Action",
     "changeActionText": "Change",
     "removeActionText": "Remove",
     "addAnotherActivityQuestion": "Do you want to add another activity?",
