@@ -206,23 +206,31 @@ describe('ServiceDeliveryCheckYourAnswersPresenter', () => {
     expect(content.pageTitle).toBe('Session details – Check your answers')
     expect(content.pageHeader).toBe('Check service delivery details')
     expect(content.backLink.href).toBe('/referral/AB1234CD/action-plan/person-involvement')
-    expect(content.submitHref).toBe('/referral/AB1234CD/action-plan/submit')
+    expect(content.submitHref).toBe('/referral/AB1234CD/action-plan/service-delivery-check-your-answers')
     expect(content.summaryLists.map(summary => summary.summaryList.card)).toEqual([
       {
         title: { text: 'Session details' },
-        actions: { items: [{ href: '/referral/AB1234CD/action-plan/session-delivery-details', text: 'Change' }] },
+        actions: {
+          items: [{ href: '/referral/AB1234CD/action-plan/change-session-delivery-details', text: 'Change' }],
+        },
       },
       {
         title: { text: 'Risks and adjustments' },
-        actions: { items: [{ href: '/referral/AB1234CD/action-plan/risks-and-adjustments', text: 'Change' }] },
+        actions: {
+          items: [{ href: '/referral/AB1234CD/action-plan/change-risks-and-adjustments', text: 'Change' }],
+        },
       },
       {
         title: { text: 'Service end date' },
-        actions: { items: [{ href: '/referral/AB1234CD/action-plan/service-end-date-check', text: 'Change' }] },
+        actions: {
+          items: [{ href: '/referral/AB1234CD/action-plan/change-service-end-date-check', text: 'Change' }],
+        },
       },
       {
         title: { text: 'Involvement in creating action plan' },
-        actions: { items: [{ href: '/referral/AB1234CD/action-plan/person-involvement', text: 'Change' }] },
+        actions: {
+          items: [{ href: '/referral/AB1234CD/action-plan/change-person-involvement', text: 'Change' }],
+        },
       },
     ])
     expect(content.summaryLists.map(summary => summary.summaryList.rows)).toEqual([

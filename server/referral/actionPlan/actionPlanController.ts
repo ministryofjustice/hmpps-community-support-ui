@@ -40,6 +40,16 @@ import ServiceDeliveryPresenter from './serviceDelivery/serviceDeliveryPresenter
 class ActionPlanController {
   constructor(private readonly referralService: ReferralService) {}
 
+  private serviceDeliveryNextPage(
+    req: Request,
+    caseReference: string,
+    nextPage: string,
+    isCheckAnswersEdit: boolean = false,
+  ): string {
+    const page = isCheckAnswersEdit ? `change-${nextPage}` : nextPage
+    return `/referral/${caseReference}/action-plan/${page}`
+  }
+
   private getActionPlanSessionDelivery(req: Request, caseReference: string) {
     return req.session.actionPlanSessionDelivery?.caseReference === caseReference
       ? req.session.actionPlanSessionDelivery
@@ -531,7 +541,7 @@ class ActionPlanController {
     return res.redirect(`/referral/${caseReference}/action-plan`)
   }
 
-  async showSessionDeliveryDetailsPage(req: Request, res: Response) {
+  async showSessionDeliveryDetailsPage(req: Request, res: Response, isCheckAnswersEdit = false) {
     const { id: caseReference } = req.params as { id: string }
     const { username } = res.locals.user
 
@@ -544,12 +554,13 @@ class ActionPlanController {
       applySessionDeliveryDetailsData(sessionDeliveryDetails, sessionDelivery),
       validationErrors,
       userInputData,
+      isCheckAnswersEdit,
     )
 
     return presenter.renderPage(res)
   }
 
-  async submitSessionDeliveryDetailsPage(req: Request, res: Response) {
+  async submitSessionDeliveryDetailsPage(req: Request, res: Response, isCheckAnswersEdit = false) {
     const { id: caseReference } = req.params as { id: string }
     const { username } = res.locals.user
 
@@ -559,11 +570,15 @@ class ActionPlanController {
     return validateRequestBodyAgainstSchema(schema, req, res, async form => {
       const request = buildSessionDeliveryDetailsRequestFromForm(sessionDeliveryDetails, form)
       this.saveSessionDeliveryDetails(req, caseReference, request)
-      return res.redirect(`/referral/${caseReference}/action-plan/risks-and-adjustments`)
+      if (isCheckAnswersEdit) {
+        return res.redirect(`/referral/${caseReference}/action-plan/service-delivery-check-your-answers`)
+      }
+
+      return res.redirect(this.serviceDeliveryNextPage(req, caseReference, 'risks-and-adjustments'))
     })
   }
 
-  async showRisksAndAdjustmentsPage(req: Request, res: Response) {
+  async showRisksAndAdjustmentsPage(req: Request, res: Response, isCheckAnswersEdit = false) {
     const { id: caseReference } = req.params as { id: string }
     const { username } = res.locals.user
 
@@ -577,12 +592,13 @@ class ActionPlanController {
       applySessionDeliveryDetailsData(sessionDeliveryDetails, sessionDelivery),
       validationErrors,
       userInputData,
+      isCheckAnswersEdit,
     )
 
     return presenter.renderPage(res)
   }
 
-  async submitRisksAndAdjustmentsPage(req: Request, res: Response) {
+  async submitRisksAndAdjustmentsPage(req: Request, res: Response, isCheckAnswersEdit = false) {
     const { id: caseReference } = req.params as { id: string }
     const { username } = res.locals.user
 
@@ -601,11 +617,15 @@ class ActionPlanController {
         }),
       )
       this.saveSessionDeliveryDetails(req, caseReference, request)
-      return res.redirect(`/referral/${caseReference}/action-plan/service-end-date-check`)
+      if (isCheckAnswersEdit) {
+        return res.redirect(`/referral/${caseReference}/action-plan/service-delivery-check-your-answers`)
+      }
+
+      return res.redirect(this.serviceDeliveryNextPage(req, caseReference, 'service-end-date-check'))
     })
   }
 
-  async showServiceEndDateCheckPage(req: Request, res: Response) {
+  async showServiceEndDateCheckPage(req: Request, res: Response, isCheckAnswersEdit = false) {
     const { id: caseReference } = req.params as { id: string }
     const { username } = res.locals.user
 
@@ -618,11 +638,12 @@ class ActionPlanController {
       applySessionDeliveryDetailsData(sessionDeliveryDetails, sessionDelivery),
       validationErrors,
       userInputData,
+      isCheckAnswersEdit,
     )
     return presenter.renderPage(res)
   }
 
-  async submitServiceEndDateCheckPage(req: Request, res: Response) {
+  async submitServiceEndDateCheckPage(req: Request, res: Response, isCheckAnswersEdit = false) {
     const { id: caseReference } = req.params as { id: string }
     const { username } = res.locals.user
 
@@ -638,14 +659,18 @@ class ActionPlanController {
       })
 
       if (form.SERVICE_END_DATE_CHECK === 'YES') {
-        return res.redirect(`/referral/${caseReference}/action-plan/person-involvement`)
+        if (isCheckAnswersEdit) {
+          return res.redirect(`/referral/${caseReference}/action-plan/service-delivery-check-your-answers`)
+        }
+        return res.redirect(this.serviceDeliveryNextPage(req, caseReference, 'person-involvement'))
       }
-
-      return res.redirect(`/referral/${caseReference}/action-plan/update-service-end-date`)
+      return res.redirect(
+        this.serviceDeliveryNextPage(req, caseReference, 'update-service-end-date', isCheckAnswersEdit),
+      )
     })
   }
 
-  async showUpdateServiceEndDatePage(req: Request, res: Response) {
+  async showUpdateServiceEndDatePage(req: Request, res: Response, isCheckAnswersEdit = false) {
     const { id: caseReference } = req.params as { id: string }
     const { username } = res.locals.user
 
@@ -658,11 +683,12 @@ class ActionPlanController {
       applySessionDeliveryDetailsData(sessionDeliveryDetails, sessionDelivery),
       validationErrors,
       userInputData,
+      isCheckAnswersEdit,
     )
     return presenter.renderPage(res)
   }
 
-  async submitUpdateServiceEndDatePage(req: Request, res: Response) {
+  async submitUpdateServiceEndDatePage(req: Request, res: Response, isCheckAnswersEdit = false) {
     const { id: caseReference } = req.params as { id: string }
     const { username } = res.locals.user
 
@@ -672,7 +698,10 @@ class ActionPlanController {
     return validateRequestBodyAgainstSchema(schema, req, res, async form => {
       const request = buildSessionDeliveryDetailsRequestFromForm(sessionDeliveryDetails, form)
       this.saveSessionDeliveryDetails(req, caseReference, request)
-      return res.redirect(`/referral/${caseReference}/action-plan/person-involvement`)
+      if (isCheckAnswersEdit) {
+        return res.redirect(`/referral/${caseReference}/action-plan/service-delivery-check-your-answers`)
+      }
+      return res.redirect(this.serviceDeliveryNextPage(req, caseReference, 'person-involvement'))
     })
   }
 
@@ -700,6 +729,34 @@ class ActionPlanController {
     return presenter.renderPage(res)
   }
 
+  async submitServiceDeliveryCheckYourAnswersPage(req: Request, res: Response) {
+    const { id: caseReference } = req.params as { id: string }
+    const { username } = res.locals.user
+
+    const sessionDelivery = this.getActionPlanSessionDelivery(req, caseReference)
+    const checkYourAnswers = await this.referralService.getCheckYourAnswers(
+      caseReference,
+      username,
+      sessionDelivery?.isServiceEndDateChanged ?? false,
+    )
+    const request: ActionPlanSessionDeliveryDetailsRequest = {
+      answers: Object.values(checkYourAnswers).flatMap(section =>
+        applySessionDeliveryDetailsData(section, sessionDelivery?.sessionDeliveryDetails).questions.map(question => ({
+          questionId: question.id,
+          incomingAnswerDetails: question.savedResponses,
+        })),
+      ),
+    }
+
+    await this.referralService.submitServiceDeliveryDetails(caseReference, request, username)
+
+    if (sessionDelivery) {
+      delete req.session.actionPlanSessionDelivery
+    }
+
+    return res.redirect(`/referral/${caseReference}/action-plan`)
+  }
+
   async moveNeed(req: Request, res: Response) {
     const {
       id: caseReference,
@@ -717,7 +774,7 @@ class ActionPlanController {
     return res.redirect(`/referral/${caseReference}/action-plan`)
   }
 
-  async showUserInvolvementPage(req: Request, res: Response) {
+  async showUserInvolvementPage(req: Request, res: Response, isCheckAnswersEdit = false) {
     const { id: caseReference } = req.params as { id: string }
     const { username } = res.locals.user
 
@@ -730,6 +787,7 @@ class ActionPlanController {
       applySessionDeliveryDetailsData(sessionDeliveryDetails, sessionDelivery),
       validationErrors,
       userInputData,
+      isCheckAnswersEdit,
     )
     return presenter.renderPage(res)
   }
@@ -750,7 +808,7 @@ class ActionPlanController {
         buildAdditionalDetailsFieldNameResolver({ USER_INVOLVEMENT_IN_ACTION_PLAN: 'WHY_NOT_INVOLVED' }),
       )
       this.saveSessionDeliveryDetails(req, caseReference, request)
-      return res.redirect(`/referral/${caseReference}/action-plan/person-involvement`)
+      return res.redirect(`/referral/${caseReference}/action-plan/service-delivery-check-your-answers`)
     })
   }
 }
