@@ -1,5 +1,5 @@
 import { GovukFrontendSummaryList } from '@govuk-frontend'
-import { ExisingSupportNeedsBffResponseDto } from '@community-support-api'
+import { ExistingSupportNeedsBffResponseDto } from '@community-support-api'
 import { govFrontendSummaryListRow } from '../../utils/viewUtils'
 
 export interface ExisintingSupportNeedsContent {
@@ -8,7 +8,7 @@ export interface ExisintingSupportNeedsContent {
 }
 
 export type ExistingSupportNeedsPresenterData = Pick<
-  ExisingSupportNeedsBffResponseDto,
+  ExistingSupportNeedsBffResponseDto,
   'supportNeeds' | 'referralFirstName'
   // 'appointmentDate' | 'appointmentTime'
 >

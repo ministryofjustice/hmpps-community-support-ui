@@ -52,7 +52,7 @@ import type {
   OffenceSentenceInfoBffResponseDto,
   WithdrawReferralRequest,
   ActionPlanNeedsOrderRequest,
-  ExisingSupportNeedsBffResponseDto,
+  ExistingSupportNeedsBffResponseDto,
 } from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
@@ -242,7 +242,7 @@ export default class CommunitySupportApiClient extends RestClient {
     return this.get({ path: `/bff/draft-referral/additional-support-needs/${id}` }, asSystem(username))
   }
 
-  getExistingSupportNeeds(caseReference: string, username: string): Promise<ExisingSupportNeedsBffResponseDto> {
+  getExistingSupportNeeds(caseReference: string, username: string): Promise<ExistingSupportNeedsBffResponseDto> {
     return this.get({ path: `/bff/referral/${caseReference}/existing-support-needs` }, asSystem(username))
   }
 

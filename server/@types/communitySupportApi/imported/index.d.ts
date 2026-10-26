@@ -548,23 +548,6 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/bff/referral/{referralReference}/action-plan/service-delivery-details/check-your-answers': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get the check your answers questions and saved answers of the service delivery details */
-    get: operations['getCheckYourAnswers']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
   '/bff/referral/{caseReference}/ics_appointment_feedback_details': {
     parameters: {
       query?: never
@@ -608,6 +591,23 @@ export interface paths {
     }
     /** Get a single ICS appointment by ID */
     get: operations['getIcsAppointment']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/referral/{caseReference}/existing_support_needs': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get Already identified support needs */
+    get: operations['getIcsFeedbackSession2']
     put?: never
     post?: never
     delete?: never
@@ -1320,8 +1320,12 @@ export interface components {
       sessionDetails?: components['schemas']['SessionDetailsRequest'] | null
       sessionFeedback?: components['schemas']['SessionFeedbackRequest'] | null
       issuesAndConcerns?: components['schemas']['IssuesAndConcernsRequest'] | null
-      newlyIdentifiedAdditionalSupportNeeds?: string | null
+      identifiedAdditionalNeeds?: components['schemas']['IdentifiedAdditionalNeedsRequest'] | null
       nextSteps?: components['schemas']['NextStepsRequest'] | null
+    }
+    IdentifiedAdditionalNeedsRequest: {
+      didYouIdentity?: boolean | null
+      identityDetails?: string | null
     }
     IssuesAndConcernsRequest: {
       identified?: string | null
@@ -1398,7 +1402,8 @@ export interface components {
       sessionFeedbackStrengthsIdentified?: string | null
       issuesOrConcernsIdentified?: string | null
       issuesOrConcernsNotifyProbationPractitioner?: boolean | null
-      additionalSupportNeeds?: string | null
+      additionalNeedsDidYouIdentity?: boolean | null
+      additionalNeedsIdentityDetails?: string | null
       nextStepsPlannedForNextSession?: string | null
       nextStepsActionsBeforeNextSession?: string | null
       sessionFeedbackAppointmentDetails?: components['schemas']['SessionFeedbackAppointmentDetailsDto'] | null
@@ -1717,6 +1722,14 @@ export interface components {
       fullName: string
       appointmentDetails?: components['schemas']['AppointmentDetailsDto'] | null
       otherAppointmentMethods?: string[] | null
+    }
+    ExistingSupportNeedsBffResponseDto: {
+      supportNeeds?: components['schemas']['SupportNeed'][] | null
+      referralFirstName: string
+    }
+    SupportNeed: {
+      needName: string
+      needDetails: string
     }
     CreateAppointmentReferenceDataBffDto: {
       appointmentTypes: components['schemas']['CreateAppointmentTypeOptionDto'][]
@@ -3366,7 +3379,6 @@ export interface operations {
       }
     }
   }
-
   getIcsFeedbackSession: {
     parameters: {
       query?: never
@@ -3451,6 +3463,37 @@ export interface operations {
         }
       }
       /** @description Appointment not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getIcsFeedbackSession2: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        caseReference: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Already identified support needs found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ExistingSupportNeedsBffResponseDto']
+        }
+      }
+      /** @description Already identified support needs foun */
       404: {
         headers: {
           [name: string]: unknown
