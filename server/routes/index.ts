@@ -134,6 +134,14 @@ export default function routes({
     referralController.showSelectAppointmentType(req, res),
   )
 
+  get('/referral/:caseReference/create-an-appointment/check-your-answers', (req, res) =>
+    appointmentController.showAppointmentCheckYourAnswers(req, res),
+  )
+
+  post('/referral/:caseReference/create-an-appointment/check-your-answers', (req, res) =>
+    appointmentController.submitAppointment(req, res),
+  )
+
   get('/ics-feedback/:caseRefId/attendance', async (req, res) =>
     appointmentController.icsAppointmentAttendance(req, res),
   )

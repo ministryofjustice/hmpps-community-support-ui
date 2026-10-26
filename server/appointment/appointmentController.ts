@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import {
   AppointmentIcsResponse,
+  CreateAppointmentRequest,
   AppointmentTimeResponse,
   IcsFeedbackSubmission,
   ReferralInformation,
@@ -9,7 +10,7 @@ import {
 } from '@community-support-api'
 import { format, isBefore, parse } from 'date-fns'
 import { ZodType } from 'zod'
-import timeFormat from '../utils/timeFormat'
+import timeFormat, { parseTime12Hr } from '../utils/timeFormat'
 import { ErrorMiddlewareErrors, HowSessionTookPlace, IcsFeedbackHowSessionTookPlaceSession } from '../@types/express'
 import ConfirmIcsPresenter, { type AdditionalInformation } from './confirm-ics/confirmIcsPresenter'
 import InitialContactSessionDetailsPresenter from '../referral/InitialContactSessionDetailsPresenter'
@@ -49,9 +50,17 @@ import { ChangeIcsDetailsReasonSchema } from '../validation/ChangeIcsDetailsReas
 import { saveFormToSession, ScheduledIcsFormDataResolver } from './schedule-ics/ScheduledIcsFormDataResolver'
 import IssuesOrConcernsPresenter from './issues-or-concerns/IssuesOrConcernsPresenter'
 import { IssuesOrConcernsFormDataSchema } from '../validation/IssuesOrConcernsFormData'
+import {
+  buildAppointmentSessionMethodRequest,
+  appointmentMethodRequiresLocation,
+  normaliseAppointmentMethod,
+} from './create-an-appointment/appointmentMethod'
 import AppointmentTypePresenter from './create-an-appointment/appointment-type/AppointmentTypePresenter'
+import AppointmentCheckYourAnswersPresenter from './create-an-appointment/check-your-answers/AppointmentCheckYourAnswersPresenter'
 import { AppointmentTypeSchema } from '../validation/AppointmentTypeFormData'
 import logger from '../../logger'
+import AppointmentSessionData from './create-an-appointment/AppointmentSessionData'
+import { toIsoDate } from '../utils/dateFormat'
 
 const recordAttendanceRedirectUrl = (data: RecordSessionAttendanceFormData, caseRefId: string): string => {
   if (data.happened === 'Yes') {
@@ -198,6 +207,32 @@ const getFlashedFormValues = (req: Request): Record<string, string> | undefined 
   return flashData.length > 0 ? JSON.parse(flashData[0]) : undefined
 }
 
+const buildSessionMethodRequest = (
+  appointmentSessionData: AppointmentSessionData,
+  probationOfficeLocations: Array<{ id: number; name: string }>,
+): SessionMethodRequest => {
+  const locationId = appointmentSessionData.probationOfficeLocationId
+  const locationName = probationOfficeLocations.find(office => String(office.id) === String(locationId))?.name
+  const detailValue =
+    appointmentSessionData.method === 'IN_PERSON_OTHER_LOCATION'
+      ? appointmentSessionData.location || locationName || locationId || ''
+      : locationName || locationId || ''
+
+  return buildAppointmentSessionMethodRequest(appointmentSessionData.method, detailValue)
+}
+
+const buildCreateAppointmentRequest = (
+  appointmentSessionData: AppointmentSessionData,
+  probationOfficeLocations: Array<{ id: number; name: string }>,
+): CreateAppointmentRequest => ({
+  appointmentType: appointmentSessionData.appointmentType as CreateAppointmentRequest['appointmentType'],
+  date: toIsoDate(appointmentSessionData.date) || '',
+  time: parseTime12Hr(appointmentSessionData.startTime),
+  sessionMethodRequest: buildSessionMethodRequest(appointmentSessionData, probationOfficeLocations),
+  sessionCommunication: appointmentSessionData.informedBy || [],
+  meetAtTheGate: appointmentSessionData.meetAtTheGate,
+})
+
 class AppointmentController {
   private readonly resolver: ScheduledIcsFormDataResolver
 
@@ -245,6 +280,31 @@ class AppointmentController {
       referenceData.appointmentTypes,
       res.locals.errors,
       selectedAppointmentType,
+    )
+
+    return presenter.renderPage(res)
+  }
+
+  async showAppointmentCheckYourAnswers(req: Request, res: Response): Promise<void> {
+    const { username } = res.locals.user
+    const { caseReference } = req.params as { caseReference: string }
+    const { appointmentSessionData } = req.session
+
+    if (!appointmentSessionData) {
+      return res.redirect(`/referral/${caseReference}/create-an-appointment/appointment-type`)
+    }
+
+    const [referralInformation, referenceData] = await Promise.all([
+      this.referralService.getReferralInformation(caseReference, username),
+      this.appointmentService.getCreateAppointmentReferenceData(caseReference, username),
+    ])
+
+    const presenter = new AppointmentCheckYourAnswersPresenter(
+      caseReference,
+      referralInformation.firstName,
+      appointmentSessionData,
+      referenceData.probationOfficeLocations,
+      referenceData.appointmentTypes,
     )
 
     return presenter.renderPage(res)
@@ -315,6 +375,17 @@ class AppointmentController {
     const { schema } = await this.prepareAppointmentRequest(req, username, caseRefId, appointmentType)
 
     return validateRequestBodyAgainstSchema(schema, req, res, () => {
+      const method = req.body.sessionTakePlace
+      const normalisedMethod = normaliseAppointmentMethod(method)
+      const meetAtTheGateValue = req.body.meetAtTheGate
+      let meetAtTheGate: boolean | undefined
+
+      if (meetAtTheGateValue === 'yes') {
+        meetAtTheGate = true
+      } else if (meetAtTheGateValue === 'no') {
+        meetAtTheGate = false
+      }
+
       req.session.appointmentSessionData = {
         ...req.session.appointmentSessionData,
         appointmentType,
@@ -324,11 +395,19 @@ class AppointmentController {
           req.body['sessionTime-minute'],
           req.body['sessionTime-meridiem']?.toLowerCase(),
         ].join(':'),
-        method: req.body.sessionTakePlace,
-        probationOfficeLocationId: req.body.probationOfficeList,
+        method: normalisedMethod,
+        probationOfficeLocationId: appointmentMethodRequiresLocation(normalisedMethod)
+          ? req.body.probationOfficeList
+          : undefined,
+        location:
+          normalisedMethod === 'IN_PERSON_OTHER_LOCATION'
+            ? [req.body.addressLine1, req.body.addressTown, req.body.addressPostcode].filter(Boolean).join(', ')
+            : undefined,
+        meetAtTheGate,
         informedBy: req.session.createAppointmentRequest?.sessionCommunication,
       }
-      return res.redirect(`/referral/${caseRefId}/appointment/confirm-ics`)
+
+      return res.redirect(`/referral/${caseRefId}/create-an-appointment/check-your-answers`)
     })
   }
 
@@ -338,6 +417,27 @@ class AppointmentController {
       parseAppointmentType(req.session?.appointmentSessionData?.appointmentType) ??
       parseAppointmentType(req.session?.createAppointmentRequest?.appointmentType)
     )
+  }
+
+  async submitAppointment(req: Request, res: Response): Promise<void> {
+    const { caseReference } = req.params as { caseReference: string }
+    const { username } = res.locals.user
+    const { appointmentSessionData } = req.session
+
+    if (!appointmentSessionData) {
+      return res.redirect(`/referral/${caseReference}/create-an-appointment/appointment-type`)
+    }
+
+    const referenceData = await this.appointmentService.getCreateAppointmentReferenceData(caseReference, username)
+    const createAppointmentRequest = buildCreateAppointmentRequest(
+      appointmentSessionData,
+      referenceData.probationOfficeLocations,
+    )
+
+    await this.appointmentService.submitAppointment(caseReference, createAppointmentRequest, username)
+    delete req.session.appointmentSessionData
+
+    return res.redirect(`/referral/${caseReference}/appointments`)
   }
 
   async showScheduleIcs(req: Request, res: Response): Promise<void> {
