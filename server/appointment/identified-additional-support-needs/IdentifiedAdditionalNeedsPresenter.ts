@@ -1,5 +1,5 @@
 import { Response } from 'express'
-import { GovukFrontendErrorMessage } from '@govuk-frontend'
+import { GovukFrontendErrorMessage, GovukFrontendSummaryList } from '@govuk-frontend'
 import PresenterBase from '../../presenter/presenterBase'
 import {
   IdentifiedAdditionalNeedsContent,
@@ -15,8 +15,13 @@ import {
 import { components } from '../../@types/communitySupportApi/imported'
 import { escapeHtml } from '../../utils/utils'
 import { ErrorMiddlewareErrors } from '../../@types/express'
-import buildExistingSuppportNeedsDetails, { ExistingSupportNeedsPresenterData } from './ExisingSupportNeedsNeedsModel'
+import { govFrontendSummaryListRow } from '../../utils/viewUtils'
+import { ExistingSupportNeedsBffResponseDto } from '@community-support-api'
 
+export type ExistingSupportNeedsPresenterData = Pick<
+  ExistingSupportNeedsBffResponseDto,
+  'supportNeeds' | 'referralFirstName'
+>
 export default class IdentifiedAdditionalSupportNeedsPresenter extends PresenterBase<
   IdentifiedAdditionalNeedsViewModel,
   IdentifiedAdditionalNeedsContent
@@ -99,6 +104,23 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
     }
   }
 
+  private buildExistingSuppportNeedsDetails = (cardTitle: string, exisitngData: ExistingSupportNeedsPresenterData,
+  ): GovukFrontendSummaryList | undefined => {
+  
+    if (!exisitngData.supportNeeds || exisitngData.supportNeeds.length === 0)
+      return undefined
+  
+    return {
+      card: {
+        title: { 
+          text: cardTitle
+        }
+      },
+      rows: exisitngData.supportNeeds.map(need => govFrontendSummaryListRow(need.needName, need.needDetails)),
+      attributes: { 'data-testid': 'exisiting-support-needs-details' },
+    }
+  }
+
   buildViewModel(res: Response): IdentifiedAdditionalNeedsViewModel {
     const content = this.buildStaticContent(res)
     const formData: IdentifiedAdditionalNeedsFormData = this.identifiedAdditionalNeeds
@@ -121,13 +143,7 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
       submitButton: { text: content.submitButtonText },
       submitHref: `/ics-feedback/${this.caseRefId}/identified-additional-needs`,
       backLink: { href: content.backLinkHref.replace('{{ id }}', this.caseRefId) },
-      alreadyIdentifiedNeedsDetails: buildExistingSuppportNeedsDetails(
-        {
-          needName: 'needName',
-          needDetails: 'needDetails',
-        },
-        this.data,
-      ),
+      existingSupportNeedsDetails: this.buildExistingSuppportNeedsDetails( content.cardTitle, this.data),
       formData,
     }
   }

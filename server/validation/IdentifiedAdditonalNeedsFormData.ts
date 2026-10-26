@@ -9,12 +9,13 @@ const checkIdentityDetails = (val: { didYouIdentity: string; identityDetails: st
 
 const baseSchema = z.object({
   didYouIdentity: z.literal(['Yes', 'No'], {
-    error: 'Select yes if you identity anything else {{ firstname }} needs support with',
+    error: 'Select yes if you identified anything else they need support with',
+            
   }),
   identityDetails: z.string(),
 })
 export const IdentifiedAdditionalNeedsFormDataSchema = baseSchema.refine(checkIdentityDetails, {
-  message: 'Enter details of anything else {{ firstname }} needs support with',
+  message: 'Enter details of anything else they need support with',
   path: ['identityDetails'],
 })
 

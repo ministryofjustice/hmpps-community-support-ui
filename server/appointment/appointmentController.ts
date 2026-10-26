@@ -736,7 +736,7 @@ class AppointmentController {
 
     const identifiedAdditionalNeeds = icsFeedbackSubmission ? icsFeedbackSubmission.identifiedAdditionalNeeds : null
     const appointmentData = await this.appointmentService.getICS(caseRefId.toString(), username)
-    const existingSupportNeeedsData = await this.appointmentService.getExistingSupportNeeds(
+    const existingSupportNeeedsData = await this.appointmentService.getExistingSupportNeedsStub(
       caseRefId.toString(),
       username,
     )
