@@ -604,11 +604,6 @@
         "informedByEmail": "Email"
       }
     },
-    "recordSessionAttendance": {
-      "title": "Record session attendance",
-      "didSessionHappen": "Did the session happen?",
-      "didPersonAttend": "Did {{ firstname }} come to the appointment?"
-    },
     "sessionDetails": {
       "title": "Session details",
       "wasPersonLate": "Was {{ firstname }} late?",
@@ -616,13 +611,24 @@
       "duration": "Session duration",
       "notApplicable": "Not applicable because the session did not happen"
     },
+    "recordSessionAttendance": {
+      "title": "Record session attendance",
+      "didSessionHappen": "Did the session happen?",
+      "didPersonAttend": "Did {{ firstname }} come to the appointment?"
+    },
     "sessionFeedback": {
       "title": "Session feedback",
-      "whatHappened": "What happened in the session",
-      "behaviour": "What was {{ firstname }}'s engagement like during the session?",
-      "strengths": "What strengths did you identify?",
-      "whySessionDidNotHappen": "Why the session did not happen",
-      "triedToContactDidNotAttend": "Details about how you tried to contact {{ firstname }} and why they did not attend"
+      "attended": {
+        "whatHappened": "What happened in the session",
+        "behaviour": "How {{ firstname }} behaved",
+        "strengths": "Strengths identified"
+      },
+      "sessionDidNotHappen": {
+        "whySessionDidNotHappen": "Why the session did not happen"
+      },
+      "didNotAttend": {
+        "triedToContactDidNotAttend": "Details about how you tried to contact {{ firstname }} and why they did not attend"
+      }
     },
     "didNotHappenReasonLabels": {
       "serviceProviderIssue": "Service provider issue",
@@ -631,16 +637,16 @@
     },
     "issuesAndConcerns": {
       "title": "Issues or concerns",
-      "identified": "What issues or concerns did you identify?"
+      "identified": "Issues or concerns identified"
     },
     "additionalSupportNeeds": {
-      "title": "Additional support needs",
-      "identified": "What additional support needs did you identify?"
+      "title": "Needs and additional support",
+      "identified": "New support needs identified"
     },
     "nextSteps": {
       "title": "Next steps",
-      "plannedForNextSession": "What do you have planned for the next session?",
-      "actionsBeforeNextSession": "What actions do you and {{ firstname }} have before the next session takes place?"
+      "plannedForNextSession": "Planned for the next session",
+      "actionsBeforeNextSession": "Actions before the next session"
     }
   },
   "/ics-feedback/:id/check-answers": {

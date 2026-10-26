@@ -172,6 +172,28 @@ describe('ViewSessionFeedbackPresenter', () => {
         expect(row?.value.text).toBe('Client requested phone appointment')
       })
 
+      it.each([
+        ['Phone call', 'Reason session was not in-person', 'Location'],
+        ['Video call', 'Reason session was not in-person', 'Location'],
+        ['In person (probation office)', 'Location', 'Reason session was not in-person'],
+        ['In person (other location)', 'Location', 'Reason session was not in-person'],
+      ])('shows only the applicable location or reason for %s', (method, visibleLabel, hiddenLabel) => {
+        const viewModel = renderViewModel(
+          IcsFeedbackResponseFactory.build({
+            recordSessionHowSessionTookPlace: method,
+            recordSessionNotInPersonReason: 'Requested a remote session',
+            recordSessionPdu: 'Test Area PDU',
+            recordSessionAddressLine1: '1 Test Street',
+            recordSessionTownOrCity: 'Test Town',
+            recordSessionPostcode: 'T3 3ST',
+          }),
+        )
+
+        const labels = viewModel.appointmentDetailsSummary.rows.map(row => row.key.text)
+        expect(labels.filter(label => label === visibleLabel)).toHaveLength(1)
+        expect(labels).not.toContain(hiddenLabel)
+      })
+
       it('hides the non-in-person reason for in-person sessions', () => {
         const viewModel = renderViewModel(
           IcsFeedbackResponseFactory.build({
@@ -465,8 +487,8 @@ describe('ViewSessionFeedbackPresenter', () => {
 
         expect(viewModel.sessionFeedbackSummary.rows).toEqual([
           { key: { text: 'What happened in the session' }, value: { text: 'None' } },
-          { key: { text: "What was Alex's engagement like during the session?" }, value: { text: 'None' } },
-          { key: { text: 'What strengths did you identify?' }, value: { text: 'None' } },
+          { key: { text: 'How Alex behaved' }, value: { text: 'None' } },
+          { key: { text: 'Strengths identified' }, value: { text: 'None' } },
         ])
       })
 
@@ -488,13 +510,14 @@ describe('ViewSessionFeedbackPresenter', () => {
         const viewModel = renderViewModel()
 
         expect(viewModel.sessionFeedbackSummary.rows).toContainEqual({
-          key: { text: "What was Alex's engagement like during the session?" },
+          key: { text: 'How Alex behaved' },
           value: { text: 'Engaged and positive' },
         })
         expect(viewModel.sessionFeedbackSummary.rows).toContainEqual({
-          key: { text: 'What strengths did you identify?' },
+          key: { text: 'Strengths identified' },
           value: { text: 'Strong family support' },
         })
+        expect(viewModel.sessionFeedbackSummary.rows).toHaveLength(3)
       })
 
       it('shows why the session did not happen when a reason is provided', () => {
@@ -511,6 +534,7 @@ describe('ViewSessionFeedbackPresenter', () => {
           key: { text: 'Why the session did not happen' },
           value: { text: 'Service provider issue: Room booking was cancelled due to a fire alarm.' },
         })
+        expect(viewModel.sessionFeedbackSummary.rows).toHaveLength(1)
       })
 
       it('shows contact attempt details when the person did not attend', () => {
@@ -527,6 +551,7 @@ describe('ViewSessionFeedbackPresenter', () => {
           key: { text: 'Details about how you tried to contact Alex and why they did not attend' },
           value: { text: 'Called and left voicemail' },
         })
+        expect(viewModel.sessionFeedbackSummary.rows).toHaveLength(1)
       })
     })
 
