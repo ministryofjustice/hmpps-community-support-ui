@@ -624,7 +624,7 @@ export interface paths {
       cookie?: never
     }
     /** Get Already identified support needs */
-    get: operations['getIcsFeedbackSession2']
+    get: operations['getExistingSupportNeeds']
     put?: never
     post?: never
     delete?: never
@@ -3491,7 +3491,7 @@ export interface operations {
       }
     }
   }
-  getIcsFeedbackSession2: {
+  getExistingSupportNeeds: {
     parameters: {
       query?: never
       header?: never
@@ -3502,7 +3502,7 @@ export interface operations {
     }
     requestBody?: never
     responses: {
-      /** @description Already identified support needs found */
+      /** @description Existing support needs found */
       200: {
         headers: {
           [name: string]: unknown
@@ -3511,7 +3511,7 @@ export interface operations {
           'application/json': components['schemas']['ExistingSupportNeedsBffResponseDto']
         }
       }
-      /** @description Already identified support needs foun */
+      /** @description Existing support needs not found */
       404: {
         headers: {
           [name: string]: unknown
