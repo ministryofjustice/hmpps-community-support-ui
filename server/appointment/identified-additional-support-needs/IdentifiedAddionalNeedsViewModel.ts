@@ -32,9 +32,4 @@ export type IdentifiedAdditionalNeedsViewModel = {
   formData: IdentifiedAdditionalNeedsFormData
 }
 
-type ExistingSupportNeedsPresenterData = Pick<
-  ExistingSupportNeedsBffResponseDto,
-  'supportNeeds' | 'referralFirstName'
->
-
 export type IdentifiedAdditionalNeedsContent = GlobalContent['/ics-feedback/:id/identified-additional-needs']

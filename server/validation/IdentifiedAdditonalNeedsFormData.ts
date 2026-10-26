@@ -10,7 +10,6 @@ const checkIdentityDetails = (val: { didYouIdentity: string; identityDetails: st
 const baseSchema = z.object({
   didYouIdentity: z.literal(['Yes', 'No'], {
     error: 'Select yes if you identified anything else they need support with',
-            
   }),
   identityDetails: z.string(),
 })

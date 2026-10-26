@@ -1,5 +1,6 @@
 import { Response } from 'express'
 import { GovukFrontendErrorMessage, GovukFrontendSummaryList } from '@govuk-frontend'
+import { ExistingSupportNeedsBffResponseDto } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
 import {
   IdentifiedAdditionalNeedsContent,
@@ -16,7 +17,6 @@ import { components } from '../../@types/communitySupportApi/imported'
 import { escapeHtml } from '../../utils/utils'
 import { ErrorMiddlewareErrors } from '../../@types/express'
 import { govFrontendSummaryListRow } from '../../utils/viewUtils'
-import { ExistingSupportNeedsBffResponseDto } from '@community-support-api'
 
 export type ExistingSupportNeedsPresenterData = Pick<
   ExistingSupportNeedsBffResponseDto,
@@ -104,17 +104,17 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
     }
   }
 
-  private buildExistingSuppportNeedsDetails = (cardTitle: string, exisitngData: ExistingSupportNeedsPresenterData,
+  private buildExistingSuppportNeedsDetails = (
+    cardTitle: string,
+    exisitngData: ExistingSupportNeedsPresenterData,
   ): GovukFrontendSummaryList | undefined => {
-  
-    if (!exisitngData.supportNeeds || exisitngData.supportNeeds.length === 0)
-      return undefined
-  
+    if (!exisitngData.supportNeeds || exisitngData.supportNeeds.length === 0) return undefined
+
     return {
       card: {
-        title: { 
-          text: cardTitle
-        }
+        title: {
+          text: cardTitle,
+        },
       },
       rows: exisitngData.supportNeeds.map(need => govFrontendSummaryListRow(need.needName, need.needDetails)),
       attributes: { 'data-testid': 'exisiting-support-needs-details' },
@@ -143,7 +143,7 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
       submitButton: { text: content.submitButtonText },
       submitHref: `/ics-feedback/${this.caseRefId}/identified-additional-needs`,
       backLink: { href: content.backLinkHref.replace('{{ id }}', this.caseRefId) },
-      existingSupportNeedsDetails: this.buildExistingSuppportNeedsDetails( content.cardTitle, this.data),
+      existingSupportNeedsDetails: this.buildExistingSuppportNeedsDetails(content.cardTitle, this.data),
       formData,
     }
   }

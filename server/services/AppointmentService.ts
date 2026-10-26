@@ -6,7 +6,7 @@ import {
   IcsFeedbackSubmissionResponse,
   ChangeAppointmentDetails,
   ExistingSupportNeedsBffResponseDto,
-  SupportNeed
+  SupportNeed,
 } from '@community-support-api'
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
 
@@ -68,8 +68,16 @@ export default class AppointmentService {
 
   getExistingSupportNeedsStub(_caseRefId: string, _username: string): ExistingSupportNeedsBffResponseDto {
     const supportNeeds: SupportNeed[] = [
-      { needName: 'Mental or emotional health', needDetails: 'Alex experienced anxiety through different life events and personal stories, ranging from panic attacks and health anxiety to trauma-induced stress and neurodivergence-related overwhelm' },
-      { needName: 'Neurodiversity', needDetails: 'Alex experienced anxiety through different life events and personal stories, ranging from panic attacks and health anxiety to trauma-induced stress and neurodivergence-related overwhelm' },
+      {
+        needName: 'Mental or emotional health',
+        needDetails:
+          'Alex experienced anxiety through different life events and personal stories, ranging from panic attacks and health anxiety to trauma-induced stress and neurodivergence-related overwhelm',
+      },
+      {
+        needName: 'Neurodiversity',
+        needDetails:
+          'Alex experienced anxiety through different life events and personal stories, ranging from panic attacks and health anxiety to trauma-induced stress and neurodivergence-related overwhelm',
+      },
     ]
 
     return {

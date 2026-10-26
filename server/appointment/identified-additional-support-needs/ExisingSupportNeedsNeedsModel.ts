@@ -1,4 +1,3 @@
-
 import { ExistingSupportNeedsBffResponseDto } from '@community-support-api'
 
 export interface ExisintingSupportNeedsContent {

@@ -168,5 +168,5 @@ export type {
   DraftAdditionalReferralInformationTableDataDto,
   DraftMainPOCDetailsTableDataDto,
   ExistingSupportNeedsBffResponseDto,
-  SupportNeed
+  SupportNeed,
 }
