@@ -106,16 +106,16 @@ test.describe('Action Plan Check Your Answers Page', () => {
 
     await expect(
       checkYourAnswersPage.summaryCard('Session details').getByRole('link', { name: /Change/ }),
-    ).toHaveAttribute('href', `/referral/${caseReference}/action-plan/session-delivery-details`)
+    ).toHaveAttribute('href', `/referral/${caseReference}/action-plan/change-session-delivery-details`)
     await expect(
       checkYourAnswersPage.summaryCard('Risks and adjustments').getByRole('link', { name: /Change/ }),
-    ).toHaveAttribute('href', `/referral/${caseReference}/action-plan/risks-and-adjustments`)
+    ).toHaveAttribute('href', `/referral/${caseReference}/action-plan/change-risks-and-adjustments`)
     await expect(
       checkYourAnswersPage.summaryCard('Service end date').getByRole('link', { name: /Change/ }),
-    ).toHaveAttribute('href', `/referral/${caseReference}/action-plan/service-end-date-check`)
+    ).toHaveAttribute('href', `/referral/${caseReference}/action-plan/change-service-end-date-check`)
     await expect(
       checkYourAnswersPage.summaryCard('Involvement in creating action plan').getByRole('link', { name: /Change/ }),
-    ).toHaveAttribute('href', `/referral/${caseReference}/action-plan/person-involvement`)
+    ).toHaveAttribute('href', `/referral/${caseReference}/action-plan/change-person-involvement`)
     await expect(checkYourAnswersPage.submitButton).toBeVisible()
   })
 
@@ -204,16 +204,95 @@ test.describe('Action Plan Check Your Answers Page', () => {
 
     await expect(
       checkYourAnswersPage.summaryCard('Session details').getByRole('link', { name: /Change/ }),
-    ).toHaveAttribute('href', `/referral/${caseReference}/action-plan/session-delivery-details`)
+    ).toHaveAttribute('href', `/referral/${caseReference}/action-plan/change-session-delivery-details`)
     await expect(
       checkYourAnswersPage.summaryCard('Risks and adjustments').getByRole('link', { name: /Change/ }),
-    ).toHaveAttribute('href', `/referral/${caseReference}/action-plan/risks-and-adjustments`)
+    ).toHaveAttribute('href', `/referral/${caseReference}/action-plan/change-risks-and-adjustments`)
     await expect(
       checkYourAnswersPage.summaryCard('Service end date').getByRole('link', { name: /Change/ }),
-    ).toHaveAttribute('href', `/referral/${caseReference}/action-plan/service-end-date-check`)
+    ).toHaveAttribute('href', `/referral/${caseReference}/action-plan/change-service-end-date-check`)
     await expect(
       checkYourAnswersPage.summaryCard('Involvement in creating action plan').getByRole('link', { name: /Change/ }),
-    ).toHaveAttribute('href', `/referral/${caseReference}/action-plan/person-involvement`)
+    ).toHaveAttribute('href', `/referral/${caseReference}/action-plan/change-person-involvement`)
     await expect(checkYourAnswersPage.submitButton).toBeVisible()
+  })
+
+  test('submits answers from all sections and redirects to action plan landing page', async ({ page }) => {
+    const checkYourAnswersResponse: ActionPlanSessionDeliveryDetailsResponse = {
+      questions: [
+        ...actionPlanSessionDeliveryDetailsFactory.build().questions,
+        ...actionPlanRisksAndAdjustmentsFactory.build().questions,
+        ...actionPlanCheckServiceEndDateFactory.build({}, { transient: { savedAnswer: 'YES' } }).questions,
+        ...actionPlanPersonInvolvementFactory.build().questions,
+      ],
+    }
+    await communitySupport.stubGetSessionDeliveryCheckYourAnswers(caseReference, checkYourAnswersResponse, false)
+    await communitySupport.stubSubmitServiceDelivery(caseReference, checkYourAnswersResponse)
+
+    await page.goto(ActionPlanCheckYourAnswersPage.url(caseReference))
+    const checkYourAnswersPage = await ActionPlanCheckYourAnswersPage.verifyOnPage(page)
+
+    await checkYourAnswersPage.submitButton.click()
+
+    await expect(page).toHaveURL(`/referral/${caseReference}/action-plan`)
+  })
+
+  test('changes risks and adjustments and returns to check your answers after correcting validation errors', async ({
+    page,
+  }) => {
+    const risksAndAdjustments = actionPlanRisksAndAdjustmentsFactory.build()
+    const checkYourAnswersResponse: ActionPlanSessionDeliveryDetailsResponse = {
+      questions: [
+        ...actionPlanSessionDeliveryDetailsFactory.build().questions,
+        ...risksAndAdjustments.questions,
+        ...actionPlanCheckServiceEndDateFactory.build().questions,
+        ...actionPlanPersonInvolvementFactory.build().questions,
+      ],
+    }
+    await communitySupport.stubGetSessionDeliveryCheckYourAnswers(caseReference, checkYourAnswersResponse)
+    await communitySupport.stubGetRisksAndAdjustments(caseReference, risksAndAdjustments)
+    await communitySupport.stubGetActionPlanSummary(caseReference, {
+      personDetails: { firstName: 'Alex', lastName: 'River' },
+      needs: [],
+      lastUpdatedAt: '2026-10-12T09:00:00Z',
+    })
+
+    await page.goto(ActionPlanCheckYourAnswersPage.url(caseReference))
+    const checkYourAnswersPage = await ActionPlanCheckYourAnswersPage.verifyOnPage(page)
+    await checkYourAnswersPage
+      .summaryCard('Risks and adjustments')
+      .getByRole('link', { name: /Change/ })
+      .click()
+
+    const editUrl = `/referral/${caseReference}/action-plan/change-risks-and-adjustments`
+    await expect(page).toHaveURL(editUrl)
+    await expect(page.getByRole('link', { name: 'Back', exact: true })).toHaveAttribute(
+      'href',
+      ActionPlanCheckYourAnswersPage.url(caseReference),
+    )
+    const saveButton = page.getByRole('button', { name: 'Save and continue', exact: true })
+    await expect(saveButton).toBeVisible()
+
+    await page.getByRole('radio', { name: 'Yes', exact: true }).first().check()
+    await page.getByRole('radio', { name: 'Yes', exact: true }).last().check()
+    await expect(page.locator('#RISK_INFO')).toHaveValue('Risk of harm to staff')
+    await expect(page.locator('#ADJUSTMENT_INFO')).toHaveValue('Step-free access')
+
+    await page.locator('#RISK_INFO').fill('Updated risk details')
+    await page.locator('#ADJUSTMENT_INFO').fill('Updated adjustment details')
+
+    await saveButton.click()
+
+    await expect(page).toHaveURL(ActionPlanCheckYourAnswersPage.url(caseReference))
+    const saveActionPlanButton = page.getByRole('button', { name: 'Submit action plan', exact: true })
+    await expect(saveActionPlanButton).toBeVisible()
+    await expect(
+      checkYourAnswersPage.summaryRow('Details about the risks and what you will put in place to reduce them'),
+    ).toContainText('Updated risk details')
+    await expect(
+      checkYourAnswersPage.summaryRow(
+        'Details about what reasonable adjustments you will make and how this will support Alex',
+      ),
+    ).toContainText('Updated adjustment details')
   })
 })
