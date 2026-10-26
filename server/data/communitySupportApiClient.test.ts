@@ -17,6 +17,7 @@ import type {
   ActionPlanActionRequest,
   ActionPlanActionResponse,
   ActionPlanSessionDeliveryDetailsResponse,
+  ActionPlanSessionDeliveryDetailsRequest,
   WithdrawalReasonsGroupedBffResponseDto,
   AreaConfirmationBffResponseDto,
   CommunityServiceProviderRequest,
@@ -462,6 +463,37 @@ describe('CommunitySupportApiClient tests', () => {
       const result = communitySupportApiClient.getSessionDeliveryCheckYourAnswers(caseReference, 'user1', true)
 
       await expect(result).resolves.toEqual(response)
+    })
+  })
+  describe('submitServiceDeliveryDetails tests', () => {
+    it('patches the answers and returns the saved response', async () => {
+      const request: ActionPlanSessionDeliveryDetailsRequest = {
+        answers: [
+          {
+            questionId: 'question-id',
+            incomingAnswerDetails: [{ value: 'VIDEO_CALL', additionalDetails: 'Travel restrictions' }],
+          },
+        ],
+      }
+      const response: ActionPlanSessionDeliveryDetailsResponse = { questions: [] }
+
+      nock('http://localhost:8080')
+        .patch('/referral/AB1234CD/action-plan/session-delivery-details', request)
+        .reply(200, response)
+
+      await expect(
+        communitySupportApiClient.submitServiceDeliveryDetails('AB1234CD', request, 'user1'),
+      ).resolves.toEqual(response)
+    })
+
+    it('propagates API validation failures', async () => {
+      nock('http://localhost:8080')
+        .patch('/referral/AB1234CD/action-plan/session-delivery-details', { answers: [] })
+        .reply(400, { message: 'Invalid answers' })
+
+      await expect(
+        communitySupportApiClient.submitServiceDeliveryDetails('AB1234CD', { answers: [] }, 'user1'),
+      ).rejects.toThrow()
     })
   })
   describe('deleteAction tests', () => {

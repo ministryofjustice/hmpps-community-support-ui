@@ -725,6 +725,22 @@ export default {
         jsonBody: checkYourAnswers,
       },
     }),
+  stubSubmitServiceDelivery: (
+    caseReference: string,
+    response: ActionPlanSessionDeliveryDetailsResponse,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'PATCH',
+        urlPath: `/community-support/referral/${caseReference}/action-plan/session-delivery-details`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: response,
+      },
+    }),
   stubGetRisksAndAdjustments: (
     caseReference: string,
     risksAndAdjustments: ActionPlanSessionDeliveryDetailsResponse,

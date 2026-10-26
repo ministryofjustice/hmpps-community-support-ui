@@ -18,6 +18,7 @@ import {
   ActionPlanActionRequest,
   ActionPlanActionResponse,
   ActionPlanSessionDeliveryDetailsResponse,
+  ActionPlanSessionDeliveryDetailsRequest,
   ActionPlanSelectANeedResponse,
   ServiceEndDatePageDto,
   ServiceDaysPageDto,
@@ -117,6 +118,14 @@ export default class ReferralService {
     username: string,
   ): Promise<ActionPlanSessionDeliveryDetailsResponse> {
     return this.communitySupportApiClient.getSessionDeliveryDetails(caseReference, username)
+  }
+
+  submitServiceDeliveryDetails(
+    caseReference: string,
+    request: ActionPlanSessionDeliveryDetailsRequest,
+    username: string,
+  ): Promise<ActionPlanSessionDeliveryDetailsResponse> {
+    return this.communitySupportApiClient.submitServiceDeliveryDetails(caseReference, request, username)
   }
 
   getRisksAndAdjustments(caseReference: string, username: string): Promise<ActionPlanSessionDeliveryDetailsResponse> {
