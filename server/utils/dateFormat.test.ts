@@ -1,4 +1,4 @@
-import dateFormat, { formatIsoDateOrNull } from './dateFormat'
+import dateFormat, { formatIsoDateOrNull, toIsoDate } from './dateFormat'
 
 describe('dateFormat', () => {
   ;[
@@ -70,5 +70,21 @@ describe('formatIsoDateOrNull', () => {
 
   test('returns null for invalid format', () => {
     expect(formatIsoDateOrNull('not-a-date')).toBeNull()
+  })
+})
+
+describe('toIsoDate', () => {
+  test('converts a UK-formatted date to ISO date format', () => {
+    expect(toIsoDate('24/10/2026')).toBe('2026-10-24')
+  })
+
+  test('returns existing ISO dates unchanged', () => {
+    expect(toIsoDate('2026-10-24')).toBe('2026-10-24')
+  })
+
+  test('returns undefined for invalid or missing values', () => {
+    expect(toIsoDate('')).toBeUndefined()
+    expect(toIsoDate(undefined)).toBeUndefined()
+    expect(toIsoDate('not-a-date')).toBeUndefined()
   })
 })

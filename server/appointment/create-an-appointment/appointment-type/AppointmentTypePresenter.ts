@@ -42,7 +42,7 @@ export default class AppointmentTypePresenter extends PresenterBase<AppointmentT
       pageTitle: content.pageTitle,
       heading: content.heading.replace('{{ personName }}', personName),
       backLink: {
-        href: `/progress/${this.caseReference}`,
+        href: `/referral/${this.caseReference}/appointments`,
       },
       radios: this.buildRadios(content),
       button: {
