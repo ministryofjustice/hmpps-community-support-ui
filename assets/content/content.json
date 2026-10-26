@@ -374,11 +374,11 @@
     "pageHeader": "Action plan",
     "noActionPlanText": "{{ firstName }} does not have an action plan yet.",
     "addAnotherOutcomeText": "Add another outcome",
-    "submitActionPlanText": "Submit Action plan",
+    "submitActionPlanText": "Submit action plan",
     "addOrChangeActivitiesText": "Add or change activities",
     "removeOutcomeText": "Remove",
     "outcomePrefixText": "Outcome: ",
-    "whoWillDeliverHeaderText": "Who will do this",
+    "whoWillDeliverHeaderText": "Who will deliver this",
     "activityHeaderText": "Activity",
     "moveOutcomeDownText": "Move outcome down",
     "moveOutcomeUpText": "Move outcome up",
@@ -396,14 +396,14 @@
     "cancelLinkText": "Cancel"
   },
   "/referral/:id/action-plan/select-a-need": {
-    "pageHeader": "Area of Need",
+    "pageHeader": "Area of need",
     "identifiedNeedsDetailsTitle": "Show the needs identified in the referral",
-    "whichNeedTitle": "Which need are you creating an action for?",
+    "whichNeedTitle": "Which need do you want to address?",
     "whichNeedHint": "Select one option. You can select more needs later.",
     "continueButtonText": "Continue"
   },
   "/referral/:id/action-plan/select-an-outcome": {
-    "pageHeader": "Which outcome is appropriate for {{ fullName }}?",
+    "pageHeader": "Which outcome is appropriate for {{ firstName }}?",
     "selectOutcomeHint": "Select one option.",
     "continueButtonText": "Continue"
   },
@@ -411,9 +411,11 @@
     "pageHeader": "Activities",
     "areaOfNeedLabel": "Area of need",
     "outcomeLabel": "Outcome",
+    "addActivityNotificationText": "You added an activity to {{ firstName }}'s plan",
+    "removeActivityNotificationText": "You removed an activity from {{ firstName }}'s plan",
     "activityProviderHeading": "Who will deliver this",
     "activityDetailsHeading": "Activity details",
-    "actionsHeading": "Actions",
+    "actionsHeading": "Action",
     "changeActionText": "Change",
     "removeActionText": "Remove",
     "addAnotherActivityQuestion": "Do you want to add another activity?",
@@ -425,33 +427,107 @@
     "pageTitle": "Session details – Session delivery details",
     "pageHeader": "Session details",
     "continueButtonText": "Continue",
-    "backLink": "/referral/{{ id }}/action-plan"
+    "saveAndContinueButtonText": "Save and continue",
+    "backLink": "/referral/{{ id }}/action-plan",
+    "editBackLink": "/referral/{{ id }}/action-plan/service-delivery-check-your-answers"
+  },
+  "/referral/:id/action-plan/change-session-delivery-details": {
+    "pageTitle": "Session details – Session delivery details",
+    "pageHeader": "Session details",
+    "continueButtonText": "Continue",
+    "saveAndContinueButtonText": "Save and continue",
+    "backLink": "/referral/{{ id }}/action-plan",
+    "editBackLink": "/referral/{{ id }}/action-plan/service-delivery-check-your-answers"
   },
   "/referral/:id/action-plan/risks-and-adjustments": {
     "pageTitle": "Session details – Risks and adjustments",
     "pageHeader": "Risks and adjustments",
     "continueButtonText": "Continue",
-    "backLink": "/referral/{{ id }}/action-plan/session-delivery-details"
+    "saveAndContinueButtonText": "Save and continue",
+    "backLink": "/referral/{{ id }}/action-plan/session-delivery-details",
+    "editBackLink": "/referral/{{ id }}/action-plan/service-delivery-check-your-answers"
+  },
+  "/referral/:id/action-plan/change-risks-and-adjustments": {
+    "pageTitle": "Session details – Risks and adjustments",
+    "pageHeader": "Risks and adjustments",
+    "continueButtonText": "Continue",
+    "saveAndContinueButtonText": "Save and continue",
+    "backLink": "/referral/{{ id }}/action-plan/session-delivery-details",
+    "editBackLink": "/referral/{{ id }}/action-plan/service-delivery-check-your-answers"
   },
   "/referral/:id/action-plan/service-end-date-check": {
     "pageTitle": "Session details – Service end date",
     "pageHeader": "Service end date",
     "continueButtonText": "Continue",
-    "backLink": "/referral/{{ id }}/action-plan/risks-and-adjustments"
+    "saveAndContinueButtonText": "Save and continue",
+    "backLink": "/referral/{{ id }}/action-plan/risks-and-adjustments",
+    "editBackLink": "/referral/{{ id }}/action-plan/service-delivery-check-your-answers"
+  },
+  "/referral/:id/action-plan/change-service-end-date-check": {
+    "pageTitle": "Session details – Service end date",
+    "pageHeader": "Service end date",
+    "continueButtonText": "Continue",
+    "saveAndContinueButtonText": "Save and continue",
+    "backLink": "/referral/{{ id }}/action-plan/risks-and-adjustments",
+    "editBackLink": "/referral/{{ id }}/action-plan/service-delivery-check-your-answers"
   },
   "/referral/:id/action-plan/update-service-end-date": {
     "pageTitle": "Session details – Change the service end date",
     "pageHeader": "Change the service end date",
     "continueButtonText": "Continue",
-    "backLink": "/referral/{{ id }}/action-plan/service-end-date-check"
+    "saveAndContinueButtonText": "Save and continue",
+    "backLink": "/referral/{{ id }}/action-plan/service-end-date-check",
+    "editBackLink": "/referral/{{ id }}/action-plan/change-service-end-date-check"
+  },
+  "/referral/:id/action-plan/change-update-service-end-date": {
+    "pageTitle": "Session details – Change the service end date",
+    "pageHeader": "Change the service end date",
+    "continueButtonText": "Continue",
+    "saveAndContinueButtonText": "Save and continue",
+    "backLink": "/referral/{{ id }}/action-plan/service-end-date-check",
+    "editBackLink": "/referral/{{ id }}/action-plan/change-service-end-date-check"
   },
   "/referral/:id/action-plan/person-involvement": {
     "pageTitle": "Session details – Person involvement",
     "continueButtonText": "Continue",
-    "backLink": "/referral/{{ id }}/action-plan/service-end-date-check"
+    "saveAndContinueButtonText": "Save and continue",
+    "backLink": "/referral/{{ id }}/action-plan/service-end-date-check",
+    "editBackLink": "/referral/{{ id }}/action-plan/service-delivery-check-your-answers"
+  },
+  "/referral/:id/action-plan/change-person-involvement": {
+    "pageTitle": "Session details – Person involvement",
+    "continueButtonText": "Continue",
+    "saveAndContinueButtonText": "Save and continue",
+    "backLink": "/referral/{{ id }}/action-plan/service-end-date-check",
+    "editBackLink": "/referral/{{ id }}/action-plan/service-delivery-check-your-answers"
+  },
+  "/referral/:id/action-plan/service-delivery-check-your-answers": {
+    "pageTitle": "Session details – Check your answers",
+    "pageHeader": "Check service delivery details",
+    "summaryLists": [
+      {
+        "summaryTitle": "Session details",
+        "changeHref": "/referral/{{ id }}/action-plan/change-session-delivery-details"
+      },
+      {
+        "summaryTitle": "Risks and adjustments",
+        "changeHref": "/referral/{{ id }}/action-plan/change-risks-and-adjustments"
+      },
+      {
+        "summaryTitle": "Service end date",
+        "changeHref": "/referral/{{ id }}/action-plan/change-service-end-date-check"
+      },
+      {
+        "summaryTitle": "Involvement in creating action plan",
+        "changeHref": "/referral/{{ id }}/action-plan/change-person-involvement"
+      }
+    ],
+    "submitButtonText": "Submit action plan",
+    "submitHref": "/referral/{{ id }}/action-plan/service-delivery-check-your-answers",
+    "backLink": "/referral/{{ id }}/action-plan/person-involvement"
   },
   "/referral/:id/action-plan/activities/add": {
-    "pageHeader": "Add An Activity",
+    "pageHeader": "Add an activity",
     "backLink": "/referral/{{ caseReference }}/action-plan/activities",
     "areaOfNeedLabel": "Area of need",
     "outcomeLabel": "Outcome",
@@ -1050,7 +1126,7 @@
         "title": "Check answers and submit",
         "subTasks": {
           "checkAnswersAndSubmit": {
-            "text": "Check answers and submit",
+            "text": "Check answers and submit the referral",
             "href": "/referral/check-referral-information"
           }
         }

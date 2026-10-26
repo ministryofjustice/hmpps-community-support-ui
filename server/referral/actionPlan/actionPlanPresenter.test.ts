@@ -145,7 +145,7 @@ describe('ActionPlanPresenter', () => {
     expect(renderData.content.addAnotherOutcomeButton.text).toBe('Add another outcome')
     expect(renderData.content.submitActionPlanButton).toEqual({
       href: '/referral/AB1234CD/action-plan/session-delivery-details',
-      text: 'Submit Action plan',
+      text: 'Submit action plan',
     })
 
     expect(renderData.content.needsSummary.length).toBe(1)
@@ -164,7 +164,7 @@ describe('ActionPlanPresenter', () => {
     )
     expect(need.rows.length).toBe(3)
     const activities = need.rows
-    expect(activities[0].key.text).toBe('Who will do this')
+    expect(activities[0].key.text).toBe('Who will deliver this')
     expect(activities[0].value.text).toBe('Activity')
     expect(activities[1].key.text).toBe('Delivery practitioner')
     expect(activities[1].value.text).toBe('Details about what needs to be done to achieve the outcome')
@@ -328,7 +328,7 @@ describe('ActionPlanPresenter', () => {
 
       expect(content.submitActionPlanButton).toEqual({
         href: '/referral/AB1234CD/action-plan/session-delivery-details',
-        text: 'Submit Action plan',
+        text: 'Submit action plan',
       })
     })
 
