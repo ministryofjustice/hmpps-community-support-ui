@@ -6,8 +6,8 @@ import {
   IdentifiedAdditionalNeedsContent,
   IdentifiedAdditionalNeedsViewModel,
   IdentifiedAdditionalNeedsFormData,
-  DidYouIndentityRadioItemsContent,
-  DidYouIndentityRadioContent,
+  DidYouIdentityRadioItemsContent,
+  DidYouIdentityRadioContent,
 } from './IdentifiedAddionalNeedsViewModel'
 import {
   GovukFrontendRadiosItemWithConditional,
@@ -36,7 +36,7 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
   }
 
   private buildIdentityTextArea(
-    content: DidYouIndentityRadioItemsContent,
+    content: DidYouIdentityRadioItemsContent,
     formData: IdentifiedAdditionalNeedsFormData,
     errorMessage?: GovukFrontendErrorMessage,
   ): string {
@@ -61,7 +61,7 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
   }
 
   private buildDidYouIdentityRadioItems(
-    content: DidYouIndentityRadioItemsContent,
+    content: DidYouIdentityRadioItemsContent,
     formData: IdentifiedAdditionalNeedsFormData,
     errorMessage?: GovukFrontendErrorMessage,
   ): GovukFrontendRadiosItemWithConditional[] {
@@ -83,8 +83,8 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
     ]
   }
 
-  private buildDidYouIdnetityRadio(
-    content: DidYouIndentityRadioContent,
+  private buildDidYouIdentityRadio(
+    content: DidYouIdentityRadioContent,
     formData: IdentifiedAdditionalNeedsFormData,
     errorMessages?: Record<string, GovukFrontendErrorMessage>,
   ): GovukFrontendRadiosWithConditional {
@@ -135,7 +135,7 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
       pageHeader: content.pageHeader,
       pageSubHeader: content.pageSubHeader.replace('{{ firstname }}', this.data.referralFirstName),
       firstname: this.data.referralFirstName,
-      didYouIdentityRadio: this.buildDidYouIdnetityRadio(
+      didYouIdentityRadio: this.buildDidYouIdentityRadio(
         content.didYouIdentityRadio,
         formData,
         this.validationErrors?.messages,

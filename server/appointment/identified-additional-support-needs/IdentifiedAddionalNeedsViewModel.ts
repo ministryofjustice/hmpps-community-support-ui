@@ -6,17 +6,17 @@ export interface IdentifiedAdditionalNeedsFormData {
   didYouIdentity?: boolean
   identityDetails?: string
 }
-export type DidYouIndentityRadioItemsContent = {
+export type DidYouIdentityRadioItemsContent = {
   yesText: string
   noText: string
   identityDetailsName: string
   identityDetailsLabel: string
 }
 
-export type DidYouIndentityRadioContent = {
+export type DidYouIdentityRadioContent = {
   name: string
   title: string
-  items: DidYouIndentityRadioItemsContent
+  items: DidYouIdentityRadioItemsContent
 }
 
 export type IdentifiedAdditionalNeedsViewModel = {
