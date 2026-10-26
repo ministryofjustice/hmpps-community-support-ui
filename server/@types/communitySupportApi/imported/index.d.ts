@@ -548,23 +548,6 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/bff/referral/{referralReference}/action-plan/service-delivery-details/check-your-answers': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get the check your answers questions and saved answers of the service delivery details */
-    get: operations['getCheckYourAnswers']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
   '/bff/referral/{caseReference}/ics_appointment_feedback_details': {
     parameters: {
       query?: never
@@ -623,7 +606,7 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /** Get Already identified support needs */
+    /** Get Existing support needs */
     get: operations['getExistingSupportNeeds']
     put?: never
     post?: never
@@ -3396,7 +3379,6 @@ export interface operations {
       }
     }
   }
-
   getIcsFeedbackSession: {
     parameters: {
       query?: never
@@ -3511,7 +3493,7 @@ export interface operations {
           'application/json': components['schemas']['ExistingSupportNeedsBffResponseDto']
         }
       }
-      /** @description Existing support needs not found */
+      /** @description Existing support needs found */
       404: {
         headers: {
           [name: string]: unknown
