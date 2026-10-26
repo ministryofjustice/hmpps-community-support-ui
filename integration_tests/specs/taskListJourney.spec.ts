@@ -20,13 +20,13 @@ test.describe('Task List E2E Journey Regression', () => {
 
   const defaultTaskListStatus = {
     fullName: 'Alex Rivers',
-    confirmPersonalDetailsCompleted: incompleteStatus,
-    checkRiskInformationCompleted: incompleteStatus,
-    selectAnAreaForReferralCompleted: incompleteStatus,
-    selectThePersonsNeedsCompleted: incompleteStatus,
-    addDetailsOfAnyAdditionalSupportNeedsCompleted: incompleteStatus,
-    addAdditionalInformationCompleted: incompleteStatus,
-    addDetailsOfMainPointOfContactCompleted: incompleteStatus,
+    confirmPersonalDetailsStatus: incompleteStatus,
+    checkRiskInformationStatus: incompleteStatus,
+    selectAnAreaForReferralStatus: incompleteStatus,
+    selectThePersonsNeedsStatus: incompleteStatus,
+    addAdditionalSupportNeedsStatus: incompleteStatus,
+    addAdditionalInformationStatus: incompleteStatus,
+    addDetailsOfMainPointOfContactStatus: incompleteStatus,
   }
 
   const supportNeedsStubData: AdditionalSupportNeedsDto = {
@@ -126,7 +126,7 @@ test.describe('Task List E2E Journey Regression', () => {
   }) => {
     await communitySupport.stubGetTaskListStatus(referralId, {
       ...defaultTaskListStatus,
-      addDetailsOfAnyAdditionalSupportNeedsCompleted: completedStatus,
+      addAdditionalSupportNeedsStatus: completedStatus,
     })
     await page.goto(TaskListPage.url())
     const taskListPom = await TaskListPage.verifyOnPage(page)
@@ -155,7 +155,7 @@ test.describe('Task List E2E Journey Regression', () => {
   }) => {
     await communitySupport.stubGetTaskListStatus(referralId, {
       ...defaultTaskListStatus,
-      addDetailsOfAnyAdditionalSupportNeedsCompleted: completedStatus,
+      addAdditionalSupportNeedsStatus: completedStatus,
     })
     await communitySupport.stubGetAdditionalSupportNeeds(referralId, supportNeedsStubData)
 

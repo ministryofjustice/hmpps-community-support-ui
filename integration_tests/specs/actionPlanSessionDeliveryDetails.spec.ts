@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test'
 import { ActionPlanSessionDeliveryDetailsResponse, ActionPlanSummaryDto } from '@community-support-api'
 import { login, resetStubs } from '../testUtils'
 import communitySupport from '../mockApis/communitySupport'
-import sessionDeliveryDetails from '../mockData/actionPlanData'
+import { actionPlanSessionDeliveryDetailsFactory } from '../../server/testutils/factories/ActionPlanSessionDeliveryDetailsResponse'
 import ActionPlanSessionDeliveryDetailsPage from '../pages/actionPlanSessionDeliveryDetailsPage'
 import ActionPlanPage from '../pages/actionPlanPage'
 import buildReferralProgress from '../../server/testutils/buildReferralProgress'
@@ -86,7 +86,7 @@ test.describe('Action Plan Session Delivery Details Page', () => {
   })
 
   test('displays session delivery questions, hints and saved answers', async ({ page }) => {
-    await communitySupport.stubGetSessionDeliveryDetails(caseReference, sessionDeliveryDetails)
+    await communitySupport.stubGetSessionDeliveryDetails(caseReference, actionPlanSessionDeliveryDetailsFactory.build())
 
     await page.goto(ActionPlanSessionDeliveryDetailsPage.url(caseReference))
 

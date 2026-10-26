@@ -280,20 +280,40 @@ export default function routes({
     actionPlanController.showSessionDeliveryDetailsPage(req, res),
   )
 
+  get('/referral/:id/action-plan/change-session-delivery-details', (req, res) =>
+    actionPlanController.showSessionDeliveryDetailsPage(req, res, true),
+  )
+
   post('/referral/:id/action-plan/session-delivery-details', (req, res) =>
     actionPlanController.submitSessionDeliveryDetailsPage(req, res),
+  )
+
+  post('/referral/:id/action-plan/change-session-delivery-details', (req, res) =>
+    actionPlanController.submitSessionDeliveryDetailsPage(req, res, true),
   )
 
   get('/referral/:id/action-plan/risks-and-adjustments', (req, res) =>
     actionPlanController.showRisksAndAdjustmentsPage(req, res),
   )
 
+  get('/referral/:id/action-plan/change-risks-and-adjustments', (req, res) =>
+    actionPlanController.showRisksAndAdjustmentsPage(req, res, true),
+  )
+
   post('/referral/:id/action-plan/risks-and-adjustments', (req, res) =>
     actionPlanController.submitRisksAndAdjustmentsPage(req, res),
   )
 
+  post('/referral/:id/action-plan/change-risks-and-adjustments', (req, res) =>
+    actionPlanController.submitRisksAndAdjustmentsPage(req, res, true),
+  )
+
   get('/referral/:id/action-plan/service-end-date-check', (req, res) =>
     actionPlanController.showServiceEndDateCheckPage(req, res),
+  )
+
+  get('/referral/:id/action-plan/change-service-end-date-check', (req, res) =>
+    actionPlanController.showServiceEndDateCheckPage(req, res, true),
   )
 
   post('/referral/:id/action-plan/service-end-date-check', (req, res) =>
@@ -304,16 +324,40 @@ export default function routes({
     actionPlanController.showUpdateServiceEndDatePage(req, res),
   )
 
+  get('/referral/:id/action-plan/change-update-service-end-date', (req, res) =>
+    actionPlanController.showUpdateServiceEndDatePage(req, res, true),
+  )
+
   post('/referral/:id/action-plan/update-service-end-date', (req, res) =>
     actionPlanController.submitUpdateServiceEndDatePage(req, res),
+  )
+
+  post('/referral/:id/action-plan/change-update-service-end-date', (req, res) =>
+    actionPlanController.submitUpdateServiceEndDatePage(req, res, true),
   )
 
   get('/referral/:id/action-plan/person-involvement', (req, res) =>
     actionPlanController.showUserInvolvementPage(req, res),
   )
 
+  get('/referral/:id/action-plan/change-person-involvement', (req, res) =>
+    actionPlanController.showUserInvolvementPage(req, res, true),
+  )
+
   post('/referral/:id/action-plan/person-involvement', (req, res) =>
     actionPlanController.submitUserInvolvementPage(req, res),
+  )
+
+  post('/referral/:id/action-plan/change-person-involvement', (req, res) =>
+    actionPlanController.submitUserInvolvementPage(req, res),
+  )
+
+  get('/referral/:id/action-plan/service-delivery-check-your-answers', (req, res) =>
+    actionPlanController.showServiceDeliveryCheckYourAnswersPage(req, res),
+  )
+
+  post('/referral/:id/action-plan/service-delivery-check-your-answers', (req, res) =>
+    actionPlanController.submitServiceDeliveryCheckYourAnswersPage(req, res),
   )
 
   get('/referral/:caseIdentifier/withdraw', (req, res) => withdrawalController.showReason(req, res))
