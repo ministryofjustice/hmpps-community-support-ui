@@ -1686,7 +1686,8 @@ describe('ActionPlanController', () => {
     await actionPlanController.submitSessionDeliveryDetailsPage(req, res)
 
     expect(req.flash).toHaveBeenCalledWith('SESSION_DELIVERY_METHODError', 'Select how the sessions will take place')
-    expect(req.flash).toHaveBeenCalledWith('SESSION_FORMATError', 'Select which format you will use for the sessions')
+    expect(req.flash).toHaveBeenCalledWith('SESSION_FREQUENCYError', 'Enter how often sessions will take place')
+    expect(req.flash).toHaveBeenCalledWith('SESSION_FORMATError', 'Select what format you will use for the sessions')
     expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/session-delivery-details')
   })
 
