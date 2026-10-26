@@ -2,9 +2,10 @@ import { expect, test } from '@playwright/test'
 import { ReferralProgress } from '@community-support-api'
 import { login, resetStubs } from '../testUtils'
 import communitySupport from '../mockApis/communitySupport'
+import prisonApi from '../mockApis/prisonApi'
 import AppointmentTypePage from '../pages/AppointmentTypePage'
-import ReferralProgressPage from '../pages/referralProgressPage'
-import { createAppointmentReferenceData } from '../mockData/referenceData'
+import CreateAppointmentDetailsPage from '../pages/createAppointmentDetailsPage'
+import { createAppointmentReferenceData, probationOfficesData } from '../mockData/referenceData'
 import { referralInformationInCommunity } from '../mockData/referralInformationData'
 import buildReferralProgress from '../../server/testutils/buildReferralProgress'
 
@@ -19,6 +20,8 @@ test.describe('Appointment Type Page', () => {
     await Promise.all([
       communitySupport.stubGetReferralInformation(200, CASE_REFERENCE, referralInformationInCommunity),
       communitySupport.stubGetCreateAppointmentReferenceData(CASE_REFERENCE, createAppointmentReferenceData),
+      communitySupport.stubGetProbationOffices(probationOfficesData),
+      prisonApi.stubGetPrisons(),
     ])
   })
 
@@ -44,34 +47,39 @@ test.describe('Appointment Type Page', () => {
     await expect(appointmentTypePage.errorSummary).toContainText('Select the appointment type')
   })
 
-  // TODO:
-  //  Update this test to check for the correct redirect URL once the appointment details page is implemented
-
-  test('should save the appointment type and return a redirect response', async ({ page }) => {
+  test('should go to the appointment details page after saving the appointment type', async ({ page }) => {
     await page.goto(AppointmentTypePage.url(CASE_REFERENCE))
-    await AppointmentTypePage.verifyOnPage(page)
+    const appointmentTypePage = await AppointmentTypePage.verifyOnPage(page)
 
-    const response = await page.request.post(AppointmentTypePage.url(CASE_REFERENCE), {
-      form: { appointmentType: 'POST_RELEASE_SESSION' },
-      maxRedirects: 0,
-    })
+    await appointmentTypePage.selectAppointmentType('POST_RELEASE_SESSION')
+    await appointmentTypePage.continueButton.click()
 
-    expect(response.status()).toBe(302)
+    await expect(page).toHaveURL(`/referral/${CASE_REFERENCE}/create-an-appointment/appointment-details`)
+    await CreateAppointmentDetailsPage.verifyOnPage(page, 'POST_RELEASE_SESSION')
   })
 
-  // TODO:
-  //  Update this test to check for the correct redirect URL once the appointments tab page is implemented
-
-  test('should return to referral progress when the back link is clicked', async ({ page }) => {
+  test('should return to the appointments tab when the back link is clicked', async ({ page }) => {
     const referralProgressNoAppointments: ReferralProgress = buildReferralProgress([], CASE_REFERENCE)
     await communitySupport.stubGetReferralProgress(referralProgressNoAppointments, CASE_REFERENCE)
+    await communitySupport.stubGetReferralAppointments(
+      {
+        personDetails: {
+          firstName: 'John',
+          lastName: 'Doe',
+          dateOfBirth: '1980-01-01',
+          crn: 'X123456',
+        },
+        appointments: [],
+      },
+      CASE_REFERENCE,
+    )
 
     await page.goto(AppointmentTypePage.url(CASE_REFERENCE))
     const appointmentTypePage = await AppointmentTypePage.verifyOnPage(page)
 
     await appointmentTypePage.backLink.click()
 
-    await expect(page).toHaveURL(ReferralProgressPage.url(CASE_REFERENCE))
-    await ReferralProgressPage.verifyOnPage(page)
+    await expect(page).toHaveURL(`/referral/${CASE_REFERENCE}/appointments`)
+    await expect(page.getByRole('heading', { name: 'Appointments', level: 2 })).toBeVisible()
   })
 })

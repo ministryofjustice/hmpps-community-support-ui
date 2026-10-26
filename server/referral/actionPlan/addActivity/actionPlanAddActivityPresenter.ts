@@ -20,10 +20,11 @@ export default class ActionPlanAddActivityPresenter extends PresenterBase<
 
   protected buildViewModel(res: Response): ActionPlanAddActivityViewModel {
     const content = this.buildStaticContent(res)
+    const href = content.backLink.replace('{{ caseReference }}', this.caseReference)
 
     return {
       pageHeader: content.pageHeader,
-      backLink: { href: `/referral/${this.caseReference}/action-plan/activities` },
+      backLink: { href },
       selectedNeedAndOutcomeInset: {
         html: `${content.areaOfNeedLabel}: <strong>${escapeHtml(this.selectedNeedLabel)}</strong><br>${content.outcomeLabel}: <strong>${escapeHtml(this.selectedOutcomeText)}</strong>`,
       },
