@@ -18,6 +18,7 @@ export default class AddContactDetailsPresenter extends PresenterBase<
   buildViewModel(res: Response) {
     const content = this.buildStaticContent(res)
     return {
+      pageTitle: content.pageTitle,
       heading: content.heading.replace(
         '{{ personName }}',
         `${this.personalDetails.firstName} ${this.personalDetails.lastName}`,

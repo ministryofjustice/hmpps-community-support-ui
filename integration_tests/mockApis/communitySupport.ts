@@ -16,6 +16,7 @@ import {
   ProbationOffice,
   ProbationPractitionerDetails,
   ReferralInformation,
+  ReferralAppointmentsBffResponseDto,
   SubmitReferralResponse,
   TaskListStatusDto,
   CaseWorkerDto,
@@ -62,27 +63,25 @@ const incompleteTaskStatus = {
   completed: false,
   statusText: 'Incomplete',
   tag: 'govuk-tag--blue',
-}
+} as const
+
+const cannotStartTaskStatus = { completed: false, statusText: 'Cannot Start Yet', tag: null } as const
+
+const completeTaskStatus = { completed: true, statusText: 'Completed', tag: 'govuk-tag--blue' } as const
 
 const buildTaskListStatus = (taskListStatus: TaskListStatusStub): TaskListStatusDto => ({
   fullName: taskListStatus.fullName,
-  confirmPersonalDetailsCompleted: taskListStatus.confirmPersonalDetailsCompleted ?? incompleteTaskStatus,
-  checkRiskInformationCompleted: taskListStatus.checkRiskInformationCompleted ?? incompleteTaskStatus,
-  selectThePersonsNeedsCompleted: taskListStatus.selectThePersonsNeedsCompleted ?? incompleteTaskStatus,
-  addDetailsOfAnyAdditionalSupportNeedsCompleted:
-    taskListStatus.addDetailsOfAnyAdditionalSupportNeedsCompleted ?? incompleteTaskStatus,
-  addDetailsOfMainPointOfContactCompleted:
-    taskListStatus.addDetailsOfMainPointOfContactCompleted ?? incompleteTaskStatus,
-  addAdditionalInformationCompleted: taskListStatus.addAdditionalInformationCompleted ?? incompleteTaskStatus,
-  selectAnAreaForReferralCompleted: taskListStatus.selectAnAreaForReferralCompleted ?? incompleteTaskStatus,
-  // addMainPointOfContactCompleted supersedes addDetailsOfMainPointOfContactCompleted and drives which
-  // contact details task is shown. Default it to the legacy field's value so existing fixtures/specs that
-  // only set the legacy field keep exercising the "add contact details" task, as before.
-  addMainPointOfContactCompleted:
-    taskListStatus.addMainPointOfContactCompleted ??
-    taskListStatus.addDetailsOfMainPointOfContactCompleted ??
-    incompleteTaskStatus,
-  checkProbationPractitionerDetailsCompleted: taskListStatus.checkProbationPractitionerDetailsCompleted ?? null,
+  confirmPersonalDetailsStatus: taskListStatus.confirmPersonalDetailsStatus || completeTaskStatus,
+  checkRiskInformationStatus: taskListStatus.checkRiskInformationStatus || incompleteTaskStatus,
+  selectThePersonsNeedsStatus: taskListStatus.selectThePersonsNeedsStatus || incompleteTaskStatus,
+  addAdditionalSupportNeedsStatus: taskListStatus.addAdditionalSupportNeedsStatus || incompleteTaskStatus,
+  addAdditionalInformationStatus: taskListStatus.addAdditionalInformationStatus || incompleteTaskStatus,
+  selectAnAreaForReferralStatus: taskListStatus.selectAnAreaForReferralStatus || incompleteTaskStatus,
+  contactDetailsStatus: taskListStatus.contactDetailsStatus || {
+    isProbationPractitioner: true,
+    status: incompleteTaskStatus,
+  },
+  checkYourAnswersStatus: taskListStatus.checkYourAnswersStatus || cannotStartTaskStatus,
 })
 
 export default {
@@ -592,6 +591,22 @@ export default {
         transformers: ['response-template'],
       },
     }),
+  stubGetReferralAppointments: (
+    appointments: ReferralAppointmentsBffResponseDto,
+    caseReference: string,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: `/community-support/bff/referral/${caseReference}/appointments`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: appointments,
+      },
+    }),
   stubIcsFeedbackSubmission: (
     icsFeedback: IcsFeedbackSubmission,
     icsId: string,
@@ -688,6 +703,42 @@ export default {
         jsonBody: sessionDeliveryDetails,
       },
     }),
+  stubGetSessionDeliveryCheckYourAnswers: (
+    caseReference: string,
+    checkYourAnswers: ActionPlanSessionDeliveryDetailsResponse,
+    isServiceEndDateChanged = false,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPath: `/community-support/bff/referral/${caseReference}/action-plan/session-delivery-details/check-your-answers`,
+        queryParameters: {
+          isServiceEndDateChanged: { equalTo: String(isServiceEndDateChanged) },
+        },
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: checkYourAnswers,
+      },
+    }),
+  stubSubmitServiceDelivery: (
+    caseReference: string,
+    response: ActionPlanSessionDeliveryDetailsResponse,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'PATCH',
+        urlPath: `/community-support/referral/${caseReference}/action-plan/session-delivery-details`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: response,
+      },
+    }),
   stubGetRisksAndAdjustments: (
     caseReference: string,
     risksAndAdjustments: ActionPlanSessionDeliveryDetailsResponse,
@@ -749,6 +800,22 @@ export default {
         status: httpStatus,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: checkServiceEndDate,
+      },
+    }),
+  stubGetPersonInvolvement: (
+    caseReference: string,
+    personInvolvement: ActionPlanSessionDeliveryDetailsResponse,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: `/community-support/bff/referral/${caseReference}/action-plan/service-delivery-details/person-involvement`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: personInvolvement,
       },
     }),
   stubGetWithdrawalReasons: (

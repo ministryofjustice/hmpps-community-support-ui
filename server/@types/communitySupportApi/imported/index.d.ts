@@ -1303,6 +1303,7 @@ export interface components {
       sessionDetails?: components['schemas']['SessionDetailsRequest'] | null
       sessionFeedback?: components['schemas']['SessionFeedbackRequest'] | null
       issuesAndConcerns?: components['schemas']['IssuesAndConcernsRequest'] | null
+      newlyIdentifiedAdditionalSupportNeeds?: string | null
       nextSteps?: components['schemas']['NextStepsRequest'] | null
     }
     IssuesAndConcernsRequest: {
@@ -1380,6 +1381,7 @@ export interface components {
       sessionFeedbackStrengthsIdentified?: string | null
       issuesOrConcernsIdentified?: string | null
       issuesOrConcernsNotifyProbationPractitioner?: boolean | null
+      additionalSupportNeeds?: string | null
       nextStepsPlannedForNextSession?: string | null
       nextStepsActionsBeforeNextSession?: string | null
       sessionFeedbackAppointmentDetails?: components['schemas']['SessionFeedbackAppointmentDetailsDto'] | null
@@ -1670,6 +1672,10 @@ export interface components {
       refereeName: components['schemas']['RefereeNameDto']
       details: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
     }
+    ContactDetailsDto: {
+      isProbationPractitioner: boolean
+      status: components['schemas']['TaskListStatusItem']
+    }
     TaskListStatusItem: {
       completed: boolean
       statusText: string
@@ -1677,15 +1683,14 @@ export interface components {
     }
     TaskListStatusResponseDto: {
       fullName: string
-      confirmPersonalDetailsCompleted: components['schemas']['TaskListStatusItem']
-      checkRiskInformationCompleted: components['schemas']['TaskListStatusItem']
-      selectThePersonsNeedsCompleted: components['schemas']['TaskListStatusItem']
-      addDetailsOfAnyAdditionalSupportNeedsCompleted: components['schemas']['TaskListStatusItem']
-      addAdditionalInformationCompleted: components['schemas']['TaskListStatusItem']
-      addDetailsOfMainPointOfContactCompleted: components['schemas']['TaskListStatusItem']
-      selectAnAreaForReferralCompleted: components['schemas']['TaskListStatusItem']
-      checkProbationPractitionerDetailsCompleted?: components['schemas']['TaskListStatusItem'] | null
-      addMainPointOfContactCompleted?: components['schemas']['TaskListStatusItem'] | null
+      confirmPersonalDetailsStatus: components['schemas']['TaskListStatusItem']
+      checkRiskInformationStatus: components['schemas']['TaskListStatusItem']
+      selectThePersonsNeedsStatus: components['schemas']['TaskListStatusItem']
+      addAdditionalSupportNeedsStatus: components['schemas']['TaskListStatusItem']
+      addAdditionalInformationStatus: components['schemas']['TaskListStatusItem']
+      selectAnAreaForReferralStatus: components['schemas']['TaskListStatusItem']
+      contactDetailsStatus: components['schemas']['ContactDetailsDto']
+      checkYourAnswersStatus: components['schemas']['TaskListStatusItem']
     }
     AppointmentDetailsDto: {
       /** @enum {string|null} */
@@ -1711,7 +1716,11 @@ export interface components {
       /** Format: uuid */
       id: string
       label: string
-      time: string
+      /** Format: date */
+      appointmentDate: string
+      appointmentTime: components['schemas']['AppointmentTimeResponse']
+      /** @enum {string} */
+      appointmentStatus: 'SCHEDULED' | 'NEEDS_FEEDBACK' | 'COMPLETED' | 'CHANGED' | 'DID_NOT_ATTEND' | 'DID_NOT_HAPPEN'
     }
     ReferralAppointmentsBffResponseDto: {
       personDetails: components['schemas']['ReferralAppointmentsPersonDetailsDto']

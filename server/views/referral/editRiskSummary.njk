@@ -4,7 +4,7 @@
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
 
-{% set pageTitle = content.pageTitle %}
+{% set pageTitle = content.pageTitle + " - " + applicationName %}
 {% set mainClasses = "govuk-body" %}
 
 {% block contentBody %}

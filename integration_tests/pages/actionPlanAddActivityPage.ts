@@ -27,7 +27,7 @@ export default class ActionPlanAddActivityPage extends AbstractPage {
 
   static async verifyOnPage(page: Page): Promise<ActionPlanAddActivityPage> {
     const addActivityPage = new ActionPlanAddActivityPage(page)
-    await expect(addActivityPage.header).toHaveText('Add An Activity')
+    await expect(addActivityPage.header).toHaveText('Add an activity')
     return addActivityPage
   }
 }

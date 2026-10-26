@@ -12,6 +12,7 @@ import FoundPersonPresenter from './foundPerson/foundPersonPresenter'
 import logger from '../../logger'
 import ReferralDetailsPresenter from './referralDetails/ReferralDetailsPresenter'
 import ReferralProgressPresenter from './progress/referralProgressPresenter'
+import ReferralAppointmentsPresenter from './appointments/referralAppointmentsPresenter'
 import { ErrorMiddlewareErrors } from '../@types/express'
 import ConfirmPersonalDetailsPresenter from './confirmPersonalDetails/ConfirmPersonalDetailsPresenter'
 import TaskListPresenter from './taskList/TaskListPresenter'
@@ -253,6 +254,27 @@ export default class ReferralController {
     return presenter.renderPage(res)
   }
 
+  async showReferralAppointments(req: Request, res: Response) {
+    const { caseReference } = req.params as { caseReference: string }
+    const { username } = res.locals.user
+    const appointments = await this.referralService.getReferralAppointments(caseReference, username)
+    const presenter = new ReferralAppointmentsPresenter(appointments, caseReference)
+    return presenter.renderPage(res)
+  }
+
+  showSelectAppointmentType(req: Request, res: Response) {
+    const { caseReference } = req.params as { caseReference: string }
+    return res.render('referral/selectAppointmentType', {
+      content: {
+        ...res.locals.content,
+        backLink: {
+          href: `/referral/${caseReference}/appointments`,
+          text: res.locals.content.backLinkText,
+        },
+      },
+    })
+  }
+
   async showTaskList(req: Request, res: Response) {
     const { username } = res.locals.user
     const { draftReferralId } = req.session
@@ -262,7 +284,7 @@ export default class ReferralController {
     }
 
     const taskListStatus = await this.referralService.getTaskListStatus(draftReferralId, username)
-    const presenter = new TaskListPresenter(taskListStatus, draftReferralId)
+    const presenter = new TaskListPresenter(taskListStatus)
     return presenter.renderPage(res)
   }
 
