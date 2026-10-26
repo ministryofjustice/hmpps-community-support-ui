@@ -15,6 +15,7 @@ export default class SelectAreaPresenter extends PresenterBase<SelectAreaViewMod
   buildViewModel(res: Response) {
     const content = this.buildStaticContent(res)
     return {
+      pageTitle: content.pageTitle,
       heading: content.heading.replace(
         '{{ personName }}',
         formatFullName(this.personalDetails.firstName, this.personalDetails.lastName),

@@ -4,6 +4,7 @@ import {
   ReferralDetailsResponseDto,
   ReferralInformation,
   ReferralProgress,
+  ReferralAppointmentsBffResponseDto,
   ConfirmPersonDetailsBffDto,
   AdditionalSupportNeedsDto,
   TaskListStatusDto,
@@ -36,6 +37,13 @@ import {
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
 import { NeedsAnInterpreterFormData } from '../validation/NeedsAnInterpreterFormDataSchema'
 import { AdditionalInformationForTheDeliveryPartnerFormData } from '../validation/AdditionalInformationForTheDeliveryPartnerFormData'
+
+export type ActionPlanCheckYourAnswersDetails = {
+  sessionDetails: ActionPlanSessionDeliveryDetailsResponse
+  risksAndAdjustments: ActionPlanSessionDeliveryDetailsResponse
+  serviceEndDate: ActionPlanSessionDeliveryDetailsResponse
+  personInvolvement: ActionPlanSessionDeliveryDetailsResponse
+}
 
 export default class ReferralService {
   constructor(private readonly communitySupportApiClient: CommunitySupportApiClient) {}
@@ -80,6 +88,10 @@ export default class ReferralService {
     return this.communitySupportApiClient.getReferralProgress(caseReference, username)
   }
 
+  getReferralAppointments(caseReference: string, username: string): Promise<ReferralAppointmentsBffResponseDto> {
+    return this.communitySupportApiClient.getReferralAppointments(caseReference, username)
+  }
+
   getReferralInformation(caseIdentifier: string, username: string): Promise<ReferralInformation> {
     return this.communitySupportApiClient.getReferralInformation(caseIdentifier, username)
   }
@@ -109,6 +121,40 @@ export default class ReferralService {
 
   getRisksAndAdjustments(caseReference: string, username: string): Promise<ActionPlanSessionDeliveryDetailsResponse> {
     return this.communitySupportApiClient.getRisksAndAdjustments(caseReference, username)
+  }
+
+  async getCheckYourAnswers(
+    caseReference: string,
+    username: string,
+    isServiceEndDateChanged: boolean,
+  ): Promise<ActionPlanCheckYourAnswersDetails> {
+    const { questions } = await this.communitySupportApiClient.getSessionDeliveryCheckYourAnswers(
+      caseReference,
+      username,
+      isServiceEndDateChanged,
+    )
+    return {
+      sessionDetails: {
+        questions: questions.filter(question =>
+          ['SESSION_FREQUENCY', 'SESSION_DELIVERY_METHOD', 'SESSION_FORMAT'].includes(question.key),
+        ),
+      },
+      risksAndAdjustments: {
+        questions: questions.filter(question =>
+          ['RISK_ASSOCIATED_WITH_PLANNED_ACTIVITIES', 'REASONABLE_ADJUSTMENTS_FOR_PLANNED_ACTIVITIES'].includes(
+            question.key,
+          ),
+        ),
+      },
+      serviceEndDate: {
+        questions: questions.filter(question =>
+          ['SERVICE_END_DATE_CHECK', 'NEW_SERVICE_END_DATE', 'SERVICE_END_DATE_CHANGE_REASON'].includes(question.key),
+        ),
+      },
+      personInvolvement: {
+        questions: questions.filter(question => question.key === 'USER_INVOLVEMENT_IN_ACTION_PLAN'),
+      },
+    }
   }
 
   getServiceEndDateCheck(caseReference: string, username: string): Promise<ActionPlanSessionDeliveryDetailsResponse> {

@@ -1320,17 +1320,12 @@ export interface components {
       sessionDetails?: components['schemas']['SessionDetailsRequest'] | null
       sessionFeedback?: components['schemas']['SessionFeedbackRequest'] | null
       issuesAndConcerns?: components['schemas']['IssuesAndConcernsRequest'] | null
-      newlyIdentifiedAdditionalSupportNeeds?:
-        components['schemas']['NewlyIdentifiedAdditionalSupportNeedsRequest'] | null
+      newlyIdentifiedAdditionalSupportNeeds?: string | null
       nextSteps?: components['schemas']['NextStepsRequest'] | null
     }
     IssuesAndConcernsRequest: {
       identified?: string | null
       notifyProbationPractitioner?: boolean | null
-    }
-    NewlyIdentifiedAdditionalSupportNeedsRequest: {
-      newlyIdentifiedAdditionalSupportNeedsIdentified?: boolean | null
-      newlyIdentifiedAdditionalSupportNeedsDetails?: string | null
     }
     NextStepsRequest: {
       plannedForNextSession?: string | null
@@ -1403,8 +1398,7 @@ export interface components {
       sessionFeedbackStrengthsIdentified?: string | null
       issuesOrConcernsIdentified?: string | null
       issuesOrConcernsNotifyProbationPractitioner?: boolean | null
-      newlyIdentifiedAdditionalSupportNeedsIdentified?: boolean | null
-      newlyIdentifiedAdditionalSupportNeedsDetails?: string | null
+      additionalSupportNeeds?: string | null
       nextStepsPlannedForNextSession?: string | null
       nextStepsActionsBeforeNextSession?: string | null
       sessionFeedbackAppointmentDetails?: components['schemas']['SessionFeedbackAppointmentDetailsDto'] | null
@@ -3372,46 +3366,7 @@ export interface operations {
       }
     }
   }
-  getCheckYourAnswers: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        referralReference: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Session Delivery Check your answers questions and saved answers returned */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ActionPlanSessionDeliveryDetailsResponse']
-        }
-      }
-      /** @description Missing or invalid isServiceEndDateChanged query parameter */
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-      /** @description Referral not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
+
   getIcsFeedbackSession: {
     parameters: {
       query?: never

@@ -77,7 +77,7 @@ describe('EditRiskSummaryPresenter', () => {
   test('builds correct view model', () => {
     const presenter = new EditRiskSummaryPresenter(risk)
     const viewModel = presenter.buildViewModel(res)
-    expect(viewModel.pageTitle).toBe('Change OASys risk information - Community Support')
+    expect(viewModel.pageTitle).toBe('Change OASys risk information')
     expect(viewModel.backLink.href).toBe('/referral/task-list/view-risk-summary')
     expect(viewModel.heading).toBe('Alex River')
     expect(viewModel.subheading).toBe('Edit OASys risk information')

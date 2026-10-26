@@ -16,6 +16,7 @@ import type {
   CreateAppointmentRequest,
   AppointmentIcsResponse,
   ReferralProgress,
+  ReferralAppointmentsBffResponseDto,
   ProbationOffice,
   IcsFeedbackSubmission,
   IcsFeedbackSubmissionResponse,
@@ -150,6 +151,10 @@ export default class CommunitySupportApiClient extends RestClient {
     return this.get({ path: `/bff/referral-details/${caseReference}/progress` }, asSystem(username))
   }
 
+  getReferralAppointments(caseReference: string, username: string): Promise<ReferralAppointmentsBffResponseDto> {
+    return this.get({ path: `/bff/referral/${caseReference}/appointments` }, asSystem(username))
+  }
+
   getReferralInformation(caseReference: string, username: string): Promise<ReferralInformation> {
     return this.get({ path: `/bff/referral-information/${caseReference}` }, asSystem(username))
   }
@@ -214,6 +219,19 @@ export default class CommunitySupportApiClient extends RestClient {
   getPersonInvolvement(caseReference: string, username: string): Promise<ActionPlanSessionDeliveryDetailsResponse> {
     return this.get(
       { path: `/bff/referral/${caseReference}/action-plan/service-delivery-details/person-involvement` },
+      asSystem(username),
+    )
+  }
+
+  getSessionDeliveryCheckYourAnswers(
+    caseReference: string,
+    username: string,
+    isServiceEndDateChanged: boolean,
+  ): Promise<ActionPlanSessionDeliveryDetailsResponse> {
+    return this.get(
+      {
+        path: `/bff/referral/${caseReference}/action-plan/session-delivery-details/check-your-answers?isServiceEndDateChanged=${isServiceEndDateChanged}`,
+      },
       asSystem(username),
     )
   }

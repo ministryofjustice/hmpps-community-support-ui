@@ -197,10 +197,13 @@ export default class ReferralDetailsPresenter extends PresenterBase<ReferralDeta
 
   private buildSubNavItems(content: ReferralDetailsContent, isAssigned: boolean): MojSubNavigationItem[] {
     return content.subNavItems
-      .filter(i => i.text !== 'Progress' || isAssigned)
+      .filter(i => (i.text !== 'Progress' && i.text !== 'Appointments') || isAssigned)
       .map(i => ({
         text: i.text,
-        href: `${i.href}/${this.referralDetails.referenceNumber}`,
+        href:
+          i.text === 'Appointments'
+            ? i.href.replace(':id', this.referralDetails.referenceNumber)
+            : `${i.href}/${this.referralDetails.referenceNumber}`,
         active: i.text === 'Case details',
       }))
   }

@@ -5,6 +5,8 @@ import ActionPlanPresenter from './actionPlanPresenter'
 import { ActionPlanViewModel } from './actionPlanViewModel'
 import { globalContent } from '../../../assets/content/GlobalContent'
 
+const actionPlanContent = { ...globalContent['/referral/:id'], ...globalContent['/referral/:id/action-plan'] }
+
 describe('ActionPlanPresenter', () => {
   it('builds the page header and back link from summary data', () => {
     const actionPlanSummary: ActionPlanSummaryDto = {
@@ -19,7 +21,7 @@ describe('ActionPlanPresenter', () => {
     const presenter = new ActionPlanPresenter(actionPlanSummary, 'AB1234CD')
     const res = {
       locals: {
-        content: globalContent['/referral/:id/action-plan'],
+        content: actionPlanContent,
       },
       render: jest.fn(),
     } as unknown as Response
@@ -34,6 +36,63 @@ describe('ActionPlanPresenter', () => {
     expect(renderData.content.noActionPlanText).toBe('Alex does not have an action plan yet.')
     expect(renderData.content.createButton).toBeDefined()
     expect(renderData.content.createButton.text).toBe('Create an action plan')
+  })
+
+  it('builds the sub navigation with the action plan item active for the referral', () => {
+    const actionPlanSummary: ActionPlanSummaryDto = {
+      personDetails: { firstName: 'Alex', lastName: 'River' },
+      needs: [],
+      lastUpdatedAt: '',
+    }
+    const res = {
+      locals: { content: actionPlanContent },
+      render: jest.fn(),
+    } as unknown as Response
+
+    new ActionPlanPresenter(actionPlanSummary, 'AB1234CD').renderPage(res)
+
+    const renderData = (res.render as jest.Mock).mock.calls[0][1] as { content: ActionPlanViewModel }
+    expect(renderData.content.subNavigationArgs).toEqual({
+      label: 'Sub navigation',
+      items: [{ href: '/referral/AB1234CD/action-plan', text: 'Action plan', active: true }],
+    })
+  })
+
+  describe('side navigation', () => {
+    const buildSummary = (hasNeeds: boolean): ActionPlanSummaryDto => ({
+      personDetails: { firstName: 'Alex', lastName: 'River' },
+      needs: hasNeeds
+        ? [
+            {
+              id: 'need_id_1',
+              label: 'Accommodation',
+              orderNumber: 1,
+              outcomes: [{ id: 'outcome_id_1', label: 'Find housing', activities: [] }],
+            },
+          ]
+        : [],
+      lastUpdatedAt: '2026-10-15T09:00:00Z',
+    })
+
+    const render = (summary: ActionPlanSummaryDto) => {
+      const res = { locals: { content: actionPlanContent }, render: jest.fn() } as unknown as Response
+      new ActionPlanPresenter(summary, 'AB1234CD').renderPage(res)
+      return (res.render as jest.Mock).mock.calls[0][1] as { content: ActionPlanViewModel }
+    }
+
+    it('builds the side navigation with the action plan item active when there are needs', () => {
+      expect(render(buildSummary(true)).content.horizontalSubNavArgs).toEqual({
+        label: 'Side navigation',
+        items: [
+          { href: '/referral/AB1234CD/action-plan', text: 'Action plan', active: true },
+          { href: '/referral/AB1234CD/service-delivery', text: 'Service details', active: false },
+        ],
+      })
+    })
+
+    it('does not build the side navigation when there are no needs', () => {
+      expect(render(buildSummary(false)).content.horizontalSubNavArgs).toBeUndefined()
+    })
   })
 
   it('builds the needs summary from data', () => {
@@ -73,7 +132,7 @@ describe('ActionPlanPresenter', () => {
     const presenter = new ActionPlanPresenter(actionPlanSummary, 'AB1234CD', true)
     const res = {
       locals: {
-        content: globalContent['/referral/:id/action-plan'],
+        content: actionPlanContent,
       },
       render: jest.fn(),
     } as unknown as Response
@@ -86,7 +145,7 @@ describe('ActionPlanPresenter', () => {
     expect(renderData.content.addAnotherOutcomeButton.text).toBe('Add another outcome')
     expect(renderData.content.submitActionPlanButton).toEqual({
       href: '/referral/AB1234CD/action-plan/session-delivery-details',
-      text: 'Submit Action plan',
+      text: 'Submit action plan',
     })
 
     expect(renderData.content.needsSummary.length).toBe(1)
@@ -105,7 +164,7 @@ describe('ActionPlanPresenter', () => {
     )
     expect(need.rows.length).toBe(3)
     const activities = need.rows
-    expect(activities[0].key.text).toBe('Who will do this')
+    expect(activities[0].key.text).toBe('Who will deliver this')
     expect(activities[0].value.text).toBe('Activity')
     expect(activities[1].key.text).toBe('Delivery practitioner')
     expect(activities[1].value.text).toBe('Details about what needs to be done to achieve the outcome')
@@ -129,7 +188,7 @@ describe('ActionPlanPresenter', () => {
       lastUpdatedAt: '2026-10-15T09:00:00Z',
     }
     const res = {
-      locals: { content: globalContent['/referral/:id/action-plan'] },
+      locals: { content: actionPlanContent },
       render: jest.fn(),
     } as unknown as Response
 
@@ -211,7 +270,7 @@ describe('ActionPlanPresenter', () => {
     const presenter = new ActionPlanPresenter(actionPlanSummary, 'AB1234CD')
     const res = {
       locals: {
-        content: globalContent['/referral/:id/action-plan'],
+        content: actionPlanContent,
       },
       render: jest.fn(),
     } as unknown as Response
@@ -247,7 +306,7 @@ describe('ActionPlanPresenter', () => {
       const presenter = new ActionPlanPresenter(actionPlanSummary, 'AB1234CD', icsFeedbackSubmitted)
       const res = {
         locals: {
-          content: globalContent['/referral/:id/action-plan'],
+          content: actionPlanContent,
         },
         render: jest.fn(),
       } as unknown as Response
@@ -269,7 +328,7 @@ describe('ActionPlanPresenter', () => {
 
       expect(content.submitActionPlanButton).toEqual({
         href: '/referral/AB1234CD/action-plan/session-delivery-details',
-        text: 'Submit Action plan',
+        text: 'Submit action plan',
       })
     })
 
@@ -312,7 +371,7 @@ describe('ActionPlanPresenter', () => {
       const presenter = new ActionPlanPresenter(actionPlanSummary, 'AB1234CD', false, 'ADD')
       const res = {
         locals: {
-          content: globalContent['/referral/:id/action-plan'],
+          content: actionPlanContent,
         },
         render: jest.fn(),
       } as unknown as Response
@@ -330,7 +389,7 @@ describe('ActionPlanPresenter', () => {
       const presenter = new ActionPlanPresenter(actionPlanSummary, 'AB1234CD', false, 'REMOVE')
       const res = {
         locals: {
-          content: globalContent['/referral/:id/action-plan'],
+          content: actionPlanContent,
         },
         render: jest.fn(),
       } as unknown as Response
@@ -348,7 +407,7 @@ describe('ActionPlanPresenter', () => {
       const presenter = new ActionPlanPresenter(actionPlanSummary, 'AB1234CD', false)
       const res = {
         locals: {
-          content: globalContent['/referral/:id/action-plan'],
+          content: actionPlanContent,
         },
         render: jest.fn(),
       } as unknown as Response
