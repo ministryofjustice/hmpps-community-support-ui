@@ -16,6 +16,7 @@ import {
   ProbationOffice,
   ProbationPractitionerDetails,
   ReferralInformation,
+  ReferralAppointmentsBffResponseDto,
   SubmitReferralResponse,
   TaskListStatusDto,
   CaseWorkerDto,
@@ -592,6 +593,22 @@ export default {
         transformers: ['response-template'],
       },
     }),
+  stubGetReferralAppointments: (
+    appointments: ReferralAppointmentsBffResponseDto,
+    caseReference: string,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: `/community-support/bff/referral/${caseReference}/appointments`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: appointments,
+      },
+    }),
   stubIcsFeedbackSubmission: (
     icsFeedback: IcsFeedbackSubmission,
     icsId: string,
@@ -688,6 +705,26 @@ export default {
         jsonBody: sessionDeliveryDetails,
       },
     }),
+  stubGetSessionDeliveryCheckYourAnswers: (
+    caseReference: string,
+    checkYourAnswers: ActionPlanSessionDeliveryDetailsResponse,
+    isServiceEndDateChanged = false,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPath: `/community-support/bff/referral/${caseReference}/action-plan/session-delivery-details/check-your-answers`,
+        queryParameters: {
+          isServiceEndDateChanged: { equalTo: String(isServiceEndDateChanged) },
+        },
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: checkYourAnswers,
+      },
+    }),
   stubGetRisksAndAdjustments: (
     caseReference: string,
     risksAndAdjustments: ActionPlanSessionDeliveryDetailsResponse,
@@ -749,6 +786,22 @@ export default {
         status: httpStatus,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: checkServiceEndDate,
+      },
+    }),
+  stubGetPersonInvolvement: (
+    caseReference: string,
+    personInvolvement: ActionPlanSessionDeliveryDetailsResponse,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: `/community-support/bff/referral/${caseReference}/action-plan/service-delivery-details/person-involvement`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: personInvolvement,
       },
     }),
   stubGetWithdrawalReasons: (

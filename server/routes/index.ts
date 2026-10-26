@@ -84,6 +84,14 @@ export default function routes({
 
   post('/referral/:caseRefId/appointment/schedule-ics', (req, res) => appointmentController.scheduleIcs(req, res))
 
+  get('/referral/:caseRefId/create-an-appointment/appointment-details', (req, res) =>
+    appointmentController.showCreateAppointmentDetails(req, res),
+  )
+
+  post('/referral/:caseRefId/create-an-appointment/appointment-details', (req, res) =>
+    appointmentController.createAppointmentDetails(req, res),
+  )
+
   get('/referral-details/:caseRefId/ics-view-or-change', (req, res) => appointmentController.viewOrChangeIcs(req, res))
 
   get('/referral-details/:caseRefId/changed-ics-details/:icsId', (req, res) =>
@@ -98,10 +106,6 @@ export default function routes({
     appointmentController.recordDidSessionTakePlace(req, res),
   )
 
-  get('/referral-details/:caseReference/progress', async (req, res) =>
-    referralController.showReferralProgressDetails(req, res),
-  )
-
   get('/referral/:referralId/ics/:icsId/view-session-details', async (req, res) =>
     appointmentController.viewChangeSessionDetails(req, res),
   )
@@ -110,12 +114,24 @@ export default function routes({
 
   get('/progress/:caseReference', (req, res) => referralController.showReferralProgressDetails(req, res))
 
+  get('/referral/:caseReference/appointments', (req, res) => referralController.showReferralAppointments(req, res))
+
+  get('/referral/:caseReference/appointment/select-type', (req, res) =>
+    referralController.showSelectAppointmentType(req, res),
+  )
+
   get('/referral/:caseReference/create-an-appointment/appointment-type', (req, res) =>
     appointmentController.showAppointmentType(req, res),
   )
 
   post('/referral/:caseReference/create-an-appointment/appointment-type', (req, res) =>
     appointmentController.submitAppointmentType(req, res),
+  )
+
+  get('/referral/:caseReference/appointments', (req, res) => referralController.showReferralAppointments(req, res))
+
+  get('/referral/:caseReference/appointment/select-type', (req, res) =>
+    referralController.showSelectAppointmentType(req, res),
   )
 
   get('/ics-feedback/:caseRefId/attendance', async (req, res) =>
@@ -236,6 +252,8 @@ export default function routes({
 
   get('/referral/:id/action-plan', (req, res) => actionPlanController.showActionPlanPage(req, res))
 
+  get('/referral/:id/service-delivery', (req, res) => actionPlanController.showServiceDeliveryPage(req, res))
+
   get('/referral/:id/action-plan/remove-outcome', (req, res) => actionPlanController.showRemoveOutcomePage(req, res))
 
   post('/referral/:id/action-plan/remove-outcome', (req, res) => actionPlanController.removeOutcome(req, res))
@@ -296,6 +314,18 @@ export default function routes({
 
   post('/referral/:id/action-plan/update-service-end-date', (req, res) =>
     actionPlanController.submitUpdateServiceEndDatePage(req, res),
+  )
+
+  get('/referral/:id/action-plan/person-involvement', (req, res) =>
+    actionPlanController.showUserInvolvementPage(req, res),
+  )
+
+  post('/referral/:id/action-plan/person-involvement', (req, res) =>
+    actionPlanController.submitUserInvolvementPage(req, res),
+  )
+
+  get('/referral/:id/action-plan/service-delivery-check-your-answers', (req, res) =>
+    actionPlanController.showServiceDeliveryCheckYourAnswersPage(req, res),
   )
 
   get('/referral/:caseIdentifier/withdraw', (req, res) => withdrawalController.showReason(req, res))

@@ -1,12 +1,16 @@
 {% extends "../partials/layout.njk" %}
 
+{%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
+{%- from "moj/components/side-navigation/macro.njk" import mojSideNavigation -%}
 {% from "components/action-plan-summary-list/macro.njk" import actionPlanSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "moj/components/alert/macro.njk" import mojAlert %}
 
 {% set pageTitle = "Action plan – " + applicationName %}
 {% set mainClasses = "govuk-body" %}
 
 {% block content %}
+  {{ mojSubNavigation(content.subNavigationArgs) }}
   <div class="actionplan-summary__actions">
     {% if content.addAnotherOutcomeButton %}
     {{ govukButton(content.addAnotherOutcomeButton) }}
@@ -18,19 +22,40 @@
   <div class="actionplan-summary__title">
     <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
   </div>
-  <p>{{ content.updatedAtText }}</p>
-  <p>{{ content.noActionPlanText }}</p>
-  {% if content.needsSummary %}
-  <ol class="actionplan-summary">
-    {% for need in content.needsSummary %}
-      <li>{{ actionPlanSummaryList(need) }}</li>
-    {% endfor %}
-  </ol>
+
+  {% if content.alert %}
+    {{ mojAlert({
+      variant: content.alert.variant,
+      title: content.alert.title,
+      html: content.alert.html,
+      dismissible: content.alert.dismissible,
+      attributes: {
+        "data-testid": "action-plan-alert"
+      }
+    }) }}
   {% endif %}
-  {% if content.createButton %}
-    <form method="post" novalidate action="{{ content.createLink }}">
-      <input type="hidden" name="_csrf" value="{{csrfToken}}">
-      {{ govukButton(content.createButton) }}
-    </form>
-  {% endif %}
+  <div class="govuk-grid-row">
+    {% if content.horizontalSubNavArgs %}
+      <div class="govuk-grid-column-one-third">
+        {{ mojSideNavigation(content.horizontalSubNavArgs) }}
+      </div>
+    {% endif %}
+    <div class="{{ 'govuk-grid-column-two-thirds govuk-!-padding-4' if content.horizontalSubNavArgs else 'govuk-grid-column-full' }}">
+      <p>{{ content.updatedAtText }}</p>
+      <p>{{ content.noActionPlanText }}</p>
+      {% if content.needsSummary %}
+      <ol class="actionplan-summary">
+        {% for need in content.needsSummary %}
+          <li>{{ actionPlanSummaryList(need) }}</li>
+        {% endfor %}
+      </ol>
+      {% endif %}
+      {% if content.createButton %}
+        <form method="post" novalidate action="{{ content.createLink }}">
+          <input type="hidden" name="_csrf" value="{{csrfToken}}">
+          {{ govukButton(content.createButton) }}
+        </form>
+      {% endif %}
+    </div>
+  </div>
 {% endblock %}

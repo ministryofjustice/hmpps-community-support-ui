@@ -1,4 +1,4 @@
-import { GovukFrontendBackLink, GovukFrontendButton } from '@govuk-frontend'
+import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendRadios } from '@govuk-frontend'
 import { MojDatePicker } from '@moj-frontend'
 import { ComponentsTimeInput } from '../../@types/components'
 import {
@@ -29,6 +29,7 @@ export interface ScheduleFormData {
   addressPostcode?: string
   informedMethods?: string[]
   otherMethodOfContact?: string
+  meetAtTheGate?: string
 }
 
 export interface ScheduleIcsViewModel {
@@ -39,6 +40,7 @@ export interface ScheduleIcsViewModel {
   dateInput: MojDatePicker
   timeInput: ComponentsTimeInput
   howWillTheSessionTakePlaceInput: GovukFrontendRadiosWithConditional
+  meetAtTheGateInput?: GovukFrontendRadios
   howWasTheyInformedAboutTheSessionInput: GovukFrontendCheckboxesWithConditional | undefined
 }
 
@@ -58,6 +60,7 @@ export interface RadioItems {
     video: ListItem
     prison: ListItem
     probation: ListItem
+    inPerson?: { text: string }
     somewhereElse: {
       text: string
       addressLabels: {
@@ -82,6 +85,8 @@ export interface SelectionItems {
 
 export interface ScheduleIcsContent {
   pageHeader: string
+  pageHeaders?: Record<string, string>
+  meetAtTheGate?: { label: string; yes: string; no: string }
   date: LabelAndHint
   time: LabelAndHint & { AMorPM: string }
   howSessionTakePlace: LabelAndHint & RadioItems

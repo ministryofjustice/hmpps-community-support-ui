@@ -1,5 +1,7 @@
 import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendSummaryList } from '@govuk-frontend'
+import { MojAlert, MojSubNavigation } from '@moj-frontend'
 import { GlobalContent } from '../../../assets/content/GlobalContent'
+import { ReferralLayoutContent } from '../referralLayout/referralLayoutViewModel'
 
 export type ActionPlanSummaryList = GovukFrontendSummaryList & {
   preText: string
@@ -17,6 +19,20 @@ export type ActionPlanViewModel = {
   createButton: GovukFrontendButton
   createLink: string
   noActionPlanText: string
+  alert?: MojAlert
+  subNavigationArgs: MojSubNavigation
+  horizontalSubNavArgs?: MojSubNavigation
 }
 
-export type ActionPlanContent = GlobalContent['/referral/:id/action-plan']
+export type ActionPlanSideNavContent = Pick<
+  GlobalContent['/referral/:id'],
+  | 'sideNavigationLabel'
+  | 'actionPlanSideTabText'
+  | 'actionPlanSideTabHref'
+  | 'serviceDeliverySideTabText'
+  | 'serviceDeliverySideTabHref'
+>
+
+export type ActionPlanContent = GlobalContent['/referral/:id/action-plan'] &
+  ReferralLayoutContent &
+  ActionPlanSideNavContent

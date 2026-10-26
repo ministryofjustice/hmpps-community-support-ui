@@ -2,7 +2,7 @@
 
 {% from "govuk/components/task-list/macro.njk" import govukTaskList %}
 
-{% set pageTitle = "Make a referral - [Service name]" %}
+{% set pageTitle = content.pageTitle + " - " + applicationName %}
 {% set mainClasses = "govuk-body" %}
 
 {% block contentBody %}
