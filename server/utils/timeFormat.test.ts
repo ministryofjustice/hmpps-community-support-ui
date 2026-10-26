@@ -1,4 +1,4 @@
-import timeFormat, { formatTime12Hr, isoToFormattedTime } from './timeFormat'
+import timeFormat, { formatTime12Hr, isoToFormattedTime, parseTime12Hr } from './timeFormat'
 
 describe('timeFormat', () => {
   it('formats a provided time object', () => {
@@ -29,5 +29,18 @@ describe('formatTime12Hr', () => {
 
   it('keeps existing behaviour for amPm spacing', () => {
     expect(formatTime12Hr(9, 0, 'am ')).toBe('9:00am ')
+  })
+})
+
+describe('parseTime12Hr', () => {
+  it('parses a standard 12-hour time string into the API format', () => {
+    expect(parseTime12Hr('1:30pm')).toEqual({ hour: 1, minute: 30, amPm: 'pm' })
+    expect(parseTime12Hr('9am')).toEqual({ hour: 9, minute: 0, amPm: 'am' })
+    expect(parseTime12Hr('12:45pm')).toEqual({ hour: 12, minute: 45, amPm: 'pm' })
+  })
+
+  it('defaults to a safe fallback when the value is missing or invalid', () => {
+    expect(parseTime12Hr()).toEqual({ hour: 0, minute: 0, amPm: 'am' })
+    expect(parseTime12Hr('not-a-time')).toEqual({ hour: 0, minute: 0, amPm: 'am' })
   })
 })

@@ -5,11 +5,9 @@ import communitySupport from '../mockApis/communitySupport'
 import prisonApi from '../mockApis/prisonApi'
 import CreateAppointmentDetailsPage, { SessionType } from '../pages/createAppointmentDetailsPage'
 import { referralInformationInCommunity, referralInformationInPrison } from '../mockData/referralInformationData'
-import { probationOfficesData } from '../mockData/referenceData'
-import ConfirmIcsPage from '../pages/confirmIcsPage'
+import { createAppointmentReferenceData, probationOfficesData } from '../mockData/referenceData'
 
 const CASE_REFERENCE = 'AB1234CD'
-const CONFIRM_URL = ConfirmIcsPage.url(CASE_REFERENCE)
 const futureDate = () => format(addDays(new Date(), 7), 'd/M/yyyy')
 
 test.describe('Create an appointment - appointment details page', () => {
@@ -21,6 +19,7 @@ test.describe('Create an appointment - appointment details page', () => {
       prisonApi.stubGetPrisons(),
       communitySupport.stubGetProbationOffices(probationOfficesData),
       communitySupport.stubGetReferralInformation(200, CASE_REFERENCE, referralInformationInCommunity),
+      communitySupport.stubGetCreateAppointmentReferenceData(CASE_REFERENCE, createAppointmentReferenceData),
     ])
   })
 
@@ -126,7 +125,7 @@ test.describe('Create an appointment - appointment details page', () => {
         await appointmentPage.fillDateAndTime(futureDate(), '10', '30', 'AM')
         await fill(appointmentPage)
         await appointmentPage.saveAndContinueButton.click()
-        await expect(page).toHaveURL(CONFIRM_URL)
+        await expect(page).toHaveURL(`/referral/${CASE_REFERENCE}/create-an-appointment/check-your-answers`)
       })
     }
 

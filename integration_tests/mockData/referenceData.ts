@@ -1916,7 +1916,7 @@ const createAppointmentReferenceData: CreateAppointmentReferenceDataBffDto = {
     { name: 'Post-release session', value: 'POST_RELEASE_SESSION' },
     { name: 'Handover session', value: 'HANDOVER_SESSION' },
   ],
-  probationOfficeLocations: [],
+  probationOfficeLocations: [{ id: 2, name: 'Derbyshire: Buxton Probation Office' }],
 }
 
 export { createAppointmentReferenceData, prisonsData, probationOfficesData }

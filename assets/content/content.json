@@ -297,6 +297,23 @@
     "appointmentTypeLabel": "Select the appointment type",
     "buttonText": "Save and continue"
   },
+  "/referral/:id/create-an-appointment/check-your-answers": {
+    "pageTitle": "Check the details before scheduling the appointment",
+    "pageHeader": "Check the details before scheduling the appointment",
+    "summaryTitle": "Appointment details",
+    "dateLabel": "Date",
+    "startTimeLabel": "Start time",
+    "methodLabel": "Method",
+    "locationLabel": "Location",
+    "meetAtTheGateLabel": "Meeting at the gate",
+    "informedLabel": "How {{ firstname }} was informed about the session",
+    "changeLinkText": "Change",
+    "changeLinkVisualText": "appointment details",
+    "changeLinkHref": "/referral/{{ id }}/create-an-appointment/appointment-type",
+    "submitButtonText": "Submit",
+    "submitHref": "/referral/{{ id }}/create-an-appointment/check-your-answers",
+    "backLink": "/referral/{{ id }}/create-an-appointment/appointment-type"
+  },
   "/progress/:id": {
     "pageHeader": "Referral for",
     "progressSubNavTitle": "Progress",
@@ -528,6 +545,7 @@
   },
   "/referral/:id/action-plan/activities/add": {
     "pageHeader": "Add an activity",
+    "backLink": "/referral/{{ caseReference }}/action-plan/activities",
     "areaOfNeedLabel": "Area of need",
     "outcomeLabel": "Outcome",
     "activityProviderLabel": "Who will deliver the activity?",

@@ -148,6 +148,14 @@ export default class CommunitySupportApiClient extends RestClient {
     return this.post({ path: `/referral/${caseRefId}/ics`, data: createAppointmentRequest }, asSystem(username))
   }
 
+  async submitAppointment(
+    caseRefId: string,
+    createAppointmentRequest: CreateAppointmentRequest,
+    username: string,
+  ): Promise<AppointmentIcsResponse> {
+    return this.post({ path: `/referral/${caseRefId}/appointment`, data: createAppointmentRequest }, asSystem(username))
+  }
+
   getReferralProgress(caseReference: string, username: string): Promise<ReferralProgress> {
     return this.get({ path: `/bff/referral-details/${caseReference}/progress` }, asSystem(username))
   }
