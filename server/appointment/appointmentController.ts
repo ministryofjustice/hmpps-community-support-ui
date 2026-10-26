@@ -50,7 +50,6 @@ import { ChangeIcsDetailsReasonSchema } from '../validation/ChangeIcsDetailsReas
 import { saveFormToSession, ScheduledIcsFormDataResolver } from './schedule-ics/ScheduledIcsFormDataResolver'
 import IssuesOrConcernsPresenter from './issues-or-concerns/IssuesOrConcernsPresenter'
 import { IssuesOrConcernsFormDataSchema } from '../validation/IssuesOrConcernsFormData'
-import IdentifiedAdditionalNeedsPresenter from './identified-additional-support-needs/IdentifiedAdditionalNeedsPresenter'
 import {
   buildAppointmentSessionMethodRequest,
   appointmentMethodRequiresLocation,
