@@ -527,7 +527,7 @@
     "backLink": "/referral/{{ id }}/action-plan/person-involvement"
   },
   "/referral/:id/action-plan/activities/add": {
-    "pageHeader": "Add An Activity",
+    "pageHeader": "Add an activity",
     "backLink": "/referral/{{ caseReference }}/action-plan/activities",
     "areaOfNeedLabel": "Area of need",
     "outcomeLabel": "Outcome",
