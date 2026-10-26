@@ -190,7 +190,8 @@ test.describe('View ICS Session Feedback', () => {
     const submittedByRow = appointmentDetailsCard
       .locator('.govuk-summary-list__row')
       .filter({ hasText: 'Feedback submitted by' })
-    await expect(submittedByRow.getByRole('link', { name: 'CaseWorker Two', exact: true })).toHaveAttribute(
+    await expect(submittedByRow).toContainText('CaseWorker Two')
+    await expect(submittedByRow.getByRole('link')).toHaveAttribute(
       'href',
       `mailto:${caseWorkerTwo.emailAddress}`,
     )
