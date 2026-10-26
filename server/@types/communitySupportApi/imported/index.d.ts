@@ -548,23 +548,6 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/bff/referral/{referralReference}/action-plan/service-delivery-details/check-your-answers': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get the check your answers questions and saved answers of the service delivery details */
-    get: operations['getCheckYourAnswers']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
   '/bff/referral/{caseReference}/ics_appointment_feedback_details': {
     parameters: {
       query?: never
@@ -1689,6 +1672,10 @@ export interface components {
       refereeName: components['schemas']['RefereeNameDto']
       details: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
     }
+    ContactDetailsDto: {
+      isProbationPractitioner: boolean
+      status: components['schemas']['TaskListStatusItem']
+    }
     TaskListStatusItem: {
       completed: boolean
       statusText: string
@@ -1696,15 +1683,14 @@ export interface components {
     }
     TaskListStatusResponseDto: {
       fullName: string
-      confirmPersonalDetailsCompleted: components['schemas']['TaskListStatusItem']
-      checkRiskInformationCompleted: components['schemas']['TaskListStatusItem']
-      selectThePersonsNeedsCompleted: components['schemas']['TaskListStatusItem']
-      addDetailsOfAnyAdditionalSupportNeedsCompleted: components['schemas']['TaskListStatusItem']
-      addAdditionalInformationCompleted: components['schemas']['TaskListStatusItem']
-      addDetailsOfMainPointOfContactCompleted: components['schemas']['TaskListStatusItem']
-      selectAnAreaForReferralCompleted: components['schemas']['TaskListStatusItem']
-      checkProbationPractitionerDetailsCompleted?: components['schemas']['TaskListStatusItem'] | null
-      addMainPointOfContactCompleted?: components['schemas']['TaskListStatusItem'] | null
+      confirmPersonalDetailsStatus: components['schemas']['TaskListStatusItem']
+      checkRiskInformationStatus: components['schemas']['TaskListStatusItem']
+      selectThePersonsNeedsStatus: components['schemas']['TaskListStatusItem']
+      addAdditionalSupportNeedsStatus: components['schemas']['TaskListStatusItem']
+      addAdditionalInformationStatus: components['schemas']['TaskListStatusItem']
+      selectAnAreaForReferralStatus: components['schemas']['TaskListStatusItem']
+      contactDetailsStatus: components['schemas']['ContactDetailsDto']
+      checkYourAnswersStatus: components['schemas']['TaskListStatusItem']
     }
     AppointmentDetailsDto: {
       /** @enum {string|null} */
@@ -3366,7 +3352,6 @@ export interface operations {
       }
     }
   }
-
   getIcsFeedbackSession: {
     parameters: {
       query?: never

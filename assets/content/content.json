@@ -427,30 +427,79 @@
     "pageTitle": "Session details – Session delivery details",
     "pageHeader": "Session details",
     "continueButtonText": "Continue",
-    "backLink": "/referral/{{ id }}/action-plan"
+    "saveAndContinueButtonText": "Save and continue",
+    "backLink": "/referral/{{ id }}/action-plan",
+    "editBackLink": "/referral/{{ id }}/action-plan/service-delivery-check-your-answers"
+  },
+  "/referral/:id/action-plan/change-session-delivery-details": {
+    "pageTitle": "Session details – Session delivery details",
+    "pageHeader": "Session details",
+    "continueButtonText": "Continue",
+    "saveAndContinueButtonText": "Save and continue",
+    "backLink": "/referral/{{ id }}/action-plan",
+    "editBackLink": "/referral/{{ id }}/action-plan/service-delivery-check-your-answers"
   },
   "/referral/:id/action-plan/risks-and-adjustments": {
     "pageTitle": "Session details – Risks and adjustments",
     "pageHeader": "Risks and adjustments",
     "continueButtonText": "Continue",
-    "backLink": "/referral/{{ id }}/action-plan/session-delivery-details"
+    "saveAndContinueButtonText": "Save and continue",
+    "backLink": "/referral/{{ id }}/action-plan/session-delivery-details",
+    "editBackLink": "/referral/{{ id }}/action-plan/service-delivery-check-your-answers"
+  },
+  "/referral/:id/action-plan/change-risks-and-adjustments": {
+    "pageTitle": "Session details – Risks and adjustments",
+    "pageHeader": "Risks and adjustments",
+    "continueButtonText": "Continue",
+    "saveAndContinueButtonText": "Save and continue",
+    "backLink": "/referral/{{ id }}/action-plan/session-delivery-details",
+    "editBackLink": "/referral/{{ id }}/action-plan/service-delivery-check-your-answers"
   },
   "/referral/:id/action-plan/service-end-date-check": {
     "pageTitle": "Session details – Service end date",
     "pageHeader": "Service end date",
     "continueButtonText": "Continue",
-    "backLink": "/referral/{{ id }}/action-plan/risks-and-adjustments"
+    "saveAndContinueButtonText": "Save and continue",
+    "backLink": "/referral/{{ id }}/action-plan/risks-and-adjustments",
+    "editBackLink": "/referral/{{ id }}/action-plan/service-delivery-check-your-answers"
+  },
+  "/referral/:id/action-plan/change-service-end-date-check": {
+    "pageTitle": "Session details – Service end date",
+    "pageHeader": "Service end date",
+    "continueButtonText": "Continue",
+    "saveAndContinueButtonText": "Save and continue",
+    "backLink": "/referral/{{ id }}/action-plan/risks-and-adjustments",
+    "editBackLink": "/referral/{{ id }}/action-plan/service-delivery-check-your-answers"
   },
   "/referral/:id/action-plan/update-service-end-date": {
     "pageTitle": "Session details – Change the service end date",
     "pageHeader": "Change the service end date",
     "continueButtonText": "Continue",
-    "backLink": "/referral/{{ id }}/action-plan/service-end-date-check"
+    "saveAndContinueButtonText": "Save and continue",
+    "backLink": "/referral/{{ id }}/action-plan/service-end-date-check",
+    "editBackLink": "/referral/{{ id }}/action-plan/change-service-end-date-check"
+  },
+  "/referral/:id/action-plan/change-update-service-end-date": {
+    "pageTitle": "Session details – Change the service end date",
+    "pageHeader": "Change the service end date",
+    "continueButtonText": "Continue",
+    "saveAndContinueButtonText": "Save and continue",
+    "backLink": "/referral/{{ id }}/action-plan/service-end-date-check",
+    "editBackLink": "/referral/{{ id }}/action-plan/change-service-end-date-check"
   },
   "/referral/:id/action-plan/person-involvement": {
     "pageTitle": "Session details – Person involvement",
     "continueButtonText": "Continue",
-    "backLink": "/referral/{{ id }}/action-plan/service-end-date-check"
+    "saveAndContinueButtonText": "Save and continue",
+    "backLink": "/referral/{{ id }}/action-plan/service-end-date-check",
+    "editBackLink": "/referral/{{ id }}/action-plan/service-delivery-check-your-answers"
+  },
+  "/referral/:id/action-plan/change-person-involvement": {
+    "pageTitle": "Session details – Person involvement",
+    "continueButtonText": "Continue",
+    "saveAndContinueButtonText": "Save and continue",
+    "backLink": "/referral/{{ id }}/action-plan/service-end-date-check",
+    "editBackLink": "/referral/{{ id }}/action-plan/service-delivery-check-your-answers"
   },
   "/referral/:id/action-plan/service-delivery-check-your-answers": {
     "pageTitle": "Session details – Check your answers",
@@ -458,23 +507,23 @@
     "summaryLists": [
       {
         "summaryTitle": "Session details",
-        "changeHref": "/referral/{{ id }}/action-plan/session-delivery-details"
+        "changeHref": "/referral/{{ id }}/action-plan/change-session-delivery-details"
       },
       {
         "summaryTitle": "Risks and adjustments",
-        "changeHref": "/referral/{{ id }}/action-plan/risks-and-adjustments"
+        "changeHref": "/referral/{{ id }}/action-plan/change-risks-and-adjustments"
       },
       {
         "summaryTitle": "Service end date",
-        "changeHref": "/referral/{{ id }}/action-plan/service-end-date-check"
+        "changeHref": "/referral/{{ id }}/action-plan/change-service-end-date-check"
       },
       {
         "summaryTitle": "Involvement in creating action plan",
-        "changeHref": "/referral/{{ id }}/action-plan/person-involvement"
+        "changeHref": "/referral/{{ id }}/action-plan/change-person-involvement"
       }
     ],
     "submitButtonText": "Submit action plan",
-    "submitHref": "/referral/{{ id }}/action-plan/submit",
+    "submitHref": "/referral/{{ id }}/action-plan/service-delivery-check-your-answers",
     "backLink": "/referral/{{ id }}/action-plan/person-involvement"
   },
   "/referral/:id/action-plan/activities/add": {
@@ -1077,7 +1126,7 @@
         "title": "Check answers and submit",
         "subTasks": {
           "checkAnswersAndSubmit": {
-            "text": "Check answers and submit",
+            "text": "Check answers and submit the referral",
             "href": "/referral/check-referral-information"
           }
         }
