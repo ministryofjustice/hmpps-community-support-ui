@@ -21,6 +21,7 @@ type ReferralDetailsResponseDto = components['schemas']['ReferralDetailsBffRespo
 type AppointmentIcsResponse = components['schemas']['AppointmentIcsResponse']
 type AppointmentTimeResponse = components['schemas']['AppointmentIcsResponse']['appointmentTime']
 type ReferralProgress = components['schemas']['ReferralProgressDto']
+type ReferralAppointmentsBffResponseDto = components['schemas']['ReferralAppointmentsBffResponseDto']
 type ReferralAppointmentHistory = components['schemas']['ReferralAppointmentHistoryDto']
 type ProbationOffice = components['schemas']['ProbationOffice']
 type IcsFeedbackSubmission = components['schemas']['CreateIcsFeedbackRequest']
@@ -83,7 +84,7 @@ type AdditionalInformationForTheDeliveryPartner =
 
 type Selection = components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
 type WithdrawReferralRequest = components['schemas']['WithdrawReferralRequest']
-type ExisingSupportNeedsBffResponseDto = components['schemas']['ExistingSupportNeedsBffResponseDto']
+
 export type {
   Referral,
   CommunitySupportServicesProvider,
@@ -106,6 +107,7 @@ export type {
   AppointmentIcsResponse,
   AppointmentTimeResponse,
   ReferralProgress,
+  ReferralAppointmentsBffResponseDto,
   ReferralAppointmentHistory,
   ProbationOffice,
   IcsFeedbackSubmission,
@@ -163,5 +165,4 @@ export type {
   WithdrawReferralRequest,
   DraftAdditionalReferralInformationTableDataDto,
   DraftMainPOCDetailsTableDataDto,
-  ExisingSupportNeedsBffResponseDto,
 }
