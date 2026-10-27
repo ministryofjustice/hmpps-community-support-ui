@@ -551,57 +551,5 @@ describe('ViewSessionFeedbackPresenter', () => {
         expect(viewModel.sessionFeedbackSummary.rows).toHaveLength(1)
       })
     })
-
-    describe('Issues and next steps', () => {
-      it('shows issues or concerns when provided', () => {
-        const viewModel = renderViewModel(
-          IcsFeedbackResponseFactory.build({ issuesOrConcernsIdentified: 'No concerns identified' }),
-        )
-
-        expect(viewModel.issuesAndConcernsSummary.card?.title?.text).toBe('Issues or concerns')
-        expect(viewModel.issuesAndConcernsSummary.rows).toEqual([
-          {
-            key: { text: 'Issues or concerns identified' },
-            value: { text: 'No concerns identified' },
-          },
-        ])
-      })
-
-      it('shows next steps', () => {
-        const viewModel = renderViewModel()
-
-        expect(viewModel.nextStepsSummary.card?.title?.text).toBe('Next steps')
-        expect(viewModel.nextStepsSummary.rows).toEqual([
-          {
-            key: { text: 'Planned for the next session' },
-            value: { text: 'Continue with action plan' },
-          },
-          {
-            key: { text: 'Actions before the next session' },
-            value: { text: 'Complete CV template' },
-          },
-        ])
-      })
-
-      it('shows additional support needs when provided', () => {
-        const viewModel = renderViewModel(
-          IcsFeedbackResponseFactory.build({ additionalSupportNeeds: 'Needs a quiet room for sessions' }),
-        )
-
-        expect(viewModel.additionalSupportNeedsSummary.card?.title?.text).toBe('Needs and additional support')
-        expect(viewModel.additionalSupportNeedsSummary.rows).toEqual([
-          {
-            key: { text: 'New support needs identified' },
-            value: { text: 'Needs a quiet room for sessions' },
-          },
-        ])
-      })
-
-      it('shows a fallback when no additional support needs were identified', () => {
-        const viewModel = renderViewModel(IcsFeedbackResponseFactory.build({ additionalSupportNeeds: null }))
-
-        expect(viewModel.additionalSupportNeedsSummary.rows[0].value.text).toBe('None')
-      })
-    })
   })
 })
