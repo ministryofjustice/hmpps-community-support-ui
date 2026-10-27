@@ -83,7 +83,10 @@ const APPOINTMENT_DELIVERY_METHOD_DISPLAY: Record<string, string> = {
   IN_PERSON_OTHER_LOCATION: 'In person (other location)',
 }
 
-export default class ViewSessionFeedbackPresenter extends PresenterBase<ViewSessionFeedbackViewModel, object> {
+export default class ViewSessionFeedbackPresenter extends PresenterBase<
+  ViewSessionFeedbackViewModel,
+  ViewSessionFeedbackContent
+> {
   constructor(
     private readonly icsFeedbackSubmissionResponse: IcsFeedbackSubmissionResponse,
     private readonly caseRefId: string,
