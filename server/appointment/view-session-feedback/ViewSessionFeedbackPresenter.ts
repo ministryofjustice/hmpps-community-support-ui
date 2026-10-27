@@ -76,12 +76,12 @@ export interface DidNotAttendSessionFeedbackRowInput {
 
 const REMOTE_SESSION_METHODS = new Set(['Phone call', 'Video call'])
 
-const APPOINTMENT_DELIVERY_METHOD_DISPLAY: Record<string, string> = {
-  PHONE_CALL: 'Phone call',
-  VIDEO_CALL: 'Video call',
-  IN_PERSON_PROBATION_OFFICE: 'In person (probation office)',
-  IN_PERSON_OTHER_LOCATION: 'In person (other location)',
-}
+// const APPOINTMENT_DELIVERY_METHOD_DISPLAY: Record<string, string> = {
+//   PHONE_CALL: 'Phone call',
+//   VIDEO_CALL: 'Video call',
+//   IN_PERSON_PROBATION_OFFICE: 'In person (probation office)',
+//   IN_PERSON_OTHER_LOCATION: 'In person (other location)',
+// }
 
 export default class ViewSessionFeedbackPresenter extends PresenterBase<
   ViewSessionFeedbackViewModel,
