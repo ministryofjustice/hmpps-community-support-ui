@@ -33,6 +33,7 @@ import type {
   ActionPlanActionRequest,
   ActionPlanActionResponse,
   ActionPlanSessionDeliveryDetailsResponse,
+  ActionPlanSessionDeliveryDetailsRequest,
   ActionPlanSelectANeedResponse,
   WithdrawalReasonsGroupedBffResponseDto,
   AreaConfirmationBffResponseDto,
@@ -147,6 +148,14 @@ export default class CommunitySupportApiClient extends RestClient {
     return this.post({ path: `/referral/${caseRefId}/ics`, data: createAppointmentRequest }, asSystem(username))
   }
 
+  async submitAppointment(
+    caseRefId: string,
+    createAppointmentRequest: CreateAppointmentRequest,
+    username: string,
+  ): Promise<AppointmentIcsResponse> {
+    return this.post({ path: `/referral/${caseRefId}/appointment`, data: createAppointmentRequest }, asSystem(username))
+  }
+
   getReferralProgress(caseReference: string, username: string): Promise<ReferralProgress> {
     return this.get({ path: `/bff/referral-details/${caseReference}/progress` }, asSystem(username))
   }
@@ -188,6 +197,17 @@ export default class CommunitySupportApiClient extends RestClient {
     )
   }
 
+  submitServiceDeliveryDetails(
+    caseReference: string,
+    request: ActionPlanSessionDeliveryDetailsRequest,
+    username: string,
+  ): Promise<ActionPlanSessionDeliveryDetailsResponse> {
+    return this.patch(
+      { path: `/referral/${caseReference}/action-plan/session-delivery-details`, data: request },
+      asSystem(username),
+    )
+  }
+
   getRisksAndAdjustments(caseReference: string, username: string): Promise<ActionPlanSessionDeliveryDetailsResponse> {
     return this.get(
       { path: `/bff/referral/${caseReference}/action-plan/service-delivery-details/risks-and-adjustments` },
@@ -219,6 +239,19 @@ export default class CommunitySupportApiClient extends RestClient {
   getPersonInvolvement(caseReference: string, username: string): Promise<ActionPlanSessionDeliveryDetailsResponse> {
     return this.get(
       { path: `/bff/referral/${caseReference}/action-plan/service-delivery-details/person-involvement` },
+      asSystem(username),
+    )
+  }
+
+  getSessionDeliveryCheckYourAnswers(
+    caseReference: string,
+    username: string,
+    isServiceEndDateChanged: boolean,
+  ): Promise<ActionPlanSessionDeliveryDetailsResponse> {
+    return this.get(
+      {
+        path: `/bff/referral/${caseReference}/action-plan/session-delivery-details/check-your-answers?isServiceEndDateChanged=${isServiceEndDateChanged}`,
+      },
       asSystem(username),
     )
   }

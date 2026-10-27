@@ -63,27 +63,25 @@ const incompleteTaskStatus = {
   completed: false,
   statusText: 'Incomplete',
   tag: 'govuk-tag--blue',
-}
+} as const
+
+const cannotStartTaskStatus = { completed: false, statusText: 'Cannot Start Yet', tag: null } as const
+
+const completeTaskStatus = { completed: true, statusText: 'Completed', tag: 'govuk-tag--blue' } as const
 
 const buildTaskListStatus = (taskListStatus: TaskListStatusStub): TaskListStatusDto => ({
   fullName: taskListStatus.fullName,
-  confirmPersonalDetailsCompleted: taskListStatus.confirmPersonalDetailsCompleted ?? incompleteTaskStatus,
-  checkRiskInformationCompleted: taskListStatus.checkRiskInformationCompleted ?? incompleteTaskStatus,
-  selectThePersonsNeedsCompleted: taskListStatus.selectThePersonsNeedsCompleted ?? incompleteTaskStatus,
-  addDetailsOfAnyAdditionalSupportNeedsCompleted:
-    taskListStatus.addDetailsOfAnyAdditionalSupportNeedsCompleted ?? incompleteTaskStatus,
-  addDetailsOfMainPointOfContactCompleted:
-    taskListStatus.addDetailsOfMainPointOfContactCompleted ?? incompleteTaskStatus,
-  addAdditionalInformationCompleted: taskListStatus.addAdditionalInformationCompleted ?? incompleteTaskStatus,
-  selectAnAreaForReferralCompleted: taskListStatus.selectAnAreaForReferralCompleted ?? incompleteTaskStatus,
-  // addMainPointOfContactCompleted supersedes addDetailsOfMainPointOfContactCompleted and drives which
-  // contact details task is shown. Default it to the legacy field's value so existing fixtures/specs that
-  // only set the legacy field keep exercising the "add contact details" task, as before.
-  addMainPointOfContactCompleted:
-    taskListStatus.addMainPointOfContactCompleted ??
-    taskListStatus.addDetailsOfMainPointOfContactCompleted ??
-    incompleteTaskStatus,
-  checkProbationPractitionerDetailsCompleted: taskListStatus.checkProbationPractitionerDetailsCompleted ?? null,
+  confirmPersonalDetailsStatus: taskListStatus.confirmPersonalDetailsStatus || completeTaskStatus,
+  checkRiskInformationStatus: taskListStatus.checkRiskInformationStatus || incompleteTaskStatus,
+  selectThePersonsNeedsStatus: taskListStatus.selectThePersonsNeedsStatus || incompleteTaskStatus,
+  addAdditionalSupportNeedsStatus: taskListStatus.addAdditionalSupportNeedsStatus || incompleteTaskStatus,
+  addAdditionalInformationStatus: taskListStatus.addAdditionalInformationStatus || incompleteTaskStatus,
+  selectAnAreaForReferralStatus: taskListStatus.selectAnAreaForReferralStatus || incompleteTaskStatus,
+  contactDetailsStatus: taskListStatus.contactDetailsStatus || {
+    isProbationPractitioner: true,
+    status: incompleteTaskStatus,
+  },
+  checkYourAnswersStatus: taskListStatus.checkYourAnswersStatus || cannotStartTaskStatus,
 })
 
 export default {
@@ -547,6 +545,22 @@ export default {
         jsonBody: mockRespData,
       },
     }),
+  stubSubmitAppointment: (
+    caseRefId: string,
+    mockRespData: AppointmentIcsResponse,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'POST',
+        urlPathPattern: `/community-support/referral/${caseRefId}/appointment`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: mockRespData,
+      },
+    }),
   stubRescheduleICS: (caseRefId: string, mockRespData: AppointmentIcsResponse, httpStatus = 200): SuperAgentRequest =>
     stubFor({
       request: {
@@ -703,6 +717,42 @@ export default {
         status: httpStatus,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: sessionDeliveryDetails,
+      },
+    }),
+  stubGetSessionDeliveryCheckYourAnswers: (
+    caseReference: string,
+    checkYourAnswers: ActionPlanSessionDeliveryDetailsResponse,
+    isServiceEndDateChanged = false,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPath: `/community-support/bff/referral/${caseReference}/action-plan/session-delivery-details/check-your-answers`,
+        queryParameters: {
+          isServiceEndDateChanged: { equalTo: String(isServiceEndDateChanged) },
+        },
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: checkYourAnswers,
+      },
+    }),
+  stubSubmitServiceDelivery: (
+    caseReference: string,
+    response: ActionPlanSessionDeliveryDetailsResponse,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'PATCH',
+        urlPath: `/community-support/referral/${caseReference}/action-plan/session-delivery-details`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: response,
       },
     }),
   stubGetRisksAndAdjustments: (

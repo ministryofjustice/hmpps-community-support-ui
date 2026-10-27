@@ -58,6 +58,43 @@ describe('ActionPlanPresenter', () => {
     })
   })
 
+  describe('side navigation', () => {
+    const buildSummary = (hasNeeds: boolean): ActionPlanSummaryDto => ({
+      personDetails: { firstName: 'Alex', lastName: 'River' },
+      needs: hasNeeds
+        ? [
+            {
+              id: 'need_id_1',
+              label: 'Accommodation',
+              orderNumber: 1,
+              outcomes: [{ id: 'outcome_id_1', label: 'Find housing', activities: [] }],
+            },
+          ]
+        : [],
+      lastUpdatedAt: '2026-10-15T09:00:00Z',
+    })
+
+    const render = (summary: ActionPlanSummaryDto) => {
+      const res = { locals: { content: actionPlanContent }, render: jest.fn() } as unknown as Response
+      new ActionPlanPresenter(summary, 'AB1234CD').renderPage(res)
+      return (res.render as jest.Mock).mock.calls[0][1] as { content: ActionPlanViewModel }
+    }
+
+    it('builds the side navigation with the action plan item active when there are needs', () => {
+      expect(render(buildSummary(true)).content.horizontalSubNavArgs).toEqual({
+        label: 'Side navigation',
+        items: [
+          { href: '/referral/AB1234CD/action-plan', text: 'Action plan', active: true },
+          { href: '/referral/AB1234CD/service-delivery', text: 'Service details', active: false },
+        ],
+      })
+    })
+
+    it('does not build the side navigation when there are no needs', () => {
+      expect(render(buildSummary(false)).content.horizontalSubNavArgs).toBeUndefined()
+    })
+  })
+
   it('builds the needs summary from data', () => {
     const actionPlanSummary: ActionPlanSummaryDto = {
       personDetails: {
@@ -108,7 +145,7 @@ describe('ActionPlanPresenter', () => {
     expect(renderData.content.addAnotherOutcomeButton.text).toBe('Add another outcome')
     expect(renderData.content.submitActionPlanButton).toEqual({
       href: '/referral/AB1234CD/action-plan/session-delivery-details',
-      text: 'Submit Action plan',
+      text: 'Submit action plan',
     })
 
     expect(renderData.content.needsSummary.length).toBe(1)
@@ -127,7 +164,7 @@ describe('ActionPlanPresenter', () => {
     )
     expect(need.rows.length).toBe(3)
     const activities = need.rows
-    expect(activities[0].key.text).toBe('Who will do this')
+    expect(activities[0].key.text).toBe('Who will deliver this')
     expect(activities[0].value.text).toBe('Activity')
     expect(activities[1].key.text).toBe('Delivery practitioner')
     expect(activities[1].value.text).toBe('Details about what needs to be done to achieve the outcome')
@@ -291,7 +328,7 @@ describe('ActionPlanPresenter', () => {
 
       expect(content.submitActionPlanButton).toEqual({
         href: '/referral/AB1234CD/action-plan/session-delivery-details',
-        text: 'Submit Action plan',
+        text: 'Submit action plan',
       })
     })
 

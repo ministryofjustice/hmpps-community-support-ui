@@ -10,6 +10,7 @@ import { ViewSessionFeedbackContent, ViewSessionFeedbackViewModel } from './View
 import { isoToFormattedDate } from '../../utils/dateFormat'
 import { isoToFormattedTime } from '../../utils/timeFormat'
 import { createMailtoLink } from '../../utils/viewUtils'
+import { getInformedByLabel } from '../informedByLabels'
 
 type AppointmentDeliveryDetails = SessionFeedbackAppointmentDetails['appointmentDeliveryDetails']
 
@@ -75,10 +76,14 @@ export interface DidNotAttendSessionFeedbackRowInput {
 
 const REMOTE_SESSION_METHODS = new Set(['Phone call', 'Video call'])
 
-export default class ViewSessionFeedbackPresenter extends PresenterBase<
-  ViewSessionFeedbackViewModel,
-  ViewSessionFeedbackContent
-> {
+const APPOINTMENT_DELIVERY_METHOD_DISPLAY: Record<string, string> = {
+  PHONE_CALL: 'Phone call',
+  VIDEO_CALL: 'Video call',
+  IN_PERSON_PROBATION_OFFICE: 'In person (probation office)',
+  IN_PERSON_OTHER_LOCATION: 'In person (other location)',
+}
+
+export default class ViewSessionFeedbackPresenter extends PresenterBase<ViewSessionFeedbackViewModel, object> {
   constructor(
     private readonly icsFeedbackSubmissionResponse: IcsFeedbackSubmissionResponse,
     private readonly caseRefId: string,
@@ -108,8 +113,8 @@ export default class ViewSessionFeedbackPresenter extends PresenterBase<
     return 'appointment/viewSessionFeedback'
   }
 
-  private formatSessionCommunication(input: string, content: ViewSessionFeedbackContent['appointmentDetails']): string {
-    return (content.sessionCommunicationDisplay as Record<string, string>)[input] ?? input
+  private formatSessionCommunication(input: string): string {
+    return getInformedByLabel(input)
   }
 
   private formatLocation(parts: (string | null | undefined)[]): string | undefined {

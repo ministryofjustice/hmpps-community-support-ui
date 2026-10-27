@@ -26,4 +26,20 @@ describe('ActionPlanSelectANeedPresenter', () => {
     expect(renderData.content.identifiedNeedsDetailsTitle).toBe('Show the needs identified in the referral')
     expect(renderData.content.identifiedNeeds).toEqual(selectedNeeds)
   })
+
+  it("doesn't show the identified needs section when none are identified", () => {
+    const needs: ActionPlanSelectANeedNeed[] = [
+      { id: 'need-1', label: 'Accommodation', outcomes: [{ id: 'outcome-1', text: 'Find housing' }] },
+    ]
+    const presenter = new ActionPlanSelectANeedPresenter('AB1234CD', needs, [])
+    const res = {
+      locals: { content: globalContent['/referral/:id/action-plan/select-a-need'] },
+      render: jest.fn(),
+    } as unknown as Response
+
+    presenter.renderPage(res)
+    const renderData = (res.render as jest.Mock).mock.calls[0][1] as { content: ActionPlanSelectANeedViewModel }
+
+    expect(renderData.content.identifiedNeeds).toHaveLength(0)
+  })
 })
