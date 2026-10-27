@@ -205,10 +205,7 @@ test.describe('View ICS Session Feedback', () => {
       .locator('.govuk-summary-list__row')
       .filter({ hasText: 'Feedback submitted by' })
     await expect(submittedByRow).toContainText('CaseWorker Two')
-    await expect(submittedByRow.getByRole('link')).toHaveAttribute(
-      'href',
-      `mailto:${caseWorkerTwo.emailAddress}`,
-    )
+    await expect(submittedByRow.getByRole('link')).toHaveAttribute('href', `mailto:${caseWorkerTwo.emailAddress}`)
 
     const communicationRow = appointmentDetailsCard
       .locator('.govuk-summary-list__row')
@@ -295,7 +292,9 @@ test.describe('View ICS Session Feedback', () => {
 
     const attendanceCard = page.locator('.govuk-summary-card', { hasText: 'Record session attendance' })
     await expect(attendanceCard).toBeVisible()
-    const happenedRow = attendanceCard.locator('.govuk-summary-list__row').filter({ hasText: 'Did the session happen?' })
+    const happenedRow = attendanceCard
+      .locator('.govuk-summary-list__row')
+      .filter({ hasText: 'Did the session happen?' })
     await expect(happenedRow.locator('.govuk-summary-list__value')).toHaveText('No')
     const attendedRow = attendanceCard
       .locator('.govuk-summary-list__row')

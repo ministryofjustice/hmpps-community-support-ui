@@ -172,10 +172,8 @@ export default class ViewSessionFeedbackPresenter extends PresenterBase<
       feedbackSubmittedBy,
       date: isoToFormattedDate(startDateTime),
       startTime: isoToFormattedTime(startDateTime),
-      sessionMethod:
-        this.icsFeedbackSubmissionResponse.recordSessionHowSessionTookPlace,
-      reasonForSessionNotInPerson:
-        this.icsFeedbackSubmissionResponse.recordSessionNotInPersonReason,
+      sessionMethod: this.icsFeedbackSubmissionResponse.recordSessionHowSessionTookPlace,
+      reasonForSessionNotInPerson: this.icsFeedbackSubmissionResponse.recordSessionNotInPersonReason,
       location: this.buildLocation(
         this.icsFeedbackSubmissionResponse.recordSessionHowSessionTookPlace,
         appointmentDeliveryDetails,
@@ -229,7 +227,7 @@ export default class ViewSessionFeedbackPresenter extends PresenterBase<
 
   private buildSessionFeedbackSummary(content: ViewSessionFeedbackContent): GovukFrontendSummaryList {
     const response = this.icsFeedbackSubmissionResponse
-    const personFirstName = response.sessionFeedbackAppointmentDetails.personFirstName
+    const { personFirstName } = response.sessionFeedbackAppointmentDetails
     let rows: GovukFrontendSummaryList['rows']
 
     if (response.recordSessionDidSessionHappen) {
@@ -364,9 +362,9 @@ export function buildSessionDetailsRows(input: SessionDetailsSummaryRowInput): G
   return [
     {
       key: { text: content.wasPersonLate.replace('{{ firstname }}', personFirstName) },
-      value: { text: isLate == null ? noneText : isLate ? input.yesText : input.noText },
+      value: { text: isLate ? input.yesText : input.noText },
     },
-    ...(isLate !== false
+    ...(isLate === true
       ? [
           {
             key: { text: content.whyWereTheyLate.replace('{{ firstname }}', personFirstName) },
@@ -382,7 +380,7 @@ export function buildSessionDetailsRows(input: SessionDetailsSummaryRowInput): G
 export function buildRecordSessionAttendanceRows(
   input: RecordSessionAttendanceSummaryRowInput,
 ): GovukFrontendSummaryList['rows'] {
-  const { didSessionHappen, attendedAppointment, personFirstName, content, noneText } = input
+  const { didSessionHappen, attendedAppointment, personFirstName, content } = input
 
   return [
     {
@@ -392,7 +390,7 @@ export function buildRecordSessionAttendanceRows(
     {
       key: { text: content.didPersonAttend.replace('{{ firstname }}', personFirstName) },
       value: {
-        text: attendedAppointment == null ? noneText : attendedAppointment ? input.yesText : input.noText,
+        text: attendedAppointment ? input.yesText : input.noText,
       },
     },
   ]
