@@ -1,5 +1,5 @@
 import { Response } from 'express'
-import { GovukFrontendErrorMessage, GovukFrontendSummaryList } from '@govuk-frontend'
+import { GovukFrontendErrorMessage, GovukFrontendSummaryList, GovukFrontendSummaryListRow } from '@govuk-frontend'
 import { ExistingSupportNeedsBffResponseDto } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
 import {
@@ -16,19 +16,14 @@ import {
 import { components } from '../../@types/communitySupportApi/imported'
 import { escapeHtml } from '../../utils/utils'
 import { ErrorMiddlewareErrors } from '../../@types/express'
-import { govFrontendSummaryListRow } from '../../utils/viewUtils'
 
-export type ExistingSupportNeedsPresenterData = Pick<
-  ExistingSupportNeedsBffResponseDto,
-  'supportNeeds' | 'referralFirstName'
->
 export default class IdentifiedAdditionalSupportNeedsPresenter extends PresenterBase<
   IdentifiedAdditionalNeedsViewModel,
   IdentifiedAdditionalNeedsContent
 > {
   constructor(
     private readonly caseRefId: string,
-    private readonly data: ExistingSupportNeedsPresenterData,
+    private readonly existingSupportNeedsdata: ExistingSupportNeedsBffResponseDto,
     private readonly identifiedAdditionalNeeds: components['schemas']['IdentifiedAdditionalNeedsRequest'],
     private readonly validationErrors?: ErrorMiddlewareErrors,
   ) {
@@ -52,7 +47,7 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
       <h1 class="govuk-label-wrapper govuk-label">
         <label class="govuk-label govuk-label--s"
           id=${content.identityDetailsName}Label>
-          ${content.identityDetailsLabel.replace('{{ firstname }}', this.data.referralFirstName)}
+          ${content.identityDetailsLabel.replace('{{ firstname }}', this.existingSupportNeedsdata.referralFirstName)}
         </label>
       </h1>
       ${errorHtml}
@@ -93,7 +88,7 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
       fieldset: {
         attributes: { 'data-testid': `fieldset-${content.name}` },
         legend: {
-          text: content.title.replace('{{ firstname }}', this.data.referralFirstName),
+          text: content.title.replace('{{ firstname }}', this.existingSupportNeedsdata.referralFirstName),
           isPageHeading: false,
           classes: 'govuk-fieldset__legend govuk-fieldset__legend--m',
         },
@@ -105,20 +100,112 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
   }
 
   private buildExistingSuppportNeedsDetails = (
-    cardTitle: string,
-    exisitngData: ExistingSupportNeedsPresenterData,
+    content: IdentifiedAdditionalNeedsContent,
+    exisitngData: ExistingSupportNeedsBffResponseDto,
   ): GovukFrontendSummaryList | undefined => {
-    if (!exisitngData.supportNeeds || exisitngData.supportNeeds.length === 0) return undefined
+    if (!exisitngData.referralFirstName) return undefined
+
+    const draftRows = this.getDraftRows(exisitngData, content)
 
     return {
       card: {
         title: {
-          text: cardTitle,
+          text: content.cardTitle,
         },
       },
-      rows: exisitngData.supportNeeds.map(need => govFrontendSummaryListRow(need.needName, need.needDetails)),
+      rows: draftRows,
+
       attributes: { 'data-testid': 'exisiting-support-needs-details' },
     }
+  }
+
+  private getDraftRows = (
+    exisitngData: ExistingSupportNeedsBffResponseDto,
+    content: IdentifiedAdditionalNeedsContent,
+  ): GovukFrontendSummaryListRow[] => {
+    const draftRows: GovukFrontendSummaryListRow[] = []
+
+    if (exisitngData.physicalHealthDetails) {
+      draftRows.push({
+        key: {
+          text: content.supportNeedsTitle.physicalHealth,
+        },
+        value: {
+          html: exisitngData.physicalHealthDetails,
+        },
+      })
+    }
+    if (exisitngData.mentalEmotionalHealthDetails) {
+      draftRows.push({
+        key: {
+          text: content.supportNeedsTitle.mentalEmotionalHealth,
+        },
+        value: {
+          html: exisitngData.mentalEmotionalHealthDetails,
+        },
+      })
+    }
+    if (exisitngData.neurodiversityDetails) {
+      draftRows.push({
+        key: {
+          text: content.supportNeedsTitle.neurodiversity,
+        },
+        value: {
+          html: exisitngData.neurodiversityDetails,
+        },
+      })
+    }
+    if (exisitngData.locationTravelDetails) {
+      draftRows.push({
+        key: {
+          text: content.supportNeedsTitle.locationTravel,
+        },
+        value: {
+          html: exisitngData.locationTravelDetails,
+        },
+      })
+    }
+    if (exisitngData.caringResponsibilitiesDetails) {
+      draftRows.push({
+        key: {
+          text: content.supportNeedsTitle.caringResponsibilities,
+        },
+        value: {
+          html: exisitngData.caringResponsibilitiesDetails,
+        },
+      })
+    }
+    if (exisitngData.employmentResponsibilitiesDetails) {
+      draftRows.push({
+        key: {
+          text: content.supportNeedsTitle.employmentResponsibilities,
+        },
+        value: {
+          html: exisitngData.employmentResponsibilitiesDetails,
+        },
+      })
+    }
+    if (exisitngData.diversityDetails) {
+      draftRows.push({
+        key: {
+          text: content.supportNeedsTitle.diversity,
+        },
+        value: {
+          html: exisitngData.diversityDetails,
+        },
+      })
+    }
+    if (exisitngData.anythingElseDetails) {
+      draftRows.push({
+        key: {
+          text: content.supportNeedsTitle.anythingElse,
+        },
+        value: {
+          html: exisitngData.anythingElseDetails,
+        },
+      })
+    }
+    return draftRows
   }
 
   buildViewModel(res: Response): IdentifiedAdditionalNeedsViewModel {
@@ -133,8 +220,8 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
     return {
       pageTitle: content.pageTitle,
       pageHeader: content.pageHeader,
-      pageSubHeader: content.pageSubHeader.replace('{{ firstname }}', this.data.referralFirstName),
-      firstname: this.data.referralFirstName,
+      pageSubHeader: content.pageSubHeader.replace('{{ firstname }}', this.existingSupportNeedsdata.referralFirstName),
+      firstname: this.existingSupportNeedsdata.referralFirstName,
       didYouIdentityRadio: this.buildDidYouIdentityRadio(
         content.didYouIdentityRadio,
         formData,
@@ -143,7 +230,7 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
       submitButton: { text: content.submitButtonText },
       submitHref: `/ics-feedback/${this.caseRefId}/identified-additional-needs`,
       backLink: { href: content.backLinkHref.replace('{{ id }}', this.caseRefId) },
-      existingSupportNeedsDetails: this.buildExistingSuppportNeedsDetails(content.cardTitle, this.data),
+      existingSupportNeedsDetails: this.buildExistingSuppportNeedsDetails(content, this.existingSupportNeedsdata),
       formData,
     }
   }

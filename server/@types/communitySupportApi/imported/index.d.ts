@@ -1727,12 +1727,16 @@ export interface components {
       otherAppointmentMethods?: string[] | null
     }
     ExistingSupportNeedsBffResponseDto: {
-      supportNeeds?: components['schemas']['SupportNeed'][] | null
+      physicalHealthDetails?: string | null
+      mentalEmotionalHealthDetails?: string | null
+      neurodiversityDetails?: string | null
+      locationTravelDetails?: string | null
+      caringResponsibilitiesDetails?: string | null
+      employmentResponsibilitiesDetails?: string | null
+      diversityDetails?: string | null
+      anythingElseDetails?: string | null
+      interpreterLanguage?: string | null
       referralFirstName: string
-    }
-    SupportNeed: {
-      needName: string
-      needDetails: string
     }
     CreateAppointmentReferenceDataBffDto: {
       appointmentTypes: components['schemas']['CreateAppointmentTypeOptionDto'][]

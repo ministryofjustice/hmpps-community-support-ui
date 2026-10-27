@@ -836,10 +836,11 @@ class AppointmentController {
 
     const identifiedAdditionalNeeds = icsFeedbackSubmission ? icsFeedbackSubmission.identifiedAdditionalNeeds : null
     const appointmentData = await this.appointmentService.getICS(caseRefId.toString(), username)
-    const existingSupportNeeedsData = await this.appointmentService.getExistingSupportNeedsStub(
+    const existingSupportNeeedsDataStub = await this.appointmentService.getExistingSupportNeedsStub(
       caseRefId.toString(),
       username,
     )
+
     const validationErrors = formatDynamicErrorMessages(
       res.locals.errors,
       '{{ firstname }}',
@@ -849,7 +850,7 @@ class AppointmentController {
 
     const presenter = new IdentifiedAdditionalNeedsPresenter(
       caseRefId,
-      existingSupportNeeedsData,
+      existingSupportNeeedsDataStub,
       identifiedAdditionalNeeds,
       validationErrors,
     )
