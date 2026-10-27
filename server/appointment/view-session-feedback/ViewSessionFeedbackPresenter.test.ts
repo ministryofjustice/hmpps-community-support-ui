@@ -339,19 +339,21 @@ describe('ViewSessionFeedbackPresenter', () => {
         expect(viewModel.sessionDetailsSummary).toBeDefined()
       })
 
-      it('shows why session details do not apply when the session did not happen', () => {
+      it.each([true, false, null])('hides delivery-only cards when the session did not happen and attendance is %s', attended => {
         const viewModel = renderViewModel(
           IcsFeedbackResponseFactory.build({
             recordSessionDidSessionHappen: false,
-            recordSessionDidPersonAttend: true,
+            recordSessionDidPersonAttend: attended,
             recordSessionNotHappenReason: 'Provider unexpectedly cancelled session due to emergency meeting',
+            issuesOrConcernsIdentified: 'Recorded concern',
+            additionalSupportNeeds: 'Recorded support need',
           }),
         )
 
-        expect(viewModel.sessionDetailsSummary.rows).toContainEqual({
-          key: { text: 'Session details' },
-          value: { text: 'Not applicable because the session did not happen' },
-        })
+        expect(viewModel.sessionDetailsSummary).toBeUndefined()
+        expect(viewModel.issuesAndConcernsSummary).toBeUndefined()
+        expect(viewModel.additionalSupportNeedsSummary).toBeUndefined()
+        expect(viewModel.nextStepsSummary).toBeUndefined()
       })
 
       it('shows the late reason when the person was late', () => {
@@ -426,13 +428,24 @@ describe('ViewSessionFeedbackPresenter', () => {
         expect(viewModel.recordSessionAttendanceSummary.card?.title?.text).toBe('Record session attendance')
       })
 
-      it('includes the record session attendance summary when the session happened', () => {
+      it('hides the record session attendance summary when the session happened', () => {
         const viewModel = renderViewModel()
 
-        expect(viewModel.recordSessionAttendanceSummary.rows).toContainEqual({
-          key: { text: 'Did the session happen?' },
-          value: { text: 'Yes' },
-        })
+        expect(viewModel.recordSessionAttendanceSummary).toBeUndefined()
+      })
+
+      it('shows the attendance summary when the person attended but the session did not happen', () => {
+        const viewModel = renderViewModel(
+          IcsFeedbackResponseFactory.build({
+            recordSessionDidSessionHappen: false,
+            recordSessionDidPersonAttend: true,
+          }),
+        )
+
+        expect(viewModel.recordSessionAttendanceSummary.rows).toEqual([
+          { key: { text: 'Did the session happen?' }, value: { text: 'No' } },
+          { key: { text: 'Did Alex come to the appointment?' }, value: { text: 'Yes' } },
+        ])
       })
 
       it('shows the attendance status when the person did not attend', () => {

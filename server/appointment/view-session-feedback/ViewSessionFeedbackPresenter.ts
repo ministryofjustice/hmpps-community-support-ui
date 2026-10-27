@@ -95,12 +95,12 @@ export default class ViewSessionFeedbackPresenter extends PresenterBase<
       pageHeader: content.pageHeader,
       backLink: { href: content.backLink.replace('{{ id }}', this.caseRefId) },
       appointmentDetailsSummary: this.buildAppointmentDetailsSummary(content),
-      sessionDetailsSummary: this.buildSessionDetailsSummary(content, didSessionHappen),
-      recordSessionAttendanceSummary: this.buildRecordSessionAttendanceSummary(content),
+      sessionDetailsSummary: didSessionHappen ? this.buildSessionDetailsSummary(content) : undefined,
+      recordSessionAttendanceSummary: didSessionHappen ? undefined : this.buildRecordSessionAttendanceSummary(content),
       sessionFeedbackSummary: this.buildSessionFeedbackSummary(content),
-      issuesAndConcernsSummary: this.buildIssuesAndConcernsSummary(content),
-      additionalSupportNeedsSummary: this.buildAdditionalSupportNeedsSummary(content),
-      nextStepsSummary: this.buildNextStepsSummary(content),
+      issuesAndConcernsSummary: didSessionHappen ? this.buildIssuesAndConcernsSummary(content) : undefined,
+      additionalSupportNeedsSummary: didSessionHappen ? this.buildAdditionalSupportNeedsSummary(content) : undefined,
+      nextStepsSummary: didSessionHappen ? this.buildNextStepsSummary(content) : undefined,
     }
   }
 
@@ -192,22 +192,17 @@ export default class ViewSessionFeedbackPresenter extends PresenterBase<
     }
   }
 
-  private buildSessionDetailsSummary(
-    content: ViewSessionFeedbackContent,
-    didSessionHappen: boolean,
-  ): GovukFrontendSummaryList {
-    const rows = didSessionHappen
-      ? buildSessionDetailsRows({
-          content: content.sessionDetails,
-          noneText: content.noneText,
-          yesText: content.yesText,
-          noText: content.noText,
-          isLate: this.icsFeedbackSubmissionResponse.sessionDetailsWasPersonLate ?? null,
-          whyWereTheyLate: this.icsFeedbackSubmissionResponse.sessionDetailsLateReason,
-          sessionDuration: this.icsFeedbackSubmissionResponse.sessionDetailsDuration,
-          personFirstName: this.icsFeedbackSubmissionResponse.sessionFeedbackAppointmentDetails.personFirstName,
-        })
-      : [{ key: { text: content.sessionDetails.title }, value: { text: content.sessionDetails.notApplicable } }]
+  private buildSessionDetailsSummary(content: ViewSessionFeedbackContent): GovukFrontendSummaryList {
+    const rows = buildSessionDetailsRows({
+      content: content.sessionDetails,
+      noneText: content.noneText,
+      yesText: content.yesText,
+      noText: content.noText,
+      isLate: this.icsFeedbackSubmissionResponse.sessionDetailsWasPersonLate ?? null,
+      whyWereTheyLate: this.icsFeedbackSubmissionResponse.sessionDetailsLateReason,
+      sessionDuration: this.icsFeedbackSubmissionResponse.sessionDetailsDuration,
+      personFirstName: this.icsFeedbackSubmissionResponse.sessionFeedbackAppointmentDetails.personFirstName,
+    })
 
     return {
       card: { title: { text: content.sessionDetails.title } },

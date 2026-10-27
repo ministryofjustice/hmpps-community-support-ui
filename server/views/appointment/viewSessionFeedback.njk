@@ -9,11 +9,21 @@
 <h1 class="govuk-heading-xl">{{ content.pageHeader }}</h1>
 
     {{ govukSummaryList(content.appointmentDetailsSummary) }}
-    {{ govukSummaryList(content.sessionDetailsSummary) }}
-    {{ govukSummaryList(content.recordSessionAttendanceSummary) }}
+    {% if content.sessionDetailsSummary %}
+        {{ govukSummaryList(content.sessionDetailsSummary) }}
+    {% endif %}
+    {% if content.recordSessionAttendanceSummary %}
+        {{ govukSummaryList(content.recordSessionAttendanceSummary) }}
+    {% endif %}
     {{ govukSummaryList(content.sessionFeedbackSummary) }}
-    {{ govukSummaryList(content.issuesAndConcernsSummary) }}
-    {{ govukSummaryList(content.additionalSupportNeedsSummary) }}
-    {{ govukSummaryList(content.nextStepsSummary) }}
+    {% if content.issuesAndConcernsSummary %}
+        {{ govukSummaryList(content.issuesAndConcernsSummary) }}
+    {% endif %}
+    {% if content.additionalSupportNeedsSummary %}
+        {{ govukSummaryList(content.additionalSupportNeedsSummary) }}
+    {% endif %}
+    {% if content.nextStepsSummary %}
+        {{ govukSummaryList(content.nextStepsSummary) }}
+    {% endif %}
 
 {% endblock %}

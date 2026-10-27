@@ -8,10 +8,10 @@ export type ViewSessionFeedbackViewModel = {
   pageHeader: string
   backLink: GovukFrontendBackLink
   appointmentDetailsSummary: GovukFrontendSummaryList
-  sessionDetailsSummary: GovukFrontendSummaryList
-  recordSessionAttendanceSummary: GovukFrontendSummaryList
+  sessionDetailsSummary?: GovukFrontendSummaryList
+  recordSessionAttendanceSummary?: GovukFrontendSummaryList
   sessionFeedbackSummary: GovukFrontendSummaryList
-  issuesAndConcernsSummary: GovukFrontendSummaryList
-  additionalSupportNeedsSummary: GovukFrontendSummaryList
-  nextStepsSummary: GovukFrontendSummaryList
+  issuesAndConcernsSummary?: GovukFrontendSummaryList
+  additionalSupportNeedsSummary?: GovukFrontendSummaryList
+  nextStepsSummary?: GovukFrontendSummaryList
 }
