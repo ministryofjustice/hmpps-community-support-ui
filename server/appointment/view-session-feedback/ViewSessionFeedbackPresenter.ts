@@ -187,8 +187,7 @@ export default class ViewSessionFeedbackPresenter extends PresenterBase<
         appointmentDeliveryDetails,
       ),
       howWasUserInformedAboutSession:
-        sessionCommunications?.map(c => this.formatSessionCommunication(c, content.appointmentDetails)).join(', ') ??
-        '',
+        sessionCommunications?.map(c => this.formatSessionCommunication(c)).join(', ') ?? '',
       personFirstName,
     })
 
