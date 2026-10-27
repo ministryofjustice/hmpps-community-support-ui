@@ -840,10 +840,7 @@ class AppointmentController {
       caseRefId.toString(),
       username,
     )
-    const existingSupportNeeedsData = await this.appointmentService.getExistingSupportNeedsStub(
-      caseRefId.toString(),
-      username,
-    )
+
     const validationErrors = formatDynamicErrorMessages(
       res.locals.errors,
       '{{ firstname }}',

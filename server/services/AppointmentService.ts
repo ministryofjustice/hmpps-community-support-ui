@@ -6,7 +6,6 @@ import {
   IcsFeedbackSubmissionResponse,
   ChangeAppointmentDetails,
   ExistingSupportNeedsBffResponseDto,
-  SupportNeed,
 } from '@community-support-api'
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
 
@@ -77,8 +76,10 @@ export default class AppointmentService {
   getExistingSupportNeedsStub(_caseRefId: string, _username: string): ExistingSupportNeedsBffResponseDto {
     return {
       physicalHealthDetails: '',
-      mentalEmotionalHealthDetails: 'Alex experienced anxiety through different life events and personal stories, ranging from panic attacks and health anxiety to trauma-induced stress and neurodivergence-related overwhelm',
-      neurodiversityDetails: 'Alex experienced anxiety through different life events and personal stories, ranging from panic attacks and health anxiety to trauma-induced stress and neurodivergence-related overwhelm',
+      mentalEmotionalHealthDetails:
+        'As a young age, Alex experienced anxiety through different life events and personal stories, ranging from panic attacks and health anxiety to trauma-induced stress and neurodivergence-related overwhelm',
+      neurodiversityDetails:
+        'As per your description, Alex experienced anxiety through different life events and personal stories, ranging from panic attacks and health anxiety to trauma-induced stress and neurodivergence-related overwhelm',
       locationTravelDetails: '',
       caringResponsibilitiesDetails: '',
       employmentResponsibilitiesDetails: '',

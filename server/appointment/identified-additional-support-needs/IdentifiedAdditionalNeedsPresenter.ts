@@ -16,12 +16,7 @@ import {
 import { components } from '../../@types/communitySupportApi/imported'
 import { escapeHtml } from '../../utils/utils'
 import { ErrorMiddlewareErrors } from '../../@types/express'
-import { govFrontendSummaryListRow } from '../../utils/viewUtils'
 
-// export type ExistingSupportNeedsPresenterData = Pick<
-//   ExistingSupportNeedsBffResponseDto,
-//   'supportNeeds' | 'referralFirstName'
-// >
 export default class IdentifiedAdditionalSupportNeedsPresenter extends PresenterBase<
   IdentifiedAdditionalNeedsViewModel,
   IdentifiedAdditionalNeedsContent
@@ -119,95 +114,95 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
         },
       },
       rows: draftRows,
-      
+
       attributes: { 'data-testid': 'exisiting-support-needs-details' },
     }
   }
 
   private getDraftRows = (
     exisitngData: ExistingSupportNeedsBffResponseDto,
-    content: IdentifiedAdditionalNeedsContent
+    content: IdentifiedAdditionalNeedsContent,
   ): GovukFrontendSummaryListRow[] => {
     const draftRows: GovukFrontendSummaryListRow[] = []
 
     if (exisitngData.physicalHealthDetails) {
       draftRows.push({
         key: {
-          text: content.supportNeedsTitle.physicalHealth
+          text: content.supportNeedsTitle.physicalHealth,
         },
         value: {
-          html: exisitngData.physicalHealthDetails
-        }
+          html: exisitngData.physicalHealthDetails,
+        },
       })
     }
     if (exisitngData.mentalEmotionalHealthDetails) {
       draftRows.push({
         key: {
-          text: content.supportNeedsTitle.mentalEmotionalHealth
+          text: content.supportNeedsTitle.mentalEmotionalHealth,
         },
         value: {
-          html: exisitngData.mentalEmotionalHealthDetails
-        }
+          html: exisitngData.mentalEmotionalHealthDetails,
+        },
       })
     }
     if (exisitngData.neurodiversityDetails) {
       draftRows.push({
         key: {
-          text: content.supportNeedsTitle.neurodiversity
+          text: content.supportNeedsTitle.neurodiversity,
         },
         value: {
-          html: exisitngData.neurodiversityDetails
-        }
+          html: exisitngData.neurodiversityDetails,
+        },
       })
     }
     if (exisitngData.locationTravelDetails) {
       draftRows.push({
         key: {
-          text: content.supportNeedsTitle.locationTravel
+          text: content.supportNeedsTitle.locationTravel,
         },
         value: {
-          html: exisitngData.locationTravelDetails
-        }
+          html: exisitngData.locationTravelDetails,
+        },
       })
     }
     if (exisitngData.caringResponsibilitiesDetails) {
       draftRows.push({
         key: {
-          text: content.supportNeedsTitle.caringResponsibilities
+          text: content.supportNeedsTitle.caringResponsibilities,
         },
         value: {
-          html: exisitngData.caringResponsibilitiesDetails
-        }
+          html: exisitngData.caringResponsibilitiesDetails,
+        },
       })
     }
     if (exisitngData.employmentResponsibilitiesDetails) {
       draftRows.push({
         key: {
-          text: content.supportNeedsTitle.employmentResponsibilities
+          text: content.supportNeedsTitle.employmentResponsibilities,
         },
         value: {
-          html: exisitngData.employmentResponsibilitiesDetails
-        }
+          html: exisitngData.employmentResponsibilitiesDetails,
+        },
       })
     }
     if (exisitngData.diversityDetails) {
       draftRows.push({
         key: {
-          text: content.supportNeedsTitle.diversity
+          text: content.supportNeedsTitle.diversity,
         },
         value: {
-          html: exisitngData.diversityDetails
-        }
+          html: exisitngData.diversityDetails,
+        },
       })
     }
     if (exisitngData.anythingElseDetails) {
       draftRows.push({
         key: {
-          text: content.supportNeedsTitle.anythingElse
+          text: content.supportNeedsTitle.anythingElse,
         },
         value: {
-          html: exisitngData.anythingElseDetails
-        }
+          html: exisitngData.anythingElseDetails,
+        },
       })
     }
     return draftRows
