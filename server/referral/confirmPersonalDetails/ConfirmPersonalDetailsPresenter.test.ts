@@ -58,7 +58,7 @@ describe('ConfirmPersonalDetailsPresenter', () => {
   test('builds correct view model', () => {
     const presenter = new ConfirmPersonalDetailsPresenter(data)
     const viewModel = presenter.buildViewModel(res)
-    expect(viewModel.pageTitle).toBe('Confirm personal details - Make a referral')
+    expect(viewModel.pageTitle).toBe('Check and confirm personal details - Make a referral - Community Support')
     expect(viewModel.backLink.href).toBe('/referral/task-list')
     expect(viewModel.heading).toBe('Charlie Robert Smith')
     expect(viewModel.subheading).toBe('Confirm personal details')
