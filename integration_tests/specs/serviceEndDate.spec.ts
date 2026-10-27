@@ -53,7 +53,7 @@ test.describe('Service End Date Page', () => {
     const serviceEndDatePage = await ServiceEndDatePage.verifyOnPage(page)
 
     await expect(serviceEndDatePage.header).toBeVisible()
-    await expect(page.getByText('This is the date by which the service should be completed.')).toBeVisible()
+    await expect(page.getByText('This date must allow enough time to deliver the service and complete the end of service report. Do not use the licence end date or sentence end date.')).toBeVisible()
     await expect(serviceEndDatePage.dayInput).toBeVisible()
     await expect(serviceEndDatePage.monthInput).toBeVisible()
     await expect(serviceEndDatePage.yearInput).toBeVisible()
