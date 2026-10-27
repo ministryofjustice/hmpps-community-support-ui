@@ -1694,10 +1694,6 @@ export interface components {
       refereeName: components['schemas']['RefereeNameDto']
       details: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
     }
-    ContactDetailsDto: {
-      isProbationPractitioner: boolean
-      status: components['schemas']['TaskListStatusItem']
-    }
     TaskListStatusItem: {
       completed: boolean
       statusText: string
@@ -1705,14 +1701,15 @@ export interface components {
     }
     TaskListStatusResponseDto: {
       fullName: string
-      confirmPersonalDetailsStatus: components['schemas']['TaskListStatusItem']
-      checkRiskInformationStatus: components['schemas']['TaskListStatusItem']
-      selectThePersonsNeedsStatus: components['schemas']['TaskListStatusItem']
-      addAdditionalSupportNeedsStatus: components['schemas']['TaskListStatusItem']
-      addAdditionalInformationStatus: components['schemas']['TaskListStatusItem']
-      selectAnAreaForReferralStatus: components['schemas']['TaskListStatusItem']
-      contactDetailsStatus: components['schemas']['ContactDetailsDto']
-      checkYourAnswersStatus: components['schemas']['TaskListStatusItem']
+      confirmPersonalDetailsCompleted: components['schemas']['TaskListStatusItem']
+      checkRiskInformationCompleted: components['schemas']['TaskListStatusItem']
+      selectThePersonsNeedsCompleted: components['schemas']['TaskListStatusItem']
+      addDetailsOfAnyAdditionalSupportNeedsCompleted: components['schemas']['TaskListStatusItem']
+      addAdditionalInformationCompleted: components['schemas']['TaskListStatusItem']
+      addDetailsOfMainPointOfContactCompleted: components['schemas']['TaskListStatusItem']
+      selectAnAreaForReferralCompleted: components['schemas']['TaskListStatusItem']
+      checkProbationPractitionerDetailsCompleted?: components['schemas']['TaskListStatusItem'] | null
+      addMainPointOfContactCompleted?: components['schemas']['TaskListStatusItem'] | null
     }
     AppointmentDetailsDto: {
       /** @enum {string|null} */
@@ -1727,12 +1724,16 @@ export interface components {
       otherAppointmentMethods?: string[] | null
     }
     ExistingSupportNeedsBffResponseDto: {
-      supportNeeds?: components['schemas']['SupportNeed'][] | null
+      physicalHealthDetails?: string | null
+      mentalEmotionalHealthDetails?: string | null
+      neurodiversityDetails?: string | null
+      locationTravelDetails?: string | null
+      caringResponsibilitiesDetails?: string | null
+      employmentResponsibilitiesDetails?: string | null
+      diversityDetails?: string | null
+      anythingElseDetails?: string | null
+      interpreterLanguage?: string | null
       referralFirstName: string
-    }
-    SupportNeed: {
-      needName: string
-      needDetails: string
     }
     CreateAppointmentReferenceDataBffDto: {
       appointmentTypes: components['schemas']['CreateAppointmentTypeOptionDto'][]

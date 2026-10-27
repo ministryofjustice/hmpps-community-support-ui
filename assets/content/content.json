@@ -682,6 +682,16 @@
       }
     },
     "cardTitle": "Additional support needs already identified",
+    "supportNeedsTitle": {
+      "physicalHealth": "Physical Health",
+      "mentalEmotionalHealth": "Mental & Emotional Health",
+      "neurodiversity": "Neurodiversity",
+      "locationTravel": "Location & Travel",
+      "caringResponsibilities": "Caring Responsibilities",
+      "employmentResponsibilities": "Employment Responsibilities",
+      "diversity": "Diversity",
+      "anythingElse": "Anything Else"
+    },
     "submitButtonText": "Continue",
     "backLinkHref": "/ics-feedback/{{ id }}/issues-or-concerns"
   },

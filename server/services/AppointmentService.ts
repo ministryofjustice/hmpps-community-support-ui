@@ -75,22 +75,17 @@ export default class AppointmentService {
   }
 
   getExistingSupportNeedsStub(_caseRefId: string, _username: string): ExistingSupportNeedsBffResponseDto {
-    const supportNeeds: SupportNeed[] = [
-      {
-        needName: 'Mental or emotional health',
-        needDetails:
-          'Alex experienced anxiety through different life events and personal stories, ranging from panic attacks and health anxiety to trauma-induced stress and neurodivergence-related overwhelm',
-      },
-      {
-        needName: 'Neurodiversity',
-        needDetails:
-          'Alex experienced anxiety through different life events and personal stories, ranging from panic attacks and health anxiety to trauma-induced stress and neurodivergence-related overwhelm',
-      },
-    ]
-
     return {
-      supportNeeds,
+      physicalHealthDetails: '',
+      mentalEmotionalHealthDetails: 'Alex experienced anxiety through different life events and personal stories, ranging from panic attacks and health anxiety to trauma-induced stress and neurodivergence-related overwhelm',
+      neurodiversityDetails: 'Alex experienced anxiety through different life events and personal stories, ranging from panic attacks and health anxiety to trauma-induced stress and neurodivergence-related overwhelm',
+      locationTravelDetails: '',
+      caringResponsibilitiesDetails: '',
+      employmentResponsibilitiesDetails: '',
+      diversityDetails: '',
+      anythingElseDetails: '',
+      interpreterLanguage: '',
       referralFirstName: 'John',
-    }
+    } as ExistingSupportNeedsBffResponseDto
   }
 }

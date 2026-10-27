@@ -836,6 +836,10 @@ class AppointmentController {
 
     const identifiedAdditionalNeeds = icsFeedbackSubmission ? icsFeedbackSubmission.identifiedAdditionalNeeds : null
     const appointmentData = await this.appointmentService.getICS(caseRefId.toString(), username)
+    const existingSupportNeeedsDataStub = await this.appointmentService.getExistingSupportNeedsStub(
+      caseRefId.toString(),
+      username,
+    )
     const existingSupportNeeedsData = await this.appointmentService.getExistingSupportNeedsStub(
       caseRefId.toString(),
       username,
@@ -849,7 +853,7 @@ class AppointmentController {
 
     const presenter = new IdentifiedAdditionalNeedsPresenter(
       caseRefId,
-      existingSupportNeeedsData,
+      existingSupportNeeedsDataStub,
       identifiedAdditionalNeeds,
       validationErrors,
     )
