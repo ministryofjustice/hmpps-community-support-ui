@@ -1,11 +1,10 @@
 import { Response } from 'express'
 import { GovukFrontendErrorMessage, GovukFrontendSummaryList, GovukFrontendSummaryListRow } from '@govuk-frontend'
-import { ExistingSupportNeedsBffResponseDto } from '@community-support-api'
+import { ExistingSupportNeedsBffResponseDto, SupportNeeds } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
 import {
   IdentifiedAdditionalNeedsContent,
   IdentifiedAdditionalNeedsViewModel,
-  IdentifiedAdditionalNeedsFormData,
   DidYouIdentifyRadioItemsContent,
   DidYouIdentifyRadioContent,
 } from './IdentifiedAddionalNeedsViewModel'
@@ -13,7 +12,6 @@ import {
   GovukFrontendRadiosItemWithConditional,
   GovukFrontendRadiosWithConditional,
 } from '../../@types/govukFrontend/derived'
-import { components } from '../../@types/communitySupportApi/imported'
 import { escapeHtml } from '../../utils/utils'
 import { ErrorMiddlewareErrors } from '../../@types/express'
 
@@ -24,7 +22,7 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
   constructor(
     private readonly caseRefId: string,
     private readonly existingSupportNeedsdata: ExistingSupportNeedsBffResponseDto,
-    private readonly identifiedAdditionalNeeds: components['schemas']['IdentifiedAdditionalNeedsRequest'],
+    private readonly identifiedAdditionalNeeds: string,
     private readonly validationErrors?: ErrorMiddlewareErrors,
   ) {
     super()
@@ -32,7 +30,7 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
 
   private buildIdentifyTextArea(
     content: DidYouIdentifyRadioItemsContent,
-    formData: IdentifiedAdditionalNeedsFormData,
+    formData: string,
     errorMessage?: GovukFrontendErrorMessage,
   ): string {
     const errorText: string = errorMessage ? errorMessage.text : undefined
@@ -51,13 +49,13 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
         </label>
       </h1>
       ${errorHtml}
-      <textarea class="govuk-textarea" id=${content.identifyDetailsName}Input name=${content.identifyDetailsName} rows="5" spellcheck="false" >${escapeHtml(formData.identifyDetails) ?? ''}</textarea>
+      <textarea class="govuk-textarea" id=${content.identifyDetailsName}Input name=${content.identifyDetailsName} rows="5" spellcheck="false" >${escapeHtml(formData) ?? ''}</textarea>
     </div>`
   }
 
   private buildDidYouIdentifyRadioItems(
     content: DidYouIdentifyRadioItemsContent,
-    formData: IdentifiedAdditionalNeedsFormData,
+    formData: string,
     errorMessage?: GovukFrontendErrorMessage,
   ): GovukFrontendRadiosItemWithConditional[] {
     const htmlString = this.buildIdentifyTextArea(content, formData, errorMessage)
@@ -66,21 +64,21 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
         id: 'YesRadio',
         value: content.yesText,
         text: content.yesText,
-        checked: formData.didYouIdentify === true,
+        // checked: formData.didYouIdentify === true,
         conditional: { html: htmlString },
       },
       {
         id: 'NoRadio',
         value: content.noText,
         text: content.noText,
-        checked: formData.didYouIdentify === false,
+        // checked: formData.didYouIdentify === false,
       },
     ]
   }
 
   private buildDidYouIdentifyRadio(
     content: DidYouIdentifyRadioContent,
-    formData: IdentifiedAdditionalNeedsFormData,
+    formData: string,
     errorMessages?: Record<string, GovukFrontendErrorMessage>,
   ): GovukFrontendRadiosWithConditional {
     return {
@@ -105,7 +103,7 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
   ): GovukFrontendSummaryList | undefined => {
     if (!exisitngData.referralFirstName) return undefined
 
-    const draftRows = this.getDraftRows(exisitngData, content)
+    const draftRows = this.getDraftRows(exisitngData.supportNeeds, content)
 
     return {
       card: {
@@ -120,88 +118,88 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
   }
 
   private getDraftRows = (
-    exisitngData: ExistingSupportNeedsBffResponseDto,
+    exisitngSupportNeedsData: SupportNeeds,
     content: IdentifiedAdditionalNeedsContent,
   ): GovukFrontendSummaryListRow[] => {
     const draftRows: GovukFrontendSummaryListRow[] = []
 
-    if (exisitngData.physicalHealthDetails) {
+    if (exisitngSupportNeedsData.physicalHealthDetails) {
       draftRows.push({
         key: {
           text: content.supportNeedsTitle.physicalHealth,
         },
         value: {
-          html: exisitngData.physicalHealthDetails,
+          html: exisitngSupportNeedsData.physicalHealthDetails,
         },
       })
     }
-    if (exisitngData.mentalEmotionalHealthDetails) {
+    if (exisitngSupportNeedsData.mentalEmotionalHealthDetails) {
       draftRows.push({
         key: {
           text: content.supportNeedsTitle.mentalEmotionalHealth,
         },
         value: {
-          html: exisitngData.mentalEmotionalHealthDetails,
+          html: exisitngSupportNeedsData.mentalEmotionalHealthDetails,
         },
       })
     }
-    if (exisitngData.neurodiversityDetails) {
+    if (exisitngSupportNeedsData.neurodiversityDetails) {
       draftRows.push({
         key: {
           text: content.supportNeedsTitle.neurodiversity,
         },
         value: {
-          html: exisitngData.neurodiversityDetails,
+          html: exisitngSupportNeedsData.neurodiversityDetails,
         },
       })
     }
-    if (exisitngData.locationTravelDetails) {
+    if (exisitngSupportNeedsData.locationTravelDetails) {
       draftRows.push({
         key: {
           text: content.supportNeedsTitle.locationTravel,
         },
         value: {
-          html: exisitngData.locationTravelDetails,
+          html: exisitngSupportNeedsData.locationTravelDetails,
         },
       })
     }
-    if (exisitngData.caringResponsibilitiesDetails) {
+    if (exisitngSupportNeedsData.caringResponsibilitiesDetails) {
       draftRows.push({
         key: {
           text: content.supportNeedsTitle.caringResponsibilities,
         },
         value: {
-          html: exisitngData.caringResponsibilitiesDetails,
+          html: exisitngSupportNeedsData.caringResponsibilitiesDetails,
         },
       })
     }
-    if (exisitngData.employmentResponsibilitiesDetails) {
+    if (exisitngSupportNeedsData.employmentResponsibilitiesDetails) {
       draftRows.push({
         key: {
           text: content.supportNeedsTitle.employmentResponsibilities,
         },
         value: {
-          html: exisitngData.employmentResponsibilitiesDetails,
+          html: exisitngSupportNeedsData.employmentResponsibilitiesDetails,
         },
       })
     }
-    if (exisitngData.diversityDetails) {
+    if (exisitngSupportNeedsData.diversityDetails) {
       draftRows.push({
         key: {
           text: content.supportNeedsTitle.diversity,
         },
         value: {
-          html: exisitngData.diversityDetails,
+          html: exisitngSupportNeedsData.diversityDetails,
         },
       })
     }
-    if (exisitngData.anythingElseDetails) {
+    if (exisitngSupportNeedsData.anythingElseDetails) {
       draftRows.push({
         key: {
           text: content.supportNeedsTitle.anythingElse,
         },
         value: {
-          html: exisitngData.anythingElseDetails,
+          html: exisitngSupportNeedsData.anythingElseDetails,
         },
       })
     }
@@ -210,12 +208,13 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
 
   buildViewModel(res: Response): IdentifiedAdditionalNeedsViewModel {
     const content = this.buildStaticContent(res)
-    const formData: IdentifiedAdditionalNeedsFormData = this.identifiedAdditionalNeeds
-      ? {
-          didYouIdentify: this.identifiedAdditionalNeeds.identified,
-          identifyDetails: this.identifiedAdditionalNeeds.details,
-        }
-      : {}
+    const formData: string = this.identifiedAdditionalNeeds || ''
+    // const formData: IdentifiedAdditionalNeedsFormData = this.identifiedAdditionalNeeds
+    //   ? {
+    //       didYouIdentify: this.identifiedAdditionalNeeds.identified,
+    //       identifyDetails: this.identifiedAdditionalNeeds.details,
+    //     }
+    //   : {}
 
     return {
       pageTitle: content.pageTitle,
@@ -231,7 +230,7 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
       submitHref: `/ics-feedback/${this.caseRefId}/identified-additional-needs`,
       backLink: { href: content.backLinkHref.replace('{{ id }}', this.caseRefId) },
       existingSupportNeedsDetails: this.buildExistingSuppportNeedsDetails(content, this.existingSupportNeedsdata),
-      formData,
+      newlyIdentifiedAdditionalNeeds: formData,
     }
   }
 

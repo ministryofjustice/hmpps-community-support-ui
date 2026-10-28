@@ -1320,12 +1320,8 @@ export interface components {
       sessionDetails?: components['schemas']['SessionDetailsRequest'] | null
       sessionFeedback?: components['schemas']['SessionFeedbackRequest'] | null
       issuesAndConcerns?: components['schemas']['IssuesAndConcernsRequest'] | null
-      identifiedAdditionalNeeds?: components['schemas']['IdentifiedAdditionalNeedsRequest'] | null
+      newlyIdentifiedAdditionalSupportNeeds?: string | null
       nextSteps?: components['schemas']['NextStepsRequest'] | null
-    }
-    IdentifiedAdditionalNeedsRequest: {
-      identified?: boolean | null
-      details?: string | null
     }
     IssuesAndConcernsRequest: {
       identified?: string | null
@@ -1402,8 +1398,7 @@ export interface components {
       sessionFeedbackStrengthsIdentified?: string | null
       issuesOrConcernsIdentified?: string | null
       issuesOrConcernsNotifyProbationPractitioner?: boolean | null
-      additionalSupportNeedsIdentified?: boolean | null
-      additionalSupportNeedsDetails?: string | null
+      additionalSupportNeeds?: string | null
       nextStepsPlannedForNextSession?: string | null
       nextStepsActionsBeforeNextSession?: string | null
       sessionFeedbackAppointmentDetails?: components['schemas']['SessionFeedbackAppointmentDetailsDto'] | null
@@ -1727,6 +1722,10 @@ export interface components {
       otherAppointmentMethods?: string[] | null
     }
     ExistingSupportNeedsBffResponseDto: {
+      referralFirstName: string
+      supportNeeds: components['schemas']['SupportNeeds']
+    }
+    SupportNeeds: {
       physicalHealthDetails?: string | null
       mentalEmotionalHealthDetails?: string | null
       neurodiversityDetails?: string | null
@@ -1736,7 +1735,6 @@ export interface components {
       diversityDetails?: string | null
       anythingElseDetails?: string | null
       interpreterLanguage?: string | null
-      referralFirstName: string
     }
     CreateAppointmentReferenceDataBffDto: {
       appointmentTypes: components['schemas']['CreateAppointmentTypeOptionDto'][]
