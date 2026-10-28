@@ -22,13 +22,10 @@ describe('ServiceEndDatePagePresenter', () => {
 
     expect(viewModel.pageTitle).toBe('What date does the service need to be completed by?')
     expect(viewModel.pageHeader).toBe('What date does the service need to be completed by?')
-    expect(viewModel.hint).toBe(
+    expect(viewModel.dateHint).toBe(
       'This date must allow enough time to deliver the service and complete the end of service report. Do not use the licence end date or sentence end date.',
     )
-    expect(viewModel.dateLabel).toBe('Date')
-    expect(viewModel.dateHint).toBe('For example, 31 3 2027')
     expect(viewModel.reasonLabel).toBe('Why does it need to be completed by this date?')
-    expect(viewModel.reasonHint).toBe('Explain why this date was chosen')
     expect(viewModel.continueButton).toBe('Save and continue')
     expect(viewModel.backLink.href).toBe('/referral/task-list')
     expect(viewModel.formValues.day).toBe('31')
