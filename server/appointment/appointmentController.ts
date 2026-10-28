@@ -836,7 +836,7 @@ class AppointmentController {
 
     const identifiedAdditionalNeeds = icsFeedbackSubmission ? icsFeedbackSubmission.identifiedAdditionalNeeds : null
     const appointmentData = await this.appointmentService.getICS(caseRefId.toString(), username)
-    const existingSupportNeeedsDataStub = await this.appointmentService.getExistingSupportNeedsStub(
+    const existingSupportNeeedsData = await this.appointmentService.getExistingSupportNeedsStub(
       caseRefId.toString(),
       username,
     )
@@ -850,7 +850,7 @@ class AppointmentController {
 
     const presenter = new IdentifiedAdditionalNeedsPresenter(
       caseRefId,
-      existingSupportNeeedsDataStub,
+      existingSupportNeeedsData,
       identifiedAdditionalNeeds,
       validationErrors,
     )
@@ -908,8 +908,8 @@ class AppointmentController {
       return
     }
     icsFeedbackSubmission.identifiedAdditionalNeeds = {
-      didYouIdentity: req.body.didYouIdentity ? req.body.didYouIdentity === 'Yes' : null,
-      identityDetails: req.body.identityDetails,
+      identified: req.body.didYouIdentify ? req.body.didYouIdentify === 'Yes' : null,
+      details: req.body.identifyDetails,
     }
     req.session.icsFeedbackSubmission = icsFeedbackSubmission
     validateRequestBodyAgainstSchema(IdentifiedAdditionalNeedsFormDataSchema, req, res, () => {

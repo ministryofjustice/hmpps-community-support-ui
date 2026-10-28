@@ -1324,8 +1324,8 @@ export interface components {
       nextSteps?: components['schemas']['NextStepsRequest'] | null
     }
     IdentifiedAdditionalNeedsRequest: {
-      didYouIdentity?: boolean | null
-      identityDetails?: string | null
+      identified?: boolean | null
+      details?: string | null
     }
     IssuesAndConcernsRequest: {
       identified?: string | null
@@ -1402,8 +1402,8 @@ export interface components {
       sessionFeedbackStrengthsIdentified?: string | null
       issuesOrConcernsIdentified?: string | null
       issuesOrConcernsNotifyProbationPractitioner?: boolean | null
-      additionalNeedsDidYouIdentity?: boolean | null
-      additionalNeedsIdentityDetails?: string | null
+      additionalSupportNeedsIdentified?: boolean | null
+      additionalSupportNeedsDetails?: string | null
       nextStepsPlannedForNextSession?: string | null
       nextStepsActionsBeforeNextSession?: string | null
       sessionFeedbackAppointmentDetails?: components['schemas']['SessionFeedbackAppointmentDetailsDto'] | null

@@ -671,14 +671,14 @@
     "pageTitle": "Additional support needs – ICS feedback – Community Support",
     "pageHeader": "Additional support needs",
     "pageSubHeader": "These are the support needs identified in {{ firstname }}’s referral.",
-    "didYouIdentityRadio": {
-      "name": "didYouIdentity",
+    "didYouIdentifyRadio": {
+      "name": "didYouIdentify",
       "title": "Did you identity anything else {{ firstname }} needs support with?",
       "items": {
         "yesText": "Yes",
         "noText": "No",
-        "identityDetailsName": "identityDetails",
-        "identityDetailsLabel": "Give details of anything else {{ firstname }} needs support with"
+        "identifyDetailsName": "identifyDetails",
+        "identifyDetailsLabel": "Give details of anything else {{ firstname }} needs support with"
       }
     },
     "cardTitle": "Additional support needs already identified",

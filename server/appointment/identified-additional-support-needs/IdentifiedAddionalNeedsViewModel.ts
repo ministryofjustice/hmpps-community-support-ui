@@ -3,20 +3,20 @@ import { GlobalContent } from '../../../assets/content/GlobalContent'
 import { GovukFrontendRadiosWithConditional } from '../../@types/govukFrontend/derived'
 
 export interface IdentifiedAdditionalNeedsFormData {
-  didYouIdentity?: boolean
-  identityDetails?: string
+  didYouIdentify?: boolean
+  identifyDetails?: string
 }
-export type DidYouIdentityRadioItemsContent = {
+export type DidYouIdentifyRadioItemsContent = {
   yesText: string
   noText: string
-  identityDetailsName: string
-  identityDetailsLabel: string
+  identifyDetailsName: string
+  identifyDetailsLabel: string
 }
 
-export type DidYouIdentityRadioContent = {
+export type DidYouIdentifyRadioContent = {
   name: string
   title: string
-  items: DidYouIdentityRadioItemsContent
+  items: DidYouIdentifyRadioItemsContent
 }
 
 export type IdentifiedAdditionalNeedsViewModel = {
@@ -25,7 +25,7 @@ export type IdentifiedAdditionalNeedsViewModel = {
   pageSubHeader: string
   firstname: string
   existingSupportNeedsDetails?: GovukFrontendSummaryList
-  didYouIdentityRadio: GovukFrontendRadiosWithConditional
+  didYouIdentifyRadio: GovukFrontendRadiosWithConditional
   submitButton: GovukFrontendButton
   submitHref: string
   backLink: GovukFrontendBackLink

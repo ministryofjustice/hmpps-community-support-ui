@@ -6,8 +6,8 @@ import {
   IdentifiedAdditionalNeedsContent,
   IdentifiedAdditionalNeedsViewModel,
   IdentifiedAdditionalNeedsFormData,
-  DidYouIdentityRadioItemsContent,
-  DidYouIdentityRadioContent,
+  DidYouIdentifyRadioItemsContent,
+  DidYouIdentifyRadioContent,
 } from './IdentifiedAddionalNeedsViewModel'
 import {
   GovukFrontendRadiosItemWithConditional,
@@ -30,56 +30,56 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
     super()
   }
 
-  private buildIdentityTextArea(
-    content: DidYouIdentityRadioItemsContent,
+  private buildIdentifyTextArea(
+    content: DidYouIdentifyRadioItemsContent,
     formData: IdentifiedAdditionalNeedsFormData,
     errorMessage?: GovukFrontendErrorMessage,
   ): string {
     const errorText: string = errorMessage ? errorMessage.text : undefined
     const errorHtml: string = errorText
       ? `
-    <p id="${content.identityDetailsName}Error" class="govuk-error-message">
+    <p id="${content.identifyDetailsName}Error" class="govuk-error-message">
       <span class="govuk-visually-hidden">Error:</span> ${errorText}
     </p>`
       : ''
     return `
-    <div class="govuk-form-group ${errorText ? 'govuk-form-group--error' : ''}" data-testid=${content.identityDetailsName} >
+    <div class="govuk-form-group ${errorText ? 'govuk-form-group--error' : ''}" data-testid=${content.identifyDetailsName} >
       <h1 class="govuk-label-wrapper govuk-label">
         <label class="govuk-label govuk-label--s"
-          id=${content.identityDetailsName}Label>
-          ${content.identityDetailsLabel.replace('{{ firstname }}', this.existingSupportNeedsdata.referralFirstName)}
+          id=${content.identifyDetailsName}Label>
+          ${content.identifyDetailsLabel.replace('{{ firstname }}', this.existingSupportNeedsdata.referralFirstName)}
         </label>
       </h1>
       ${errorHtml}
-      <textarea class="govuk-textarea" id=${content.identityDetailsName}Input name=${content.identityDetailsName} rows="5" spellcheck="false" >${escapeHtml(formData.identityDetails) ?? ''}</textarea>
+      <textarea class="govuk-textarea" id=${content.identifyDetailsName}Input name=${content.identifyDetailsName} rows="5" spellcheck="false" >${escapeHtml(formData.identifyDetails) ?? ''}</textarea>
     </div>`
   }
 
-  private buildDidYouIdentityRadioItems(
-    content: DidYouIdentityRadioItemsContent,
+  private buildDidYouIdentifyRadioItems(
+    content: DidYouIdentifyRadioItemsContent,
     formData: IdentifiedAdditionalNeedsFormData,
     errorMessage?: GovukFrontendErrorMessage,
   ): GovukFrontendRadiosItemWithConditional[] {
-    const htmlString = this.buildIdentityTextArea(content, formData, errorMessage)
+    const htmlString = this.buildIdentifyTextArea(content, formData, errorMessage)
     return [
       {
         id: 'YesRadio',
         value: content.yesText,
         text: content.yesText,
-        checked: formData.didYouIdentity === true,
+        checked: formData.didYouIdentify === true,
         conditional: { html: htmlString },
       },
       {
         id: 'NoRadio',
         value: content.noText,
         text: content.noText,
-        checked: formData.didYouIdentity === false,
+        checked: formData.didYouIdentify === false,
       },
     ]
   }
 
-  private buildDidYouIdentityRadio(
-    content: DidYouIdentityRadioContent,
+  private buildDidYouIdentifyRadio(
+    content: DidYouIdentifyRadioContent,
     formData: IdentifiedAdditionalNeedsFormData,
     errorMessages?: Record<string, GovukFrontendErrorMessage>,
   ): GovukFrontendRadiosWithConditional {
@@ -93,9 +93,9 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
           classes: 'govuk-fieldset__legend govuk-fieldset__legend--m',
         },
       },
-      errorMessage: errorMessages.didYouIdentity,
+      errorMessage: errorMessages.didYouIdentify,
       attributes: { 'data-testid': content.name },
-      items: this.buildDidYouIdentityRadioItems(content.items, formData, errorMessages.identityDetails),
+      items: this.buildDidYouIdentifyRadioItems(content.items, formData, errorMessages.identifyDetails),
     }
   }
 
@@ -212,8 +212,8 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
     const content = this.buildStaticContent(res)
     const formData: IdentifiedAdditionalNeedsFormData = this.identifiedAdditionalNeeds
       ? {
-          didYouIdentity: this.identifiedAdditionalNeeds.didYouIdentity,
-          identityDetails: this.identifiedAdditionalNeeds.identityDetails,
+          didYouIdentify: this.identifiedAdditionalNeeds.identified,
+          identifyDetails: this.identifiedAdditionalNeeds.details,
         }
       : {}
 
@@ -222,8 +222,8 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
       pageHeader: content.pageHeader,
       pageSubHeader: content.pageSubHeader.replace('{{ firstname }}', this.existingSupportNeedsdata.referralFirstName),
       firstname: this.existingSupportNeedsdata.referralFirstName,
-      didYouIdentityRadio: this.buildDidYouIdentityRadio(
-        content.didYouIdentityRadio,
+      didYouIdentifyRadio: this.buildDidYouIdentifyRadio(
+        content.didYouIdentifyRadio,
         formData,
         this.validationErrors?.messages,
       ),

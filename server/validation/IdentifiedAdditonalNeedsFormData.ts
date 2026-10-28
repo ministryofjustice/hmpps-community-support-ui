@@ -1,21 +1,21 @@
 import { z } from 'zod'
 
-const checkIdentityDetails = (val: { didYouIdentity: string; identityDetails: string }) => {
-  if (val.didYouIdentity === 'Yes') {
-    return val.identityDetails.length > 0
+const checkIdentifyDetails = (val: { didYouIdentify: string; identifyDetails: string }) => {
+  if (val.didYouIdentify === 'Yes') {
+    return val.identifyDetails.length > 0
   }
   return true
 }
 
 const baseSchema = z.object({
-  didYouIdentity: z.literal(['Yes', 'No'], {
+  didYouIdentify: z.literal(['Yes', 'No'], {
     error: 'Select yes if you identified anything else they need support with',
   }),
-  identityDetails: z.string(),
+  identifyDetails: z.string(),
 })
-export const IdentifiedAdditionalNeedsFormDataSchema = baseSchema.refine(checkIdentityDetails, {
+export const IdentifiedAdditionalNeedsFormDataSchema = baseSchema.refine(checkIdentifyDetails, {
   message: 'Enter details of anything else they need support with',
-  path: ['identityDetails'],
+  path: ['identifyDetails'],
 })
 
 type IdentifiedAdditionalNeedsFormData = z.infer<typeof IdentifiedAdditionalNeedsFormDataSchema>
