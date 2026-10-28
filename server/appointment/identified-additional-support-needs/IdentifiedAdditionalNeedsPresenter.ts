@@ -5,6 +5,7 @@ import PresenterBase from '../../presenter/presenterBase'
 import {
   IdentifiedAdditionalNeedsContent,
   IdentifiedAdditionalNeedsViewModel,
+  IdentifiedAdditionalNeedsFormData,
   DidYouIdentifyRadioItemsContent,
   DidYouIdentifyRadioContent,
 } from './IdentifiedAddionalNeedsViewModel'
@@ -22,7 +23,7 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
   constructor(
     private readonly caseRefId: string,
     private readonly existingSupportNeedsdata: ExistingSupportNeedsBffResponseDto,
-    private readonly identifiedAdditionalNeeds: string,
+    private readonly identifiedAdditionalNeeds: IdentifiedAdditionalNeedsFormData,
     private readonly validationErrors?: ErrorMiddlewareErrors,
   ) {
     super()
@@ -30,7 +31,7 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
 
   private buildIdentifyTextArea(
     content: DidYouIdentifyRadioItemsContent,
-    formData: string,
+    formData: IdentifiedAdditionalNeedsFormData,
     errorMessage?: GovukFrontendErrorMessage,
   ): string {
     const errorText: string = errorMessage ? errorMessage.text : undefined
@@ -49,13 +50,13 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
         </label>
       </h1>
       ${errorHtml}
-      <textarea class="govuk-textarea" id=${content.identifyDetailsName}Input name=${content.identifyDetailsName} rows="5" spellcheck="false" >${escapeHtml(formData) ?? ''}</textarea>
+      <textarea class="govuk-textarea" id=${content.identifyDetailsName}Input name=${content.identifyDetailsName} rows="5" spellcheck="false" >${escapeHtml(formData.identifyDetails) ?? ''}</textarea>
     </div>`
   }
 
   private buildDidYouIdentifyRadioItems(
     content: DidYouIdentifyRadioItemsContent,
-    formData: string,
+    formData: IdentifiedAdditionalNeedsFormData,
     errorMessage?: GovukFrontendErrorMessage,
   ): GovukFrontendRadiosItemWithConditional[] {
     const htmlString = this.buildIdentifyTextArea(content, formData, errorMessage)
@@ -64,21 +65,21 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
         id: 'YesRadio',
         value: content.yesText,
         text: content.yesText,
-        // checked: formData.didYouIdentify === true,
+        checked: formData.didYouIdentify === true,
         conditional: { html: htmlString },
       },
       {
         id: 'NoRadio',
         value: content.noText,
         text: content.noText,
-        // checked: formData.didYouIdentify === false,
+        checked: formData.didYouIdentify === false,
       },
     ]
   }
 
   private buildDidYouIdentifyRadio(
     content: DidYouIdentifyRadioContent,
-    formData: string,
+    formData: IdentifiedAdditionalNeedsFormData,
     errorMessages?: Record<string, GovukFrontendErrorMessage>,
   ): GovukFrontendRadiosWithConditional {
     return {
@@ -208,13 +209,12 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
 
   buildViewModel(res: Response): IdentifiedAdditionalNeedsViewModel {
     const content = this.buildStaticContent(res)
-    const formData: string = this.identifiedAdditionalNeeds || ''
-    // const formData: IdentifiedAdditionalNeedsFormData = this.identifiedAdditionalNeeds
-    //   ? {
-    //       didYouIdentify: this.identifiedAdditionalNeeds.identified,
-    //       identifyDetails: this.identifiedAdditionalNeeds.details,
-    //     }
-    //   : {}
+    const formData: IdentifiedAdditionalNeedsFormData = this.identifiedAdditionalNeeds
+      ? {
+          didYouIdentify: this.identifiedAdditionalNeeds.didYouIdentify,
+          identifyDetails: this.identifiedAdditionalNeeds.identifyDetails,
+        }
+      : {}
 
     return {
       pageTitle: content.pageTitle,
@@ -230,7 +230,7 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
       submitHref: `/ics-feedback/${this.caseRefId}/identified-additional-needs`,
       backLink: { href: content.backLinkHref.replace('{{ id }}', this.caseRefId) },
       existingSupportNeedsDetails: this.buildExistingSuppportNeedsDetails(content, this.existingSupportNeedsdata),
-      newlyIdentifiedAdditionalNeeds: formData,
+      formData,
     }
   }
 

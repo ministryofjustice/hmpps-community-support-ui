@@ -834,8 +834,12 @@ class AppointmentController {
       icsAppointment.referralFirstName,
     )
 
-    const identifiedAdditionalNeeds = icsFeedbackSubmission
-      ? icsFeedbackSubmission.newlyIdentifiedAdditionalSupportNeeds
+    const sessionNeeds = icsFeedbackSubmission?.newlyIdentifiedAdditionalSupportNeeds
+    const identifiedAdditionalNeeds = sessionNeeds != null
+      ? {
+          didYouIdentify: true,
+          identifyDetails: sessionNeeds,
+        }
       : null
     const appointmentData = await this.appointmentService.getICS(caseRefId.toString(), username)
     const existingSupportNeeedsData = await this.appointmentService.getExistingSupportNeedsStub(
@@ -909,10 +913,7 @@ class AppointmentController {
       res.redirect(`/progress/${caseRefId}`)
       return
     }
-    // icsFeedbackSubmission.identifiedAdditionalNeeds = {
-    //   identified: req.body.didYouIdentify ? req.body.didYouIdentify === 'Yes' : null,
-    //   details: req.body.identifyDetails,
-    // }
+    icsFeedbackSubmission.newlyIdentifiedAdditionalSupportNeeds = req.body.didYouIdentify === 'Yes'? req.body.identifyDetails : null
     req.session.icsFeedbackSubmission = icsFeedbackSubmission
     validateRequestBodyAgainstSchema(IdentifiedAdditionalNeedsFormDataSchema, req, res, () => {
       res.redirect(`/ics-feedback/${caseRefId}/next-steps`)

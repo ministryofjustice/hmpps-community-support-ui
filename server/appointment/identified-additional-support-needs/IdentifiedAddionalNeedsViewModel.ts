@@ -29,7 +29,7 @@ export type IdentifiedAdditionalNeedsViewModel = {
   submitButton: GovukFrontendButton
   submitHref: string
   backLink: GovukFrontendBackLink
-  newlyIdentifiedAdditionalNeeds: string
+  formData: IdentifiedAdditionalNeedsFormData
 }
 
 export type IdentifiedAdditionalNeedsContent = GlobalContent['/ics-feedback/:id/identified-additional-needs']
