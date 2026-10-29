@@ -3,6 +3,7 @@ import {
   GovukFrontendCheckboxesItem,
   GovukFrontendRadios,
   GovukFrontendRadiosItem,
+  GovukFrontendTextarea,
 } from '@govuk-frontend'
 
 export type ConditionalInput = {
@@ -21,4 +22,12 @@ export type GovukFrontendRadiosWithConditional = Omit<GovukFrontendRadios, 'item
 
 export type GovukFrontendCheckboxesWithConditional = Omit<GovukFrontendCheckboxes, 'items'> & {
   items: WithConditional<GovukFrontendCheckboxesItem>[]
+}
+
+export type YesWithDetailOrNoValue = { selected: 'yes'; details: string } | { selected: 'no' }
+
+export interface YesWithDetailOrNo {
+  dropDown: Omit<GovukFrontendTextarea, 'value'>
+  main: Omit<GovukFrontendRadios, 'items'>
+  value?: YesWithDetailOrNoValue
 }

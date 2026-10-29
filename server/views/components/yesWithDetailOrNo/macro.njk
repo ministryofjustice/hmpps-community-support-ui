@@ -1,0 +1,16 @@
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+
+{% macro yesWithDetailOrNo(content) %}
+<p>{{ content | merge({tag:"hannah"}) | dump(2) }}</p>
+{% set value = { value:content.value?.details } %}
+{% set conditionalContent = content.dropDown | merge  %}
+{% set details %}
+{{ govukTextarea(content.dropDown | merge(conditionalContent)) }}
+{% endset -%}
+{% set yesItem = { value: "Yes", text: "Yes", conditional: { html:details } } %}
+{% set noItem = { value :"No", text: "No" } %}
+{% set items = {items:[ yesItem, noItem ]} %}
+{% set radiosContent = content.main | merge(items) %}
+{{ govukRadios(radiosContent) }}
+{% endmacro %}
