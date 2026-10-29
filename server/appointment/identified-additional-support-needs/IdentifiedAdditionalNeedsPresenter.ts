@@ -105,7 +105,7 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
   ): GovukFrontendSummaryList | undefined => {
     if (!exisitngData) return undefined
 
-    const draftRows = this.getDraftRows(exisitngData.supportNeeds, content)
+    const supportNeedsRows = this.getSupportNeedsRows(exisitngData.supportNeeds, content)
 
     return {
       card: {
@@ -113,13 +113,13 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
           text: content.cardTitle,
         },
       },
-      rows: draftRows,
+      rows: supportNeedsRows,
 
       attributes: { 'data-testid': 'exisiting-support-needs-details' },
     }
   }
 
-  private getDraftRows = (
+  private getSupportNeedsRows = (
     exisitngSupportNeedsData: SupportNeeds,
     content: IdentifiedAdditionalNeedsContent,
   ): GovukFrontendSummaryListRow[] => {
