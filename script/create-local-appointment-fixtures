@@ -1,0 +1,281 @@
+#!/usr/bin/env bash
+#
+# Invokes the Community Support API's local-only appointment fixture endpoint.
+#
+# Usage:
+#   script/create-local-appointment-fixtures [count]
+#
+# Optional:
+#   API_BASE_URL=http://localhost:8080
+#   ACCESS_TOKEN=<token>
+
+set -euo pipefail
+
+readonly API_BASE_URL="${API_BASE_URL:-http://localhost:8080}"
+readonly AUTH_URL="${AUTH_URL:-http://localhost:8090/auth}"
+readonly AUTH_CLIENT_ID="${AUTH_CLIENT_ID:-hmpps-community-support-ui-1}"
+readonly AUTH_CLIENT_SECRET="${AUTH_CLIENT_SECRET:-clientsecret}"
+readonly AUTH_CALLBACK_URL="${AUTH_CALLBACK_URL:-http://localhost:3000/sign-in/callback}"
+readonly FIXTURE_USERNAME="APPOINTMENT.FIXTURES@DIGITAL.JUSTICE.GOV.UK"
+readonly FIXTURE_PASSWORD="password123456"
+readonly FIXTURE_PASSWORD_HASH='{bcrypt}$2a$10$Fmcp2KUKRW53US3EJfsxkOh.ekZhqz5.Baheb9E98QLwEFLb9csxy'
+readonly PROVIDER_GROUP_CODE="INT_SP_SEETEC_BUS_TECH_CTR_LTD"
+readonly PROVIDER_GROUP_NAME="Seetec Business Technology Centre Limited"
+
+count="${1:-1}"
+AUTH_DB_CONTAINER=""
+
+usage() {
+  cat <<'EOF'
+Usage: script/create-local-appointment-fixtures [count]
+
+Creates between 1 and 10 local appointment fixtures. Defaults to 1.
+
+Creates or updates appointment.fixtures@digital.justice.gov.uk with the role
+that HMPPS Auth exposes as ROLE_IPB_FRONTEND_RW, obtains a local HMPPS Auth
+token, and invokes the API.
+
+Set ACCESS_TOKEN to skip local user setup and token generation.
+EOF
+}
+
+if [[ $# -gt 1 || ! "$count" =~ ^([1-9]|10)$ ]]; then
+  usage >&2
+  exit 1
+fi
+
+for command in curl docker python3; do
+  if ! command -v "$command" >/dev/null 2>&1; then
+    printf 'ERROR: %s is required but was not found on PATH.\n' "$command" >&2
+    exit 1
+  fi
+done
+
+urlencode() {
+  python3 -c "import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=''))" "$1"
+}
+
+running_container() {
+  docker ps --filter "name=$1" --format '{{.Names}}' | head -1
+}
+
+ensure_local_stack() {
+  if ! docker info >/dev/null 2>&1; then
+    echo "ERROR: Docker is not running or is not accessible to the current user." >&2
+    return 1
+  fi
+
+  local missing_containers=()
+  local container_pattern
+  for container_pattern in auth-db hmpps-auth wiremock; do
+    if [[ -z "$(running_container "$container_pattern")" ]]; then
+      missing_containers+=("$container_pattern")
+    fi
+  done
+
+  if (( ${#missing_containers[@]} > 0 )); then
+    printf 'ERROR: required local containers are not running: %s\nStart the local stack first.\n' \
+      "${missing_containers[*]}" >&2
+    return 1
+  fi
+
+  AUTH_DB_CONTAINER="$(running_container auth-db)"
+
+  if ! curl --fail --silent --show-error "$API_BASE_URL/health" >/dev/null; then
+    echo "ERROR: The local API is not responding at $API_BASE_URL/health. Start it with the local Spring profile first." >&2
+    return 1
+  fi
+}
+
+ensure_fixture_user() {
+  if ! docker exec -i "$AUTH_DB_CONTAINER" psql -U admin -d auth-db --quiet -v ON_ERROR_STOP=1 >&2 <<SQL
+INSERT INTO roles (role_code, role_name, role_description, admin_type)
+VALUES ('IPB_FRONTEND_RW', 'IPB Frontend RW', 'Local appointment fixture role', 'EXT_ADM')
+ON CONFLICT (role_code) DO NOTHING;
+
+INSERT INTO user_allowlist (
+  user_allowlist_id,
+  username,
+  email,
+  first_name,
+  last_name,
+  reason,
+  allowlist_end_date,
+  last_updated,
+  last_updated_by,
+  user_type
+)
+VALUES (
+  gen_random_uuid(),
+  '$FIXTURE_USERNAME',
+  '$FIXTURE_USERNAME',
+  'Appointment',
+  'Fixtures',
+  'Local appointment fixture user',
+  CURRENT_DATE + INTERVAL '1 year',
+  CURRENT_TIMESTAMP,
+  'local-fixture-script',
+  'DIGITAL'
+)
+ON CONFLICT (username) DO UPDATE
+SET allowlist_end_date = EXCLUDED.allowlist_end_date,
+    last_updated = EXCLUDED.last_updated,
+    last_updated_by = EXCLUDED.last_updated_by;
+
+INSERT INTO users (
+  username,
+  password,
+  email,
+  first_name,
+  last_name,
+  verified,
+  locked,
+  enabled,
+  master,
+  password_expiry,
+  source
+)
+VALUES (
+  '$FIXTURE_USERNAME',
+  '$FIXTURE_PASSWORD_HASH',
+  '$FIXTURE_USERNAME',
+  'Appointment',
+  'Fixtures',
+  true,
+  false,
+  true,
+  false,
+  '3013-01-28 13:23:19',
+  'auth'
+)
+ON CONFLICT (username) DO UPDATE
+SET password = EXCLUDED.password,
+    verified = EXCLUDED.verified,
+    locked = EXCLUDED.locked,
+    enabled = EXCLUDED.enabled,
+    password_expiry = EXCLUDED.password_expiry;
+
+INSERT INTO user_role (user_id, role_id)
+SELECT users.user_id, roles.role_id
+FROM users
+JOIN roles ON roles.role_code = 'IPB_FRONTEND_RW'
+WHERE users.username = '$FIXTURE_USERNAME'
+ON CONFLICT (user_id, role_id) DO NOTHING;
+
+INSERT INTO groups (group_code, group_name)
+VALUES ('$PROVIDER_GROUP_CODE', '$PROVIDER_GROUP_NAME')
+ON CONFLICT (group_code) DO UPDATE
+SET group_name = EXCLUDED.group_name;
+
+INSERT INTO user_group (user_id, group_id)
+SELECT users.user_id, groups.group_id
+FROM users
+JOIN groups ON groups.group_code = '$PROVIDER_GROUP_CODE'
+WHERE users.username = '$FIXTURE_USERNAME'
+ON CONFLICT (user_id, group_id) DO NOTHING;
+SQL
+  then
+    echo "ERROR: could not create or update the local appointment fixture user." >&2
+    return 1
+  fi
+}
+
+obtain_access_token() {
+  if ! ensure_fixture_user; then
+    return 1
+  fi
+
+  local cookies signin_page csrf authorization_location authorization_code token
+  cookies="$(mktemp)"
+  trap 'rm -f "$cookies"' RETURN
+
+  signin_page="$(curl --fail --silent --show-error --cookie-jar "$cookies" "$AUTH_URL/sign-in")"
+  csrf="$(printf '%s' "$signin_page" | grep -o 'name="_csrf" value="[^"]*"' | head -1 | sed -E 's/.*value="([^"]*)"/\1/')"
+  if [[ -z "$csrf" ]]; then
+    echo "ERROR: could not obtain a CSRF token from local HMPPS Auth." >&2
+    return 1
+  fi
+
+  curl \
+    --fail \
+    --silent \
+    --show-error \
+    --cookie "$cookies" \
+    --cookie-jar "$cookies" \
+    --output /dev/null \
+    --request POST \
+    --data-urlencode "username=$FIXTURE_USERNAME" \
+    --data-urlencode "password=$FIXTURE_PASSWORD" \
+    --data-urlencode "_csrf=$csrf" \
+    "$AUTH_URL/sign-in"
+
+  authorization_location="$(
+    curl \
+      --fail \
+      --silent \
+      --show-error \
+      --cookie "$cookies" \
+      --cookie-jar "$cookies" \
+      --dump-header - \
+      --output /dev/null \
+      "$AUTH_URL/oauth/authorize?response_type=code&redirect_uri=$(urlencode "$AUTH_CALLBACK_URL")&client_id=$AUTH_CLIENT_ID&state=appointment-fixtures" |
+      grep -i '^location:' |
+      tr -d '\r'
+  )"
+  authorization_code="$(printf '%s' "$authorization_location" | grep -oE 'code=[^&]*' | cut -d= -f2)"
+  if [[ -z "$authorization_code" ]]; then
+    echo "ERROR: could not obtain an authorization code from local HMPPS Auth." >&2
+    return 1
+  fi
+
+  token="$(
+    curl \
+      --fail \
+      --silent \
+      --show-error \
+      --user "$AUTH_CLIENT_ID:$AUTH_CLIENT_SECRET" \
+      --request POST \
+      --data-urlencode "grant_type=authorization_code" \
+      --data-urlencode "code=$authorization_code" \
+      --data-urlencode "redirect_uri=$AUTH_CALLBACK_URL" \
+      "$AUTH_URL/oauth/token" |
+      python3 -c "import json, sys; print(json.load(sys.stdin)['access_token'])"
+  )"
+  if [[ -z "$token" ]]; then
+    echo "ERROR: local HMPPS Auth did not return an access token." >&2
+    return 1
+  fi
+
+  printf '%s' "$token"
+}
+
+ensure_local_stack
+access_token="${ACCESS_TOKEN:-}"
+if [[ -z "$access_token" ]]; then
+  access_token="$(obtain_access_token)"
+fi
+
+response_file="$(mktemp)"
+trap 'rm -f "$response_file"' EXIT
+
+if ! status_code="$(
+  curl \
+    --silent \
+    --show-error \
+    --output "$response_file" \
+    --write-out '%{http_code}' \
+    --request POST \
+    --header "Authorization: Bearer $access_token" \
+    "$API_BASE_URL/admin/local/appointment-fixtures?count=$count"
+)"; then
+  echo "ERROR: unable to call the local appointment fixture endpoint." >&2
+  exit 1
+fi
+
+if [[ "$status_code" != "201" ]]; then
+  printf 'ERROR: fixture creation failed with HTTP %s.\n' "$status_code" >&2
+  cat "$response_file" >&2
+  exit 1
+fi
+
+cat "$response_file"

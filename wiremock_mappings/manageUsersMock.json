@@ -11,7 +11,12 @@
         "headers": {
           "Content-Type": "application/json"
         },
-        "jsonBody": [{ "groupCode": "INT_SP_TEST", "groupName": "Test Provider Group" }]
+        "jsonBody": [
+          {
+            "groupCode": "INT_SP_SEETEC_BUS_TECH_CTR_LTD",
+            "groupName": "Seetec Business Technology Centre Limited"
+          }
+        ]
       }
     },
     {

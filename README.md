@@ -90,8 +90,9 @@ seeded in HMPPS Auth's `auth-db` (`hmpps-community-support-ui-1` and
 
 Once any of the stacks above is up, `script/local-user-setup` creates a fully working local
 HMPPS Auth user (password set, no email step required) with whichever roles you need and
-the `INT_SP_ACHIEVE` provider access group required by the Community
-Support API case list, entirely offline (no GOV.UK Notify/real Delius/Nomis dependency):
+the `INT_SP_SEETEC_BUS_TECH_CTR_LTD` provider access group, which maps to the
+seeded Seetec service provider in the Community Support API, entirely offline
+(no GOV.UK Notify/real Delius/Nomis dependency):
 
 ```bash
 script/local-user-setup [email] [ROLE1,ROLE2,...]
@@ -102,6 +103,25 @@ script/local-user-setup [email] [ROLE1,ROLE2,...]
 It works no matter which of the three stacks above you're running, and is safe to re-run
 (idempotent) - useful for local development and as a repeatable way to seed e2e test users.
 On first login you'll see a one-off "verify your email" nag - skip it to continue.
+
+### Creating local appointment endpoint fixtures
+
+With the Community Support API running locally using its `local` profile, create between one
+and ten submitted referral fixtures:
+
+```bash
+# Create one fixture
+script/create-local-appointment-fixtures
+
+# Create ten independent fixtures
+script/create-local-appointment-fixtures 10
+```
+
+The script verifies the local Auth, WireMock, and API services are available. It creates or
+updates `appointment.fixtures@digital.justice.gov.uk` with `ROLE_IPB_FRONTEND_RW` and the
+Seetec provider group, obtains a local HMPPS Auth token, and invokes the API's local-only
+fixture endpoint. Set `ACCESS_TOKEN` to skip token generation or `API_BASE_URL` to target a
+different API address.
 
 ### Run linter
 
@@ -189,4 +209,3 @@ You can also run the script without the `--local` flag to generate types against
 ```sh
 $ ./script/generateApiTypes/communitySupportApiTypes
 ```
-
