@@ -8,7 +8,7 @@ import {
   IdentifiedAdditionalNeedsFormData,
   DidYouIdentifyRadioItemsContent,
   DidYouIdentifyRadioContent,
-} from './IdentifiedAddionalNeedsViewModel'
+} from './IdentifiedAdditionalNeedsViewModel'
 import {
   GovukFrontendRadiosItemWithConditional,
   GovukFrontendRadiosWithConditional,
@@ -93,9 +93,9 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
           classes: 'govuk-fieldset__legend govuk-fieldset__legend--m',
         },
       },
-      errorMessage: errorMessages.didYouIdentify,
+      errorMessage: errorMessages?.didYouIdentify,
       attributes: { 'data-testid': content.name },
-      items: this.buildDidYouIdentifyRadioItems(content.items, formData, errorMessages.identifyDetails),
+      items: this.buildDidYouIdentifyRadioItems(content.items, formData, errorMessages?.identifyDetails),
     }
   }
 
