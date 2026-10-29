@@ -342,7 +342,10 @@
   },
   "/referral/:id/service-delivery": {
     "pageHeader": "Action plan",
-    "addAnotherOutcomeText": "Add another outcome"
+    "addAnotherOutcomeText": "Add another outcome",
+    "serviceDeliveryCardTitle": "Service delivery",
+    "risksAndAdjustmentsCardTitle": "Risks and adjustments",
+    "serviceEndDateCardTitle": "Service end date"
   },
   "/referral/:id/appointments": {
     "pageHeader": "Referral for",

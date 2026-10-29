@@ -1,4 +1,4 @@
-import { GovukFrontendBackLink, GovukFrontendButton } from '@govuk-frontend'
+import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendSummaryList } from '@govuk-frontend'
 import { MojSubNavigation } from '@moj-frontend'
 import { GlobalContent } from '../../../../assets/content/GlobalContent'
 import { ActionPlanSideNavContent } from '../actionPlanViewModel'
@@ -11,6 +11,9 @@ export type ServiceDeliveryViewModel = {
   addAnotherOutcomeButton: GovukFrontendButton
   subNavigationArgs: MojSubNavigation
   horizontalSubNavArgs?: MojSubNavigation
+  serviceDeliverySummaryCard: GovukFrontendSummaryList
+  risksAndAdjustmentsSummaryCard: GovukFrontendSummaryList
+  serviceEndDateSummaryCard: GovukFrontendSummaryList
 }
 
 export type ServiceDeliveryContent = GlobalContent['/referral/:id/service-delivery'] &

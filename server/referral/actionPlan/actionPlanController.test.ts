@@ -301,11 +301,39 @@ describe('ActionPlanController', () => {
   })
 
   describe('service delivery page', () => {
-    it('renders the service delivery page for the referral', async () => {
+    const checkYourAnswers: ActionPlanCheckYourAnswersDetails = {
+      sessionDetails: { questions: [] },
+      risksAndAdjustments: { questions: [] },
+      serviceEndDate: { questions: [] },
+      personInvolvement: { questions: [] },
+    }
+
+    beforeEach(() => {
+      referralService.getCheckYourAnswers.mockResolvedValue(checkYourAnswers)
+    })
+
+    it('renders the service delivery page with the check your answers details', async () => {
       await actionPlanController.showServiceDeliveryPage(req, res)
 
-      expect(ServiceDeliveryPresenter).toHaveBeenCalledWith('AB1234CD')
+      expect(referralService.getCheckYourAnswers).toHaveBeenCalledWith('AB1234CD', 'user1', false)
+      expect(ServiceDeliveryPresenter).toHaveBeenCalledWith('AB1234CD', checkYourAnswers)
       expect(ServiceDeliveryPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+    })
+
+    it('passes whether the service end date was changed in the session', async () => {
+      req.session.actionPlanSessionDelivery = { caseReference: 'AB1234CD', isServiceEndDateChanged: true }
+
+      await actionPlanController.showServiceDeliveryPage(req, res)
+
+      expect(referralService.getCheckYourAnswers).toHaveBeenCalledWith('AB1234CD', 'user1', true)
+    })
+
+    it('ignores session data for a different referral', async () => {
+      req.session.actionPlanSessionDelivery = { caseReference: 'ZZ9999ZZ', isServiceEndDateChanged: true }
+
+      await actionPlanController.showServiceDeliveryPage(req, res)
+
+      expect(referralService.getCheckYourAnswers).toHaveBeenCalledWith('AB1234CD', 'user1', false)
     })
   })
 
