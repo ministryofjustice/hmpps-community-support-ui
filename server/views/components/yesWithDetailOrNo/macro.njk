@@ -2,7 +2,6 @@
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
 
 {% macro yesWithDetailOrNo(content) %}
-<p>{{ content | merge({tag:"hannah"}) | dump(2) }}</p>
 {% set value = { value:content.value?.details } %}
 {% set conditionalContent = content.dropDown | merge  %}
 {% set details %}
