@@ -66,6 +66,7 @@ describe('ActionPlanController', () => {
       getPersonInvolvement: jest.fn(),
       getCheckYourAnswers: jest.fn(),
       submitServiceDeliveryDetails: jest.fn(),
+      submitActionPlan: jest.fn(),
       submitAction: jest.fn(),
       moveNeed: jest.fn(),
       deleteAction: jest.fn(),
@@ -2197,6 +2198,7 @@ describe('ActionPlanController', () => {
           },
           'user1',
         )
+        expect(referralService.submitActionPlan).toHaveBeenCalledWith('AB1234CD', 'user1')
         expect(req.session.actionPlanSessionDelivery).toBeUndefined()
         expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan')
       })
@@ -2241,6 +2243,7 @@ describe('ActionPlanController', () => {
           }),
           'user1',
         )
+        expect(referralService.submitActionPlan).toHaveBeenCalledWith('AB1234CD', 'user1')
       })
 
       it.each([false, true])('ignores drafts for other referrals (draft present: %s)', async hasDraft => {
@@ -2270,6 +2273,7 @@ describe('ActionPlanController', () => {
           },
           'user1',
         )
+        expect(referralService.submitActionPlan).toHaveBeenCalledWith('AB1234CD', 'user1')
         expect(req.session.actionPlanSessionDelivery).toEqual(draft)
       })
 
@@ -2287,6 +2291,7 @@ describe('ActionPlanController', () => {
           'Unable to save answers',
         )
 
+        expect(referralService.submitActionPlan).not.toHaveBeenCalled()
         expect(req.session.actionPlanSessionDelivery).toEqual(draft)
         expect(res.redirect).not.toHaveBeenCalled()
       })
