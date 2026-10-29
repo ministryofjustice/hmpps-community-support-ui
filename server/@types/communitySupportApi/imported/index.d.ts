@@ -89,6 +89,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/referral/{referralReference}/action-plan': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Submit an action plan */
+    post: operations['submitActionPlan']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/referral/{referralReference}/action-plan/action': {
     parameters: {
       query?: never
@@ -591,6 +608,23 @@ export interface paths {
     }
     /** Get a single ICS appointment by ID */
     get: operations['getIcsAppointment']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/referral/{caseReference}/existing-support-needs': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get Existing support needs */
+    get: operations['getExistingSupportNeeds']
     put?: never
     post?: never
     delete?: never
@@ -1261,6 +1295,10 @@ export interface components {
       reasonCode: string
       additionalDetails?: string | null
     }
+    ActionPlanSubmitResponse: {
+      success: boolean
+      message: string
+    }
     ActionPlanActionRequest: {
       /** Format: uuid */
       needId: string
@@ -1414,6 +1452,7 @@ export interface components {
       needs: components['schemas']['ActionPlanSummaryNeed'][]
       /** Format: date-time */
       lastUpdatedAt: string
+      isSubmitted: boolean
     }
     ActionPlanSummaryNeed: {
       /** Format: uuid */
@@ -1703,6 +1742,21 @@ export interface components {
       fullName: string
       appointmentDetails?: components['schemas']['AppointmentDetailsDto'] | null
       otherAppointmentMethods?: string[] | null
+    }
+    ExistingSupportNeedsBffResponseDto: {
+      referralFirstName: string
+      supportNeeds: components['schemas']['SupportNeeds']
+    }
+    SupportNeeds: {
+      physicalHealthDetails?: string | null
+      mentalEmotionalHealthDetails?: string | null
+      neurodiversityDetails?: string | null
+      locationTravelDetails?: string | null
+      caringResponsibilitiesDetails?: string | null
+      employmentResponsibilitiesDetails?: string | null
+      diversityDetails?: string | null
+      anythingElseDetails?: string | null
+      interpreterLanguage?: string | null
     }
     CreateAppointmentReferenceDataBffDto: {
       appointmentTypes: components['schemas']['CreateAppointmentTypeOptionDto'][]
@@ -2361,6 +2415,37 @@ export interface operations {
       }
       /** @description Referral already withdrawn */
       409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  submitActionPlan: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralReference: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Action plan submitted successfully */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ActionPlanSubmitResponse']
+        }
+      }
+      /** @description Referral or action not found */
+      404: {
         headers: {
           [name: string]: unknown
         }
@@ -3436,6 +3521,37 @@ export interface operations {
         }
       }
       /** @description Appointment not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getExistingSupportNeeds: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        caseReference: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Existing support needs found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ExistingSupportNeedsBffResponseDto']
+        }
+      }
+      /** @description Existing support needs found */
       404: {
         headers: {
           [name: string]: unknown
