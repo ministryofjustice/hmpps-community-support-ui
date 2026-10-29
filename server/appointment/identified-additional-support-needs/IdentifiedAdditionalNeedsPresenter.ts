@@ -22,6 +22,7 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
 > {
   constructor(
     private readonly caseRefId: string,
+    private readonly referralFirstName: string,
     private readonly existingSupportNeedsdata: ExistingSupportNeedsBffResponseDto,
     private readonly identifiedAdditionalNeeds: IdentifiedAdditionalNeedsFormData,
     private readonly validationErrors?: ErrorMiddlewareErrors,
@@ -46,7 +47,7 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
       <h1 class="govuk-label-wrapper govuk-label">
         <label class="govuk-label govuk-label--s"
           id=${content.identifyDetailsName}Label>
-          ${content.identifyDetailsLabel.replace('{{ firstname }}', this.existingSupportNeedsdata.referralFirstName)}
+          ${content.identifyDetailsLabel.replace('{{ firstname }}', this.referralFirstName)}
         </label>
       </h1>
       ${errorHtml}
@@ -87,7 +88,7 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
       fieldset: {
         attributes: { 'data-testid': `fieldset-${content.name}` },
         legend: {
-          text: content.title.replace('{{ firstname }}', this.existingSupportNeedsdata.referralFirstName),
+          text: content.title.replace('{{ firstname }}', this.referralFirstName),
           isPageHeading: false,
           classes: 'govuk-fieldset__legend govuk-fieldset__legend--m',
         },
@@ -102,7 +103,7 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
     content: IdentifiedAdditionalNeedsContent,
     exisitngData: ExistingSupportNeedsBffResponseDto,
   ): GovukFrontendSummaryList | undefined => {
-    if (!exisitngData.referralFirstName) return undefined
+    if (!exisitngData) return undefined
 
     const draftRows = this.getDraftRows(exisitngData.supportNeeds, content)
 
@@ -219,8 +220,8 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
     return {
       pageTitle: content.pageTitle,
       pageHeader: content.pageHeader,
-      pageSubHeader: content.pageSubHeader.replace('{{ firstname }}', this.existingSupportNeedsdata.referralFirstName),
-      firstname: this.existingSupportNeedsdata.referralFirstName,
+      pageSubHeader: content.pageSubHeader.replace('{{ firstname }}', this.referralFirstName),
+      firstname: this.referralFirstName,
       didYouIdentifyRadio: this.buildDidYouIdentifyRadio(
         content.didYouIdentifyRadio,
         formData,

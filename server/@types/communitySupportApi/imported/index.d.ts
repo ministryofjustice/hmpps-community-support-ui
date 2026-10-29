@@ -599,7 +599,7 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/bff/referral/{caseReference}/existing_support_needs': {
+  '/bff/referral/{caseReference}/existing-support-needs': {
     parameters: {
       query?: never
       header?: never

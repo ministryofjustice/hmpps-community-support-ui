@@ -810,59 +810,6 @@ class AppointmentController {
     presenter.renderPage(res)
   }
 
-  async getIdentifiedAdditionalNeeds(req: Request, res: Response): Promise<void> {
-    const caseRefId = req.params.caseRefId as string
-    const { username } = res.locals.user
-    const icsAppointment = await this.appointmentService.getICS(caseRefId, username)
-
-    if (!icsAppointment) {
-      logger.info(`Appointment for Case '${caseRefId}' not found for user '${username}'`)
-      req.flash('error', 'Appointment not found.')
-      res.redirect(`/ics-feedback/${caseRefId}/identified-additional-supprt-needs`)
-      return
-    }
-    res.locals.errors = formatDynamicErrorMessages(
-      res.locals.errors,
-      '{{ firstname }}',
-      icsAppointment.referralFirstName,
-    )
-
-    const { icsFeedbackSubmission } = req.session
-    res.locals.errors = formatDynamicErrorMessages(
-      res.locals.errors,
-      '{{ firstName }}',
-      icsAppointment.referralFirstName,
-    )
-
-    const sessionNeeds = icsFeedbackSubmission?.newlyIdentifiedAdditionalSupportNeeds
-    const identifiedAdditionalNeeds = sessionNeeds != null
-      ? {
-          didYouIdentify: true,
-          identifyDetails: sessionNeeds,
-        }
-      : null
-    const appointmentData = await this.appointmentService.getICS(caseRefId.toString(), username)
-    const existingSupportNeeedsData = await this.appointmentService.getExistingSupportNeedsStub(
-      caseRefId.toString(),
-      username,
-    )
-
-    const validationErrors = formatDynamicErrorMessages(
-      res.locals.errors,
-      '{{ firstname }}',
-      appointmentData.referralFirstName,
-    )
-    res.locals.errors = validationErrors
-
-    const presenter = new IdentifiedAdditionalNeedsPresenter(
-      caseRefId,
-      existingSupportNeeedsData,
-      identifiedAdditionalNeeds,
-      validationErrors,
-    )
-    presenter.renderPage(res)
-  }
-
   async submitIssuesOrConcerns(req: Request, res: Response): Promise<void> {
     const caseRefId = req.params.caseRefId as string
     const { username } = res.locals.user
@@ -895,6 +842,62 @@ class AppointmentController {
     })
   }
 
+  async getIdentifiedAdditionalNeeds(req: Request, res: Response): Promise<void> {
+    const caseRefId = req.params.caseRefId as string
+    const { username } = res.locals.user
+    const icsAppointment = await this.appointmentService.getICS(caseRefId, username)
+
+    if (!icsAppointment) {
+      logger.info(`Appointment for Case '${caseRefId}' not found for user '${username}'`)
+      req.flash('error', 'Appointment not found.')
+      res.redirect(`/ics-feedback/${caseRefId}/identified-additional-supprt-needs`)
+      return
+    }
+    res.locals.errors = formatDynamicErrorMessages(
+      res.locals.errors,
+      '{{ firstname }}',
+      icsAppointment.referralFirstName,
+    )
+
+    const { icsFeedbackSubmission } = req.session
+    res.locals.errors = formatDynamicErrorMessages(
+      res.locals.errors,
+      '{{ firstName }}',
+      icsAppointment.referralFirstName,
+    )
+
+    const supportNeeds = icsFeedbackSubmission?.newlyIdentifiedAdditionalSupportNeeds
+    const identifiedAdditionalNeeds =
+      supportNeeds != null
+        ? {
+            didYouIdentify: true,
+            identifyDetails: supportNeeds,
+          }
+        : null
+    const appointmentData = await this.appointmentService.getICS(caseRefId.toString(), username)
+    // call the service to get existing support needs for the appointment
+    const existingSupportNeeedsData = await this.appointmentService.getExistingSupportNeeds(
+      caseRefId.toString(),
+      username,
+    )
+
+    const validationErrors = formatDynamicErrorMessages(
+      res.locals.errors,
+      '{{ firstname }}',
+      appointmentData.referralFirstName,
+    )
+    res.locals.errors = validationErrors
+
+    const presenter = new IdentifiedAdditionalNeedsPresenter(
+      caseRefId,
+      icsAppointment.referralFirstName,
+      existingSupportNeeedsData,
+      identifiedAdditionalNeeds,
+      validationErrors,
+    )
+    presenter.renderPage(res)
+  }
+
   async submitIdentifiedAdditionalNeeds(req: Request, res: Response): Promise<void> {
     const caseRefId = req.params.caseRefId as string
     const { username } = res.locals.user
@@ -913,7 +916,8 @@ class AppointmentController {
       res.redirect(`/progress/${caseRefId}`)
       return
     }
-    icsFeedbackSubmission.newlyIdentifiedAdditionalSupportNeeds = req.body.didYouIdentify === 'Yes'? req.body.identifyDetails : null
+    icsFeedbackSubmission.newlyIdentifiedAdditionalSupportNeeds =
+      req.body.didYouIdentify === 'Yes' ? req.body.identifyDetails : null
     req.session.icsFeedbackSubmission = icsFeedbackSubmission
     validateRequestBodyAgainstSchema(IdentifiedAdditionalNeedsFormDataSchema, req, res, () => {
       res.redirect(`/ics-feedback/${caseRefId}/next-steps`)
