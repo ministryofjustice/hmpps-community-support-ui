@@ -103,6 +103,7 @@ describe('ActionPlanController', () => {
       },
       needs: [],
       lastUpdatedAt: '',
+      isSubmitted: false,
     }
 
     beforeEach(() => {
@@ -145,6 +146,7 @@ describe('ActionPlanController', () => {
     const summary: ActionPlanSummaryDto = {
       personDetails: { firstName: 'Alex', lastName: 'River' },
       lastUpdatedAt: '2026-10-12T09:00:00Z',
+      isSubmitted: false,
       needs: [
         {
           id: 'need-1',
@@ -328,6 +330,7 @@ describe('ActionPlanController', () => {
         personDetails: { firstName: 'Alex', lastName: 'River' },
         needs: [],
         lastUpdatedAt: '',
+        isSubmitted: false,
       })
     })
 
@@ -352,6 +355,7 @@ describe('ActionPlanController', () => {
         referralService.getActionPlanSummary.mockResolvedValue({
           personDetails: { firstName: 'Alex', lastName: 'River' },
           lastUpdatedAt: '',
+          isSubmitted: false,
           needs: [
             {
               id: 'need-2',
@@ -375,6 +379,7 @@ describe('ActionPlanController', () => {
       referralService.getActionPlanSummary.mockResolvedValue({
         personDetails: { firstName: 'Alex', lastName: 'River' },
         lastUpdatedAt: '',
+        isSubmitted: false,
         needs: [
           { id: 'need-1', label: 'Accommodation', orderNumber: 1, outcomes: [] },
           {
@@ -456,6 +461,7 @@ describe('ActionPlanController', () => {
         personDetails: { firstName: 'Alex', lastName: 'River' },
         needs: [],
         lastUpdatedAt: '',
+        isSubmitted: false,
       })
 
       await actionPlanController.showSelectOutcomePage(req, res)
@@ -477,6 +483,7 @@ describe('ActionPlanController', () => {
         personDetails: { firstName: 'Alex', lastName: 'River' },
         needs: [],
         lastUpdatedAt: '',
+        isSubmitted: false,
       })
 
       await actionPlanController.showSelectOutcomePage(req, res)
@@ -495,6 +502,7 @@ describe('ActionPlanController', () => {
         personDetails: { firstName: 'Alex', lastName: 'River' },
         needs: [],
         lastUpdatedAt: '',
+        isSubmitted: false,
       })
 
       await actionPlanController.submitOutcome(req, res)
@@ -941,6 +949,7 @@ describe('ActionPlanController', () => {
       referralService.getActionPlanSummary.mockResolvedValue({
         personDetails: { firstName: 'Alex', lastName: 'River' },
         lastUpdatedAt: '2026-10-12T09:00:00Z',
+        isSubmitted: false,
         needs: [
           {
             id: 'need-1',
@@ -991,6 +1000,7 @@ describe('ActionPlanController', () => {
         personDetails: { firstName: 'Alex', lastName: 'River' },
         lastUpdatedAt: '2026-10-12T09:00:00Z',
         needs: [],
+        isSubmitted: false,
       })
       referralService.getActionPlanNeedsAndOutcomes.mockResolvedValue({ needs: [], selectedNeeds: [] })
       jest.clearAllMocks()
@@ -1034,6 +1044,7 @@ describe('ActionPlanController', () => {
         personDetails: { firstName: 'Alex', lastName: 'River' },
         lastUpdatedAt: '',
         needs: [],
+        isSubmitted: false,
       })
 
       await actionPlanController.showViewActivitiesPage(req, res)
@@ -1132,6 +1143,7 @@ describe('ActionPlanController', () => {
         },
       ],
       lastUpdatedAt: '2026-15-10',
+      isSubmitted: false,
     }
 
     beforeEach(() => {
@@ -1289,6 +1301,7 @@ describe('ActionPlanController', () => {
         personDetails: { firstName: 'Alex', lastName: 'River' },
         needs: [],
         lastUpdatedAt: '',
+        isSubmitted: false,
       })
     })
 
@@ -1456,6 +1469,7 @@ describe('ActionPlanController', () => {
         personDetails: { firstName: 'Alex', lastName: 'River' },
         needs: [],
         lastUpdatedAt: '',
+        isSubmitted: false,
       })
 
       await actionPlanController.submitRisksAndAdjustmentsPage(req, res)
@@ -1907,6 +1921,7 @@ describe('ActionPlanController', () => {
         personDetails: { firstName: 'Alex', lastName: 'River' },
         needs: [],
         lastUpdatedAt: '',
+        isSubmitted: false,
       })
     })
 
