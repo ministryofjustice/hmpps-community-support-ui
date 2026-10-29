@@ -8,6 +8,7 @@ import { getChangeRequesterLabel } from '../change-ics-details-reason/ChangeAppo
 import { formatIsoDateOrNull } from '../../utils/dateFormat'
 import { formatTime12Hr } from '../../utils/timeFormat'
 import formatFullName from '../../utils/presenterFormatters'
+import { getInformedByLabel } from '../informedByLabels'
 
 export type AdditionalInformation = {
   firstName: string
@@ -63,12 +64,7 @@ export default class ConfirmIcsPresenter extends PresenterBase<ConfirmIcsViewMod
   }
 
   private formatSessionCommunication(input: string): string {
-    const communications: Record<string, string> = {
-      informedByPhone: 'Phone call',
-      informedByEmail: 'Email',
-      informedByTextMessage: 'Text message',
-    }
-    return communications[input] ?? input
+    return getInformedByLabel(input)
   }
 
   private buildIcsDetailsSummary(): GovukFrontendSummaryList {

@@ -545,6 +545,22 @@ export default {
         jsonBody: mockRespData,
       },
     }),
+  stubSubmitAppointment: (
+    caseRefId: string,
+    mockRespData: AppointmentIcsResponse,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'POST',
+        urlPathPattern: `/community-support/referral/${caseRefId}/appointment`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: mockRespData,
+      },
+    }),
   stubRescheduleICS: (caseRefId: string, mockRespData: AppointmentIcsResponse, httpStatus = 200): SuperAgentRequest =>
     stubFor({
       request: {
