@@ -209,14 +209,8 @@ export default class CommunitySupportApiClient extends RestClient {
     )
   }
 
-  submitActionPlan(
-    caseReference: string,
-    username: string
-  ): Promise<ActionPlanSubmitResponse> {
-    return this.post(
-      { path: `/referral/${caseReference}/action-plan`},
-      asSystem(username),
-    )
+  submitActionPlan(caseReference: string, username: string): Promise<ActionPlanSubmitResponse> {
+    return this.post({ path: `/referral/${caseReference}/action-plan` }, asSystem(username))
   }
 
   getRisksAndAdjustments(caseReference: string, username: string): Promise<ActionPlanSessionDeliveryDetailsResponse> {
