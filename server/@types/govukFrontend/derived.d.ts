@@ -1,3 +1,4 @@
+import { Selection } from '@community-support-api'
 import {
   GovukFrontendCheckboxes,
   GovukFrontendCheckboxesItem,
@@ -24,10 +25,8 @@ export type GovukFrontendCheckboxesWithConditional = Omit<GovukFrontendCheckboxe
   items: WithConditional<GovukFrontendCheckboxesItem>[]
 }
 
-export type YesWithDetailOrNoValue = { selected: 'yes'; details: string } | { selected: 'no' }
-
 export interface YesWithDetailOrNo {
-  dropDown: Omit<GovukFrontendTextarea, 'value'>
+  details: Omit<GovukFrontendTextarea, 'value'>
   main: Omit<GovukFrontendRadios, 'items'>
-  value?: YesWithDetailOrNoValue
+  value: Selection
 }

@@ -1,0 +1,15 @@
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+
+{% macro yesWithDetailOrNo(content) %}
+{% set value = { value:content.value.value } %}
+{% set conditionalContent = content.details | merge(value)  %}
+{% set details %}
+{{ govukTextarea(conditionalContent) }}
+{% endset -%}
+{% set yesItem = { value: "Yes", text: "Yes", conditional: { html:details }, checked: (content.value.selected == "Yes") } %}
+{% set noItem = { value :"No", text: "No", checked: (content.value.selected == "No")}%}
+{% set radiosItems = {items:[ yesItem, noItem ]} %}
+{% set radiosContent = content.main | merge(radiosItems) %}
+{{ govukRadios(radiosContent) }}
+{% endmacro %}

@@ -1,5 +1,5 @@
 import { GovukFrontendBackLink, GovukFrontendButton } from '@govuk-frontend'
-import { GovukFrontendRadiosWithConditional } from '../../@types/govukFrontend/derived'
+import { GovukFrontendRadiosWithConditional, YesWithDetailOrNo } from '../../@types/govukFrontend/derived'
 
 export interface AdditionalInformationForTheDeliveryPartnerContent {
   pageTitle: string
@@ -25,6 +25,6 @@ export interface AdditionalInformationForTheDeliveryPartnerViewModel {
   backLink: GovukFrontendBackLink
   heading: string
   details: Details
-  radios: GovukFrontendRadiosWithConditional
+  radios: YesWithDetailOrNo
   button: GovukFrontendButton
 }

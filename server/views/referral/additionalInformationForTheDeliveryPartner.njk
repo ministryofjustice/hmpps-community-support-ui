@@ -3,6 +3,7 @@
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from "components/yes-with-detail-or-no/macro.njk" import yesWithDetailOrNo %}
 
 {% set pageTitle = content.pageTitle + " - " + applicationName %}
 {% set mainClasses = "govuk-body" %}
@@ -25,9 +26,9 @@
   </ul>
   {{ content.detailsBody }}
   {% endcall %}
-  <form method="post" >
+  <form method="post">
     <input type="hidden" name="_csrf" value="{{csrfToken}}">
-    {{ govukRadios(content.radios) }}
+    {{ yesWithDetailOrNo(content.radios) }}
     {{ govukButton(content.button) }}
   </form>
 </div>
