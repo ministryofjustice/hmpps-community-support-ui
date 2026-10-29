@@ -3,12 +3,12 @@ import { ActionPlanSessionDeliveryDetailsResponse } from '@community-support-api
 
 const MAX_CHAR = 65000
 
-const FREQUENCY_NOTHING_ENTERED_ERROR = { error: 'Enter how often the sessions will take place' }
+const FREQUENCY_NOTHING_ENTERED_ERROR = { error: 'Enter how often sessions will take place' }
 const FREQUENCY_TOO_LONG = { error: 'Details about session frequency must be 65000 characters or less' }
 const HOW_NOTHING_ENTERED_ERROR = { error: 'Select how the sessions will take place' }
 const HOW_UNKNOWN_VALUE_ERROR = { error: 'Select how the sessions will take place' }
-const FORMAT_NOTHING_ENTERED_ERROR = { error: 'Select which format you will use for the sessions' }
-const FORMAT_UNKNOWN_VALUE_ERROR = { error: 'Select which format you will use for the sessions' }
+const FORMAT_NOTHING_ENTERED_ERROR = { error: 'Select what format you will use for the sessions' }
+const FORMAT_UNKNOWN_VALUE_ERROR = { error: 'Select what format you will use for the sessions' }
 const WHY_VIDEO_CALL_REQUIRED_ERROR = { error: 'Enter why the sessions are not in person' }
 const WHY_PHONE_CALL_REQUIRED_ERROR = { error: 'Enter why the sessions are not in person' }
 
