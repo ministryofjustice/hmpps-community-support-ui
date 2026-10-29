@@ -1722,10 +1722,6 @@ export interface components {
       otherAppointmentMethods?: string[] | null
     }
     ExistingSupportNeedsBffResponseDto: {
-      referralFirstName: string
-      supportNeeds: components['schemas']['SupportNeeds']
-    }
-    SupportNeeds: {
       physicalHealthDetails?: string | null
       mentalEmotionalHealthDetails?: string | null
       neurodiversityDetails?: string | null

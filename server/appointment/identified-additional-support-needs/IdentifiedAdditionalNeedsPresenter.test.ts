@@ -17,10 +17,7 @@ describe('IdentifiedAdditionalNeedsPresenter', () => {
       locals: { content },
       render: jest.fn(),
     } as unknown as Response
-    existingSupportNeeds = {
-      referralFirstName: firstName,
-      supportNeeds: {},
-    }
+    existingSupportNeeds = {}
   })
 
   describe('renderPage', () => {
@@ -165,7 +162,7 @@ describe('IdentifiedAdditionalNeedsPresenter', () => {
 
   describe('existing support needs', () => {
     it('renders all populated support needs in order with the card title', () => {
-      existingSupportNeeds.supportNeeds = {
+      existingSupportNeeds = {
         physicalHealthDetails: 'Physical health support',
         mentalEmotionalHealthDetails: 'Mental health support',
         neurodiversityDetails: 'Neurodiversity support',
@@ -199,7 +196,7 @@ describe('IdentifiedAdditionalNeedsPresenter', () => {
     })
 
     it('omits empty, null and missing support needs', () => {
-      existingSupportNeeds.supportNeeds = {
+      existingSupportNeeds = {
         physicalHealthDetails: '',
         mentalEmotionalHealthDetails: null,
         neurodiversityDetails: 'Use plain language',

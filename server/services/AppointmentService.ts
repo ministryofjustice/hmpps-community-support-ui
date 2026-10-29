@@ -72,23 +72,4 @@ export default class AppointmentService {
   getExistingSupportNeeds(caseRefId: string, username: string): Promise<ExistingSupportNeedsBffResponseDto> {
     return this.communitySupportApiClient.getExistingSupportNeeds(caseRefId, username)
   }
-
-  getExistingSupportNeedsStub(_caseRefId: string, _username: string): ExistingSupportNeedsBffResponseDto {
-    return {
-      referralFirstName: 'John',
-      supportNeeds: {
-        physicalHealthDetails: '',
-        mentalEmotionalHealthDetails:
-          'As a young age, Alex experienced anxiety through different life events and personal stories, ranging from panic attacks and health anxiety to trauma-induced stress and neurodivergence-related overwhelm',
-        neurodiversityDetails:
-          'As per your description, Alex experienced anxiety through different life events and personal stories, ranging from panic attacks and health anxiety to trauma-induced stress and neurodivergence-related overwhelm',
-        locationTravelDetails: '',
-        caringResponsibilitiesDetails: '',
-        employmentResponsibilitiesDetails: '',
-        diversityDetails: '',
-        anythingElseDetails: '',
-        interpreterLanguage: '',
-      },
-    } as ExistingSupportNeedsBffResponseDto
-  }
 }

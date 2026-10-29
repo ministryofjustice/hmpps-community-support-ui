@@ -105,7 +105,7 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
   ): GovukFrontendSummaryList | undefined => {
     if (!exisitngData) return undefined
 
-    const supportNeedsRows = this.getSupportNeedsRows(exisitngData.supportNeeds, content)
+    const supportNeedsRows = this.getSupportNeedsRows(exisitngData, content)
 
     return {
       card: {

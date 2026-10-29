@@ -874,8 +874,7 @@ class AppointmentController {
             identifyDetails: supportNeeds,
           }
         : null
-    const appointmentData = await this.appointmentService.getICS(caseRefId.toString(), username)
-    // call the service to get existing support needs for the appointment
+    
     const existingSupportNeeedsData = await this.appointmentService.getExistingSupportNeeds(
       caseRefId.toString(),
       username,
@@ -884,7 +883,7 @@ class AppointmentController {
     const validationErrors = formatDynamicErrorMessages(
       res.locals.errors,
       '{{ firstname }}',
-      appointmentData.referralFirstName,
+      icsAppointment.referralFirstName,
     )
     res.locals.errors = validationErrors
 
