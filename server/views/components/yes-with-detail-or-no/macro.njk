@@ -7,7 +7,10 @@
 {% set details %}
 {{ govukTextarea(conditionalContent) }}
 {% endset -%}
-{% set yesItem = { value: "Yes", text: "Yes", conditional: { html:details }, checked: (content.value.selected == "Yes") } %}
+{% set yesHasError = ( ( content.details.errorMessage is defined ) and ((content.details.errorMessage.text is defined) or (content.details.errorMessage.html is defined)) ) %}
+{% set yesIsSelected = ( content.value and content.value.selected == "Yes" ) %}
+{% set yesChecked = ( yesHasError or yesIsSelected ) %}
+{% set yesItem = { value: "Yes", text: "Yes", conditional: { html:details }, checked: (yesChecked) } %}
 {% set noItem = { value :"No", text: "No", checked: (content.value.selected == "No")}%}
 {% set radiosItems = {items:[ yesItem, noItem ]} %}
 {% set radiosContent = content.main | merge(radiosItems) %}

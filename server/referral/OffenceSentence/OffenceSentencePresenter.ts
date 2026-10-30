@@ -26,38 +26,33 @@ const buildDateRows = (
   return []
 }
 
-const toSelection = (option: 'Yes' | 'No' | undefined | boolean, value: string): Selection => {
+const toSelection = (option: 'Yes' | 'No' | undefined | boolean | string, value: string): Selection => {
   switch (option) {
     case true:
     case 'Yes':
+    case 'yes':
       return { selected: 'Yes', value }
     case false:
     case 'No':
+    case 'no':
       return { selected: 'No' }
     default:
       return { selected: 'Unanswered' }
   }
 }
 
-const calculateValue = (selection: Selection, hasError: boolean): Selection => {
-  if (hasError) {
-    return { selected: 'Yes', value: '' }
+const mergeSelections = (original: Selection, updated: Selection): Selection => {
+  if (updated.selected === 'Yes') {
+    return updated
   }
-  return selection
-}
-
-const mergeSelections = (a: Selection, b: Selection): Selection => {
-  if (b.selected === 'Yes') {
-    return b
+  if (original.selected === 'Yes') {
+    return original
   }
-  if (a.selected === 'Yes') {
-    return a
+  if (updated.selected === 'No') {
+    return updated
   }
-  if (b.selected === 'No') {
-    return b
-  }
-  if (a.selected === 'No') {
-    return a
+  if (original.selected === 'No') {
+    return original
   }
   return { selected: 'Unanswered' }
 }
@@ -70,8 +65,7 @@ const buildRadios = (
 ): YesWithDetailOrNo => {
   const selection = toSelection(formData.hasLicenceConditionsOrZones, formData.licenceConditionsOrZonesDetails)
   const bffSelection = toSelection(hasLicenceConditionsOrZones, licenceConditionsOrZonesDetails)
-  const merged = mergeSelections(bffSelection, selection)
-  const value = calculateValue(merged, !!messages.licenceConditionsOrZonesDetails)
+  const value = mergeSelections(bffSelection, selection)
 
   return {
     details: {
