@@ -1,5 +1,5 @@
 import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendSummaryList } from '@govuk-frontend'
-import { GovukFrontendRadiosWithConditional } from '../../@types/govukFrontend/derived'
+import { YesWithDetailOrNo } from '../../@types/govukFrontend/derived'
 import { GlobalContent } from '../../../assets/content/GlobalContent'
 
 export type OffenceSentencePageContent = GlobalContent['/referral/task-list/offence-sentence']
@@ -18,5 +18,5 @@ export interface OffenceSentencePageViewModel {
   button: GovukFrontendButton
   offenceSentenceCardHeading: string
   offenceSentenceSummary: GovukFrontendSummaryList
-  radios: GovukFrontendRadiosWithConditional
+  radios: YesWithDetailOrNo
 }

@@ -66,10 +66,11 @@ describe('OffenceSentencePresenter', () => {
     expect(rows[3].value.text).toBe('15 December 2025')
     expect(rows).toHaveLength(4)
 
-    const [yesRadio, noRadio] = viewModel.radios.items
-    expect(yesRadio.checked).toBe(true)
-    expect(yesRadio.conditional.html).toContain('No contact with victim')
-    expect(noRadio.checked).toBe(false)
+    const { radios } = viewModel
+    expect(radios.value.selected).toBe('Yes')
+    if (radios.value.selected === 'Yes') {
+      expect(radios.value.value).toBe('No contact with victim')
+    }
   })
 
   test('shows expected release date when sentence end date is not returned', () => {
@@ -129,9 +130,8 @@ describe('OffenceSentencePresenter', () => {
     expect(viewModel.crn).toBe(content.notAvailableText)
     expect(viewModel.dateOfBirth).toBe(content.notAvailableText)
 
-    const [yesRadio, noRadio] = viewModel.radios.items
-    expect(yesRadio.checked).toBeNull()
-    expect(noRadio.checked).toBeNull()
+    const { radios } = viewModel
+    expect(radios.value.selected).toBe('Unanswered')
   })
 
   test('preserves a posted yes selection and shows the textarea error when details are blank', () => {
@@ -152,11 +152,11 @@ describe('OffenceSentencePresenter', () => {
     )
     const viewModel = presenter.buildViewModel(res)
 
-    const [yesRadio, noRadio] = viewModel.radios.items
-    expect(yesRadio.checked).toBe(true)
-    expect(noRadio.checked).toBe(false)
-    expect(yesRadio.conditional.html).toContain('Enter details of all relevant licence conditions or exclusion zones')
-    expect(yesRadio.conditional.html).toContain('name="licenceConditionsOrZonesDetails"')
+    const { radios } = viewModel
+    expect(radios.value.selected).toBe('Yes')
+    expect(radios.details.label.text).toBe('Give details of all relevant licence conditions or exclusion zones')
+    expect(radios.details.errorMessage.text).toBe('Enter details of all relevant licence conditions or exclusion zones')
+    expect(radios.details.name).toBe('licenceConditionsOrZonesDetails')
   })
 
   test('returns expected template path', () => {
