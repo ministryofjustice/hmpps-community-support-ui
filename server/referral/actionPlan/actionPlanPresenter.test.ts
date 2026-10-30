@@ -16,6 +16,7 @@ describe('ActionPlanPresenter', () => {
       },
       needs: [],
       lastUpdatedAt: '',
+      isSubmitted: false,
     }
 
     const presenter = new ActionPlanPresenter(actionPlanSummary, 'AB1234CD')
@@ -43,6 +44,7 @@ describe('ActionPlanPresenter', () => {
       personDetails: { firstName: 'Alex', lastName: 'River' },
       needs: [],
       lastUpdatedAt: '',
+      isSubmitted: false,
     }
     const res = {
       locals: { content: actionPlanContent },
@@ -72,6 +74,7 @@ describe('ActionPlanPresenter', () => {
           ]
         : [],
       lastUpdatedAt: '2026-10-15T09:00:00Z',
+      isSubmitted: false,
     })
 
     const render = (summary: ActionPlanSummaryDto) => {
@@ -127,6 +130,7 @@ describe('ActionPlanPresenter', () => {
         },
       ],
       lastUpdatedAt: '2026-10-15',
+      isSubmitted: false,
     }
 
     const presenter = new ActionPlanPresenter(actionPlanSummary, 'AB1234CD', true)
@@ -186,6 +190,7 @@ describe('ActionPlanPresenter', () => {
         },
       ],
       lastUpdatedAt: '2026-10-15T09:00:00Z',
+      isSubmitted: false,
     }
     const res = {
       locals: { content: actionPlanContent },
@@ -265,6 +270,7 @@ describe('ActionPlanPresenter', () => {
         },
       ],
       lastUpdatedAt: '2026-10-15',
+      isSubmitted: false,
     }
 
     const presenter = new ActionPlanPresenter(actionPlanSummary, 'AB1234CD')
@@ -321,6 +327,7 @@ describe('ActionPlanPresenter', () => {
         { id: 'need_id_2', label: 'Finances', orderNumber: 2, outcomes: [{ ...outcome, id: 'outcome_id_2' }] },
       ],
       lastUpdatedAt: '2026-10-15',
+      isSubmitted: false,
     }
 
     it('is displayed and links to session details when all outcomes are added and ICS feedback is submitted', () => {
@@ -365,6 +372,7 @@ describe('ActionPlanPresenter', () => {
         },
       ],
       lastUpdatedAt: '2026-10-15T09:00:00Z',
+      isSubmitted: false,
     }
 
     it('renders the correct alert when adding an outcome', () => {
