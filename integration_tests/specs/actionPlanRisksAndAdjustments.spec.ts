@@ -19,6 +19,7 @@ test.describe('Action Plan Risks and Adjustments Page', () => {
       lastName: 'River',
     },
     needs: [],
+    isSubmitted: false,
   }
 
   test.beforeEach(async ({ page }) => {
