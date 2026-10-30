@@ -1,6 +1,6 @@
 import { Response } from 'express'
 import { GovukFrontendErrorMessage, GovukFrontendSummaryList, GovukFrontendSummaryListRow } from '@govuk-frontend'
-import { ExistingSupportNeedsBffResponseDto, SupportNeeds } from '@community-support-api'
+import { ExistingSupportNeedsBffResponseDto } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
 import {
   IdentifiedAdditionalNeedsContent,
@@ -120,7 +120,7 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
   }
 
   private getSupportNeedsRows = (
-    exisitngSupportNeedsData: SupportNeeds,
+    exisitngSupportNeedsData: ExistingSupportNeedsBffResponseDto,
     content: IdentifiedAdditionalNeedsContent,
   ): GovukFrontendSummaryListRow[] => {
     const draftRows: GovukFrontendSummaryListRow[] = []
