@@ -5,6 +5,7 @@ import {
   IcsFeedbackSubmission,
   IcsFeedbackSubmissionResponse,
   ChangeAppointmentDetails,
+  ExistingSupportNeedsBffResponseDto,
 } from '@community-support-api'
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
 
@@ -66,5 +67,9 @@ export default class AppointmentService {
 
   getIcsSessionFeedback(icsFeedbackId: string, username: string): Promise<IcsFeedbackSubmissionResponse> {
     return this.communitySupportApiClient.getIcsSessionFeedback(icsFeedbackId, username)
+  }
+
+  getExistingSupportNeeds(caseRefId: string, username: string): Promise<ExistingSupportNeedsBffResponseDto> {
+    return this.communitySupportApiClient.getExistingSupportNeeds(caseRefId, username)
   }
 }

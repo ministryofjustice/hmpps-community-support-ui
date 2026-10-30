@@ -44,7 +44,7 @@ export default class FindPersonPage extends AbstractPage {
     readonly contactDetails: SummaryList,
   ) {
     super(page)
-    this.header = page.getByRole('heading', { name: 'Confirm this is the correct person for referral' })
+    this.header = page.getByRole('heading', { name: 'Check and confirm personal details' })
     this.backLink = page.getByRole('link', { name: 'Back', exact: true })
     this.personSummary = personSummary
     this.equalityMonitoring = equalityMonitoring

@@ -160,6 +160,14 @@ export default function routes({
     appointmentController.submitIssuesOrConcerns(req, res),
   )
 
+  get('/ics-feedback/:caseRefId/identified-additional-needs', (req, res) =>
+    appointmentController.getIdentifiedAdditionalNeeds(req, res),
+  )
+
+  post('/ics-feedback/:caseRefId/identified-additional-needs', (req, res) =>
+    appointmentController.submitIdentifiedAdditionalNeeds(req, res),
+  )
+
   get('/ics-feedback/:caseRefId/next-steps', (req, res) => appointmentController.getNextSteps(req, res))
 
   post('/ics-feedback/:caseRefId/next-steps', (req, res) => appointmentController.submitNextSteps(req, res))
