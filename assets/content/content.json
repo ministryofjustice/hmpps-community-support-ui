@@ -1404,11 +1404,8 @@
   "/referral/task-list/service-end-date": {
     "pageTitle": "What date does the service need to be completed by?",
     "pageHeader": "What date does the service need to be completed by?",
-    "hint": "This date must allow enough time to deliver the service and complete the end of service report. Do not use the licence end date or sentence end date.",
-    "dateLabel": "Date",
-    "dateHint": "For example, 31 3 2027",
+    "dateHint": "This date must allow enough time to deliver the service and complete the end of service report. Do not use the licence end date or sentence end date.",
     "reasonLabel": "Why does it need to be completed by this date?",
-    "reasonHint": "Explain why this date was chosen",
     "backLink": "/referral/task-list",
     "continueButton": "Save and continue",
     "updateError": "Something has gone wrong updating the service end date"

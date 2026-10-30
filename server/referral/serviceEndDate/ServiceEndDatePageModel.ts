@@ -11,11 +11,8 @@ export interface ServiceEndDateFormValues {
 export interface ServiceEndDatePageViewModel {
   pageTitle: string
   pageHeader: string
-  hint: string
-  dateLabel: string
   dateHint?: string
   reasonLabel: string
-  reasonHint: string
   continueButton: string
   backLink: GovukFrontendBackLink
   formValues: ServiceEndDateFormValues

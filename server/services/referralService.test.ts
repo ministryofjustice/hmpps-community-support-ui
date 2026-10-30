@@ -218,6 +218,7 @@ describe('Referral service tests', () => {
         },
         needs: [],
         lastUpdatedAt: '',
+        isSubmitted: false,
       }
 
       communitySupportApiClient.getActionPlanSummary.mockResolvedValue(mockActionPlanSummary)
