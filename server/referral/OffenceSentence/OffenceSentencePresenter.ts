@@ -1,10 +1,10 @@
 import { Response } from 'express'
 import { GovukFrontendErrorMessage } from '@govuk-frontend'
-import { OffenceSentenceDto, OffenceSentenceInfoBffResponseDto } from '@community-support-api'
+import { OffenceSentenceDto, OffenceSentenceInfoBffResponseDto, Selection } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
 import { OffenceSentencePageContent, OffenceSentencePageViewModel } from './OffenceSentencePageModel'
 import ViewUtils from '../../utils/viewUtils'
-import { GovukFrontendRadiosWithConditional } from '../../@types/govukFrontend/derived'
+import { GovukFrontendRadiosWithConditional, YesWithDetailOrNo } from '../../@types/govukFrontend/derived'
 import { booleanToTriState, buildTextarea, not, yesNoSelectionToTriState } from '../../utils/utils'
 import { formatIsoDateOrNull } from '../../utils/dateFormat'
 import { ErrorMiddlewareErrors } from '../../@types/express'
@@ -27,15 +27,15 @@ const buildConditional = (
   })
 
 const resolveLicenceOrExclusionDetails = (
-  offenceSentenceInfo: OffenceSentenceDto,
-  formData: Partial<OffenceSentenceFormInput>,
+  { hasLicenceConditionsOrZones, licenceConditionsOrZonesDetails }: OffenceSentenceDto,
+  formData: string | undefined,
 ): string => {
-  if (formData.licenceConditionsOrZonesDetails !== undefined) {
-    return formData.licenceConditionsOrZonesDetails
+  if (formData !== undefined) {
+    return formData
   }
 
-  if (offenceSentenceInfo.hasLicenceConditionsOrZones) {
-    return offenceSentenceInfo.licenceConditionsOrZonesDetails || ''
+  if (hasLicenceConditionsOrZones) {
+    return licenceConditionsOrZonesDetails
   }
 
   return ''
@@ -68,7 +68,10 @@ const buildRadios = (
     formData.hasLicenceConditionsOrZones !== undefined
       ? formSelection
       : booleanToTriState(offenceSentenceInfo.hasLicenceConditionsOrZones)
-  const licenceOrExclusionDetails = resolveLicenceOrExclusionDetails(offenceSentenceInfo, formData)
+  const licenceOrExclusionDetails = resolveLicenceOrExclusionDetails(
+    offenceSentenceInfo,
+    formData.licenceConditionsOrZonesDetails,
+  )
 
   return {
     name: 'hasLicenceConditionsOrZones',
@@ -95,6 +98,57 @@ const buildRadios = (
       },
     ],
     attributes: { 'data-testid': 'has-licence-conditions-or-zones' },
+  }
+}
+
+const toSelection = (option: 'Yes' | 'No' | undefined, value: string): Selection => {
+  switch (option) {
+    case 'Yes':
+      return { selected: 'Yes', value }
+    case 'No':
+      return { selected: 'No' }
+    default:
+      return { selected: 'Unanswered' }
+  }
+}
+
+const calculateValue = (selection: Selection, hasError: boolean): Selection => {
+  if (hasError) {
+    return { selected: 'Yes', value: '' }
+  }
+  return selection
+}
+
+const buildRadios2 = (
+  content: OffenceSentencePageContent,
+  offenceSentenceInfo: OffenceSentenceDto,
+  formData: Partial<OffenceSentenceFormInput>,
+  messages: Record<string, GovukFrontendErrorMessage>,
+): YesWithDetailOrNo => {
+  const selection2 = toSelection(formData.hasLicenceConditionsOrZones, formData.licenceConditionsOrZonesDetails)
+  const value = calculateValue(selection2, !!messages.licenceConditionsOrZonesDetails)
+
+  return {
+    details: {
+      name: 'licenceConditionsOrZonesDetails',
+      label: { text: content.licenceConditionsOrZonesDetailsLabel },
+      spellcheck: true,
+      rows: '5',
+      errorMessage: messages.licenceConditionsOrZonesDetails,
+      attributes: { 'data-testid': 'licence-conditions-or-zones-details' },
+    },
+    main: {
+      name: 'hasLicenceConditionsOrZones',
+      fieldset: {
+        legend: {
+          text: content.hasLicenceConditionsOrZonesLabel,
+          classes: 'govuk-fieldset__legend--m',
+        },
+      },
+      errorMessage: messages.hasLicenceConditionsOrZones,
+      attributes: { 'data-testid': 'has-licence-conditions-or-zones' },
+    },
+    value,
   }
 }
 
@@ -146,6 +200,7 @@ export default class OffenceSentencePresenter extends PresenterBase<
         ...dateRows,
       ]),
       radios: buildRadios(content, offenceSentenceInfo, this.formData, this.validationErrors.messages),
+      radios2: buildRadios2(content, offenceSentenceInfo, this.formData, this.validationErrors.messages),
     }
   }
 
