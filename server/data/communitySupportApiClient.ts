@@ -54,6 +54,7 @@ import type {
   OffenceSentenceInfoBffResponseDto,
   WithdrawReferralRequest,
   ActionPlanNeedsOrderRequest,
+  ActionPlanSubmitResponse,
 } from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
@@ -206,6 +207,10 @@ export default class CommunitySupportApiClient extends RestClient {
       { path: `/referral/${caseReference}/action-plan/session-delivery-details`, data: request },
       asSystem(username),
     )
+  }
+
+  submitActionPlan(caseReference: string, username: string): Promise<ActionPlanSubmitResponse> {
+    return this.post({ path: `/referral/${caseReference}/action-plan` }, asSystem(username))
   }
 
   getRisksAndAdjustments(caseReference: string, username: string): Promise<ActionPlanSessionDeliveryDetailsResponse> {

@@ -33,6 +33,7 @@ type CaseWorkerSummary = components['schemas']['CaseWorkerSummaryDto']
 type PDU = components['schemas']['Pdu']
 type ActionPlanSessionDeliveryDetailsRequest = components['schemas']['ActionPlanSessionDeliveryDetailsRequest']
 type ActionPlanSessionDeliveryDetailsResponse = components['schemas']['ActionPlanSessionDeliveryDetailsResponse']
+type ActionPlanSubmitResponse = components['schemas']['ActionPlanSubmitResponse']
 type SessionDeliveryDetailsQuestionAnswer = components['schemas']['SessionDeliveryDetailsQuestionAnswer']
 type SessionDeliveryDetailsQuestionAnswers = components['schemas']['SessionDeliveryDetailsQuestionAnswers']
 type SessionDeliveryQuestion = components['schemas']['SessionDeliveryQuestion']
@@ -165,4 +166,5 @@ export type {
   WithdrawReferralRequest,
   DraftAdditionalReferralInformationTableDataDto,
   DraftMainPOCDetailsTableDataDto,
+  ActionPlanSubmitResponse,
 }

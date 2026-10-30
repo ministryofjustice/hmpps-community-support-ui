@@ -34,6 +34,7 @@ import {
   WithdrawReferralRequest,
   WithdrawalReasonsGroupedBffResponseDto,
   ActionPlanNeedsOrderRequest,
+  ActionPlanSubmitResponse,
 } from '@community-support-api'
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
 import { NeedsAnInterpreterFormData } from '../validation/NeedsAnInterpreterFormDataSchema'
@@ -126,6 +127,10 @@ export default class ReferralService {
     username: string,
   ): Promise<ActionPlanSessionDeliveryDetailsResponse> {
     return this.communitySupportApiClient.submitServiceDeliveryDetails(caseReference, request, username)
+  }
+
+  submitActionPlan(caseReference: string, username: string): Promise<ActionPlanSubmitResponse> {
+    return this.communitySupportApiClient.submitActionPlan(caseReference, username)
   }
 
   getRisksAndAdjustments(caseReference: string, username: string): Promise<ActionPlanSessionDeliveryDetailsResponse> {

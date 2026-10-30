@@ -756,6 +756,7 @@ class ActionPlanController {
     }
 
     await this.referralService.submitServiceDeliveryDetails(caseReference, request, username)
+    await this.referralService.submitActionPlan(caseReference, username)
 
     if (sessionDelivery) {
       delete req.session.actionPlanSessionDelivery
