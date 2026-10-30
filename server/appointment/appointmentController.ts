@@ -874,7 +874,7 @@ class AppointmentController {
             identifyDetails: supportNeeds,
           }
         : null
-    
+
     const existingSupportNeeedsData = await this.appointmentService.getExistingSupportNeeds(
       caseRefId.toString(),
       username,
