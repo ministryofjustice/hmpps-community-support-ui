@@ -85,7 +85,7 @@ test.describe('Confirm An Area For Referral Page', () => {
     }
     await communitySupport.stubSaveCommunityServiceProvider(mockReferralId, savedResponse)
     await communitySupport.stubGetTaskListStatus(mockReferralId, {
-      fullName: 'Alex River',
+      refereeName: { firstName: 'Alex', lastName: 'River' },
       confirmPersonalDetailsStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
       checkRiskInformationStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
       selectAnAreaForReferralStatus: { completed: true, statusText: 'Completed', tag: 'govuk-tag--green' },
