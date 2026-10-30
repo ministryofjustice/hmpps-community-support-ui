@@ -255,6 +255,7 @@ test.describe('Action Plan Check Your Answers Page', () => {
       personDetails: { firstName: 'Alex', lastName: 'River' },
       needs: [],
       lastUpdatedAt: '2026-10-12T09:00:00Z',
+      isSubmitted: false,
     })
 
     await page.goto(ActionPlanCheckYourAnswersPage.url(caseReference))
