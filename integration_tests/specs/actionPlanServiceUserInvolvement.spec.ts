@@ -15,6 +15,7 @@ test.describe('Action Plan Service User Involvement Page', () => {
       lastName: 'River',
     },
     needs: [],
+    isSubmitted: false,
   }
 
   const emptyPersonInvolvementFactory = actionPlanPersonInvolvementFactory.transient({ savedResponses: [] })
