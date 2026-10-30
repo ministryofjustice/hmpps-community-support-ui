@@ -19,7 +19,7 @@
   },
   "/referral/new/find-a-person": {
     "pageTitle": "Check and confirm personal details - Make a referral - Community Support",
-    "pageHeader": "Confirm this is the correct person for referral",
+    "pageHeader": "Check and confirm personal details",
     "continueButtonText": "Continue",
     "continueButtonLink": "/referral/new/confirm-person",
     "backLink": "/referral/new/find-a-person",
@@ -668,6 +668,34 @@
     "submitButtonText": "Continue",
     "backLinkHref": "/ics-feedback/{{ id }}/session-feedback"
   },
+  "/ics-feedback/:id/identified-additional-needs": {
+    "pageTitle": "Additional support needs – ICS feedback – Community Support",
+    "pageHeader": "Additional support needs",
+    "pageSubHeader": "These are the support needs identified in {{ firstname }}’s referral.",
+    "didYouIdentifyRadio": {
+      "name": "didYouIdentify",
+      "title": "Did you identity anything else {{ firstname }} needs support with?",
+      "items": {
+        "yesText": "Yes",
+        "noText": "No",
+        "identifyDetailsName": "identifyDetails",
+        "identifyDetailsLabel": "Give details of anything else {{ firstname }} needs support with"
+      }
+    },
+    "cardTitle": "Additional support needs already identified",
+    "supportNeedsTitle": {
+      "physicalHealth": "Physical Health",
+      "mentalEmotionalHealth": "Mental & Emotional Health",
+      "neurodiversity": "Neurodiversity",
+      "locationTravel": "Location & Travel",
+      "caringResponsibilities": "Caring Responsibilities",
+      "employmentResponsibilities": "Employment Responsibilities",
+      "diversity": "Diversity",
+      "anythingElse": "Anything Else"
+    },
+    "submitButtonText": "Continue",
+    "backLinkHref": "/ics-feedback/{{ id }}/issues-or-concerns"
+  },
   "/ics-feedback/:id/next-steps": {
     "pageTitle": "Next steps – ICS feedback – Community Support ",
     "pageHeader": "Next steps",
@@ -676,7 +704,7 @@
     "actionsBeforeNextSessionLabel": "What actions do you and {{ firstname }} have before the next session takes place?",
     "actionsBeforeNextSessionHint": "Give details of any actions or next steps you and {{ firstname }} have agreed to do ahead of your next session.",
     "submitButtonText": "Continue",
-    "backLinkHref": "/ics-feedback/{{ id }}/issues-or-concerns"
+    "backLinkHref": "/ics-feedback/{{ id }}/identified-additional-needs"
   },
   "/ics-feedback/:id/session/:id": {
     "pageTitle": "View session feedback",
@@ -1227,7 +1255,7 @@
     }
   },
   "/referral/task-list/confirm-personal-details": {
-    "pageTitle": "Check and confirm personal details",
+    "pageTitle": "Confirm personal details - Make a referral",
     "pageHeader": "{{ name }}",
     "pageSubHeader": "Confirm personal details",
     "backLink": "/referral/task-list",

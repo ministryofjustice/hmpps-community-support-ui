@@ -81,4 +81,27 @@ describe('IssuesOrConcernsPresenter', () => {
       expect(renderData.content.issuesOrConcerns.errorMessage).toEqual('Test error')
     })
   })
+
+  describe('buildViewModel', () => {
+    it('sets the form action and textarea attributes', () => {
+      const presenter = new IssuesOrConcernsPresenter(caseRefId, firstName)
+
+      const viewModel = presenter.buildViewModel(res)
+
+      expect(viewModel.submitHref).toBe(`/ics-feedback/${caseRefId}/issues-or-concerns`)
+      expect(viewModel.issuesOrConcerns).toMatchObject({
+        id: 'issuesOrConcerns',
+        name: 'issuesOrConcerns',
+        label: {
+          classes: 'govuk-label--m',
+          isPageHeading: false,
+          attributes: { 'data-testid': 'textarea-label' },
+        },
+        hint: {
+          attributes: { 'data-testid': 'textarea-hint' },
+        },
+        attributes: { 'data-testid': 'textarea-input' },
+      })
+    })
+  })
 })

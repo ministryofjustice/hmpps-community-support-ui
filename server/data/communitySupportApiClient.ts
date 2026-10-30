@@ -54,6 +54,7 @@ import type {
   OffenceSentenceInfoBffResponseDto,
   WithdrawReferralRequest,
   ActionPlanNeedsOrderRequest,
+  ExistingSupportNeedsBffResponseDto,
 } from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
@@ -287,6 +288,25 @@ export default class CommunitySupportApiClient extends RestClient {
 
   getAdditionalSupportNeeds(id: string, username: string): Promise<AdditionalSupportNeedsDto> {
     return this.get({ path: `/bff/draft-referral/additional-support-needs/${id}` }, asSystem(username))
+  }
+
+  async getExistingSupportNeeds(
+    caseReference: string,
+    username: string,
+  ): Promise<ExistingSupportNeedsBffResponseDto | null> {
+    try {
+      return await this.get<ExistingSupportNeedsBffResponseDto>(
+        { path: `/bff/referral/${caseReference}/existing-support-needs` },
+        asSystem(username),
+      )
+    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const err = error as any
+      if ((err?.responseStatus ?? err?.status ?? err?.response?.status) === 404) {
+        return null
+      }
+      throw error
+    }
   }
 
   getTaskListStatus(referralId: string, username: string): Promise<TaskListStatusDto> {

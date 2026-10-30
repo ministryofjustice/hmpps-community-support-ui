@@ -68,7 +68,7 @@ test.describe('Task List E2E Journey Regression', () => {
       await findPom.enterIdentifyierAndContinue(crn)
     })
     await test.step('confirm person', async () => {
-      await expect(page.getByRole('heading', { name: 'Confirm this is the correct' })).toBeVisible()
+      await expect(page.getByRole('heading', { name: 'Check and confirm personal details' })).toBeVisible()
       await page.getByRole('button', { name: 'Continue' }).click()
     })
   }
