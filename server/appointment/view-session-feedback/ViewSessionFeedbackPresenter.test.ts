@@ -2,6 +2,7 @@ import { Response } from 'express'
 import ViewSessionFeedbackPresenter from './ViewSessionFeedbackPresenter'
 import { ViewSessionFeedbackViewModel } from './ViewSessionFeedbackViewModel'
 import IcsFeedbackResponseFactory from '../../testutils/factories/IcsFeedbackSubmissionResponse'
+import { globalContent } from '../../../assets/content/GlobalContent'
 
 describe('ViewSessionFeedbackPresenter', () => {
   let res: Response
@@ -22,7 +23,7 @@ describe('ViewSessionFeedbackPresenter', () => {
 
   beforeEach(() => {
     res = {
-      locals: { content: {} },
+      locals: { content: globalContent['/ics-feedback/:id/session/:id'] },
       render: jest.fn(),
       redirect: jest.fn(),
     } as unknown as Response
@@ -102,7 +103,7 @@ describe('ViewSessionFeedbackPresenter', () => {
         expect(row?.value.text).toBe('Phone call')
       })
 
-      it('falls back to the appointment delivery method when no recorded session method exists', () => {
+      it('shows None when no recorded session method exists', () => {
         const viewModel = renderViewModel(
           IcsFeedbackResponseFactory.build({
             recordSessionHowSessionTookPlace: undefined,
@@ -110,26 +111,7 @@ describe('ViewSessionFeedbackPresenter', () => {
         )
         const row = viewModel.appointmentDetailsSummary.rows.find(r => r.key.text === 'Method')
 
-        expect(row?.value.text).toBe('Phone call')
-      })
-
-      it('uses the recorded session method in preference to the appointment method', () => {
-        const viewModel = renderViewModel(
-          IcsFeedbackResponseFactory.build({
-            recordSessionHowSessionTookPlace: 'Video call',
-            sessionFeedbackAppointmentDetails: {
-              ...icsFeedbackSubmissionResponse.sessionFeedbackAppointmentDetails,
-              appointmentDeliveryDetails: {
-                method: 'PHONE_CALL',
-                methodDetails: undefined,
-              },
-            },
-          }),
-        )
-
-        const row = viewModel.appointmentDetailsSummary.rows.find(r => r.key.text === 'Method')
-
-        expect(row?.value.text).toBe('Video call')
+        expect(row?.value.text).toBe('None')
       })
 
       it('shows the recorded reason why the session was not in-person', () => {
@@ -149,10 +131,10 @@ describe('ViewSessionFeedbackPresenter', () => {
         })
       })
 
-      it('falls back to the appointment method details when no recorded reason exists', () => {
+      it('shows None when no recorded reason exists', () => {
         const viewModel = renderViewModel(
           IcsFeedbackResponseFactory.build({
-            recordSessionHowSessionTookPlace: undefined,
+            recordSessionHowSessionTookPlace: 'Phone call',
             recordSessionNotInPersonReason: undefined,
             sessionFeedbackAppointmentDetails: {
               ...icsFeedbackSubmissionResponse.sessionFeedbackAppointmentDetails,
@@ -168,7 +150,29 @@ describe('ViewSessionFeedbackPresenter', () => {
           r => r.key.text === 'Reason session was not in-person',
         )
 
-        expect(row?.value.text).toBe('Client requested phone appointment')
+        expect(row?.value.text).toBe('None')
+      })
+
+      it.each([
+        ['Phone call', 'Reason session was not in-person', 'Location'],
+        ['Video call', 'Reason session was not in-person', 'Location'],
+        ['In person (probation office)', 'Location', 'Reason session was not in-person'],
+        ['In person (other location)', 'Location', 'Reason session was not in-person'],
+      ])('shows only the applicable location or reason for %s', (method, visibleLabel, hiddenLabel) => {
+        const viewModel = renderViewModel(
+          IcsFeedbackResponseFactory.build({
+            recordSessionHowSessionTookPlace: method,
+            recordSessionNotInPersonReason: 'Requested a remote session',
+            recordSessionPdu: 'Test Area PDU',
+            recordSessionAddressLine1: '1 Test Street',
+            recordSessionTownOrCity: 'Test Town',
+            recordSessionPostcode: 'T3 3ST',
+          }),
+        )
+
+        const labels = viewModel.appointmentDetailsSummary.rows.map(row => row.key.text)
+        expect(labels.filter(label => label === visibleLabel)).toHaveLength(1)
+        expect(labels).not.toContain(hiddenLabel)
       })
 
       it('hides the non-in-person reason for in-person sessions', () => {
@@ -299,7 +303,7 @@ describe('ViewSessionFeedbackPresenter', () => {
           r.key.text.includes('was informed about the session'),
         )
 
-        expect(row?.value.text).toBe('')
+        expect(row?.value.text).toBe('None')
       })
     })
 
@@ -316,17 +320,25 @@ describe('ViewSessionFeedbackPresenter', () => {
         expect(viewModel.sessionDetailsSummary).toBeDefined()
       })
 
-      it('omits the session details summary when the session did not happen', () => {
-        const viewModel = renderViewModel(
-          IcsFeedbackResponseFactory.build({
-            recordSessionDidSessionHappen: false,
-            recordSessionDidPersonAttend: true,
-            recordSessionNotHappenReason: 'Provider unexpectedly cancelled session due to emergency meeting',
-          }),
-        )
+      it.each([true, false, null])(
+        'hides delivery-only cards when the session did not happen and attendance is %s',
+        attended => {
+          const viewModel = renderViewModel(
+            IcsFeedbackResponseFactory.build({
+              recordSessionDidSessionHappen: false,
+              recordSessionDidPersonAttend: attended,
+              recordSessionNotHappenReason: 'Provider unexpectedly cancelled session due to emergency meeting',
+              issuesOrConcernsIdentified: 'Recorded concern',
+              additionalSupportNeeds: 'Recorded support need',
+            }),
+          )
 
-        expect(viewModel.sessionDetailsSummary).toBeUndefined()
-      })
+          expect(viewModel.sessionDetailsSummary).toBeUndefined()
+          expect(viewModel.issuesAndConcernsSummary).toBeUndefined()
+          expect(viewModel.additionalSupportNeedsSummary).toBeUndefined()
+          expect(viewModel.nextStepsSummary).toBeUndefined()
+        },
+      )
 
       it('shows the late reason when the person was late', () => {
         const viewModel = renderViewModel(
@@ -368,7 +380,7 @@ describe('ViewSessionFeedbackPresenter', () => {
         })
       })
 
-      it('does not show the late reason when no reason is provided', () => {
+      it('shows None for the late reason when no reason is provided', () => {
         const viewModel = renderViewModel(
           IcsFeedbackResponseFactory.build({
             recordSessionDidSessionHappen: true,
@@ -382,7 +394,10 @@ describe('ViewSessionFeedbackPresenter', () => {
           value: { text: 'Yes' },
         })
 
-        expect(viewModel.sessionDetailsSummary.rows.find(r => r.key.text.includes('Why Alex was late'))).toBeUndefined()
+        expect(viewModel.sessionDetailsSummary.rows).toContainEqual({
+          key: { text: 'Why Alex was late' },
+          value: { text: 'None' },
+        })
       })
     })
 
@@ -397,10 +412,24 @@ describe('ViewSessionFeedbackPresenter', () => {
         expect(viewModel.recordSessionAttendanceSummary.card?.title?.text).toBe('Record session attendance')
       })
 
-      it('omits the record session attendance summary when the session happened', () => {
+      it('hides the record session attendance summary when the session happened', () => {
         const viewModel = renderViewModel()
 
         expect(viewModel.recordSessionAttendanceSummary).toBeUndefined()
+      })
+
+      it('shows the attendance summary when the person attended but the session did not happen', () => {
+        const viewModel = renderViewModel(
+          IcsFeedbackResponseFactory.build({
+            recordSessionDidSessionHappen: false,
+            recordSessionDidPersonAttend: true,
+          }),
+        )
+
+        expect(viewModel.recordSessionAttendanceSummary.rows).toEqual([
+          { key: { text: 'Did the session happen?' }, value: { text: 'No' } },
+          { key: { text: 'Did Alex come to the appointment?' }, value: { text: 'Yes' } },
+        ])
       })
 
       it('shows the attendance status when the person did not attend', () => {
@@ -416,7 +445,7 @@ describe('ViewSessionFeedbackPresenter', () => {
         expect(row).toEqual({ key: { text: 'Did Alex come to the appointment?' }, value: { text: 'No' } })
       })
 
-      it('omits the attendance row when attendance is unknown', () => {
+      it('treats unknown attendance as No', () => {
         const viewModel = renderViewModel(
           IcsFeedbackResponseFactory.build({
             recordSessionDidSessionHappen: false,
@@ -424,9 +453,13 @@ describe('ViewSessionFeedbackPresenter', () => {
           }),
         )
 
-        expect(viewModel.recordSessionAttendanceSummary.rows).toHaveLength(1)
+        expect(viewModel.recordSessionAttendanceSummary.rows).toHaveLength(2)
         expect(viewModel.recordSessionAttendanceSummary.rows[0]).toEqual({
           key: { text: 'Did the session happen?' },
+          value: { text: 'No' },
+        })
+        expect(viewModel.recordSessionAttendanceSummary.rows[1]).toEqual({
+          key: { text: 'Did Alex come to the appointment?' },
           value: { text: 'No' },
         })
       })
@@ -439,15 +472,21 @@ describe('ViewSessionFeedbackPresenter', () => {
         expect(viewModel.sessionFeedbackSummary.card?.title?.text).toBe('Session feedback')
       })
 
-      it('omits the session feedback summary when no feedback information exists', () => {
+      it('shows a fallback when no session feedback information exists', () => {
         const viewModel = renderViewModel(
           IcsFeedbackResponseFactory.build({
             recordSessionDidSessionHappen: true,
             sessionFeedbackWhatHappened: undefined,
+            sessionFeedbackBehaviour: undefined,
+            sessionFeedbackStrengthsIdentified: undefined,
           }),
         )
 
-        expect(viewModel.sessionFeedbackSummary).toBeUndefined()
+        expect(viewModel.sessionFeedbackSummary.rows).toEqual([
+          { key: { text: 'What happened in the session' }, value: { text: 'None' } },
+          { key: { text: 'How Alex behaved' }, value: { text: 'None' } },
+          { key: { text: 'Strengths identified' }, value: { text: 'None' } },
+        ])
       })
 
       it('shows what happened in the session when the session happened', () => {
@@ -464,6 +503,20 @@ describe('ViewSessionFeedbackPresenter', () => {
         })
       })
 
+      it('shows behaviour and strengths when the session happened', () => {
+        const viewModel = renderViewModel()
+
+        expect(viewModel.sessionFeedbackSummary.rows).toContainEqual({
+          key: { text: 'How Alex behaved' },
+          value: { text: 'Engaged and positive' },
+        })
+        expect(viewModel.sessionFeedbackSummary.rows).toContainEqual({
+          key: { text: 'Strengths identified' },
+          value: { text: 'Strong family support' },
+        })
+        expect(viewModel.sessionFeedbackSummary.rows).toHaveLength(3)
+      })
+
       it('shows why the session did not happen when a reason is provided', () => {
         const viewModel = renderViewModel(
           IcsFeedbackResponseFactory.build({
@@ -476,8 +529,9 @@ describe('ViewSessionFeedbackPresenter', () => {
 
         expect(viewModel.sessionFeedbackSummary.rows[0]).toEqual({
           key: { text: 'Why the session did not happen' },
-          value: { text: 'Room booking was cancelled due to a fire alarm.' },
+          value: { text: 'Service provider issue: Room booking was cancelled due to a fire alarm.' },
         })
+        expect(viewModel.sessionFeedbackSummary.rows).toHaveLength(1)
       })
 
       it('shows contact attempt details when the person did not attend', () => {
@@ -494,6 +548,7 @@ describe('ViewSessionFeedbackPresenter', () => {
           key: { text: 'Details about how you tried to contact Alex and why they did not attend' },
           value: { text: 'Called and left voicemail' },
         })
+        expect(viewModel.sessionFeedbackSummary.rows).toHaveLength(1)
       })
     })
   })
