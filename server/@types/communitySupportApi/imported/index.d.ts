@@ -1721,7 +1721,7 @@ export interface components {
       tag?: string | null
     }
     TaskListStatusResponseDto: {
-      fullName: string
+      refereeName: components['schemas']['RefereeNameDto']
       confirmPersonalDetailsStatus: components['schemas']['TaskListStatusItem']
       checkRiskInformationStatus: components['schemas']['TaskListStatusItem']
       selectThePersonsNeedsStatus: components['schemas']['TaskListStatusItem']

@@ -29,13 +29,23 @@ export default class TaskListPresenter extends PresenterBase<TaskListViewModel, 
     const status = getTaskListStatus(this.data)
     return {
       personalDetails: {
-        title: content.personalDetails.title,
+        title: content.personalDetails.title.replace('{{ firstName }}', this.data.refereeName.firstName),
         taskList: {
           items: [
             {
               title: { text: content.personalDetails.subTasks.confirmPersonalDetails.text },
               href: content.personalDetails.subTasks.confirmPersonalDetails.href,
               status: status.personalDetails,
+            },
+            {
+              title: { text: content.personalDetails.subTasks.checkRiskInformation.text },
+              href: content.personalDetails.subTasks.checkRiskInformation.href,
+              status: status.riskInformation,
+            },
+            {
+              title: { text: content.personalDetails.subTasks.addSupportNeeds.text },
+              href: content.personalDetails.subTasks.addSupportNeeds.href,
+              status: status.supportNeeds,
             },
           ],
         },
@@ -45,29 +55,19 @@ export default class TaskListPresenter extends PresenterBase<TaskListViewModel, 
         taskList: {
           items: [
             {
-              title: { text: content.referralInformation.subTasks.checkRiskInformation.text },
-              href: content.referralInformation.subTasks.checkRiskInformation.href,
-              status: status.riskInformation,
-            },
-            {
               title: { text: content.referralInformation.subTasks.selectPersonNeeds.text },
               href: content.referralInformation.subTasks.selectPersonNeeds.href,
               status: status.personNeeds,
             },
             {
-              title: { text: content.referralInformation.subTasks.addSupportNeeds.text },
-              href: content.referralInformation.subTasks.addSupportNeeds.href,
-              status: status.supportNeeds,
+              title: { text: content.referralInformation.subTasks.selectArea.text },
+              href: content.referralInformation.subTasks.selectArea.href,
+              status: status.selectAnAreaForReferral,
             },
             {
               title: { text: content.referralInformation.subTasks.additionalReferralInformation.text },
               href: content.referralInformation.subTasks.additionalReferralInformation.href,
               status: status.additionalReferralInformation,
-            },
-            {
-              title: { text: content.referralInformation.subTasks.selectArea.text },
-              href: content.referralInformation.subTasks.selectArea.href,
-              status: status.selectAnAreaForReferral,
             },
           ],
         },
@@ -112,7 +112,10 @@ export default class TaskListPresenter extends PresenterBase<TaskListViewModel, 
     const content = this.buildStaticContent(res)
     return {
       pageTitle: content.pageTitle,
-      pageHeader: content.pageHeader.replace('{{ fullName }}', this.data.fullName),
+      pageHeader: content.pageHeader.replace(
+        '{{ fullName }}',
+        `${this.data.refereeName.firstName} ${this.data.refereeName.lastName}`,
+      ),
       pageSubHeader: content.pageSubHeader,
       backLink: { href: content.backLink },
       taskListItemsBySection: this.buildTaskList(content.taskList),

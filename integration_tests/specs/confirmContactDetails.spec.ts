@@ -94,7 +94,9 @@ test.describe('Confirm Contact Details Page', () => {
   })
 
   test('should submit the contact details and redirect to the task list on save and continue', async ({ page }) => {
-    await communitySupport.stubGetTaskListStatus(mockReferralId, { fullName: 'Alex River' })
+    await communitySupport.stubGetTaskListStatus(mockReferralId, {
+      refereeName: { firstName: 'Alex', lastName: 'River' },
+    })
     const confirmContactDetailsPage = await goToConfirmContactDetailsPage(page)
 
     await confirmContactDetailsPage.submit()

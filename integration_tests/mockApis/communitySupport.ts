@@ -54,9 +54,9 @@ export interface ReferralProgress {
   actionPlanStatus: components['schemas']['ActionPlanStatusDto']
 }
 
-type TaskListStatusStub = Pick<TaskListStatusDto, 'fullName'> &
+type TaskListStatusStub = Pick<TaskListStatusDto, 'refereeName'> &
   Partial<{
-    [K in keyof Omit<TaskListStatusDto, 'fullName'>]: Omit<TaskListStatusDto, 'fullName'>[K] | null
+    [K in keyof Omit<TaskListStatusDto, 'refereeName'>]: Omit<TaskListStatusDto, 'refereeName'>[K] | null
   }>
 
 const incompleteTaskStatus = {
@@ -70,7 +70,7 @@ const cannotStartTaskStatus = { completed: false, statusText: 'Cannot Start Yet'
 const completeTaskStatus = { completed: true, statusText: 'Completed', tag: 'govuk-tag--blue' } as const
 
 const buildTaskListStatus = (taskListStatus: TaskListStatusStub): TaskListStatusDto => ({
-  fullName: taskListStatus.fullName,
+  refereeName: taskListStatus.refereeName,
   confirmPersonalDetailsStatus: taskListStatus.confirmPersonalDetailsStatus || completeTaskStatus,
   checkRiskInformationStatus: taskListStatus.checkRiskInformationStatus || incompleteTaskStatus,
   selectThePersonsNeedsStatus: taskListStatus.selectThePersonsNeedsStatus || incompleteTaskStatus,
