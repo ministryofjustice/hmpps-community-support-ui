@@ -18,7 +18,7 @@
   },
   "/referral/new/find-a-person": {
     "pageTitle": "Check and confirm personal details - Make a referral - Community Support",
-    "pageHeader": "Confirm this is the correct person for referral",
+    "pageHeader": "Check and confirm personal details",
     "continueButtonText": "Continue",
     "continueButtonLink": "/referral/new/confirm-person",
     "backLink": "/referral/new/find-a-person",
@@ -1151,7 +1151,7 @@
     }
   },
   "/referral/task-list/confirm-personal-details": {
-    "pageTitle": "Check and confirm personal details",
+    "pageTitle": "Confirm personal details - Make a referral",
     "pageHeader": "{{ name }}",
     "pageSubHeader": "Confirm personal details",
     "backLink": "/referral/task-list",
