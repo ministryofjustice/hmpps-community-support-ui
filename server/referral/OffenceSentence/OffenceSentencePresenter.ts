@@ -4,42 +4,11 @@ import { OffenceSentenceDto, OffenceSentenceInfoBffResponseDto, Selection } from
 import PresenterBase from '../../presenter/presenterBase'
 import { OffenceSentencePageContent, OffenceSentencePageViewModel } from './OffenceSentencePageModel'
 import ViewUtils from '../../utils/viewUtils'
-import { GovukFrontendRadiosWithConditional, YesWithDetailOrNo } from '../../@types/govukFrontend/derived'
-import { booleanToTriState, buildTextarea, not, yesNoSelectionToTriState } from '../../utils/utils'
+import { YesWithDetailOrNo } from '../../@types/govukFrontend/derived'
 import { formatIsoDateOrNull } from '../../utils/dateFormat'
 import { ErrorMiddlewareErrors } from '../../@types/express'
 import type { OffenceSentenceFormInput } from '../../validation/OffenceSentenceFormData'
 import formatFullName from '../../utils/presenterFormatters'
-
-const buildConditional = (
-  content: OffenceSentencePageContent,
-  value: string,
-  errorMessage: GovukFrontendErrorMessage | undefined,
-): string =>
-  buildTextarea({
-    name: 'licenceConditionsOrZonesDetails',
-    label: { text: content.licenceConditionsOrZonesDetailsLabel },
-    value,
-    spellcheck: true,
-    rows: '5',
-    errorMessage,
-    attributes: { 'data-testid': 'licence-conditions-or-zones-details' },
-  })
-
-const resolveLicenceOrExclusionDetails = (
-  { hasLicenceConditionsOrZones, licenceConditionsOrZonesDetails }: OffenceSentenceDto,
-  formData: string | undefined,
-): string => {
-  if (formData !== undefined) {
-    return formData
-  }
-
-  if (hasLicenceConditionsOrZones) {
-    return licenceConditionsOrZonesDetails
-  }
-
-  return ''
-}
 
 const buildDateRows = (
   content: OffenceSentencePageContent,
@@ -57,54 +26,12 @@ const buildDateRows = (
   return []
 }
 
-const buildRadios = (
-  content: OffenceSentencePageContent,
-  offenceSentenceInfo: OffenceSentenceDto,
-  formData: Partial<OffenceSentenceFormInput>,
-  messages: Record<string, GovukFrontendErrorMessage>,
-): GovukFrontendRadiosWithConditional => {
-  const formSelection = yesNoSelectionToTriState(formData.hasLicenceConditionsOrZones)
-  const selection =
-    formData.hasLicenceConditionsOrZones !== undefined
-      ? formSelection
-      : booleanToTriState(offenceSentenceInfo.hasLicenceConditionsOrZones)
-  const licenceOrExclusionDetails = resolveLicenceOrExclusionDetails(
-    offenceSentenceInfo,
-    formData.licenceConditionsOrZonesDetails,
-  )
-
-  return {
-    name: 'hasLicenceConditionsOrZones',
-    fieldset: {
-      legend: {
-        text: content.hasLicenceConditionsOrZonesLabel,
-        classes: 'govuk-fieldset__legend--m',
-      },
-    },
-    errorMessage: messages.hasLicenceConditionsOrZones,
-    items: [
-      {
-        value: content.yesOptionLabel,
-        text: content.yesOptionLabel,
-        checked: selection,
-        conditional: {
-          html: buildConditional(content, licenceOrExclusionDetails, messages.licenceConditionsOrZonesDetails),
-        },
-      },
-      {
-        value: content.noOptionLabel,
-        text: content.noOptionLabel,
-        checked: not(selection),
-      },
-    ],
-    attributes: { 'data-testid': 'has-licence-conditions-or-zones' },
-  }
-}
-
-const toSelection = (option: 'Yes' | 'No' | undefined, value: string): Selection => {
+const toSelection = (option: 'Yes' | 'No' | undefined | boolean, value: string): Selection => {
   switch (option) {
+    case true:
     case 'Yes':
       return { selected: 'Yes', value }
+    case false:
     case 'No':
       return { selected: 'No' }
     default:
@@ -119,14 +46,32 @@ const calculateValue = (selection: Selection, hasError: boolean): Selection => {
   return selection
 }
 
-const buildRadios2 = (
+const mergeSelections = (a: Selection, b: Selection): Selection => {
+  if (b.selected === 'Yes') {
+    return b
+  }
+  if (a.selected === 'Yes') {
+    return a
+  }
+  if (b.selected === 'No') {
+    return b
+  }
+  if (a.selected === 'No') {
+    return a
+  }
+  return { selected: 'Unanswered' }
+}
+
+const buildRadios = (
   content: OffenceSentencePageContent,
-  offenceSentenceInfo: OffenceSentenceDto,
+  { hasLicenceConditionsOrZones, licenceConditionsOrZonesDetails }: OffenceSentenceDto,
   formData: Partial<OffenceSentenceFormInput>,
   messages: Record<string, GovukFrontendErrorMessage>,
 ): YesWithDetailOrNo => {
-  const selection2 = toSelection(formData.hasLicenceConditionsOrZones, formData.licenceConditionsOrZonesDetails)
-  const value = calculateValue(selection2, !!messages.licenceConditionsOrZonesDetails)
+  const selection = toSelection(formData.hasLicenceConditionsOrZones, formData.licenceConditionsOrZonesDetails)
+  const bffSelection = toSelection(hasLicenceConditionsOrZones, licenceConditionsOrZonesDetails)
+  const merged = mergeSelections(bffSelection, selection)
+  const value = calculateValue(merged, !!messages.licenceConditionsOrZonesDetails)
 
   return {
     details: {
@@ -200,7 +145,6 @@ export default class OffenceSentencePresenter extends PresenterBase<
         ...dateRows,
       ]),
       radios: buildRadios(content, offenceSentenceInfo, this.formData, this.validationErrors.messages),
-      radios2: buildRadios2(content, offenceSentenceInfo, this.formData, this.validationErrors.messages),
     }
   }
 

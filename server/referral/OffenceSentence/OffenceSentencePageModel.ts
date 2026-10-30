@@ -18,6 +18,5 @@ export interface OffenceSentencePageViewModel {
   button: GovukFrontendButton
   offenceSentenceCardHeading: string
   offenceSentenceSummary: GovukFrontendSummaryList
-  radios: GovukFrontendRadiosWithConditional
-  radios2: YesWithDetailOrNo
+  radios: YesWithDetailOrNo
 }

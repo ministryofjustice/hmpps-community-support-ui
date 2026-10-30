@@ -17,7 +17,7 @@ const calculateValue = (selection: Selection, hasError: boolean): Selection => {
   return selection
 }
 
-const buildRadiosWithSelection2 = (
+const buildRadiosWithSelection = (
   content: AdditionalInformationForTheDeliveryPartnerContent,
   selection: Selection,
   messages: Record<string, GovukFrontendErrorMessage>,
@@ -69,7 +69,7 @@ export default class AdditionalInformationForTheDeliveryPartnerPresenter extends
       },
       heading: content.pageHeader.replace('{{ firstName }}', firstName),
       details: buildDetails(content, firstName),
-      radios: buildRadiosWithSelection2(content, this.data.details, this.validationErrors.messages),
+      radios: buildRadiosWithSelection(content, this.data.details, this.validationErrors.messages),
       button: {
         text: content.button,
       },
