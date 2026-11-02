@@ -30,6 +30,7 @@ test.describe('Select an action plan need', () => {
     lastUpdatedAt: '2026-10-12T09:00:00Z',
     personDetails: { firstName: 'Alex', lastName: 'River' },
     needs: [],
+    isSubmitted: false,
   }
 
   test.beforeEach(async ({ page }) => {
@@ -295,6 +296,7 @@ test.describe('Select an action plan need', () => {
           ],
         },
       ],
+      isSubmitted: false,
     }
     await communitySupport.stubGetActionPlanSummary(caseReference, populatedActionPlanSummary)
     await communitySupport.stubGetActionPlanNeedsAndOutcomes({
@@ -350,6 +352,7 @@ test.describe('Select an action plan need', () => {
           ],
         },
       ],
+      isSubmitted: false,
     }
     await communitySupport.stubGetActionPlanSummary(caseReference, summaryWithOutcome)
     await communitySupport.stubGetActionPlanNeedsAndOutcomes({
@@ -406,6 +409,7 @@ test.describe('Select an action plan need', () => {
           ],
         },
       ],
+      isSubmitted: false,
     }
     await communitySupport.stubGetActionPlanSummary(caseReference, summaryWithOutcome)
     await communitySupport.stubGetActionPlanNeedsAndOutcomes({

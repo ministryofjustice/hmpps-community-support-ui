@@ -22,3 +22,38 @@ export const isoToFormattedTime = (iso: string): string =>
     minute: new Date(iso).getMinutes(),
     amPm: new Date(iso).getHours() >= 12 ? 'pm' : 'am',
   })
+
+export const parseTime12Hr = (input?: string): { hour: number; minute: number; amPm: 'am' | 'pm' } => {
+  const fallback = { hour: 0, minute: 0, amPm: 'am' as const }
+  if (!input) {
+    return fallback
+  }
+
+  const match = input
+    .trim()
+    .toLowerCase()
+    .match(/^(\d{1,2})(?::(\d{2}))?\s*(am|pm)?$/)
+  if (!match) {
+    return fallback
+  }
+
+  let hour = Number(match[1])
+  const minute = match[2] ? Number(match[2]) : 0
+  let amPm = (match[3] || '').toLowerCase() as 'am' | 'pm' | ''
+
+  if (!amPm) {
+    amPm = hour >= 12 ? 'pm' : 'am'
+    if (hour > 12) {
+      hour -= 12
+    }
+  }
+
+  if (hour === 0) {
+    hour = 12
+  }
+  if (hour > 12) {
+    hour -= 12
+  }
+
+  return { hour, minute, amPm: amPm || 'am' }
+}

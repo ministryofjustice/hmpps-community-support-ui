@@ -55,6 +55,10 @@ export default class CreateAppointmentDetailsPage extends AbstractPage {
 
   readonly informedByPhoneCheckbox: Locator
 
+  readonly informedByTextMessageCheckbox: Locator
+
+  readonly informedByEmailCheckbox: Locator
+
   readonly informedByOtherMethodCheckbox: Locator
 
   readonly informedByOtherMethodInput: Locator
@@ -67,7 +71,7 @@ export default class CreateAppointmentDetailsPage extends AbstractPage {
 
   private constructor(page: Page, session: SessionType) {
     super(page)
-    this.header = page.locator('h1', { hasText: headers[session] })
+    this.header = page.getByRole('heading', { level: 1, name: headers[session], exact: true })
     this.errorHeader = page.locator('h2', { hasText: 'There is a problem' })
     this.backLink = page.getByRole('link', { name: 'Back', exact: true })
     this.dateInput = page.locator('input[type="text"][name="sessionDate"]')
@@ -89,9 +93,11 @@ export default class CreateAppointmentDetailsPage extends AbstractPage {
     this.meetAtTheGateYesRadioButton = page.locator('input[type="radio"][name="meetAtTheGate"][value="yes"]')
     this.meetAtTheGateNoRadioButton = page.locator('input[type="radio"][name="meetAtTheGate"][value="no"]')
     this.informedByPhoneCheckbox = page.locator('input[type="checkbox"][value="informedByPhone"]')
+    this.informedByTextMessageCheckbox = page.locator('input[type="checkbox"][value="informedByTextMessage"]')
+    this.informedByEmailCheckbox = page.locator('input[type="checkbox"][value="informedByEmail"]')
     this.informedByOtherMethodCheckbox = page.locator('input[type="checkbox"][value="informedByOtherMethod"]')
     this.informedByOtherMethodInput = page.locator('input[type="text"][name="otherMethodOfContact"]')
-    this.saveAndContinueButton = page.getByRole('button', { name: 'Save and Continue' })
+    this.saveAndContinueButton = page.getByRole('button', { name: 'Save and continue', exact: true })
   }
 
   static async verifyOnPage(page: Page, session: SessionType): Promise<CreateAppointmentDetailsPage> {

@@ -1,45 +1,14 @@
 import { Response } from 'express'
 import { GovukFrontendErrorMessage } from '@govuk-frontend'
-import { OffenceSentenceDto, OffenceSentenceInfoBffResponseDto } from '@community-support-api'
+import { OffenceSentenceDto, OffenceSentenceInfoBffResponseDto, Selection } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
 import { OffenceSentencePageContent, OffenceSentencePageViewModel } from './OffenceSentencePageModel'
 import ViewUtils from '../../utils/viewUtils'
-import { GovukFrontendRadiosWithConditional } from '../../@types/govukFrontend/derived'
-import { booleanToTriState, buildTextarea, not, yesNoSelectionToTriState } from '../../utils/utils'
+import { YesWithDetailOrNo } from '../../@types/govukFrontend/derived'
 import { formatIsoDateOrNull } from '../../utils/dateFormat'
 import { ErrorMiddlewareErrors } from '../../@types/express'
 import type { OffenceSentenceFormInput } from '../../validation/OffenceSentenceFormData'
 import formatFullName from '../../utils/presenterFormatters'
-
-const buildConditional = (
-  content: OffenceSentencePageContent,
-  value: string,
-  errorMessage: GovukFrontendErrorMessage | undefined,
-): string =>
-  buildTextarea({
-    name: 'licenceConditionsOrZonesDetails',
-    label: { text: content.licenceConditionsOrZonesDetailsLabel },
-    value,
-    spellcheck: true,
-    rows: '5',
-    errorMessage,
-    attributes: { 'data-testid': 'licence-conditions-or-zones-details' },
-  })
-
-const resolveLicenceOrExclusionDetails = (
-  offenceSentenceInfo: OffenceSentenceDto,
-  formData: Partial<OffenceSentenceFormInput>,
-): string => {
-  if (formData.licenceConditionsOrZonesDetails !== undefined) {
-    return formData.licenceConditionsOrZonesDetails
-  }
-
-  if (offenceSentenceInfo.hasLicenceConditionsOrZones) {
-    return offenceSentenceInfo.licenceConditionsOrZonesDetails || ''
-  }
-
-  return ''
-}
 
 const buildDateRows = (
   content: OffenceSentencePageContent,
@@ -57,44 +26,68 @@ const buildDateRows = (
   return []
 }
 
+const toSelection = (option: 'Yes' | 'No' | undefined | boolean | string, value: string): Selection => {
+  switch (option) {
+    case true:
+    case 'Yes':
+    case 'yes':
+      return { selected: 'Yes', value }
+    case false:
+    case 'No':
+    case 'no':
+      return { selected: 'No' }
+    default:
+      return { selected: 'Unanswered' }
+  }
+}
+
+const mergeSelections = (original: Selection, updated: Selection): Selection => {
+  if (updated.selected === 'Yes') {
+    return updated
+  }
+  if (original.selected === 'Yes') {
+    return original
+  }
+  if (updated.selected === 'No') {
+    return updated
+  }
+  if (original.selected === 'No') {
+    return original
+  }
+  return { selected: 'Unanswered' }
+}
+
 const buildRadios = (
   content: OffenceSentencePageContent,
-  offenceSentenceInfo: OffenceSentenceDto,
+  { hasLicenceConditionsOrZones, licenceConditionsOrZonesDetails }: OffenceSentenceDto,
   formData: Partial<OffenceSentenceFormInput>,
   messages: Record<string, GovukFrontendErrorMessage>,
-): GovukFrontendRadiosWithConditional => {
-  const formSelection = yesNoSelectionToTriState(formData.hasLicenceConditionsOrZones)
-  const selection =
-    formData.hasLicenceConditionsOrZones !== undefined
-      ? formSelection
-      : booleanToTriState(offenceSentenceInfo.hasLicenceConditionsOrZones)
-  const licenceOrExclusionDetails = resolveLicenceOrExclusionDetails(offenceSentenceInfo, formData)
+): YesWithDetailOrNo => {
+  const selection = toSelection(formData.hasLicenceConditionsOrZones, formData.licenceConditionsOrZonesDetails)
+  const bffSelection = toSelection(hasLicenceConditionsOrZones, licenceConditionsOrZonesDetails)
+  const value = mergeSelections(bffSelection, selection)
 
   return {
-    name: 'hasLicenceConditionsOrZones',
-    fieldset: {
-      legend: {
-        text: content.hasLicenceConditionsOrZonesLabel,
-        classes: 'govuk-fieldset__legend--m',
-      },
+    details: {
+      name: 'licenceConditionsOrZonesDetails',
+      label: { text: content.licenceConditionsOrZonesDetailsLabel },
+      spellcheck: true,
+      rows: '5',
+      errorMessage: messages.licenceConditionsOrZonesDetails,
+      attributes: { 'data-testid': 'licence-conditions-or-zones-details' },
     },
-    errorMessage: messages.hasLicenceConditionsOrZones,
-    items: [
-      {
-        value: content.yesOptionLabel,
-        text: content.yesOptionLabel,
-        checked: selection,
-        conditional: {
-          html: buildConditional(content, licenceOrExclusionDetails, messages.licenceConditionsOrZonesDetails),
+    main: {
+      name: 'hasLicenceConditionsOrZones',
+      fieldset: {
+        legend: {
+          text: content.hasLicenceConditionsOrZonesLabel,
+          classes: 'govuk-fieldset__legend--m',
         },
       },
-      {
-        value: content.noOptionLabel,
-        text: content.noOptionLabel,
-        checked: not(selection),
-      },
-    ],
-    attributes: { 'data-testid': 'has-licence-conditions-or-zones' },
+      errorMessage: messages.hasLicenceConditionsOrZones,
+      attributes: { 'data-testid': 'has-licence-conditions-or-zones' },
+    },
+    value,
   }
 }
 

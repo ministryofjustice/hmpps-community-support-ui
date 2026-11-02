@@ -386,6 +386,7 @@ describe('CommunitySupportApiClient tests', () => {
         },
         needs: [],
         lastUpdatedAt: '',
+        isSubmitted: false,
       }
 
       nock('http://localhost:8080', {

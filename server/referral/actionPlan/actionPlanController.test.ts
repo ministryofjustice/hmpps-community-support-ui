@@ -87,6 +87,7 @@ describe('ActionPlanController', () => {
         user: { username: 'user1' },
         content: {
           pageHeader: 'Action plan',
+          backLink: '/referral/{{ caseReference }}/action-plan/activities',
         },
       },
       render: jest.fn(),
@@ -102,6 +103,7 @@ describe('ActionPlanController', () => {
       },
       needs: [],
       lastUpdatedAt: '',
+      isSubmitted: false,
     }
 
     beforeEach(() => {
@@ -144,6 +146,7 @@ describe('ActionPlanController', () => {
     const summary: ActionPlanSummaryDto = {
       personDetails: { firstName: 'Alex', lastName: 'River' },
       lastUpdatedAt: '2026-10-12T09:00:00Z',
+      isSubmitted: false,
       needs: [
         {
           id: 'need-1',
@@ -355,6 +358,7 @@ describe('ActionPlanController', () => {
         personDetails: { firstName: 'Alex', lastName: 'River' },
         needs: [],
         lastUpdatedAt: '',
+        isSubmitted: false,
       })
     })
 
@@ -379,6 +383,7 @@ describe('ActionPlanController', () => {
         referralService.getActionPlanSummary.mockResolvedValue({
           personDetails: { firstName: 'Alex', lastName: 'River' },
           lastUpdatedAt: '',
+          isSubmitted: false,
           needs: [
             {
               id: 'need-2',
@@ -402,6 +407,7 @@ describe('ActionPlanController', () => {
       referralService.getActionPlanSummary.mockResolvedValue({
         personDetails: { firstName: 'Alex', lastName: 'River' },
         lastUpdatedAt: '',
+        isSubmitted: false,
         needs: [
           { id: 'need-1', label: 'Accommodation', orderNumber: 1, outcomes: [] },
           {
@@ -483,6 +489,7 @@ describe('ActionPlanController', () => {
         personDetails: { firstName: 'Alex', lastName: 'River' },
         needs: [],
         lastUpdatedAt: '',
+        isSubmitted: false,
       })
 
       await actionPlanController.showSelectOutcomePage(req, res)
@@ -504,6 +511,7 @@ describe('ActionPlanController', () => {
         personDetails: { firstName: 'Alex', lastName: 'River' },
         needs: [],
         lastUpdatedAt: '',
+        isSubmitted: false,
       })
 
       await actionPlanController.showSelectOutcomePage(req, res)
@@ -522,6 +530,7 @@ describe('ActionPlanController', () => {
         personDetails: { firstName: 'Alex', lastName: 'River' },
         needs: [],
         lastUpdatedAt: '',
+        isSubmitted: false,
       })
 
       await actionPlanController.submitOutcome(req, res)
@@ -587,8 +596,52 @@ describe('ActionPlanController', () => {
         undefined,
         undefined,
       )
+      expect(res.locals.content.backLink).toBe('/referral/{{ caseReference }}/action-plan/select-a-need')
       expect(ActionPlanAddActivityPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
     })
+
+    it.each([
+      { outcomeCount: 1, savedCaseReference: undefined, destination: 'select-a-need' },
+      { outcomeCount: 2, savedCaseReference: undefined, destination: 'select-an-outcome' },
+      { outcomeCount: 1, savedCaseReference: 'AB1234CD', destination: 'activities' },
+      { outcomeCount: 2, savedCaseReference: 'AB1234CD', destination: 'activities' },
+      { outcomeCount: 1, savedCaseReference: 'ZZ9876YY', destination: 'select-a-need' },
+    ])(
+      'links back to $destination with $outcomeCount outcomes and activities for $savedCaseReference',
+      async ({ outcomeCount, savedCaseReference, destination }) => {
+        req.session.actionPlan = {
+          needs: [
+            {
+              id: 'need-1',
+              label: 'Employment',
+              outcomes: Array.from({ length: outcomeCount }, (_, index) => ({
+                id: `outcome-${index + 1}`,
+                text: `Outcome ${index + 1}`,
+              })),
+            },
+          ],
+        }
+        req.session.actionPlanAction = { needId: 'need-1', outcomeId: 'outcome-1' }
+        if (savedCaseReference) {
+          req.session.actionPlanActivities = {
+            caseReference: savedCaseReference,
+            activities: [{ activityProvider: 'Provider', activityDescription: 'Saved activity' }],
+          }
+        }
+
+        await actionPlanController.showAddActivityPage(req, res)
+
+        expect(ActionPlanAddActivityPresenter).toHaveBeenLastCalledWith(
+          'AB1234CD',
+          'Employment',
+          'Outcome 1',
+          undefined,
+          undefined,
+          undefined,
+        )
+        expect(res.locals.content.backLink).toBe(`/referral/{{ caseReference }}/action-plan/${destination}`)
+      },
+    )
 
     it('stores the submitted activity and returns to the activities page', async () => {
       req.session.actionPlanActivities = {
@@ -924,6 +977,7 @@ describe('ActionPlanController', () => {
       referralService.getActionPlanSummary.mockResolvedValue({
         personDetails: { firstName: 'Alex', lastName: 'River' },
         lastUpdatedAt: '2026-10-12T09:00:00Z',
+        isSubmitted: false,
         needs: [
           {
             id: 'need-1',
@@ -974,6 +1028,7 @@ describe('ActionPlanController', () => {
         personDetails: { firstName: 'Alex', lastName: 'River' },
         lastUpdatedAt: '2026-10-12T09:00:00Z',
         needs: [],
+        isSubmitted: false,
       })
       referralService.getActionPlanNeedsAndOutcomes.mockResolvedValue({ needs: [], selectedNeeds: [] })
       jest.clearAllMocks()
@@ -1017,6 +1072,7 @@ describe('ActionPlanController', () => {
         personDetails: { firstName: 'Alex', lastName: 'River' },
         lastUpdatedAt: '',
         needs: [],
+        isSubmitted: false,
       })
 
       await actionPlanController.showViewActivitiesPage(req, res)
@@ -1066,6 +1122,7 @@ describe('ActionPlanController', () => {
         undefined,
         undefined,
       )
+      expect(res.locals.content.backLink).toBe('/referral/{{ caseReference }}/action-plan/select-a-need')
     })
   })
 
@@ -1114,6 +1171,7 @@ describe('ActionPlanController', () => {
         },
       ],
       lastUpdatedAt: '2026-15-10',
+      isSubmitted: false,
     }
 
     beforeEach(() => {
@@ -1271,6 +1329,7 @@ describe('ActionPlanController', () => {
         personDetails: { firstName: 'Alex', lastName: 'River' },
         needs: [],
         lastUpdatedAt: '',
+        isSubmitted: false,
       })
     })
 
@@ -1438,6 +1497,7 @@ describe('ActionPlanController', () => {
         personDetails: { firstName: 'Alex', lastName: 'River' },
         needs: [],
         lastUpdatedAt: '',
+        isSubmitted: false,
       })
 
       await actionPlanController.submitRisksAndAdjustmentsPage(req, res)
@@ -1889,6 +1949,7 @@ describe('ActionPlanController', () => {
         personDetails: { firstName: 'Alex', lastName: 'River' },
         needs: [],
         lastUpdatedAt: '',
+        isSubmitted: false,
       })
     })
 
