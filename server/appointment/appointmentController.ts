@@ -920,7 +920,6 @@ class AppointmentController {
 
     req.session.icsFeedbackSubmission = icsFeedbackSubmission
 
-    
     validateRequestBodyAgainstSchema(IdentifiedAdditionalNeedsFormDataSchema, req, res, () => {
       res.redirect(`/ics-feedback/${caseRefId}/next-steps`)
     })
