@@ -917,7 +917,10 @@ class AppointmentController {
     }
     icsFeedbackSubmission.newlyIdentifiedAdditionalSupportNeeds =
       req.body.didYouIdentify === 'Yes' ? req.body.identifyDetails : null
+
     req.session.icsFeedbackSubmission = icsFeedbackSubmission
+
+    
     validateRequestBodyAgainstSchema(IdentifiedAdditionalNeedsFormDataSchema, req, res, () => {
       res.redirect(`/ics-feedback/${caseRefId}/next-steps`)
     })

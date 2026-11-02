@@ -55,7 +55,7 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
                 },
                 value: {
                   text: values[index],
-                  html: row.text === 'Location' || row.text.includes('did not happen') ? values[index] : null,
+                  html: row.text == 'New support needs identified' || row.text === 'Location' || row.text.includes('did not happen') ? values[index] : null,
                 },
                 actions: {
                   items: [
@@ -113,6 +113,12 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
         content.summaryLists.filter(item => item.summaryTitle === 'Issues or concerns')[0],
         [this.icsFeedbackSubmission.issuesAndConcerns?.identified || null],
         !!this.icsFeedbackSubmission.issuesAndConcerns,
+      ),
+      // Additional support needs summary
+      this.buildSummary(
+        content.summaryLists.filter(item => item.summaryTitle === 'Additional support needs')[0],
+        [`<p>${this.icsFeedbackSubmission.newlyIdentifiedAdditionalSupportNeeds !== null ? "Yes" : "None"}</p>`.concat(this.icsFeedbackSubmission.newlyIdentifiedAdditionalSupportNeeds !==null 
+          ? `<p>${this.icsFeedbackSubmission.newlyIdentifiedAdditionalSupportNeeds}</p>` : '')],
       ),
       // Next steps
       this.buildSummary(

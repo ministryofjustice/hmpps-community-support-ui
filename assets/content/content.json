@@ -875,6 +875,16 @@
         ]
       },
       {
+        "summaryTitle": "Additional support needs",
+        "rows": [
+          {
+            "text": "New support needs identified",
+            "hint": "New support needs identified",
+            "changeHref": "/ics-feedback/caseRefId/identified-additional-needs"
+          }
+        ]
+      },
+      {
         "summaryTitle": "Next steps",
         "rows": [
           {
