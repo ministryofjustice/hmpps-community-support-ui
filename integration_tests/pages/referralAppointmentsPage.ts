@@ -1,5 +1,6 @@
 import { expect, type Locator, type Page } from '@playwright/test'
 import AbstractPage from './abstractPage'
+import ReferralNavigation from './components/referralNavigation'
 
 export default class ReferralAppointmentsPage extends AbstractPage {
   readonly header: Locator
@@ -8,12 +9,15 @@ export default class ReferralAppointmentsPage extends AbstractPage {
 
   readonly createAppointmentLink: Locator
 
+  readonly navigation: ReferralNavigation
+
   static url(caseReference: string): string {
     return `/referral/${caseReference}/appointments`
   }
 
   constructor(page: Page) {
     super(page)
+    this.navigation = new ReferralNavigation(page)
     this.header = page.locator('h1')
     this.appointmentsTable = page.locator('[data-testid="referral-appointments-table"]')
     this.createAppointmentLink = page.getByRole('link', { name: 'Create an Appointment', exact: true })

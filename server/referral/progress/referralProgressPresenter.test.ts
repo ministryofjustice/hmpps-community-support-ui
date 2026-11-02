@@ -13,18 +13,31 @@ describe('ReferralProgressPresenter', () => {
 
   const mockContent: ReferralProgressContent = {
     pageHeader: 'Referral for',
-    progressSubNavTitle: 'Progress',
     actionPlanTitle: 'Action plan',
     actionPlanStatusLabel: 'Status',
     actionPlanActionsLabel: 'Actions',
     actionPlanLinkText: 'View action plan',
-    subNavItems: [],
     progressActiveColumnHeaders: ['Date and time', 'Status', 'Action'],
     progressInactiveColumnHeaders: ['Status', 'Action'],
     historySummary: 'View ICS history',
   }
 
   const mockResponse = { locals: { content: mockContent } } as unknown as Response
+
+  it('uses the shared navigation with Progress active and Action Plan immediately after it', () => {
+    const presenter = new ReferralProgressPresenter(buildReferralProgress([]), caseReference)
+
+    expect(presenter.buildViewModel(mockResponse).navBar).toEqual({
+      label: 'Sub navigation',
+      items: [
+        { text: 'Case details', href: `/referral-details/${caseReference}`, active: false },
+        { text: 'Progress', href: `/progress/${caseReference}`, active: true },
+        { text: 'Action Plan', href: `/referral/${caseReference}/action-plan`, active: false },
+        { text: 'Appointments', href: `/referral/${caseReference}/appointments`, active: false },
+        { text: 'Change log', href: '#', active: false },
+      ],
+    })
+  })
 
   const statusLabel = {
     DID_NOT_HAPPEN: 'Did not happen',

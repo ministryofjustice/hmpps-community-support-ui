@@ -1,5 +1,3 @@
-import { MojSubNavigationItem } from '@moj-frontend'
-
 export interface PersonalDetailsCard {
   heading: string
   nameLabel: string
@@ -52,8 +50,6 @@ export interface ReferralDetailsContent {
   equalityMonitoringCard: EqualityMonitoringCard
   contactDetailsCard: ContactDetailsCard
   referralDetailsCard: ReferralDetailsCard
-  subNavTitle: string
-  subNavItems: MojSubNavigationItem[]
   // TODO - Remove once we have a decision on the entry point for withdrawing referrals
   withdrawReferralLinkText: string
   alerts: ReferralDetailsAlertsContent
