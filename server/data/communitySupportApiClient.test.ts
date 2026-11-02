@@ -467,6 +467,13 @@ describe('CommunitySupportApiClient tests', () => {
     })
   })
   describe('submitServiceDeliveryDetails tests', () => {
+    it('submits the action plan using the dedicated endpoint', async () => {
+      const response = { success: true, message: 'Submitted' }
+      nock('http://localhost:8080').post('/referral/AB1234CD/action-plan').reply(200, response)
+
+      await expect(communitySupportApiClient.submitActionPlan('AB1234CD', 'user1')).resolves.toEqual(response)
+    })
+
     it('patches the answers and returns the saved response', async () => {
       const request: ActionPlanSessionDeliveryDetailsRequest = {
         answers: [

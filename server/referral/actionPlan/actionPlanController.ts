@@ -763,6 +763,10 @@ class ActionPlanController {
     }
 
     await this.referralService.submitServiceDeliveryDetails(caseReference, request, username)
+    const submission = await this.referralService.submitActionPlan(caseReference, username)
+    if (!submission.success) {
+      throw new Error(submission.message || 'Unable to submit action plan')
+    }
 
     if (sessionDelivery) {
       delete req.session.actionPlanSessionDelivery

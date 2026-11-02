@@ -739,6 +739,18 @@ export default {
         jsonBody: checkYourAnswers,
       },
     }),
+  stubSubmitActionPlan: (caseReference: string): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'POST',
+        urlPath: `/community-support/referral/${caseReference}/action-plan`,
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: { success: true, message: 'Submitted' },
+      },
+    }),
   stubSubmitServiceDelivery: (
     caseReference: string,
     response: ActionPlanSessionDeliveryDetailsResponse,

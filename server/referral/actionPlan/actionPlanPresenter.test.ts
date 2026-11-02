@@ -89,8 +89,8 @@ describe('ActionPlanPresenter', () => {
       return (res.render as jest.Mock).mock.calls[0][1] as { content: ActionPlanViewModel }
     }
 
-    it('builds the side navigation with the action plan item active when there are needs', () => {
-      expect(render(buildSummary(true)).content.horizontalSubNavArgs).toEqual({
+    it('builds the side navigation when the plan is submitted and there are needs', () => {
+      expect(render({ ...buildSummary(true), isSubmitted: true }).content.horizontalSubNavArgs).toEqual({
         label: 'Side navigation',
         items: [
           { href: '/referral/AB1234CD/action-plan', text: 'Action plan', active: true },
@@ -100,7 +100,11 @@ describe('ActionPlanPresenter', () => {
     })
 
     it('does not build the side navigation when there are no needs', () => {
-      expect(render(buildSummary(false)).content.horizontalSubNavArgs).toBeUndefined()
+      expect(render({ ...buildSummary(false), isSubmitted: true }).content.horizontalSubNavArgs).toBeUndefined()
+    })
+
+    it('does not build the side navigation when the plan has needs but is not submitted', () => {
+      expect(render(buildSummary(true)).content.horizontalSubNavArgs).toBeUndefined()
     })
   })
 
@@ -348,6 +352,26 @@ describe('ActionPlanPresenter', () => {
     it('is not displayed when the ICS feedback has not been submitted', () => {
       expect(render(summaryWithAllOutcomes, false).submitActionPlanButton).toBeUndefined()
       expect(render(summaryWithAllOutcomes).submitActionPlanButton).toBeUndefined()
+    })
+
+    it('hides submission and every outcome removal action when the plan is submitted', () => {
+      const content = render({ ...summaryWithAllOutcomes, isSubmitted: true }, true)
+
+      expect(content.submitActionPlanButton).toBeUndefined()
+      expect(content.needsSummary).toHaveLength(2)
+      content.needsSummary.forEach(need => {
+        expect(need.card.actions.items).toHaveLength(1)
+        expect(need.card.actions.items[0].text).toBe('Add or change activities')
+      })
+      expect(content.addAnotherOutcomeButton).toBeDefined()
+    })
+
+    it('keeps outcome removal actions available when the plan is not submitted', () => {
+      const content = render(summaryWithAllOutcomes, true)
+
+      content.needsSummary.forEach(need => {
+        expect(need.card.actions.items.map(item => item.text)).toEqual(['Add or change activities', 'Remove'])
+      })
     })
 
     it('is not displayed when not all outcomes have been added', () => {
