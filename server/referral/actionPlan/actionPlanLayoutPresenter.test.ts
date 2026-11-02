@@ -77,9 +77,9 @@ describe('ActionPlanLayoutPresenter', () => {
     expect(presenter.activePage).toBe(ReferralNavigationValues.actionPlanTab)
     expect(presenter.activeTab).toBe(ActionPlanNavigationValues.serviceDeliveryTab)
     expect(presenter.referralId).toBe('AB1234CD')
-    expect(presenter.getMojSubNavigationArgs(content).items[0]).toEqual({
+    expect(presenter.getMojSubNavigationArgs(content).items.find(item => item.active)).toEqual({
       href: '/referral/AB1234CD/action-plan',
-      text: 'Action plan',
+      text: 'Action Plan',
       active: true,
     })
   })

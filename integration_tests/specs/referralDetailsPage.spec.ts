@@ -27,6 +27,28 @@ test.describe('Referral Details Page', () => {
   test('should display the page', async ({ page }) => {
     await ReferralDetailsPage.verifyOnPage(page)
   })
+
+  test('hides Progress, Action Plan and Appointments for an unassigned referral', async ({ page }) => {
+    const referralDetailsPage = await ReferralDetailsPage.verifyOnPage(page)
+
+    await referralDetailsPage.navigation.verify('QD0878DE', 'Case details', false)
+  })
+
+  test('shows the shared referral navigation for an assigned referral', async ({ page }) => {
+    await communitySupport.stubGetReferralDetailsPage(200, id, 'CRN123', [
+      {
+        userType: 'INTERNAL',
+        userId: randomUUID(),
+        fullName: 'Test Caseworker',
+        emailAddress: 'caseworker@example.com',
+      },
+    ])
+    await page.reload()
+
+    const referralDetailsPage = await ReferralDetailsPage.verifyOnPage(page)
+    await referralDetailsPage.navigation.verify('QD0878DE', 'Case details')
+  })
+
   // IPB-1940:AC1
   test('should display the heading with the correct content', async ({ page }) => {
     const referralDetailsPage = await ReferralDetailsPage.verifyOnPage(page)
