@@ -7,7 +7,7 @@ import IcsFeedbackNextStepsPage from '../pages/IcsFeedbackNextStepsPage'
 
 const CASE_REFERENCE = 'AB1234CD'
 const NEXT_STEPS_URL = `/ics-feedback/${CASE_REFERENCE}/next-steps`
-const ISSUES_OR_CONCERNS_URL = `/ics-feedback/${CASE_REFERENCE}/issues-or-concerns`
+const IDENTIFIED_ADDITIONAL_NEEDS_URL = `/ics-feedback/${CASE_REFERENCE}/identified-additional-needs`
 const CHECK_ANSWERS_URL = `/ics-feedback/${CASE_REFERENCE}/check-answers`
 
 const REFERRAL_ID = randomUUID()
@@ -63,12 +63,12 @@ test.describe('Next Steps Page', () => {
     )
   })
 
-  test('Back link navigates to issues or concerns', async ({ page }) => {
+  test('Back link navigates to identified additional needs', async ({ page }) => {
     await seedSessionWithIcsFeedback(page, mockIcsFeedbackSubmission)
     await page.goto(NEXT_STEPS_URL)
     const nextStepsPage = await IcsFeedbackNextStepsPage.verifyOnPage(page)
     await nextStepsPage.backLink.click()
-    await expect(page).toHaveURL(ISSUES_OR_CONCERNS_URL)
+    await expect(page).toHaveURL(IDENTIFIED_ADDITIONAL_NEEDS_URL)
   })
 
   test('Successful submission navigates to check answers', async ({ page }) => {

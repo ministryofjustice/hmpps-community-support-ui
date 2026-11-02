@@ -44,6 +44,7 @@ export default function createApp(services: Services): express.Application {
     // Test-only route: seeds the session with a createAppointmentRequest for integration tests.
     // Registered before CSRF middleware so it is not blocked by CSRF protection.
     app.post('/test/setup-appointment-session', async (req, res) => {
+      req.session.appointmentSessionData = req.body
       req.session.createAppointmentRequest = req.body
       res.status(200).json({ ok: true })
     })

@@ -46,11 +46,8 @@ export default class ServiceEndDatePagePresenter extends PresenterBase<
     return {
       pageTitle: content.pageTitle,
       pageHeader: content.pageHeader,
-      hint: content.hint,
-      dateLabel: content.dateLabel,
       dateHint: content.dateHint,
       reasonLabel: content.reasonLabel,
-      reasonHint: content.reasonHint,
       continueButton: content.continueButton,
       backLink: {
         href: content.backLink,

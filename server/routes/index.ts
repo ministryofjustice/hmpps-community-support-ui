@@ -134,6 +134,14 @@ export default function routes({
     referralController.showSelectAppointmentType(req, res),
   )
 
+  get('/referral/:caseReference/create-an-appointment/check-your-answers', (req, res) =>
+    appointmentController.showAppointmentCheckYourAnswers(req, res),
+  )
+
+  post('/referral/:caseReference/create-an-appointment/check-your-answers', (req, res) =>
+    appointmentController.submitAppointment(req, res),
+  )
+
   get('/ics-feedback/:caseRefId/attendance', async (req, res) =>
     appointmentController.icsAppointmentAttendance(req, res),
   )
@@ -150,6 +158,14 @@ export default function routes({
 
   post('/ics-feedback/:caseRefId/issues-or-concerns', (req, res) =>
     appointmentController.submitIssuesOrConcerns(req, res),
+  )
+
+  get('/ics-feedback/:caseRefId/identified-additional-needs', (req, res) =>
+    appointmentController.getIdentifiedAdditionalNeeds(req, res),
+  )
+
+  post('/ics-feedback/:caseRefId/identified-additional-needs', (req, res) =>
+    appointmentController.submitIdentifiedAdditionalNeeds(req, res),
   )
 
   get('/ics-feedback/:caseRefId/next-steps', (req, res) => appointmentController.getNextSteps(req, res))

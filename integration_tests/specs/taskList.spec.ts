@@ -81,7 +81,7 @@ test.describe('Task List Journey', () => {
         await pom.enterIdentifyierAndContinue('X320741')
       })
       await test.step('confirm person', async () => {
-        await expect(page.getByRole('heading', { name: 'Confirm this is the correct' })).toBeVisible()
+        await expect(page.getByRole('heading', { name: 'Check and confirm personal details' })).toBeVisible()
         await page.getByRole('button', { name: 'Continue' }).click()
       })
       await test.step('confirm task list page', async () => {
