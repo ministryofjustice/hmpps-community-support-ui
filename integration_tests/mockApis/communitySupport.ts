@@ -29,6 +29,7 @@ import {
   AdditionalInformationForTheDeliveryPartner,
   OffenceSentenceInfoBffResponseDto,
   WithdrawReferralRequest,
+  ActionPlanSubmitResponse,
 } from '@community-support-api'
 import { stubFor } from './wiremock'
 import { duplicateData } from '../testUtils'
@@ -696,6 +697,22 @@ export default {
       request: {
         method: 'POST',
         urlPath: `/community-support/referral/${caseReference}/action-plan/action`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: response,
+      },
+    }),
+  stubSubmitActionPlan: (
+    caseReference: string,
+    response: ActionPlanSubmitResponse,
+    httpStatus = 200,
+  ): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'POST',
+        urlPath: `/community-support/referral/${caseReference}/action-plan`,
       },
       response: {
         status: httpStatus,

@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test'
 import { addDays, format } from 'date-fns'
-import { ActionPlanSessionDeliveryDetailsResponse } from '@community-support-api'
+import { ActionPlanSessionDeliveryDetailsResponse, ActionPlanSubmitResponse } from '@community-support-api'
 import { login, resetStubs } from '../testUtils'
 import communitySupport from '../mockApis/communitySupport'
 import ActionPlanCheckYourAnswersPage from '../pages/actionPlanCheckYourAnswersPage'
@@ -228,6 +228,11 @@ test.describe('Action Plan Check Your Answers Page', () => {
     }
     await communitySupport.stubGetSessionDeliveryCheckYourAnswers(caseReference, checkYourAnswersResponse, false)
     await communitySupport.stubSubmitServiceDelivery(caseReference, checkYourAnswersResponse)
+    const submitActionPlanResponse: ActionPlanSubmitResponse = {
+      success: true,
+      message: 'Action plan submitted successfully',
+    }
+    await communitySupport.stubSubmitActionPlan(caseReference, submitActionPlanResponse)
 
     await page.goto(ActionPlanCheckYourAnswersPage.url(caseReference))
     const checkYourAnswersPage = await ActionPlanCheckYourAnswersPage.verifyOnPage(page)
