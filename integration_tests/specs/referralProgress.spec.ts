@@ -113,6 +113,14 @@ test.describe('Referral Progress Page', () => {
     await login(page)
   })
 
+  test('shows the shared referral navigation with Progress active', async ({ page }) => {
+    await communitySupport.stubGetReferralProgress(referralProgressNoAppointments, caseReference)
+    await page.goto(ReferralProgressPage.url(caseReference))
+
+    const referralProgressPage = await ReferralProgressPage.verifyOnPage(page)
+    await referralProgressPage.navigation.verify(caseReference, 'Progress')
+  })
+
   // IPB-2142:AC1
   test('Navigate back to referral dashboard', async ({ page }) => {
     await communitySupport.stubGetReferralProgress(referralProgressNoAppointments, caseReference)

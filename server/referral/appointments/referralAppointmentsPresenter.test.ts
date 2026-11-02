@@ -7,13 +7,6 @@ describe('ReferralAppointmentsPresenter', () => {
   const caseReference = 'AB1234CD'
   const content: ReferralAppointmentsContent = {
     pageHeader: 'Referral for',
-    subNavTitle: 'Referral',
-    subNavItems: [
-      { id: 'caseDetails', title: 'Case details' },
-      { id: 'progress', title: 'Progress' },
-      { id: 'appointments', title: 'Appointments' },
-      { id: 'changeLog', title: 'Change log' },
-    ],
     appointmentsTitle: 'Appointments',
     appointmentTypeColumnHeader: 'Appointment',
     dateTimeColumnHeader: 'Date and time',
@@ -49,6 +42,18 @@ describe('ReferralAppointmentsPresenter', () => {
     expect(viewModel.navBar.items.find(item => item.active)).toMatchObject({
       text: 'Appointments',
       href: `/referral/${caseReference}/appointments`,
+    })
+    expect(viewModel.navBar.items.map(item => item.text)).toEqual([
+      'Case details',
+      'Progress',
+      'Action Plan',
+      'Appointments',
+      'Change log',
+    ])
+    expect(viewModel.navBar.items[2]).toEqual({
+      text: 'Action Plan',
+      href: `/referral/${caseReference}/action-plan`,
+      active: false,
     })
     expect(viewModel.appointmentsTitle).toBe('Appointments')
     expect(viewModel.createAppointmentText).toBe('Create an Appointment')

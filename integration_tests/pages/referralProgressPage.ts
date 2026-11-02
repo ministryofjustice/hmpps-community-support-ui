@@ -1,6 +1,7 @@
 import { expect, type Locator, type Page } from '@playwright/test'
 import AbstractPage from './abstractPage'
 import Table from './components/table'
+import ReferralNavigation from './components/referralNavigation'
 
 export default class ReferralProgressPage extends AbstractPage {
   readonly header: Locator
@@ -8,6 +9,8 @@ export default class ReferralProgressPage extends AbstractPage {
   readonly notificationBanner: Locator
 
   readonly subNavBar: Locator
+
+  readonly navigation: ReferralNavigation
 
   readonly subHeader: Locator
 
@@ -44,6 +47,7 @@ export default class ReferralProgressPage extends AbstractPage {
     this.notificationBanner = page.locator('.govuk-notification-banner')
     this.header = page.locator('h1')
     this.subNavBar = page.locator('.moj-sub-navigation__list')
+    this.navigation = new ReferralNavigation(page)
     this.subHeader = page.locator('h2')
     this.icsTitle = page.getByRole('heading', { name: 'Initial contact session (ICS)', level: 3 })
     this.backLink = page.getByRole('link', { name: 'Back', exact: true })

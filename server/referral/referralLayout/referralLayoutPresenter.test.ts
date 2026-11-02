@@ -20,12 +20,18 @@ describe('ReferralLayoutPresenter', () => {
   const content = globalContent['/referral/:id']
 
   describe('getMojSubNavigationArgs', () => {
-    it('builds the action plan item linking to the referral', () => {
+    it('builds the shared navigation with Action Plan immediately after Progress', () => {
       const presenter = new TestReferralLayoutPresenter(ReferralNavigationValues.actionPlanTab, 'AB1234CD')
 
       expect(presenter.getMojSubNavigationArgs(content)).toEqual({
         label: 'Sub navigation',
-        items: [{ href: '/referral/AB1234CD/action-plan', text: 'Action plan', active: true }],
+        items: [
+          { href: '/referral-details/AB1234CD', text: 'Case details', active: false },
+          { href: '/progress/AB1234CD', text: 'Progress', active: false },
+          { href: '/referral/AB1234CD/action-plan', text: 'Action Plan', active: true },
+          { href: '/referral/AB1234CD/appointments', text: 'Appointments', active: false },
+          { href: '#', text: 'Change log', active: false },
+        ],
       })
     })
 
@@ -34,8 +40,7 @@ describe('ReferralLayoutPresenter', () => {
 
       const args = presenter.getMojSubNavigationArgs({
         subNavigationLabel: 'Custom label',
-        actionPlanTabText: 'Custom tab',
-        actionPlanTabHref: '/custom/{{ id }}/path',
+        subNavItems: [{ id: 'actionPlan', text: 'Custom tab', href: '/custom/{{ id }}/path' }],
       })
 
       expect(args.label).toBe('Custom label')
@@ -46,7 +51,24 @@ describe('ReferralLayoutPresenter', () => {
     it('marks the action plan item as inactive when another page is active', () => {
       const presenter = new TestReferralLayoutPresenter('somethingElse' as ReferralNavigationValues, 'AB1234CD')
 
-      expect(presenter.getMojSubNavigationArgs(content).items[0].active).toBe(false)
+      expect(presenter.getMojSubNavigationArgs(content).items.every(item => !item.active)).toBe(true)
+    })
+
+    it.each(Object.values(ReferralNavigationValues))('marks only %s as active', activePage => {
+      const presenter = new TestReferralLayoutPresenter(activePage, 'AB1234CD')
+      const { items } = presenter.getMojSubNavigationArgs()
+
+      expect(items.filter(item => item.active)).toHaveLength(1)
+      expect(items.findIndex(item => item.active)).toBe(content.subNavItems.findIndex(item => item.id === activePage))
+    })
+
+    it('hides Progress, Action Plan and Appointments for unassigned referrals', () => {
+      const presenter = new TestReferralLayoutPresenter(ReferralNavigationValues.caseDetailsTab, 'AB1234CD')
+
+      expect(presenter.getMojSubNavigationArgs(content, false).items).toEqual([
+        { href: '/referral-details/AB1234CD', text: 'Case details', active: true },
+        { href: '#', text: 'Change log', active: false },
+      ])
     })
   })
 
