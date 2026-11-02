@@ -1,9 +1,11 @@
 import { expect, type Locator, type Page } from '@playwright/test'
 import AbstractPage from './abstractPage'
 
-export type SessionType = 'CONTACT_SESSION' | 'PRE_RELEASE_SESSION' | 'POST_RELEASE_SESSION' | 'HANDOVER_SESSION'
+export type SessionType =
+  'ICS' | 'CONTACT_SESSION' | 'PRE_RELEASE_SESSION' | 'POST_RELEASE_SESSION' | 'HANDOVER_SESSION'
 
 const headers: Record<SessionType, string> = {
+  ICS: 'Book initial contact session (ICS)',
   CONTACT_SESSION: 'Schedule the contact session',
   PRE_RELEASE_SESSION: 'Schedule the pre-release session',
   POST_RELEASE_SESSION: 'Schedule the post-release session',

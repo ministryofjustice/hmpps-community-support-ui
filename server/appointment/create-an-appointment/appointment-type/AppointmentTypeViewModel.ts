@@ -2,14 +2,14 @@ import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendRadios } from 
 
 export interface AppointmentTypeContent {
   pageTitle: string
-  heading: string
+  heading?: string
   appointmentTypeLabel: string
   buttonText: string
 }
 
 export interface AppointmentTypeViewModel {
   pageTitle: string
-  heading: string
+  heading?: string
   backLink: GovukFrontendBackLink
   radios: GovukFrontendRadios
   button: GovukFrontendButton
