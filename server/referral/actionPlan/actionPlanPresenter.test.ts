@@ -54,7 +54,13 @@ describe('ActionPlanPresenter', () => {
     const renderData = (res.render as jest.Mock).mock.calls[0][1] as { content: ActionPlanViewModel }
     expect(renderData.content.subNavigationArgs).toEqual({
       label: 'Sub navigation',
-      items: [{ href: '/referral/AB1234CD/action-plan', text: 'Action plan', active: true }],
+      items: [
+        { href: '/referral-details/AB1234CD', text: 'Case details', active: false },
+        { href: '/progress/AB1234CD', text: 'Progress', active: false },
+        { href: '/referral/AB1234CD/action-plan', text: 'Action Plan', active: true },
+        { href: '/referral/AB1234CD/appointments', text: 'Appointments', active: false },
+        { href: '#', text: 'Change log', active: false },
+      ],
     })
   })
 
