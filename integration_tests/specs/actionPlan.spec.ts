@@ -124,7 +124,9 @@ test.describe('Action Plan Page', () => {
       await expect(actionPlanPage.submitActionPlanButton).toBeEnabled()
       await expect(actionPlanPage.sidebarColumn).toHaveCount(0)
       await expect(actionPlanPage.mainContentColumn).toHaveClass('govuk-grid-column-full')
-      await expect(actionPlanPage.mainContentColumn.getByRole('link', { name: 'Remove', exact: true })).toBeVisible()
+      await expect(
+        actionPlanPage.mainContentColumn.getByRole('link', { name: 'Remove (Accommodation)', exact: true }),
+      ).toBeVisible()
     })
 
     test('hides submission and outcome removal when the action plan is submitted', async ({ page }) => {
@@ -138,9 +140,14 @@ test.describe('Action Plan Page', () => {
       const actionPlanPage = await ActionPlanPage.verifyOnPage(page)
 
       await expect(actionPlanPage.submitActionPlanButton).toHaveCount(0)
-      await expect(actionPlanPage.mainContentColumn.getByRole('link', { name: 'Remove', exact: true })).toHaveCount(0)
       await expect(
-        actionPlanPage.mainContentColumn.getByRole('link', { name: 'Add or change activities', exact: true }),
+        actionPlanPage.mainContentColumn.getByRole('link', { name: 'Remove (Accommodation)', exact: true }),
+      ).toHaveCount(0)
+      await expect(
+        actionPlanPage.mainContentColumn.getByRole('link', {
+          name: 'Add or change activities (Accommodation)',
+          exact: true,
+        }),
       ).toBeVisible()
       await expect(actionPlanPage.mainContentColumn).toContainText('Find suitable housing')
     })
