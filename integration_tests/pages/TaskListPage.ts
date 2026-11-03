@@ -20,7 +20,7 @@ export default class TaskListPage extends AbstractPage {
   }
 
   get personalDetailsSection() {
-    return this.page.getByRole('heading', { name: 'Personal details' }).locator('..')
+    return this.page.getByRole('heading', { name: 'About Alex' }).locator('..')
   }
 
   get referralInformationSection() {
@@ -40,7 +40,7 @@ export default class TaskListPage extends AbstractPage {
   }
 
   get checkRiskInformationTask() {
-    return this.referralInformationSection.getByRole('link', { name: 'Check risk information' })
+    return this.personalDetailsSection.getByRole('link', { name: 'Check risk information' })
   }
 
   get selectPersonNeedsTask() {
@@ -48,7 +48,7 @@ export default class TaskListPage extends AbstractPage {
   }
 
   get addSupportNeedsTask() {
-    return this.referralInformationSection.getByRole('link', { name: 'Add details of any additional support needs' })
+    return this.personalDetailsSection.getByRole('link', { name: 'Add details of any additional support needs' })
   }
 
   get additionalReferralInformationTask() {
