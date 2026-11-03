@@ -331,6 +331,58 @@ test.describe('Select an action plan need', () => {
     await expect(editActivityPage.activityDescription).toHaveValue('Attend weekly appointments')
   })
 
+  test('hides Remove for submitted plans on saved and session activity pages', async ({ page }) => {
+    const needId = '00000000-0000-4000-8000-000000000001'
+    const outcomeId = '00000000-0000-4000-8000-000000000002'
+    const outcomeAnswerId = '00000000-0000-4000-8000-000000000003'
+    await communitySupport.stubGetActionPlanSummary(caseReference, {
+      ...actionPlanSummary,
+      isSubmitted: true,
+      needs: [
+        {
+          id: needId,
+          label: 'Accommodation',
+          orderNumber: 1,
+          outcomes: [
+            {
+              id: outcomeAnswerId,
+              label: outcomeId,
+              activities: [
+                { id: 'activity-1', who: 'Housing service', details: 'Attend weekly appointments' },
+                { id: 'activity-2', who: 'Support group', details: 'Attend group sessions' },
+              ],
+            },
+          ],
+        },
+      ],
+    })
+    await communitySupport.stubGetActionPlanNeedsAndOutcomes({
+      needs: [{ id: needId, label: 'Accommodation', outcomes: [{ id: outcomeId, text: 'Find suitable housing' }] }],
+      selectedNeeds: [],
+    })
+
+    await page.goto(
+      `/referral/${caseReference}/action-plan/activities?needId=${needId}&outcomeAnswerId=${outcomeAnswerId}`,
+    )
+    const viewActivitiesPage = await ActionPlanViewActivitiesPage.verifyOnPage(page)
+    await expect(viewActivitiesPage.activityRows).toHaveCount(2)
+    await expect(viewActivitiesPage.removeLinks).toHaveCount(0)
+    await expect(viewActivitiesPage.activitiesTable.getByRole('link', { name: 'Change', exact: true })).toHaveCount(2)
+
+    await page.goto(ActionPlanViewActivitiesPage.url(caseReference))
+    await ActionPlanViewActivitiesPage.verifyOnPage(page)
+    await expect(viewActivitiesPage.activityRows).toHaveCount(2)
+    await expect(viewActivitiesPage.removeLinks).toHaveCount(0)
+    await expect(viewActivitiesPage.activitiesTable.getByRole('link', { name: 'Change', exact: true })).toHaveCount(2)
+
+    await viewActivitiesPage.activityRows.first().getByRole('link', { name: 'Change' }).click()
+    const editActivityPage = await ActionPlanAddActivityPage.verifyOnPage(page)
+    await expect(editActivityPage.activityProvider).toHaveValue('Housing service')
+    await editActivityPage.saveAndContinueButton.click()
+    await ActionPlanViewActivitiesPage.verifyOnPage(page)
+    await expect(viewActivitiesPage.removeLinks).toHaveCount(0)
+  })
+
   test('deletes a saved outcome when its last activity is removed', async ({ page }) => {
     const needId = '00000000-0000-4000-8000-000000000021'
     const outcomeId = '00000000-0000-4000-8000-000000000022'
