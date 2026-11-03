@@ -4,8 +4,6 @@ import { AppointmentTypeContent } from '../../appointment/create-an-appointment/
 class AppointmentTypeContentFactory extends Factory<AppointmentTypeContent> {}
 
 export default AppointmentTypeContentFactory.define(() => ({
-  pageTitle: 'Select the appointment type',
-  heading: 'Create an appointment for {{ personName }}',
-  appointmentTypeLabel: 'Select the appointment type',
-  buttonText: 'Save and continue',
+  pageTitle: 'Appointment type',
+  buttonText: 'Continue',
 }))

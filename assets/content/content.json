@@ -270,10 +270,9 @@
     "submitButtonText": "Submit"
   },
   "/referral/:id/create-an-appointment/appointment-type": {
-    "pageTitle": "Select the appointment type",
-    "heading": "Create an appointment for {{ personName }}",
-    "appointmentTypeLabel": "Select the appointment type",
-    "buttonText": "Save and continue"
+    "pageTitle": "Appointment type",
+    "appointmentTypeLabel": "Appointment type",
+    "buttonText": "Continue"
   },
   "/referral/:id/create-an-appointment/check-your-answers": {
     "pageTitle": "Check the details before scheduling the appointment",
@@ -1080,6 +1079,7 @@
     "submitHref": "/referral/{{ caseRef }}/create-an-appointment/appointment-details",
     "backLink": "/referral/{{ caseRef }}/create-an-appointment/appointment-type",
     "pageHeaders": {
+      "ICS": "Book initial contact session (ICS)",
       "CONTACT_SESSION": "Schedule the contact session",
       "PRE_RELEASE_SESSION": "Schedule the pre-release session",
       "POST_RELEASE_SESSION": "Schedule the post-release session",

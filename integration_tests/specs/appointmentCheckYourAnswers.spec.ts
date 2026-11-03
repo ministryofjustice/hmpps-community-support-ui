@@ -88,7 +88,7 @@ test.describe('Appointment Check Your Answers Page', () => {
     await cyaPage.changeLink.click()
     await AppointmentTypePage.verifyOnPage(page)
     await page.getByRole('radio', { name: 'Post-release session' }).check()
-    await page.getByRole('button', { name: 'Save and continue' }).click()
+    await page.getByRole('button', { name: 'Continue', exact: true }).click()
 
     const detailsPage = await CreateAppointmentDetailsPage.verifyOnPage(page, 'POST_RELEASE_SESSION')
     await detailsPage.fillDateAndTime('21/6/2026', '10', '30', 'AM')
@@ -142,7 +142,7 @@ test.describe('Appointment Check Your Answers Page', () => {
     await cyaPage.changeLink.click()
     await AppointmentTypePage.verifyOnPage(page)
     await page.getByRole('radio', { name: 'Pre-release session' }).check()
-    await page.getByRole('button', { name: 'Save and continue' }).click()
+    await page.getByRole('button', { name: 'Continue', exact: true }).click()
 
     const detailsPage = await CreateAppointmentDetailsPage.verifyOnPage(page, 'PRE_RELEASE_SESSION')
     await detailsPage.fillDateAndTime('21/6/2026', '10', '30', 'AM')
