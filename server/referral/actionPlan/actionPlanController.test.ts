@@ -66,6 +66,7 @@ describe('ActionPlanController', () => {
       getPersonInvolvement: jest.fn(),
       getCheckYourAnswers: jest.fn(),
       submitServiceDeliveryDetails: jest.fn(),
+      submitActionPlan: jest.fn().mockResolvedValue({ success: true, message: 'Submitted' }),
       submitAction: jest.fn(),
       moveNeed: jest.fn(),
       deleteAction: jest.fn(),
@@ -2316,6 +2317,29 @@ describe('ActionPlanController', () => {
         )
 
         expect(req.session.actionPlanSessionDelivery).toEqual(draft)
+        expect(referralService.submitActionPlan).not.toHaveBeenCalled()
+        expect(res.redirect).not.toHaveBeenCalled()
+      })
+
+      it('submits the action plan after saving the service delivery answers', async () => {
+        await actionPlanController.submitServiceDeliveryCheckYourAnswersPage(req, res)
+
+        expect(referralService.submitActionPlan).toHaveBeenCalledWith('AB1234CD', 'user1')
+        expect(referralService.submitServiceDeliveryDetails.mock.invocationCallOrder[0]).toBeLessThan(
+          referralService.submitActionPlan.mock.invocationCallOrder[0],
+        )
+        expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan')
+      })
+
+      it('preserves the draft without redirecting when action plan submission is unsuccessful', async () => {
+        req.session.actionPlanSessionDelivery = { caseReference: 'AB1234CD' }
+        referralService.submitActionPlan.mockResolvedValue({ success: false, message: 'Unable to submit plan' })
+
+        await expect(actionPlanController.submitServiceDeliveryCheckYourAnswersPage(req, res)).rejects.toThrow(
+          'Unable to submit plan',
+        )
+
+        expect(req.session.actionPlanSessionDelivery).toEqual({ caseReference: 'AB1234CD' })
         expect(res.redirect).not.toHaveBeenCalled()
       })
     })

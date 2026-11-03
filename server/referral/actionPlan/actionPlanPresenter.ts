@@ -32,7 +32,8 @@ export default class ActionPlanPresenter extends ActionPlanLayoutPresenter<Actio
 
     const subNavigationArgs = this.getMojSubNavigationArgs(content)
 
-    const horizontalSubNavArgs = hasNeeds ? this.getHorizontalSubNavArgs(content) : undefined
+    const horizontalSubNavArgs =
+      hasNeeds && this.actionPlanSummary.isSubmitted ? this.getHorizontalSubNavArgs(content) : undefined
 
     const addAnotherOutcomeButton: GovukFrontendButton = hasNeeds
       ? {
@@ -42,7 +43,7 @@ export default class ActionPlanPresenter extends ActionPlanLayoutPresenter<Actio
         }
       : undefined
     const submitActionPlanButton: GovukFrontendButton =
-      allOutcomesAdded && this.icsFeedbackSubmitted
+      allOutcomesAdded && this.icsFeedbackSubmitted && !this.actionPlanSummary.isSubmitted
         ? {
             href: `/referral/${this.caseReference}/action-plan/session-delivery-details`,
             text: content.submitActionPlanText,
@@ -133,18 +134,21 @@ export default class ActionPlanPresenter extends ActionPlanLayoutPresenter<Actio
     needId: string,
     outcomeId: string,
   ): GovukFrontendSummaryListCardActions {
-    return {
-      items: [
-        {
-          href: `/referral/${this.caseReference}/action-plan/activities?needId=${encodeURIComponent(needId)}&outcomeAnswerId=${encodeURIComponent(outcomeId)}`,
-          text: content.addOrChangeActivitiesText,
-        },
-        {
-          href: `/referral/${this.caseReference}/action-plan/remove-outcome?needId=${encodeURIComponent(needId)}&outcomeAnswerId=${encodeURIComponent(outcomeId)}`,
-          text: content.removeOutcomeText,
-        },
-      ],
+    const items: GovukFrontendSummaryListCardActions['items'] = [
+      {
+        href: `/referral/${this.caseReference}/action-plan/activities?needId=${encodeURIComponent(needId)}&outcomeAnswerId=${encodeURIComponent(outcomeId)}`,
+        text: content.addOrChangeActivitiesText,
+      },
+    ]
+
+    if (!this.actionPlanSummary.isSubmitted) {
+      items.push({
+        href: `/referral/${this.caseReference}/action-plan/remove-outcome?needId=${encodeURIComponent(needId)}&outcomeAnswerId=${encodeURIComponent(outcomeId)}`,
+        text: content.removeOutcomeText,
+      })
     }
+
+    return { items }
   }
 
   private getAlert(content: ActionPlanContent, name: string, type?: 'ADD' | 'REMOVE'): MojAlert | null {

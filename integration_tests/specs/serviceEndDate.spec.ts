@@ -19,7 +19,7 @@ test.describe('Service End Date Page', () => {
   test.beforeEach(async ({ page }) => {
     await resetStubs()
     await communitySupport.stubGetTaskListStatus(referralId, {
-      fullName: 'Alex Rivers',
+      refereeName: { firstName: 'Alex', lastName: 'Rivers' },
       confirmPersonalDetailsStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
       checkRiskInformationStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
       selectThePersonsNeedsStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },

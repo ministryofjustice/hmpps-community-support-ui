@@ -19,7 +19,7 @@ test.describe('Task List E2E Journey Regression', () => {
   const completedStatus = { completed: true, statusText: 'Completed', tag: undefined }
 
   const defaultTaskListStatus = {
-    fullName: 'Alex Rivers',
+    refereeName: { firstName: 'Alex', lastName: 'Rivers' },
     confirmPersonalDetailsStatus: incompleteStatus,
     checkRiskInformationStatus: incompleteStatus,
     selectAnAreaForReferralStatus: incompleteStatus,
@@ -100,11 +100,7 @@ test.describe('Task List E2E Journey Regression', () => {
   }) => {
     const taskListPom = await TaskListPage.verifyOnPage(page)
     await expect(taskListPom.addSupportNeedsTask).toBeVisible()
-    await taskListPom.verifyTaskStatus(
-      'Referral information',
-      'Add details of any additional support needs',
-      'Incomplete',
-    )
+    await taskListPom.verifyTaskStatus('About Alex', 'Add details of any additional support needs', 'Incomplete')
   })
 
   // AC5 - Navigate to Additional support needs
@@ -130,11 +126,7 @@ test.describe('Task List E2E Journey Regression', () => {
     })
     await page.goto(TaskListPage.url())
     const taskListPom = await TaskListPage.verifyOnPage(page)
-    await taskListPom.verifyTaskStatus(
-      'Referral information',
-      'Add details of any additional support needs',
-      'Completed',
-    )
+    await taskListPom.verifyTaskStatus('About Alex', 'Add details of any additional support needs', 'Completed')
   })
 
   // AC9 - Persist incomplete status (return to referral with Incomplete status)
@@ -142,11 +134,7 @@ test.describe('Task List E2E Journey Regression', () => {
     page,
   }) => {
     const taskListPom = await TaskListPage.verifyOnPage(page)
-    await taskListPom.verifyTaskStatus(
-      'Referral information',
-      'Add details of any additional support needs',
-      'Incomplete',
-    )
+    await taskListPom.verifyTaskStatus('About Alex', 'Add details of any additional support needs', 'Incomplete')
   })
 
   // AC10 - Maintain Completed status when revisiting
@@ -163,11 +151,7 @@ test.describe('Task List E2E Journey Regression', () => {
     const taskListPom = await TaskListPage.verifyOnPage(page)
 
     await test.step('verify Completed status before navigating', async () => {
-      await taskListPom.verifyTaskStatus(
-        'Referral information',
-        'Add details of any additional support needs',
-        'Completed',
-      )
+      await taskListPom.verifyTaskStatus('About Alex', 'Add details of any additional support needs', 'Completed')
     })
     await test.step('navigate to additional support needs page', async () => {
       await taskListPom.clickAddSupportNeedsTask()
@@ -181,11 +165,7 @@ test.describe('Task List E2E Journey Regression', () => {
     await test.step('return to task list and verify status remains Completed', async () => {
       await page.goto(TaskListPage.url())
       await TaskListPage.verifyOnPage(page)
-      await taskListPom.verifyTaskStatus(
-        'Referral information',
-        'Add details of any additional support needs',
-        'Completed',
-      )
+      await taskListPom.verifyTaskStatus('About Alex', 'Add details of any additional support needs', 'Completed')
     })
   })
 })

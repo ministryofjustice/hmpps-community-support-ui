@@ -89,8 +89,11 @@ test.describe('Action Plan Page', () => {
       { event: { status: 'COMPLETED', icsFeedbackId: randomUUID() } },
     ])
 
-    test('uses a quarter-width sidebar and three-quarter-width content when outcomes exist', async ({ page }) => {
-      await communitySupport.stubGetActionPlanSummary(caseReference, actionPlanSummaryWithOutcomes)
+    test('uses a quarter-width sidebar and three-quarter-width content for a submitted plan', async ({ page }) => {
+      await communitySupport.stubGetActionPlanSummary(caseReference, {
+        ...actionPlanSummaryWithOutcomes,
+        isSubmitted: true,
+      })
       await communitySupport.stubGetReferralProgress(icsFeedbackSubmittedProgress, caseReference)
       await page.goto(ActionPlanPage.url(caseReference))
 
@@ -119,6 +122,34 @@ test.describe('Action Plan Page', () => {
 
       await expect(actionPlanPage.submitActionPlanButton).toBeVisible()
       await expect(actionPlanPage.submitActionPlanButton).toBeEnabled()
+      await expect(actionPlanPage.sidebarColumn).toHaveCount(0)
+      await expect(actionPlanPage.mainContentColumn).toHaveClass('govuk-grid-column-full')
+      await expect(
+        actionPlanPage.mainContentColumn.getByRole('link', { name: 'Remove (Accommodation)', exact: true }),
+      ).toBeVisible()
+    })
+
+    test('hides submission and outcome removal when the action plan is submitted', async ({ page }) => {
+      await communitySupport.stubGetActionPlanSummary(caseReference, {
+        ...actionPlanSummaryWithOutcomes,
+        isSubmitted: true,
+      })
+      await communitySupport.stubGetReferralProgress(icsFeedbackSubmittedProgress, caseReference)
+      await page.goto(ActionPlanPage.url(caseReference))
+
+      const actionPlanPage = await ActionPlanPage.verifyOnPage(page)
+
+      await expect(actionPlanPage.submitActionPlanButton).toHaveCount(0)
+      await expect(
+        actionPlanPage.mainContentColumn.getByRole('link', { name: 'Remove (Accommodation)', exact: true }),
+      ).toHaveCount(0)
+      await expect(
+        actionPlanPage.mainContentColumn.getByRole('link', {
+          name: 'Add or change activities (Accommodation)',
+          exact: true,
+        }),
+      ).toBeVisible()
+      await expect(actionPlanPage.mainContentColumn).toContainText('Find suitable housing')
     })
 
     test('does not display the Submit Action plan button when ICS feedback has not been submitted', async ({

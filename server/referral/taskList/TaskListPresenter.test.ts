@@ -4,7 +4,7 @@ import TaskListPresenter from './TaskListPresenter'
 import TaskListContent from '../../testutils/factories/TaskListContent'
 
 const baseTaskListState: TaskListStatusDto = {
-  fullName: 'John Smith',
+  refereeName: { firstName: 'John', lastName: 'Smith' },
   confirmPersonalDetailsStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
   checkRiskInformationStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
   selectAnAreaForReferralStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
@@ -70,11 +70,11 @@ describe('TaskListPresenter - Page Rendering', () => {
       // Task list structure
       const sections = viewModel.taskListItemsBySection
 
-      expect(sections.personalDetails.title).toBe('Personal details')
-      expect(sections.personalDetails.taskList.items).toHaveLength(1)
+      expect(sections.personalDetails.title).toBe('About John')
+      expect(sections.personalDetails.taskList.items).toHaveLength(3)
 
       expect(sections.referralInformation.title).toBe('Referral information')
-      expect(sections.referralInformation.taskList.items).toHaveLength(5)
+      expect(sections.referralInformation.taskList.items).toHaveLength(3)
 
       expect(sections.contactDetails.title).toBe('Referral contact details')
       expect(sections.checkAnswers.title).toBe('Check answers and submit')
