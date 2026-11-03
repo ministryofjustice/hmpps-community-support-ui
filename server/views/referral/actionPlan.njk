@@ -36,11 +36,11 @@
   {% endif %}
   <div class="govuk-grid-row">
     {% if content.horizontalSubNavArgs %}
-      <div class="govuk-grid-column-one-third">
+      <div class="govuk-grid-column-one-quarter">
         {{ mojSideNavigation(content.horizontalSubNavArgs) }}
       </div>
     {% endif %}
-    <div class="{{ 'govuk-grid-column-two-thirds govuk-!-padding-4' if content.horizontalSubNavArgs else 'govuk-grid-column-full' }}">
+    <div class="{{ 'govuk-grid-column-three-quarters govuk-!-padding-4' if content.horizontalSubNavArgs else 'govuk-grid-column-full' }}">
       <p>{{ content.updatedAtText }}</p>
       <p>{{ content.noActionPlanText }}</p>
       {% if content.needsSummary %}

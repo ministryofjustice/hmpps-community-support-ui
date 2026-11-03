@@ -135,6 +135,7 @@ class ActionPlanController {
     const icsFeedbackSubmitted = referralProgress.appointments.some(
       appointment => appointment.type === 'ICS' && Boolean(appointment.icsFeedbackId),
     )
+
     const presenter = new ActionPlanPresenter(actionPlanSummary, caseReference, icsFeedbackSubmitted, bannerType)
 
     return presenter.renderPage(res)
@@ -142,9 +143,15 @@ class ActionPlanController {
 
   async showServiceDeliveryPage(req: Request, res: Response) {
     const { id: caseReference } = req.params as { id: string }
+    const { username } = res.locals.user
 
-    const presenter = new ServiceDeliveryPresenter(caseReference)
-
+    const sessionDelivery = await this.getActionPlanSessionDelivery(req, caseReference)
+    const checkYourAnswers = await this.referralService.getCheckYourAnswers(
+      caseReference,
+      username,
+      sessionDelivery?.isServiceEndDateChanged ?? false,
+    )
+    const presenter = new ServiceDeliveryPresenter(caseReference, checkYourAnswers)
     return presenter.renderPage(res)
   }
 

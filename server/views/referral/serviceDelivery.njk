@@ -3,6 +3,7 @@
 {%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
 {%- from "moj/components/side-navigation/macro.njk" import mojSideNavigation -%}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 
 {% set pageTitle = "Action plan – " + applicationName %}
 {% set mainClasses = "govuk-body" %}
@@ -26,7 +27,9 @@
 
     <div class="govuk-grid-column-two-thirds govuk-!-padding-4">
       <p>{{ content.updatedAtText }}</p>
-      <p>Service Delivery Content</p>
+      {{ govukSummaryList(content.serviceDeliverySummaryCard) }}
+      {{ govukSummaryList(content.risksAndAdjustmentsSummaryCard) }}
+      {{ govukSummaryList(content.serviceEndDateSummaryCard) }}
 
     </div>
   </div>
