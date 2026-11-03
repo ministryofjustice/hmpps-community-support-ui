@@ -18,6 +18,7 @@ export default class ReferralAppointmentsPresenter extends PresenterBase<
   constructor(
     private readonly referralAppointments: ReferralAppointmentsBffResponseDto,
     private readonly caseReference: string,
+    private readonly showSuccessAlert = false,
   ) {
     super()
     this.tabPaths = {
@@ -46,6 +47,12 @@ export default class ReferralAppointmentsPresenter extends PresenterBase<
       createAppointmentHref: `/referral/${this.caseReference}/create-an-appointment/appointment-type`,
       appointmentsTable: this.buildAppointmentsTable(content),
       hasAppointments: appointments.length > 0,
+      ...(this.showSuccessAlert && {
+        notificationBanner: {
+          type: 'success',
+          html: `<h3 class="govuk-notification-banner__heading">${content.appointmentCreatedSuccessfully}</h3>`,
+        },
+      }),
     }
   }
 
