@@ -21,7 +21,7 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
     super()
   }
 
-  protected buildViewModel(res: Response) {
+  buildViewModel(res: Response) {
     const content = this.buildStaticContent(res)
     return {
       ...content,

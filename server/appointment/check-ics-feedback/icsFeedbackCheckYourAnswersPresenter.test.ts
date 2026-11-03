@@ -1,11 +1,7 @@
 import { Response } from 'express'
 import { IcsFeedbackSubmission } from '@community-support-api'
 import IcsFeedbackCheckYourAnswersPresenter from './icsFeedbackCheckYourAnswersPresenter'
-import {
-  IcsFeedbackCheckYourAnswersContent,
-  SummaryListWithTitle,
-  IcsFeedbackCheckYourAnswersViewModel,
-} from './icsFeedbackCheckYourAnswersViewModel'
+import { IcsFeedbackCheckYourAnswersContent, SummaryListWithTitle } from './icsFeedbackCheckYourAnswersViewModel'
 import IcsFeedbackCheckContentFactory from '../../testutils/factories/IcsFeedbackCheckContent'
 
 describe('IcsFeedbackCheckYourAnswersPresenter', () => {
@@ -185,10 +181,7 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
       it('should display "Yes" and the support needs content when newlyIdentifiedAdditionalSupportNeeds is provided', () => {
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-        presenter.renderPage(res)
-
-        const renderCall = (res.render as jest.Mock).mock.calls[0]
-        const viewModel = renderCall[1].content as IcsFeedbackCheckYourAnswersViewModel
+        const viewModel = presenter.buildViewModel(res)
         const additionalSupportSummary = viewModel.feedbackSummaries.find(
           (summary: SummaryListWithTitle) => summary.summaryTitle === 'Additional support needs',
         )
@@ -205,11 +198,7 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
       it('should include the change action with correct href for Additional support needs', () => {
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-
-        presenter.renderPage(res)
-
-        const renderCall = (res.render as jest.Mock).mock.calls[0]
-        const viewModel = renderCall[1].content as IcsFeedbackCheckYourAnswersViewModel
+        const viewModel = presenter.buildViewModel(res)
         const additionalSupportSummary = viewModel.feedbackSummaries.find(
           (summary: SummaryListWithTitle) => summary.summaryTitle === 'Additional support needs',
         )
@@ -229,11 +218,7 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
 
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(submission, caseRefId, firstName)
 
-
-        presenter.renderPage(res)
-
-        const renderCall = (res.render as jest.Mock).mock.calls[0]
-        const viewModel = renderCall[1].content as IcsFeedbackCheckYourAnswersViewModel
+        const viewModel = presenter.buildViewModel(res)
         const additionalSupportSummary = viewModel.feedbackSummaries.find(
           (summary: SummaryListWithTitle) => summary.summaryTitle === 'Additional support needs',
         )
@@ -251,7 +236,6 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
         }
 
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(submission, caseRefId, firstName)
-
 
         const viewModel = presenter.buildViewModel(res)
         const additionalSupportSummary = viewModel.feedbackSummaries.find(
@@ -275,11 +259,7 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
 
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(submission, caseRefId, firstName)
 
-
-        presenter.renderPage(res)
-
-        const renderCall = (res.render as jest.Mock).mock.calls[0]
-        const viewModel = renderCall[1].content as IcsFeedbackCheckYourAnswersViewModel
+        const viewModel = presenter.buildViewModel(res)
         const additionalSupportSummary = viewModel.feedbackSummaries.find(
           (summary: SummaryListWithTitle) => summary.summaryTitle === 'Additional support needs',
         )
@@ -294,11 +274,7 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
       it('should return a SummaryListWithTitle with correct structure', () => {
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-
-        presenter.renderPage(res)
-
-        const renderCall = (res.render as jest.Mock).mock.calls[0]
-        const viewModel = renderCall[1].content as IcsFeedbackCheckYourAnswersViewModel
+        const viewModel = presenter.buildViewModel(res)
         const additionalSupportSummary = viewModel.feedbackSummaries.find(
           (summary: SummaryListWithTitle) => summary.summaryTitle === 'Additional support needs',
         )
@@ -311,11 +287,7 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
       it('should include all required row properties (key, value, actions)', () => {
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-
-        presenter.renderPage(res)
-
-        const renderCall = (res.render as jest.Mock).mock.calls[0]
-        const viewModel = renderCall[1].content as IcsFeedbackCheckYourAnswersViewModel
+        const viewModel = presenter.buildViewModel(res)
         const additionalSupportSummary = viewModel.feedbackSummaries.find(
           (summary: SummaryListWithTitle) => summary.summaryTitle === 'Additional support needs',
         )
@@ -339,11 +311,7 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
 
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(submission, caseRefId, firstName)
 
-
-        presenter.renderPage(res)
-
-        const renderCall = (res.render as jest.Mock).mock.calls[0]
-        const viewModel = renderCall[1].content as IcsFeedbackCheckYourAnswersViewModel
+        const viewModel = presenter.buildViewModel(res)
         const additionalSupportSummary = viewModel.feedbackSummaries.find(
           (summary: SummaryListWithTitle) => summary.summaryTitle === 'Additional support needs',
         )
@@ -357,11 +325,7 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
       it('should include Additional support needs summary alongside other summaries', () => {
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-
-        presenter.renderPage(res)
-
-        const renderCall = (res.render as jest.Mock).mock.calls[0]
-        const viewModel = renderCall[1].content as IcsFeedbackCheckYourAnswersViewModel
+        const viewModel = presenter.buildViewModel(res)
 
         const summaryTitles = viewModel.feedbackSummaries.map((summary: SummaryListWithTitle) => summary.summaryTitle)
         expect(summaryTitles).toContain('Additional support needs')
@@ -370,11 +334,7 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
       it('should maintain correct order with all feedback sections when support needs are present', () => {
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-
-        presenter.renderPage(res)
-
-        const renderCall = (res.render as jest.Mock).mock.calls[0]
-        const viewModel = renderCall[1].content as IcsFeedbackCheckYourAnswersViewModel
+        const viewModel = presenter.buildViewModel(res)
 
         const summaryTitles = viewModel.feedbackSummaries.map((summary: SummaryListWithTitle) => summary.summaryTitle)
 
@@ -396,11 +356,7 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
 
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(submission, caseRefId, firstName)
 
-
-        presenter.renderPage(res)
-
-        const renderCall = (res.render as jest.Mock).mock.calls[0]
-        const viewModel = renderCall[1].content as IcsFeedbackCheckYourAnswersViewModel
+        const viewModel = presenter.buildViewModel(res)
 
         const additionalSupportSummary = viewModel.feedbackSummaries.find(
           (summary: SummaryListWithTitle) => summary.summaryTitle === 'Additional support needs',
@@ -413,7 +369,6 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
       it('should render the correct template', () => {
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-
         presenter.renderPage(res)
 
         const templatePath = (res.render as jest.Mock).mock.calls[0][0]
@@ -423,11 +378,7 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
       it('should pass view model with feedbackSummaries to template', () => {
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-
-        presenter.renderPage(res)
-
-        const renderCall = (res.render as jest.Mock).mock.calls[0]
-        const viewModel = renderCall[1].content as IcsFeedbackCheckYourAnswersViewModel
+        const viewModel = presenter.buildViewModel(res)
 
         expect(viewModel).toHaveProperty('feedbackSummaries')
         expect(Array.isArray(viewModel.feedbackSummaries)).toBe(true)
@@ -444,11 +395,7 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
 
       const presenter = new IcsFeedbackCheckYourAnswersPresenter(submission, caseRefId, firstName)
 
-
-      presenter.renderPage(res)
-
-      const renderCall = (res.render as jest.Mock).mock.calls[0]
-      const viewModel = renderCall[1].content as IcsFeedbackCheckYourAnswersViewModel
+      const viewModel = presenter.buildViewModel(res)
 
       // Issues or concerns should not be rendered when issuesAndConcerns is null
       const issuesSummary = viewModel.feedbackSummaries.find(
@@ -469,11 +416,7 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
 
       const presenter = new IcsFeedbackCheckYourAnswersPresenter(submission, caseRefId, firstName)
 
-
-      presenter.renderPage(res)
-
-      const renderCall = (res.render as jest.Mock).mock.calls[0]
-      const viewModel = renderCall[1].content as IcsFeedbackCheckYourAnswersViewModel
+      const viewModel = presenter.buildViewModel(res)
       const sessionDetailsSummary = viewModel.feedbackSummaries.find(
         (summary: SummaryListWithTitle) => summary.summaryTitle === 'Session details',
       )
@@ -485,11 +428,7 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
     it('should replace firstname placeholders in change link text', () => {
       const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-
-      presenter.renderPage(res)
-
-      const renderCall = (res.render as jest.Mock).mock.calls[0]
-      const viewModel = renderCall[1].content as IcsFeedbackCheckYourAnswersViewModel
+      const viewModel = presenter.buildViewModel(res)
       const sessionDetailsSummary = viewModel.feedbackSummaries.find(
         (summary: SummaryListWithTitle) => summary.summaryTitle === 'Session details',
       )
@@ -502,11 +441,7 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
     it('should replace firstname placeholders in visually hidden text', () => {
       const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-
-      presenter.renderPage(res)
-
-      const renderCall = (res.render as jest.Mock).mock.calls[0]
-      const viewModel = renderCall[1].content as IcsFeedbackCheckYourAnswersViewModel
+      const viewModel = presenter.buildViewModel(res)
       const sessionDetailsSummary = viewModel.feedbackSummaries.find(
         (summary: SummaryListWithTitle) => summary.summaryTitle === 'Session details',
       )
@@ -523,12 +458,7 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
     it('should render complete feedback summary with all sections', () => {
       const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-
-      presenter.renderPage(res)
-
-      expect(res.render).toHaveBeenCalled()
-      const renderCall = (res.render as jest.Mock).mock.calls[0]
-      const viewModel = renderCall[1].content as IcsFeedbackCheckYourAnswersViewModel
+      const viewModel = presenter.buildViewModel(res)
 
       expect(viewModel.pageHeader).toBe('Check your answers before submitting feedback')
       expect(viewModel.feedbackSummaries.length).toBeGreaterThan(0)
@@ -539,11 +469,7 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
     it('should replace caseRefId in submit href', () => {
       const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-
-      presenter.renderPage(res)
-
-      const renderCall = (res.render as jest.Mock).mock.calls[0]
-      const viewModel = renderCall[1].content as IcsFeedbackCheckYourAnswersViewModel
+      const viewModel = presenter.buildViewModel(res)
 
       expect(viewModel.submitHref).toContain(caseRefId)
       expect(viewModel.submitHref).not.toContain('caseRefId')
