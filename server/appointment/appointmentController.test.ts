@@ -343,7 +343,7 @@ describe('AppointmentController', () => {
 
       await appointmentController.submitAppointmentType(req, res)
 
-      expect(req.flash).toHaveBeenCalledWith('appointmentTypeError', 'Select the appointment type')
+      expect(req.flash).toHaveBeenCalledWith('appointmentTypeError', 'Select an appointment type')
       expect(res.redirect).toHaveBeenCalledWith(`/referral/${caseRefId}/create-an-appointment/appointment-type`)
     })
   })

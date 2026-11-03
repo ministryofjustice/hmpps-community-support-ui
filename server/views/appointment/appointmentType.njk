@@ -6,8 +6,10 @@
 {% set mainClasses = "govuk-body" %}
 
 {% block contentBody %}
-  <h1 class="govuk-heading-l">{{ content.heading }}</h1>
-  <hr class="govuk-section-break govuk-section-break--visible govuk-section-break--m">
+  {% if content.heading %}
+    <h1 class="govuk-heading-l">{{ content.heading }}</h1>
+    <hr class="govuk-section-break govuk-section-break--visible govuk-section-break--m">
+  {% endif %}
 
   <form method="post" novalidate>
     <input type="hidden" name="_csrf" value="{{csrfToken}}">

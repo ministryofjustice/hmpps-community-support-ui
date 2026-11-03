@@ -55,15 +55,16 @@ describe('buildCreateAppointmentFormData', () => {
 
 describe('parseAppointmentType', () => {
   test.each([
-    ['contact-session', 'CONTACT_SESSION'],
-    ['POST_RELEASE_SESSION', 'POST_RELEASE_SESSION'],
-    ['pre-release-session', 'PRE_RELEASE_SESSION'],
-    ['Handover_Session', 'HANDOVER_SESSION'],
-  ])('%s', (input, expected) => {
+    ['ics', 'ICS'],
+    ['contact', 'CONTACT_SESSION'],
+    ['pre-release', 'PRE_RELEASE_SESSION'],
+    ['post-release', 'POST_RELEASE_SESSION'],
+    ['handover', 'HANDOVER_SESSION'],
+  ])('normalises %s to %s', (input, expected) => {
     expect(parseAppointmentType(input)).toBe(expected)
   })
 
-  test.each(['ICS', 'nonsense', undefined, 5])('rejects %s', input => {
+  test.each(['nonsense', undefined, 5])('rejects %s', input => {
     expect(parseAppointmentType(input)).toBeUndefined()
   })
 })
