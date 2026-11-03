@@ -171,15 +171,19 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
     noSessionbackLinkHref: '/referral/caseRefId/appointment/session-not-happened',
   })
 
+  let res: Response
+
+  beforeEach(() => {
+    res = {
+      locals: { content: mockContent },
+      render: jest.fn(),
+    } as unknown as Response
+  })
+
   describe('buildSummary - Additional Support Needs', () => {
     describe('AC1: Display newly identified support needs when present', () => {
       it('should display "Yes" and the support needs content when newlyIdentifiedAdditionalSupportNeeds is provided', () => {
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
-
-        const res = {
-          locals: { content: mockContent },
-          render: jest.fn(),
-        } as unknown as Response
 
         presenter.renderPage(res)
 
@@ -201,10 +205,6 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
       it('should include the change action with correct href for Additional support needs', () => {
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-        const res = {
-          locals: { content: mockContent },
-          render: jest.fn(),
-        } as unknown as Response
 
         presenter.renderPage(res)
 
@@ -229,10 +229,6 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
 
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(submission, caseRefId, firstName)
 
-        const res = {
-          locals: { content: mockContent },
-          render: jest.fn(),
-        } as unknown as Response
 
         presenter.renderPage(res)
 
@@ -256,15 +252,8 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
 
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(submission, caseRefId, firstName)
 
-        const res = {
-          locals: { content: mockContent },
-          render: jest.fn(),
-        } as unknown as Response
 
-        presenter.renderPage(res)
-
-        const renderCall = (res.render as jest.Mock).mock.calls[0]
-        const viewModel = renderCall[1].content as IcsFeedbackCheckYourAnswersViewModel
+        const viewModel = presenter.buildViewModel(res)
         const additionalSupportSummary = viewModel.feedbackSummaries.find(
           (summary: SummaryListWithTitle) => summary.summaryTitle === 'Additional support needs',
         )
@@ -286,10 +275,6 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
 
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(submission, caseRefId, firstName)
 
-        const res = {
-          locals: { content: mockContent },
-          render: jest.fn(),
-        } as unknown as Response
 
         presenter.renderPage(res)
 
@@ -309,10 +294,6 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
       it('should return a SummaryListWithTitle with correct structure', () => {
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-        const res = {
-          locals: { content: mockContent },
-          render: jest.fn(),
-        } as unknown as Response
 
         presenter.renderPage(res)
 
@@ -330,10 +311,6 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
       it('should include all required row properties (key, value, actions)', () => {
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-        const res = {
-          locals: { content: mockContent },
-          render: jest.fn(),
-        } as unknown as Response
 
         presenter.renderPage(res)
 
@@ -362,10 +339,6 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
 
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(submission, caseRefId, firstName)
 
-        const res = {
-          locals: { content: mockContent },
-          render: jest.fn(),
-        } as unknown as Response
 
         presenter.renderPage(res)
 
@@ -384,10 +357,6 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
       it('should include Additional support needs summary alongside other summaries', () => {
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-        const res = {
-          locals: { content: mockContent },
-          render: jest.fn(),
-        } as unknown as Response
 
         presenter.renderPage(res)
 
@@ -401,10 +370,6 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
       it('should maintain correct order with all feedback sections when support needs are present', () => {
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-        const res = {
-          locals: { content: mockContent },
-          render: jest.fn(),
-        } as unknown as Response
 
         presenter.renderPage(res)
 
@@ -431,10 +396,6 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
 
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(submission, caseRefId, firstName)
 
-        const res = {
-          locals: { content: mockContent },
-          render: jest.fn(),
-        } as unknown as Response
 
         presenter.renderPage(res)
 
@@ -452,10 +413,6 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
       it('should render the correct template', () => {
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-        const res = {
-          locals: { content: mockContent },
-          render: jest.fn(),
-        } as unknown as Response
 
         presenter.renderPage(res)
 
@@ -466,10 +423,6 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
       it('should pass view model with feedbackSummaries to template', () => {
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-        const res = {
-          locals: { content: mockContent },
-          render: jest.fn(),
-        } as unknown as Response
 
         presenter.renderPage(res)
 
@@ -491,10 +444,6 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
 
       const presenter = new IcsFeedbackCheckYourAnswersPresenter(submission, caseRefId, firstName)
 
-      const res = {
-        locals: { content: mockContent },
-        render: jest.fn(),
-      } as unknown as Response
 
       presenter.renderPage(res)
 
@@ -520,10 +469,6 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
 
       const presenter = new IcsFeedbackCheckYourAnswersPresenter(submission, caseRefId, firstName)
 
-      const res = {
-        locals: { content: mockContent },
-        render: jest.fn(),
-      } as unknown as Response
 
       presenter.renderPage(res)
 
@@ -540,10 +485,6 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
     it('should replace firstname placeholders in change link text', () => {
       const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-      const res = {
-        locals: { content: mockContent },
-        render: jest.fn(),
-      } as unknown as Response
 
       presenter.renderPage(res)
 
@@ -561,10 +502,6 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
     it('should replace firstname placeholders in visually hidden text', () => {
       const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-      const res = {
-        locals: { content: mockContent },
-        render: jest.fn(),
-      } as unknown as Response
 
       presenter.renderPage(res)
 
@@ -586,10 +523,6 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
     it('should render complete feedback summary with all sections', () => {
       const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-      const res = {
-        locals: { content: mockContent },
-        render: jest.fn(),
-      } as unknown as Response
 
       presenter.renderPage(res)
 
@@ -606,10 +539,6 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
     it('should replace caseRefId in submit href', () => {
       const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-      const res = {
-        locals: { content: mockContent },
-        render: jest.fn(),
-      } as unknown as Response
 
       presenter.renderPage(res)
 
