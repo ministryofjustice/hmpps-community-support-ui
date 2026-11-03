@@ -30,6 +30,7 @@ import type {
   ReferralCriminogenicNeedsDto,
   CriminogenicNeedsRequest,
   ActionPlanSummaryDto,
+  ActionPlanSubmitResponse,
   ActionPlanActionRequest,
   ActionPlanActionResponse,
   ActionPlanSessionDeliveryDetailsResponse,
@@ -196,6 +197,10 @@ export default class CommunitySupportApiClient extends RestClient {
       { path: `/bff/referral/${caseReference}/action-plan/session-delivery-details/session-delivery` },
       asSystem(username),
     )
+  }
+
+  submitActionPlan(caseReference: string, username: string): Promise<ActionPlanSubmitResponse> {
+    return this.post({ path: `/referral/${caseReference}/action-plan` }, asSystem(username))
   }
 
   submitServiceDeliveryDetails(
