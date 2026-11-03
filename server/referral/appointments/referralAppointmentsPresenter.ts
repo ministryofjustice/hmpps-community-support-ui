@@ -41,6 +41,12 @@ export default class ReferralAppointmentsPresenter extends ReferralLayoutPresent
           html: `<h3 class="govuk-notification-banner__heading">${content.appointmentCreatedSuccessfully}</h3>`,
         },
       }),
+      ...(this.showSuccessAlert && {
+        notificationBanner: {
+          type: 'success',
+          html: `<h3 class="govuk-notification-banner__heading">${content.appointmentCreatedSuccessfully}</h3>`,
+        },
+      }),
       upcomingAppointmentsTitle: content.upcomingAppointmentsTitle,
       pastAppointmentsTitle: content.pastAppointmentsTitle,
     }

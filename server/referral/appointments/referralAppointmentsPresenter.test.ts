@@ -146,4 +146,18 @@ describe('ReferralAppointmentsPresenter', () => {
       html: '<h3 class="govuk-notification-banner__heading">Appointment created successfully</h3>',
     })
   })
+
+  it('shows a success alert after an appointment has been created', () => {
+    const response: ReferralAppointmentsBffResponseDto = {
+      personDetails: { firstName: 'Alex', lastName: 'Example', dateOfBirth: '1980-01-01', crn: 'X123456' },
+      appointments: [],
+    }
+
+    const viewModel = new ReferralAppointmentsPresenter(response, caseReference, true).buildViewModel(makeResponse())
+
+    expect(viewModel.notificationBanner).toEqual({
+      type: 'success',
+      html: '<h3 class="govuk-notification-banner__heading">Appointment created successfully</h3>',
+    })
+  })
 })
