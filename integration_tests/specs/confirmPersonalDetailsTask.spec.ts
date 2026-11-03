@@ -15,7 +15,7 @@ type TaskStatus = typeof incompleteStatus | typeof completedStatus
 
 const stubTaskListStatus = async (confirmPersonalDetailsStatus?: TaskStatus) => {
   await communitySupport.stubGetTaskListStatus(referralId, {
-    fullName: 'Alex Rivers',
+    refereeName: { firstName: 'Alex', lastName: 'Rivers' },
     confirmPersonalDetailsStatus,
     checkRiskInformationStatus: incompleteStatus,
     selectThePersonsNeedsStatus: incompleteStatus,
@@ -90,7 +90,7 @@ test.describe('Confirm personal details task - E2E AC coverage', () => {
     await page.goto(TaskListPage.url())
     const taskListPage = await TaskListPage.verifyOnPage(page)
 
-    await taskListPage.verifyTaskStatus('Personal details', 'Confirm personal details', 'Completed')
+    await taskListPage.verifyTaskStatus('About Alex', 'Confirm personal details', 'Completed')
   })
 
   test('AC3: should navigate to Confirm personal details page from task list and return back', async ({ page }) => {
@@ -105,7 +105,7 @@ test.describe('Confirm personal details task - E2E AC coverage', () => {
 
     await confirmPersonalDetailsPage.clickContinue()
     await expect(page).toHaveURL(TaskListPage.url())
-    await taskListPage.verifyTaskStatus('Personal details', 'Confirm personal details', 'Completed')
+    await taskListPage.verifyTaskStatus('About Alex', 'Confirm personal details', 'Completed')
   })
 
   test('AC4: should not persist referral data to display Confirm personal details as Completed', async ({ page }) => {
@@ -113,7 +113,7 @@ test.describe('Confirm personal details task - E2E AC coverage', () => {
 
     await page.goto(TaskListPage.url())
     const taskListPage = await TaskListPage.verifyOnPage(page)
-    await taskListPage.verifyTaskStatus('Personal details', 'Confirm personal details', 'Completed')
+    await taskListPage.verifyTaskStatus('About Alex', 'Confirm personal details', 'Completed')
 
     const [postCount, putCount, patchCount] = await Promise.all([
       countWriteRequests('POST'),
