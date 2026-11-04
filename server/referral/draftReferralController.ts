@@ -403,21 +403,6 @@ export default class DraftReferralController {
         await this.referralService.submitAdditionalInformationForDeliveryPartner(data, draftReferralId, username)
         return res.redirect(taskListURL)
       })
-      /* try {
-        const schema = AdditionalInformationForTheDeliveryPartnerFormDataSchema
-        return validateRequestBodyAgainstSchema(
-          schema,
-          req,
-          res,
-          async (data: AdditionalInformationForTheDeliveryPartnerFormData) => {
-            await this.referralService.submitAdditionalInformationForDeliveryPartner(data, draftReferralId, username)
-            return res.redirect(taskListURL)
-          },
-        )
-      } catch (e) {
-        logger.error(e)
-        return res.redirect(findAPersonURL)
-      } */
     }
     return res.redirect(findAPersonURL)
   }
