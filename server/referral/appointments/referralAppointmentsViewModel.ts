@@ -1,22 +1,17 @@
-import type { GovukFrontendTable } from '@govuk-frontend'
+import type { GovukFrontendButton, GovukFrontendTable } from '@govuk-frontend'
 import type { MojSubNavigation } from '@moj-frontend'
+import { GlobalContent } from '../../../assets/content/GlobalContent'
 
 export type ReferralAppointmentsViewModel = {
   pageHeader: string
   navBar: MojSubNavigation
   appointmentsTitle: string
-  createAppointmentText: string
-  createAppointmentHref: string
+  createAppointmentButton: GovukFrontendButton
   noAppointmentsMessage: string
   appointmentsTable: GovukFrontendTable
   hasAppointments: boolean
+  upcomingAppointmentsTitle: string,
+  pastAppointmentsTitle: string,
 }
 
-export type ReferralAppointmentsContent = {
-  pageHeader: string
-  appointmentsTitle: string
-  appointmentTypeColumnHeader: string
-  dateTimeColumnHeader: string
-  noAppointmentsMessage: string
-  createAppointmentText: string
-}
+export type ReferralAppointmentsContent = GlobalContent['/referral/:id/appointments']
