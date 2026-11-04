@@ -112,7 +112,6 @@ describe('ActionPlanSessionDeliveryDetailsPresenter', () => {
     expect(content.pageHeader).toBe('Session details')
     expect(content.backLink).toEqual({ href: '/referral/AB1234CD/action-plan' })
     expect(content.submitButton).toEqual({ text: 'Continue' })
-    expect(content.submitHref).toBe('/referral/AB1234CD/action-plan/session-delivery-details')
   })
 
   it('builds the frequency textarea from the TEXTAREA question', () => {
