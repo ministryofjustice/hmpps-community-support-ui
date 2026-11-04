@@ -56,6 +56,47 @@ describe('ActionPlanSessionDeliveryDetailsFormDataSchemaBuilder', () => {
     expect(result.success).toBe(true)
   })
 
+  it('requires session frequency with the acceptance-criteria error message', () => {
+    const result = schema.safeParse({
+      SESSION_DELIVERY_METHOD: 'IN_PERSON',
+      SESSION_FORMAT: 'One-to-one',
+    })
+
+    expect(result.success).toBe(false)
+    expect(result.error?.issues).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          path: ['SESSION_FREQUENCY'],
+          message: 'Enter how often sessions will take place',
+        }),
+      ]),
+    )
+  })
+
+  it('accepts session frequency at 65000 characters and rejects longer values', () => {
+    const validResult = schema.safeParse({
+      SESSION_FREQUENCY: 'x'.repeat(65000),
+      SESSION_DELIVERY_METHOD: 'IN_PERSON',
+      SESSION_FORMAT: 'One-to-one',
+    })
+    const invalidResult = schema.safeParse({
+      SESSION_FREQUENCY: 'x'.repeat(65001),
+      SESSION_DELIVERY_METHOD: 'IN_PERSON',
+      SESSION_FORMAT: 'One-to-one',
+    })
+
+    expect(validResult.success).toBe(true)
+    expect(invalidResult.success).toBe(false)
+    expect(invalidResult.error?.issues).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          path: ['SESSION_FREQUENCY'],
+          message: 'Details about session frequency must be 65000 characters or less',
+        }),
+      ]),
+    )
+  })
+
   it('requires whyVideoCall when how is VIDEO_CALL', () => {
     const result = schema.safeParse({
       SESSION_FREQUENCY: 'Every week',
@@ -80,6 +121,45 @@ describe('ActionPlanSessionDeliveryDetailsFormDataSchemaBuilder', () => {
       SESSION_DELIVERY_METHOD: 'VIDEO_CALL',
       SESSION_FORMAT: 'One-to-one',
       VIDEO_CALL: 'Because of remote-only sessions',
+    })
+
+    expect(result.success).toBe(true)
+  })
+
+  it('requires a reason when the delivery method is PHONE_CALL', () => {
+    const result = schema.safeParse({
+      SESSION_FREQUENCY: 'Every week',
+      SESSION_DELIVERY_METHOD: 'PHONE_CALL',
+      SESSION_FORMAT: 'One-to-one',
+    })
+
+    expect(result.success).toBe(false)
+    expect(result.error?.issues).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          path: ['PHONE_CALL'],
+          message: 'Enter why the sessions are not in person',
+        }),
+      ]),
+    )
+  })
+
+  it('accepts a reason when the delivery method is PHONE_CALL', () => {
+    const result = schema.safeParse({
+      SESSION_FREQUENCY: 'Every week',
+      SESSION_DELIVERY_METHOD: 'PHONE_CALL',
+      SESSION_FORMAT: 'One-to-one',
+      PHONE_CALL: 'Travel restrictions',
+    })
+
+    expect(result.success).toBe(true)
+  })
+
+  it('accepts both session formats together', () => {
+    const result = schema.safeParse({
+      SESSION_FREQUENCY: 'Every week',
+      SESSION_DELIVERY_METHOD: 'IN_PERSON',
+      SESSION_FORMAT: ['One-to-one', 'Group'],
     })
 
     expect(result.success).toBe(true)
@@ -115,7 +195,7 @@ describe('ActionPlanSessionDeliveryDetailsFormDataSchemaBuilder', () => {
       expect.arrayContaining([
         expect.objectContaining({
           path: ['SESSION_FORMAT'],
-          message: 'Select which format you will use for the sessions',
+          message: 'Select what format you will use for the sessions',
         }),
       ]),
     )
