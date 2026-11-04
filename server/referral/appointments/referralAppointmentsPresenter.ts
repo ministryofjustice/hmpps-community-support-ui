@@ -1,8 +1,8 @@
 import type { Response } from 'express'
-import type { GovukFrontendTable } from '@govuk-frontend'
+import type { GovukFrontendButton, GovukFrontendTable } from '@govuk-frontend'
 import type { ReferralAppointmentsBffResponseDto } from '@community-support-api'
 import { formatDate } from 'date-fns'
-import { formatTime12Hr } from '../../utils/timeFormat'
+import { formatTime12Hr, formatTime24Hr } from '../../utils/timeFormat'
 import ReferralLayoutPresenter, { ReferralNavigationValues } from '../referralLayout/referralLayoutPresenter'
 import type { ReferralAppointmentsContent, ReferralAppointmentsViewModel } from './referralAppointmentsViewModel'
 
@@ -31,9 +31,8 @@ export default class ReferralAppointmentsPresenter extends ReferralLayoutPresent
       pageHeader: `${content.pageHeader} ${firstName} ${lastName}`,
       navBar: this.getMojSubNavigationArgs(),
       appointmentsTitle: content.appointmentsTitle,
-      createAppointmentText: content.createAppointmentText,
+      createAppointmentButton: this.buildAppointmentButton(content),
       noAppointmentsMessage: content.noAppointmentsMessage,
-      createAppointmentHref: `/referral/${this.caseReference}/create-an-appointment/appointment-type`,
       appointmentsTable: this.buildAppointmentsTable(content),
       hasAppointments: appointments.length > 0,
       ...(this.showSuccessAlert && {
@@ -42,6 +41,16 @@ export default class ReferralAppointmentsPresenter extends ReferralLayoutPresent
           html: `<h3 class="govuk-notification-banner__heading">${content.appointmentCreatedSuccessfully}</h3>`,
         },
       }),
+      upcomingAppointmentsTitle: content.upcomingAppointmentsTitle,
+      pastAppointmentsTitle: content.pastAppointmentsTitle,
+    }
+  }
+
+  private buildAppointmentButton(content: ReferralAppointmentsContent): GovukFrontendButton {
+    return {
+      text: content.bookAppointmentText,
+      href: content.bookAppointmentHref.replace('{{ id }}', this.caseReference),
+      preventDoubleClick: true,
     }
   }
 
@@ -51,15 +60,48 @@ export default class ReferralAppointmentsPresenter extends ReferralLayoutPresent
         'data-module': 'moj-sortable-table',
         'data-testid': 'referral-appointments-table',
       },
-      head: [{ text: content.appointmentTypeColumnHeader }, { text: content.dateTimeColumnHeader }],
-      rows: this.referralAppointments.appointments.map(appointment => [
-        { text: appointment.label },
+      head: [
         {
-          text: `${formatDate(new Date(appointment.appointmentDate), 'dd MMMM yyyy')} at ${formatTime12Hr(
+          text: content.appointmentTypeColumnHeader,
+          attributes: {
+            'aria-sort': 'none',
+          },
+        },
+        {
+          text: content.dateColumnHeader,
+          attributes: {
+            'aria-sort': 'none',
+          },
+        },
+        {
+          text: content.timeColumnHeader,
+          attributes: {
+            'aria-sort': 'none',
+          },
+        },
+      ],
+      rows: this.referralAppointments.appointments.map(appointment => [
+        {
+          text: appointment.label,
+          attributes: {
+            'data-sort-value': appointment.label,
+          },
+        },
+        {
+          text: `${formatDate(new Date(appointment.appointmentDate), 'dd MMMM yyyy')}`,
+          attributes: {
+            'data-sort-value': appointment.appointmentDate,
+          },
+        },
+        {
+          text: `${formatTime12Hr(
             appointment.appointmentTime.hour,
             appointment.appointmentTime.minute,
             appointment.appointmentTime.amPm,
           )}`,
+          attributes: {
+            'data-sort-value': formatTime24Hr(appointment.appointmentTime),
+          },
         },
       ]),
     }

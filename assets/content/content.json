@@ -326,9 +326,14 @@
   "/referral/:id/appointments": {
     "pageHeader": "Referral for",
     "appointmentsTitle": "Appointments",
-    "appointmentTypeColumnHeader": "Appointment",
-    "dateTimeColumnHeader": "Date and time",
+    "appointmentTypeColumnHeader": "Appointment type",
+    "dateColumnHeader": "Date",
+    "timeColumnHeader": "Start time",
     "noAppointmentsMessage": "No appointments scheduled",
+    "bookAppointmentText": "Book appointment",
+    "bookAppointmentHref": "/referral/{{ id }}/create-an-appointment/appointment-type",
+    "upcomingAppointmentsTitle": "Upcoming appointments",
+    "pastAppointmentsTitle": "Past appointments",
     "createAppointmentText": "Create an Appointment",
     "appointmentCreatedSuccessfully": "Appointment created successfully",
     "subNavItems": [

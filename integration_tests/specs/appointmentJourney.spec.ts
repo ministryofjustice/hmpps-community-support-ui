@@ -79,7 +79,7 @@ test.describe('Full appointment journey', () => {
 
     const appointmentsPage = new ReferralAppointmentsPage(page)
     await appointmentsPage.verifyOnPage()
-    await appointmentsPage.createAppointmentLink.click()
+    await appointmentsPage.bookAppointmentButton.click()
     await expect(page).toHaveURL(AppointmentTypePage.url(CASE_REFERENCE))
     const appointmentTypePage = await AppointmentTypePage.verifyOnPage(page)
 
