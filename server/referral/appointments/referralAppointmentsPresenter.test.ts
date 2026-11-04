@@ -2,10 +2,12 @@ import type { Response } from 'express'
 import type { ReferralAppointmentsBffResponseDto } from '@community-support-api'
 import ReferralAppointmentsPresenter from './referralAppointmentsPresenter'
 import type { ReferralAppointmentsContent } from './referralAppointmentsViewModel'
+import { globalContent } from '../../../assets/content/GlobalContent'
 
 describe('ReferralAppointmentsPresenter', () => {
   const caseReference = 'AB1234CD'
   const content: ReferralAppointmentsContent = {
+    ...globalContent['/referral/:id/appointments'],
     pageHeader: 'Referral for',
     appointmentsTitle: 'Appointments',
     appointmentTypeColumnHeader: 'Appointment type',
