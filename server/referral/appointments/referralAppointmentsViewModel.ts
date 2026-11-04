@@ -1,5 +1,4 @@
-import type { GovukFrontendButton, GovukFrontendTable } from '@govuk-frontend'
-import type { GovukFrontendNotificationBanner, GovukFrontendTable } from '@govuk-frontend'
+import type { GovukFrontendNotificationBanner, GovukFrontendTable, GovukFrontendButton } from '@govuk-frontend'
 import type { MojSubNavigation } from '@moj-frontend'
 import { GlobalContent } from '../../../assets/content/GlobalContent'
 
