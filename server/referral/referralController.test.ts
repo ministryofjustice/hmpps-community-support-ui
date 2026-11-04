@@ -121,57 +121,6 @@ describe('ReferralController', () => {
     })
   })
 
-  describe('showReferralAppointments', () => {
-    it('renders the success alert once for the matching referral', async () => {
-      const caseReference = 'AB1234CD'
-      const content: ReferralAppointmentsContent = {
-        pageHeader: 'Referral for',
-        appointmentsTitle: 'Appointments',
-        appointmentTypeColumnHeader: 'Appointment type',
-        dateColumnHeader: 'Date',
-        timeColumnHeader: 'Start time',
-        noAppointmentsMessage: 'No appointments scheduled',
-        bookAppointmentText: 'Book appointment',
-        bookAppointmentHref: '/referral/{{ id }}/create-an-appointment/appointment-type',
-        upcomingAppointmentsTitle: 'Upcoming appointments',
-        pastAppointmentsTitle: 'Past appointments',
-        subNavItems: [
-          { id: 'caseDetails', title: 'Case details' },
-          { id: 'progress', title: 'Progress' },
-          { id: 'appointments', title: 'Appointments' },
-          { id: 'changeLog', title: 'Change log' },
-        ],
-        createAppointmentText: 'Create an Appointment',
-        appointmentCreatedSuccessfully: 'Appointment created successfully',
-      }
-      const appointments: ReferralAppointmentsBffResponseDto = {
-        personDetails: { firstName: 'Alex', lastName: 'Example', dateOfBirth: '1980-01-01', crn: 'X123456' },
-        appointments: [],
-      }
-      req = {
-        params: { caseReference },
-        session: { referralAppointmentsSuccessCaseReference: caseReference },
-      } as unknown as Request
-      res.locals.content = content
-      referralService.getReferralAppointments.mockResolvedValue(appointments)
-
-      await referralController.showReferralAppointments(req, res)
-
-      expect(req.session.referralAppointmentsSuccessCaseReference).toBeUndefined()
-      expect(res.render).toHaveBeenCalledWith(
-        'referral/appointments',
-        expect.objectContaining({
-          content: expect.objectContaining({
-            notificationBanner: {
-              type: 'success',
-              html: '<h3 class="govuk-notification-banner__heading">Appointment created successfully</h3>',
-            },
-          }),
-        }),
-      )
-    })
-  })
-
 
   describe('showReferralAppointments', () => {
     it('renders the success alert once for the matching referral', async () => {
