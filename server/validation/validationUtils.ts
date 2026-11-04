@@ -80,7 +80,7 @@ export const validateRequestBodyAnync = <T, R>(
   validator: ValidatorAsync<T, R>,
   req: Request,
   res: Response,
-  successFunction: (data: R) => void,
+  successFunction: (data: R) => Promise<void>,
 ) =>
   validator(req.body)
     .then(successFunction)
