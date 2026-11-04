@@ -57,7 +57,7 @@ test.describe('Risk Summary Page', () => {
   }
 
   const mockTaskListStatus: TaskListStatusDto = {
-    fullName: 'Alex River',
+    refereeName: { firstName: 'Alex', lastName: 'River' },
     confirmPersonalDetailsStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
     checkRiskInformationStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
     selectAnAreaForReferralStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },

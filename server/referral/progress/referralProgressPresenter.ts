@@ -5,16 +5,13 @@ import {
   GovukFrontendTableHeadElement,
   GovukFrontendTableRow,
 } from '@govuk-frontend'
-import { MojSubNavigation } from '@moj-frontend'
 import { ReferralProgress, ReferralAppointmentHistory } from '@community-support-api'
-
 import { formatDate, isPast } from 'date-fns'
-import PresenterBase from '../../presenter/presenterBase'
+import ReferralLayoutPresenter, { ReferralNavigationValues } from '../referralLayout/referralLayoutPresenter'
 import { ReferralProgressContent, ReferralProgressViewModel } from './referralProgressViewModel'
 import { ReferralProgressBannerContent } from './ReferralProgressBannerContent'
 import type { AuthSource } from '../../interfaces/hmppsUser'
 
-type TabKey = 'caseDetails' | 'progress' | 'appointments' | 'changeLog'
 type StatusKey = ReferralAppointmentHistory['status'] | 'NOT_SCHEDULED'
 type StatusConfig = { label: string; tagClass: string; actions: { label: string; href: string }[] }
 
@@ -101,13 +98,11 @@ const buildRescheduleActions = (
     : [{ label: 'View feedback', href: `/ics-feedback/${caseReference}/session/${icsFeedbackId}` }]
 }
 
-export default class ReferralProgressPresenter extends PresenterBase<
+export default class ReferralProgressPresenter extends ReferralLayoutPresenter<
   ReferralProgressViewModel,
   ReferralProgressContent
 > {
   private readonly name: string
-
-  private readonly tabPaths: Record<TabKey, string>
 
   constructor(
     private readonly referralProgress: ReferralProgress,
@@ -115,14 +110,8 @@ export default class ReferralProgressPresenter extends PresenterBase<
     private readonly bannerContent?: ReferralProgressBannerContent,
     private readonly authSource?: AuthSource,
   ) {
-    super()
+    super(ReferralNavigationValues.progressTab, caseReference)
     this.name = referralProgress.fullName
-    this.tabPaths = {
-      caseDetails: `/referral-details/${this.caseReference}`,
-      progress: `/progress/${this.caseReference}`,
-      appointments: `/referral/${this.caseReference}/appointments`,
-      changeLog: '#',
-    }
   }
 
   buildViewModel(res: Response): ReferralProgressViewModel {
@@ -131,7 +120,7 @@ export default class ReferralProgressPresenter extends PresenterBase<
 
     return {
       pageHeader: `${content.pageHeader} ${this.name}`,
-      navBar: this.buildSubNav(content),
+      navBar: this.getMojSubNavigationArgs(),
       actionLinkHref: '#',
       backLink: { href: '/cases-in-progress' },
       notificationBanner: this.getNotificationBanner(),
@@ -163,21 +152,6 @@ export default class ReferralProgressPresenter extends PresenterBase<
 
   protected getTemplatePath(): string {
     return 'referral/progress'
-  }
-
-  private buildSubNav(content: ReferralProgressContent): MojSubNavigation {
-    return {
-      label: content.progressSubNavTitle,
-      items: this.buildSubNavItems(content),
-    }
-  }
-
-  private buildSubNavItems(content: ReferralProgressContent) {
-    return Object.keys(this.tabPaths).map(tabKey => ({
-      text: content.subNavItems.find(i => i.id === tabKey)?.title ?? tabKey,
-      href: this.tabPaths[tabKey as TabKey],
-      active: tabKey === 'progress',
-    }))
   }
 
   private buildIcsAppointmentTable(content: ReferralProgressContent, hasAppointment: boolean): GovukFrontendTable {

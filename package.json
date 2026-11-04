@@ -36,7 +36,7 @@
     "npm": "^11"
   },
   "dependencies": {
-    "@aws-sdk/client-sqs": "^3.1154.0",
+    "@aws-sdk/client-sqs": "^3.1156.0",
     "@ministryofjustice/frontend": "^11.1.0",
     "@ministryofjustice/hmpps-auth-clients": "^3.0.0",
     "@ministryofjustice/hmpps-monitoring": "^2.1.0",
@@ -44,7 +44,7 @@
     "@playwright/test": "^1.64.1",
     "accessible-autocomplete": "3.0.2",
     "applicationinsights": "^3.17.0",
-    "body-parser": "^2.3.0",
+    "body-parser": "^2.4.0",
     "bunyan": "^1.8.15",
     "bunyan-format": "^0.2.1",
     "compression": "^1.8.2",

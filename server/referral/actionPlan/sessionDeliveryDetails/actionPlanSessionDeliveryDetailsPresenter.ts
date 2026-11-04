@@ -189,7 +189,6 @@ export default class ActionPlanSessionDeliveryDetailsPresenter extends Presenter
         'PHONE_CALL',
       ),
       formatCheckboxArgs: this.buildCheckboxQuestion(sessionFormatQuestion),
-      submitHref: `/referral/${this.caseReference}/action-plan/session-delivery-details`,
     }
   }
 

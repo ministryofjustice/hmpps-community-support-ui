@@ -65,6 +65,14 @@ describe('Referral service tests', () => {
   })
 
   describe('submitServiceDeliveryDetails', () => {
+    it('submits the action plan using the API client', async () => {
+      const response = { success: true, message: 'Submitted' }
+      communitySupportApiClient.submitActionPlan.mockResolvedValue(response)
+
+      await expect(referralService.submitActionPlan('AB1234CD', 'user1')).resolves.toEqual(response)
+      expect(communitySupportApiClient.submitActionPlan).toHaveBeenCalledWith('AB1234CD', 'user1')
+    })
+
     it('passes the complete answers to the API client and returns the saved response', async () => {
       const request: ActionPlanSessionDeliveryDetailsRequest = {
         answers: [{ questionId: 'question-id', incomingAnswerDetails: [{ value: 'YES' }] }],
@@ -218,6 +226,7 @@ describe('Referral service tests', () => {
         },
         needs: [],
         lastUpdatedAt: '',
+        isSubmitted: false,
       }
 
       communitySupportApiClient.getActionPlanSummary.mockResolvedValue(mockActionPlanSummary)

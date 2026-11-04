@@ -48,6 +48,7 @@ type ServiceDaysPageDto = components['schemas']['ServiceDaysPageDto']
 type NeedsInterpreterBffResponseDto = components['schemas']['NeedsInterpreterBffResponseDto']
 type CommunitySupportRiskDto = components['schemas']['CommunitySupportRiskDto']
 type ActionPlanSummaryDto = components['schemas']['ActionPlanSummaryDto']
+type ActionPlanSubmitResponse = components['schemas']['ActionPlanSubmitResponse']
 type ActionPlanActionRequest = components['schemas']['ActionPlanActionRequest']
 type ActionPlanActionResponse = components['schemas']['ActionPlanActionResponse']
 type ActionPlanSelectANeedResponse = components['schemas']['ActionPlanSelectANeedResponse']
@@ -84,6 +85,7 @@ type AdditionalInformationForTheDeliveryPartner =
 
 type Selection = components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
 type WithdrawReferralRequest = components['schemas']['WithdrawReferralRequest']
+type ExistingSupportNeedsBffResponseDto = components['schemas']['ExistingSupportNeedsBffResponseDto']
 
 export type {
   Referral,
@@ -136,6 +138,7 @@ export type {
   Selection,
   CommunitySupportRiskDto,
   ActionPlanSummaryDto,
+  ActionPlanSubmitResponse,
   ActionPlanActionRequest,
   ActionPlanActionResponse,
   ActionPlanSelectANeedResponse,
@@ -165,4 +168,5 @@ export type {
   WithdrawReferralRequest,
   DraftAdditionalReferralInformationTableDataDto,
   DraftMainPOCDetailsTableDataDto,
+  ExistingSupportNeedsBffResponseDto,
 }

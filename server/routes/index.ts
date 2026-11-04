@@ -160,6 +160,14 @@ export default function routes({
     appointmentController.submitIssuesOrConcerns(req, res),
   )
 
+  get('/ics-feedback/:caseRefId/identified-additional-needs', (req, res) =>
+    appointmentController.getIdentifiedAdditionalNeeds(req, res),
+  )
+
+  post('/ics-feedback/:caseRefId/identified-additional-needs', (req, res) =>
+    appointmentController.submitIdentifiedAdditionalNeeds(req, res),
+  )
+
   get('/ics-feedback/:caseRefId/next-steps', (req, res) => appointmentController.getNextSteps(req, res))
 
   post('/ics-feedback/:caseRefId/next-steps', (req, res) => appointmentController.submitNextSteps(req, res))
@@ -326,6 +334,10 @@ export default function routes({
 
   post('/referral/:id/action-plan/service-end-date-check', (req, res) =>
     actionPlanController.submitServiceEndDateCheckPage(req, res),
+  )
+
+  post('/referral/:id/action-plan/change-service-end-date-check', (req, res) =>
+    actionPlanController.submitServiceEndDateCheckPage(req, res, true),
   )
 
   get('/referral/:id/action-plan/update-service-end-date', (req, res) =>

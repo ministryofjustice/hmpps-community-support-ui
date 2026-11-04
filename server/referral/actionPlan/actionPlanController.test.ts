@@ -66,6 +66,7 @@ describe('ActionPlanController', () => {
       getPersonInvolvement: jest.fn(),
       getCheckYourAnswers: jest.fn(),
       submitServiceDeliveryDetails: jest.fn(),
+      submitActionPlan: jest.fn().mockResolvedValue({ success: true, message: 'Submitted' }),
       submitAction: jest.fn(),
       moveNeed: jest.fn(),
       deleteAction: jest.fn(),
@@ -103,6 +104,7 @@ describe('ActionPlanController', () => {
       },
       needs: [],
       lastUpdatedAt: '',
+      isSubmitted: false,
     }
 
     beforeEach(() => {
@@ -145,6 +147,7 @@ describe('ActionPlanController', () => {
     const summary: ActionPlanSummaryDto = {
       personDetails: { firstName: 'Alex', lastName: 'River' },
       lastUpdatedAt: '2026-10-12T09:00:00Z',
+      isSubmitted: false,
       needs: [
         {
           id: 'need-1',
@@ -302,11 +305,39 @@ describe('ActionPlanController', () => {
   })
 
   describe('service delivery page', () => {
-    it('renders the service delivery page for the referral', async () => {
+    const checkYourAnswers: ActionPlanCheckYourAnswersDetails = {
+      sessionDetails: { questions: [] },
+      risksAndAdjustments: { questions: [] },
+      serviceEndDate: { questions: [] },
+      personInvolvement: { questions: [] },
+    }
+
+    beforeEach(() => {
+      referralService.getCheckYourAnswers.mockResolvedValue(checkYourAnswers)
+    })
+
+    it('renders the service delivery page with the check your answers details', async () => {
       await actionPlanController.showServiceDeliveryPage(req, res)
 
-      expect(ServiceDeliveryPresenter).toHaveBeenCalledWith('AB1234CD')
+      expect(referralService.getCheckYourAnswers).toHaveBeenCalledWith('AB1234CD', 'user1', false)
+      expect(ServiceDeliveryPresenter).toHaveBeenCalledWith('AB1234CD', checkYourAnswers)
       expect(ServiceDeliveryPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+    })
+
+    it('passes whether the service end date was changed in the session', async () => {
+      req.session.actionPlanSessionDelivery = { caseReference: 'AB1234CD', isServiceEndDateChanged: true }
+
+      await actionPlanController.showServiceDeliveryPage(req, res)
+
+      expect(referralService.getCheckYourAnswers).toHaveBeenCalledWith('AB1234CD', 'user1', true)
+    })
+
+    it('ignores session data for a different referral', async () => {
+      req.session.actionPlanSessionDelivery = { caseReference: 'ZZ9999ZZ', isServiceEndDateChanged: true }
+
+      await actionPlanController.showServiceDeliveryPage(req, res)
+
+      expect(referralService.getCheckYourAnswers).toHaveBeenCalledWith('AB1234CD', 'user1', false)
     })
   })
 
@@ -328,6 +359,7 @@ describe('ActionPlanController', () => {
         personDetails: { firstName: 'Alex', lastName: 'River' },
         needs: [],
         lastUpdatedAt: '',
+        isSubmitted: false,
       })
     })
 
@@ -352,6 +384,7 @@ describe('ActionPlanController', () => {
         referralService.getActionPlanSummary.mockResolvedValue({
           personDetails: { firstName: 'Alex', lastName: 'River' },
           lastUpdatedAt: '',
+          isSubmitted: false,
           needs: [
             {
               id: 'need-2',
@@ -375,6 +408,7 @@ describe('ActionPlanController', () => {
       referralService.getActionPlanSummary.mockResolvedValue({
         personDetails: { firstName: 'Alex', lastName: 'River' },
         lastUpdatedAt: '',
+        isSubmitted: false,
         needs: [
           { id: 'need-1', label: 'Accommodation', orderNumber: 1, outcomes: [] },
           {
@@ -456,6 +490,7 @@ describe('ActionPlanController', () => {
         personDetails: { firstName: 'Alex', lastName: 'River' },
         needs: [],
         lastUpdatedAt: '',
+        isSubmitted: false,
       })
 
       await actionPlanController.showSelectOutcomePage(req, res)
@@ -477,6 +512,7 @@ describe('ActionPlanController', () => {
         personDetails: { firstName: 'Alex', lastName: 'River' },
         needs: [],
         lastUpdatedAt: '',
+        isSubmitted: false,
       })
 
       await actionPlanController.showSelectOutcomePage(req, res)
@@ -495,6 +531,7 @@ describe('ActionPlanController', () => {
         personDetails: { firstName: 'Alex', lastName: 'River' },
         needs: [],
         lastUpdatedAt: '',
+        isSubmitted: false,
       })
 
       await actionPlanController.submitOutcome(req, res)
@@ -936,11 +973,21 @@ describe('ActionPlanController', () => {
   })
 
   describe('view activities', () => {
-    it('loads the selected need, outcome and activities from the action-plan summary', async () => {
+    beforeEach(() => {
+      referralService.getActionPlanSummary.mockResolvedValue({
+        personDetails: { firstName: 'Alex', lastName: 'River' },
+        lastUpdatedAt: '',
+        needs: [],
+        isSubmitted: false,
+      })
+    })
+
+    it.each([false, true])('loads saved activities when isSubmitted is %s', async isSubmitted => {
       req.query = { needId: 'need-1', outcomeAnswerId: 'outcome-answer-1' }
       referralService.getActionPlanSummary.mockResolvedValue({
         personDetails: { firstName: 'Alex', lastName: 'River' },
         lastUpdatedAt: '2026-10-12T09:00:00Z',
+        isSubmitted,
         needs: [
           {
             id: 'need-1',
@@ -964,6 +1011,7 @@ describe('ActionPlanController', () => {
       await actionPlanController.showViewActivitiesPage(req, res)
 
       expect(referralService.getActionPlanSummary).toHaveBeenCalledWith('AB1234CD', 'user1')
+      expect(referralService.getActionPlanSummary).toHaveBeenCalledTimes(1)
       expect(referralService.getActionPlanNeedsAndOutcomes).toHaveBeenCalledWith('AB1234CD', 'user1')
       expect(req.session.actionPlanAction).toEqual({
         needId: 'need-1',
@@ -980,6 +1028,7 @@ describe('ActionPlanController', () => {
         'Accommodation',
         'Find housing',
         [{ activityProvider: 'Local group', activityDescription: 'Weekly sessions' }],
+        isSubmitted,
         undefined,
         'Alex',
       )
@@ -991,6 +1040,7 @@ describe('ActionPlanController', () => {
         personDetails: { firstName: 'Alex', lastName: 'River' },
         lastUpdatedAt: '2026-10-12T09:00:00Z',
         needs: [],
+        isSubmitted: false,
       })
       referralService.getActionPlanNeedsAndOutcomes.mockResolvedValue({ needs: [], selectedNeeds: [] })
       jest.clearAllMocks()
@@ -1001,7 +1051,13 @@ describe('ActionPlanController', () => {
       expect(ActionPlanViewActivitiesPresenter).not.toHaveBeenCalled()
     })
 
-    it('renders the selected need, outcome, and session activities', async () => {
+    it.each([false, true])('renders session activities when isSubmitted is %s', async isSubmitted => {
+      referralService.getActionPlanSummary.mockResolvedValue({
+        personDetails: { firstName: 'Alex', lastName: 'River' },
+        lastUpdatedAt: '',
+        needs: [],
+        isSubmitted,
+      })
       req.session.actionPlan = {
         needs: [{ id: 'need-1', label: 'Accommodation', outcomes: [{ id: 'outcome-1', text: 'Find housing' }] }],
       }
@@ -1013,11 +1069,14 @@ describe('ActionPlanController', () => {
 
       await actionPlanController.showViewActivitiesPage(req, res)
 
+      expect(referralService.getActionPlanSummary).toHaveBeenCalledWith('AB1234CD', 'user1')
+      expect(referralService.getActionPlanSummary).toHaveBeenCalledTimes(1)
       expect(ActionPlanViewActivitiesPresenter).toHaveBeenCalledWith(
         'AB1234CD',
         'Accommodation',
         'Find housing',
         [{ activityProvider: 'Local group', activityDescription: 'Weekly sessions' }],
+        isSubmitted,
         undefined,
         undefined,
       )
@@ -1034,17 +1093,20 @@ describe('ActionPlanController', () => {
         personDetails: { firstName: 'Alex', lastName: 'River' },
         lastUpdatedAt: '',
         needs: [],
+        isSubmitted: false,
       })
 
       await actionPlanController.showViewActivitiesPage(req, res)
 
       expect(referralService.getActionPlanSummary).toHaveBeenCalledWith('AB1234CD', 'user1')
       expect(req.session.actionPlanActivityAlertType).toBeUndefined()
+      expect(referralService.getActionPlanSummary).toHaveBeenCalledTimes(1)
       expect(ActionPlanViewActivitiesPresenter).toHaveBeenCalledWith(
         'AB1234CD',
         'Accommodation',
         'Find housing',
         [],
+        false,
         'ADD',
         'Alex',
       )
@@ -1068,6 +1130,7 @@ describe('ActionPlanController', () => {
         'Employment',
         'Find work',
         [],
+        false,
         undefined,
         undefined,
       )
@@ -1132,6 +1195,7 @@ describe('ActionPlanController', () => {
         },
       ],
       lastUpdatedAt: '2026-15-10',
+      isSubmitted: false,
     }
 
     beforeEach(() => {
@@ -1289,6 +1353,7 @@ describe('ActionPlanController', () => {
         personDetails: { firstName: 'Alex', lastName: 'River' },
         needs: [],
         lastUpdatedAt: '',
+        isSubmitted: false,
       })
     })
 
@@ -1456,6 +1521,7 @@ describe('ActionPlanController', () => {
         personDetails: { firstName: 'Alex', lastName: 'River' },
         needs: [],
         lastUpdatedAt: '',
+        isSubmitted: false,
       })
 
       await actionPlanController.submitRisksAndAdjustmentsPage(req, res)
@@ -1907,6 +1973,7 @@ describe('ActionPlanController', () => {
         personDetails: { firstName: 'Alex', lastName: 'River' },
         needs: [],
         lastUpdatedAt: '',
+        isSubmitted: false,
       })
     })
 
@@ -2273,6 +2340,29 @@ describe('ActionPlanController', () => {
         )
 
         expect(req.session.actionPlanSessionDelivery).toEqual(draft)
+        expect(referralService.submitActionPlan).not.toHaveBeenCalled()
+        expect(res.redirect).not.toHaveBeenCalled()
+      })
+
+      it('submits the action plan after saving the service delivery answers', async () => {
+        await actionPlanController.submitServiceDeliveryCheckYourAnswersPage(req, res)
+
+        expect(referralService.submitActionPlan).toHaveBeenCalledWith('AB1234CD', 'user1')
+        expect(referralService.submitServiceDeliveryDetails.mock.invocationCallOrder[0]).toBeLessThan(
+          referralService.submitActionPlan.mock.invocationCallOrder[0],
+        )
+        expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan')
+      })
+
+      it('preserves the draft without redirecting when action plan submission is unsuccessful', async () => {
+        req.session.actionPlanSessionDelivery = { caseReference: 'AB1234CD' }
+        referralService.submitActionPlan.mockResolvedValue({ success: false, message: 'Unable to submit plan' })
+
+        await expect(actionPlanController.submitServiceDeliveryCheckYourAnswersPage(req, res)).rejects.toThrow(
+          'Unable to submit plan',
+        )
+
+        expect(req.session.actionPlanSessionDelivery).toEqual({ caseReference: 'AB1234CD' })
         expect(res.redirect).not.toHaveBeenCalled()
       })
     })

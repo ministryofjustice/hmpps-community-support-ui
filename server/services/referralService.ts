@@ -120,6 +120,10 @@ export default class ReferralService {
     return this.communitySupportApiClient.getSessionDeliveryDetails(caseReference, username)
   }
 
+  submitActionPlan(caseReference: string, username: string) {
+    return this.communitySupportApiClient.submitActionPlan(caseReference, username)
+  }
+
   submitServiceDeliveryDetails(
     caseReference: string,
     request: ActionPlanSessionDeliveryDetailsRequest,

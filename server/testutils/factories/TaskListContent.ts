@@ -10,30 +10,30 @@ export default TaskListContentFactory.define(({ transientParams }) => ({
   backLink: '/referral/new/find-a-person',
   taskList: {
     personalDetails: {
-      title: 'Personal details',
+      title: 'About {{ firstName }}',
       subTasks: {
         confirmPersonalDetails: {
           text: 'Confirm personal details',
           href: '/referral/new/personal-details',
+        },
+        checkRiskInformation: { text: 'Check risk information', href: '/referral/task-list/view-risk-summary' },
+        addSupportNeeds: {
+          text: 'Add details of any additional support needs',
+          href: '/referral/new/add-support-needs',
         },
       },
     },
     referralInformation: {
       title: 'Referral information',
       subTasks: {
-        checkRiskInformation: { text: 'Check risk information', href: '/referral/task-list/view-risk-summary' },
         selectPersonNeeds: { text: `Select the person's needs`, href: '/referral/new/select-person-needs' },
-        addSupportNeeds: {
-          text: 'Add details of any additional support needs',
-          href: '/referral/new/add-support-needs',
+        selectArea: {
+          text: 'Select the area for the referral',
+          href: '/referral/task-list/select-an-area-for-referral',
         },
         additionalReferralInformation: {
           text: 'Additional referral information',
           href: '/referral/new/additional-referral-information',
-        },
-        selectArea: {
-          text: 'Select the area for the referral',
-          href: '/referral/task-list/select-an-area-for-referral',
         },
       },
     },

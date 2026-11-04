@@ -12,6 +12,7 @@ describe('ScheduleIcsPresenter with appointment type', () => {
   const caseReference = 'AB1234CD'
   const content = ScheduleIcsContentFactory.build({
     pageHeaders: {
+      ICS: 'Book initial contact session (ICS)',
       CONTACT_SESSION: 'Schedule the contact session',
       PRE_RELEASE_SESSION: 'Schedule the pre-release session',
       POST_RELEASE_SESSION: 'Schedule the post-release session',
@@ -44,6 +45,7 @@ describe('ScheduleIcsPresenter with appointment type', () => {
     build(type, referral).howWillTheSessionTakePlaceInput.items.map(item => item.value)
 
   test.each([
+    ['ICS', ['ByPhone', 'ByVideo', 'InProbationOffice', 'InSomewhereElse']],
     ['CONTACT_SESSION', ['ByPhone', 'ByVideo', 'InProbationOffice', 'InSomewhereElse']],
     ['PRE_RELEASE_SESSION', ['ByPhone', 'ByVideo', 'InSomewhereElse']],
     ['POST_RELEASE_SESSION', ['ByPhone', 'ByVideo', 'InProbationOffice', 'InSomewhereElse']],
@@ -61,6 +63,7 @@ describe('ScheduleIcsPresenter with appointment type', () => {
   })
 
   test.each([
+    ['ICS', 'Book initial contact session (ICS)'],
     ['CONTACT_SESSION', 'Schedule the contact session'],
     ['PRE_RELEASE_SESSION', 'Schedule the pre-release session'],
     ['POST_RELEASE_SESSION', 'Schedule the post-release session'],
@@ -75,6 +78,7 @@ describe('ScheduleIcsPresenter with appointment type', () => {
 
   test('meet at the gate is only shown for post-release sessions', () => {
     expect(build('POST_RELEASE_SESSION').meetAtTheGateInput).toBeDefined()
+    expect(build('ICS').meetAtTheGateInput).toBeUndefined()
     expect(build('CONTACT_SESSION').meetAtTheGateInput).toBeUndefined()
     expect(build('PRE_RELEASE_SESSION').meetAtTheGateInput).toBeUndefined()
     expect(build('HANDOVER_SESSION').meetAtTheGateInput).toBeUndefined()
@@ -94,6 +98,7 @@ describe('ScheduleIcsPresenter with appointment type', () => {
 
   test('informed question is hidden for handover sessions only', () => {
     expect(build('HANDOVER_SESSION').howWasTheyInformedAboutTheSessionInput).toBeUndefined()
+    expect(build('ICS').howWasTheyInformedAboutTheSessionInput).toBeDefined()
     expect(build('CONTACT_SESSION').howWasTheyInformedAboutTheSessionInput).toBeDefined()
     expect(build('POST_RELEASE_SESSION').howWasTheyInformedAboutTheSessionInput).toBeDefined()
   })

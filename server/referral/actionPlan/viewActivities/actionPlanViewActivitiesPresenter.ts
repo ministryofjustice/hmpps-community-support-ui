@@ -16,6 +16,7 @@ export default class ActionPlanViewActivitiesPresenter extends PresenterBase<
     private readonly selectedNeedLabel: string,
     private readonly selectedOutcomeText: string,
     private readonly activities: ActionPlanActivity[],
+    private readonly isSubmitted: boolean,
     private readonly alertType?: 'ADD' | 'REMOVE',
     private readonly firstName?: string,
   ) {
@@ -83,7 +84,10 @@ export default class ActionPlanViewActivitiesPresenter extends PresenterBase<
     const rows: GovukFrontendTableRow[] = this.activities.map((activity, index) => {
       const editHref = `/referral/${this.caseReference}/action-plan/activities/add?activityIndex=${index}`
       const removeHref = `/referral/${this.caseReference}/action-plan/activities/remove?activityIndex=${index}`
-      const actionLinks = `<a class="govuk-link" href="${escapeHtml(editHref)}">${escapeHtml(content.changeActionText)}</a><a class="govuk-link govuk-!-margin-left-2" href="${escapeHtml(removeHref)}">${escapeHtml(content.removeActionText)}</a>`
+      let actionLinks = `<a class="govuk-link" href="${escapeHtml(editHref)}">${escapeHtml(content.changeActionText)}</a>`
+      if (!this.isSubmitted) {
+        actionLinks += `<a class="govuk-link govuk-!-margin-left-2" href="${escapeHtml(removeHref)}">${escapeHtml(content.removeActionText)}</a>`
+      }
 
       return [{ text: activity.activityProvider }, { text: activity.activityDescription }, { html: actionLinks }]
     })

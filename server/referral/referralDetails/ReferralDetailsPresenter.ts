@@ -2,8 +2,8 @@ import { Response } from 'express'
 import { GovukFrontendBackLink, GovukFrontendSummaryList } from '@govuk-frontend'
 import { ReferralDetailsResponseDto, ReferralUserAssignmentsResponse } from '@community-support-api'
 import { differenceInYears } from 'date-fns'
-import { MojSubNavigation, MojSubNavigationItem } from '@moj-frontend'
-import PresenterBase from '../../presenter/presenterBase'
+import { MojSubNavigation } from '@moj-frontend'
+import ReferralLayoutPresenter, { ReferralNavigationValues } from '../referralLayout/referralLayoutPresenter'
 import dateFormat, { britishDateFormat } from '../../utils/dateFormat'
 import {
   AssignmentSuccessBanner,
@@ -33,7 +33,10 @@ export interface ReferralDetailsViewModel {
   withdrawReferralLinkText: string
 }
 
-export default class ReferralDetailsPresenter extends PresenterBase<ReferralDetailsViewModel, ReferralDetailsContent> {
+export default class ReferralDetailsPresenter extends ReferralLayoutPresenter<
+  ReferralDetailsViewModel,
+  ReferralDetailsContent
+> {
   private readonly assignReferralHref: string
 
   private readonly age: number
@@ -46,7 +49,7 @@ export default class ReferralDetailsPresenter extends PresenterBase<ReferralDeta
     private readonly authSource: string,
     private readonly notification?: ReferralDetailsNotification,
   ) {
-    super()
+    super(ReferralNavigationValues.caseDetailsTab, referralDetails.referenceNumber)
     this.assignReferralHref = `/referral/${referralDetails.id}/assign`
     this.age = differenceInYears(this.today, new Date(referralDetails.personDetailsTableData.dateOfBirth))
   }
@@ -188,31 +191,11 @@ export default class ReferralDetailsPresenter extends PresenterBase<ReferralDeta
     return null
   }
 
-  private buildSubNav(content: ReferralDetailsContent, isAssigned: boolean): MojSubNavigation {
-    return {
-      label: content.subNavTitle,
-      items: this.buildSubNavItems(content, isAssigned),
-    } as MojSubNavigation
-  }
-
-  private buildSubNavItems(content: ReferralDetailsContent, isAssigned: boolean): MojSubNavigationItem[] {
-    return content.subNavItems
-      .filter(i => (i.text !== 'Progress' && i.text !== 'Appointments') || isAssigned)
-      .map(i => ({
-        text: i.text,
-        href:
-          i.text === 'Appointments'
-            ? i.href.replace(':id', this.referralDetails.referenceNumber)
-            : `${i.href}/${this.referralDetails.referenceNumber}`,
-        active: i.text === 'Case details',
-      }))
-  }
-
   buildViewModel(res: Response): ReferralDetailsViewModel {
     const content = this.buildStaticContent(res)
     return {
       name: this.referralDetails.personDetailsTableData.name,
-      subNav: this.buildSubNav(content, this.isReferralAssigned()),
+      subNav: this.getMojSubNavigationArgs(undefined, this.isReferralAssigned()),
       successBanner: this.assignResult ? this.buildSuccessBanner(content.successBannerHeading) : null,
       alert: this.buildAlert(content),
       personal: this.buildPersonalDetails(content.personalDetailsCard, content.defaultFieldValue),

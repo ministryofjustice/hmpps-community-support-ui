@@ -5,7 +5,7 @@ class FoundPersonContentFactory extends Factory<FoundPersonContent> {}
 
 export default FoundPersonContentFactory.define(({ transientParams }) => ({
   pageTitle: 'Enter a CRN or prison number - Make a referral - Community Support',
-  pageHeader: transientParams.pageHeader || `Confirm this is the correct person for referral`,
+  pageHeader: transientParams.pageHeader || `Check and confirm personal details`,
   continueButtonText: transientParams.continueButtonText || 'Continue',
   continueButtonLink: transientParams.continueButtonLink || '/referral/task-list',
   backLink: transientParams.backLink || '/referral/new/find-a-person',
