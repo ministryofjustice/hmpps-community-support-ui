@@ -48,7 +48,6 @@ export default class ReferralAppointmentsPresenter extends ReferralLayoutPresent
   }
 
   private buildAppointmentsTable(content: ReferralAppointmentsContent): GovukFrontendTable {
-    console.log(JSON.stringify(this.referralAppointments.appointments, null, 2))
     return {
       attributes: {
         'data-module': 'moj-sortable-table',
@@ -82,7 +81,7 @@ export default class ReferralAppointmentsPresenter extends ReferralLayoutPresent
           },
         },
         {
-          text: `${formatDate(new Date(appointment.appointmentDate), 'dd MMMM yyyy') }`,
+          text: `${formatDate(new Date(appointment.appointmentDate), 'dd MMMM yyyy')}`,
           attributes: {
             'data-sort-value': appointment.appointmentDate,
           },

@@ -10,8 +10,8 @@ export type ReferralAppointmentsViewModel = {
   noAppointmentsMessage: string
   appointmentsTable: GovukFrontendTable
   hasAppointments: boolean
-  upcomingAppointmentsTitle: string,
-  pastAppointmentsTitle: string,
+  upcomingAppointmentsTitle: string
+  pastAppointmentsTitle: string
 }
 
 export type ReferralAppointmentsContent = GlobalContent['/referral/:id/appointments']

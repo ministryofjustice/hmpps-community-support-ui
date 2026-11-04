@@ -8,10 +8,14 @@ describe('ReferralAppointmentsPresenter', () => {
   const content: ReferralAppointmentsContent = {
     pageHeader: 'Referral for',
     appointmentsTitle: 'Appointments',
-    appointmentTypeColumnHeader: 'Appointment',
-    dateTimeColumnHeader: 'Date and time',
+    appointmentTypeColumnHeader: 'Appointment type',
+    dateColumnHeader: 'Date',
+    timeColumnHeader: 'Start time',
     noAppointmentsMessage: 'No appointments scheduled',
-    createAppointmentText: 'Create an Appointment',
+    bookAppointmentText: 'Book appointment',
+    bookAppointmentHref: '/referral/{{ id }}/create-an-appointment/appointment-type',
+    upcomingAppointmentsTitle: 'Upcoming appointments',
+    pastAppointmentsTitle: 'Past appointments',
   }
 
   const makeResponse = () => ({ locals: { content } }) as unknown as Response
@@ -34,11 +38,27 @@ describe('ReferralAppointmentsPresenter', () => {
 
     expect(viewModel.pageHeader).toBe('Referral for Alex Example')
     expect(viewModel.hasAppointments).toBe(true)
-    expect(viewModel.appointmentsTable.head).toEqual([{ text: 'Appointment' }, { text: 'Date and time' }])
-    expect(viewModel.appointmentsTable.rows).toEqual([
-      [{ text: 'Contact session' }, { text: '09 October 2026 at 2:30pm' }],
+    expect(viewModel.appointmentsTable.head).toEqual([
+      { text: 'Appointment type', attributes: { 'aria-sort': 'none' } },
+      { text: 'Date', attributes: { 'aria-sort': 'none' } },
+      { text: 'Start time', attributes: { 'aria-sort': 'none' } },
     ])
-    expect(viewModel.appointmentsTable.attributes).toMatchObject({ 'data-module': 'moj-sortable-table' })
+    expect(viewModel.appointmentsTable.rows).toEqual([
+      [
+        { text: 'Contact session', attributes: { 'data-sort-value': 'Contact session' } },
+        { text: '09 October 2026', attributes: { 'data-sort-value': '2026-10-09' } },
+        { text: '2:30pm', attributes: { 'data-sort-value': '14:30' } },
+      ],
+    ])
+    expect(viewModel.appointmentsTable.attributes).toEqual({
+      'data-module': 'moj-sortable-table',
+      'data-testid': 'referral-appointments-table',
+    })
+    expect(viewModel.createAppointmentButton).toEqual({
+      text: 'Book appointment',
+      href: `/referral/${caseReference}/create-an-appointment/appointment-type`,
+      preventDoubleClick: true,
+    })
     expect(viewModel.navBar.items.find(item => item.active)).toMatchObject({
       text: 'Appointments',
       href: `/referral/${caseReference}/appointments`,
@@ -56,9 +76,39 @@ describe('ReferralAppointmentsPresenter', () => {
       active: false,
     })
     expect(viewModel.appointmentsTitle).toBe('Appointments')
-    expect(viewModel.createAppointmentText).toBe('Create an Appointment')
     expect(viewModel.noAppointmentsMessage).toBe('No appointments scheduled')
-    expect(viewModel.createAppointmentHref).toBe(`/referral/${caseReference}/create-an-appointment/appointment-type`)
+    expect(viewModel.upcomingAppointmentsTitle).toBe('Upcoming appointments')
+    expect(viewModel.pastAppointmentsTitle).toBe('Past appointments')
+  })
+
+  it.each([
+    [{ hour: 12, minute: 0, amPm: 'am' }, '12:00am', '00:00'],
+    [{ hour: 12, minute: 0, amPm: 'pm' }, '12:00pm', '12:00'],
+    [{ hour: 9, minute: 5, amPm: 'AM' }, '9:05am', '09:05'],
+    [{ hour: 11, minute: 59, amPm: 'PM' }, '11:59pm', '23:59'],
+  ])('uses a 24-hour sort value for %j while retaining the display time', (appointmentTime, text, sortValue) => {
+    const response: ReferralAppointmentsBffResponseDto = {
+      personDetails: { firstName: 'Alex', lastName: 'Example', dateOfBirth: '1980-01-01', crn: 'X123456' },
+      appointments: [
+        {
+          id: 'appointment-id',
+          label: 'Contact session',
+          appointmentDate: '2026-10-09',
+          appointmentTime,
+          appointmentStatus: 'SCHEDULED',
+        },
+      ],
+    }
+
+    const viewModel = new ReferralAppointmentsPresenter(response, caseReference).buildViewModel(makeResponse())
+
+    expect(viewModel.appointmentsTable.rows).toEqual([
+      [
+        { text: 'Contact session', attributes: { 'data-sort-value': 'Contact session' } },
+        { text: '09 October 2026', attributes: { 'data-sort-value': '2026-10-09' } },
+        { text, attributes: { 'data-sort-value': sortValue } },
+      ],
+    ])
   })
 
   it('renders an empty appointment list when the API returns no appointments', () => {
@@ -71,5 +121,11 @@ describe('ReferralAppointmentsPresenter', () => {
 
     expect(viewModel.hasAppointments).toBe(false)
     expect(viewModel.appointmentsTable.rows).toEqual([])
+    expect(viewModel.noAppointmentsMessage).toBe('No appointments scheduled')
+    expect(viewModel.createAppointmentButton).toEqual({
+      text: 'Book appointment',
+      href: `/referral/${caseReference}/create-an-appointment/appointment-type`,
+      preventDoubleClick: true,
+    })
   })
 })

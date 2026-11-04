@@ -20,7 +20,7 @@ export default class ReferralAppointmentsPage extends AbstractPage {
     this.navigation = new ReferralNavigation(page)
     this.header = page.locator('h1')
     this.appointmentsTable = page.locator('[data-testid="referral-appointments-table"]')
-    this.createAppointmentLink = page.getByRole('link', { name: 'Create an Appointment', exact: true })
+    this.createAppointmentLink = page.getByRole('link', { name: 'Book appointment', exact: true })
   }
 
   async verifyOnPage(): Promise<void> {
