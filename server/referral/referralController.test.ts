@@ -126,8 +126,6 @@ describe('ReferralController', () => {
       const caseReference = 'AB1234CD'
       const content: ReferralAppointmentsContent = {
         pageHeader: 'Referral for',
-        subNavTitle: 'Referral',
-        subNavItems: [],
         appointmentsTitle: 'Appointments',
         appointmentTypeColumnHeader: 'Appointment',
         dateTimeColumnHeader: 'Date and time',
