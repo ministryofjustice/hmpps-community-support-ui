@@ -943,6 +943,9 @@ describe('AppointmentController', () => {
     beforeEach(() => {
       IcsFeedbackHowSessionTookPlacePresenter.prototype.renderPage = jest.fn()
       ;(appointmentService.getICS as jest.Mock).mockResolvedValue(mockIcsAppointment)
+      ;(appointmentService.getIcsFeedbackDidSessionTakePlace as jest.Mock).mockResolvedValue({
+        sessionMethod: mockIcsAppointment.sessionMethod,
+      })
 
       icsFeedbackReq = {
         params: { caseRefId: 'ics-123' },
@@ -1390,7 +1393,9 @@ describe('AppointmentController', () => {
     })
 
     it('renders the check your answers page with presenter if feedback submission exists in session', async () => {
-      jest.spyOn(appointmentService, 'getICS').mockResolvedValue(mockAppointmentIcsResponse)
+      jest
+        .spyOn(appointmentService, 'getIcsFeedbackCheckAnswers')
+        .mockResolvedValue({ referralFirstName: mockAppointmentIcsResponse.referralFirstName })
       const mockSubmission = {
         record: {
           didSessionHappen: true,

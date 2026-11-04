@@ -1,7 +1,7 @@
 import { Response } from 'express'
 import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendSummaryList } from '@govuk-frontend'
 import { isPast } from 'date-fns'
-import { IcsFeedbackSubmission } from '@community-support-api'
+import { IcsFeedbackAttendanceBffDto, IcsFeedbackSubmission } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
 import getAppointmentDateTime from '../../utils/getAppointmentDateTime'
 import {
@@ -10,7 +10,7 @@ import {
   GovukFrontendRadiosWithConditional,
 } from '../../@types/govukFrontend/derived'
 import { ErrorMiddlewareErrors } from '../../@types/express'
-import buildAppointmentDetails, { RecordSessionAttendancePresenterData } from './AppointmentDetailsModel'
+import buildAppointmentDetails from './AppointmentDetailsModel'
 
 type SubmissionRecord = IcsFeedbackSubmission['record']
 export type RecordSessionAttendanceSessionData = Partial<Pick<SubmissionRecord, 'didSessionHappen' | 'didPersonAttend'>>
@@ -68,7 +68,7 @@ export default class RecordSessionAttendancePresenter extends PresenterBase<
 
   constructor(
     private readonly caseRefId: string,
-    private readonly data: RecordSessionAttendancePresenterData,
+    private readonly data: IcsFeedbackAttendanceBffDto,
     private readonly record: RecordSessionAttendanceSessionData,
   ) {
     super()
@@ -161,12 +161,17 @@ export default class RecordSessionAttendancePresenter extends PresenterBase<
   buildViewModel(res: Response): RecordSessionAttendanceViewModel {
     const content = this.buildStaticContent(res)
     this.errors = res.locals.errors
+    const appointment = {
+      referralFirstName: this.data.referralFirstName,
+      appointmentDate: this.data.date,
+      appointmentTime: this.data.time,
+    }
     return {
       backLink: { href: content.backLink.replace('{{ id }}', this.caseRefId) },
       pageHeader: content.pageHeader,
       description: content.description,
-      appointment: buildAppointmentDetails(content.appointmentDetails, this.data),
-      form: isPast(getAppointmentDateTime(this.data)) ? this.buildForm(content.attendanceForm) : undefined,
+      appointment: buildAppointmentDetails(content.appointmentDetails, appointment),
+      form: isPast(getAppointmentDateTime(appointment)) ? this.buildForm(content.attendanceForm) : undefined,
       submitHref: `/ics-feedback/${this.caseRefId}/attendance`,
     }
   }

@@ -56,6 +56,15 @@ import type {
   WithdrawReferralRequest,
   ActionPlanNeedsOrderRequest,
   ExistingSupportNeedsBffResponseDto,
+  IcsFeedbackWhyDidSessionNotHappenBffDto,
+  IcsFeedbackSessionFeedbackBffDto,
+  IcsFeedbackNextStepsBffDto,
+  IcsFeedbackIssuesOrConcernsBffDto,
+  IcsFeedbackIdentifiedAdditionalNeedsBffDto,
+  IcsFeedbackHowTheyTriedToContactThePersonBffDto,
+  IcsFeedbackDidSessionTakePlaceBffDto,
+  IcsFeedbackCheckAnswersBffDto,
+  IcsFeedbackAttendanceBffDto,
 } from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
@@ -130,6 +139,58 @@ export default class CommunitySupportApiClient extends RestClient {
 
   getICS(caseRefId: string, username: string): Promise<AppointmentIcsResponse> {
     return this.get({ path: `/bff/referral-details/${caseRefId}/ics` }, asSystem(username))
+  }
+
+  getIcsFeedbackWhyDidSessionNotHappen(
+    caseRefId: string,
+    username: string,
+  ): Promise<IcsFeedbackWhyDidSessionNotHappenBffDto> {
+    return this.getIcsFeedbackPage(caseRefId, 'why-did-the-session-not-happen', username)
+  }
+
+  getIcsFeedbackSessionFeedback(caseRefId: string, username: string): Promise<IcsFeedbackSessionFeedbackBffDto> {
+    return this.getIcsFeedbackPage(caseRefId, 'session-feedback', username)
+  }
+
+  getIcsFeedbackNextSteps(caseRefId: string, username: string): Promise<IcsFeedbackNextStepsBffDto> {
+    return this.getIcsFeedbackPage(caseRefId, 'next-steps', username)
+  }
+
+  getIcsFeedbackIssuesOrConcerns(caseRefId: string, username: string): Promise<IcsFeedbackIssuesOrConcernsBffDto> {
+    return this.getIcsFeedbackPage(caseRefId, 'issues-or-concerns', username)
+  }
+
+  getIcsFeedbackIdentifiedAdditionalNeeds(
+    caseRefId: string,
+    username: string,
+  ): Promise<IcsFeedbackIdentifiedAdditionalNeedsBffDto> {
+    return this.getIcsFeedbackPage(caseRefId, 'identified-additional-needs', username)
+  }
+
+  getIcsFeedbackHowTheyTriedToContactThePerson(
+    caseRefId: string,
+    username: string,
+  ): Promise<IcsFeedbackHowTheyTriedToContactThePersonBffDto> {
+    return this.getIcsFeedbackPage(caseRefId, 'how-they-tried-to-contact-the-person', username)
+  }
+
+  getIcsFeedbackDidSessionTakePlace(
+    caseRefId: string,
+    username: string,
+  ): Promise<IcsFeedbackDidSessionTakePlaceBffDto> {
+    return this.getIcsFeedbackPage(caseRefId, 'did-session-take-place', username)
+  }
+
+  getIcsFeedbackCheckAnswers(caseRefId: string, username: string): Promise<IcsFeedbackCheckAnswersBffDto> {
+    return this.getIcsFeedbackPage(caseRefId, 'check-answers', username)
+  }
+
+  getIcsFeedbackAttendance(caseRefId: string, username: string): Promise<IcsFeedbackAttendanceBffDto> {
+    return this.getIcsFeedbackPage(caseRefId, 'attendance', username)
+  }
+
+  private getIcsFeedbackPage<T>(caseRefId: string, page: string, username: string): Promise<T> {
+    return this.get({ path: `/bff/ics-feedback/${caseRefId}/${page}` }, asSystem(username))
   }
 
   getCreateAppointmentReferenceData(
