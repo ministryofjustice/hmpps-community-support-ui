@@ -49,7 +49,7 @@ test.describe('Action Plan Check Service End Date Page', () => {
     const checkServiceEndDatePage = await ActionPlanCheckServiceEndDatePage.verifyOnPage(page)
 
     await expect(checkServiceEndDatePage.header).toHaveText('Service end date')
-    await expect(page.getByRole('radio', { name: 'No, I need to change the date', exact: true })).toBeChecked()
+    await expect(page.getByRole('radio', { name: 'No', exact: true })).toBeChecked()
   })
 
   test('submits when the service end date has changed and redirects to update service end date', async ({ page }) => {
@@ -58,7 +58,7 @@ test.describe('Action Plan Check Service End Date Page', () => {
     await page.goto(ActionPlanCheckServiceEndDatePage.url(caseReference))
     await ActionPlanCheckServiceEndDatePage.verifyOnPage(page)
 
-    await page.getByRole('radio', { name: 'No, I need to change the date', exact: true }).check()
+    await page.getByRole('radio', { name: 'No', exact: true }).check()
     await page.getByRole('button', { name: 'Continue' }).click()
 
     await expect(page).toHaveURL(`/referral/${caseReference}/action-plan/update-service-end-date`)

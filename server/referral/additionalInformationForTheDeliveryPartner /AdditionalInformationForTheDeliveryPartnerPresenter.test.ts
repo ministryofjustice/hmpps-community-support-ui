@@ -56,24 +56,11 @@ describe('AdditionalInformationForTheDeliveryPartnerPresenter', () => {
 
       expect(viewModel.backLink.href).toBe('/referral/task-list/offence-sentence')
       expect(viewModel.heading).toBe(pageContent.h2)
+      expect(viewModel.radios.details.label.text).toBe(pageContent.radio1.textareaLabel)
       expect(viewModel.button).toStrictEqual({ text: pageContent.button })
-      expect(viewModel.radios.name).toBe('additionalInformation')
-      expect(viewModel.radios.items).toHaveLength(2)
-
-      const [yesRadio, noRadio] = viewModel.radios.items
-
-      expect(yesRadio.value).toBe(pageContent.radio1.label)
-      expect(yesRadio.text).toBe(pageContent.radio1.label)
-      expect(yesRadio.checked).toBeNull()
-      expect(yesRadio.conditional.html).toContain(pageContent.radio1.textareaLabel)
-      expect(yesRadio.conditional.html).toContain('name="details"')
-      expect(yesRadio.conditional.html).toContain('></textarea>') // ie empty text area
-
-      expect(noRadio.value).toBe(pageContent.radio2.label)
-      expect(noRadio.text).toBe(pageContent.radio2.label)
-      expect(noRadio.checked).toBeNull()
-
+      expect(viewModel.radios.main.name).toBe('additionalInformation')
       expect(viewModel.button.text).toBe(pageContent.button)
+      expect(viewModel.radios.value.selected).toBe('Unanswered')
     })
 
     test('buildViewModel selects the yes option and preserves the saved informaiton', () => {
@@ -89,15 +76,7 @@ describe('AdditionalInformationForTheDeliveryPartnerPresenter', () => {
 
       const presenter = new AdditionalInformationForTheDeliveryPartnerPresenter(dto, validationErrors)
       const viewModel = presenter.buildViewModel(res)
-
-      const [yesRadio, noRadio] = viewModel.radios.items
-
-      expect(yesRadio).toBeDefined()
-      expect(noRadio).toBeDefined()
-
-      expect(yesRadio.checked).toBe(true)
-      expect(yesRadio.conditional.html).toContain('Give details of anything else the delivery partner should know')
-      expect(noRadio.checked).toBe(false)
+      expect(viewModel.radios.value.selected).toBe('Yes')
     })
 
     test('buildViewModel displays the correct error message when nothing is selected', () => {
@@ -113,12 +92,8 @@ describe('AdditionalInformationForTheDeliveryPartnerPresenter', () => {
 
       const presenter = new AdditionalInformationForTheDeliveryPartnerPresenter(dto, validationErrors)
       const viewModel = presenter.buildViewModel(res)
-
-      const [yesRadio, noRadio] = viewModel.radios.items
-      // nothing checked
-      expect(yesRadio.checked).toBeNull()
-      expect(noRadio.checked).toBeNull()
-      expect(viewModel.radios.errorMessage.text).toBe(errorMessage.nothingEntered)
+      expect(viewModel.radios.value.selected).toBe('Unanswered')
+      expect(viewModel.radios.main.errorMessage.text).toBe(errorMessage.nothingEntered)
     })
 
     test('buildViewModel displays the correct error message when no details are given', () => {
@@ -134,12 +109,8 @@ describe('AdditionalInformationForTheDeliveryPartnerPresenter', () => {
 
       const presenter = new AdditionalInformationForTheDeliveryPartnerPresenter(dto, validationErrors)
       const viewModel = presenter.buildViewModel(res)
-
-      const [yesRadio, noRadio] = viewModel.radios.items
-      // yes checked
-      expect(yesRadio.checked).toBe(true)
-      expect(noRadio.checked).toBe(false)
-      expect(yesRadio.conditional.html).toContain(errorMessage.nothingEntered)
+      expect(viewModel.radios.value.selected).toBe('Yes')
+      expect(viewModel.radios.details.errorMessage.text).toBe(errorMessage.nothingEntered)
     })
   })
 })

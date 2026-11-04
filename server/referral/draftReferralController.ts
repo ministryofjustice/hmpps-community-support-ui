@@ -6,7 +6,11 @@ import {
 } from '@community-support-api'
 import ReferralService from '../services/referralService'
 import AdditionalSuportNeedsPresenter from './additionalSupportNeeds/AdditionalSupportNeedsPresenter'
-import { formatDynamicErrorMessages, validateRequestBodyAgainstSchema } from '../validation/validationUtils'
+import {
+  formatDynamicErrorMessages,
+  validateRequestBody,
+  validateRequestBodyAgainstSchema,
+} from '../validation/validationUtils'
 import {
   AdditionalSuportNeedsFormData,
   AdditionalSuportNeedsFormDataSchemaBuilder,
@@ -26,8 +30,8 @@ import ServiceEndDatePagePresenter from './serviceEndDate/ServiceEndDatePagePres
 import CheckReferralInformationPresenter from './check-referral-information/checkReferralInformationPresenter'
 import AdditionalInformationForTheDeliveryPartnerPresenter from './additionalInformationForTheDeliveryPartner /AdditionalInformationForTheDeliveryPartnerPresenter'
 import {
+  additionalInformationForDeliveryPartnerValidator,
   AdditionalInformationForTheDeliveryPartnerFormData,
-  AdditionalInformationForTheDeliveryPartnerFormDataSchema,
 } from '../validation/AdditionalInformationForTheDeliveryPartnerFormData'
 import OffenceSentencePresenter from './OffenceSentence/OffenceSentencePresenter'
 import { OffenceSentenceFormData, OffenceSentenceSchema } from '../validation/OffenceSentenceFormData'
@@ -390,21 +394,15 @@ export default class DraftReferralController {
     const { username } = res.locals.user
     const draftReferralId = req.session?.draftReferralId
     if (draftReferralId) {
-      try {
-        const schema = AdditionalInformationForTheDeliveryPartnerFormDataSchema
-        return validateRequestBodyAgainstSchema(
-          schema,
-          req,
-          res,
-          async (data: AdditionalInformationForTheDeliveryPartnerFormData) => {
-            await this.referralService.submitAdditionalInformationForDeliveryPartner(data, draftReferralId, username)
-            return res.redirect(taskListURL)
-          },
-        )
-      } catch (e) {
-        logger.error(e)
-        return res.redirect(findAPersonURL)
-      }
+      return validateRequestBody(additionalInformationForDeliveryPartnerValidator, req, res, async body => {
+        const selection = body.details
+        const data: AdditionalInformationForTheDeliveryPartnerFormData =
+          selection.selected === 'Yes'
+            ? { additionalInformation: 'Yes', details: selection.value }
+            : { additionalInformation: 'No' }
+        await this.referralService.submitAdditionalInformationForDeliveryPartner(data, draftReferralId, username)
+        return res.redirect(taskListURL)
+      })
     }
     return res.redirect(findAPersonURL)
   }

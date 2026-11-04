@@ -30,6 +30,7 @@ test.describe('Select an action plan need', () => {
     lastUpdatedAt: '2026-10-12T09:00:00Z',
     personDetails: { firstName: 'Alex', lastName: 'River' },
     needs: [],
+    isSubmitted: false,
   }
 
   test.beforeEach(async ({ page }) => {
@@ -104,12 +105,15 @@ test.describe('Select an action plan need', () => {
 
     const viewActivitiesPage = await ActionPlanViewActivitiesPage.verifyOnPage(page)
     await expect(page).toHaveURL(ActionPlanViewActivitiesPage.url(caseReference))
+    await expect(page.locator('[data-testid="action-plan-activities-alert"]')).toContainText(
+      "You added an activity to Alex's plan",
+    )
     await expect(page.getByText('Do you want to add another activity?', { exact: true })).toBeVisible()
     await expect(viewActivitiesPage.addAnotherActivityRadios.getByLabel('Yes')).toBeVisible()
     await expect(viewActivitiesPage.addAnotherActivityRadios.getByLabel('No')).toBeVisible()
     await expect(viewActivitiesPage.activitiesTable.locator('thead')).toContainText('Who will deliver this')
     await expect(viewActivitiesPage.activitiesTable.locator('thead')).toContainText('Activity details')
-    await expect(viewActivitiesPage.activitiesTable.locator('thead')).toContainText('Actions')
+    await expect(viewActivitiesPage.activitiesTable.locator('thead')).toContainText('Action')
     await expect(viewActivitiesPage.activityRows).toHaveCount(1)
     await expect(viewActivitiesPage.activityRows.first()).toContainText('Local support organisation')
     await expect(viewActivitiesPage.activityRows.first()).toContainText('Weekly employment support sessions')
@@ -216,6 +220,9 @@ test.describe('Select an action plan need', () => {
 
     await ActionPlanViewActivitiesPage.verifyOnPage(page)
     await expect(page).toHaveURL(ActionPlanViewActivitiesPage.url(caseReference))
+    await expect(page.locator('[data-testid="action-plan-activities-alert"]')).toContainText(
+      "You removed an activity from Alex's plan",
+    )
     await expect(viewActivitiesPage.activityRows).toHaveCount(1)
     await expect(viewActivitiesPage.activityRows.first()).toContainText('Second provider')
     await expect(viewActivitiesPage.activityRows.first()).not.toContainText('First provider')
@@ -289,6 +296,7 @@ test.describe('Select an action plan need', () => {
           ],
         },
       ],
+      isSubmitted: false,
     }
     await communitySupport.stubGetActionPlanSummary(caseReference, populatedActionPlanSummary)
     await communitySupport.stubGetActionPlanNeedsAndOutcomes({
@@ -323,6 +331,115 @@ test.describe('Select an action plan need', () => {
     await expect(editActivityPage.activityDescription).toHaveValue('Attend weekly appointments')
   })
 
+  test('hides Remove for submitted plans on saved and session activity pages', async ({ page }) => {
+    const needId = '00000000-0000-4000-8000-000000000001'
+    const outcomeId = '00000000-0000-4000-8000-000000000002'
+    const outcomeAnswerId = '00000000-0000-4000-8000-000000000003'
+    await communitySupport.stubGetActionPlanSummary(caseReference, {
+      ...actionPlanSummary,
+      isSubmitted: true,
+      needs: [
+        {
+          id: needId,
+          label: 'Accommodation',
+          orderNumber: 1,
+          outcomes: [
+            {
+              id: outcomeAnswerId,
+              label: outcomeId,
+              activities: [
+                { id: 'activity-1', who: 'Housing service', details: 'Attend weekly appointments' },
+                { id: 'activity-2', who: 'Support group', details: 'Attend group sessions' },
+              ],
+            },
+          ],
+        },
+      ],
+    })
+    await communitySupport.stubGetActionPlanNeedsAndOutcomes({
+      needs: [{ id: needId, label: 'Accommodation', outcomes: [{ id: outcomeId, text: 'Find suitable housing' }] }],
+      selectedNeeds: [],
+    })
+
+    await page.goto(
+      `/referral/${caseReference}/action-plan/activities?needId=${needId}&outcomeAnswerId=${outcomeAnswerId}`,
+    )
+    const viewActivitiesPage = await ActionPlanViewActivitiesPage.verifyOnPage(page)
+    await expect(viewActivitiesPage.activityRows).toHaveCount(2)
+    await expect(viewActivitiesPage.removeLinks).toHaveCount(0)
+    await expect(viewActivitiesPage.activitiesTable.getByRole('link', { name: 'Change', exact: true })).toHaveCount(2)
+
+    await page.goto(ActionPlanViewActivitiesPage.url(caseReference))
+    await ActionPlanViewActivitiesPage.verifyOnPage(page)
+    await expect(viewActivitiesPage.activityRows).toHaveCount(2)
+    await expect(viewActivitiesPage.removeLinks).toHaveCount(0)
+    await expect(viewActivitiesPage.activitiesTable.getByRole('link', { name: 'Change', exact: true })).toHaveCount(2)
+
+    await viewActivitiesPage.activityRows.first().getByRole('link', { name: 'Change' }).click()
+    const editActivityPage = await ActionPlanAddActivityPage.verifyOnPage(page)
+    await expect(editActivityPage.activityProvider).toHaveValue('Housing service')
+    await editActivityPage.saveAndContinueButton.click()
+    await ActionPlanViewActivitiesPage.verifyOnPage(page)
+    await expect(viewActivitiesPage.removeLinks).toHaveCount(0)
+  })
+
+  test('deletes a saved outcome when its last activity is removed', async ({ page }) => {
+    const needId = '00000000-0000-4000-8000-000000000021'
+    const outcomeId = '00000000-0000-4000-8000-000000000022'
+    const outcomeAnswerId = '00000000-0000-4000-8000-000000000023'
+    const summaryWithOutcome: ActionPlanSummaryDto = {
+      lastUpdatedAt: '2026-10-12T09:00:00Z',
+      personDetails: { firstName: 'Alex', lastName: 'River' },
+      needs: [
+        {
+          id: needId,
+          label: 'Accommodation',
+          orderNumber: 1,
+          outcomes: [
+            {
+              id: outcomeAnswerId,
+              label: 'Find suitable housing',
+              activities: [{ id: 'activity-1', who: 'Housing service', details: 'Attend weekly appointments' }],
+            },
+          ],
+        },
+      ],
+      isSubmitted: false,
+    }
+    await communitySupport.stubGetActionPlanSummary(caseReference, summaryWithOutcome)
+    await communitySupport.stubGetActionPlanNeedsAndOutcomes({
+      needs: [{ id: needId, label: 'Accommodation', outcomes: [{ id: outcomeId, text: 'Find suitable housing' }] }],
+      selectedNeeds: [{ id: needId, label: 'Accommodation' }],
+    })
+    await stubFor({
+      request: {
+        method: 'DELETE',
+        urlPath: `/community-support/referral/${caseReference}/action-plan/action/${outcomeAnswerId}`,
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: { success: true, message: 'Action deleted successfully' },
+      },
+    })
+
+    await page.goto(
+      `/referral/${caseReference}/action-plan/activities?needId=${needId}&outcomeAnswerId=${outcomeAnswerId}`,
+    )
+    const activitiesPage = await ActionPlanViewActivitiesPage.verifyOnPage(page)
+    await activitiesPage.removeLinks.first().click()
+    const removeActivityPage = await ActionPlanRemoveActivityPage.verifyOnPage(page)
+    await removeActivityPage.yesOption.check()
+    await removeActivityPage.saveAndContinueButton.click()
+
+    await expect(page).toHaveURL(`/referral/${caseReference}/action-plan/select-a-need`)
+    const deletionRequests = await getMatchingRequests({
+      method: 'DELETE',
+      urlPath: `/community-support/referral/${caseReference}/action-plan/action/${outcomeAnswerId}`,
+    })
+    expect(deletionRequests.body.requests).toHaveLength(1)
+  })
+
   test('removes an outcome and its activities from the action plan', async ({ page }) => {
     const needId = '00000000-0000-4000-8000-000000000011'
     const outcomeId = '00000000-0000-4000-8000-000000000012'
@@ -344,6 +461,7 @@ test.describe('Select an action plan need', () => {
           ],
         },
       ],
+      isSubmitted: false,
     }
     await communitySupport.stubGetActionPlanSummary(caseReference, summaryWithOutcome)
     await communitySupport.stubGetActionPlanNeedsAndOutcomes({

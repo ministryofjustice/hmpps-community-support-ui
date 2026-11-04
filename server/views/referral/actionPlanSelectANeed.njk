@@ -10,14 +10,16 @@
 {% block contentBody %}
   <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
 
-  {% set identifiedNeedsHtml %}
-    <ul class="govuk-list govuk-list--bullet">
-      {% for need in content.identifiedNeeds %}
-        <li>{{ need.label }}</li>
-      {% endfor %}
-    </ul>
-  {% endset %}
-  {{ govukDetails({ summaryText: content.identifiedNeedsDetailsTitle, html: identifiedNeedsHtml }) }}
+  {% if content.identifiedNeeds and content.identifiedNeeds.length > 0 %}
+    {% set identifiedNeedsHtml %}
+      <ul class="govuk-list govuk-list--bullet">
+        {% for need in content.identifiedNeeds %}
+          <li>{{ need.label }}</li>
+        {% endfor %}
+      </ul>
+    {% endset %}
+    {{ govukDetails({ summaryText: content.identifiedNeedsDetailsTitle, html: identifiedNeedsHtml }) }}
+  {% endif %}
 
   <form method="post" action="{{ content.continueButtonLink }}">
     <input type="hidden" name="_csrf" value="{{csrfToken}}">

@@ -1,5 +1,6 @@
 import { Response } from 'express'
 import { GovukFrontendTable, GovukFrontendTableRow } from '@govuk-frontend'
+import { MojAlert } from '@moj-frontend'
 import PresenterBase from '../../../presenter/presenterBase'
 import { escapeHtml } from '../../../utils/utils'
 import { ActionPlanViewActivitiesContent, ActionPlanViewActivitiesViewModel } from './actionPlanViewActivitiesViewModel'
@@ -15,6 +16,9 @@ export default class ActionPlanViewActivitiesPresenter extends PresenterBase<
     private readonly selectedNeedLabel: string,
     private readonly selectedOutcomeText: string,
     private readonly activities: ActionPlanActivity[],
+    private readonly isSubmitted: boolean,
+    private readonly alertType?: 'ADD' | 'REMOVE',
+    private readonly firstName?: string,
   ) {
     super()
   }
@@ -24,6 +28,7 @@ export default class ActionPlanViewActivitiesPresenter extends PresenterBase<
 
     return {
       pageHeader: content.pageHeader,
+      alert: this.buildAlert(content, this.firstName, this.alertType),
       backLink: { href: `/referral/${this.caseReference}/action-plan/select-an-outcome` },
       selectedNeedAndOutcomeInset: {
         html: `${content.areaOfNeedLabel}: <strong>${escapeHtml(this.selectedNeedLabel)}</strong><br>${content.outcomeLabel}: <strong>${escapeHtml(this.selectedOutcomeText)}</strong>`,
@@ -48,11 +53,41 @@ export default class ActionPlanViewActivitiesPresenter extends PresenterBase<
     }
   }
 
+  private buildAlert(
+    content: ActionPlanViewActivitiesContent,
+    firstName?: string,
+    alertType?: 'ADD' | 'REMOVE',
+  ): MojAlert | undefined {
+    if (!firstName) return undefined
+
+    let message: string | undefined
+    switch (alertType) {
+      case 'ADD':
+        message = content.addActivityNotificationText
+        break
+      case 'REMOVE':
+        message = content.removeActivityNotificationText
+        break
+      default:
+        return undefined
+    }
+    if (!message) return undefined
+
+    return {
+      variant: 'success',
+      html: `<p class="govuk-body">${message.replace('{{ firstName }}', escapeHtml(firstName))}</p>`,
+      dismissible: true,
+    }
+  }
+
   private buildActivitiesTable(content: ActionPlanViewActivitiesContent): GovukFrontendTable {
     const rows: GovukFrontendTableRow[] = this.activities.map((activity, index) => {
       const editHref = `/referral/${this.caseReference}/action-plan/activities/add?activityIndex=${index}`
       const removeHref = `/referral/${this.caseReference}/action-plan/activities/remove?activityIndex=${index}`
-      const actionLinks = `<a class="govuk-link" href="${escapeHtml(editHref)}">${escapeHtml(content.changeActionText)}</a><a class="govuk-link govuk-!-margin-left-2" href="${escapeHtml(removeHref)}">${escapeHtml(content.removeActionText)}</a>`
+      let actionLinks = `<a class="govuk-link" href="${escapeHtml(editHref)}">${escapeHtml(content.changeActionText)}</a>`
+      if (!this.isSubmitted) {
+        actionLinks += `<a class="govuk-link govuk-!-margin-left-2" href="${escapeHtml(removeHref)}">${escapeHtml(content.removeActionText)}</a>`
+      }
 
       return [{ text: activity.activityProvider }, { text: activity.activityDescription }, { html: actionLinks }]
     })

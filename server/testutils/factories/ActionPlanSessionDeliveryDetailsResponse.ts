@@ -1,11 +1,206 @@
 import { Factory } from 'fishery'
+import { addDays, format } from 'date-fns'
 import { randomUUID } from 'crypto'
 import type { ActionPlanSessionDeliveryDetailsResponse } from '@community-support-api'
 
 type SavedAnswer = 'YES' | 'NO' | 'EMPTY'
 type SavedResponses = ActionPlanSessionDeliveryDetailsResponse['questions'][number]['savedResponses']
 
-const actionPlanCheckServiceEndDateFactory = Factory.define<
+export const actionPlanSessionDeliveryDetailsFactory = Factory.define<
+  ActionPlanSessionDeliveryDetailsResponse,
+  {
+    sessionFrequency?: SavedResponses
+    sessionDeliveryMethod?: SavedResponses
+    sessionFormat?: SavedResponses
+  }
+>(({ transientParams }) => ({
+  questions: [
+    {
+      id: randomUUID(),
+      displayOrder: 1,
+      label: 'How often will sessions take place?',
+      key: 'SESSION_FREQUENCY',
+      hint: 'For example, every week, every 2 weeks, every month.',
+      answerType: 'TEXTAREA',
+      maximumNumberOfResponses: 1,
+      choices: null,
+      savedResponses: transientParams.sessionFrequency ?? [{ value: 'Every week', additionalDetails: null }],
+    },
+    {
+      id: randomUUID(),
+      displayOrder: 2,
+      label: 'How will the sessions take place?',
+      key: 'SESSION_DELIVERY_METHOD',
+      hint: 'Select one option.',
+      answerType: 'RADIO',
+      maximumNumberOfResponses: 1,
+      choices: [
+        {
+          value: 'IN_PERSON',
+          label: 'In person',
+          displayOrder: 1,
+          displayAdditionalDetailsOnSelect: true,
+          additionalDetailsLabel: 'Why are the sessions not in person?',
+        },
+        {
+          value: 'VIDEO_CALL',
+          label: 'Video call',
+          displayOrder: 2,
+          displayAdditionalDetailsOnSelect: true,
+          additionalDetailsLabel: 'Why are the sessions not in person?',
+        },
+        {
+          value: 'PHONE_CALL',
+          label: 'Phone call',
+          displayOrder: 3,
+          displayAdditionalDetailsOnSelect: true,
+          additionalDetailsLabel: 'Why are the sessions not in person?',
+        },
+      ],
+      savedResponses: transientParams.sessionDeliveryMethod ?? [
+        { value: 'VIDEO_CALL', additionalDetails: 'Travel restrictions' },
+      ],
+    },
+    {
+      id: randomUUID(),
+      displayOrder: 3,
+      label: 'What format will you use for the sessions?',
+      key: 'SESSION_FORMAT',
+      hint: 'Select all that apply.',
+      answerType: 'CHECKBOX',
+      maximumNumberOfResponses: 2,
+      choices: [
+        {
+          value: 'ONE_TO_ONE_SESSION',
+          label: 'One-to-one session',
+          displayOrder: 1,
+          displayAdditionalDetailsOnSelect: false,
+          additionalDetailsLabel: null,
+          additionalDetailsHint: null,
+        },
+        {
+          value: 'GROUP_SESSION',
+          label: 'Group session',
+          displayOrder: 2,
+          displayAdditionalDetailsOnSelect: false,
+          additionalDetailsLabel: null,
+          additionalDetailsHint: null,
+        },
+      ],
+      savedResponses: transientParams.sessionFormat ?? [{ value: 'GROUP_SESSION', additionalDetails: null }],
+    },
+  ],
+}))
+
+export const actionPlanRisksAndAdjustmentsFactory = Factory.define<
+  ActionPlanSessionDeliveryDetailsResponse,
+  {
+    firstName?: string
+    risks?: SavedResponses
+    reasonableAdjustments?: SavedResponses
+  }
+>(({ transientParams }) => {
+  const { firstName = 'Alex' } = transientParams
+
+  return {
+    questions: [
+      {
+        id: randomUUID(),
+        displayOrder: 1,
+        label: 'Are there any risks associated with the planned activities?',
+        key: 'RISK_ASSOCIATED_WITH_PLANNED_ACTIVITIES',
+        answerType: 'RADIO',
+        maximumNumberOfResponses: 1,
+        choices: [
+          {
+            value: 'YES',
+            label: 'Yes',
+            displayOrder: 1,
+            displayAdditionalDetailsOnSelect: true,
+            additionalDetailsLabel: 'Give details about the risks and what you will put in place to reduce them',
+            additionalDetailsHint: 'Details about the risks and what you will put in place to reduce them',
+          },
+          {
+            value: 'NO',
+            label: 'No',
+            displayOrder: 2,
+            displayAdditionalDetailsOnSelect: false,
+          },
+        ],
+        savedResponses: transientParams.risks ?? [{ value: 'YES', additionalDetails: 'Risk of harm to staff' }],
+      },
+      {
+        id: randomUUID(),
+        displayOrder: 2,
+        label: `Will you put any reasonable adjustments in place to help ${firstName} take part in the planned activities?`,
+        key: 'REASONABLE_ADJUSTMENTS_FOR_PLANNED_ACTIVITIES',
+        answerType: 'RADIO',
+        maximumNumberOfResponses: 1,
+        choices: [
+          {
+            value: 'YES',
+            label: 'Yes',
+            displayOrder: 1,
+            displayAdditionalDetailsOnSelect: true,
+            additionalDetailsLabel: `Give details about what reasonable adjustments you will make and how this will support ${firstName}`,
+            additionalDetailsHint: `Details about what reasonable adjustments you will make and how this will support ${firstName}`,
+          },
+          {
+            value: 'NO',
+            label: 'No',
+            displayOrder: 2,
+            displayAdditionalDetailsOnSelect: false,
+          },
+        ],
+        savedResponses: transientParams.reasonableAdjustments ?? [
+          { value: 'YES', additionalDetails: 'Step-free access' },
+        ],
+      },
+    ],
+  }
+})
+
+export const actionPlanPersonInvolvementFactory = Factory.define<
+  ActionPlanSessionDeliveryDetailsResponse,
+  { firstName?: string; savedResponses?: SavedResponses }
+>(({ transientParams }) => {
+  const { firstName = 'Alex' } = transientParams
+
+  return {
+    questions: [
+      {
+        id: randomUUID(),
+        displayOrder: 1,
+        label: `Was ${firstName} involved in creating the action plan?`,
+        key: 'USER_INVOLVEMENT_IN_ACTION_PLAN',
+        hint: 'Select one option.',
+        answerType: 'RADIO',
+        maximumNumberOfResponses: 1,
+        choices: [
+          {
+            value: 'YES',
+            label: 'Yes',
+            displayOrder: 1,
+            displayAdditionalDetailsOnSelect: false,
+            additionalDetailsLabel: null,
+            additionalDetailsHint: null,
+          },
+          {
+            value: 'NO',
+            label: 'No',
+            displayOrder: 2,
+            displayAdditionalDetailsOnSelect: true,
+            additionalDetailsLabel: `Why was ${firstName} not involved?`,
+            additionalDetailsHint: null,
+          },
+        ],
+        savedResponses: transientParams.savedResponses ?? [{ value: 'NO', additionalDetails: 'User was sick' }],
+      },
+    ],
+  }
+})
+
+export const actionPlanCheckServiceEndDateFactory = Factory.define<
   ActionPlanSessionDeliveryDetailsResponse,
   { savedAnswer: SavedAnswer }
 >(({ transientParams }) => {
@@ -31,7 +226,7 @@ const actionPlanCheckServiceEndDateFactory = Factory.define<
           },
           {
             value: 'NO',
-            label: 'No, I need to change the date',
+            label: 'No',
             displayOrder: 2,
             displayAdditionalDetailsOnSelect: false,
             additionalDetailsLabel: null,
@@ -54,7 +249,8 @@ export const actionPlanUpdateServiceEndDateFactory = Factory.define<
     serviceEndDateChangeReason?: string | null
   }
 >(({ transientParams }) => {
-  const { newServiceEndDate, serviceEndDateChangeReason } = transientParams
+  const { newServiceEndDate = format(addDays(new Date(), 10), 'yyyy-MM-dd'), serviceEndDateChangeReason } =
+    transientParams
 
   return {
     questions: [

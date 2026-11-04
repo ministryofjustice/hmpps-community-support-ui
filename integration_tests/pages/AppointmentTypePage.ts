@@ -14,15 +14,11 @@ export default class AppointmentTypePage extends AbstractPage {
     return `/referral/${caseReference}/create-an-appointment/appointment-type`
   }
 
-  static detailsUrl(caseReference: string): string {
-    return `/referral/${caseReference}/create-an-appointment/appointment-details`
-  }
-
   private constructor(page: Page) {
     super(page)
-    this.heading = page.getByRole('heading', { level: 1 })
+    this.heading = page.getByText('Appointment type').first()
     this.backLink = page.getByRole('link', { name: 'Back', exact: true })
-    this.continueButton = page.getByRole('button', { name: 'Save and continue' })
+    this.continueButton = page.getByRole('button', { name: 'Continue', exact: true })
     this.errorSummary = page.locator('[data-testid="error-messages"]')
   }
 
@@ -34,7 +30,16 @@ export default class AppointmentTypePage extends AbstractPage {
   }
 
   radioOption(appointmentType: string): Locator {
-    return this.page.locator(`input[name="appointmentType"][value="${appointmentType}"]`)
+    const valueMap: Record<string, string> = {
+      ICS: 'ics',
+      CONTACT_SESSION: 'contact',
+      PRE_RELEASE_SESSION: 'pre-release',
+      POST_RELEASE_SESSION: 'post-release',
+      HANDOVER_SESSION: 'handover',
+    }
+
+    const normalisedValue = valueMap[appointmentType] ?? appointmentType
+    return this.page.locator(`input[name="appointmentType"][value="${normalisedValue}"]`)
   }
 
   async selectAppointmentType(appointmentType: string): Promise<void> {

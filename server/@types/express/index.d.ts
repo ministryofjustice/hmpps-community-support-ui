@@ -34,6 +34,7 @@ export interface IcsFeedbackHowSessionTookPlaceSession {
 export interface ActionPlanSessionDeliveryData {
   caseReference: string
   sessionDeliveryDetails?: ActionPlanSessionDeliveryDetailsRequest
+  isServiceEndDateChanged?: boolean
 }
 
 export interface ActionPlanActivity {
@@ -76,9 +77,11 @@ export declare module 'express-session' {
       needs: ActionPlanSelectANeedNeed[]
     }
     actionPlanAlertType?: 'ADD' | 'REMOVE'
+    actionPlanActivityAlertType?: 'ADD' | 'REMOVE'
     actionPlanAction?: {
       needId: string
       outcomeId?: string
+      outcomeAnswerId?: string
     }
     actionPlanActivities?: ActionPlanActivitiesData
     preChangeActivities?: ActionPlanActivitiesData

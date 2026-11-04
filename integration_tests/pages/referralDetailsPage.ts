@@ -1,8 +1,11 @@
 import { expect, type Locator, type Page } from '@playwright/test'
 import AbstractPage from './abstractPage'
 import SummaryList from './components/summaryList'
+import ReferralNavigation from './components/referralNavigation'
 
 export default class ReferralDetailsPage extends AbstractPage {
+  readonly navigation: ReferralNavigation
+
   private readonly successHeader: Locator
 
   private readonly singleAssignmentMessage: Locator
@@ -26,6 +29,7 @@ export default class ReferralDetailsPage extends AbstractPage {
     readonly alert: Locator,
   ) {
     super(page)
+    this.navigation = new ReferralNavigation(page)
     this.successHeader = page.locator('h3', { hasText: 'Case assigned' })
     this.singleAssignmentMessage = page
       .locator('[data-testid="success-message"] p')

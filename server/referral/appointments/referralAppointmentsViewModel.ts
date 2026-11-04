@@ -15,8 +15,6 @@ export type ReferralAppointmentsViewModel = {
 
 export type ReferralAppointmentsContent = {
   pageHeader: string
-  subNavTitle: string
-  subNavItems: { id: string; title: string }[]
   appointmentsTitle: string
   appointmentTypeColumnHeader: string
   dateTimeColumnHeader: string

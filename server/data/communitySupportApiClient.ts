@@ -30,9 +30,11 @@ import type {
   ReferralCriminogenicNeedsDto,
   CriminogenicNeedsRequest,
   ActionPlanSummaryDto,
+  ActionPlanSubmitResponse,
   ActionPlanActionRequest,
   ActionPlanActionResponse,
   ActionPlanSessionDeliveryDetailsResponse,
+  ActionPlanSessionDeliveryDetailsRequest,
   ActionPlanSelectANeedResponse,
   WithdrawalReasonsGroupedBffResponseDto,
   AreaConfirmationBffResponseDto,
@@ -53,6 +55,7 @@ import type {
   OffenceSentenceInfoBffResponseDto,
   WithdrawReferralRequest,
   ActionPlanNeedsOrderRequest,
+  ExistingSupportNeedsBffResponseDto,
 } from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
@@ -147,6 +150,14 @@ export default class CommunitySupportApiClient extends RestClient {
     return this.post({ path: `/referral/${caseRefId}/ics`, data: createAppointmentRequest }, asSystem(username))
   }
 
+  async submitAppointment(
+    caseRefId: string,
+    createAppointmentRequest: CreateAppointmentRequest,
+    username: string,
+  ): Promise<AppointmentIcsResponse> {
+    return this.post({ path: `/referral/${caseRefId}/appointment`, data: createAppointmentRequest }, asSystem(username))
+  }
+
   getReferralProgress(caseReference: string, username: string): Promise<ReferralProgress> {
     return this.get({ path: `/bff/referral-details/${caseReference}/progress` }, asSystem(username))
   }
@@ -188,6 +199,21 @@ export default class CommunitySupportApiClient extends RestClient {
     )
   }
 
+  submitActionPlan(caseReference: string, username: string): Promise<ActionPlanSubmitResponse> {
+    return this.post({ path: `/referral/${caseReference}/action-plan` }, asSystem(username))
+  }
+
+  submitServiceDeliveryDetails(
+    caseReference: string,
+    request: ActionPlanSessionDeliveryDetailsRequest,
+    username: string,
+  ): Promise<ActionPlanSessionDeliveryDetailsResponse> {
+    return this.patch(
+      { path: `/referral/${caseReference}/action-plan/session-delivery-details`, data: request },
+      asSystem(username),
+    )
+  }
+
   getRisksAndAdjustments(caseReference: string, username: string): Promise<ActionPlanSessionDeliveryDetailsResponse> {
     return this.get(
       { path: `/bff/referral/${caseReference}/action-plan/service-delivery-details/risks-and-adjustments` },
@@ -223,6 +249,19 @@ export default class CommunitySupportApiClient extends RestClient {
     )
   }
 
+  getSessionDeliveryCheckYourAnswers(
+    caseReference: string,
+    username: string,
+    isServiceEndDateChanged: boolean,
+  ): Promise<ActionPlanSessionDeliveryDetailsResponse> {
+    return this.get(
+      {
+        path: `/bff/referral/${caseReference}/action-plan/session-delivery-details/check-your-answers?isServiceEndDateChanged=${isServiceEndDateChanged}`,
+      },
+      asSystem(username),
+    )
+  }
+
   getIcsById(referralId: string, icsId: string, username: string): Promise<AppointmentIcsResponse> {
     return this.get({ path: `/bff/referral/${referralId}/ics/${icsId}` }, asSystem(username))
   }
@@ -254,6 +293,25 @@ export default class CommunitySupportApiClient extends RestClient {
 
   getAdditionalSupportNeeds(id: string, username: string): Promise<AdditionalSupportNeedsDto> {
     return this.get({ path: `/bff/draft-referral/additional-support-needs/${id}` }, asSystem(username))
+  }
+
+  async getExistingSupportNeeds(
+    caseReference: string,
+    username: string,
+  ): Promise<ExistingSupportNeedsBffResponseDto | null> {
+    try {
+      return await this.get<ExistingSupportNeedsBffResponseDto>(
+        { path: `/bff/referral/${caseReference}/existing-support-needs` },
+        asSystem(username),
+      )
+    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const err = error as any
+      if ((err?.responseStatus ?? err?.status ?? err?.response?.status) === 404) {
+        return null
+      }
+      throw error
+    }
   }
 
   getTaskListStatus(referralId: string, username: string): Promise<TaskListStatusDto> {

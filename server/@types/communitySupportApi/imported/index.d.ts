@@ -89,6 +89,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/referral/{referralReference}/action-plan': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Submit an action plan */
+    post: operations['submitActionPlan']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/referral/{referralReference}/action-plan/action': {
     parameters: {
       query?: never
@@ -548,23 +565,6 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/bff/referral/{referralReference}/action-plan/service-delivery-details/check-your-answers': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get the check your answers questions and saved answers of the service delivery details */
-    get: operations['getCheckYourAnswers']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
   '/bff/referral/{caseReference}/ics_appointment_feedback_details': {
     parameters: {
       query?: never
@@ -608,6 +608,23 @@ export interface paths {
     }
     /** Get a single ICS appointment by ID */
     get: operations['getIcsAppointment']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/referral/{caseReference}/existing-support-needs': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get Existing support needs */
+    get: operations['getExistingSupportNeeds']
     put?: never
     post?: never
     delete?: never
@@ -1278,6 +1295,10 @@ export interface components {
       reasonCode: string
       additionalDetails?: string | null
     }
+    ActionPlanSubmitResponse: {
+      success: boolean
+      message: string
+    }
     ActionPlanActionRequest: {
       /** Format: uuid */
       needId: string
@@ -1431,6 +1452,7 @@ export interface components {
       needs: components['schemas']['ActionPlanSummaryNeed'][]
       /** Format: date-time */
       lastUpdatedAt: string
+      isSubmitted: boolean
     }
     ActionPlanSummaryNeed: {
       /** Format: uuid */
@@ -1689,22 +1711,25 @@ export interface components {
       refereeName: components['schemas']['RefereeNameDto']
       details: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
     }
+    ContactDetailsDto: {
+      isProbationPractitioner: boolean
+      status: components['schemas']['TaskListStatusItem']
+    }
     TaskListStatusItem: {
       completed: boolean
       statusText: string
       tag?: string | null
     }
     TaskListStatusResponseDto: {
-      fullName: string
-      confirmPersonalDetailsCompleted: components['schemas']['TaskListStatusItem']
-      checkRiskInformationCompleted: components['schemas']['TaskListStatusItem']
-      selectThePersonsNeedsCompleted: components['schemas']['TaskListStatusItem']
-      addDetailsOfAnyAdditionalSupportNeedsCompleted: components['schemas']['TaskListStatusItem']
-      addAdditionalInformationCompleted: components['schemas']['TaskListStatusItem']
-      addDetailsOfMainPointOfContactCompleted: components['schemas']['TaskListStatusItem']
-      selectAnAreaForReferralCompleted: components['schemas']['TaskListStatusItem']
-      checkProbationPractitionerDetailsCompleted?: components['schemas']['TaskListStatusItem'] | null
-      addMainPointOfContactCompleted?: components['schemas']['TaskListStatusItem'] | null
+      refereeName: components['schemas']['RefereeNameDto']
+      confirmPersonalDetailsStatus: components['schemas']['TaskListStatusItem']
+      checkRiskInformationStatus: components['schemas']['TaskListStatusItem']
+      selectThePersonsNeedsStatus: components['schemas']['TaskListStatusItem']
+      addAdditionalSupportNeedsStatus: components['schemas']['TaskListStatusItem']
+      addAdditionalInformationStatus: components['schemas']['TaskListStatusItem']
+      selectAnAreaForReferralStatus: components['schemas']['TaskListStatusItem']
+      contactDetailsStatus: components['schemas']['ContactDetailsDto']
+      checkYourAnswersStatus: components['schemas']['TaskListStatusItem']
     }
     AppointmentDetailsDto: {
       /** @enum {string|null} */
@@ -1717,6 +1742,17 @@ export interface components {
       fullName: string
       appointmentDetails?: components['schemas']['AppointmentDetailsDto'] | null
       otherAppointmentMethods?: string[] | null
+    }
+    ExistingSupportNeedsBffResponseDto: {
+      physicalHealthDetails?: string | null
+      mentalEmotionalHealthDetails?: string | null
+      neurodiversityDetails?: string | null
+      locationTravelDetails?: string | null
+      caringResponsibilitiesDetails?: string | null
+      employmentResponsibilitiesDetails?: string | null
+      diversityDetails?: string | null
+      anythingElseDetails?: string | null
+      interpreterLanguage?: string | null
     }
     CreateAppointmentReferenceDataBffDto: {
       appointmentTypes: components['schemas']['CreateAppointmentTypeOptionDto'][]
@@ -2375,6 +2411,37 @@ export interface operations {
       }
       /** @description Referral already withdrawn */
       409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  submitActionPlan: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralReference: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Action plan submitted successfully */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ActionPlanSubmitResponse']
+        }
+      }
+      /** @description Referral or action not found */
+      404: {
         headers: {
           [name: string]: unknown
         }
@@ -3366,46 +3433,6 @@ export interface operations {
       }
     }
   }
-  getCheckYourAnswers: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        referralReference: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Session Delivery Check your answers questions and saved answers returned */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ActionPlanSessionDeliveryDetailsResponse']
-        }
-      }
-      /** @description Missing or invalid isServiceEndDateChanged query parameter */
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-      /** @description Referral not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
   getIcsFeedbackSession: {
     parameters: {
       query?: never
@@ -3490,6 +3517,37 @@ export interface operations {
         }
       }
       /** @description Appointment not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getExistingSupportNeeds: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        caseReference: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Existing support needs found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ExistingSupportNeedsBffResponseDto']
+        }
+      }
+      /** @description Existing support needs found */
       404: {
         headers: {
           [name: string]: unknown

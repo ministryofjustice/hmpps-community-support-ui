@@ -19,18 +19,17 @@ test.describe('Service End Date Page', () => {
   test.beforeEach(async ({ page }) => {
     await resetStubs()
     await communitySupport.stubGetTaskListStatus(referralId, {
-      fullName: 'Alex Rivers',
-      confirmPersonalDetailsCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-      checkRiskInformationCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-      selectThePersonsNeedsCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-      addDetailsOfAnyAdditionalSupportNeedsCompleted: {
+      refereeName: { firstName: 'Alex', lastName: 'Rivers' },
+      confirmPersonalDetailsStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+      checkRiskInformationStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+      selectThePersonsNeedsStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+      addAdditionalSupportNeedsStatus: {
         completed: false,
         statusText: 'Incomplete',
         tag: 'govuk-tag--blue',
       },
-      addDetailsOfMainPointOfContactCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-      addAdditionalInformationCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-      selectAnAreaForReferralCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+      addAdditionalInformationStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+      selectAnAreaForReferralStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
     })
     await page.goto('/')
     await login(page)
@@ -54,7 +53,11 @@ test.describe('Service End Date Page', () => {
     const serviceEndDatePage = await ServiceEndDatePage.verifyOnPage(page)
 
     await expect(serviceEndDatePage.header).toBeVisible()
-    await expect(page.getByText('This is the date by which the service should be completed.')).toBeVisible()
+    await expect(
+      page.getByText(
+        'This date must allow enough time to deliver the service and complete the end of service report. Do not use the licence end date or sentence end date.',
+      ),
+    ).toBeVisible()
     await expect(serviceEndDatePage.dayInput).toBeVisible()
     await expect(serviceEndDatePage.monthInput).toBeVisible()
     await expect(serviceEndDatePage.yearInput).toBeVisible()

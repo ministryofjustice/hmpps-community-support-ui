@@ -9,7 +9,7 @@ export default class ActionPlanSelectOutcomePresenter extends PresenterBase<
 > {
   constructor(
     private readonly caseReference: string,
-    private readonly fullName: string,
+    private readonly firstName: string,
     private readonly outcomes: Array<{ id: string; text: string }>,
     private readonly selectedOutcomeId?: string,
   ) {
@@ -24,7 +24,7 @@ export default class ActionPlanSelectOutcomePresenter extends PresenterBase<
       name: 'selectOutcomeRadio',
       fieldset: {
         legend: {
-          text: content.pageHeader.replace('{{ fullName }}', this.fullName),
+          text: content.pageHeader.replace('{{ firstName }}', this.firstName),
           isPageHeading: true,
           classes: 'govuk-fieldset__legend--l',
         },

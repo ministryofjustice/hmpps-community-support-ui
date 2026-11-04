@@ -1,32 +1,21 @@
 import type { Response } from 'express'
 import type { GovukFrontendTable } from '@govuk-frontend'
-import type { MojSubNavigation } from '@moj-frontend'
 import type { ReferralAppointmentsBffResponseDto } from '@community-support-api'
 import { formatDate } from 'date-fns'
 import { formatTime12Hr } from '../../utils/timeFormat'
-import PresenterBase from '../../presenter/presenterBase'
+import ReferralLayoutPresenter, { ReferralNavigationValues } from '../referralLayout/referralLayoutPresenter'
 import type { ReferralAppointmentsContent, ReferralAppointmentsViewModel } from './referralAppointmentsViewModel'
 
-type ReferralTab = 'caseDetails' | 'progress' | 'appointments' | 'changeLog'
-
-export default class ReferralAppointmentsPresenter extends PresenterBase<
+export default class ReferralAppointmentsPresenter extends ReferralLayoutPresenter<
   ReferralAppointmentsViewModel,
   ReferralAppointmentsContent
 > {
-  private readonly tabPaths: Record<ReferralTab, string>
-
   constructor(
     private readonly referralAppointments: ReferralAppointmentsBffResponseDto,
     private readonly caseReference: string,
     private readonly showSuccessAlert = false,
   ) {
-    super()
-    this.tabPaths = {
-      caseDetails: `/referral-details/${caseReference}`,
-      progress: `/progress/${caseReference}`,
-      appointments: `/referral/${caseReference}/appointments`,
-      changeLog: '#',
-    }
+    super(ReferralNavigationValues.appointmentsTab, caseReference)
   }
 
   protected getTemplatePath(): string {
@@ -40,7 +29,7 @@ export default class ReferralAppointmentsPresenter extends PresenterBase<
 
     return {
       pageHeader: `${content.pageHeader} ${firstName} ${lastName}`,
-      navBar: this.buildSubNav(content),
+      navBar: this.getMojSubNavigationArgs(),
       appointmentsTitle: content.appointmentsTitle,
       createAppointmentText: content.createAppointmentText,
       noAppointmentsMessage: content.noAppointmentsMessage,
@@ -53,17 +42,6 @@ export default class ReferralAppointmentsPresenter extends PresenterBase<
           html: `<h3 class="govuk-notification-banner__heading">${content.appointmentCreatedSuccessfully}</h3>`,
         },
       }),
-    }
-  }
-
-  private buildSubNav(content: ReferralAppointmentsContent): MojSubNavigation {
-    return {
-      label: content.subNavTitle,
-      items: (Object.keys(this.tabPaths) as ReferralTab[]).map(tab => ({
-        text: content.subNavItems.find(item => item.id === tab)?.title ?? tab,
-        href: this.tabPaths[tab],
-        active: tab === 'appointments',
-      })),
     }
   }
 

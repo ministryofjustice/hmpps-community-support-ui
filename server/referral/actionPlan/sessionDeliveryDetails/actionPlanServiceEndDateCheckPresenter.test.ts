@@ -26,7 +26,7 @@ describe('ActionPlanServiceEndDateCheckPresenter', () => {
           },
           {
             value: 'NO',
-            label: 'No, I need to change the date',
+            label: 'No',
             displayOrder: 2,
             displayAdditionalDetailsOnSelect: false,
             additionalDetailsLabel: null,
@@ -70,6 +70,36 @@ describe('ActionPlanServiceEndDateCheckPresenter', () => {
     expect(content.pageHeader).toBe('Service end date')
     expect(content.backLink).toEqual({ href: '/referral/AB1234CD/action-plan/risks-and-adjustments' })
     expect(content.submitButton).toEqual({ text: 'Continue' })
+  })
+
+  it.each([
+    { edit: true, saved: 'YES', submitted: undefined, expected: 'Save and continue' },
+    { edit: true, saved: 'NO', submitted: undefined, expected: 'Continue' },
+    { edit: true, saved: 'YES', submitted: 'NO', expected: 'Continue' },
+    { edit: true, saved: 'NO', submitted: 'YES', expected: 'Save and continue' },
+    { edit: false, saved: 'YES', submitted: undefined, expected: 'Continue' },
+    { edit: false, saved: 'NO', submitted: undefined, expected: 'Continue' },
+  ])('uses $expected with edit=$edit, saved=$saved, submitted=$submitted', ({ edit, saved, submitted, expected }) => {
+    const res = buildResponse()
+    const details: ActionPlanSessionDeliveryDetailsResponse = {
+      questions: sessionDeliveryDetails.questions.map(
+        (question): ActionPlanSessionDeliveryDetailsResponse['questions'][number] => ({
+          ...question,
+          savedResponses: [{ value: saved, additionalDetails: null }],
+        }),
+      ),
+    }
+    new ActionPlanServiceEndDateCheckPresenter(
+      'AB1234CD',
+      details,
+      undefined,
+      submitted ? { SERVICE_END_DATE_CHECK: submitted } : undefined,
+      edit,
+    ).renderPage(res)
+
+    const { content } = (res.render as jest.Mock).mock.calls[0][1]
+    expect(content.submitButton.text).toBe(expected)
+    expect(content.submitButton.attributes).toBeUndefined()
   })
 
   it('builds the service end date check radios', () => {

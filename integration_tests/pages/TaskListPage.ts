@@ -20,7 +20,7 @@ export default class TaskListPage extends AbstractPage {
   }
 
   get personalDetailsSection() {
-    return this.page.getByRole('heading', { name: 'Personal details' }).locator('..')
+    return this.page.getByRole('heading', { name: 'About Alex' }).locator('..')
   }
 
   get referralInformationSection() {
@@ -40,7 +40,7 @@ export default class TaskListPage extends AbstractPage {
   }
 
   get checkRiskInformationTask() {
-    return this.referralInformationSection.getByRole('link', { name: 'Check risk information' })
+    return this.personalDetailsSection.getByRole('link', { name: 'Check risk information' })
   }
 
   get selectPersonNeedsTask() {
@@ -48,7 +48,7 @@ export default class TaskListPage extends AbstractPage {
   }
 
   get addSupportNeedsTask() {
-    return this.referralInformationSection.getByRole('link', { name: 'Add details of any additional support needs' })
+    return this.personalDetailsSection.getByRole('link', { name: 'Add details of any additional support needs' })
   }
 
   get additionalReferralInformationTask() {
@@ -59,8 +59,14 @@ export default class TaskListPage extends AbstractPage {
     return this.contactDetailsSection.getByRole('link', { name: 'Add details of main point of contact' })
   }
 
+  get checkProbationPractitionerDetailsTask() {
+    return this.contactDetailsSection.getByRole('link', { name: "Check probation practitioner's details" })
+  }
+
   get checkAnswersTask() {
-    return this.checkAnswersSection.getByRole('link', { name: 'Check answers and submit' })
+    return this.checkAnswersSection
+      .getByRole('link', { name: 'Check answers and submit' })
+      .or(this.checkAnswersSection.getByText('Check answers and submit').nth(1))
   }
 
   async clickPersonalDetailsTask() {
@@ -107,7 +113,9 @@ export default class TaskListPage extends AbstractPage {
     await expect(taskListPage.addSupportNeedsTask).toBeVisible()
     await expect(taskListPage.additionalReferralInformationTask).toBeVisible()
     await expect(taskListPage.contactDetailsSection).toBeVisible()
-    await expect(taskListPage.addContactDetailsTask).toBeVisible()
+    await expect(
+      taskListPage.addContactDetailsTask.or(taskListPage.checkProbationPractitionerDetailsTask),
+    ).toBeVisible()
     await expect(taskListPage.checkAnswersSection).toBeVisible()
     await expect(taskListPage.checkAnswersTask).toBeVisible()
 

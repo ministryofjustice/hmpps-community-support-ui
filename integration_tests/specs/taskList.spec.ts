@@ -37,38 +37,33 @@ test.describe('Task List Journey', () => {
       deliveryPartner: '',
     })
     await communitySupport.stubGetTaskListStatus(referralId, {
-      fullName: `${firstName} ${lastName}`,
-      confirmPersonalDetailsCompleted: {
+      refereeName: { firstName, lastName },
+      confirmPersonalDetailsStatus: {
+        completed: true,
+        statusText: 'Completed',
+        tag: 'govuk-tag--blue',
+      },
+      checkRiskInformationStatus: {
         completed: false,
         statusText: 'Incomplete',
         tag: 'govuk-tag--blue',
       },
-      checkRiskInformationCompleted: {
+      selectAnAreaForReferralStatus: {
         completed: false,
         statusText: 'Incomplete',
         tag: 'govuk-tag--blue',
       },
-      selectAnAreaForReferralCompleted: {
+      selectThePersonsNeedsStatus: {
         completed: false,
         statusText: 'Incomplete',
         tag: 'govuk-tag--blue',
       },
-      selectThePersonsNeedsCompleted: {
+      addAdditionalSupportNeedsStatus: {
         completed: false,
         statusText: 'Incomplete',
         tag: 'govuk-tag--blue',
       },
-      addDetailsOfAnyAdditionalSupportNeedsCompleted: {
-        completed: false,
-        statusText: 'Incomplete',
-        tag: 'govuk-tag--blue',
-      },
-      addAdditionalInformationCompleted: {
-        completed: false,
-        statusText: 'Incomplete',
-        tag: 'govuk-tag--blue',
-      },
-      addDetailsOfMainPointOfContactCompleted: {
+      addAdditionalInformationStatus: {
         completed: false,
         statusText: 'Incomplete',
         tag: 'govuk-tag--blue',
@@ -86,7 +81,7 @@ test.describe('Task List Journey', () => {
         await pom.enterIdentifyierAndContinue('X320741')
       })
       await test.step('confirm person', async () => {
-        await expect(page.getByRole('heading', { name: 'Confirm this is the correct' })).toBeVisible()
+        await expect(page.getByRole('heading', { name: 'Check and confirm personal details' })).toBeVisible()
         await page.getByRole('button', { name: 'Continue' }).click()
       })
       await test.step('confirm task list page', async () => {
@@ -138,7 +133,7 @@ test.describe('Task List Journey', () => {
 
     await test.step('select confirm personal details task', async () => {
       const taskListPom = await TaskListPage.verifyOnPage(page)
-      await taskListPom.verifyTaskStatus('Personal details', 'Confirm personal details', 'Completed')
+      await taskListPom.verifyTaskStatus('About Alex', 'Confirm personal details', 'Completed')
       await taskListPom.clickPersonalDetailsTask()
     })
     await test.step('confirm personal details page', async () => {
@@ -150,38 +145,33 @@ test.describe('Task List Journey', () => {
     })
     await test.step('return to task list', async () => {
       await communitySupport.stubGetTaskListStatus(referralId, {
-        fullName: 'Alex Rivers',
-        confirmPersonalDetailsCompleted: {
+        refereeName: { firstName: 'Alex', lastName: 'Rivers' },
+        confirmPersonalDetailsStatus: {
           completed: true,
           statusText: '',
           tag: undefined,
         },
-        checkRiskInformationCompleted: {
+        checkRiskInformationStatus: {
           completed: false,
           statusText: '',
           tag: undefined,
         },
-        selectAnAreaForReferralCompleted: {
+        selectAnAreaForReferralStatus: {
           completed: false,
           statusText: '',
           tag: undefined,
         },
-        selectThePersonsNeedsCompleted: {
+        selectThePersonsNeedsStatus: {
           completed: false,
           statusText: '',
           tag: undefined,
         },
-        addDetailsOfAnyAdditionalSupportNeedsCompleted: {
+        addAdditionalSupportNeedsStatus: {
           completed: false,
           statusText: '',
           tag: undefined,
         },
-        addAdditionalInformationCompleted: {
-          completed: false,
-          statusText: '',
-          tag: undefined,
-        },
-        addDetailsOfMainPointOfContactCompleted: {
+        addAdditionalInformationStatus: {
           completed: false,
           statusText: '',
           tag: undefined,
@@ -195,11 +185,7 @@ test.describe('Task List Journey', () => {
   // AC9 - Persist incomplete status
   test('should display Incomplete status for additional support needs task', async ({ page }) => {
     const taskListPom = await TaskListPage.verifyOnPage(page)
-    await taskListPom.verifyTaskStatus(
-      'Referral information',
-      'Add details of any additional support needs',
-      'Incomplete',
-    )
+    await taskListPom.verifyTaskStatus('About Alex', 'Add details of any additional support needs', 'Incomplete')
   })
 
   // AC5 - Navigate to Additional support needs
@@ -229,43 +215,37 @@ test.describe('Task List Journey', () => {
     page,
   }) => {
     await communitySupport.stubGetTaskListStatus(referralId, {
-      fullName: 'Alex Rivers',
-      confirmPersonalDetailsCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-      checkRiskInformationCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-      selectAnAreaForReferralCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-      selectThePersonsNeedsCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-      addDetailsOfAnyAdditionalSupportNeedsCompleted: {
+      refereeName: { firstName: 'Alex', lastName: 'Rivers' },
+      confirmPersonalDetailsStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+      checkRiskInformationStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+      selectAnAreaForReferralStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+      selectThePersonsNeedsStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+      addAdditionalSupportNeedsStatus: {
         completed: true,
         statusText: 'Completed',
         tag: undefined,
       },
-      addAdditionalInformationCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-      addDetailsOfMainPointOfContactCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+      addAdditionalInformationStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
     })
     await page.goto('/referral/task-list')
     const taskListPom = await TaskListPage.verifyOnPage(page)
-    await taskListPom.verifyTaskStatus(
-      'Referral information',
-      'Add details of any additional support needs',
-      'Completed',
-    )
+    await taskListPom.verifyTaskStatus('About Alex', 'Add details of any additional support needs', 'Completed')
   })
 
   // AC10 - Maintain Completed Status When Revisiting additional support needs Task
   test('should maintain Completed status when revisiting additional support needs task', async ({ page }) => {
     await communitySupport.stubGetTaskListStatus(referralId, {
-      fullName: 'Alex Rivers',
-      confirmPersonalDetailsCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-      checkRiskInformationCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-      selectAnAreaForReferralCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-      selectThePersonsNeedsCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-      addDetailsOfAnyAdditionalSupportNeedsCompleted: {
+      refereeName: { firstName: 'Alex', lastName: 'Rivers' },
+      confirmPersonalDetailsStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+      checkRiskInformationStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+      selectAnAreaForReferralStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+      selectThePersonsNeedsStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+      addAdditionalSupportNeedsStatus: {
         completed: true,
         statusText: 'Completed',
         tag: undefined,
       },
-      addAdditionalInformationCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
-      addDetailsOfMainPointOfContactCompleted: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
+      addAdditionalInformationStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
     })
     await communitySupport.stubGetAdditionalSupportNeeds(referralId, {
       refereeName: { firstName: 'Alex', lastName: 'Rivers' },
@@ -281,11 +261,7 @@ test.describe('Task List Journey', () => {
     })
     await page.goto('/referral/task-list')
     const taskListPom = await TaskListPage.verifyOnPage(page)
-    await taskListPom.verifyTaskStatus(
-      'Referral information',
-      'Add details of any additional support needs',
-      'Completed',
-    )
+    await taskListPom.verifyTaskStatus('About Alex', 'Add details of any additional support needs', 'Completed')
     await taskListPom.clickAddSupportNeedsTask()
     await expect(page).toHaveURL(/additional-support-needs/)
     await expect(
@@ -293,11 +269,7 @@ test.describe('Task List Journey', () => {
     ).toBeVisible()
     await page.goto('/referral/task-list')
     await TaskListPage.verifyOnPage(page)
-    await taskListPom.verifyTaskStatus(
-      'Referral information',
-      'Add details of any additional support needs',
-      'Completed',
-    )
+    await taskListPom.verifyTaskStatus('About Alex', 'Add details of any additional support needs', 'Completed')
   })
   test.describe('Additional support needs journey', () => {
     test.beforeEach(async () => {
@@ -698,14 +670,10 @@ test.describe.skip('Task List Page', () => {
   test.skip('should display task list correctly', async ({ page }) => {
     await page.goto(TaskListPage.url())
     const taskListPage = await TaskListPage.verifyOnPage(page)
-    await taskListPage.verifyTaskStatus('Personal details', 'Confirm personal details', 'Incomplete')
-    await taskListPage.verifyTaskStatus('Referral information', 'Check risk information', 'Incomplete')
+    await taskListPage.verifyTaskStatus('About Alex', 'Confirm personal details', 'Incomplete')
+    await taskListPage.verifyTaskStatus('About Alex', 'Check risk information', 'Incomplete')
     await taskListPage.verifyTaskStatus('Referral information', `Select the person's needs`, 'Incomplete')
-    await taskListPage.verifyTaskStatus(
-      'Referral information',
-      'Add details of any additional support needs',
-      'Incomplete',
-    )
+    await taskListPage.verifyTaskStatus('About Alex', 'Add details of any additional support needs', 'Incomplete')
     await taskListPage.verifyTaskStatus(
       'Referral contact details',
       'Add details of main point of contact',
@@ -720,14 +688,10 @@ test.describe.skip('Task List Page', () => {
   }) => {
     await page.goto(TaskListPage.url())
     const taskListPage = await TaskListPage.verifyOnPage(page)
-    await taskListPage.verifyTaskStatus('Personal details', 'Confirm personal details', 'Completed')
-    await taskListPage.verifyTaskStatus('Referral information', 'Check risk information', 'Completed')
+    await taskListPage.verifyTaskStatus('About Alex', 'Confirm personal details', 'Completed')
+    await taskListPage.verifyTaskStatus('About Alex', 'Check risk information', 'Completed')
     await taskListPage.verifyTaskStatus('Referral information', `Select the person's needs`, 'Completed')
-    await taskListPage.verifyTaskStatus(
-      'Referral information',
-      'Add details of any additional support needs',
-      'Completed',
-    )
+    await taskListPage.verifyTaskStatus('About Alex', 'Add details of any additional support needs', 'Completed')
     await taskListPage.verifyTaskStatus('Referral contact details', 'Add details of main point of contact', 'Completed')
     await taskListPage.verifyTaskStatus('Check answers and submit', 'Check answers and submit', 'Completed')
     await taskListPage.verifyCheckAnswersLink(referralInformationTaskList.referralId)

@@ -1911,12 +1911,13 @@ const prisonsData: Prison[] = [
 
 const createAppointmentReferenceData: CreateAppointmentReferenceDataBffDto = {
   appointmentTypes: [
-    { name: 'Contact session', value: 'CONTACT_SESSION' },
-    { name: 'Pre-release session', value: 'PRE_RELEASE_SESSION' },
-    { name: 'Post-release session', value: 'POST_RELEASE_SESSION' },
-    { name: 'Handover session', value: 'HANDOVER_SESSION' },
+    { name: 'Contact session', value: 'contact' },
+    { name: 'Initial contact session', value: 'ics' },
+    { name: 'Handover session', value: 'handover' },
+    { name: 'Post-release session', value: 'post-release' },
+    { name: 'Pre-release session', value: 'pre-release' },
   ],
-  probationOfficeLocations: [],
+  probationOfficeLocations: [{ id: 2, name: 'Derbyshire: Buxton Probation Office' }],
 }
 
 export { createAppointmentReferenceData, prisonsData, probationOfficesData }

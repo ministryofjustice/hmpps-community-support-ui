@@ -26,6 +26,7 @@ export default class ActionPlanServiceUserInvolvementPresenter extends Presenter
     private readonly sessionDeliveryDetails: ActionPlanSessionDeliveryDetailsResponse,
     private readonly validationErrors?: ErrorMiddlewareErrors,
     private readonly userInputData?: Record<string, string | string[]>,
+    private readonly isCheckAnswersEdit = false,
   ) {
     super()
   }
@@ -113,8 +114,12 @@ export default class ActionPlanServiceUserInvolvementPresenter extends Presenter
     const whyNotInvolved = userInvolvementInActionPlanQuestion.choices.find(c => c.value === 'NO')!
     return {
       pageTitle: content.pageTitle,
-      backLink: { href: content.backLink.replace('{{ id }}', this.caseReference) },
-      submitButton: { text: content.continueButtonText },
+      backLink: {
+        href: this.isCheckAnswersEdit
+          ? content.editBackLink.replace('{{ id }}', this.caseReference)
+          : content.backLink.replace('{{ id }}', this.caseReference),
+      },
+      submitButton: { text: this.isCheckAnswersEdit ? content.saveAndContinueButtonText : content.continueButtonText },
       userInvolvementInActionPlanRadioArgs: (whyNotInvolvedTextHtml: string) =>
         this.buildRadioQuestion(userInvolvementInActionPlanQuestion, { NO: whyNotInvolvedTextHtml }),
       whyNotInvolvedTextBoxArgs: this.buildAdditionalDetailsTextareaQuestion(

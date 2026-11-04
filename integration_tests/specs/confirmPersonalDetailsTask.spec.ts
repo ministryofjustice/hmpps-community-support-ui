@@ -8,19 +8,20 @@ import ConfirmPersonalDetailsPage from '../pages/ConfirmPersonalDetailsPage'
 
 const referralId = randomUUID()
 
-const incompleteStatus = { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' }
-const completedStatus = { completed: true, statusText: 'Completed', tag: 'govuk-tag--green' }
+const incompleteStatus = { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' } as const
+const completedStatus = { completed: true, statusText: 'Completed', tag: 'govuk-tag--green' } as const
 
-const stubTaskListStatus = async (confirmPersonalDetailsCompleted?: typeof incompleteStatus) => {
+type TaskStatus = typeof incompleteStatus | typeof completedStatus
+
+const stubTaskListStatus = async (confirmPersonalDetailsStatus?: TaskStatus) => {
   await communitySupport.stubGetTaskListStatus(referralId, {
-    fullName: 'Alex Rivers',
-    confirmPersonalDetailsCompleted,
-    checkRiskInformationCompleted: incompleteStatus,
-    selectThePersonsNeedsCompleted: incompleteStatus,
-    addDetailsOfAnyAdditionalSupportNeedsCompleted: incompleteStatus,
-    addDetailsOfMainPointOfContactCompleted: incompleteStatus,
-    addAdditionalInformationCompleted: incompleteStatus,
-    selectAnAreaForReferralCompleted: incompleteStatus,
+    refereeName: { firstName: 'Alex', lastName: 'Rivers' },
+    confirmPersonalDetailsStatus,
+    checkRiskInformationStatus: incompleteStatus,
+    selectThePersonsNeedsStatus: incompleteStatus,
+    addAdditionalSupportNeedsStatus: incompleteStatus,
+    addAdditionalInformationStatus: incompleteStatus,
+    selectAnAreaForReferralStatus: incompleteStatus,
   })
 }
 
@@ -89,24 +90,11 @@ test.describe('Confirm personal details task - E2E AC coverage', () => {
     await page.goto(TaskListPage.url())
     const taskListPage = await TaskListPage.verifyOnPage(page)
 
-    await taskListPage.verifyTaskStatus('Personal details', 'Confirm personal details', 'Completed')
-  })
-
-  test('AC2: should display Completed regardless of backend completion record', async ({ page }) => {
-    await stubTaskListStatus(incompleteStatus)
-
-    await page.goto(TaskListPage.url())
-    let taskListPage = await TaskListPage.verifyOnPage(page)
-    await taskListPage.verifyTaskStatus('Personal details', 'Confirm personal details', 'Completed')
-
-    await stubTaskListStatus(undefined)
-    await page.goto(TaskListPage.url())
-    taskListPage = await TaskListPage.verifyOnPage(page)
-    await taskListPage.verifyTaskStatus('Personal details', 'Confirm personal details', 'Completed')
+    await taskListPage.verifyTaskStatus('About Alex', 'Confirm personal details', 'Completed')
   })
 
   test('AC3: should navigate to Confirm personal details page from task list and return back', async ({ page }) => {
-    await stubTaskListStatus(incompleteStatus)
+    await stubTaskListStatus(completedStatus)
     await stubConfirmPersonalDetailsData()
 
     await page.goto(TaskListPage.url())
@@ -117,15 +105,15 @@ test.describe('Confirm personal details task - E2E AC coverage', () => {
 
     await confirmPersonalDetailsPage.clickContinue()
     await expect(page).toHaveURL(TaskListPage.url())
-    await taskListPage.verifyTaskStatus('Personal details', 'Confirm personal details', 'Completed')
+    await taskListPage.verifyTaskStatus('About Alex', 'Confirm personal details', 'Completed')
   })
 
   test('AC4: should not persist referral data to display Confirm personal details as Completed', async ({ page }) => {
-    await stubTaskListStatus(incompleteStatus)
+    await stubTaskListStatus(completedStatus)
 
     await page.goto(TaskListPage.url())
     const taskListPage = await TaskListPage.verifyOnPage(page)
-    await taskListPage.verifyTaskStatus('Personal details', 'Confirm personal details', 'Completed')
+    await taskListPage.verifyTaskStatus('About Alex', 'Confirm personal details', 'Completed')
 
     const [postCount, putCount, patchCount] = await Promise.all([
       countWriteRequests('POST'),

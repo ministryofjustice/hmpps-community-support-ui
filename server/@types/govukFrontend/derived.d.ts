@@ -1,8 +1,10 @@
+import { Selection } from '@community-support-api'
 import {
   GovukFrontendCheckboxes,
   GovukFrontendCheckboxesItem,
   GovukFrontendRadios,
   GovukFrontendRadiosItem,
+  GovukFrontendTextarea,
 } from '@govuk-frontend'
 
 export type ConditionalInput = {
@@ -21,4 +23,10 @@ export type GovukFrontendRadiosWithConditional = Omit<GovukFrontendRadios, 'item
 
 export type GovukFrontendCheckboxesWithConditional = Omit<GovukFrontendCheckboxes, 'items'> & {
   items: WithConditional<GovukFrontendCheckboxesItem>[]
+}
+
+export interface YesWithDetailOrNo {
+  details: Omit<GovukFrontendTextarea, 'value'>
+  main: Omit<GovukFrontendRadios, 'items'>
+  value: Selection
 }
