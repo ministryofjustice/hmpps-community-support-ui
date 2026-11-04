@@ -10,7 +10,6 @@ export type ActionPlanSessionDeliveryDetailsViewModel = {
   pageHeader: string
   backLink: GovukFrontendBackLink
   submitButton: GovukFrontendButton
-  submitHref: string
   frequencyTextBoxArgs: GovukFrontendTextarea
   howRadioArgs: (videoCallHtml: string, phoneCallHtml: string) => GovukFrontendRadiosWithConditional
   videoCallReasonTextBoxArgs: GovukFrontendTextarea
