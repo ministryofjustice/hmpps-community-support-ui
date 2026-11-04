@@ -66,6 +66,7 @@ export declare module 'express-session' {
       target_service_completion_reason?: string
     }
     referralProgressBanner?: ReferralProgressBannerContent
+    referralAppointmentsSuccessCaseReference?: string
     referralDetailsNotification?: ReferralDetailsNotification
     icsFeedbackSubmission: IcsFeedbackSubmission & { caseReferenceId: string }
     draftReferralId: string

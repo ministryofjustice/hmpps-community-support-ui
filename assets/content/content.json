@@ -329,7 +329,14 @@
     "appointmentTypeColumnHeader": "Appointment",
     "dateTimeColumnHeader": "Date and time",
     "noAppointmentsMessage": "No appointments scheduled",
-    "createAppointmentText": "Create an Appointment"
+    "createAppointmentText": "Create an Appointment",
+    "appointmentCreatedSuccessfully": "Appointment created successfully",
+    "subNavItems": [
+      { "id": "caseDetails", "title": "Case details" },
+      { "id": "progress", "title": "Progress" },
+      { "id": "appointments", "title": "Appointments" },
+      { "id": "changeLog", "title": "Change log" }
+    ]
   },
   "/referral/:id/appointment/select-type": {
     "pageTitle": "Select appointment type",
