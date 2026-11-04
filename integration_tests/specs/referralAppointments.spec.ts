@@ -68,8 +68,10 @@ test.describe('Referral Appointments Page', () => {
     ])
     await expect(page.getByRole('heading', { name: 'Upcoming appointments', exact: true })).toBeVisible()
     await expect(page.getByRole('heading', { name: 'Past appointments', exact: true })).toBeVisible()
+    await expect(appointmentsPage.noAppointmentsMessage).toHaveCount(0)
+    await expect(appointmentsPage.bookAppointmentButton).toHaveAttribute('href', AppointmentTypePage.url(caseReference))
 
-    await appointmentsPage.createAppointmentLink.click()
+    await appointmentsPage.bookAppointmentButton.click()
     await expect(page).toHaveURL(AppointmentTypePage.url(caseReference))
     await AppointmentTypePage.verifyOnPage(page)
   })
@@ -102,13 +104,14 @@ test.describe('Referral Appointments Page', () => {
     await page.goto(ReferralAppointmentsPage.url(caseReference))
 
     const appointmentsPage = new ReferralAppointmentsPage(page)
+    await appointmentsPage.verifyOnPage()
     await expect(appointmentsPage.header).toHaveText('Referral for Alex Example')
-    await expect(page.locator('[data-testid="no-appointments-message"]')).toHaveText('No appointments scheduled')
+    await expect(appointmentsPage.noAppointmentsMessage).toHaveText('No appointments scheduled')
     await expect(appointmentsPage.appointmentsTable).toHaveCount(0)
     await expect(page.getByRole('heading', { name: 'Upcoming appointments', exact: true })).toHaveCount(0)
     await expect(page.getByRole('heading', { name: 'Past appointments', exact: true })).toHaveCount(0)
-    await expect(appointmentsPage.createAppointmentLink).toBeVisible()
-    await expect(appointmentsPage.createAppointmentLink).toHaveAttribute(
+    await expect(appointmentsPage.bookAppointmentButton).toBeVisible()
+    await expect(appointmentsPage.bookAppointmentButton).toHaveAttribute(
       'href',
       `/referral/${caseReference}/create-an-appointment/appointment-type`,
     )

@@ -7,7 +7,9 @@ export default class ReferralAppointmentsPage extends AbstractPage {
 
   readonly appointmentsTable: Locator
 
-  readonly createAppointmentLink: Locator
+  readonly bookAppointmentButton: Locator
+
+  readonly noAppointmentsMessage: Locator
 
   readonly navigation: ReferralNavigation
 
@@ -20,11 +22,13 @@ export default class ReferralAppointmentsPage extends AbstractPage {
     this.navigation = new ReferralNavigation(page)
     this.header = page.locator('h1')
     this.appointmentsTable = page.locator('[data-testid="referral-appointments-table"]')
-    this.createAppointmentLink = page.getByRole('link', { name: 'Book appointment', exact: true })
+    this.bookAppointmentButton = page.getByRole('button', { name: 'Book appointment', exact: true })
+    this.noAppointmentsMessage = page.locator('[data-testid="no-appointments-message"]')
   }
 
   async verifyOnPage(): Promise<void> {
     await expect(this.header).toBeVisible()
-    await expect(this.appointmentsTable).toBeVisible()
+    await expect(this.bookAppointmentButton).toBeVisible()
+    await expect(this.appointmentsTable.or(this.noAppointmentsMessage)).toBeVisible()
   }
 }
