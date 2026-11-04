@@ -310,18 +310,18 @@ describe('ActionPlanSessionDeliveryDetailsPresenter', () => {
     const content = renderAndGetContent('AB1234CD', sessionDeliveryDetails, {
       list: [],
       messages: {
-        SESSION_FREQUENCY: { text: 'Enter how often the sessions will take place' },
+        SESSION_FREQUENCY: { text: 'Enter how often sessions will take place' },
         SESSION_DELIVERY_METHOD: { text: 'Select how the sessions will take place' },
-        SESSION_FORMAT: { text: 'Select which format you will use for the sessions' },
+        SESSION_FORMAT: { text: 'Select what format you will use for the sessions' },
         VIDEO_CALL: { text: 'Enter why the sessions are not in person' },
         PHONE_CALL: { text: 'Enter why the sessions are not in person' },
       },
     })
 
-    expect(content.frequencyTextBoxArgs.errorMessage).toEqual({ text: 'Enter how often the sessions will take place' })
+    expect(content.frequencyTextBoxArgs.errorMessage).toEqual({ text: 'Enter how often sessions will take place' })
     expect(content.howRadioArgs('', '').errorMessage).toEqual({ text: 'Select how the sessions will take place' })
     expect(content.formatCheckboxArgs.errorMessage).toEqual({
-      text: 'Select which format you will use for the sessions',
+      text: 'Select what format you will use for the sessions',
     })
     expect(content.videoCallReasonTextBoxArgs.errorMessage).toEqual({
       text: 'Enter why the sessions are not in person',
