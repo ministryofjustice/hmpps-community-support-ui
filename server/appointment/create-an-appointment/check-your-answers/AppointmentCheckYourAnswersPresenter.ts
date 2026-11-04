@@ -4,7 +4,7 @@ import { Response } from 'express'
 import { format } from 'date-fns'
 import PresenterBase from '../../../presenter/presenterBase'
 import { formatIsoDateOrNull } from '../../../utils/dateFormat'
-import { govFrontendSummaryListRow } from '../../../utils/viewUtils'
+import { escapeSpecialHtmlCharacters, govFrontendSummaryListRow } from '../../../utils/viewUtils'
 import AppointmentSessionData from '../AppointmentSessionData'
 import { getAppointmentMethodLabel, normaliseAppointmentMethod } from '../appointmentMethod'
 import { getAppointmentTypeLabel } from '../appointmentTypeLabel'
@@ -34,11 +34,14 @@ export default class AppointmentCheckYourAnswersPresenter extends PresenterBase<
       this.appointmentSessionData.appointmentType,
       this.appointmentTypes,
     )
-    const appointmentTypeLabelForSentence = appointmentTypeLabel === 'ICS' ? 'ICS' : appointmentTypeLabel.toLowerCase()
+    const appointmentTypeLabelForSentence =
+      appointmentTypeLabel === 'Initial contact session' || appointmentTypeLabel === 'ICS'
+        ? 'ICS'
+        : appointmentTypeLabel.toLowerCase()
 
     return {
-      pageTitle: `Check the details before scheduling the ${appointmentTypeLabelForSentence}`,
-      pageHeader: `Check the details before scheduling the ${appointmentTypeLabelForSentence}`,
+      pageTitle: `Check the details before booking the ${appointmentTypeLabelForSentence}`,
+      pageHeader: `Check the details before booking the ${appointmentTypeLabelForSentence}`,
       submitHref: content.submitHref.replace(/caseRefId|\{\{ id \}\}/g, this.caseRefId),
       submitButtonText: content.submitButtonText,
       backLink: { href: content.backLink.replace(/caseRefId|\{\{ id \}\}/g, this.caseRefId) },
@@ -53,13 +56,13 @@ export default class AppointmentCheckYourAnswersPresenter extends PresenterBase<
   private buildAppointmentSummary(content: AppointmentCheckYourAnswersContent, appointmentTypeLabel: string) {
     return {
       card: {
-        title: { text: `${appointmentTypeLabel} details` },
+        title: { text: appointmentTypeLabel },
         actions: {
           items: [
             {
               href: content.changeLinkHref.replace(/caseRefId|\{\{ id \}\}/g, this.caseRefId),
               text: content.changeLinkText,
-              visuallyHiddenText: `${appointmentTypeLabel} details`,
+              visuallyHiddenText: appointmentTypeLabel,
             },
           ],
         },
@@ -75,9 +78,9 @@ export default class AppointmentCheckYourAnswersPresenter extends PresenterBase<
       govFrontendSummaryListRow(content.methodLabel, this.formatMethod(this.appointmentSessionData.method)),
     ]
 
-    const locationRow = this.buildLocationRow(content)
-    if (locationRow) {
-      rows.push(locationRow)
+    const methodDetailRow = this.buildMethodDetailRow(content)
+    if (methodDetailRow) {
+      rows.push(methodDetailRow)
     }
 
     const meetAtTheGateRow = this.buildMeetAtTheGateRow(content)
@@ -108,9 +111,16 @@ export default class AppointmentCheckYourAnswersPresenter extends PresenterBase<
     return informedBy.length > 0
   }
 
-  private buildLocationRow(content: AppointmentCheckYourAnswersContent): GovukFrontendSummaryListRow | undefined {
+  private buildMethodDetailRow(content: AppointmentCheckYourAnswersContent): GovukFrontendSummaryListRow | undefined {
     const method = normaliseAppointmentMethod(this.appointmentSessionData.method)
-    if (!method || !['IN_PERSON_PROBATION_OFFICE', 'IN_PERSON_OTHER_LOCATION'].includes(method)) {
+    if (method === 'PHONE' || method === 'VIDEO') {
+      return govFrontendSummaryListRow(
+        content.reasonSessionNotInPersonLabel,
+        this.appointmentSessionData.reasonSessionNotInPerson || '',
+      )
+    }
+
+    if (method !== 'IN_PERSON_PROBATION_OFFICE' && method !== 'IN_PERSON_OTHER_LOCATION') {
       return undefined
     }
 
@@ -119,13 +129,21 @@ export default class AppointmentCheckYourAnswersPresenter extends PresenterBase<
       return undefined
     }
 
-    return govFrontendSummaryListRow(content.locationLabel, location)
+    const label =
+      method === 'IN_PERSON_PROBATION_OFFICE' ? content.probationOfficeLabel : content.appointmentAddressLabel
+
+    if (method === 'IN_PERSON_OTHER_LOCATION' && this.appointmentSessionData.addressLines) {
+      const locationHtml = this.appointmentSessionData.addressLines.map(escapeSpecialHtmlCharacters).join('<br>')
+      return govFrontendSummaryListRow(label, { html: locationHtml })
+    }
+
+    return govFrontendSummaryListRow(label, location)
   }
 
   private formatLocation(): string {
     const method = normaliseAppointmentMethod(this.appointmentSessionData.method)
-    if (method === 'IN_PERSON_OTHER_LOCATION' && this.appointmentSessionData.location) {
-      return this.appointmentSessionData.location
+    if (method === 'IN_PERSON_OTHER_LOCATION') {
+      return this.appointmentSessionData.addressLines?.join(', ') || ''
     }
 
     const locationId = this.appointmentSessionData.probationOfficeLocationId
@@ -168,6 +186,14 @@ export default class AppointmentCheckYourAnswersPresenter extends PresenterBase<
   }
 
   private formatMethod(method?: string): string {
+    const normalisedMethod = normaliseAppointmentMethod(method)
+    if (normalisedMethod === 'IN_PERSON_PROBATION_OFFICE') {
+      return 'In person: probation office'
+    }
+    if (normalisedMethod === 'IN_PERSON_OTHER_LOCATION') {
+      return 'In person: another address'
+    }
+
     return getAppointmentMethodLabel(method)
   }
 
