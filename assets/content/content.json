@@ -333,7 +333,7 @@
     "bookAppointmentText": "Book appointment",
     "bookAppointmentHref": "/referral/{{ id }}/create-an-appointment/appointment-type",
     "upcomingAppointmentsTitle": "Upcoming appointments",
-    "pastAppointmentsTitle": "Past appointments"
+    "pastAppointmentsTitle": "Past appointments",
     "createAppointmentText": "Create an Appointment",
     "appointmentCreatedSuccessfully": "Appointment created successfully",
     "subNavItems": [
