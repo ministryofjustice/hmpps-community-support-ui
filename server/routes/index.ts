@@ -336,6 +336,10 @@ export default function routes({
     actionPlanController.submitServiceEndDateCheckPage(req, res),
   )
 
+  post('/referral/:id/action-plan/change-service-end-date-check', (req, res) =>
+    actionPlanController.submitServiceEndDateCheckPage(req, res, true),
+  )
+
   get('/referral/:id/action-plan/update-service-end-date', (req, res) =>
     actionPlanController.showUpdateServiceEndDatePage(req, res),
   )

@@ -1,4 +1,5 @@
 import type { GovukFrontendButton, GovukFrontendTable } from '@govuk-frontend'
+import type { GovukFrontendNotificationBanner, GovukFrontendTable } from '@govuk-frontend'
 import type { MojSubNavigation } from '@moj-frontend'
 import { GlobalContent } from '../../../assets/content/GlobalContent'
 
@@ -10,6 +11,7 @@ export type ReferralAppointmentsViewModel = {
   noAppointmentsMessage: string
   appointmentsTable: GovukFrontendTable
   hasAppointments: boolean
+  notificationBanner?: GovukFrontendNotificationBanner
   upcomingAppointmentsTitle: string
   pastAppointmentsTitle: string
 }
