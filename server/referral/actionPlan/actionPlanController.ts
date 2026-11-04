@@ -3,6 +3,7 @@ import type {
   ActionPlanActionRequest,
   ActionPlanNeedsOrderRequest,
   ActionPlanSessionDeliveryDetailsRequest,
+  ActionPlanSummaryDto,
 } from '@community-support-api'
 import type { ActionPlanActivitiesData, ActionPlanActivity, ActionPlanSessionDeliveryData } from '../../@types/express'
 import ReferralService from '../../services/referralService'
@@ -338,6 +339,7 @@ class ActionPlanController {
     const { id: caseReference } = req.params as { id: string }
     const { needId, outcomeAnswerId } = req.query ?? {}
     let firstName: string | undefined
+    let actionPlanSummary: ActionPlanSummaryDto
 
     if (needId !== undefined || outcomeAnswerId !== undefined) {
       if (typeof needId !== 'string' || typeof outcomeAnswerId !== 'string') {
@@ -345,10 +347,11 @@ class ActionPlanController {
       }
 
       const { username } = res.locals.user
-      const [actionPlanSummary, needsAndOutcomes] = await Promise.all([
+      const [summary, needsAndOutcomes] = await Promise.all([
         this.referralService.getActionPlanSummary(caseReference, username),
         this.referralService.getActionPlanNeedsAndOutcomes(caseReference, username),
       ])
+      actionPlanSummary = summary
       firstName = actionPlanSummary.personDetails.firstName
       const selectedNeed = actionPlanSummary.needs.find(need => need.id === needId)
       const selectedOutcome = selectedNeed?.outcomes.find(outcome => outcome.id === outcomeAnswerId)
@@ -371,12 +374,13 @@ class ActionPlanController {
       }))
       req.session.preChangeActivities = { caseReference, activities }
       this.setActionPlanActivities(req, caseReference, activities)
+    } else {
+      actionPlanSummary = await this.referralService.getActionPlanSummary(caseReference, res.locals.user.username)
     }
 
     const activityAlertType = req.session.actionPlanActivityAlertType
     delete req.session.actionPlanActivityAlertType
     if (activityAlertType && !firstName) {
-      const actionPlanSummary = await this.referralService.getActionPlanSummary(caseReference, res.locals.user.username)
       firstName = actionPlanSummary.personDetails.firstName
     }
 
@@ -389,6 +393,7 @@ class ActionPlanController {
       selectedNeed?.label ?? '',
       selectedOutcome?.text ?? '',
       this.getActionPlanActivities(req, caseReference)[0],
+      actionPlanSummary.isSubmitted,
       activityAlertType,
       firstName,
     )
