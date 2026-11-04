@@ -1,4 +1,4 @@
-import z, { ZodType, parseAsync, ZodError } from 'zod'
+import z, { ZodType, parseAsync, ZodError, ZodSafeParseResult } from 'zod'
 import { Request, Response } from 'express'
 import { GovukFrontendErrorMessage, GovukFrontendErrorSummaryErrorListElement } from '@govuk-frontend'
 import { ErrorMiddlewareErrors } from '../@types/express'
@@ -28,6 +28,23 @@ export const formatDynamicErrorMessages = (
   return formattedErrors
 }
 
+const handleZodError = (error: ZodError, req: Request, res: Response) => {
+  const errors = z.flattenError(error).fieldErrors
+  req.session.formKeys = []
+  Object.entries(errors).forEach(([field, errorMessage]) => {
+    req.session.formKeys.push(field)
+    if (Array.isArray(errorMessage)) {
+      const errorMessages = errorMessage as string[]
+      errorMessages.forEach(msg => req.flash(`${field}Error`, `${msg}`))
+    } else {
+      req.flash(`${field}Error`, `${errorMessage}`)
+    }
+  })
+  const formData = Object.fromEntries(Object.entries(req.body).filter(([key]) => key !== '_csrf'))
+  req.flash('value', JSON.stringify(formData))
+  return res.redirect(req.url)
+}
+
 export const validateRequestBodyAgainstSchema = <Schema extends ZodType>(
   schema: Schema,
   req: Request,
@@ -40,18 +57,36 @@ export const validateRequestBodyAgainstSchema = <Schema extends ZodType>(
       if (!(error instanceof ZodError)) {
         return res.redirect('/error')
       }
-      const errors = z.flattenError(error).fieldErrors
-      req.session.formKeys = []
-      Object.entries(errors).forEach(([field, errorMessage]) => {
-        req.session.formKeys.push(field)
-        if (Array.isArray(errorMessage)) {
-          const errorMessages = errorMessage as string[]
-          errorMessages.forEach(msg => req.flash(`${field}Error`, `${msg}`))
-        } else {
-          req.flash(`${field}Error`, `${errorMessage}`)
-        }
-      })
-      const formData = Object.fromEntries(Object.entries(req.body).filter(([key]) => key !== '_csrf'))
-      req.flash('value', JSON.stringify(formData))
-      return res.redirect(req.url)
+      return handleZodError(error, req, res)
+    })
+
+export type Validator<T, R> = (body: T) => ZodSafeParseResult<R>
+export type ValidatorAsync<T, R> = (body: T) => Promise<R>
+
+export const validateRequestBody = async <T, R>(
+  validator: Validator<T, R>,
+  req: Request,
+  res: Response,
+  successFunction: (data: R) => Promise<void>,
+) => {
+  const result = validator(req.body)
+  if (!result.success) {
+    return handleZodError(result.error, req, res)
+  }
+  return successFunction(result.data)
+}
+
+export const validateRequestBodyAnync = <T, R>(
+  validator: ValidatorAsync<T, R>,
+  req: Request,
+  res: Response,
+  successFunction: (data: R) => Promise<void>,
+) =>
+  validator(req.body)
+    .then(successFunction)
+    .catch(error => {
+      if (!(error instanceof ZodError)) {
+        return res.redirect('/error')
+      }
+      return handleZodError(error, req, res)
     })
