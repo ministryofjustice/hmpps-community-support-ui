@@ -99,7 +99,7 @@ export default class CreateAppointmentDetailsPage extends AbstractPage {
     this.informedByEmailCheckbox = page.locator('input[type="checkbox"][value="informedByEmail"]')
     this.informedByOtherMethodCheckbox = page.locator('input[type="checkbox"][value="informedByOtherMethod"]')
     this.informedByOtherMethodInput = page.locator('input[type="text"][name="otherMethodOfContact"]')
-    this.saveAndContinueButton = page.getByRole('button', { name: 'Save and continue', exact: true })
+    this.saveAndContinueButton = page.getByRole('button', { name: 'Continue', exact: true })
   }
 
   static async verifyOnPage(page: Page, session: SessionType): Promise<CreateAppointmentDetailsPage> {

@@ -12,7 +12,7 @@
         "heading": "View cases",
         "description": "View your cases and other cases in progress.",
         "href": "/cases-in-progress",
-          "noneText": "None",
+        "noneText": "None",
         "dataTestId": "view-cases-tile"
       }
     ]
@@ -1019,36 +1019,42 @@
   "/referral/:id/create-an-appointment/appointment-details": {
     "pageHeader": "Schedule the session",
     "date": {
-      "label": "What is the date of the session?",
-      "hint": "Enter a date, for example 10/7/2025, or select one from the calendar."
+      "label": "Session date",
+      "hint": "For example 10/7/2025"
     },
     "time": {
-      "label": "What time does the session start?",
+      "label": "Start time",
       "hint": "Use the 12-hour clock, for example 11:30am or 3pm.",
-      "AMorPM": "AM or PM"
+      "AMorPM": "am or pm",
+      "hourLabel": "Hours",
+      "minuteLabel": "Minutes"
     },
     "howSessionTakePlace": {
       "label": "How will the session take place?",
-      "hint": "Select one option.",
+      "hint": "",
+      "groupHeadings": {
+        "inPerson": "In person",
+        "remote": "Remote"
+      },
       "radioItems": {
         "phone": {
           "text": "Phone call",
-          "label": "Why is this session not in person?"
+          "label": "Reason the session is not in person"
         },
         "video": {
           "text": "Video call",
-          "label": "Why is this session not in person?"
+          "label": "Reason the session is not in person"
         },
         "prison": {
-          "text": "In-person meeting - prison establishment",
+          "text": "Prison",
           "label": "Select prison"
         },
         "probation": {
-          "text": "In-person meeting - probation office",
-          "label": "Select a probation office"
+          "text": "Probation office",
+          "label": "Select probation office"
         },
         "somewhereElse": {
-          "text": "In-person meeting - somewhere else",
+          "text": "Another address",
           "addressLabels": {
             "address1": "Address line 1",
             "address2": "Address line 2 (optional)",
@@ -1071,11 +1077,11 @@
         "email": "Email",
         "other": {
           "text": "Other",
-          "label": "Other method of contact"
+          "label": "Other contact method"
         }
       }
     },
-    "submitButtonText": "Save and continue",
+    "submitButtonText": "Continue",
     "submitHref": "/referral/{{ caseRef }}/create-an-appointment/appointment-details",
     "backLink": "/referral/{{ caseRef }}/create-an-appointment/appointment-type",
     "pageHeaders": {
