@@ -160,7 +160,6 @@ test.describe('Ics Feedback CYA Page', () => {
   }
   test.beforeEach(async ({ page }) => {
     await resetStubs()
-    await communitySupport.stubGetICS(caseRefId, mockAppointmentIcsResponse)
     await communitySupport.stubGetIcsFeedbackPage(caseRefId, 'check-answers', {
       referralFirstName: mockAppointmentIcsResponse.referralFirstName,
     })
