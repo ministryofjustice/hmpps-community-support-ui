@@ -5,6 +5,8 @@ import {
   ConfirmPersonDetailsBffDto,
   CommunitySupportRiskDto,
   CommunitySupportRiskInformationDto,
+  IcsFeedbackAttendanceBffDto,
+  IcsFeedbackDidSessionTakePlaceBffDto,
   IcsFeedbackSubmission,
   IcsFeedbackSubmissionResponse,
   ActionPlanSummaryDto,
@@ -84,7 +86,43 @@ const buildTaskListStatus = (taskListStatus: TaskListStatusStub): TaskListStatus
   checkYourAnswersStatus: taskListStatus.checkYourAnswersStatus || cannotStartTaskStatus,
 })
 
+const stubGetIcsFeedbackPage = (
+  caseRefId: string,
+  page: string,
+  jsonBody: object,
+  httpStatus = 200,
+): SuperAgentRequest =>
+  stubFor({
+    request: {
+      method: 'GET',
+      urlPathPattern: `/community-support/bff/ics-feedback/${caseRefId}/${page}`,
+    },
+    response: {
+      status: httpStatus,
+      headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+      jsonBody,
+      transformers: ['response-template'],
+    },
+  })
+
+const stubGetIcsFeedbackDidSessionTakePlace = (caseRefId: string, appointment: AppointmentIcsResponse) => {
+  const body: IcsFeedbackDidSessionTakePlaceBffDto = { sessionMethod: appointment.sessionMethod }
+  return stubGetIcsFeedbackPage(caseRefId, 'did-session-take-place', body)
+}
+
+const stubGetIcsFeedbackAttendance = (caseRefId: string, appointment: AppointmentIcsResponse) => {
+  const body: IcsFeedbackAttendanceBffDto = {
+    referralFirstName: appointment.referralFirstName,
+    date: appointment.appointmentDate,
+    time: appointment.appointmentTime,
+  }
+  return stubGetIcsFeedbackPage(caseRefId, 'attendance', body)
+}
+
 export default {
+  stubGetIcsFeedbackPage,
+  stubGetIcsFeedbackDidSessionTakePlace,
+  stubGetIcsFeedbackAttendance,
   stubPing: (httpStatus = 200): SuperAgentRequest =>
     stubFor({
       request: {

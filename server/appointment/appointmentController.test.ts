@@ -29,6 +29,10 @@ import {
 } from '../../integration_tests/mockData/referralInformationData'
 import ViewChangeSessionDetailsPresenter from './view-change-session-details/ViewChangeSessionDetailsPresenter'
 import IcsFeedbackCheckYourAnswersPresenter from './check-ics-feedback/icsFeedbackCheckYourAnswersPresenter'
+import RecordSessionAttendancePresenter from './record-ics/RecordSessionAttendancePresenter'
+import SessionFeedbackPresenter from './session-feedback/sessionFeedbackPresenter'
+import IssuesOrConcernsPresenter from './issues-or-concerns/IssuesOrConcernsPresenter'
+import WhyDidSessionNotHappenPresenter from './why-did-session-not-happen/WhyDidSessionNotHappenPresenter'
 import { ReferralProgressBannerContent } from '../referral/progress/ReferralProgressBannerContent'
 import { ChangeRequesterType } from './change-ics-details-reason/ChangeAppointmentDetails'
 
@@ -42,6 +46,10 @@ jest.mock('../services/referralService')
 jest.mock('../services/referenceDataService')
 jest.mock('./view-change-session-details/ViewChangeSessionDetailsPresenter')
 jest.mock('./check-ics-feedback/icsFeedbackCheckYourAnswersPresenter')
+jest.mock('./record-ics/RecordSessionAttendancePresenter')
+jest.mock('./session-feedback/sessionFeedbackPresenter')
+jest.mock('./issues-or-concerns/IssuesOrConcernsPresenter')
+jest.mock('./why-did-session-not-happen/WhyDidSessionNotHappenPresenter')
 
 describe('AppointmentController', () => {
   let appointmentService: AppointmentService
@@ -942,7 +950,6 @@ describe('AppointmentController', () => {
 
     beforeEach(() => {
       IcsFeedbackHowSessionTookPlacePresenter.prototype.renderPage = jest.fn()
-      ;(appointmentService.getICS as jest.Mock).mockResolvedValue(mockIcsAppointment)
       ;(appointmentService.getIcsFeedbackDidSessionTakePlace as jest.Mock).mockResolvedValue({
         sessionMethod: mockIcsAppointment.sessionMethod,
       })

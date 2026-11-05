@@ -554,6 +554,41 @@ describe('CommunitySupportApiClient tests', () => {
       return expect(result).resolves.toEqual(mockIcsFeedbackResponse)
     })
   })
+  describe('getIcsFeedbackPage BFF tests', () => {
+    const caseRefId = 'AB1234CD'
+    const username = 'user1'
+    const bffPages: Array<[string, string, (client: CommunitySupportApiClient) => Promise<unknown>]> = [
+      [
+        'why-did-the-session-not-happen',
+        'WhyDidSessionNotHappen',
+        c => c.getIcsFeedbackWhyDidSessionNotHappen(caseRefId, username),
+      ],
+      ['session-feedback', 'SessionFeedback', c => c.getIcsFeedbackSessionFeedback(caseRefId, username)],
+      ['next-steps', 'NextSteps', c => c.getIcsFeedbackNextSteps(caseRefId, username)],
+      ['issues-or-concerns', 'IssuesOrConcerns', c => c.getIcsFeedbackIssuesOrConcerns(caseRefId, username)],
+      [
+        'identified-additional-needs',
+        'IdentifiedAdditionalNeeds',
+        c => c.getIcsFeedbackIdentifiedAdditionalNeeds(caseRefId, username),
+      ],
+      [
+        'how-they-tried-to-contact-the-person',
+        'HowTheyTriedToContactThePerson',
+        c => c.getIcsFeedbackHowTheyTriedToContactThePerson(caseRefId, username),
+      ],
+      ['did-session-take-place', 'DidSessionTakePlace', c => c.getIcsFeedbackDidSessionTakePlace(caseRefId, username)],
+      ['check-answers', 'CheckAnswers', c => c.getIcsFeedbackCheckAnswers(caseRefId, username)],
+      ['attendance', 'Attendance', c => c.getIcsFeedbackAttendance(caseRefId, username)],
+    ]
+
+    it.each(bffPages)('calls /bff/ics-feedback/{caseRefId}/%s for %s', async (page, _name, call) => {
+      const mockResponse = { page }
+
+      nock('http://localhost:8080').get(`/bff/ics-feedback/${caseRefId}/${page}`).reply(200, mockResponse)
+
+      await expect(call(communitySupportApiClient)).resolves.toEqual(mockResponse)
+    })
+  })
   describe('saveRiskInformation tests', () => {
     it('should save risk information on a 200 response', () => {
       const riskInformation: CommunitySupportRiskInformationDto = {
