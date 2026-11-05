@@ -22,6 +22,7 @@ test.describe('Action Plan Service User Involvement Page', () => {
 
   test.beforeEach(async ({ page }) => {
     await resetStubs()
+    await communitySupport.stubGetActionPlanSummary(caseReference, actionPlanSummary)
     await page.goto('/')
     await login(page)
   })
