@@ -7,6 +7,9 @@ import {
   referralInformationInPrison,
 } from '../../../integration_tests/mockData/referralInformationData'
 import { SessionAppointmentType } from '../appointmentTypeRules'
+import loadContentDataForTest from '../../testutils/loadContentDataForTest'
+import { ScheduleIcsContent } from './scheduleIcsViewModel'
+import { ErrorMiddlewareErrors } from '../../@types/express'
 
 describe('ScheduleIcsPresenter with appointment type', () => {
   const caseReference = 'AB1234CD'
@@ -101,5 +104,129 @@ describe('ScheduleIcsPresenter with appointment type', () => {
     expect(build('ICS').howWasTheyInformedAboutTheSessionInput).toBeDefined()
     expect(build('CONTACT_SESSION').howWasTheyInformedAboutTheSessionInput).toBeDefined()
     expect(build('POST_RELEASE_SESSION').howWasTheyInformedAboutTheSessionInput).toBeDefined()
+  })
+
+  describe('with the appointment details page content', () => {
+    const pageContent = loadContentDataForTest(
+      '/referral/:id/create-an-appointment/appointment-details',
+    ) as unknown as ScheduleIcsContent
+    const pageRes = { locals: { content: pageContent }, render: jest.fn() } as unknown as Response
+
+    const buildWithPageContent = (
+      type: SessionAppointmentType,
+      referral = referralInformationInCommunity,
+      validationErrors?: ErrorMiddlewareErrors,
+    ) =>
+      new ScheduleIcsPresenter(
+        caseReference,
+        probationOfficesData,
+        prisonsData,
+        referral,
+        {},
+        validationErrors,
+        type,
+      ).buildViewModel(pageRes)
+
+    const itemsSummary = (type: SessionAppointmentType, referral = referralInformationInCommunity) =>
+      buildWithPageContent(type, referral).howWillTheSessionTakePlaceInput.items.map(item =>
+        item.divider ? `divider:${item.divider}` : item.value,
+      )
+
+    test('ICS groups in-person options before remote options', () => {
+      expect(itemsSummary('ICS')).toEqual([
+        'divider:In person',
+        'InProbationOffice',
+        'InSomewhereElse',
+        'divider:Remote',
+        'ByPhone',
+        'ByVideo',
+      ])
+    })
+
+    test('ICS in custody shows the prison option under in person', () => {
+      expect(itemsSummary('ICS', referralInformationInPrison)).toEqual([
+        'divider:In person',
+        'InPrison',
+        'divider:Remote',
+        'ByPhone',
+        'ByVideo',
+      ])
+    })
+
+    test('handover session groups the in-person meeting option', () => {
+      expect(itemsSummary('HANDOVER_SESSION')).toEqual([
+        'divider:In person',
+        'InPerson',
+        'divider:Remote',
+        'ByPhone',
+        'ByVideo',
+      ])
+    })
+
+    test('ICS page content matches the design', () => {
+      const viewModel = buildWithPageContent('ICS')
+      const how = viewModel.howWillTheSessionTakePlaceInput
+      expect(viewModel.pageHeader).toBe('Book initial contact session (ICS)')
+      expect(viewModel.submitButton.text).toBe('Continue')
+      expect(viewModel.dateInput.label.text).toBe('Session date')
+      expect(viewModel.dateInput.hint.text).toBe('For example 10/7/2025')
+      expect(viewModel.timeInput.fieldset.legend.text).toBe('Start time')
+      expect(viewModel.timeInput.items.map(item => item.label)).toEqual(['Hours', 'Minutes'])
+      expect(viewModel.timeInput.meridiemParams.label).toBe('am or pm')
+      expect(how.classes).toBe('grouped-radio')
+      expect(how.hint).toBeUndefined()
+      expect(how.items.filter(item => !item.divider).map(item => item.text)).toEqual([
+        'Probation office',
+        'Another address',
+        'Phone call',
+        'Video call',
+      ])
+      expect(how.items.find(item => item.value === 'InProbationOffice').conditional.html).toContain(
+        'Select probation office',
+      )
+      expect(how.items.find(item => item.value === 'ByPhone').conditional.html).toContain(
+        'Reason the session is not in person',
+      )
+      const informed = viewModel.howWasTheyInformedAboutTheSessionInput
+      expect(informed.fieldset.legend.text).toBe(
+        `How was ${referralInformationInCommunity.firstName} informed about the session?`,
+      )
+      expect(informed.items.map(item => item.text)).toEqual(['Email', 'Phone call', 'Text message', 'Other'])
+      expect(informed.items.at(3).conditional.html).toContain('Other contact method')
+    })
+
+    test.each(['sessionTime-hour', 'sessionTime-minute', 'sessionTime-meridiem'])(
+      'shows the %s error against the start time field',
+      key => {
+        const viewModel = buildWithPageContent('ICS', referralInformationInCommunity, {
+          list: [{ text: 'Start time error', href: `#${key}` }],
+          messages: { [key]: { text: 'Start time error' } },
+        })
+        expect(viewModel.timeInput.errorMessage).toEqual({ text: 'Start time error' })
+      },
+    )
+
+    const timeErrorHighlights = (key?: string) => {
+      const { timeInput } = buildWithPageContent(
+        'ICS',
+        referralInformationInCommunity,
+        key ? { list: [], messages: { [key]: { text: 'Start time error' } } } : undefined,
+      )
+      return {
+        hour: timeInput.items[0].classes.includes('govuk-input--error'),
+        minute: timeInput.items[1].classes.includes('govuk-input--error'),
+        meridiem: timeInput.meridiemParams.classes === 'govuk-select--error',
+      }
+    }
+
+    test.each([
+      [undefined, { hour: false, minute: false, meridiem: false }],
+      ['sessionTime', { hour: true, minute: true, meridiem: true }],
+      ['sessionTime-hour', { hour: true, minute: false, meridiem: false }],
+      ['sessionTime-minute', { hour: false, minute: true, meridiem: false }],
+      ['sessionTime-meridiem', { hour: false, minute: false, meridiem: true }],
+    ])('highlights the start time inputs in error for %s', (key, expected) => {
+      expect(timeErrorHighlights(key)).toEqual(expected)
+    })
   })
 })

@@ -32,7 +32,12 @@ const getStatusConfig = (
       tagClass: 'govuk-tag--grey',
       actions: isProbationPractitioner
         ? []
-        : [{ label: 'Schedule session', href: `/referral/${caseReference}/appointment/schedule-ics` }],
+        : [
+            {
+              label: 'Schedule session',
+              href: `/referral/${caseReference}/create-an-appointment/appointment-details?session=ICS`,
+            },
+          ],
     },
     SCHEDULED: {
       label: 'Scheduled',
@@ -92,7 +97,10 @@ const buildRescheduleActions = (
 ) => {
   return isCurrent && !isProbationPractitioner
     ? [
-        { label: 'Reschedule', href: `/referral/${caseReference}/appointment/schedule-ics` },
+        {
+          label: 'Reschedule',
+          href: `/referral/${caseReference}/create-an-appointment/appointment-details?session=ICS`,
+        },
         { label: 'View feedback', href: `/ics-feedback/${caseReference}/session/${icsFeedbackId}` },
       ]
     : [{ label: 'View feedback', href: `/ics-feedback/${caseReference}/session/${icsFeedbackId}` }]
