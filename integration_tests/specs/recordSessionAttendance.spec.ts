@@ -41,10 +41,10 @@ test.describe('RecordSessionAttendancePage', () => {
 
   test.beforeEach(async ({ page }) => {
     await resetStubs()
-    await communitySupport.stubGetICS(pastMeeting.caseRefId, pastMeeting.data)
-    await communitySupport.stubGetICS(futureMeeting.caseRefId, futureMeeting.data)
-    await communitySupport.stubGetICS(fixedTimeMeeting.caseRefId, fixedTimeMeeting.data)
-    await communitySupport.stubGetICS(fixedTimePmMeeting.caseRefId, fixedTimePmMeeting.data)
+    await communitySupport.stubGetIcsFeedbackAttendance(pastMeeting.caseRefId, pastMeeting.data)
+    await communitySupport.stubGetIcsFeedbackAttendance(futureMeeting.caseRefId, futureMeeting.data)
+    await communitySupport.stubGetIcsFeedbackAttendance(fixedTimeMeeting.caseRefId, fixedTimeMeeting.data)
+    await communitySupport.stubGetIcsFeedbackAttendance(fixedTimePmMeeting.caseRefId, fixedTimePmMeeting.data)
     await page.goto('/')
     await login(page)
   })
