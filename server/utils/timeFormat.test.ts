@@ -1,4 +1,33 @@
-import timeFormat, { formatTime12Hr, isoToFormattedTime, parseTime12Hr } from './timeFormat'
+import timeFormat, { formatTime12Hr, formatTime24Hr, isoToFormattedTime, parseTime12Hr } from './timeFormat'
+
+describe('formatTime24Hr', () => {
+  it.each([
+    [{ hour: 4, minute: 59, amPm: 'pm' }, '16:59'],
+    [{ hour: 12, minute: 0, amPm: 'am' }, '00:00'],
+    [{ hour: 12, minute: 30, amPm: 'am' }, '00:30'],
+    [{ hour: 12, minute: 0, amPm: 'pm' }, '12:00'],
+    [{ hour: 12, minute: 30, amPm: 'pm' }, '12:30'],
+    [{ hour: 1, minute: 5, amPm: 'am' }, '01:05'],
+    [{ hour: 11, minute: 59, amPm: 'pm' }, '23:59'],
+    [{ hour: 4, minute: 59, amPm: 'PM' }, '16:59'],
+    [{ hour: 12, minute: 0, amPm: 'AM' }, '00:00'],
+  ])('converts %j to %s', (time, expected) => {
+    expect(formatTime24Hr(time)).toBe(expected)
+  })
+
+  it('produces strings that sort in chronological order', () => {
+    const times = [
+      { hour: 4, minute: 59, amPm: 'pm' },
+      { hour: 12, minute: 0, amPm: 'pm' },
+      { hour: 9, minute: 5, amPm: 'am' },
+      { hour: 12, minute: 0, amPm: 'am' },
+      { hour: 4, minute: 5, amPm: 'pm' },
+      { hour: 11, minute: 59, amPm: 'pm' },
+    ]
+
+    expect(times.map(formatTime24Hr).sort()).toEqual(['00:00', '09:05', '12:00', '16:05', '16:59', '23:59'])
+  })
+})
 
 describe('timeFormat', () => {
   it('formats a provided time object', () => {

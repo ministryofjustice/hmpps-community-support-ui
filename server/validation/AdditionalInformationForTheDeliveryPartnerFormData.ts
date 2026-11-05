@@ -1,5 +1,6 @@
 import z from 'zod'
 import validString from './ValidString'
+import { validateYesWithDetailsOrNo } from './components/yesWithDetailOrNo'
 
 export const AdditionalInformationForTheDeliveryPartnerFormDataSchema = z
   .object({
@@ -20,3 +21,13 @@ export const AdditionalInformationForTheDeliveryPartnerFormDataSchema = z
   )
 export type AdditionalInformationForTheDeliveryPartnerFormData =
   { additionalInformation: 'Yes'; details: string } | { additionalInformation: 'No' }
+
+export const additionalInformationForDeliveryPartnerValidator = validateYesWithDetailsOrNo({
+  fields: { radioFieldName: 'additionalInformation', detailsFieldName: 'details' },
+  messages: {
+    tooManyCharacters:
+      'Details of anything else the delivery partner should know must be {{ maxCharacters }} characters or less',
+    nothingSelected: 'Select yes if there is anything else the delivery partner should know',
+    noValueGiven: 'Enter details of anything else the delivery partner should know',
+  },
+})

@@ -658,6 +658,12 @@ class AppointmentController {
 
     delete req.session.createAppointmentRequest
 
+    if (response.appointmentType !== 'ICS') {
+      delete req.session.appointmentSessionData
+      req.session.referralAppointmentsSuccessCaseReference = caseRefId
+      return res.redirect(`/referral/${caseRefId}/appointments`)
+    }
+
     if (this.isRetrospectiveAppointment(response.appointmentDate, response.appointmentTime)) {
       return res.redirect(`/ics-feedback/${caseRefId}/attendance`)
     }

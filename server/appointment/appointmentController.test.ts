@@ -425,6 +425,33 @@ describe('AppointmentController', () => {
       expect(req.session.createAppointmentRequest).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith(`/progress/${caseRefId}`)
     })
+
+    it('redirects newly created appointment types to the appointments tab with a success alert', async () => {
+      jest.spyOn(appointmentService, 'submitICS').mockResolvedValue({
+        ...mockFutureAppointmentIcsResponse,
+        appointmentType: 'CONTACT_SESSION',
+      })
+      req.session.createAppointmentRequest = mockCreateAppointmentRequest
+      req.session.appointmentSessionData = { appointmentType: 'CONTACT_SESSION' }
+
+      await appointmentController.submitIcs(req, res)
+
+      expect(req.session.createAppointmentRequest).toBeUndefined()
+      expect(req.session.appointmentSessionData).toBeUndefined()
+      expect(req.session.referralAppointmentsSuccessCaseReference).toBe(caseRefId)
+      expect(res.redirect).toHaveBeenCalledWith(`/referral/${caseRefId}/appointments`)
+    })
+
+    it('propagates appointment creation errors without setting the success alert', async () => {
+      const createError = new Error('Appointment creation failed')
+      jest.spyOn(appointmentService, 'submitICS').mockRejectedValue(createError)
+      req.session.createAppointmentRequest = mockCreateAppointmentRequest
+
+      await expect(appointmentController.submitIcs(req, res)).rejects.toBe(createError)
+
+      expect(req.session.referralAppointmentsSuccessCaseReference).toBeUndefined()
+      expect(res.redirect).not.toHaveBeenCalled()
+    })
   })
 
   describe('submitChangeIcsDetails', () => {
