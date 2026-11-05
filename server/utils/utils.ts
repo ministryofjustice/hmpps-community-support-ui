@@ -82,13 +82,13 @@ export const buildInputErrors = (name: string, { text, html }: GovukFrontendErro
 }
 
 export const buildInput = ({ name, label, value, hint, errorMessage, spellcheck }: GovukFrontendInput) => {
-  return `<div class="govuk-form-group">
+  return `<div class="govuk-form-group${errorMessage ? ' govuk-form-group--error' : ''}">
     <h1 class="govuk-label-wrapper">
     ${buildLabel(name, label)}
   </h1>
   ${hint ? buildHint(hint) : ''}
   ${errorMessage ? buildInputErrors(name, errorMessage) : ''}
-  <input class="govuk-input" id="${name}" name="${name}" type="text" spellcheck="${spellcheck || false}" value="${value || ''}">
+  <input class="govuk-input${errorMessage ? ' govuk-input--error' : ''}" id="${name}" name="${name}" type="text" spellcheck="${spellcheck || false}" value="${value || ''}"${errorMessage ? ` aria-describedby="${name}-error"` : ''}>
     </div>`
 }
 

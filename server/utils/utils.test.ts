@@ -1,4 +1,4 @@
-import { convertToTitleCase, initialiseName, trimOrDefault } from './utils'
+import { buildInput, convertToTitleCase, initialiseName, trimOrDefault } from './utils'
 
 describe('convert to title case', () => {
   it.each([
@@ -36,5 +36,27 @@ describe('trimOrDefault', () => {
 
   it('returns default when value is empty', () => {
     expect(trimOrDefault('   ', 'Not available')).toBe('Not available')
+  })
+})
+
+describe('buildInput', () => {
+  it('does not add error styling when there is no error', () => {
+    const html = buildInput({ id: 'reason', name: 'reason', label: { text: 'Reason' } })
+    expect(html).toContain('class="govuk-form-group"')
+    expect(html).toContain('class="govuk-input"')
+    expect(html).not.toContain('--error')
+  })
+
+  it('adds error styling and links the error message when there is an error', () => {
+    const html = buildInput({
+      id: 'reason',
+      name: 'reason',
+      label: { text: 'Reason' },
+      errorMessage: { text: 'Enter the reason the session is not in person' },
+    })
+    expect(html).toContain('class="govuk-form-group govuk-form-group--error"')
+    expect(html).toContain('class="govuk-input govuk-input--error"')
+    expect(html).toContain('aria-describedby="reason-error"')
+    expect(html).toContain('<p id="reason-error" class="govuk-error-message">')
   })
 })
