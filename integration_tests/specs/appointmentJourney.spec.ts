@@ -94,6 +94,7 @@ test.describe('Full appointment journey', () => {
     await initialDetailsPage.saveAndContinueButton.click()
 
     const initialCyaPage = await AppointmentCheckYourAnswersPage.verifyOnPage(page)
+    await expect(initialCyaPage.reasonSessionNotInPersonRow).toContainText('Initial reason')
     await initialCyaPage.changeLink.click()
     await AppointmentTypePage.verifyOnPage(page)
 
@@ -105,12 +106,17 @@ test.describe('Full appointment journey', () => {
     await preReleaseDetailsPage.inSomewhereElseRadioButton.click()
     await preReleaseDetailsPage.addressLine1Input.fill('1 High Street')
     await preReleaseDetailsPage.townInput.fill('Derby')
+    await preReleaseDetailsPage.countyInput.fill('Derbyshire')
     await preReleaseDetailsPage.postcodeInput.fill('DE1 2EQ')
     await preReleaseDetailsPage.informedByPhoneCheckbox.check()
     await preReleaseDetailsPage.saveAndContinueButton.click()
 
     const cyaPage = await AppointmentCheckYourAnswersPage.verifyOnPage(page)
-    await expect(cyaPage.locationRow).toContainText('1 High Street, Derby, DE1 2EQ')
+    await expect(cyaPage.appointmentAddressRow).toContainText('1 High Street')
+    await expect(cyaPage.appointmentAddressRow).toContainText('Derby')
+    await expect(cyaPage.appointmentAddressRow).toContainText('Derbyshire')
+    await expect(cyaPage.appointmentAddressRow).toContainText('DE1 2EQ')
+    await expect(cyaPage.appointmentAddressRow.locator('dd br')).toHaveCount(3)
 
     await cyaPage.submitButton.click()
     await expect(page).toHaveURL(`/referral/${CASE_REFERENCE}/appointments`)
