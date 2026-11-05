@@ -127,9 +127,20 @@ describe('ReferralController', () => {
       const content: ReferralAppointmentsContent = {
         pageHeader: 'Referral for',
         appointmentsTitle: 'Appointments',
-        appointmentTypeColumnHeader: 'Appointment',
-        dateTimeColumnHeader: 'Date and time',
+        appointmentTypeColumnHeader: 'Appointment type',
+        dateColumnHeader: 'Date',
+        timeColumnHeader: 'Start time',
         noAppointmentsMessage: 'No appointments scheduled',
+        bookAppointmentText: 'Book appointment',
+        bookAppointmentHref: '/referral/{{ id }}/create-an-appointment/appointment-type',
+        upcomingAppointmentsTitle: 'Upcoming appointments',
+        pastAppointmentsTitle: 'Past appointments',
+        subNavItems: [
+          { id: 'caseDetails', title: 'Case details' },
+          { id: 'progress', title: 'Progress' },
+          { id: 'appointments', title: 'Appointments' },
+          { id: 'changeLog', title: 'Change log' },
+        ],
         createAppointmentText: 'Create an Appointment',
         appointmentCreatedSuccessfully: 'Appointment created successfully',
       }

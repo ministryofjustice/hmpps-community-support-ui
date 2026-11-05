@@ -47,7 +47,11 @@ import NextStepsPresenter from './next-steps/NextStepsPresenter'
 import { NextStepsFormDataSchema } from '../validation/NextStepsFormData'
 import ChangeIcsDetailsReasonPresenter from './change-ics-details-reason/ChangeIcsDetailsReasonPresenter'
 import { ChangeIcsDetailsReasonSchema } from '../validation/ChangeIcsDetailsReasonFormData'
-import { saveFormToSession, ScheduledIcsFormDataResolver } from './schedule-ics/ScheduledIcsFormDataResolver'
+import {
+  saveFormToSession,
+  ScheduledIcsFormData,
+  ScheduledIcsFormDataResolver,
+} from './schedule-ics/ScheduledIcsFormDataResolver'
 import IssuesOrConcernsPresenter from './issues-or-concerns/IssuesOrConcernsPresenter'
 import { IssuesOrConcernsFormDataSchema } from '../validation/IssuesOrConcernsFormData'
 import {
@@ -204,9 +208,30 @@ const storePending = (req: Request) => {
   req.session.pending = req.body as Record<string, string>
 }
 
+const icsAppointmentDetailsHref = (caseRefId: string): string =>
+  `/referral/${caseRefId}/create-an-appointment/appointment-details?session=ICS`
+
 const getFlashedFormValues = (req: Request): Record<string, string> | undefined => {
   const flashData = req.flash('value')
   return flashData.length > 0 ? JSON.parse(flashData[0]) : undefined
+}
+
+// After a validation error, show the date and start time exactly as they were typed. The draft in the
+// session stores them as numbers (so a blank hour comes back as 0, and an invalid date as blank).
+const withSubmittedDateAndTime = (
+  formData: ScheduledIcsFormData | undefined,
+  submitted: Record<string, string> | undefined,
+): ScheduledIcsFormData | undefined => {
+  if (!submitted) {
+    return formData
+  }
+  return {
+    ...formData,
+    sessionDate: submitted.sessionDate ?? '',
+    'sessionTime-hour': submitted['sessionTime-hour'] ?? '',
+    'sessionTime-minute': submitted['sessionTime-minute'] ?? '',
+    'sessionTime-meridiem': submitted['sessionTime-meridiem']?.toLowerCase() ?? '',
+  }
 }
 
 const buildSessionMethodRequest = (
@@ -217,7 +242,7 @@ const buildSessionMethodRequest = (
   const locationName = probationOfficeLocations.find(office => String(office.id) === String(locationId))?.name
   const detailValue =
     appointmentSessionData.method === 'IN_PERSON_OTHER_LOCATION'
-      ? appointmentSessionData.location || locationName || locationId || ''
+      ? appointmentSessionData.addressLines?.join(', ') || ''
       : locationName || locationId || ''
 
   return buildAppointmentSessionMethodRequest(appointmentSessionData.method, detailValue)
@@ -251,7 +276,7 @@ class AppointmentController {
     const { caseRefId } = req.params as { caseRefId: string }
     const createAppointmentRequest = req.session?.createAppointmentRequest
     if (!createAppointmentRequest) {
-      return res.redirect(`/referral/${caseRefId}/appointment/schedule-ics`)
+      return res.redirect(icsAppointmentDetailsHref(caseRefId))
     }
     const referralInformation = await this.referralService.getReferralInformation(caseRefId, username)
     const additionalDetails: AdditionalInformation = {
@@ -329,7 +354,7 @@ class AppointmentController {
     const sessionType = parseAppointmentType(appointmentType)
     return sessionType
       ? `/referral/${caseRefId}/create-an-appointment/appointment-details`
-      : `/referral/${caseRefId}/appointment/schedule-ics`
+      : icsAppointmentDetailsHref(caseRefId)
   }
 
   async showCreateAppointmentDetails(req: Request, res: Response): Promise<void> {
@@ -344,10 +369,12 @@ class AppointmentController {
       this.referenceDataService.getPrisons(),
       this.referralService.getReferralInformation(caseRefId, username),
     ])
-    const formData =
+    const formData = withSubmittedDateAndTime(
       req.session.createAppointmentRequest?.appointmentType === appointmentType
         ? this.resolver.resolveFromSession(req)
-        : undefined
+        : undefined,
+      getFlashedFormValues(req),
+    )
 
     const validationErrors: ErrorMiddlewareErrors = formatDynamicErrorMessages(
       res.locals.errors,
@@ -380,7 +407,14 @@ class AppointmentController {
       const method = req.body.sessionTakePlace
       const normalisedMethod = normaliseAppointmentMethod(method)
       const meetAtTheGateValue = req.body.meetAtTheGate
+      let reasonSessionNotInPerson: string | undefined
       let meetAtTheGate: boolean | undefined
+
+      if (normalisedMethod === 'PHONE') {
+        reasonSessionNotInPerson = req.body.ByPhone
+      } else if (normalisedMethod === 'VIDEO') {
+        reasonSessionNotInPerson = req.body.ByVideo
+      }
 
       if (meetAtTheGateValue === 'yes') {
         meetAtTheGate = true
@@ -401,10 +435,17 @@ class AppointmentController {
         probationOfficeLocationId: appointmentMethodRequiresLocation(normalisedMethod)
           ? req.body.probationOfficeList
           : undefined,
-        location:
+        addressLines:
           normalisedMethod === 'IN_PERSON_OTHER_LOCATION'
-            ? [req.body.addressLine1, req.body.addressTown, req.body.addressPostcode].filter(Boolean).join(', ')
+            ? [
+                req.body.addressLine1,
+                req.body.addressLine2,
+                req.body.addressTown,
+                req.body.addressCounty,
+                req.body.addressPostcode,
+              ].filter(Boolean)
             : undefined,
+        reasonSessionNotInPerson,
         meetAtTheGate,
         informedBy: req.session.createAppointmentRequest?.sessionCommunication,
       }
@@ -442,42 +483,21 @@ class AppointmentController {
     return res.redirect(`/referral/${caseReference}/appointments`)
   }
 
-  async showScheduleIcs(req: Request, res: Response): Promise<void> {
-    const { username } = res.locals.user
+  showScheduleIcs(req: Request, res: Response): void {
     const caseRefId = req.params.caseRefId as string
-    const [probationOffices, prisons, referralInformation, formData] = await Promise.all([
-      this.referenceDataService.getProbationOffices(),
-      this.referenceDataService.getPrisons(),
-      this.referralService.getReferralInformation(caseRefId, username),
-      this.resolver.resolve(req, res),
-    ])
-
-    const validationErrors: ErrorMiddlewareErrors = formatDynamicErrorMessages(
-      res.locals.errors,
-      '{{ firstname }}',
-      referralInformation.firstName,
-    )
-    res.locals.errors = validationErrors
-    const presenter = new ScheduleIcsPresenter(
-      caseRefId,
-      probationOffices,
-      prisons,
-      referralInformation,
-      formData,
-      validationErrors,
-    )
-    return presenter.renderPage(res)
+    return res.redirect(icsAppointmentDetailsHref(caseRefId))
   }
 
   async showRescheduleIcs(req: Request, res: Response): Promise<void> {
     const { username } = res.locals.user
     const caseRefId = req.params.caseRefId as string
-    const [probationOffices, prisons, referralInformation, formData] = await Promise.all([
+    const [probationOffices, prisons, referralInformation, resolvedFormData] = await Promise.all([
       this.referenceDataService.getProbationOffices(),
       this.referenceDataService.getPrisons(),
       this.referralService.getReferralInformation(caseRefId, username),
       this.resolver.resolve(req, res),
     ])
+    const formData = withSubmittedDateAndTime(resolvedFormData, getFlashedFormValues(req))
 
     const validationErrors: ErrorMiddlewareErrors = formatDynamicErrorMessages(
       res.locals.errors,
@@ -645,7 +665,7 @@ class AppointmentController {
     const createAppointmentRequest = req.session?.createAppointmentRequest
 
     if (!createAppointmentRequest) {
-      return res.redirect(`/referral/${caseRefId}/appointment/schedule-ics`)
+      return res.redirect(icsAppointmentDetailsHref(caseRefId))
     }
 
     const response = await this.appointmentService.submitICS(caseRefId, createAppointmentRequest, username)

@@ -1,13 +1,14 @@
 {% extends "../partials/layout.njk" %}
 
 {% from "moj/components/sub-navigation/macro.njk" import mojSubNavigation %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 
 {% set pageTitle = "Appointments – " + applicationName %}
 {% set mainClasses = "govuk-body" %}
 
-{% block contentBody %}
+{% block content %}
   <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
 
   {{ mojSubNavigation(content.navBar) }}
@@ -16,15 +17,18 @@
     {{ govukNotificationBanner(content.notificationBanner) }}
   {% endif %}
 
-  <h2 class="govuk-heading-m">{{ content.appointmentsTitle }}</h2>
   <p class="govuk-body">
     <a class="govuk-link" href="{{ content.createAppointmentHref }}" data-testid="create-appointment-link">
       {{ content.createAppointmentText }}
     </a>
   </p>
+  <h2 class="govuk-heading-l">{{ content.appointmentsTitle }}</h2>
+ {{ govukButton(content.createAppointmentButton) }}
 
   {% if content.hasAppointments %}
+    <h2 class="govuk-heading-m">{{ content.upcomingAppointmentsTitle }}</h2>
     {{ govukTable(content.appointmentsTable) }}
+    <h2 class="govuk-heading-m">{{ content.pastAppointmentsTitle }}</h2>
   {% else %}
     <p class="govuk-body" data-testid="no-appointments-message">{{ content.noAppointmentsMessage }}</p>
   {% endif %}

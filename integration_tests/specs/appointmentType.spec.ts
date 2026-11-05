@@ -80,6 +80,6 @@ test.describe('Appointment Type Page', () => {
     await appointmentTypePage.backLink.click()
 
     await expect(page).toHaveURL(`/referral/${CASE_REFERENCE}/appointments`)
-    await expect(page.getByRole('heading', { name: 'Appointments', level: 2 })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Appointments', level: 2, exact: true })).toBeVisible()
   })
 })

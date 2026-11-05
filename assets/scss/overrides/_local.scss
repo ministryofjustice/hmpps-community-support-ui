@@ -13,6 +13,19 @@ $guidance-panel-background-colour: #eaf4f9;
   }
 }
 
+.grouped-radio {
+  .govuk-radios__divider {
+    font-weight: bold;
+    margin-top: govuk-spacing(4);
+    text-align: left;
+    width: 100%;
+  }
+
+  .govuk-radios__divider:first-child {
+    margin-top: 0;
+  }
+}
+
 .guidance-panel {
   border-left-color: govuk-colour('blue');
   background-color: $guidance-panel-background-colour;

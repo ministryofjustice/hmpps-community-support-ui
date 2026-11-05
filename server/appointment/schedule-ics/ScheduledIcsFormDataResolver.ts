@@ -104,13 +104,17 @@ const loadInformedMethodsFromSession = (
 ): ScheduledIcsFormData => {
   let informedMethods = sessionCommunications ? [...sessionCommunications] : []
 
-  const standardMethods = ['informedByPhone', 'informedByTextMessage', 'informedByEmail']
+  // 'informedByOtherMethod' is the checkbox value itself (saved when "Other" was ticked without
+  // any text), so it must not be treated as the free-text contact method.
+  const checkboxValues = ['informedByPhone', 'informedByTextMessage', 'informedByEmail', 'informedByOtherMethod']
 
-  const otherMethod = informedMethods.find(method => !standardMethods.includes(method))
+  const otherMethod = informedMethods.find(method => !checkboxValues.includes(method))
 
   if (otherMethod) {
     informedMethods = informedMethods.filter(method => method !== otherMethod)
-    informedMethods.push('informedByOtherMethod')
+    if (!informedMethods.includes('informedByOtherMethod')) {
+      informedMethods.push('informedByOtherMethod')
+    }
   }
 
   return {
@@ -177,12 +181,6 @@ const loadFormFromSession = (
       formData.addressCounty = method.county || ''
       formData.addressPostcode = method.postcode || ''
     }
-  }
-
-  if (Array.isArray(createAppointmentRequest.sessionCommunication)) {
-    formData.informedMethods = [...createAppointmentRequest.sessionCommunication]
-  } else {
-    formData.informedMethods = []
   }
 
   if (typeof createAppointmentRequest.meetAtTheGate === 'boolean') {
