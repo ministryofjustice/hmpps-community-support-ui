@@ -8,6 +8,7 @@ import initialContactSessionDetailsPageData from '../mockData/initialContactSess
 import communitySupport from '../mockApis/communitySupport'
 import IcsFeedbackSessionFeedbackPage from '../pages/IcsFeedbackSessionFeedbackPage'
 import IcsFeedbackHowSessionTookPlacePage from '../pages/icsFeedbackHowSessionTookPlacePage'
+import { probationOfficesData } from '../mockData/referenceData'
 
 test.describe('Session Details Page', () => {
   const date = new Date()
@@ -30,6 +31,11 @@ test.describe('Session Details Page', () => {
   test.beforeEach(async ({ page }) => {
     await resetStubs()
     await communitySupport.stubGetICS(pastMeeting.caseRefId, pastMeeting.data)
+    await communitySupport.stubGetIcsFeedbackPage(pastMeeting.caseRefId, 'session-feedback', {
+      referralFirstName: pastMeeting.data.referralFirstName,
+    })
+    await communitySupport.stubGetIcsFeedbackDidSessionTakePlace(pastMeeting.caseRefId, pastMeeting.data)
+    await communitySupport.stubGetProbationOffices(probationOfficesData)
 
     await page.goto('/')
     await login(page)
@@ -93,6 +99,7 @@ test.describe('Session Details Page', () => {
     await sessionDetailsPage.duration.items[1].input.fill('15')
     await sessionDetailsPage.continueButton.click()
     await expect(page).toHaveURL(IcsFeedbackSessionFeedbackPage.url(pastMeeting.caseRefId))
+    await expect(page.getByRole('heading', { name: 'Session feedback', exact: true })).toBeVisible()
   })
 
   // IPB-2253:AC4.2
@@ -104,6 +111,7 @@ test.describe('Session Details Page', () => {
     await sessionDetailsPage.duration.items[1].input.fill('15')
     await sessionDetailsPage.continueButton.click()
     await expect(page).toHaveURL(IcsFeedbackSessionFeedbackPage.url(pastMeeting.caseRefId))
+    await expect(page.getByRole('heading', { name: 'Session feedback', exact: true })).toBeVisible()
   })
 
   // IPB-2253:AC5/AC6
@@ -233,5 +241,6 @@ test.describe('Session Details Page', () => {
     const sessionDetailsPage = await SessionDetailsPage.verifyOnPage(page)
     await sessionDetailsPage.backLink.click()
     await expect(page).toHaveURL(IcsFeedbackHowSessionTookPlacePage.url(pastMeeting.caseRefId))
+    await IcsFeedbackHowSessionTookPlacePage.verifyOnPage(page)
   })
 })

@@ -11,6 +11,7 @@ import buildReferralProgress from '../../server/testutils/buildReferralProgress'
 import IcsFeedbackHowSessionTookPlacePage from '../pages/icsFeedbackHowSessionTookPlacePage'
 import IcsFeedbackWhyDidTheSessionNotHappenPage from '../pages/IcsFeedbackWhyDidTheSessionNotHappenPage'
 import IcsFeedbackHowTheyTriedToContactThePersonPage from '../pages/IcsFeedbackHowTheyTriedToContactThePersonPage'
+import { probationOfficesData } from '../mockData/referenceData'
 
 test.describe('RecordSessionAttendancePage', () => {
   const fixedDate = new Date('2026-03-08T09:30:40+00:00')
@@ -45,6 +46,14 @@ test.describe('RecordSessionAttendancePage', () => {
     await communitySupport.stubGetIcsFeedbackAttendance(futureMeeting.caseRefId, futureMeeting.data)
     await communitySupport.stubGetIcsFeedbackAttendance(fixedTimeMeeting.caseRefId, fixedTimeMeeting.data)
     await communitySupport.stubGetIcsFeedbackAttendance(fixedTimePmMeeting.caseRefId, fixedTimePmMeeting.data)
+    await communitySupport.stubGetIcsFeedbackDidSessionTakePlace(pastMeeting.caseRefId, pastMeeting.data)
+    await communitySupport.stubGetProbationOffices(probationOfficesData)
+    await communitySupport.stubGetIcsFeedbackPage(pastMeeting.caseRefId, 'why-did-the-session-not-happen', {
+      referralFirstName: pastMeeting.data.referralFirstName,
+    })
+    await communitySupport.stubGetIcsFeedbackPage(pastMeeting.caseRefId, 'how-they-tried-to-contact-the-person', {
+      referralFirstName: pastMeeting.data.referralFirstName,
+    })
     await page.goto('/')
     await login(page)
   })
@@ -324,6 +333,7 @@ test.describe('RecordSessionAttendancePage', () => {
     await recordSessionAttendancePage.sessionHappenedRadios.items[0].input.click()
     await recordSessionAttendancePage.continueButton.click()
     await expect(page).toHaveURL(IcsFeedbackHowSessionTookPlacePage.url(pastMeeting.caseRefId))
+    await IcsFeedbackHowSessionTookPlacePage.verifyOnPage(page)
   })
 
   // IPB-2208:AC14
@@ -336,6 +346,7 @@ test.describe('RecordSessionAttendancePage', () => {
     await recordSessionAttendancePage.sessionAttendedRadios.items[0].input.click()
     await recordSessionAttendancePage.continueButton.click()
     await expect(page).toHaveURL(IcsFeedbackWhyDidTheSessionNotHappenPage.url(pastMeeting.caseRefId))
+    await IcsFeedbackWhyDidTheSessionNotHappenPage.verifyOnPage(page)
   })
   // IPB-2208:AC15
   test('Session did not happen and the person did not attend', async ({ page }) => {
