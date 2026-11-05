@@ -645,7 +645,8 @@
       "caringResponsibilities": "Caring Responsibilities",
       "employmentResponsibilities": "Employment Responsibilities",
       "diversity": "Diversity",
-      "anythingElse": "Anything Else"
+      "anythingElse": "Anything Else",
+      "interpreterLanguage": "Interpreter Language"
     },
     "submitButtonText": "Continue",
     "backLinkHref": "/ics-feedback/{{ id }}/issues-or-concerns"

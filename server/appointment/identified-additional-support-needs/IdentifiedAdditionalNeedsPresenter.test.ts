@@ -171,6 +171,7 @@ describe('IdentifiedAdditionalNeedsPresenter', () => {
         employmentResponsibilitiesDetails: 'Employment support',
         diversityDetails: 'Diversity support',
         anythingElseDetails: 'Other support',
+        interpreterLanguage: 'Interpreter support',
       }
       const presenter = new IdentifiedAdditionalNeedsPresenter(caseRefId, firstName, existingSupportNeeds, {})
 
@@ -190,6 +191,7 @@ describe('IdentifiedAdditionalNeedsPresenter', () => {
           },
           { key: { text: content.supportNeedsTitle.diversity }, value: { html: 'Diversity support' } },
           { key: { text: content.supportNeedsTitle.anythingElse }, value: { html: 'Other support' } },
+          { key: { text: content.supportNeedsTitle.interpreterLanguage }, value: { html: 'Interpreter support' } },
         ],
         attributes: { 'data-testid': 'exisiting-support-needs-details' },
       })

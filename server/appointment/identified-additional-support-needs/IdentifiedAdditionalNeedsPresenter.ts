@@ -205,6 +205,16 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
         },
       })
     }
+     if (exisitngSupportNeedsData.interpreterLanguage) {
+      draftRows.push({
+        key: {
+          text: content.supportNeedsTitle.interpreterLanguage,
+        },
+        value: {
+          html: exisitngSupportNeedsData.interpreterLanguage,
+        },
+      })
+    }
     return draftRows
   }
 
