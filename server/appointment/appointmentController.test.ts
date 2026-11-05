@@ -390,6 +390,42 @@ describe('AppointmentController', () => {
       expect(req.session.appointmentSessionData).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith(`/referral/${caseRefId}/appointments`)
     })
+
+    it('submits the complete other-location address from location lines', async () => {
+      req = {
+        params: { caseReference: caseRefId },
+        session: {
+          appointmentSessionData: {
+            appointmentType: 'PRE_RELEASE_SESSION',
+            date: '2026-03-27',
+            startTime: '1:30pm',
+            method: 'IN_PERSON_OTHER_LOCATION',
+            addressLines: ['14 High Street', 'Flat 2', 'Bath', 'Somerset', 'BA1 1AA'],
+            informedBy: ['informedByPhone'],
+          },
+        },
+      } as unknown as Request
+
+      jest
+        .spyOn(appointmentService, 'getCreateAppointmentReferenceData')
+        .mockResolvedValue(mockCreateAppointmentReferenceData)
+      jest.spyOn(appointmentService, 'submitAppointment').mockResolvedValue(mockAppointmentIcsResponse)
+
+      await appointmentController.submitAppointment(req, res)
+
+      expect(appointmentService.submitAppointment).toHaveBeenCalledWith(
+        caseRefId,
+        expect.objectContaining({
+          sessionMethodRequest: {
+            type: 'IN_PERSON_OTHER_LOCATION',
+            additionalDetails: '14 High Street, Flat 2, Bath, Somerset, BA1 1AA',
+          },
+        }),
+        'user1',
+      )
+      expect(req.session.appointmentSessionData).toBeUndefined()
+      expect(res.redirect).toHaveBeenCalledWith(`/referral/${caseRefId}/appointments`)
+    })
   })
 
   describe('submitIcs', () => {
@@ -655,12 +691,64 @@ describe('AppointmentController', () => {
         date: '20/6/2026',
         startTime: '11:30:am',
         method: 'PHONE',
+        reasonSessionNotInPerson: 'reason',
         probationOfficeLocationId: undefined,
         informedBy: ['informedByPhone'],
       })
       expect(scheduleIcsRes.redirect).toHaveBeenCalledWith(
         `/referral/${caseRefId}/create-an-appointment/check-your-answers`,
       )
+    })
+
+    it('saves the video call reason in the appointment session data', async () => {
+      createReq.body = {
+        ...validBody,
+        sessionTakePlace: 'ByVideo',
+        ByVideo: 'Reason for video session',
+      }
+
+      await appointmentController.createAppointmentDetails(createReq, scheduleIcsRes)
+
+      expect(createReq.session.appointmentSessionData).toMatchObject({
+        method: 'VIDEO',
+        reasonSessionNotInPerson: 'Reason for video session',
+      })
+    })
+
+    it.each([
+      ['Flat 2', 'Somerset', ['14 High Street', 'Flat 2', 'Bath', 'Somerset', 'BA1 1AA']],
+      ['', '', ['14 High Street', 'Bath', 'BA1 1AA']],
+    ])('saves address lines in form order with line 2 "%s" and county "%s"', async (line2, county, expectedLines) => {
+      createReq.body = {
+        ...validBody,
+        sessionTakePlace: 'InSomewhereElse',
+        addressLine1: '14 High Street',
+        addressLine2: line2,
+        addressTown: 'Bath',
+        addressCounty: county,
+        addressPostcode: 'BA1 1AA',
+      }
+
+      await appointmentController.createAppointmentDetails(createReq, scheduleIcsRes)
+
+      expect(createReq.session.appointmentSessionData).toMatchObject({
+        method: 'IN_PERSON_OTHER_LOCATION',
+        addressLines: expectedLines,
+      })
+    })
+
+    it('clears address lines when the method changes to a phone call', async () => {
+      createReq.session.appointmentSessionData = {
+        method: 'IN_PERSON_OTHER_LOCATION',
+        addressLines: ['14 High Street', 'Bath', 'BA1 1AA'],
+      }
+
+      await appointmentController.createAppointmentDetails(createReq, scheduleIcsRes)
+
+      expect(createReq.session.appointmentSessionData).toMatchObject({
+        method: 'PHONE',
+        addressLines: undefined,
+      })
     })
 
     it('clears the probation office id when the method changes away from an in-person location method', async () => {

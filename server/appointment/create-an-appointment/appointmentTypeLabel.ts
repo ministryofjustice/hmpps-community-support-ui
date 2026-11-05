@@ -55,7 +55,9 @@ export const getAppointmentTypeLabel = (
   }
 
   const lookupValue = normaliseAppointmentTypeKey(appointmentType)
-  const matchedType = appointmentTypes?.find(type => normaliseAppointmentTypeKey(type.value) === lookupValue)
+  const matchedType = normaliseAppointmentTypeOptions(appointmentTypes).find(
+    type => normaliseAppointmentTypeKey(type.value) === lookupValue,
+  )
 
   if (matchedType?.name) {
     return matchedType.name
