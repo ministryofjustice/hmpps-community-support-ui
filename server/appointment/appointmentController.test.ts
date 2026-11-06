@@ -756,7 +756,7 @@ describe('AppointmentController', () => {
       expect(createReq.session.appointmentSessionData).toMatchObject({
         appointmentType: 'POST_RELEASE_SESSION',
         date: '20/6/2026',
-        startTime: '11:30:am',
+        startTime: '11:30am',
         method: 'PHONE',
         reasonSessionNotInPerson: 'reason',
         probationOfficeLocationId: undefined,
