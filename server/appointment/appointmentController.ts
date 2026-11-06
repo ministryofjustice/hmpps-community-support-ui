@@ -479,6 +479,7 @@ class AppointmentController {
 
     await this.appointmentService.submitAppointment(caseReference, createAppointmentRequest, username)
     delete req.session.appointmentSessionData
+    req.session.referralAppointmentsSuccessCaseReference = caseReference
 
     return res.redirect(`/referral/${caseReference}/appointments`)
   }

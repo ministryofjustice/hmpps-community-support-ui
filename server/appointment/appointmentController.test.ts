@@ -388,6 +388,7 @@ describe('AppointmentController', () => {
       )
 
       expect(req.session.appointmentSessionData).toBeUndefined()
+      expect(req.session.referralAppointmentsSuccessCaseReference).toBe(caseRefId)
       expect(res.redirect).toHaveBeenCalledWith(`/referral/${caseRefId}/appointments`)
     })
 
@@ -425,6 +426,36 @@ describe('AppointmentController', () => {
       )
       expect(req.session.appointmentSessionData).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith(`/referral/${caseRefId}/appointments`)
+    })
+
+    it('propagates appointment creation errors without setting the success alert or clearing session data', async () => {
+      const createError = new Error('Appointment creation failed')
+      req = {
+        params: { caseReference: caseRefId },
+        session: {
+          appointmentSessionData: {
+            appointmentType: 'CONTACT_SESSION',
+            date: '2026-03-27',
+            startTime: '1:30pm',
+            method: 'IN_PERSON_PROBATION_OFFICE',
+            probationOfficeLocationId: '2',
+            informedBy: ['informedByPhone'],
+          },
+        },
+        flash: jest.fn().mockReturnValue([]),
+      } as unknown as Request
+
+      jest.spyOn(appointmentService, 'getCreateAppointmentReferenceData').mockResolvedValue({
+        appointmentTypes: mockCreateAppointmentReferenceData.appointmentTypes,
+        probationOfficeLocations: [{ id: 2, name: 'Derbyshire: Buxton Probation Office' }],
+      } as never)
+      jest.spyOn(appointmentService, 'submitAppointment').mockRejectedValue(createError)
+
+      await expect(appointmentController.submitAppointment(req, res)).rejects.toBe(createError)
+
+      expect(req.session.referralAppointmentsSuccessCaseReference).toBeUndefined()
+      expect(req.session.appointmentSessionData).toBeDefined()
+      expect(res.redirect).not.toHaveBeenCalled()
     })
   })
 
