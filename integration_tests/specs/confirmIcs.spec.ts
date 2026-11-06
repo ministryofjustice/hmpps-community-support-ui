@@ -288,6 +288,7 @@ test.describe('Confirm ICS Page', () => {
     await test.step('Given a retrospective ICS appointment has been scheduled', async () => {
       await seedAppointmentSession(page, pastAppointmentRequest)
       await communitySupport.stubSubmitICS(CASE_REF_ID, mockAppointmentIcsResponse, 200)
+      await communitySupport.stubGetIcsFeedbackAttendance(CASE_REF_ID, mockAppointmentIcsResponse)
 
       await page.goto(ConfirmIcsPage.url(CASE_REF_ID))
     })
@@ -451,6 +452,7 @@ test.describe('Confirm ICS Page', () => {
     ])
     await communitySupport.stubGetReferralProgress(referralProgressWithRescheduledAppointments, CASE_REF_ID)
     await communitySupport.stubRescheduleICS(CASE_REF_ID, mockAppointmentIcsResponse, 200)
+    await communitySupport.stubGetIcsFeedbackAttendance(CASE_REF_ID, mockAppointmentIcsResponse)
     await seedAppointmentSession(page, informedOtherAppointmentRequest)
     await seedChangeAppointmentDetails(page, changeAppointmentDetails)
     await page.goto(ConfirmIcsPage.rescheduleUrl(CASE_REF_ID))
