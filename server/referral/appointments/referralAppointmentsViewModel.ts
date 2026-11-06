@@ -11,6 +11,8 @@ export type ReferralAppointmentsViewModel = {
   appointmentsTable: GovukFrontendTable
   hasAppointments: boolean
   notificationBanner?: GovukFrontendNotificationBanner
+  upcomingAppointmentsTitle: string
+  pastAppointmentsTitle: string
 }
 
 export type ReferralAppointmentsContent = GlobalContent['/referral/:id/appointments']

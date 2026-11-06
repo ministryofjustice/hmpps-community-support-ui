@@ -28,6 +28,7 @@ import ConfirmContactDetailsPresenter from './addContactDetails/confirmContactDe
 import ReferralDetailsPresenter from './referralDetails/ReferralDetailsPresenter'
 import { HmppsUser } from '../interfaces/hmppsUser'
 import type { ReferralAppointmentsContent } from './appointments/referralAppointmentsViewModel'
+import { globalContent } from '../../assets/content/GlobalContent'
 
 jest.mock('../services/referralService')
 jest.mock('../services/communityServiceProviderService')
@@ -121,21 +122,10 @@ describe('ReferralController', () => {
     })
   })
 
-
   describe('showReferralAppointments', () => {
     it('renders the success alert once for the matching referral', async () => {
       const caseReference = 'AB1234CD'
-      const content: ReferralAppointmentsContent = {
-        pageHeader: 'Referral for',
-        subNavTitle: 'Referral',
-        subNavItems: [],
-        appointmentsTitle: 'Appointments',
-        appointmentTypeColumnHeader: 'Appointment',
-        dateTimeColumnHeader: 'Date and time',
-        noAppointmentsMessage: 'No appointments scheduled',
-        createAppointmentText: 'Create an Appointment',
-        appointmentCreatedSuccessfully: 'Appointment created successfully',
-      }
+      const content: ReferralAppointmentsContent = globalContent['/referral/:id/appointments']
       const appointments: ReferralAppointmentsBffResponseDto = {
         personDetails: { firstName: 'Alex', lastName: 'Example', dateOfBirth: '1980-01-01', crn: 'X123456' },
         appointments: [],
