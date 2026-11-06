@@ -18,10 +18,6 @@
     {{ govukNotificationBanner(content.notificationBanner) }}
   {% endif %}
 
-  {% if content.notificationBanner %}
-    {{ govukNotificationBanner(content.notificationBanner) }}
-  {% endif %}
-
   <p class="govuk-body">
     <a class="govuk-link" href="{{ content.createAppointmentHref }}" data-testid="create-appointment-link">
       {{ content.createAppointmentText }}
