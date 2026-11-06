@@ -1122,7 +1122,10 @@ class AppointmentController {
   async recordHowTheyTriedToContactThePerson(req: Request, res: Response): Promise<void> {
     const caseRefId = req.params.caseRefId as string
     const { username } = res.locals.user
-    const { referralFirstName } = await this.appointmentService.getICS(caseRefId.toString(), username)
+    const { referralFirstName } = await this.appointmentService.getIcsFeedbackHowTheyTriedToContactThePerson(
+      caseRefId.toString(),
+      username,
+    )
 
     await validateRequestBodyAgainstSchema(
       icsFeedbackHowTheyTriedToContactThePersonFormDataSchema(referralFirstName),

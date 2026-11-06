@@ -1528,7 +1528,9 @@ describe('AppointmentController', () => {
           },
         },
       } as unknown as Request
-      jest.spyOn(appointmentService, 'getICS').mockResolvedValue(mockAppointmentIcsResponse)
+      jest
+        .spyOn(appointmentService, 'getIcsFeedbackHowTheyTriedToContactThePerson')
+        .mockResolvedValue({ referralFirstName: mockAppointmentIcsResponse.referralFirstName })
     })
     test('empty form data', async () => {
       req.body = {}
