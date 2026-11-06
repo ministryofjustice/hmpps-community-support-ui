@@ -8,7 +8,7 @@ import {
   SessionMethod,
   SessionMethodRequest,
 } from '@community-support-api'
-import { format, isBefore, parse } from 'date-fns'
+import { format, isBefore, parse, parseISO } from 'date-fns'
 import { ZodType } from 'zod'
 import timeFormat, { parseTime12Hr } from '../utils/timeFormat'
 import { ErrorMiddlewareErrors, HowSessionTookPlace, IcsFeedbackHowSessionTookPlaceSession } from '../@types/express'
@@ -42,7 +42,7 @@ import { IcsFeedbackFormSchema } from '../validation/IcsFeedbackHowSessionTookPl
 import buildScheduleIcsAppointmentFormData, {
   buildCreateAppointmentFormData,
 } from '../validation/ScheduleIcsAppointmentFormData'
-import { parseAppointmentType, SessionAppointmentType } from './appointmentTypeRules'
+import { appointmentTypeRules, parseAppointmentType, SessionAppointmentType } from './appointmentTypeRules'
 import NextStepsPresenter from './next-steps/NextStepsPresenter'
 import { NextStepsFormDataSchema } from '../validation/NextStepsFormData'
 import ChangeIcsDetailsReasonPresenter from './change-ics-details-reason/ChangeIcsDetailsReasonPresenter'
@@ -238,14 +238,17 @@ const buildSessionMethodRequest = (
   appointmentSessionData: AppointmentSessionData,
   probationOfficeLocations: Array<{ id: number; name: string }>,
 ): SessionMethodRequest => {
+  const { method } = appointmentSessionData
   const locationId = appointmentSessionData.probationOfficeLocationId
   const locationName = probationOfficeLocations.find(office => String(office.id) === String(locationId))?.name
-  const detailValue =
-    appointmentSessionData.method === 'IN_PERSON_OTHER_LOCATION'
-      ? appointmentSessionData.addressLines?.join(', ') || ''
-      : locationName || locationId || ''
+  let detailValue = locationName || locationId || ''
+  if (method === 'IN_PERSON_OTHER_LOCATION') {
+    detailValue = appointmentSessionData.addressLines?.join(', ') || ''
+  } else if (method === 'PHONE' || method === 'VIDEO') {
+    detailValue = appointmentSessionData.reasonSessionNotInPerson || ''
+  }
 
-  return buildAppointmentSessionMethodRequest(appointmentSessionData.method, detailValue)
+  return buildAppointmentSessionMethodRequest(method, detailValue)
 }
 
 const buildCreateAppointmentRequest = (
@@ -369,12 +372,16 @@ class AppointmentController {
       this.referenceDataService.getPrisons(),
       this.referralService.getReferralInformation(caseRefId, username),
     ])
+    const submitted = getFlashedFormValues(req)
     const formData = withSubmittedDateAndTime(
       req.session.createAppointmentRequest?.appointmentType === appointmentType
         ? this.resolver.resolveFromSession(req)
         : undefined,
-      getFlashedFormValues(req),
+      submitted,
     )
+    if (submitted && formData) {
+      formData.sessionTakePlace = submitted.sessionTakePlace ?? ''
+    }
 
     const validationErrors: ErrorMiddlewareErrors = formatDynamicErrorMessages(
       res.locals.errors,
@@ -406,7 +413,9 @@ class AppointmentController {
     return validateRequestBodyAgainstSchema(schema, req, res, () => {
       const method = req.body.sessionTakePlace
       const normalisedMethod = normaliseAppointmentMethod(method)
-      const meetAtTheGateValue = req.body.meetAtTheGate
+      const meetAtTheGateValue = appointmentTypeRules[appointmentType].meetAtTheGate
+        ? req.body.meetAtTheGate
+        : undefined
       let reasonSessionNotInPerson: string | undefined
       let meetAtTheGate: boolean | undefined
 
@@ -550,7 +559,7 @@ class AppointmentController {
     referralInformation: ReferralInformation
   }> {
     const referralInformation = await this.referralService.getReferralInformation(caseRefId, username)
-    const referralDate = new Date(referralInformation.referralDate)
+    const referralDate = parseISO(referralInformation.referralDate)
     const schema = appointmentType
       ? buildCreateAppointmentFormData(referralDate, appointmentType)
       : buildScheduleIcsAppointmentFormData(referralDate)
@@ -574,7 +583,8 @@ class AppointmentController {
       addressPostcode: req.body.addressPostcode,
       informedMethods: informedMethodArr,
       otherMethodOfContact: req.body.otherMethodOfContact,
-      meetAtTheGate: req.body.meetAtTheGate,
+      meetAtTheGate:
+        !appointmentType || appointmentTypeRules[appointmentType].meetAtTheGate ? req.body.meetAtTheGate : undefined,
       appointmentType,
     })
 

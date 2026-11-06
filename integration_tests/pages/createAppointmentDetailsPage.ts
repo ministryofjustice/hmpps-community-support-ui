@@ -6,7 +6,7 @@ export type SessionType =
 
 const headers: Record<SessionType, string> = {
   ICS: 'Book initial contact session (ICS)',
-  CONTACT_SESSION: 'Schedule the contact session',
+  CONTACT_SESSION: 'Book contact session',
   PRE_RELEASE_SESSION: 'Schedule the pre-release session',
   POST_RELEASE_SESSION: 'Schedule the post-release session',
   HANDOVER_SESSION: 'Schedule the handover session',

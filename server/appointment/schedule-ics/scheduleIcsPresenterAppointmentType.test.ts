@@ -143,6 +143,57 @@ describe('ScheduleIcsPresenter with appointment type', () => {
       ])
     })
 
+    test('contact session matches the design and reuses the grouped initial-contact inputs', () => {
+      const viewModel = buildWithPageContent('CONTACT_SESSION')
+      expect(viewModel.pageHeader).toBe('Book contact session')
+      expect(viewModel.submitButton.text).toBe('Continue')
+      expect(viewModel.dateInput).toEqual(buildWithPageContent('ICS').dateInput)
+      expect(viewModel.timeInput).toEqual(buildWithPageContent('ICS').timeInput)
+      expect(itemsSummary('CONTACT_SESSION')).toEqual(itemsSummary('ICS'))
+      const { items } = viewModel.howWillTheSessionTakePlaceInput
+      const icsItems = buildWithPageContent('ICS').howWillTheSessionTakePlaceInput.items
+      for (const value of ['ByPhone', 'ByVideo']) {
+        expect(items.find(item => item.value === value).conditional).toEqual(
+          icsItems.find(item => item.value === value).conditional,
+        )
+      }
+      expect(items.find(item => item.value === 'InProbationOffice').conditional.html).toContain('probationOfficeList')
+      expect(items.find(item => item.value === 'InSomewhereElse').conditional).toEqual(
+        icsItems.find(item => item.value === 'InSomewhereElse').conditional,
+      )
+      expect(viewModel.howWasTheyInformedAboutTheSessionInput).toEqual(
+        buildWithPageContent('ICS').howWasTheyInformedAboutTheSessionInput,
+      )
+    })
+
+    test('contact session uses the same location options as ICS for a person in custody', () => {
+      expect(itemsSummary('CONTACT_SESSION', referralInformationInPrison)).toEqual(
+        itemsSummary('ICS', referralInformationInPrison),
+      )
+    })
+
+    test.each(['sessionDate', 'sessionTakePlace', 'probationOfficeList', 'otherMethodOfContact'])(
+      'contact session renders the %s inline error',
+      key => {
+        const message = { text: 'Required field' }
+        const viewModel = buildWithPageContent('CONTACT_SESSION', referralInformationInCommunity, {
+          list: [{ text: message.text, href: `#${key}` }],
+          messages: { [key]: message },
+        })
+        if (key === 'sessionDate') expect(viewModel.dateInput.errorMessage).toEqual(message)
+        if (key === 'sessionTakePlace') expect(viewModel.howWillTheSessionTakePlaceInput.errorMessage).toEqual(message)
+        if (key === 'probationOfficeList') {
+          expect(
+            viewModel.howWillTheSessionTakePlaceInput.items.find(item => item.value === 'InProbationOffice').conditional
+              .html,
+          ).toContain(message.text)
+        }
+        if (key === 'otherMethodOfContact') {
+          expect(viewModel.howWasTheyInformedAboutTheSessionInput.items.at(3).conditional.html).toContain(message.text)
+        }
+      },
+    )
+
     test('ICS in custody shows the prison option under in person', () => {
       expect(itemsSummary('ICS', referralInformationInPrison)).toEqual([
         'divider:In person',

@@ -195,7 +195,7 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
   }
 
   private buildRadioItems(content: ScheduleIcsContent): WithConditional<GovukFrontendRadiosItem>[] {
-    const remoteItems: WithConditional<GovukFrontendRadiosItem>[] = [
+    const remoteItemsWithReasons: WithConditional<GovukFrontendRadiosItem>[] = [
       {
         value: 'ByPhone',
         text: content.howSessionTakePlace.radioItems.phone.text,
@@ -240,12 +240,12 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
 
     const { groupHeadings } = content.howSessionTakePlace
     if (!groupHeadings) {
-      return remoteItems.concat(inPersonItems)
+      return remoteItemsWithReasons.concat(inPersonItems)
     }
     return [
       ...(inPersonItems.length > 0 ? [{ divider: groupHeadings.inPerson, value: '' }, ...inPersonItems] : []),
       { divider: groupHeadings.remote, value: '' },
-      ...remoteItems,
+      ...remoteItemsWithReasons,
     ]
   }
 

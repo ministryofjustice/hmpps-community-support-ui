@@ -55,7 +55,7 @@ export const buildAppointmentSessionMethodRequest = (
     return { type: 'PHONE' }
   }
 
-  if (methodsWithLocation.has(method)) {
+  if (methodsWithLocation.has(method) || ((method === 'PHONE' || method === 'VIDEO') && additionalDetails)) {
     return { type: method, additionalDetails }
   }
 

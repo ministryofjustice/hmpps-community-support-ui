@@ -42,8 +42,15 @@ describe('appointmentMethod', () => {
   })
 
   describe('buildAppointmentSessionMethodRequest', () => {
-    it('builds requests for remote methods without additional details', () => {
-      expect(buildAppointmentSessionMethodRequest('PHONE', 'ignored')).toEqual({ type: 'PHONE' })
+    it('builds requests for remote methods with their reason when provided', () => {
+      expect(buildAppointmentSessionMethodRequest('PHONE', 'Phone reason')).toEqual({
+        type: 'PHONE',
+        additionalDetails: 'Phone reason',
+      })
+      expect(buildAppointmentSessionMethodRequest('VIDEO', 'Video reason')).toEqual({
+        type: 'VIDEO',
+        additionalDetails: 'Video reason',
+      })
       expect(buildAppointmentSessionMethodRequest('VIDEO')).toEqual({ type: 'VIDEO' })
       expect(buildAppointmentSessionMethodRequest('IN_PERSON', 'ignored')).toEqual({ type: 'IN_PERSON' })
     })
