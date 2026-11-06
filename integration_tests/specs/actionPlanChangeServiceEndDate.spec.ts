@@ -14,6 +14,12 @@ test.describe('Action Plan Change Service End Date Page', () => {
 
   test.beforeEach(async ({ page }) => {
     await resetStubs()
+    await communitySupport.stubGetActionPlanSummary(caseReference, {
+      personDetails: { firstName: 'Alex', lastName: 'River' },
+      needs: [],
+      lastUpdatedAt: '',
+      isSubmitted: false,
+    })
     await page.goto('/')
     await login(page)
   })
