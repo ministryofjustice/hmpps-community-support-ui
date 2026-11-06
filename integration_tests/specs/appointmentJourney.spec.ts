@@ -94,6 +94,7 @@ test.describe('Full appointment journey', () => {
     await initialDetailsPage.saveAndContinueButton.click()
 
     const initialCyaPage = await AppointmentCheckYourAnswersPage.verifyOnPage(page)
+    await expect(initialCyaPage.methodRow).toContainText('Video call')
     await expect(initialCyaPage.reasonSessionNotInPersonRow).toContainText('Initial reason')
     await initialCyaPage.changeLink.click()
     await AppointmentTypePage.verifyOnPage(page)

@@ -101,6 +101,22 @@ describe('AppointmentCheckYourAnswersPresenter', () => {
     ).toBe(true)
   })
 
+  it.each(['PHONE', 'VIDEO'] as const)('shows the remote reason for a contact session by %s', method => {
+    const viewModel = new AppointmentCheckYourAnswersPresenter(
+      'AB1234CD',
+      'John',
+      { appointmentType: 'CONTACT_SESSION', method, reasonSessionNotInPerson: 'The person cannot attend in person' },
+      [],
+    ).buildViewModel(res)
+    expect(
+      viewModel.appointmentSummary.rows.some(
+        row =>
+          row.key.text === content.reasonSessionNotInPersonLabel &&
+          row.value.text === 'The person cannot attend in person',
+      ),
+    ).toBe(true)
+  })
+
   it('shows the meet at the gate answer for a post-release session', () => {
     const presenter = new AppointmentCheckYourAnswersPresenter(
       'AB1234CD',
@@ -184,7 +200,7 @@ describe('AppointmentCheckYourAnswersPresenter', () => {
       'AB1234CD',
       'John',
       {
-        appointmentType: 'CONTACT_SESSION',
+        appointmentType: 'ICS',
         date: '2026-10-16',
         startTime: '1:30pm',
         method,

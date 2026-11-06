@@ -457,6 +457,42 @@ describe('AppointmentController', () => {
       expect(req.session.appointmentSessionData).toBeDefined()
       expect(res.redirect).not.toHaveBeenCalled()
     })
+
+    it.each([
+      ['ICS', 'PHONE', 'The person cannot attend by phone'],
+      ['ICS', 'VIDEO', 'The person cannot attend by video'],
+      ['CONTACT_SESSION', 'PHONE', 'The person cannot attend by phone'],
+      ['CONTACT_SESSION', 'VIDEO', 'The person cannot attend by video'],
+    ])('submits an %s %s reason', async (appointmentType, method, reason) => {
+      req = {
+        params: { caseReference: caseRefId },
+        session: {
+          appointmentSessionData: {
+            appointmentType,
+            date: '2026-03-27',
+            startTime: '1:30pm',
+            method,
+            reasonSessionNotInPerson: reason,
+            informedBy: ['informedByPhone'],
+          },
+        },
+      } as unknown as Request
+
+      jest
+        .spyOn(appointmentService, 'getCreateAppointmentReferenceData')
+        .mockResolvedValue(mockCreateAppointmentReferenceData)
+      jest.spyOn(appointmentService, 'submitAppointment').mockResolvedValue(mockAppointmentIcsResponse)
+
+      await appointmentController.submitAppointment(req, res)
+
+      expect(appointmentService.submitAppointment).toHaveBeenCalledWith(
+        caseRefId,
+        expect.objectContaining({
+          sessionMethodRequest: { type: method, additionalDetails: reason },
+        }),
+        'user1',
+      )
+    })
   })
 
   describe('submitIcs', () => {
@@ -744,6 +780,96 @@ describe('AppointmentController', () => {
         method: 'VIDEO',
         reasonSessionNotInPerson: 'Reason for video session',
       })
+    })
+
+    it.each([
+      ['ByPhone', 'The person cannot attend by phone'],
+      ['ByVideo', 'The person cannot attend by video'],
+    ])('saves a contact session by %s with its remote reason', async (sessionTakePlace, reason) => {
+      createReq.query = { session: 'CONTACT_SESSION' }
+      createReq.body = {
+        ...validBody,
+        sessionTakePlace,
+        ByPhone: sessionTakePlace === 'ByPhone' ? reason : undefined,
+        ByVideo: sessionTakePlace === 'ByVideo' ? reason : undefined,
+      }
+      await appointmentController.createAppointmentDetails(createReq, scheduleIcsRes)
+      expect(createReq.session.appointmentSessionData.reasonSessionNotInPerson).toBe(reason)
+      expect(createReq.session.createAppointmentRequest.sessionMethodRequest).toEqual({
+        type: sessionTakePlace === 'ByPhone' ? 'PHONE' : 'VIDEO',
+        additionalDetails: reason,
+      })
+      expect(scheduleIcsRes.redirect).toHaveBeenCalledWith(
+        `/referral/${caseRefId}/create-an-appointment/check-your-answers`,
+      )
+    })
+
+    it.each(['ICS', 'CONTACT_SESSION', 'POST_RELEASE_SESSION'] as const)(
+      'does not select a method after submitting an empty %s form',
+      async appointmentType => {
+        createReq.query = { session: appointmentType }
+        createReq.session.createAppointmentRequest = saveFormToSession({ appointmentType })
+        createReq.flash = jest.fn().mockReturnValue([JSON.stringify({ sessionDate: '' })])
+        await appointmentController.showCreateAppointmentDetails(createReq, scheduleIcsRes)
+        expect((ScheduleIcsPresenter as jest.Mock).mock.lastCall[4].sessionTakePlace).toBe('')
+      },
+    )
+
+    it.each(['ICS', 'CONTACT_SESSION'] as const)(
+      'does not save a meet-at-the-gate answer for %s',
+      async appointmentType => {
+        createReq.query = { session: appointmentType }
+        await appointmentController.createAppointmentDetails(createReq, scheduleIcsRes)
+        expect(createReq.session.createAppointmentRequest.meetAtTheGate).toBeUndefined()
+        expect(createReq.session.appointmentSessionData.meetAtTheGate).toBeUndefined()
+      },
+    )
+
+    it.each([
+      ['ICS', '10/6/2026', true],
+      ['CONTACT_SESSION', '10/6/2026', false],
+      ['CONTACT_SESSION', '11/6/2026', true],
+    ])('validates %s on %s against the referral date', async (appointmentType, date, isValid) => {
+      referralService.getReferralInformation.mockResolvedValue({
+        ...mockReferralInformationInCommunity,
+        referralDate: '2026-06-10',
+      })
+      createReq.query = { session: appointmentType }
+      createReq.body = { ...validBody, sessionDate: date }
+
+      await appointmentController.createAppointmentDetails(createReq, scheduleIcsRes)
+
+      if (isValid) {
+        expect(scheduleIcsRes.redirect).toHaveBeenCalledWith(
+          `/referral/${caseRefId}/create-an-appointment/check-your-answers`,
+        )
+      } else {
+        expect(createReq.flash).toHaveBeenCalledWith('sessionDateError', 'Session date must be after the referral date')
+      }
+    })
+
+    it('saves an inline contact session address and continues to check your answers', async () => {
+      createReq.query = { session: 'CONTACT_SESSION' }
+      createReq.body = {
+        ...validBody,
+        sessionTakePlace: 'InSomewhereElse',
+        addressLine1: '14 High Street',
+        addressLine2: '',
+        addressTown: 'Bath',
+        addressCounty: '',
+        addressPostcode: 'BA1 1AA',
+      }
+      await appointmentController.createAppointmentDetails(createReq, scheduleIcsRes)
+      expect(createReq.session.appointmentSessionData.addressLines).toEqual(['14 High Street', 'Bath', 'BA1 1AA'])
+      expect(createReq.session.createAppointmentRequest.sessionMethodRequest).toMatchObject({
+        type: 'IN_PERSON_OTHER_LOCATION',
+        addressLine1: '14 High Street',
+        townOrCity: 'Bath',
+        postcode: 'BA1 1AA',
+      })
+      expect(scheduleIcsRes.redirect).toHaveBeenLastCalledWith(
+        `/referral/${caseRefId}/create-an-appointment/check-your-answers`,
+      )
     })
 
     it.each([

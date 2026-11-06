@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { addMonths, isBefore, isAfter, startOfDay, isExists } from 'date-fns'
+import { addDays, addMonths, isBefore, isAfter, startOfDay, isExists } from 'date-fns'
 import { appointmentTypeRules, SessionAppointmentType } from '../appointment/appointmentTypeRules'
 
 const validCharRegex: RegExp = /^[a-zA-Z0-9\s\-']*$/
@@ -105,7 +105,7 @@ const hourSchema = z.string().regex(hourRegex, { error: 'Enter a real start time
 
 const minuteSchema = z.string().regex(minuteRegex, { error: 'Enter a real start time' })
 
-const meridiemSchema = z.enum(['am', 'AM', 'pm', 'PM'], { error: 'Select am or pm' }).or(z.literal(''))
+const meridiemSchema = z.enum(['am', 'AM', 'pm', 'PM', ''], { error: 'Select am or pm' })
 
 const timeSchema = z
   .object({
@@ -227,18 +227,16 @@ const meetAtTheGateSchema = z.object({
 export const buildCreateAppointmentFormData = (referralDate: Date, appointmentType: SessionAppointmentType) => {
   const rules = appointmentTypeRules[appointmentType]
   const methodSchemas = [
-    byPhoneSchema,
     byVideoSchema,
     ...(rules.probationOffice ? [inProbationOfficeSchema] : []),
     ...(rules.somewhereElse ? [inSomewhereElseSchema] : []),
     ...(rules.inPerson ? [inPersonSchema] : []),
   ]
-  const howSessionTookPlace = z.discriminatedUnion(
-    'sessionTakePlace',
-    methodSchemas as [typeof byPhoneSchema, ...(typeof methodSchemas)[number][]],
-    { error: 'Select how the session will take place' },
-  )
-  const schema: z.ZodType = buildSessionDateSchema(referralDate, addMonths(new Date(), 6))
+  const howSessionTookPlace = z.discriminatedUnion('sessionTakePlace', [byPhoneSchema, ...methodSchemas], {
+    error: 'Select how the session will take place',
+  })
+  const minDate = appointmentType === 'CONTACT_SESSION' ? addDays(startOfDay(referralDate), 1) : referralDate
+  const schema: z.ZodType = buildSessionDateSchema(minDate, addMonths(new Date(), 6))
     .and(timeSchema)
     .and(howSessionTookPlace)
   const withGate = rules.meetAtTheGate ? schema.and(meetAtTheGateSchema) : schema
