@@ -56,7 +56,12 @@ describe('ActionPlanController', () => {
 
   beforeEach(() => {
     referralService = {
-      getActionPlanSummary: jest.fn(),
+      getActionPlanSummary: jest.fn().mockResolvedValue({
+        personDetails: { firstName: 'Alex', lastName: 'River' },
+        needs: [],
+        lastUpdatedAt: '',
+        isSubmitted: false,
+      }),
       getReferralProgress: jest.fn(),
       getActionPlanNeedsAndOutcomes: jest.fn(),
       getSessionDeliveryDetails: jest.fn(),
@@ -1363,6 +1368,127 @@ describe('ActionPlanController', () => {
       await actionPlanController[page.show](req, res, true)
 
       expect(page.presenter).toHaveBeenCalledWith('AB1234CD', page.details, undefined, undefined, true)
+    })
+
+    describe('submitted action plans', () => {
+      beforeEach(() => {
+        referralService.getActionPlanSummary.mockResolvedValue({
+          personDetails: { firstName: 'Alex', lastName: 'River' },
+          needs: [],
+          lastUpdatedAt: '',
+          isSubmitted: true,
+        })
+        referralService.getServiceEndDateCheck.mockResolvedValue(actionPlanCheckServiceEndDateFactory.build())
+        referralService.getUpdateServiceEndDate.mockResolvedValue(actionPlanUpdateServiceEndDateFactory.build())
+      })
+
+      it.each(pages)('returns from $path to the service details journey', async page => {
+        referralService[page.get].mockResolvedValue(page.details)
+
+        await actionPlanController[page.show](req, res, true)
+
+        const backLink =
+          page.path === 'update-service-end-date'
+            ? '/referral/AB1234CD/action-plan/change-service-end-date-check'
+            : '/referral/AB1234CD/service-delivery'
+        expect(res.locals.content).toMatchObject({ backLink, editBackLink: backLink })
+        expect(page.presenter).toHaveBeenCalledWith('AB1234CD', page.details, undefined, undefined, true)
+      })
+
+      it.each(pages)('persists $path without resubmitting the plan or replaying unrelated drafts', async page => {
+        referralService[page.get].mockResolvedValue(page.details)
+        req.body = page.form
+        const unrelatedAnswer = { questionId: 'unrelated-question', incomingAnswerDetails: [{ value: 'Draft' }] }
+        req.session.actionPlanSessionDelivery = {
+          caseReference: 'AB1234CD',
+          sessionDeliveryDetails: { answers: [unrelatedAnswer] },
+        }
+
+        await actionPlanController[page.submit](req, res, true)
+
+        expect(referralService.submitServiceDeliveryDetails).toHaveBeenCalledTimes(1)
+        const [caseReference, request, username] = referralService.submitServiceDeliveryDetails.mock.calls[0]
+        expect(caseReference).toBe('AB1234CD')
+        expect(username).toBe('user1')
+        expect(request.answers).toEqual(
+          expect.arrayContaining(
+            page.details.questions.map(question => expect.objectContaining({ questionId: question.id })),
+          ),
+        )
+        expect(request.answers).not.toContainEqual(unrelatedAnswer)
+        expect(req.session.actionPlanSessionDelivery?.sessionDeliveryDetails?.answers).toEqual([unrelatedAnswer])
+        expect(referralService.submitActionPlan).not.toHaveBeenCalled()
+        expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/service-delivery')
+      })
+
+      it.each(pages)('does not persist invalid $path answers', async page => {
+        referralService[page.get].mockResolvedValue(page.details)
+        req.url = `/referral/AB1234CD/action-plan/change-${page.path}`
+        req.body = {}
+
+        await actionPlanController[page.submit](req, res, true)
+
+        expect(referralService.submitServiceDeliveryDetails).not.toHaveBeenCalled()
+        expect(referralService.submitActionPlan).not.toHaveBeenCalled()
+        expect(res.redirect).toHaveBeenCalledWith(req.url)
+      })
+
+      it('does not persist a changed end date until the new date and reason are valid', async () => {
+        referralService.getUpdateServiceEndDate.mockResolvedValue(pages[3].details)
+        req.body = { SERVICE_END_DATE_CHECK: 'NO' }
+        await actionPlanController.submitServiceEndDateCheckPage(req, res, true)
+
+        expect(referralService.submitServiceDeliveryDetails).not.toHaveBeenCalled()
+        expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/action-plan/change-update-service-end-date')
+
+        req.body = pages[3].form
+        await actionPlanController.submitUpdateServiceEndDatePage(req, res, true)
+
+        const checkDetails = await referralService.getServiceEndDateCheck('AB1234CD', 'user1')
+        expect(referralService.submitServiceDeliveryDetails).toHaveBeenCalledWith(
+          'AB1234CD',
+          {
+            answers: expect.arrayContaining([
+              { questionId: checkDetails.questions[0].id, incomingAnswerDetails: [{ value: 'NO' }] },
+              expect.objectContaining({ questionId: pages[3].details.questions[0].id }),
+              expect.objectContaining({ questionId: pages[3].details.questions[1].id }),
+            ]),
+          },
+          'user1',
+        )
+        expect(referralService.submitActionPlan).not.toHaveBeenCalled()
+        expect(req.session.actionPlanSessionDelivery?.sessionDeliveryDetails?.answers).toEqual([])
+      })
+
+      it('only submits the confirmation when keeping the current service end date', async () => {
+        const checkDetails = actionPlanCheckServiceEndDateFactory.build()
+        referralService.getServiceEndDateCheck.mockResolvedValue(checkDetails)
+        req.body = { SERVICE_END_DATE_CHECK: 'YES' }
+
+        await actionPlanController.submitServiceEndDateCheckPage(req, res, true)
+
+        const request = referralService.submitServiceDeliveryDetails.mock.calls[0][1]
+        expect(request.answers).toEqual([
+          { questionId: checkDetails.questions[0].id, incomingAnswerDetails: [{ value: 'YES' }] },
+        ])
+        expect(referralService.getUpdateServiceEndDate).not.toHaveBeenCalled()
+        expect(req.session.actionPlanSessionDelivery?.isServiceEndDateChanged).toBe(false)
+      })
+
+      it('retains the answers for retry when persistence fails', async () => {
+        const page = pages[0]
+        referralService.getSessionDeliveryDetails.mockResolvedValue(page.details)
+        referralService.submitServiceDeliveryDetails.mockRejectedValue(new Error('API unavailable'))
+        req.body = page.form
+
+        await actionPlanController.submitSessionDeliveryDetailsPage(req, res, true)
+
+        expect(req.session.actionPlanSessionDelivery?.sessionDeliveryDetails).toEqual(
+          referralService.submitServiceDeliveryDetails.mock.calls[0][1],
+        )
+        expect(res.redirect).toHaveBeenCalledWith('/error')
+        expect(referralService.submitActionPlan).not.toHaveBeenCalled()
+      })
     })
 
     it.each(pages)(

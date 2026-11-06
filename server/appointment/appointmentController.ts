@@ -242,7 +242,7 @@ const buildSessionMethodRequest = (
   const locationName = probationOfficeLocations.find(office => String(office.id) === String(locationId))?.name
   const detailValue =
     appointmentSessionData.method === 'IN_PERSON_OTHER_LOCATION'
-      ? appointmentSessionData.location || locationName || locationId || ''
+      ? appointmentSessionData.addressLines?.join(', ') || ''
       : locationName || locationId || ''
 
   return buildAppointmentSessionMethodRequest(appointmentSessionData.method, detailValue)
@@ -407,7 +407,14 @@ class AppointmentController {
       const method = req.body.sessionTakePlace
       const normalisedMethod = normaliseAppointmentMethod(method)
       const meetAtTheGateValue = req.body.meetAtTheGate
+      let reasonSessionNotInPerson: string | undefined
       let meetAtTheGate: boolean | undefined
+
+      if (normalisedMethod === 'PHONE') {
+        reasonSessionNotInPerson = req.body.ByPhone
+      } else if (normalisedMethod === 'VIDEO') {
+        reasonSessionNotInPerson = req.body.ByVideo
+      }
 
       if (meetAtTheGateValue === 'yes') {
         meetAtTheGate = true
@@ -428,10 +435,17 @@ class AppointmentController {
         probationOfficeLocationId: appointmentMethodRequiresLocation(normalisedMethod)
           ? req.body.probationOfficeList
           : undefined,
-        location:
+        addressLines:
           normalisedMethod === 'IN_PERSON_OTHER_LOCATION'
-            ? [req.body.addressLine1, req.body.addressTown, req.body.addressPostcode].filter(Boolean).join(', ')
+            ? [
+                req.body.addressLine1,
+                req.body.addressLine2,
+                req.body.addressTown,
+                req.body.addressCounty,
+                req.body.addressPostcode,
+              ].filter(Boolean)
             : undefined,
+        reasonSessionNotInPerson,
         meetAtTheGate,
         informedBy: req.session.createAppointmentRequest?.sessionCommunication,
       }

@@ -74,6 +74,8 @@ test.describe('Appointment Check Your Answers Page', () => {
 
     await page.goto(AppointmentCheckYourAnswersPage.url(CASE_REFERENCE))
     const cyaPage = await AppointmentCheckYourAnswersPage.verifyOnPage(page)
+    await expect(cyaPage.summaryCard.getByRole('heading', { name: 'Contact session' })).toBeVisible()
+    await expect(cyaPage.probationOfficeRow).toContainText('Derbyshire: Buxton Probation Office')
 
     await cyaPage.submitButton.click()
     await expect(page).toHaveURL(`/referral/${CASE_REFERENCE}/appointments`)
@@ -93,16 +95,19 @@ test.describe('Appointment Check Your Answers Page', () => {
     const detailsPage = await CreateAppointmentDetailsPage.verifyOnPage(page, 'POST_RELEASE_SESSION')
     await detailsPage.fillDateAndTime('21/6/2026', '10', '30', 'AM')
     await detailsPage.phoneCallRadioButton.click()
-    await detailsPage.phoneCallReasonInput.fill('Updated reason')
+    await detailsPage.phoneCallReasonInput.fill('John is unable to travel to the probation office')
     await detailsPage.meetAtTheGateYesRadioButton.check()
     await detailsPage.informedByEmailCheckbox.check()
     await detailsPage.saveAndContinueButton.click()
 
     const updatedCyaPage = await AppointmentCheckYourAnswersPage.verifyOnPage(page)
-    await expect(updatedCyaPage.heading).toHaveText('Check the details before scheduling the post-release session')
-    await expect(updatedCyaPage.summaryCard).toContainText('Post-release session details')
+    await expect(updatedCyaPage.heading).toHaveText('Check the details before booking the post-release session')
+    await expect(updatedCyaPage.summaryCard).toContainText('Post-release session')
     await expect(updatedCyaPage.dateRow).toContainText('21/6/2026')
     await expect(updatedCyaPage.methodRow).toContainText('Phone call')
+    await expect(updatedCyaPage.reasonSessionNotInPersonRow).toContainText(
+      'John is unable to travel to the probation office',
+    )
     await expect(updatedCyaPage.informedByRow).toContainText('Email')
 
     await updatedCyaPage.submitButton.click()
@@ -124,7 +129,7 @@ test.describe('Appointment Check Your Answers Page', () => {
     await expect(cyaPage.informedByRow).toHaveCount(0)
   })
 
-  test('shows the entered other-location address in the location row after changing to a pre-release session', async ({
+  test('shows the entered other-location address in the appointment address row after changing to a pre-release session', async ({
     page,
   }) => {
     await seedAppointmentSession(page, {
@@ -148,12 +153,17 @@ test.describe('Appointment Check Your Answers Page', () => {
     await detailsPage.fillDateAndTime('21/6/2026', '10', '30', 'AM')
     await detailsPage.inSomewhereElseRadioButton.click()
     await detailsPage.addressLine1Input.fill('1 High Street')
+    await detailsPage.addressLine2Input.fill('Flat 2')
     await detailsPage.townInput.fill('Derby')
     await detailsPage.postcodeInput.fill('DE1 2EQ')
     await detailsPage.informedByPhoneCheckbox.check()
     await detailsPage.saveAndContinueButton.click()
 
     const updatedCyaPage = await AppointmentCheckYourAnswersPage.verifyOnPage(page)
-    await expect(updatedCyaPage.locationRow).toContainText('1 High Street, Derby, DE1 2EQ')
+    await expect(updatedCyaPage.appointmentAddressRow).toContainText('1 High Street')
+    await expect(updatedCyaPage.appointmentAddressRow).toContainText('Flat 2')
+    await expect(updatedCyaPage.appointmentAddressRow).toContainText('Derby')
+    await expect(updatedCyaPage.appointmentAddressRow).toContainText('DE1 2EQ')
+    await expect(updatedCyaPage.appointmentAddressRow.locator('dd br')).toHaveCount(3)
   })
 })

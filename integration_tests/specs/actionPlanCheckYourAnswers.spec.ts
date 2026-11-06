@@ -23,6 +23,12 @@ test.describe('Action Plan Check Your Answers Page', () => {
 
   test.beforeEach(async ({ page }) => {
     await resetStubs()
+    await communitySupport.stubGetActionPlanSummary(caseReference, {
+      personDetails: { firstName: 'Alex', lastName: 'River' },
+      needs: [],
+      lastUpdatedAt: '',
+      isSubmitted: false,
+    })
     await page.goto('/')
     await login(page)
   })
