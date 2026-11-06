@@ -554,7 +554,7 @@ describe('CommunitySupportApiClient tests', () => {
       return expect(result).resolves.toEqual(mockIcsFeedbackResponse)
     })
   })
-  describe('getIcsFeedbackPage BFF tests', () => {
+  describe('ICS feedback BFF tests', () => {
     const caseRefId = 'AB1234CD'
     const username = 'user1'
     const bffPages: Array<[string, string, (client: CommunitySupportApiClient) => Promise<unknown>]> = [
