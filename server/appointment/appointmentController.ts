@@ -10,7 +10,7 @@ import {
 } from '@community-support-api'
 import { format, isBefore, parse, parseISO } from 'date-fns'
 import { ZodType } from 'zod'
-import timeFormat, { parseTime12Hr } from '../utils/timeFormat'
+import timeFormat, { formatTime12Hr, parseTime12Hr } from '../utils/timeFormat'
 import { ErrorMiddlewareErrors, HowSessionTookPlace, IcsFeedbackHowSessionTookPlaceSession } from '../@types/express'
 import ConfirmIcsPresenter, { type AdditionalInformation } from './confirm-ics/confirmIcsPresenter'
 import InitialContactSessionDetailsPresenter from '../referral/InitialContactSessionDetailsPresenter'
@@ -435,11 +435,11 @@ class AppointmentController {
         ...req.session.appointmentSessionData,
         appointmentType,
         date: req.body.sessionDate,
-        startTime: [
-          req.body['sessionTime-hour'],
+        startTime: formatTime12Hr(
+          Number(req.body['sessionTime-hour']),
           req.body['sessionTime-minute'],
-          req.body['sessionTime-meridiem']?.toLowerCase(),
-        ].join(':'),
+          req.body['sessionTime-meridiem'],
+        ),
         method: normalisedMethod,
         probationOfficeLocationId: appointmentMethodRequiresLocation(normalisedMethod)
           ? req.body.probationOfficeList
