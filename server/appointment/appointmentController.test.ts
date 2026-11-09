@@ -1676,6 +1676,7 @@ describe('AppointmentController', () => {
       )
       expect(getIcsSpy).not.toHaveBeenCalled()
       expect(icsFeedbackCheckReq.session.icsFeedbackSubmission).toBeFalsy()
+      expect(icsFeedbackCheckReq.session.referralProgressBanner).toEqual(bannerContent)
       expect(icsFeedbackCheckRes.redirect).toHaveBeenCalledWith(`/progress/${caseRefId}`)
     })
   })
