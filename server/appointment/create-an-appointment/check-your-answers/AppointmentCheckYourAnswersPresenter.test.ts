@@ -218,4 +218,22 @@ describe('AppointmentCheckYourAnswersPresenter', () => {
       ),
     ).toBe(true)
   })
+
+  it.each([
+    ['04/11/2026', '4 November 2026'],
+    ['4/11/2026', '4 November 2026'],
+    ['2026-11-04', '4 November 2026'],
+    ['25/12/2026', '25 December 2026'],
+  ])('formats the date %s as %s', (date, expected) => {
+    const presenter = new AppointmentCheckYourAnswersPresenter(
+      'AB1234CD',
+      'John',
+      { appointmentType: 'ICS', date, startTime: '1:30pm', method: 'PHONE', informedBy: ['informedByPhone'] },
+      [],
+    )
+
+    const viewModel = presenter.buildViewModel(res)
+
+    expect(viewModel.appointmentSummary.rows.some(row => row.value.text === expected)).toBe(true)
+  })
 })
