@@ -579,6 +579,7 @@ describe('CommunitySupportApiClient tests', () => {
       ['did-session-take-place', 'DidSessionTakePlace', c => c.getIcsFeedbackDidSessionTakePlace(caseRefId, username)],
       ['check-answers', 'CheckAnswers', c => c.getIcsFeedbackCheckAnswers(caseRefId, username)],
       ['attendance', 'Attendance', c => c.getIcsFeedbackAttendance(caseRefId, username)],
+      ['session-details', 'SessionDetails', c => c.getIcsFeedbackSessionDetails(caseRefId, username)],
     ]
 
     it.each(bffPages)('calls /bff/ics-feedback/{caseRefId}/%s for %s', async (page, _name, call) => {

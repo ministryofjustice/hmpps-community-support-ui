@@ -31,6 +31,7 @@ test.describe('Session Details Page', () => {
   test.beforeEach(async ({ page }) => {
     await resetStubs()
     await communitySupport.stubGetICS(pastMeeting.caseRefId, pastMeeting.data)
+    await communitySupport.stubGetIcsFeedbackSessionDetails(pastMeeting.caseRefId, pastMeeting.data)
     await communitySupport.stubGetIcsFeedbackPage(pastMeeting.caseRefId, 'session-feedback', {
       referralFirstName: pastMeeting.data.referralFirstName,
     })
