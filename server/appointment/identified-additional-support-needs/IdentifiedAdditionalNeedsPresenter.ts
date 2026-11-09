@@ -1,6 +1,6 @@
 import { Response } from 'express'
 import { GovukFrontendErrorMessage, GovukFrontendSummaryList, GovukFrontendSummaryListRow } from '@govuk-frontend'
-import { ExistingSupportNeedsBffResponseDto } from '@community-support-api'
+import { IcsFeedbackIdentifiedAdditionalSupportNeedsBffResponseDto } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
 import {
   IdentifiedAdditionalNeedsContent,
@@ -23,7 +23,7 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
   constructor(
     private readonly caseRefId: string,
     private readonly referralFirstName: string,
-    private readonly existingSupportNeedsdata: ExistingSupportNeedsBffResponseDto,
+    private readonly existingSupportNeedsdata: IcsFeedbackIdentifiedAdditionalSupportNeedsBffResponseDto["referralSupportNeeds"],
     private readonly identifiedAdditionalNeeds: IdentifiedAdditionalNeedsFormData,
     private readonly validationErrors?: ErrorMiddlewareErrors,
   ) {
@@ -99,13 +99,13 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
     }
   }
 
-  private buildExistingSuppportNeedsDetails = (
+  private buildExistingSupportNeedsDetails = (
     content: IdentifiedAdditionalNeedsContent,
-    exisitngData: ExistingSupportNeedsBffResponseDto,
+    existingData: IcsFeedbackIdentifiedAdditionalSupportNeedsBffResponseDto["referralSupportNeeds"],
   ): GovukFrontendSummaryList | undefined => {
-    if (!exisitngData) return undefined
+    if (!existingData || Object.keys(existingData).length === 0) return undefined
 
-    const supportNeedsRows = this.getSupportNeedsRows(exisitngData, content)
+    const supportNeedsRows = this.getSupportNeedsRows(existingData, content)
 
     return {
       card: {
@@ -115,96 +115,29 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
       },
       rows: supportNeedsRows,
 
-      attributes: { 'data-testid': 'exisiting-support-needs-details' },
+      attributes: { 'data-testid': 'existing-support-needs-details' },
     }
   }
 
   private getSupportNeedsRows = (
-    exisitngSupportNeedsData: ExistingSupportNeedsBffResponseDto,
+    referralSupportNeeds: IcsFeedbackIdentifiedAdditionalSupportNeedsBffResponseDto["referralSupportNeeds"],
     content: IdentifiedAdditionalNeedsContent,
   ): GovukFrontendSummaryListRow[] => {
     const draftRows: GovukFrontendSummaryListRow[] = []
 
-    if (exisitngSupportNeedsData.physicalHealthDetails) {
-      draftRows.push({
-        key: {
-          text: content.supportNeedsTitle.physicalHealth,
-        },
-        value: {
-          html: exisitngSupportNeedsData.physicalHealthDetails,
-        },
-      })
-    }
-    if (exisitngSupportNeedsData.mentalEmotionalHealthDetails) {
-      draftRows.push({
-        key: {
-          text: content.supportNeedsTitle.mentalEmotionalHealth,
-        },
-        value: {
-          html: exisitngSupportNeedsData.mentalEmotionalHealthDetails,
-        },
-      })
-    }
-    if (exisitngSupportNeedsData.neurodiversityDetails) {
-      draftRows.push({
-        key: {
-          text: content.supportNeedsTitle.neurodiversity,
-        },
-        value: {
-          html: exisitngSupportNeedsData.neurodiversityDetails,
-        },
-      })
-    }
-    if (exisitngSupportNeedsData.locationTravelDetails) {
-      draftRows.push({
-        key: {
-          text: content.supportNeedsTitle.locationTravel,
-        },
-        value: {
-          html: exisitngSupportNeedsData.locationTravelDetails,
-        },
-      })
-    }
-    if (exisitngSupportNeedsData.caringResponsibilitiesDetails) {
-      draftRows.push({
-        key: {
-          text: content.supportNeedsTitle.caringResponsibilities,
-        },
-        value: {
-          html: exisitngSupportNeedsData.caringResponsibilitiesDetails,
-        },
-      })
-    }
-    if (exisitngSupportNeedsData.employmentResponsibilitiesDetails) {
-      draftRows.push({
-        key: {
-          text: content.supportNeedsTitle.employmentResponsibilities,
-        },
-        value: {
-          html: exisitngSupportNeedsData.employmentResponsibilitiesDetails,
-        },
-      })
-    }
-    if (exisitngSupportNeedsData.diversityDetails) {
-      draftRows.push({
-        key: {
-          text: content.supportNeedsTitle.diversity,
-        },
-        value: {
-          html: exisitngSupportNeedsData.diversityDetails,
-        },
-      })
-    }
-    if (exisitngSupportNeedsData.anythingElseDetails) {
-      draftRows.push({
-        key: {
-          text: content.supportNeedsTitle.anythingElse,
-        },
-        value: {
-          html: exisitngSupportNeedsData.anythingElseDetails,
-        },
-      })
-    }
+    Object.keys(referralSupportNeeds).forEach((key: string) => {
+      if (referralSupportNeeds[key as keyof typeof referralSupportNeeds]) {
+        draftRows.push({
+          key: {
+            text: content.supportNeedsTitle[key as keyof typeof content.supportNeedsTitle],
+          },
+          value: {
+            html: referralSupportNeeds[key as keyof typeof referralSupportNeeds] as string,
+          },
+        })
+      }
+    })
+
     return draftRows
   }
 
@@ -230,7 +163,7 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
       submitButton: { text: content.submitButtonText },
       submitHref: `/ics-feedback/${this.caseRefId}/identified-additional-needs`,
       backLink: { href: content.backLinkHref.replace('{{ id }}', this.caseRefId) },
-      existingSupportNeedsDetails: this.buildExistingSuppportNeedsDetails(content, this.existingSupportNeedsdata),
+      existingSupportNeedsDetails: this.buildExistingSupportNeedsDetails(content, this.existingSupportNeedsdata),
       formData,
     }
   }

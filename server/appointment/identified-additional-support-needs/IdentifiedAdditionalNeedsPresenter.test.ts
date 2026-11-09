@@ -1,5 +1,5 @@
 import { Response } from 'express'
-import { ExistingSupportNeedsBffResponseDto } from '@community-support-api'
+import { IcsFeedbackIdentifiedAdditionalSupportNeedsBffResponseDto } from '@community-support-api'
 import contentJson from '../../../assets/content/content.json'
 import IdentifiedAdditionalNeedsPresenter from './IdentifiedAdditionalNeedsPresenter'
 import { IdentifiedAdditionalNeedsContent } from './IdentifiedAdditionalNeedsViewModel'
@@ -9,7 +9,7 @@ describe('IdentifiedAdditionalNeedsPresenter', () => {
   const firstName = 'Alex'
   let content: IdentifiedAdditionalNeedsContent
   let res: Response
-  let existingSupportNeeds: ExistingSupportNeedsBffResponseDto
+  let existingSupportNeeds: IcsFeedbackIdentifiedAdditionalSupportNeedsBffResponseDto["referralSupportNeeds"]
 
   beforeEach(() => {
     content = contentJson['/ics-feedback/:id/identified-additional-needs']
@@ -163,14 +163,14 @@ describe('IdentifiedAdditionalNeedsPresenter', () => {
   describe('existing support needs', () => {
     it('renders all populated support needs in order with the card title', () => {
       existingSupportNeeds = {
-        physicalHealthDetails: 'Physical health support',
-        mentalEmotionalHealthDetails: 'Mental health support',
-        neurodiversityDetails: 'Neurodiversity support',
-        locationTravelDetails: 'Travel support',
-        caringResponsibilitiesDetails: 'Caring support',
-        employmentResponsibilitiesDetails: 'Employment support',
-        diversityDetails: 'Diversity support',
-        anythingElseDetails: 'Other support',
+          physicalHealthDetails: 'Physical health support',
+          mentalEmotionalHealthDetails: 'Mental health support',
+          neurodiversityDetails: 'Neurodiversity support',
+          locationTravelDetails: 'Travel support',
+          caringResponsibilitiesDetails: 'Caring support',
+          employmentResponsibilitiesDetails: 'Employment support',
+          diversityDetails: 'Diversity support',
+          anythingElseDetails: 'Other support',
       }
       const presenter = new IdentifiedAdditionalNeedsPresenter(caseRefId, firstName, existingSupportNeeds, {})
 
@@ -197,9 +197,9 @@ describe('IdentifiedAdditionalNeedsPresenter', () => {
 
     it('omits empty, null and missing support needs', () => {
       existingSupportNeeds = {
-        physicalHealthDetails: '',
-        mentalEmotionalHealthDetails: null,
-        neurodiversityDetails: 'Use plain language',
+          physicalHealthDetails: '',
+          mentalEmotionalHealthDetails: null,
+          neurodiversityDetails: 'Use plain language',
       }
       const presenter = new IdentifiedAdditionalNeedsPresenter(caseRefId, firstName, existingSupportNeeds, {})
 

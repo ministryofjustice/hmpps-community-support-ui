@@ -881,25 +881,16 @@ class AppointmentController {
   async getIdentifiedAdditionalNeeds(req: Request, res: Response): Promise<void> {
     const caseRefId = req.params.caseRefId as string
     const { username } = res.locals.user
-    const icsAppointment = await this.appointmentService.getIcsFeedbackIdentifiedAdditionalNeeds(caseRefId, username)
-
-    if (!icsAppointment) {
-      logger.info(`Appointment for Case '${caseRefId}' not found for user '${username}'`)
-      req.flash('error', 'Appointment not found.')
-      res.redirect(`/ics-feedback/${caseRefId}/identified-additional-supprt-needs`)
-      return
-    }
-    res.locals.errors = formatDynamicErrorMessages(
-      res.locals.errors,
-      '{{ firstname }}',
-      icsAppointment.referralFirstName,
+    const identifiedSupportNeeds = await this.appointmentService.getIcsFeedbackIdentifiedAdditionalSupportNeeds(
+      caseRefId.toString(),
+      username,
     )
 
     const { icsFeedbackSubmission } = req.session
     res.locals.errors = formatDynamicErrorMessages(
       res.locals.errors,
       '{{ firstName }}',
-      icsAppointment.referralFirstName,
+      identifiedSupportNeeds.referralFirstName,
     )
     let identifiedAdditionalNeeds
 
@@ -918,22 +909,17 @@ class AppointmentController {
       identifiedAdditionalNeeds = null
     }
 
-    const existingSupportNeeedsData = await this.appointmentService.getExistingSupportNeeds(
-      caseRefId.toString(),
-      username,
-    )
-
     const validationErrors = formatDynamicErrorMessages(
       res.locals.errors,
       '{{ firstname }}',
-      icsAppointment.referralFirstName,
+      identifiedSupportNeeds.referralFirstName,
     )
     res.locals.errors = validationErrors
 
     const presenter = new IdentifiedAdditionalNeedsPresenter(
       caseRefId,
-      icsAppointment.referralFirstName,
-      existingSupportNeeedsData,
+      identifiedSupportNeeds.referralFirstName,
+      identifiedSupportNeeds.referralSupportNeeds,
       identifiedAdditionalNeeds,
       validationErrors,
     )

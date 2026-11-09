@@ -55,7 +55,6 @@ import type {
   OffenceSentenceInfoBffResponseDto,
   WithdrawReferralRequest,
   ActionPlanNeedsOrderRequest,
-  ExistingSupportNeedsBffResponseDto,
   IcsFeedbackWhyDidSessionNotHappenBffDto,
   IcsFeedbackSessionFeedbackBffDto,
   IcsFeedbackNextStepsBffDto,
@@ -65,6 +64,7 @@ import type {
   IcsFeedbackDidSessionTakePlaceBffDto,
   IcsFeedbackCheckAnswersBffDto,
   IcsFeedbackAttendanceBffDto,
+  IcsFeedbackIdentifiedAdditionalSupportNeedsBffResponseDto,
 } from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
@@ -352,23 +352,14 @@ export default class CommunitySupportApiClient extends RestClient {
     return this.get({ path: `/bff/draft-referral/additional-support-needs/${id}` }, asSystem(username))
   }
 
-  async getExistingSupportNeeds(
+  getIcsFeedbackIdentifiedAdditionalSupportNeeds(
     caseReference: string,
     username: string,
-  ): Promise<ExistingSupportNeedsBffResponseDto | null> {
-    try {
-      return await this.get<ExistingSupportNeedsBffResponseDto>(
-        { path: `/bff/referral/${caseReference}/existing-support-needs` },
-        asSystem(username),
-      )
-    } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const err = error as any
-      if ((err?.responseStatus ?? err?.status ?? err?.response?.status) === 404) {
-        return null
-      }
-      throw error
-    }
+  ): Promise<IcsFeedbackIdentifiedAdditionalSupportNeedsBffResponseDto> {
+    return this.get(
+      { path: `/bff/ics-feedback/${caseReference}/identified-additional-support-needs` },
+      asSystem(username),
+    )
   }
 
   getTaskListStatus(referralId: string, username: string): Promise<TaskListStatusDto> {

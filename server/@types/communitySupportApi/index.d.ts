@@ -85,7 +85,6 @@ type AdditionalInformationForTheDeliveryPartner =
 
 type Selection = components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
 type WithdrawReferralRequest = components['schemas']['WithdrawReferralRequest']
-type ExistingSupportNeedsBffResponseDto = components['schemas']['ExistingSupportNeedsBffResponseDto']
 type IcsFeedbackWhyDidSessionNotHappenBffDto = components['schemas']['IcsFeedbackWhyDidSessionNotHappenBffDto']
 type IcsFeedbackSessionFeedbackBffDto = components['schemas']['IcsFeedbackSessionFeedbackBffDto']
 type IcsFeedbackNextStepsBffDto = components['schemas']['IcsFeedbackNextStepsBffDto']
@@ -96,7 +95,8 @@ type IcsFeedbackHowTheyTriedToContactThePersonBffDto =
 type IcsFeedbackDidSessionTakePlaceBffDto = components['schemas']['IcsFeedbackDidSessionTakePlaceBffDto']
 type IcsFeedbackCheckAnswersBffDto = components['schemas']['IcsFeedbackCheckAnswersBffDto']
 type IcsFeedbackAttendanceBffDto = components['schemas']['IcsFeedbackAttendanceBffDto']
-
+type IcsFeedbackIdentifiedAdditionalSupportNeedsBffResponseDto =
+  components['schemas']['IcsFeedbackIdentifiedAdditionalSupportNeedsBffResponseDto']
 export type {
   Referral,
   CommunitySupportServicesProvider,
@@ -178,7 +178,6 @@ export type {
   WithdrawReferralRequest,
   DraftAdditionalReferralInformationTableDataDto,
   DraftMainPOCDetailsTableDataDto,
-  ExistingSupportNeedsBffResponseDto,
   IcsFeedbackWhyDidSessionNotHappenBffDto,
   IcsFeedbackSessionFeedbackBffDto,
   IcsFeedbackNextStepsBffDto,
@@ -188,4 +187,5 @@ export type {
   IcsFeedbackDidSessionTakePlaceBffDto,
   IcsFeedbackCheckAnswersBffDto,
   IcsFeedbackAttendanceBffDto,
+  IcsFeedbackIdentifiedAdditionalSupportNeedsBffResponseDto,
 }
