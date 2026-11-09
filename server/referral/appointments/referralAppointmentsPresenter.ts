@@ -13,7 +13,7 @@ export default class ReferralAppointmentsPresenter extends ReferralLayoutPresent
   constructor(
     private readonly referralAppointments: ReferralAppointmentsBffResponseDto,
     private readonly caseReference: string,
-    private readonly showSuccessAlert = false,
+    private readonly successAlert: { title: string; message: string } = undefined,
   ) {
     super(ReferralNavigationValues.appointmentsTab, caseReference)
   }
@@ -35,18 +35,16 @@ export default class ReferralAppointmentsPresenter extends ReferralLayoutPresent
       noAppointmentsMessage: content.noAppointmentsMessage,
       appointmentsTable: this.buildAppointmentsTable(content),
       hasAppointments: appointments.length > 0,
-      ...(this.showSuccessAlert && {
-        notificationBanner: {
-          type: 'success',
-          html: `<h3 class="govuk-notification-banner__heading">${content.appointmentCreatedSuccessfully}</h3>`,
-        },
-      }),
-      ...(this.showSuccessAlert && {
-        notificationBanner: {
-          type: 'success',
-          html: `<h3 class="govuk-notification-banner__heading">${content.appointmentCreatedSuccessfully}</h3>`,
-        },
-      }),
+      notificationBanner:
+        this.successAlert !== undefined
+          ? {
+              variant: 'success',
+              html: this.successAlert.message,
+              title: this.successAlert.title,
+              dismissible: true,
+              showTitleAsHeading: true,
+            }
+          : undefined,
       upcomingAppointmentsTitle: content.upcomingAppointmentsTitle,
       pastAppointmentsTitle: content.pastAppointmentsTitle,
     }

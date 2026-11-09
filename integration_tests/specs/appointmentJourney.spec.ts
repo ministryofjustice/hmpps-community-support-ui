@@ -121,5 +121,14 @@ test.describe('Full appointment journey', () => {
 
     await cyaPage.submitButton.click()
     await expect(page).toHaveURL(`/referral/${CASE_REFERENCE}/appointments`)
+
+    const appointmentsAfterBooking = new ReferralAppointmentsPage(page)
+    await expect(appointmentsAfterBooking.successAlert).toContainText('Pre-release session booked')
+    await expect(appointmentsAfterBooking.successAlert).toContainText(
+      'Pre-release session booked for 16 October 2026 at 1:30pm',
+    )
+
+    await page.reload()
+    await expect(appointmentsAfterBooking.successAlert).toHaveCount(0)
   })
 })
