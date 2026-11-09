@@ -1617,9 +1617,10 @@ describe('AppointmentController', () => {
     })
 
     it('renders the check your answers page with presenter if feedback submission exists in session', async () => {
-      jest
-        .spyOn(appointmentService, 'getIcsFeedbackCheckAnswers')
-        .mockResolvedValue({ referralFirstName: mockAppointmentIcsResponse.referralFirstName })
+      jest.spyOn(appointmentService, 'getIcsFeedbackCheckAnswers').mockResolvedValue({
+        referralFirstName: mockAppointmentIcsResponse.referralFirstName,
+        appointmentIcsId: mockAppointmentIcsResponse.appointmentIcsId,
+      })
       const mockSubmission = {
         record: {
           didSessionHappen: true,
@@ -1642,7 +1643,11 @@ describe('AppointmentController', () => {
 
     it('redirects to progress page after submitting feedback', async () => {
       jest.spyOn(appointmentService, 'submitIcsFeedback').mockResolvedValue(undefined)
-      jest.spyOn(appointmentService, 'getICS').mockResolvedValue(mockAppointmentIcsResponse)
+      jest.spyOn(appointmentService, 'getIcsFeedbackCheckAnswers').mockResolvedValue({
+        referralFirstName: mockAppointmentIcsResponse.referralFirstName,
+        appointmentIcsId: mockAppointmentIcsResponse.appointmentIcsId,
+      })
+      const getIcsSpy = jest.spyOn(appointmentService, 'getICS')
       const username = 'user1'
       const mockSubmission = {
         record: {
@@ -1669,8 +1674,8 @@ describe('AppointmentController', () => {
         mockSubmission,
         username,
       )
+      expect(getIcsSpy).not.toHaveBeenCalled()
       expect(icsFeedbackCheckReq.session.icsFeedbackSubmission).toBeFalsy()
-      expect(icsFeedbackCheckReq.session.referralProgressBanner).toEqual(bannerContent)
       expect(icsFeedbackCheckRes.redirect).toHaveBeenCalledWith(`/progress/${caseRefId}`)
     })
   })

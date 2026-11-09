@@ -1065,7 +1065,7 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /** Get referral first name for the ICS feedback check answers page */
+    /** Get referral first name and ICS appointment ID for the ICS feedback check answers page */
     get: operations['getIcsFeedbackCheckAnswers']
     put?: never
     post?: never
@@ -2202,6 +2202,8 @@ export interface components {
     }
     IcsFeedbackCheckAnswersBffDto: {
       referralFirstName: string
+      /** Format: uuid */
+      appointmentIcsId: string
     }
     IcsFeedbackAttendanceBffDto: {
       referralFirstName: string
@@ -4534,7 +4536,7 @@ export interface operations {
     }
     requestBody?: never
     responses: {
-      /** @description Referral first name found */
+      /** @description Check answers page details found */
       200: {
         headers: {
           [name: string]: unknown
@@ -4543,7 +4545,7 @@ export interface operations {
           'application/json': components['schemas']['IcsFeedbackCheckAnswersBffDto']
         }
       }
-      /** @description Referral not found */
+      /** @description Referral or ICS appointment not found */
       404: {
         headers: {
           [name: string]: unknown

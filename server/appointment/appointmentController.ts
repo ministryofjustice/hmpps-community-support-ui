@@ -737,7 +737,7 @@ class AppointmentController {
     const { username } = res.locals.user
     const { icsFeedbackSubmission } = req.session
 
-    const { appointmentIcsId } = await this.appointmentService.getICS(caseRefId, username)
+    const { appointmentIcsId } = await this.appointmentService.getIcsFeedbackCheckAnswers(caseRefId, username)
 
     if (icsFeedbackSubmission && appointmentIcsId) {
       await this.appointmentService.submitIcsFeedback(caseRefId, appointmentIcsId, icsFeedbackSubmission, username)

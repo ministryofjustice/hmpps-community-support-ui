@@ -162,6 +162,7 @@ test.describe('Ics Feedback CYA Page', () => {
     await resetStubs()
     await communitySupport.stubGetIcsFeedbackPage(caseRefId, 'check-answers', {
       referralFirstName: mockAppointmentIcsResponse.referralFirstName,
+      appointmentIcsId: mockAppointmentIcsResponse.appointmentIcsId,
     })
     await page.goto('/')
     await login(page)
@@ -299,7 +300,6 @@ test.describe('Ics Feedback CYA Page', () => {
   // AC6
   test('when I submit feedback successfully I am taken to the referral progress page', async ({ page }) => {
     await seedSessionWithIcsFeedback(page, icsFeedbackSubmissionNoAddress)
-    await communitySupport.stubGetICS(caseRefId, mockAppointmentIcsResponse)
     await communitySupport.stubIcsFeedbackSubmission(
       icsFeedbackSubmissionNoAddress,
       mockAppointmentIcsResponse.appointmentIcsId,
