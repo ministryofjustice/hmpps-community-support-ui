@@ -103,7 +103,7 @@ test.describe('Appointment Check Your Answers Page', () => {
     const updatedCyaPage = await AppointmentCheckYourAnswersPage.verifyOnPage(page)
     await expect(updatedCyaPage.heading).toHaveText('Check the details before booking the post-release session')
     await expect(updatedCyaPage.summaryCard).toContainText('Post-release session')
-    await expect(updatedCyaPage.dateRow).toContainText('21/6/2026')
+    await expect(updatedCyaPage.dateRow).toContainText('21 June 2026')
     await expect(updatedCyaPage.methodRow).toContainText('Phone call')
     await expect(updatedCyaPage.reasonSessionNotInPersonRow).toContainText(
       'John is unable to travel to the probation office',

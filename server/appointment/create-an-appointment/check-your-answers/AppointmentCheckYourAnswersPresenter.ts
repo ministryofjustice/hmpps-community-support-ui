@@ -1,7 +1,7 @@
 import { CreateAppointmentReferenceDataBffDto } from '@community-support-api'
 import { GovukFrontendSummaryListRow } from '@govuk-frontend'
 import { Response } from 'express'
-import { format } from 'date-fns'
+import { format, isValid, parse } from 'date-fns'
 import PresenterBase from '../../../presenter/presenterBase'
 import { formatIsoDateOrNull } from '../../../utils/dateFormat'
 import { escapeSpecialHtmlCharacters, govFrontendSummaryListRow } from '../../../utils/viewUtils'
@@ -176,6 +176,12 @@ export default class AppointmentCheckYourAnswersPresenter extends PresenterBase<
     const formattedDate = formatIsoDateOrNull(date)
     if (formattedDate) {
       return formattedDate
+    }
+
+    // dd/MM/yyyy must be parsed to uk date format: new Date('04/11/2026') would be read as the US format (April 11)
+    const localisedDate = parse(date, 'd/M/yyyy', new Date())
+    if (isValid(localisedDate)) {
+      return format(localisedDate, 'd MMMM yyyy')
     }
 
     try {
