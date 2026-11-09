@@ -1089,7 +1089,10 @@ class AppointmentController {
     const { username } = res.locals.user
     const { icsFeedbackSubmission } = req.session
     const sessionDetails = icsFeedbackSubmission ? icsFeedbackSubmission.sessionDetails : null
-    const appointmentData = await this.appointmentService.getICS(caseRefId.toString(), username)
+    const appointmentData = await this.appointmentService.getIcsFeedbackSessionDetails(
+      caseRefId.toString(),
+      username,
+    )
 
     const validationErrors = formatDynamicErrorMessages(
       res.locals.errors,
@@ -1098,7 +1101,16 @@ class AppointmentController {
     )
     res.locals.errors = validationErrors
 
-    const presenter = new RecordSessionDetailsPresenter(caseRefId, appointmentData, sessionDetails, validationErrors)
+    const presenter = new RecordSessionDetailsPresenter(
+      caseRefId,
+      {
+        referralFirstName: appointmentData.referralFirstName,
+        appointmentDate: appointmentData.date,
+        appointmentTime: appointmentData.time,
+      },
+      sessionDetails,
+      validationErrors,
+    )
     return presenter.renderPage(res)
   }
 
