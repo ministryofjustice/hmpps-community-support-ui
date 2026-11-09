@@ -179,19 +179,19 @@ describe('IdentifiedAdditionalNeedsPresenter', () => {
       expect(summaryList).toEqual({
         card: { title: { text: content.cardTitle } },
         rows: [
-          { key: { text: content.supportNeedsTitle.physicalHealth }, value: { html: 'Physical health support' } },
-          { key: { text: content.supportNeedsTitle.mentalEmotionalHealth }, value: { html: 'Mental health support' } },
-          { key: { text: content.supportNeedsTitle.neurodiversity }, value: { html: 'Neurodiversity support' } },
-          { key: { text: content.supportNeedsTitle.locationTravel }, value: { html: 'Travel support' } },
-          { key: { text: content.supportNeedsTitle.caringResponsibilities }, value: { html: 'Caring support' } },
+          { key: { text: content.supportNeedsTitle.physicalHealth + 'Details' }, value: { html: 'Physical health support' } },
+          { key: { text: content.supportNeedsTitle.mentalEmotionalHealth + 'Details' }, value: { html: 'Mental health support' } },
+          { key: { text: content.supportNeedsTitle.neurodiversity + 'Details' }, value: { html: 'Neurodiversity support' } },
+          { key: { text: content.supportNeedsTitle.locationTravel + 'Details' }, value: { html: 'Travel support' } },
+          { key: { text: content.supportNeedsTitle.caringResponsibilities + 'Details' }, value: { html: 'Caring support' } },
           {
-            key: { text: content.supportNeedsTitle.employmentResponsibilities },
+            key: { text: content.supportNeedsTitle.employmentResponsibilities + 'Details' },
             value: { html: 'Employment support' },
           },
-          { key: { text: content.supportNeedsTitle.diversity }, value: { html: 'Diversity support' } },
-          { key: { text: content.supportNeedsTitle.anythingElse }, value: { html: 'Other support' } },
+          { key: { text: content.supportNeedsTitle.diversity + 'Details' }, value: { html: 'Diversity support' } },
+          { key: { text: content.supportNeedsTitle.anythingElse + 'Details'}, value: { html: 'Other support' } },
         ],
-        attributes: { 'data-testid': 'exisiting-support-needs-details' },
+        attributes: { 'data-testid': 'existing-support-needs-details' },
       })
     })
 
@@ -204,7 +204,7 @@ describe('IdentifiedAdditionalNeedsPresenter', () => {
       const presenter = new IdentifiedAdditionalNeedsPresenter(caseRefId, firstName, existingSupportNeeds, {})
 
       expect(presenter.buildViewModel(res).existingSupportNeedsDetails.rows).toEqual([
-        { key: { text: content.supportNeedsTitle.neurodiversity }, value: { html: 'Use plain language' } },
+        { key: { text: content.supportNeedsTitle.neurodiversity + 'Details' }, value: { html: 'Use plain language' } },
       ])
     })
 

@@ -103,7 +103,7 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
     content: IdentifiedAdditionalNeedsContent,
     existingData: IcsFeedbackIdentifiedAdditionalSupportNeedsBffResponseDto["referralSupportNeeds"],
   ): GovukFrontendSummaryList | undefined => {
-    if (!existingData || Object.keys(existingData).length === 0) return undefined
+    if (!existingData) return undefined
 
     const supportNeedsRows = this.getSupportNeedsRows(existingData, content)
 
@@ -127,9 +127,10 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
 
     Object.keys(referralSupportNeeds).forEach((key: string) => {
       if (referralSupportNeeds[key as keyof typeof referralSupportNeeds]) {
+        const contentKey = key.replace('Details', '') as keyof typeof content.supportNeedsTitle
         draftRows.push({
           key: {
-            text: content.supportNeedsTitle[key as keyof typeof content.supportNeedsTitle],
+            text: content.supportNeedsTitle[contentKey] + 'Details',
           },
           value: {
             html: referralSupportNeeds[key as keyof typeof referralSupportNeeds] as string,
