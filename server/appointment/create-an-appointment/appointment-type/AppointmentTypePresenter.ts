@@ -5,7 +5,6 @@ import PresenterBase from '../../../presenter/presenterBase'
 import { ErrorMiddlewareErrors } from '../../../@types/express'
 import { AppointmentTypeContent, AppointmentTypeViewModel } from './AppointmentTypeViewModel'
 import { normaliseAppointmentTypeOptions } from '../appointmentTypeLabel'
-import { parseAppointmentType } from '../../appointmentTypeRules'
 
 export default class AppointmentTypePresenter extends PresenterBase<AppointmentTypeViewModel, AppointmentTypeContent> {
   constructor(
@@ -20,10 +19,6 @@ export default class AppointmentTypePresenter extends PresenterBase<AppointmentT
 
   private buildRadios(content: AppointmentTypeContent): GovukFrontendRadios {
     const normalisedAppointmentTypes = normaliseAppointmentTypeOptions(this.appointmentTypes)
-    const selectedType = parseAppointmentType(this.selectedAppointmentType)
-    const selectedValue = selectedType
-      ? normalisedAppointmentTypes.find(option => parseAppointmentType(option.value) === selectedType)?.value
-      : this.selectedAppointmentType
 
     return {
       name: 'appointmentType',
@@ -33,7 +28,7 @@ export default class AppointmentTypePresenter extends PresenterBase<AppointmentT
           classes: 'govuk-fieldset__legend--m',
         },
       },
-      value: selectedValue ?? null,
+      value: this.selectedAppointmentType ?? null,
       errorMessage: this.validationErrors?.messages.appointmentType ?? null,
       items: normalisedAppointmentTypes.map(({ name, value }) => ({
         text: name,

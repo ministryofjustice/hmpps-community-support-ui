@@ -6,8 +6,7 @@ export default interface AppointmentSessionData {
   startTime?: string
   method?: AppointmentMethod
   probationOfficeLocationId?: string
-  addressLines?: string[]
-  reasonSessionNotInPerson?: string
+  location?: string
   meetAtTheGate?: boolean
   informedBy?: string[]
 }

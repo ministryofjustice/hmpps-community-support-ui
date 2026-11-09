@@ -3,13 +3,15 @@ export type AppointmentTypeOption = {
   value: string
 }
 
-export const defaultAppointmentTypeLabels: Record<string, string> = {
-  ICS: 'Initial contact session',
-  CONTACT_SESSION: 'Contact session',
-  PRE_RELEASE_SESSION: 'Pre-release session',
-  POST_RELEASE_SESSION: 'Post-release session',
-  HANDOVER_SESSION: 'Handover session',
+export enum AppointmentTypeLabel {
+  ICS = 'Initial contact session',
+  CONTACT_SESSION = 'Contact session',
+  PRE_RELEASE_SESSION = 'Pre-release session',
+  POST_RELEASE_SESSION = 'Post-release session',
+  HANDOVER_SESSION = 'Handover session',
 }
+
+export const defaultAppointmentTypeLabels: Record<string, string> = AppointmentTypeLabel
 
 const appointmentTypeValueMap: Record<string, string> = {
   ics: 'ICS',
@@ -55,9 +57,7 @@ export const getAppointmentTypeLabel = (
   }
 
   const lookupValue = normaliseAppointmentTypeKey(appointmentType)
-  const matchedType = normaliseAppointmentTypeOptions(appointmentTypes).find(
-    type => normaliseAppointmentTypeKey(type.value) === lookupValue,
-  )
+  const matchedType = appointmentTypes?.find(type => normaliseAppointmentTypeKey(type.value) === lookupValue)
 
   if (matchedType?.name) {
     return matchedType.name

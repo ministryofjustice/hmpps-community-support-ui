@@ -72,40 +72,4 @@ export default class AppointmentService {
   getExistingSupportNeeds(caseRefId: string, username: string): Promise<ExistingSupportNeedsBffResponseDto> {
     return this.communitySupportApiClient.getExistingSupportNeeds(caseRefId, username)
   }
-
-  getIcsFeedbackWhyDidSessionNotHappen(caseRefId: string, username: string) {
-    return this.communitySupportApiClient.getIcsFeedbackWhyDidSessionNotHappen(caseRefId, username)
-  }
-
-  getIcsFeedbackSessionFeedback(caseRefId: string, username: string) {
-    return this.communitySupportApiClient.getIcsFeedbackSessionFeedback(caseRefId, username)
-  }
-
-  getIcsFeedbackNextSteps(caseRefId: string, username: string) {
-    return this.communitySupportApiClient.getIcsFeedbackNextSteps(caseRefId, username)
-  }
-
-  getIcsFeedbackIssuesOrConcerns(caseRefId: string, username: string) {
-    return this.communitySupportApiClient.getIcsFeedbackIssuesOrConcerns(caseRefId, username)
-  }
-
-  getIcsFeedbackIdentifiedAdditionalNeeds(caseRefId: string, username: string) {
-    return this.communitySupportApiClient.getIcsFeedbackIdentifiedAdditionalNeeds(caseRefId, username)
-  }
-
-  getIcsFeedbackHowTheyTriedToContactThePerson(caseRefId: string, username: string) {
-    return this.communitySupportApiClient.getIcsFeedbackHowTheyTriedToContactThePerson(caseRefId, username)
-  }
-
-  getIcsFeedbackDidSessionTakePlace(caseRefId: string, username: string) {
-    return this.communitySupportApiClient.getIcsFeedbackDidSessionTakePlace(caseRefId, username)
-  }
-
-  getIcsFeedbackCheckAnswers(caseRefId: string, username: string) {
-    return this.communitySupportApiClient.getIcsFeedbackCheckAnswers(caseRefId, username)
-  }
-
-  getIcsFeedbackAttendance(caseRefId: string, username: string) {
-    return this.communitySupportApiClient.getIcsFeedbackAttendance(caseRefId, username)
-  }
 }

@@ -275,15 +275,13 @@
     "buttonText": "Continue"
   },
   "/referral/:id/create-an-appointment/check-your-answers": {
-    "pageTitle": "Check the details before booking the appointment",
-    "pageHeader": "Check the details before booking the appointment",
+    "pageTitle": "Check the details before scheduling the appointment",
+    "pageHeader": "Check the details before scheduling the appointment",
     "summaryTitle": "Appointment details",
     "dateLabel": "Date",
     "startTimeLabel": "Start time",
-    "methodLabel": "How the session will take place",
-    "probationOfficeLabel": "Probation office",
-    "appointmentAddressLabel": "Appointment address",
-    "reasonSessionNotInPersonLabel": "Reason session is not in person",
+    "methodLabel": "Method",
+    "locationLabel": "Location",
     "meetAtTheGateLabel": "Meeting at the gate",
     "informedLabel": "How {{ firstname }} was informed about the session",
     "changeLinkText": "Change",
@@ -337,7 +335,13 @@
     "upcomingAppointmentsTitle": "Upcoming appointments",
     "pastAppointmentsTitle": "Past appointments",
     "createAppointmentText": "Create an Appointment",
-    "appointmentCreatedSuccessfully": "Appointment created successfully"
+    "appointmentCreatedSuccessfully": "Appointment created successfully",
+    "subNavItems": [
+      { "id": "caseDetails", "title": "Case details" },
+      { "id": "progress", "title": "Progress" },
+      { "id": "appointments", "title": "Appointments" },
+      { "id": "changeLog", "title": "Change log" }
+    ]
   },
   "/referral/:id/appointment/select-type": {
     "pageTitle": "Select appointment type",
@@ -636,7 +640,7 @@
     "pageSubHeader": "These are the support needs identified in {{ firstname }}’s referral.",
     "didYouIdentifyRadio": {
       "name": "didYouIdentify",
-      "title": "Did you identify anything else {{ firstname }} needs support with?",
+      "title": "Did you identity anything else {{ firstname }} needs support with?",
       "items": {
         "yesText": "Yes",
         "noText": "No",
@@ -1094,7 +1098,7 @@
     "backLink": "/referral/{{ caseRef }}/create-an-appointment/appointment-type",
     "pageHeaders": {
       "ICS": "Book initial contact session (ICS)",
-      "CONTACT_SESSION": "Book contact session",
+      "CONTACT_SESSION": "Schedule the contact session",
       "PRE_RELEASE_SESSION": "Schedule the pre-release session",
       "POST_RELEASE_SESSION": "Schedule the post-release session",
       "HANDOVER_SESSION": "Schedule the handover session"

@@ -28,7 +28,6 @@ import ConfirmContactDetailsPresenter from './addContactDetails/confirmContactDe
 import ReferralDetailsPresenter from './referralDetails/ReferralDetailsPresenter'
 import { HmppsUser } from '../interfaces/hmppsUser'
 import type { ReferralAppointmentsContent } from './appointments/referralAppointmentsViewModel'
-import { globalContent } from '../../assets/content/GlobalContent'
 
 jest.mock('../services/referralService')
 jest.mock('../services/communityServiceProviderService')
@@ -125,29 +124,53 @@ describe('ReferralController', () => {
   describe('showReferralAppointments', () => {
     it('renders the success alert once for the matching referral', async () => {
       const caseReference = 'AB1234CD'
-      const content: ReferralAppointmentsContent = globalContent['/referral/:id/appointments']
+      const content: ReferralAppointmentsContent = {
+        pageHeader: 'Referral for',
+        appointmentsTitle: 'Appointments',
+        appointmentTypeColumnHeader: 'Appointment type',
+        dateColumnHeader: 'Date',
+        timeColumnHeader: 'Start time',
+        noAppointmentsMessage: 'No appointments scheduled',
+        bookAppointmentText: 'Book appointment',
+        bookAppointmentHref: '/referral/{{ id }}/create-an-appointment/appointment-type',
+        upcomingAppointmentsTitle: 'Upcoming appointments',
+        pastAppointmentsTitle: 'Past appointments',
+        subNavItems: [
+          { id: 'caseDetails', title: 'Case details' },
+          { id: 'progress', title: 'Progress' },
+          { id: 'appointments', title: 'Appointments' },
+          { id: 'changeLog', title: 'Change log' },
+        ],
+        createAppointmentText: 'Create an Appointment',
+        appointmentCreatedSuccessfully: 'Appointment created successfully',
+      }
       const appointments: ReferralAppointmentsBffResponseDto = {
         personDetails: { firstName: 'Alex', lastName: 'Example', dateOfBirth: '1980-01-01', crn: 'X123456' },
         appointments: [],
       }
+      const successAlert = {
+        title: 'Contact session booked',
+        message: 'Contact session booked for 09 October 2026 at 2:30pm',
+      }
       req = {
         params: { caseReference },
-        session: { referralAppointmentsSuccessCaseReference: caseReference },
+        session: { createdAppointmentMessage: successAlert },
       } as unknown as Request
       res.locals.content = content
       referralService.getReferralAppointments.mockResolvedValue(appointments)
 
       await referralController.showReferralAppointments(req, res)
 
-      expect(req.session.referralAppointmentsSuccessCaseReference).toBeUndefined()
+      expect(req.session.createdAppointmentMessage).toBeUndefined()
       expect(res.render).toHaveBeenCalledWith(
         'referral/appointments',
         expect.objectContaining({
           content: expect.objectContaining({
-            notificationBanner: {
-              type: 'success',
-              html: '<h3 class="govuk-notification-banner__heading">Appointment created successfully</h3>',
-            },
+            notificationBanner: expect.objectContaining({
+              variant: 'success',
+              title: successAlert.title,
+              html: successAlert.message,
+            }),
           }),
         }),
       )

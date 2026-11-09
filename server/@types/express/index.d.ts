@@ -6,6 +6,7 @@ import {
   ActionPlanSelectANeedNeed,
   ActionPlanSessionDeliveryDetailsRequest,
   UpdateProbationPractitionerDetailsRequest,
+  AppointmentIcsResponse,
 } from '@community-support-api'
 import { GovukFrontendErrorSummaryErrorListElement } from '@govuk-frontend'
 import { HmppsUser } from '../../interfaces/hmppsUser'
@@ -90,6 +91,7 @@ export declare module 'express-session' {
       pduName: string
       probationOfficeName?: string
     }
+    createdAppointmentMessage?: { title: string; message: string }
   }
 }
 

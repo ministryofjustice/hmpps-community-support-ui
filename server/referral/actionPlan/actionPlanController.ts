@@ -865,7 +865,6 @@ class ActionPlanController {
   async showUserInvolvementPage(req: Request, res: Response, isCheckAnswersEdit = false) {
     const { id: caseReference } = req.params as { id: string }
     const { username } = res.locals.user
-    const isEdit = await this.prepareServiceDeliveryEdit(req, res, isCheckAnswersEdit)
 
     const sessionDeliveryDetails = await this.referralService.getPersonInvolvement(caseReference, username)
     const userInputData = this.getFlashedFormValues(req)
@@ -876,7 +875,7 @@ class ActionPlanController {
       applySessionDeliveryDetailsData(sessionDeliveryDetails, sessionDelivery),
       validationErrors,
       userInputData,
-      isEdit,
+      isCheckAnswersEdit,
     )
     return presenter.renderPage(res)
   }
@@ -896,10 +895,6 @@ class ActionPlanController {
         form,
         buildAdditionalDetailsFieldNameResolver({ USER_INVOLVEMENT_IN_ACTION_PLAN: 'WHY_NOT_INVOLVED' }),
       )
-      if (actionPlanSummary.isSubmitted) {
-        await this.persistSubmittedServiceDelivery(req, res, request)
-        return res.redirect(`/referral/${caseReference}/service-delivery`)
-      }
       this.saveSessionDeliveryDetails(req, caseReference, request)
       return res.redirect(`/referral/${caseReference}/action-plan/service-delivery-check-your-answers`)
     })

@@ -53,4 +53,5 @@ export interface MojAlert {
   title?: string
   html?: string
   dismissible?: boolean
+  showTitleAsHeading?: boolean,
 }

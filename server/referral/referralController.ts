@@ -257,10 +257,11 @@ export default class ReferralController {
   async showReferralAppointments(req: Request, res: Response) {
     const { caseReference } = req.params as { caseReference: string }
     const { username } = res.locals.user
-    const showSuccessAlert = req.session.referralAppointmentsSuccessCaseReference === caseReference
-    delete req.session.referralAppointmentsSuccessCaseReference
+    const successAlert = req.session.createdAppointmentMessage
+    console.log('successAlert', successAlert)
     const appointments = await this.referralService.getReferralAppointments(caseReference, username)
-    const presenter = new ReferralAppointmentsPresenter(appointments, caseReference, showSuccessAlert)
+    const presenter = new ReferralAppointmentsPresenter(appointments, caseReference, successAlert)
+    delete req.session.createdAppointmentMessage
     return presenter.renderPage(res)
   }
 

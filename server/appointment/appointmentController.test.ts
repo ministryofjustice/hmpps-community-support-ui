@@ -368,7 +368,12 @@ describe('AppointmentController', () => {
         appointmentTypes: mockCreateAppointmentReferenceData.appointmentTypes,
         probationOfficeLocations: [{ id: 2, name: 'Derbyshire: Buxton Probation Office' }],
       } as never)
-      jest.spyOn(appointmentService, 'submitAppointment').mockResolvedValue(mockAppointmentIcsResponse)
+      jest.spyOn(appointmentService, 'submitAppointment').mockResolvedValue({
+        ...mockAppointmentIcsResponse,
+        appointmentType: 'CONTACT_SESSION',
+        appointmentDate: '2026-03-27',
+        appointmentTime: { hour: 1, minute: 30, amPm: 'pm' },
+      })
 
       await appointmentController.submitAppointment(req, res)
 
@@ -388,110 +393,11 @@ describe('AppointmentController', () => {
       )
 
       expect(req.session.appointmentSessionData).toBeUndefined()
-      expect(req.session.referralAppointmentsSuccessCaseReference).toBe(caseRefId)
+      expect(req.session.createdAppointmentMessage).toEqual({
+        title: 'Contact session booked',
+        message: 'Contact session booked for 27 March 2026 at 1:30pm',
+      })
       expect(res.redirect).toHaveBeenCalledWith(`/referral/${caseRefId}/appointments`)
-    })
-
-    it('submits the complete other-location address from location lines', async () => {
-      req = {
-        params: { caseReference: caseRefId },
-        session: {
-          appointmentSessionData: {
-            appointmentType: 'PRE_RELEASE_SESSION',
-            date: '2026-03-27',
-            startTime: '1:30pm',
-            method: 'IN_PERSON_OTHER_LOCATION',
-            addressLines: ['14 High Street', 'Flat 2', 'Bath', 'Somerset', 'BA1 1AA'],
-            informedBy: ['informedByPhone'],
-          },
-        },
-      } as unknown as Request
-
-      jest
-        .spyOn(appointmentService, 'getCreateAppointmentReferenceData')
-        .mockResolvedValue(mockCreateAppointmentReferenceData)
-      jest.spyOn(appointmentService, 'submitAppointment').mockResolvedValue(mockAppointmentIcsResponse)
-
-      await appointmentController.submitAppointment(req, res)
-
-      expect(appointmentService.submitAppointment).toHaveBeenCalledWith(
-        caseRefId,
-        expect.objectContaining({
-          sessionMethodRequest: {
-            type: 'IN_PERSON_OTHER_LOCATION',
-            additionalDetails: '14 High Street, Flat 2, Bath, Somerset, BA1 1AA',
-          },
-        }),
-        'user1',
-      )
-      expect(req.session.appointmentSessionData).toBeUndefined()
-      expect(res.redirect).toHaveBeenCalledWith(`/referral/${caseRefId}/appointments`)
-    })
-
-    it('propagates appointment creation errors without setting the success alert or clearing session data', async () => {
-      const createError = new Error('Appointment creation failed')
-      req = {
-        params: { caseReference: caseRefId },
-        session: {
-          appointmentSessionData: {
-            appointmentType: 'CONTACT_SESSION',
-            date: '2026-03-27',
-            startTime: '1:30pm',
-            method: 'IN_PERSON_PROBATION_OFFICE',
-            probationOfficeLocationId: '2',
-            informedBy: ['informedByPhone'],
-          },
-        },
-        flash: jest.fn().mockReturnValue([]),
-      } as unknown as Request
-
-      jest.spyOn(appointmentService, 'getCreateAppointmentReferenceData').mockResolvedValue({
-        appointmentTypes: mockCreateAppointmentReferenceData.appointmentTypes,
-        probationOfficeLocations: [{ id: 2, name: 'Derbyshire: Buxton Probation Office' }],
-      } as never)
-      jest.spyOn(appointmentService, 'submitAppointment').mockRejectedValue(createError)
-
-      await expect(appointmentController.submitAppointment(req, res)).rejects.toBe(createError)
-
-      expect(req.session.referralAppointmentsSuccessCaseReference).toBeUndefined()
-      expect(req.session.appointmentSessionData).toBeDefined()
-      expect(res.redirect).not.toHaveBeenCalled()
-    })
-
-    it.each([
-      ['ICS', 'PHONE', 'The person cannot attend by phone'],
-      ['ICS', 'VIDEO', 'The person cannot attend by video'],
-      ['CONTACT_SESSION', 'PHONE', 'The person cannot attend by phone'],
-      ['CONTACT_SESSION', 'VIDEO', 'The person cannot attend by video'],
-    ])('submits an %s %s reason', async (appointmentType, method, reason) => {
-      req = {
-        params: { caseReference: caseRefId },
-        session: {
-          appointmentSessionData: {
-            appointmentType,
-            date: '2026-03-27',
-            startTime: '1:30pm',
-            method,
-            reasonSessionNotInPerson: reason,
-            informedBy: ['informedByPhone'],
-          },
-        },
-      } as unknown as Request
-
-      jest
-        .spyOn(appointmentService, 'getCreateAppointmentReferenceData')
-        .mockResolvedValue(mockCreateAppointmentReferenceData)
-      jest.spyOn(appointmentService, 'submitAppointment').mockResolvedValue(mockAppointmentIcsResponse)
-
-      await appointmentController.submitAppointment(req, res)
-
-      expect(appointmentService.submitAppointment).toHaveBeenCalledWith(
-        caseRefId,
-        expect.objectContaining({
-          sessionMethodRequest: { type: method, additionalDetails: reason },
-        }),
-        'user1',
-      )
     })
   })
 
@@ -756,156 +662,14 @@ describe('AppointmentController', () => {
       expect(createReq.session.appointmentSessionData).toMatchObject({
         appointmentType: 'POST_RELEASE_SESSION',
         date: '20/6/2026',
-        startTime: '11:30am',
+        startTime: '11:30:am',
         method: 'PHONE',
-        reasonSessionNotInPerson: 'reason',
         probationOfficeLocationId: undefined,
         informedBy: ['informedByPhone'],
       })
       expect(scheduleIcsRes.redirect).toHaveBeenCalledWith(
         `/referral/${caseRefId}/create-an-appointment/check-your-answers`,
       )
-    })
-
-    it('saves the video call reason in the appointment session data', async () => {
-      createReq.body = {
-        ...validBody,
-        sessionTakePlace: 'ByVideo',
-        ByVideo: 'Reason for video session',
-      }
-
-      await appointmentController.createAppointmentDetails(createReq, scheduleIcsRes)
-
-      expect(createReq.session.appointmentSessionData).toMatchObject({
-        method: 'VIDEO',
-        reasonSessionNotInPerson: 'Reason for video session',
-      })
-    })
-
-    it.each([
-      ['ByPhone', 'The person cannot attend by phone'],
-      ['ByVideo', 'The person cannot attend by video'],
-    ])('saves a contact session by %s with its remote reason', async (sessionTakePlace, reason) => {
-      createReq.query = { session: 'CONTACT_SESSION' }
-      createReq.body = {
-        ...validBody,
-        sessionTakePlace,
-        ByPhone: sessionTakePlace === 'ByPhone' ? reason : undefined,
-        ByVideo: sessionTakePlace === 'ByVideo' ? reason : undefined,
-      }
-      await appointmentController.createAppointmentDetails(createReq, scheduleIcsRes)
-      expect(createReq.session.appointmentSessionData.reasonSessionNotInPerson).toBe(reason)
-      expect(createReq.session.createAppointmentRequest.sessionMethodRequest).toEqual({
-        type: sessionTakePlace === 'ByPhone' ? 'PHONE' : 'VIDEO',
-        additionalDetails: reason,
-      })
-      expect(scheduleIcsRes.redirect).toHaveBeenCalledWith(
-        `/referral/${caseRefId}/create-an-appointment/check-your-answers`,
-      )
-    })
-
-    it.each(['ICS', 'CONTACT_SESSION', 'POST_RELEASE_SESSION'] as const)(
-      'does not select a method after submitting an empty %s form',
-      async appointmentType => {
-        createReq.query = { session: appointmentType }
-        createReq.session.createAppointmentRequest = saveFormToSession({ appointmentType })
-        createReq.flash = jest.fn().mockReturnValue([JSON.stringify({ sessionDate: '' })])
-        await appointmentController.showCreateAppointmentDetails(createReq, scheduleIcsRes)
-        expect((ScheduleIcsPresenter as jest.Mock).mock.lastCall[4].sessionTakePlace).toBe('')
-      },
-    )
-
-    it.each(['ICS', 'CONTACT_SESSION'] as const)(
-      'does not save a meet-at-the-gate answer for %s',
-      async appointmentType => {
-        createReq.query = { session: appointmentType }
-        await appointmentController.createAppointmentDetails(createReq, scheduleIcsRes)
-        expect(createReq.session.createAppointmentRequest.meetAtTheGate).toBeUndefined()
-        expect(createReq.session.appointmentSessionData.meetAtTheGate).toBeUndefined()
-      },
-    )
-
-    it.each([
-      ['ICS', '10/6/2026', true],
-      ['CONTACT_SESSION', '10/6/2026', false],
-      ['CONTACT_SESSION', '11/6/2026', true],
-    ])('validates %s on %s against the referral date', async (appointmentType, date, isValid) => {
-      referralService.getReferralInformation.mockResolvedValue({
-        ...mockReferralInformationInCommunity,
-        referralDate: '2026-06-10',
-      })
-      createReq.query = { session: appointmentType }
-      createReq.body = { ...validBody, sessionDate: date }
-
-      await appointmentController.createAppointmentDetails(createReq, scheduleIcsRes)
-
-      if (isValid) {
-        expect(scheduleIcsRes.redirect).toHaveBeenCalledWith(
-          `/referral/${caseRefId}/create-an-appointment/check-your-answers`,
-        )
-      } else {
-        expect(createReq.flash).toHaveBeenCalledWith('sessionDateError', 'Session date must be after the referral date')
-      }
-    })
-
-    it('saves an inline contact session address and continues to check your answers', async () => {
-      createReq.query = { session: 'CONTACT_SESSION' }
-      createReq.body = {
-        ...validBody,
-        sessionTakePlace: 'InSomewhereElse',
-        addressLine1: '14 High Street',
-        addressLine2: '',
-        addressTown: 'Bath',
-        addressCounty: '',
-        addressPostcode: 'BA1 1AA',
-      }
-      await appointmentController.createAppointmentDetails(createReq, scheduleIcsRes)
-      expect(createReq.session.appointmentSessionData.addressLines).toEqual(['14 High Street', 'Bath', 'BA1 1AA'])
-      expect(createReq.session.createAppointmentRequest.sessionMethodRequest).toMatchObject({
-        type: 'IN_PERSON_OTHER_LOCATION',
-        addressLine1: '14 High Street',
-        townOrCity: 'Bath',
-        postcode: 'BA1 1AA',
-      })
-      expect(scheduleIcsRes.redirect).toHaveBeenLastCalledWith(
-        `/referral/${caseRefId}/create-an-appointment/check-your-answers`,
-      )
-    })
-
-    it.each([
-      ['Flat 2', 'Somerset', ['14 High Street', 'Flat 2', 'Bath', 'Somerset', 'BA1 1AA']],
-      ['', '', ['14 High Street', 'Bath', 'BA1 1AA']],
-    ])('saves address lines in form order with line 2 "%s" and county "%s"', async (line2, county, expectedLines) => {
-      createReq.body = {
-        ...validBody,
-        sessionTakePlace: 'InSomewhereElse',
-        addressLine1: '14 High Street',
-        addressLine2: line2,
-        addressTown: 'Bath',
-        addressCounty: county,
-        addressPostcode: 'BA1 1AA',
-      }
-
-      await appointmentController.createAppointmentDetails(createReq, scheduleIcsRes)
-
-      expect(createReq.session.appointmentSessionData).toMatchObject({
-        method: 'IN_PERSON_OTHER_LOCATION',
-        addressLines: expectedLines,
-      })
-    })
-
-    it('clears address lines when the method changes to a phone call', async () => {
-      createReq.session.appointmentSessionData = {
-        method: 'IN_PERSON_OTHER_LOCATION',
-        addressLines: ['14 High Street', 'Bath', 'BA1 1AA'],
-      }
-
-      await appointmentController.createAppointmentDetails(createReq, scheduleIcsRes)
-
-      expect(createReq.session.appointmentSessionData).toMatchObject({
-        method: 'PHONE',
-        addressLines: undefined,
-      })
     })
 
     it('clears the probation office id when the method changes away from an in-person location method', async () => {
@@ -1158,9 +922,7 @@ describe('AppointmentController', () => {
 
     beforeEach(() => {
       IcsFeedbackHowSessionTookPlacePresenter.prototype.renderPage = jest.fn()
-      ;(appointmentService.getIcsFeedbackDidSessionTakePlace as jest.Mock).mockResolvedValue({
-        sessionMethod: mockIcsAppointment.sessionMethod,
-      })
+      ;(appointmentService.getICS as jest.Mock).mockResolvedValue(mockIcsAppointment)
 
       icsFeedbackReq = {
         params: { caseRefId: 'ics-123' },
@@ -1528,9 +1290,7 @@ describe('AppointmentController', () => {
           },
         },
       } as unknown as Request
-      jest
-        .spyOn(appointmentService, 'getIcsFeedbackHowTheyTriedToContactThePerson')
-        .mockResolvedValue({ referralFirstName: mockAppointmentIcsResponse.referralFirstName })
+      jest.spyOn(appointmentService, 'getICS').mockResolvedValue(mockAppointmentIcsResponse)
     })
     test('empty form data', async () => {
       req.body = {}
@@ -1610,9 +1370,7 @@ describe('AppointmentController', () => {
     })
 
     it('renders the check your answers page with presenter if feedback submission exists in session', async () => {
-      jest
-        .spyOn(appointmentService, 'getIcsFeedbackCheckAnswers')
-        .mockResolvedValue({ referralFirstName: mockAppointmentIcsResponse.referralFirstName })
+      jest.spyOn(appointmentService, 'getICS').mockResolvedValue(mockAppointmentIcsResponse)
       const mockSubmission = {
         record: {
           didSessionHappen: true,

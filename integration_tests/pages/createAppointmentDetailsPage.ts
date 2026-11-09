@@ -6,7 +6,7 @@ export type SessionType =
 
 const headers: Record<SessionType, string> = {
   ICS: 'Book initial contact session (ICS)',
-  CONTACT_SESSION: 'Book contact session',
+  CONTACT_SESSION: 'Schedule the contact session',
   PRE_RELEASE_SESSION: 'Schedule the pre-release session',
   POST_RELEASE_SESSION: 'Schedule the post-release session',
   HANDOVER_SESSION: 'Schedule the handover session',
@@ -43,11 +43,7 @@ export default class CreateAppointmentDetailsPage extends AbstractPage {
 
   readonly addressLine1Input: Locator
 
-  readonly addressLine2Input: Locator
-
   readonly townInput: Locator
-
-  readonly countyInput: Locator
 
   readonly postcodeInput: Locator
 
@@ -92,9 +88,7 @@ export default class CreateAppointmentDetailsPage extends AbstractPage {
     this.probationOfficeSelect = page.locator('#probationOfficeList')
     this.inSomewhereElseRadioButton = page.locator('input[type="radio"][value="InSomewhereElse"]')
     this.addressLine1Input = page.locator('input[type="text"][name="addressLine1"]')
-    this.addressLine2Input = page.locator('input[type="text"][name="addressLine2"]')
     this.townInput = page.locator('input[type="text"][name="addressTown"]')
-    this.countyInput = page.locator('input[type="text"][name="addressCounty"]')
     this.postcodeInput = page.locator('input[type="text"][name="addressPostcode"]')
     this.inPersonRadioButton = page.locator('input[type="radio"][value="InPerson"]')
     this.meetAtTheGateFieldset = page.locator('input[type="radio"][name="meetAtTheGate"]')
