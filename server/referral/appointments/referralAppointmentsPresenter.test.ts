@@ -18,8 +18,6 @@ describe('ReferralAppointmentsPresenter', () => {
     bookAppointmentHref: '/referral/{{ id }}/create-an-appointment/appointment-type',
     upcomingAppointmentsTitle: 'Upcoming appointments',
     pastAppointmentsTitle: 'Past appointments',
-    createAppointmentText: 'Create an Appointment',
-    appointmentCreatedSuccessfully: 'Appointment created successfully',
   }
 
   const makeResponse = () => ({ locals: { content } }) as unknown as Response
@@ -138,26 +136,32 @@ describe('ReferralAppointmentsPresenter', () => {
       personDetails: { firstName: 'Alex', lastName: 'Example', dateOfBirth: '1980-01-01', crn: 'X123456' },
       appointments: [],
     }
+    const successAlert = {
+      title: 'Contact session booked',
+      message: 'Contact session booked for 09 October 2026 at 2:30pm',
+    }
 
-    const viewModel = new ReferralAppointmentsPresenter(response, caseReference, true).buildViewModel(makeResponse())
+    const viewModel = new ReferralAppointmentsPresenter(response, caseReference, successAlert).buildViewModel(
+      makeResponse(),
+    )
 
     expect(viewModel.notificationBanner).toEqual({
-      type: 'success',
-      html: '<h3 class="govuk-notification-banner__heading">Appointment created successfully</h3>',
+      variant: 'success',
+      title: successAlert.title,
+      html: successAlert.message,
+      dismissible: true,
+      showTitleAsHeading: true,
     })
   })
 
-  it('shows a success alert after an appointment has been created', () => {
+  it('does not show a notification banner when there is no success alert', () => {
     const response: ReferralAppointmentsBffResponseDto = {
       personDetails: { firstName: 'Alex', lastName: 'Example', dateOfBirth: '1980-01-01', crn: 'X123456' },
       appointments: [],
     }
 
-    const viewModel = new ReferralAppointmentsPresenter(response, caseReference, true).buildViewModel(makeResponse())
+    const viewModel = new ReferralAppointmentsPresenter(response, caseReference).buildViewModel(makeResponse())
 
-    expect(viewModel.notificationBanner).toEqual({
-      type: 'success',
-      html: '<h3 class="govuk-notification-banner__heading">Appointment created successfully</h3>',
-    })
+    expect(viewModel.notificationBanner).toBeUndefined()
   })
 })

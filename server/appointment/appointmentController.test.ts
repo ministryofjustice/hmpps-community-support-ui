@@ -368,7 +368,12 @@ describe('AppointmentController', () => {
         appointmentTypes: mockCreateAppointmentReferenceData.appointmentTypes,
         probationOfficeLocations: [{ id: 2, name: 'Derbyshire: Buxton Probation Office' }],
       } as never)
-      jest.spyOn(appointmentService, 'submitAppointment').mockResolvedValue(mockAppointmentIcsResponse)
+      jest.spyOn(appointmentService, 'submitAppointment').mockResolvedValue({
+        ...mockAppointmentIcsResponse,
+        appointmentType: 'CONTACT_SESSION',
+        appointmentDate: '2026-03-27',
+        appointmentTime: { hour: 1, minute: 30, amPm: 'pm' },
+      })
 
       await appointmentController.submitAppointment(req, res)
 
@@ -388,7 +393,10 @@ describe('AppointmentController', () => {
       )
 
       expect(req.session.appointmentSessionData).toBeUndefined()
-      expect(req.session.referralAppointmentsSuccessCaseReference).toBe(caseRefId)
+      expect(req.session.createdAppointmentMessage).toEqual({
+        title: 'Contact session booked',
+        message: 'Contact session booked for 27 March 2026 at 1:30pm',
+      })
       expect(res.redirect).toHaveBeenCalledWith(`/referral/${caseRefId}/appointments`)
     })
 
@@ -453,7 +461,7 @@ describe('AppointmentController', () => {
 
       await expect(appointmentController.submitAppointment(req, res)).rejects.toBe(createError)
 
-      expect(req.session.referralAppointmentsSuccessCaseReference).toBeUndefined()
+      expect(req.session.createdAppointmentMessage).toBeUndefined()
       expect(req.session.appointmentSessionData).toBeDefined()
       expect(res.redirect).not.toHaveBeenCalled()
     })
@@ -541,7 +549,6 @@ describe('AppointmentController', () => {
 
       expect(req.session.createAppointmentRequest).toBeUndefined()
       expect(req.session.appointmentSessionData).toBeUndefined()
-      expect(req.session.referralAppointmentsSuccessCaseReference).toBe(caseRefId)
       expect(res.redirect).toHaveBeenCalledWith(`/referral/${caseRefId}/appointments`)
     })
 
@@ -552,7 +559,7 @@ describe('AppointmentController', () => {
 
       await expect(appointmentController.submitIcs(req, res)).rejects.toBe(createError)
 
-      expect(req.session.referralAppointmentsSuccessCaseReference).toBeUndefined()
+      expect(req.session.createdAppointmentMessage).toBeUndefined()
       expect(res.redirect).not.toHaveBeenCalled()
     })
   })

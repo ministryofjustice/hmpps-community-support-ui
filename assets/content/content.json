@@ -335,9 +335,7 @@
     "bookAppointmentText": "Book appointment",
     "bookAppointmentHref": "/referral/{{ id }}/create-an-appointment/appointment-type",
     "upcomingAppointmentsTitle": "Upcoming appointments",
-    "pastAppointmentsTitle": "Past appointments",
-    "createAppointmentText": "Create an Appointment",
-    "appointmentCreatedSuccessfully": "Appointment created successfully"
+    "pastAppointmentsTitle": "Past appointments"
   },
   "/referral/:id/appointment/select-type": {
     "pageTitle": "Select appointment type",

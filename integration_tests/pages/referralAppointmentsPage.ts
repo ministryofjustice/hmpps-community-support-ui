@@ -11,6 +11,8 @@ export default class ReferralAppointmentsPage extends AbstractPage {
 
   readonly noAppointmentsMessage: Locator
 
+  readonly successAlert: Locator
+
   readonly navigation: ReferralNavigation
 
   static url(caseReference: string): string {
@@ -24,6 +26,7 @@ export default class ReferralAppointmentsPage extends AbstractPage {
     this.appointmentsTable = page.locator('[data-testid="referral-appointments-table"]')
     this.bookAppointmentButton = page.getByRole('button', { name: 'Book appointment', exact: true })
     this.noAppointmentsMessage = page.locator('[data-testid="no-appointments-message"]')
+    this.successAlert = page.locator('.moj-alert--success')
   }
 
   async verifyOnPage(): Promise<void> {

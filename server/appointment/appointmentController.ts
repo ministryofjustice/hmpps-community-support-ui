@@ -8,7 +8,7 @@ import {
   SessionMethod,
   SessionMethodRequest,
 } from '@community-support-api'
-import { format, isBefore, parse, parseISO } from 'date-fns'
+import { format, formatDate, isBefore, parse, parseISO } from 'date-fns'
 import { ZodType } from 'zod'
 import timeFormat, { formatTime12Hr, parseTime12Hr } from '../utils/timeFormat'
 import { ErrorMiddlewareErrors, HowSessionTookPlace, IcsFeedbackHowSessionTookPlaceSession } from '../@types/express'
@@ -67,6 +67,7 @@ import AppointmentSessionData from './create-an-appointment/AppointmentSessionDa
 import { toIsoDate } from '../utils/dateFormat'
 import IdentifiedAdditionalNeedsPresenter from './identified-additional-support-needs/IdentifiedAdditionalNeedsPresenter'
 import { IdentifiedAdditionalNeedsFormDataSchema } from '../validation/IdentifiedAdditonalNeedsFormData'
+import { getAppointmentTypeLabel } from './create-an-appointment/appointmentTypeLabel'
 
 const recordAttendanceRedirectUrl = (data: RecordSessionAttendanceFormData, caseRefId: string): string => {
   if (data.happened === 'Yes') {
@@ -262,6 +263,23 @@ const buildCreateAppointmentRequest = (
   sessionCommunication: appointmentSessionData.informedBy || [],
   meetAtTheGate: appointmentSessionData.meetAtTheGate,
 })
+
+const generateSuccessMessage = (
+  appointmentType: string,
+  appointmentDate: string,
+  appointmentTime: AppointmentTimeResponse,
+): { title: string; message: string } => {
+  const appointmentTypeLabel = getAppointmentTypeLabel(appointmentType)
+
+  return {
+    title: `${appointmentTypeLabel} booked`,
+    message: `${appointmentTypeLabel} booked for ${formatDate(new Date(appointmentDate), 'dd MMMM yyyy')} at ${formatTime12Hr(
+      appointmentTime.hour,
+      appointmentTime.minute,
+      appointmentTime.amPm,
+    )}`,
+  }
+}
 
 class AppointmentController {
   private readonly resolver: ScheduledIcsFormDataResolver
@@ -486,9 +504,14 @@ class AppointmentController {
       referenceData.probationOfficeLocations,
     )
 
-    await this.appointmentService.submitAppointment(caseReference, createAppointmentRequest, username)
+    const response = await this.appointmentService.submitAppointment(caseReference, createAppointmentRequest, username)
     delete req.session.appointmentSessionData
-    req.session.referralAppointmentsSuccessCaseReference = caseReference
+
+    req.session.createdAppointmentMessage = generateSuccessMessage(
+      response.appointmentType,
+      response.appointmentDate,
+      response.appointmentTime,
+    )
 
     return res.redirect(`/referral/${caseReference}/appointments`)
   }
@@ -685,7 +708,6 @@ class AppointmentController {
 
     if (response.appointmentType !== 'ICS') {
       delete req.session.appointmentSessionData
-      req.session.referralAppointmentsSuccessCaseReference = caseRefId
       return res.redirect(`/referral/${caseRefId}/appointments`)
     }
 
