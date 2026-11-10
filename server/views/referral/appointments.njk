@@ -22,8 +22,9 @@
 
   {% if content.hasAppointments %}
     <h2 class="govuk-heading-m">{{ content.upcomingAppointmentsTitle }}</h2>
-    {{ govukTable(content.appointmentsTable) }}
+    {{ govukTable(content.upcomingAppointmentsTable) }}
     <h2 class="govuk-heading-m">{{ content.pastAppointmentsTitle }}</h2>
+    {{ govukTable(content.pastAppointmentsTable) }}
   {% else %}
     <p class="govuk-body" data-testid="no-appointments-message">{{ content.noAppointmentsMessage }}</p>
   {% endif %}

@@ -338,7 +338,7 @@ describe('CommunitySupportApiClient tests', () => {
       const caseReference = 'AB1234CD'
       const appointments: ReferralAppointmentsBffResponseDto = {
         personDetails: { firstName: 'Alex', lastName: 'Example', dateOfBirth: '1980-01-01', crn: 'X123456' },
-        appointments: [
+        upcomingAppointments: [
           {
             id: randomUUID(),
             label: 'Contact session',
@@ -347,6 +347,7 @@ describe('CommunitySupportApiClient tests', () => {
             appointmentStatus: 'SCHEDULED',
           },
         ],
+        pastAppointments: [],
       }
 
       nock('http://localhost:8080', {
