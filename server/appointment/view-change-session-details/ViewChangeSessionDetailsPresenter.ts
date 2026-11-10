@@ -14,6 +14,7 @@ const SESSION_METHOD_DISPLAY: Record<string, string> = {
   VIDEO: 'Video call',
   IN_PERSON_PROBATION_OFFICE: 'In person',
   IN_PERSON_OTHER_LOCATION: 'Other location',
+  IN_PERSON_PRISON: 'In person - prison',
   IN_PERSON_PRISON_ESTABLISMENT: 'In person',
 }
 
@@ -78,20 +79,23 @@ export default class ViewChangeSessionDetailsPresenter extends PresenterBase<
 
     let locationValue: { text: string } | { html: string } | undefined
     if (isInPerson) {
-      locationValue =
-        sessionType === 'IN_PERSON_PROBATION_OFFICE'
-          ? { text: 'Probation office' }
-          : {
-              html: formatAddress(
-                sessionMethod as {
-                  addressLine1?: string | null
-                  addressLine2?: string | null
-                  townOrCity?: string | null
-                  county?: string | null
-                  postcode?: string | null
-                },
-              ),
-            }
+      if (sessionType === 'IN_PERSON_PROBATION_OFFICE') {
+        locationValue = { text: 'Probation office' }
+      } else if (sessionType === 'IN_PERSON_PRISON' && sessionMethod.appointmentCategory === 'IN_PERSON') {
+        locationValue = { text: sessionMethod.prisonName || '' }
+      } else {
+        locationValue = {
+          html: formatAddress(
+            sessionMethod as {
+              addressLine1?: string | null
+              addressLine2?: string | null
+              townOrCity?: string | null
+              county?: string | null
+              postcode?: string | null
+            },
+          ),
+        }
+      }
     }
 
     const rows = buildIcsSummaryRows({

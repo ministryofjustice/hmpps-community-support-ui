@@ -1,4 +1,5 @@
 import {
+  appointmentMethodRequiresLocation,
   buildAppointmentSessionMethodRequest,
   getAppointmentMethodLabel,
   isAppointmentMethod,
@@ -12,6 +13,7 @@ describe('appointmentMethod', () => {
       expect(isAppointmentMethod('IN_PERSON')).toBe(true)
       expect(isAppointmentMethod('IN_PERSON_PROBATION_OFFICE')).toBe(true)
       expect(isAppointmentMethod('IN_PERSON_OTHER_LOCATION')).toBe(true)
+      expect(isAppointmentMethod('IN_PERSON_PRISON')).toBe(true)
       expect(isAppointmentMethod('PHONE CALL')).toBe(false)
       expect(isAppointmentMethod('BYPHONE')).toBe(false)
       expect(isAppointmentMethod(undefined)).toBe(false)
@@ -25,6 +27,7 @@ describe('appointmentMethod', () => {
       expect(getAppointmentMethodLabel('IN_PERSON')).toBe('In person')
       expect(getAppointmentMethodLabel('IN_PERSON_PROBATION_OFFICE')).toBe('In person (Probation office)')
       expect(getAppointmentMethodLabel('IN_PERSON_OTHER_LOCATION')).toBe('In person (Other location)')
+      expect(getAppointmentMethodLabel('IN_PERSON_PRISON')).toBe('In person (Prison)')
     })
 
     it('falls back to the original value for unknown methods', () => {
@@ -38,6 +41,18 @@ describe('appointmentMethod', () => {
       expect(getAppointmentMethodLabel('InPerson')).toBe('In person')
       expect(getAppointmentMethodLabel('InProbationOffice')).toBe('In person (Probation office)')
       expect(getAppointmentMethodLabel('InSomewhereElse')).toBe('In person (Other location)')
+      expect(getAppointmentMethodLabel('InPrison')).toBe('In person (Prison)')
+    })
+  })
+
+  describe('appointmentMethodRequiresLocation', () => {
+    it('recognises each in-person method with a location', () => {
+      expect(appointmentMethodRequiresLocation('IN_PERSON_PROBATION_OFFICE')).toBe(true)
+      expect(appointmentMethodRequiresLocation('IN_PERSON_OTHER_LOCATION')).toBe(true)
+      expect(appointmentMethodRequiresLocation('InPrison')).toBe(true)
+      expect(appointmentMethodRequiresLocation('PHONE')).toBe(false)
+      expect(appointmentMethodRequiresLocation('IN_PERSON')).toBe(false)
+      expect(appointmentMethodRequiresLocation()).toBe(false)
     })
   })
 
@@ -68,6 +83,16 @@ describe('appointmentMethod', () => {
 
     it('falls back to PHONE when no method is set', () => {
       expect(buildAppointmentSessionMethodRequest(undefined, 'ignored')).toEqual({ type: 'PHONE' })
+    })
+
+    it('sends a prison code and rejects a missing one', () => {
+      expect(buildAppointmentSessionMethodRequest('IN_PERSON_PRISON', 'MDI')).toEqual({
+        type: 'IN_PERSON_PRISON',
+        prisonCode: 'MDI',
+      })
+      expect(() => buildAppointmentSessionMethodRequest('IN_PERSON_PRISON', '')).toThrow(
+        'A prison code is required to book a prison session',
+      )
     })
   })
 })

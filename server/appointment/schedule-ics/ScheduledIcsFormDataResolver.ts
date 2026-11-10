@@ -8,6 +8,7 @@ import { Request, Response } from 'express'
 import { format, parse } from 'date-fns'
 import AppointmentValidator from '../AppointmentValidator'
 import AppointmentService from '../../services/AppointmentService'
+import { fromApiInformedBy } from '../informedByLabels'
 
 export interface ScheduledIcsFormData {
   sessionDate?: string
@@ -52,6 +53,8 @@ const mapTypeToSessionTakePlace = (type: SessionMethodRequest['type']): string =
       return 'InProbationOffice'
     case 'IN_PERSON_OTHER_LOCATION':
       return 'InSomewhereElse'
+    case 'IN_PERSON_PRISON':
+      return 'InPrison'
     case 'IN_PERSON':
       return 'InPerson'
     default:
@@ -87,6 +90,9 @@ const loadSessionMethodFromSession = (
   if (method.type === 'IN_PERSON_PROBATION_OFFICE') {
     updatedFormData.probationOffice = method.additionalDetails
   }
+  if (method.type === 'IN_PERSON_PRISON') {
+    updatedFormData.prison = method.prisonCode
+  }
   if (method.type === 'IN_PERSON_OTHER_LOCATION') {
     updatedFormData.addressLine1 = method.addressLine1 || ''
     updatedFormData.addressLine2 = method.addressLine2 || ''
@@ -102,7 +108,7 @@ const loadInformedMethodsFromSession = (
   sessionCommunications: string[],
   formData: ScheduledIcsFormData,
 ): ScheduledIcsFormData => {
-  let informedMethods = sessionCommunications ? [...sessionCommunications] : []
+  let informedMethods = fromApiInformedBy(sessionCommunications)
 
   // 'informedByOtherMethod' is the checkbox value itself (saved when "Other" was ticked without
   // any text), so it must not be treated as the free-text contact method.
@@ -231,6 +237,8 @@ const mapSessionTakePlaceToType = (takePlace: string): SessionMethodRequest['typ
       return 'IN_PERSON_PROBATION_OFFICE'
     case 'InSomewhereElse':
       return 'IN_PERSON_OTHER_LOCATION'
+    case 'InPrison':
+      return 'IN_PERSON_PRISON'
     case 'InPerson':
       return 'IN_PERSON'
     default:
@@ -254,7 +262,7 @@ const getSessionMethodFromFormData = (formData: ScheduledIcsFormData): SessionMe
     }
 
     if (sessionTakePlace === 'InPrison' && formData.prison) {
-      sessionMethod.additionalDetails = formData.prison
+      sessionMethod.prisonCode = formData.prison
     }
 
     if (sessionTakePlace === 'InSomewhereElse') {

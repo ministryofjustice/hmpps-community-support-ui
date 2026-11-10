@@ -282,6 +282,7 @@
     "startTimeLabel": "Start time",
     "methodLabel": "How the session will take place",
     "probationOfficeLabel": "Probation office",
+    "prisonLabel": "Prison",
     "appointmentAddressLabel": "Appointment address",
     "reasonSessionNotInPersonLabel": "Reason session is not in person",
     "meetAtTheGateLabel": "Meeting at the gate",
@@ -1093,7 +1094,7 @@
     "pageHeaders": {
       "ICS": "Book initial contact session (ICS)",
       "CONTACT_SESSION": "Book contact session",
-      "PRE_RELEASE_SESSION": "Schedule the pre-release session",
+      "PRE_RELEASE_SESSION": "Book pre-release session",
       "POST_RELEASE_SESSION": "Schedule the post-release session",
       "HANDOVER_SESSION": "Schedule the handover session"
     },

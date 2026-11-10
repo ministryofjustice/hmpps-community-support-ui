@@ -1,16 +1,18 @@
 import { expect, test } from '@playwright/test'
 import { randomUUID } from 'node:crypto'
+import { addDays, format } from 'date-fns'
 import { login, resetStubs } from '../testUtils'
 import communitySupport from '../mockApis/communitySupport'
 import prisonApi from '../mockApis/prisonApi'
 import AppointmentTypePage from '../pages/AppointmentTypePage'
 import CreateAppointmentDetailsPage from '../pages/createAppointmentDetailsPage'
 import AppointmentCheckYourAnswersPage from '../pages/AppointmentCheckYourAnswersPage'
-import { createAppointmentReferenceData, probationOfficesData } from '../mockData/referenceData'
+import { createAppointmentReferenceData, prisonsData, probationOfficesData } from '../mockData/referenceData'
 import { referralInformationInCommunity } from '../mockData/referralInformationData'
 import buildReferralProgress from '../../server/testutils/buildReferralProgress'
 import ReferralAppointmentsPage from '../pages/referralAppointmentsPage'
 import ReferralProgressPage from '../pages/referralProgressPage'
+import { getMatchingRequests } from '../mockApis/wiremock'
 
 const CASE_REFERENCE = 'AB1234CD'
 
@@ -25,10 +27,11 @@ const appointmentResponse = {
   appointmentStatus: 'SCHEDULED' as const,
   sessionMethod: {
     appointmentCategory: 'IN_PERSON' as const,
-    type: 'IN_PERSON_OTHER_LOCATION' as const,
-    probationOfficeName: 'Other location',
+    type: 'IN_PERSON_PRISON' as const,
+    prisonCode: prisonsData[0].agencyId,
+    prisonName: prisonsData[0].description,
   },
-  sessionCommunications: ['informedByPhone'],
+  sessionCommunications: [],
   referralFirstName: 'John',
   referralLastName: 'Doe',
   createdAt: '2026-10-16T10:15:30Z',
@@ -105,20 +108,23 @@ test.describe('Full appointment journey', () => {
 
     const preReleaseDetailsPage = await CreateAppointmentDetailsPage.verifyOnPage(page, 'PRE_RELEASE_SESSION')
     await preReleaseDetailsPage.fillDateAndTime('21/6/2026', '10', '30', 'AM')
-    await preReleaseDetailsPage.inSomewhereElseRadioButton.click()
-    await preReleaseDetailsPage.addressLine1Input.fill('1 High Street')
-    await preReleaseDetailsPage.townInput.fill('Derby')
-    await preReleaseDetailsPage.countyInput.fill('Derbyshire')
-    await preReleaseDetailsPage.postcodeInput.fill('DE1 2EQ')
-    await preReleaseDetailsPage.informedByPhoneCheckbox.check()
+    await preReleaseDetailsPage.prisonRadioButton.check()
+    await preReleaseDetailsPage.prisonSelect.selectOption(prisonsData[0].agencyId)
     await preReleaseDetailsPage.saveAndContinueButton.click()
 
     const cyaPage = await AppointmentCheckYourAnswersPage.verifyOnPage(page)
-    await expect(cyaPage.appointmentAddressRow).toContainText('1 High Street')
-    await expect(cyaPage.appointmentAddressRow).toContainText('Derby')
-    await expect(cyaPage.appointmentAddressRow).toContainText('Derbyshire')
-    await expect(cyaPage.appointmentAddressRow).toContainText('DE1 2EQ')
-    await expect(cyaPage.appointmentAddressRow.locator('dd br')).toHaveCount(3)
+    await expect(cyaPage.methodRow).toContainText('In person: prison')
+    await expect(cyaPage.prisonRow).toContainText(prisonsData[0].description)
+    await expect(cyaPage.informedByRow).toHaveCount(0)
+
+    await cyaPage.changeLink.click()
+    const typePage = await AppointmentTypePage.verifyOnPage(page)
+    await typePage.continueButton.click()
+    const returnedPage = await CreateAppointmentDetailsPage.verifyOnPage(page, 'PRE_RELEASE_SESSION')
+    await expect(returnedPage.prisonRadioButton).toBeChecked()
+    await expect(returnedPage.prisonSelect).toHaveValue(prisonsData[0].agencyId)
+    await returnedPage.saveAndContinueButton.click()
+    await AppointmentCheckYourAnswersPage.verifyOnPage(page)
 
     await cyaPage.submitButton.click()
     await expect(page).toHaveURL(`/referral/${CASE_REFERENCE}/appointments`)
@@ -131,5 +137,49 @@ test.describe('Full appointment journey', () => {
 
     await page.reload()
     await expect(appointmentsAfterBooking.successAlert).toHaveCount(0)
+    const requests = await getMatchingRequests({
+      method: 'POST',
+      urlPath: `/community-support/referral/${CASE_REFERENCE}/appointment`,
+    })
+    expect(requests.body.requests).toHaveLength(1)
+    const requestBody = JSON.parse(requests.body.requests[0].body)
+    expect(requestBody).toMatchObject({
+      appointmentType: 'PRE_RELEASE_SESSION',
+      sessionMethodRequest: { type: 'IN_PERSON_PRISON', prisonCode: prisonsData[0].agencyId },
+      sessionCommunication: [],
+    })
+    expect(requestBody.sessionMethodRequest).toEqual({ type: 'IN_PERSON_PRISON', prisonCode: prisonsData[0].agencyId })
+    expect(requestBody).not.toHaveProperty('meetAtTheGate')
   })
+
+  for (const method of ['PHONE', 'VIDEO'] as const) {
+    test(`submits a pre-release ${method.toLowerCase()} session with its reason`, async ({ page }) => {
+      await page.goto(CreateAppointmentDetailsPage.url(CASE_REFERENCE, 'PRE_RELEASE_SESSION'))
+      const detailsPage = await CreateAppointmentDetailsPage.verifyOnPage(page, 'PRE_RELEASE_SESSION')
+      await detailsPage.fillDateAndTime(format(addDays(new Date(), 7), 'd/M/yyyy'), '10', '30', 'AM')
+      await (method === 'PHONE' ? detailsPage.phoneCallRadioButton : detailsPage.videoCallRadioButton).check()
+      await (method === 'PHONE' ? detailsPage.phoneCallReasonInput : detailsPage.videoCallReasonInput).fill(
+        'The person cannot attend in person',
+      )
+      await detailsPage.saveAndContinueButton.click()
+      const cyaPage = await AppointmentCheckYourAnswersPage.verifyOnPage(page)
+      await expect(cyaPage.reasonSessionNotInPersonRow).toContainText('The person cannot attend in person')
+      await expect(cyaPage.informedByRow).toHaveCount(0)
+      await cyaPage.submitButton.click()
+      await expect(page).toHaveURL(`/referral/${CASE_REFERENCE}/appointments`)
+
+      const requests = await getMatchingRequests({
+        method: 'POST',
+        urlPath: `/community-support/referral/${CASE_REFERENCE}/appointment`,
+      })
+      expect(requests.body.requests).toHaveLength(1)
+      const requestBody = JSON.parse(requests.body.requests[0].body)
+      expect(requestBody.sessionMethodRequest).toEqual({
+        type: method,
+        additionalDetails: 'The person cannot attend in person',
+      })
+      expect(requestBody.sessionCommunication).toEqual([])
+      expect(requestBody).not.toHaveProperty('meetAtTheGate')
+    })
+  }
 })
