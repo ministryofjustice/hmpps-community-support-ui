@@ -69,7 +69,8 @@ test.describe('Appointment Type Page', () => {
           dateOfBirth: '1980-01-01',
           crn: 'X123456',
         },
-        appointments: [],
+        upcomingAppointments: [],
+        pastAppointments: [],
       },
       CASE_REFERENCE,
     )

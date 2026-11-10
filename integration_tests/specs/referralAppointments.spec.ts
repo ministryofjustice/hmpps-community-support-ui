@@ -13,7 +13,7 @@ test.describe('Referral Appointments Page', () => {
   const caseReference = 'AB1234CD'
   const appointments: ReferralAppointmentsBffResponseDto = {
     personDetails: { firstName: 'Alex', lastName: 'Example', dateOfBirth: '1980-01-01', crn: 'X123456' },
-    appointments: [
+    upcomingAppointments: [
       {
         id: '11111111-1111-4111-8111-111111111111',
         label: 'Contact session',
@@ -26,6 +26,15 @@ test.describe('Referral Appointments Page', () => {
         label: 'Handover session',
         appointmentDate: '2026-10-12',
         appointmentTime: { hour: 9, minute: 0, amPm: 'am' },
+        appointmentStatus: 'SCHEDULED',
+      },
+    ],
+    pastAppointments: [
+      {
+        id: '33333333-3333-4333-8333-333333333333',
+        label: 'Initial assessment',
+        appointmentDate: '2026-09-01',
+        appointmentTime: { hour: 10, minute: 0, amPm: 'am' },
         appointmentStatus: 'SCHEDULED',
       },
     ],
@@ -54,14 +63,20 @@ test.describe('Referral Appointments Page', () => {
     await expect(appointmentsPage.header).toHaveText('Referral for Alex Example')
     await expect(page.getByRole('heading', { name: 'Appointments', level: 2, exact: true })).toBeVisible()
     await expect(page.getByText('Referral progress')).toHaveCount(0)
-    await expect(appointmentsPage.appointmentsTable).toContainText('Contact session')
-    await expect(appointmentsPage.appointmentsTable).toContainText('Handover session')
-    await expect(appointmentsPage.appointmentsTable.getByRole('columnheader')).toHaveText([
+    await expect(appointmentsPage.upcomingAppointmentsTable).toContainText('Contact session')
+    await expect(appointmentsPage.upcomingAppointmentsTable).toContainText('Handover session')
+    await expect(appointmentsPage.upcomingAppointmentsTable).not.toContainText('Initial assessment')
+    await expect(appointmentsPage.pastAppointmentsTable.locator('tbody tr td')).toHaveText([
+      'Initial assessment',
+      '01 September 2026',
+      '10:00am',
+    ])
+    await expect(appointmentsPage.upcomingAppointmentsTable.getByRole('columnheader')).toHaveText([
       'Appointment type',
       'Date',
       'Start time',
     ])
-    await expect(appointmentsPage.appointmentsTable.locator('tbody tr').first().locator('td')).toHaveText([
+    await expect(appointmentsPage.upcomingAppointmentsTable.locator('tbody tr').first().locator('td')).toHaveText([
       'Contact session',
       '01 November 2026',
       '1:30pm',
@@ -87,8 +102,8 @@ test.describe('Referral Appointments Page', () => {
 
       const appointmentsPage = new ReferralAppointmentsPage(page)
       await appointmentsPage.verifyOnPage()
-      const labels = appointmentsPage.appointmentsTable.locator('tbody tr td:first-child')
-      const header = appointmentsPage.appointmentsTable.getByRole('columnheader', { name: column, exact: true })
+      const labels = appointmentsPage.upcomingAppointmentsTable.locator('tbody tr td:first-child')
+      const header = appointmentsPage.upcomingAppointmentsTable.getByRole('columnheader', { name: column, exact: true })
       await expect(header).toHaveAttribute('aria-sort', 'none')
       await header.getByRole('button').click()
       await expect(header).toHaveAttribute('aria-sort', 'ascending')
@@ -100,14 +115,18 @@ test.describe('Referral Appointments Page', () => {
   })
 
   test('shows the empty state and booking button when there are no appointments', async ({ page }) => {
-    await communitySupport.stubGetReferralAppointments({ ...appointments, appointments: [] }, caseReference)
+    await communitySupport.stubGetReferralAppointments(
+      { ...appointments, upcomingAppointments: [], pastAppointments: [] },
+      caseReference,
+    )
     await page.goto(ReferralAppointmentsPage.url(caseReference))
 
     const appointmentsPage = new ReferralAppointmentsPage(page)
     await appointmentsPage.verifyOnPage()
     await expect(appointmentsPage.header).toHaveText('Referral for Alex Example')
     await expect(appointmentsPage.noAppointmentsMessage).toHaveText('No appointments scheduled')
-    await expect(appointmentsPage.appointmentsTable).toHaveCount(0)
+    await expect(appointmentsPage.upcomingAppointmentsTable).toHaveCount(0)
+    await expect(appointmentsPage.pastAppointmentsTable).toHaveCount(0)
     await expect(page.getByRole('heading', { name: 'Upcoming appointments', exact: true })).toHaveCount(0)
     await expect(page.getByRole('heading', { name: 'Past appointments', exact: true })).toHaveCount(0)
     await expect(appointmentsPage.bookAppointmentButton).toBeVisible()
@@ -115,5 +134,17 @@ test.describe('Referral Appointments Page', () => {
       'href',
       `/referral/${caseReference}/create-an-appointment/appointment-type`,
     )
+  })
+
+  test('shows past appointments when there are no upcoming appointments', async ({ page }) => {
+    await communitySupport.stubGetReferralAppointments({ ...appointments, upcomingAppointments: [] }, caseReference)
+    await page.goto(ReferralAppointmentsPage.url(caseReference))
+
+    const appointmentsPage = new ReferralAppointmentsPage(page)
+    await appointmentsPage.verifyOnPage()
+    await expect(appointmentsPage.noAppointmentsMessage).toHaveCount(0)
+    await expect(appointmentsPage.upcomingAppointmentsTable.locator('tbody tr')).toHaveCount(0)
+    await expect(appointmentsPage.pastAppointmentsTable).toContainText('Initial assessment')
+    await expect(appointmentsPage.bookAppointmentButton).toBeVisible()
   })
 })
