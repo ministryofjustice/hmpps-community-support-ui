@@ -6,13 +6,13 @@ import { formatTime12Hr, formatTime24Hr } from '../../utils/timeFormat'
 import ReferralLayoutPresenter, { ReferralNavigationValues } from '../referralLayout/referralLayoutPresenter'
 import type { ReferralAppointmentsContent, ReferralAppointmentsViewModel } from './referralAppointmentsViewModel'
 
-const StatusLabel = {
-  SCHEDULED: {text:'Scheduled', classes: 'govuk-tag--blue', actions: [{text: 'View or change details', href: ''}]},
-  NEEDS_FEEDBACK: {text:'Needs feedback', classes: 'govuk-tag--red', actions: [{text: 'Add attendance and feedback', href: ''}]},
-  COMPLETED: {text:'Completed', classes: 'govuk-tag--green', actions: [{text: 'View feedback', href: ''}]},
-  CHANGED: {text:'Changed', classes: 'govuk-tag--orange', actions: [{text: 'View session details', href: ''}]},
-  DID_NOT_ATTEND: {text:'Did not attend', classes: 'govuk-tag--magenta', actions: [{text: 'Reschedule', href: ''}, {text: 'View feedback', href: ''}]},
-  DID_NOT_HAPPEN: {text:'Did not happen', classes: 'govuk-tag--magenta', actions: [{text: 'Reschedule', href: ''}, {text: 'View feedback', href: ''}]},
+const statusTagClasses: Record<string, string> = {
+  SCHEDULED: 'govuk-tag--blue',
+  NEEDS_FEEDBACK: 'govuk-tag--red',
+  COMPLETED: 'govuk-tag--green',
+  CHANGED: 'govuk-tag--orange',
+  DID_NOT_ATTEND: 'govuk-tag--magenta',
+  DID_NOT_HAPPEN: 'govuk-tag--magenta',
 }
 
 export default class ReferralAppointmentsPresenter extends ReferralLayoutPresenter<
@@ -120,43 +120,46 @@ export default class ReferralAppointmentsPresenter extends ReferralLayoutPresent
           },
         },
       ],
-      rows: appointments.map(appointment => [
-        {
-          text: appointment.label,
-          attributes: {
-            'data-sort-value': appointment.label,
+      rows: appointments.map(appointment => {
+        const status = content.statuses[appointment.appointmentStatus]
+        return [
+          {
+            text: appointment.label,
+            attributes: {
+              'data-sort-value': appointment.label,
+            },
           },
-        },
-        {
-          text: `${formatDate(new Date(appointment.appointmentDate), 'dd MMMM yyyy')}`,
-          attributes: {
-            'data-sort-value': `${appointment.appointmentDate}T${formatTime24Hr(appointment.appointmentTime)}`,
+          {
+            text: `${formatDate(new Date(appointment.appointmentDate), 'dd MMMM yyyy')}`,
+            attributes: {
+              'data-sort-value': `${appointment.appointmentDate}T${formatTime24Hr(appointment.appointmentTime)}`,
+            },
           },
-        },
-        {
-          text: `${formatTime12Hr(
-            appointment.appointmentTime.hour,
-            appointment.appointmentTime.minute,
-            appointment.appointmentTime.amPm,
-          )}`,
-          attributes: {
-            'data-sort-value': formatTime24Hr(appointment.appointmentTime),
+          {
+            text: `${formatTime12Hr(
+              appointment.appointmentTime.hour,
+              appointment.appointmentTime.minute,
+              appointment.appointmentTime.amPm,
+            )}`,
+            attributes: {
+              'data-sort-value': formatTime24Hr(appointment.appointmentTime),
+            },
           },
-        },
-        {
-          html: `<strong class="govuk-tag ${StatusLabel[appointment.appointmentStatus].classes}">${StatusLabel[appointment.appointmentStatus].text}</strong>`,
-          attributes: {
-            'data-sort-value': StatusLabel[appointment.appointmentStatus].text,
+          {
+            html: `<strong class="govuk-tag ${statusTagClasses[appointment.appointmentStatus]}">${status.text}</strong>`,
+            attributes: {
+              'data-sort-value': status.text,
+            },
           },
-        },
-        {
-          classes: 'govuk-table__cell--numeric',
-          html: `${StatusLabel[appointment.appointmentStatus].actions.map(action => `<a href="${action.href}">${action.text}</a>`).join('<br> ')}`,
-          attributes: {
-            'data-sort-value': StatusLabel[appointment.appointmentStatus].text,
+          {
+            classes: 'govuk-table__cell--numeric',
+            html: status.actions.map(action => `<a href="${action.href}">${action.text}</a>`).join('<br> '),
+            attributes: {
+              'data-sort-value': status.text,
+            },
           },
-        },
-      ]),
+        ]
+      }),
     }
   }
 }

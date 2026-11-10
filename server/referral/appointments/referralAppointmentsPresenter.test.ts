@@ -31,7 +31,7 @@ describe('ReferralAppointmentsPresenter', () => {
     },
     {
       classes: 'govuk-table__cell--numeric',
-      html: '<a href="">View or change details</a>',
+      html: '<a href="#">View or change details</a>',
       attributes: { 'data-sort-value': 'Scheduled' },
     },
   ]
@@ -191,7 +191,7 @@ describe('ReferralAppointmentsPresenter', () => {
     })
     expect(row[4]).toEqual({
       classes: 'govuk-table__cell--numeric',
-      html: actions.map(action => `<a href="">${action}</a>`).join('<br> '),
+      html: actions.map(action => `<a href="#">${action}</a>`).join('<br> '),
       attributes: { 'data-sort-value': text },
     })
   })

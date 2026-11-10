@@ -339,7 +339,30 @@
     "bookAppointmentText": "Book appointment",
     "bookAppointmentHref": "/referral/{{ id }}/create-an-appointment/appointment-type",
     "upcomingAppointmentsTitle": "Upcoming appointments",
-    "pastAppointmentsTitle": "Past appointments"
+    "pastAppointmentsTitle": "Past appointments",
+    "statuses": {
+      "SCHEDULED": { "text": "Scheduled", "actions": [{ "text": "View or change details", "href": "#" }] },
+      "NEEDS_FEEDBACK": {
+        "text": "Needs feedback",
+        "actions": [{ "text": "Add attendance and feedback", "href": "#" }]
+      },
+      "COMPLETED": { "text": "Completed", "actions": [{ "text": "View feedback", "href": "#" }] },
+      "CHANGED": { "text": "Changed", "actions": [{ "text": "View session details", "href": "#" }] },
+      "DID_NOT_ATTEND": {
+        "text": "Did not attend",
+        "actions": [
+          { "text": "Reschedule", "href": "#" },
+          { "text": "View feedback", "href": "#" }
+        ]
+      },
+      "DID_NOT_HAPPEN": {
+        "text": "Did not happen",
+        "actions": [
+          { "text": "Reschedule", "href": "#" },
+          { "text": "View feedback", "href": "#" }
+        ]
+      }
+    }
   },
   "/referral/:id/appointment/select-type": {
     "pageTitle": "Select appointment type",
