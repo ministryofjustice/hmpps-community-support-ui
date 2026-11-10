@@ -66,6 +66,7 @@ import type {
   IcsFeedbackCheckAnswersBffDto,
   IcsFeedbackAttendanceBffDto,
   IcsFeedbackSessionDetailsBffDto,
+  IcsViewOrChangeBffDto,
 } from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
@@ -192,6 +193,10 @@ export default class CommunitySupportApiClient extends RestClient {
 
   getIcsFeedbackSessionDetails(caseRefId: string, username: string): Promise<IcsFeedbackSessionDetailsBffDto> {
     return this.get({ path: `/bff/ics-feedback/${caseRefId}/session-details` }, asSystem(username))
+  }
+
+  getIcsViewOrChange(caseRefId: string, username: string): Promise<IcsViewOrChangeBffDto> {
+    return this.get({ path: `/bff/referral-details/${caseRefId}/ics-view-or-change` }, asSystem(username))
   }
 
   getCreateAppointmentReferenceData(

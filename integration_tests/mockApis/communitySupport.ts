@@ -32,6 +32,7 @@ import {
   AdditionalInformationForTheDeliveryPartner,
   OffenceSentenceInfoBffResponseDto,
   WithdrawReferralRequest,
+  IcsViewOrChangeBffDto,
 } from '@community-support-api'
 import { stubFor } from './wiremock'
 import { duplicateData } from '../testUtils'
@@ -129,11 +130,36 @@ const stubGetIcsFeedbackSessionDetails = (caseRefId: string, appointment: Appoin
   return stubGetIcsFeedbackPage(caseRefId, 'session-details', body)
 }
 
+const stubGetIcsViewOrChange = (caseRefId: string, appointment: AppointmentIcsResponse) => {
+  const body: IcsViewOrChangeBffDto = {
+    referralFirstName: appointment.referralFirstName,
+    referralLastName: appointment.referralLastName,
+    appointmentDate: appointment.appointmentDate,
+    appointmentTime: appointment.appointmentTime,
+    sessionMethod: appointment.sessionMethod,
+    sessionCommunications: appointment.sessionCommunications,
+    changeAppointmentDetails: appointment.changeAppointmentDetails,
+  }
+  return stubFor({
+    request: {
+      method: 'GET',
+      urlPathPattern: `/community-support/bff/referral-details/${caseRefId}/ics-view-or-change`,
+    },
+    response: {
+      status: 200,
+      headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+      jsonBody: body,
+      transformers: ['response-template'],
+    },
+  })
+}
+
 export default {
   stubGetIcsFeedbackPage,
   stubGetIcsFeedbackDidSessionTakePlace,
   stubGetIcsFeedbackAttendance,
   stubGetIcsFeedbackSessionDetails,
+  stubGetIcsViewOrChange,
   stubPing: (httpStatus = 200): SuperAgentRequest =>
     stubFor({
       request: {

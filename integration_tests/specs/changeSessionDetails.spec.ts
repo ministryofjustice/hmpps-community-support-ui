@@ -24,6 +24,8 @@ test.describe('Change Session Details Page', () => {
     await Promise.all([
       communitySupport.stubGetICS(virtual.caseRefId, virtual.data),
       communitySupport.stubGetICS(inPerson.caseRefId, inPerson.data),
+      communitySupport.stubGetIcsViewOrChange(virtual.caseRefId, virtual.data),
+      communitySupport.stubGetIcsViewOrChange(inPerson.caseRefId, inPerson.data),
       communitySupport.stubGetReferralInformation(200, virtual.caseRefId),
       prisonApi.stubGetPrisons(),
       communitySupport.stubGetProbationOffices(probationOfficesData),

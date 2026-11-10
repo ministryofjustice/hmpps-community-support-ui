@@ -5,7 +5,7 @@ import {
   GovukFrontendSummaryListRow,
   GovukFrontendSummaryListCardActions,
 } from '@govuk-frontend'
-import { AppointmentIcsResponse } from '@community-support-api'
+import { IcsViewOrChangeBffDto } from '@community-support-api'
 import nunjucks from 'nunjucks'
 import PresenterBase from '../presenter/presenterBase'
 import dateFormat from '../utils/dateFormat'
@@ -51,7 +51,7 @@ export interface InitialContactSessionDetailsContent {
   links: Links
 }
 
-const locationFields: string[] = [
+const locationFields: (keyof IcsViewOrChangeBffDto['sessionMethod'])[] = [
   'probationOfficeName',
   'addressLine1',
   'addressLine2',
@@ -124,7 +124,7 @@ export default class InitialContactSessionDetailsPresenter extends PresenterBase
       sessionMethod,
       sessionCommunications,
       changeAppointmentDetails,
-    }: AppointmentIcsResponse,
+    }: IcsViewOrChangeBffDto,
     private readonly caseRef: string,
     private readonly historical: boolean = false,
   ) {

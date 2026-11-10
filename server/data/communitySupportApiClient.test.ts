@@ -589,6 +589,16 @@ describe('CommunitySupportApiClient tests', () => {
 
       await expect(call(communitySupportApiClient)).resolves.toEqual(mockResponse)
     })
+
+    it('calls /bff/referral-details/{caseRefId}/ics-view-or-change', async () => {
+      const mockResponse = { page: 'ics-view-or-change' }
+
+      nock('http://localhost:8080')
+        .get(`/bff/referral-details/${caseRefId}/ics-view-or-change`)
+        .reply(200, mockResponse)
+
+      await expect(communitySupportApiClient.getIcsViewOrChange(caseRefId, username)).resolves.toEqual(mockResponse)
+    })
   })
   describe('saveRiskInformation tests', () => {
     it('should save risk information on a 200 response', () => {
