@@ -14,6 +14,8 @@ export default class AppointmentCheckYourAnswersPage extends AbstractPage {
 
   readonly probationOfficeRow: Locator
 
+  readonly prisonRow: Locator
+
   readonly appointmentAddressRow: Locator
 
   readonly reasonSessionNotInPersonRow: Locator
@@ -42,6 +44,7 @@ export default class AppointmentCheckYourAnswersPage extends AbstractPage {
     this.probationOfficeRow = page
       .locator('.govuk-summary-list__row')
       .filter({ has: page.getByText('Probation office', { exact: true }) })
+    this.prisonRow = page.locator('.govuk-summary-list__row').filter({ has: page.getByText('Prison', { exact: true }) })
     this.appointmentAddressRow = page
       .locator('.govuk-summary-list__row')
       .filter({ has: page.getByText('Appointment address', { exact: true }) })

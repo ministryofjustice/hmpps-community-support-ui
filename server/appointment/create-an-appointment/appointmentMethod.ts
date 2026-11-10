@@ -6,6 +6,7 @@ const appointmentMethodConfig = {
   IN_PERSON: { label: 'In person', location: false },
   IN_PERSON_PROBATION_OFFICE: { label: 'In person (Probation office)', location: true },
   IN_PERSON_OTHER_LOCATION: { label: 'In person (Other location)', location: true },
+  IN_PERSON_PRISON: { label: 'In person (Prison)', location: true },
 } as const
 
 export type AppointmentMethod = keyof typeof appointmentMethodConfig
@@ -20,9 +21,13 @@ const legacyAppointmentMethodMap = {
   InPerson: 'IN_PERSON',
   InProbationOffice: 'IN_PERSON_PROBATION_OFFICE',
   InSomewhereElse: 'IN_PERSON_OTHER_LOCATION',
+  InPrison: 'IN_PERSON_PRISON',
 } as const
 
-const methodsWithLocation = new Set<AppointmentMethod>(['IN_PERSON_PROBATION_OFFICE', 'IN_PERSON_OTHER_LOCATION'])
+const methodsWithLocationDetails = new Set<AppointmentMethod>([
+  'IN_PERSON_PROBATION_OFFICE',
+  'IN_PERSON_OTHER_LOCATION',
+])
 
 export const normaliseAppointmentMethod = (value?: string): AppointmentMethod | undefined => {
   if (!value) {
@@ -55,7 +60,14 @@ export const buildAppointmentSessionMethodRequest = (
     return { type: 'PHONE' }
   }
 
-  if (methodsWithLocation.has(method) || ((method === 'PHONE' || method === 'VIDEO') && additionalDetails)) {
+  if (method === 'IN_PERSON_PRISON') {
+    if (!additionalDetails.trim()) {
+      throw new Error('A prison code is required to book a prison session')
+    }
+    return { type: method, prisonCode: additionalDetails }
+  }
+
+  if (methodsWithLocationDetails.has(method) || ((method === 'PHONE' || method === 'VIDEO') && additionalDetails)) {
     return { type: method, additionalDetails }
   }
 
@@ -64,5 +76,5 @@ export const buildAppointmentSessionMethodRequest = (
 
 export const appointmentMethodRequiresLocation = (method?: string): boolean => {
   const normalisedMethod = normaliseAppointmentMethod(method)
-  return normalisedMethod ? methodsWithLocation.has(normalisedMethod) : false
+  return normalisedMethod ? appointmentMethodConfig[normalisedMethod].location : false
 }

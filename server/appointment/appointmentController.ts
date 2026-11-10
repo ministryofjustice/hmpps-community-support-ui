@@ -9,6 +9,7 @@ import {
   SessionMethodRequest,
 } from '@community-support-api'
 import { format, formatDate, isBefore, parse, parseISO } from 'date-fns'
+import { Prison } from '@prison-api'
 import { ZodType } from 'zod'
 import timeFormat, { formatTime12Hr, parseTime12Hr } from '../utils/timeFormat'
 import { ErrorMiddlewareErrors, HowSessionTookPlace, IcsFeedbackHowSessionTookPlaceSession } from '../@types/express'
@@ -56,7 +57,6 @@ import IssuesOrConcernsPresenter from './issues-or-concerns/IssuesOrConcernsPres
 import { IssuesOrConcernsFormDataSchema } from '../validation/IssuesOrConcernsFormData'
 import {
   buildAppointmentSessionMethodRequest,
-  appointmentMethodRequiresLocation,
   normaliseAppointmentMethod,
 } from './create-an-appointment/appointmentMethod'
 import AppointmentTypePresenter from './create-an-appointment/appointment-type/AppointmentTypePresenter'
@@ -65,6 +65,7 @@ import { AppointmentTypeSchema } from '../validation/AppointmentTypeFormData'
 import logger from '../../logger'
 import AppointmentSessionData from './create-an-appointment/AppointmentSessionData'
 import { toIsoDate } from '../utils/dateFormat'
+import { toApiInformedBy } from './informedByLabels'
 import IdentifiedAdditionalNeedsPresenter from './identified-additional-support-needs/IdentifiedAdditionalNeedsPresenter'
 import { IdentifiedAdditionalNeedsFormDataSchema } from '../validation/IdentifiedAdditonalNeedsFormData'
 import { getAppointmentTypeLabel } from './create-an-appointment/appointmentTypeLabel'
@@ -245,24 +246,36 @@ const buildSessionMethodRequest = (
   let detailValue = locationName || locationId || ''
   if (method === 'IN_PERSON_OTHER_LOCATION') {
     detailValue = appointmentSessionData.addressLines?.join(', ') || ''
+  } else if (method === 'IN_PERSON_PRISON') {
+    detailValue = appointmentSessionData.prisonCode || ''
   } else if (method === 'PHONE' || method === 'VIDEO') {
     detailValue = appointmentSessionData.reasonSessionNotInPerson || ''
   }
 
-  return buildAppointmentSessionMethodRequest(method, detailValue)
+  const request = buildAppointmentSessionMethodRequest(method, detailValue)
+  return method === 'IN_PERSON_OTHER_LOCATION' ? { ...request, ...appointmentSessionData.address } : request
 }
 
 const buildCreateAppointmentRequest = (
   appointmentSessionData: AppointmentSessionData,
   probationOfficeLocations: Array<{ id: number; name: string }>,
-): CreateAppointmentRequest => ({
-  appointmentType: appointmentSessionData.appointmentType as CreateAppointmentRequest['appointmentType'],
-  date: toIsoDate(appointmentSessionData.date) || '',
-  time: parseTime12Hr(appointmentSessionData.startTime),
-  sessionMethodRequest: buildSessionMethodRequest(appointmentSessionData, probationOfficeLocations),
-  sessionCommunication: appointmentSessionData.informedBy || [],
-  meetAtTheGate: appointmentSessionData.meetAtTheGate,
-})
+): CreateAppointmentRequest => {
+  const appointmentType = parseAppointmentType(appointmentSessionData.appointmentType)
+  return {
+    appointmentType,
+    date: toIsoDate(appointmentSessionData.date) || '',
+    time: parseTime12Hr(appointmentSessionData.startTime),
+    sessionMethodRequest: buildSessionMethodRequest(appointmentSessionData, probationOfficeLocations),
+    sessionCommunication:
+      appointmentType && !appointmentTypeRules[appointmentType].informed
+        ? []
+        : toApiInformedBy(appointmentSessionData.informedBy),
+    meetAtTheGate:
+      appointmentType && !appointmentTypeRules[appointmentType].meetAtTheGate
+        ? undefined
+        : appointmentSessionData.meetAtTheGate,
+  }
+}
 
 const generateSuccessMessage = (
   appointmentType: string,
@@ -426,11 +439,18 @@ class AppointmentController {
     if (!appointmentType) {
       return res.redirect(`/referral/${caseRefId}/create-an-appointment/appointment-type`)
     }
-    const { schema } = await this.prepareAppointmentRequest(req, username, caseRefId, appointmentType)
+    const { schema, prisons } = await this.prepareAppointmentRequest(req, username, caseRefId, appointmentType)
 
     return validateRequestBodyAgainstSchema(schema, req, res, () => {
       const method = req.body.sessionTakePlace
       const normalisedMethod = normaliseAppointmentMethod(method)
+      const prisonCode = typeof req.body.prisonList === 'string' ? req.body.prisonList.trim() : ''
+      const prison =
+        normalisedMethod === 'IN_PERSON_PRISON' ? prisons.find(item => item.agencyId === prisonCode) : undefined
+      if (normalisedMethod === 'IN_PERSON_PRISON' && !prison) {
+        logger.error('Validated prison was not present in the reference data')
+        throw new Error('Validated prison was not present in the reference data')
+      }
       const meetAtTheGateValue = appointmentTypeRules[appointmentType].meetAtTheGate
         ? req.body.meetAtTheGate
         : undefined
@@ -459,9 +479,10 @@ class AppointmentController {
           req.body['sessionTime-meridiem'],
         ),
         method: normalisedMethod,
-        probationOfficeLocationId: appointmentMethodRequiresLocation(normalisedMethod)
-          ? req.body.probationOfficeList
-          : undefined,
+        probationOfficeLocationId:
+          normalisedMethod === 'IN_PERSON_PROBATION_OFFICE' ? req.body.probationOfficeList : undefined,
+        prisonCode: prison?.agencyId,
+        prisonName: prison?.description,
         addressLines:
           normalisedMethod === 'IN_PERSON_OTHER_LOCATION'
             ? [
@@ -471,6 +492,16 @@ class AppointmentController {
                 req.body.addressCounty,
                 req.body.addressPostcode,
               ].filter(Boolean)
+            : undefined,
+        address:
+          normalisedMethod === 'IN_PERSON_OTHER_LOCATION'
+            ? {
+                addressLine1: req.body.addressLine1,
+                addressLine2: req.body.addressLine2,
+                townOrCity: req.body.addressTown,
+                county: req.body.addressCounty,
+                postcode: req.body.addressPostcode,
+              }
             : undefined,
         reasonSessionNotInPerson,
         meetAtTheGate,
@@ -580,11 +611,16 @@ class AppointmentController {
   ): Promise<{
     schema: ZodType
     referralInformation: ReferralInformation
+    prisons: Prison[]
   }> {
     const referralInformation = await this.referralService.getReferralInformation(caseRefId, username)
     const referralDate = parseISO(referralInformation.referralDate)
+    const prisons =
+      appointmentType && appointmentTypeRules[appointmentType].prison && req.body.sessionTakePlace === 'InPrison'
+        ? await this.referenceDataService.getPrisons()
+        : []
     const schema = appointmentType
-      ? buildCreateAppointmentFormData(referralDate, appointmentType)
+      ? buildCreateAppointmentFormData(referralDate, appointmentType, prisons)
       : buildScheduleIcsAppointmentFormData(referralDate)
     const informedMethodArr: string[] =
       typeof req.body.informedMethods === 'string' ? [req.body.informedMethods] : req.body.informedMethods
@@ -598,14 +634,16 @@ class AppointmentController {
       ByPhone: req.body.ByPhone,
       ByVideo: req.body.ByVideo,
       probationOffice: req.body.probationOfficeList,
-      prison: req.body.prisonList,
+      prison: typeof req.body.prisonList === 'string' ? req.body.prisonList.trim() : undefined,
       addressLine1: req.body.addressLine1,
       addressLine2: req.body.addressLine2,
       addressTown: req.body.addressTown,
       addressCounty: req.body.addressCounty,
       addressPostcode: req.body.addressPostcode,
-      informedMethods: informedMethodArr,
-      otherMethodOfContact: req.body.otherMethodOfContact,
+      informedMethods:
+        !appointmentType || appointmentTypeRules[appointmentType].informed ? informedMethodArr : undefined,
+      otherMethodOfContact:
+        !appointmentType || appointmentTypeRules[appointmentType].informed ? req.body.otherMethodOfContact : undefined,
       meetAtTheGate:
         !appointmentType || appointmentTypeRules[appointmentType].meetAtTheGate ? req.body.meetAtTheGate : undefined,
       appointmentType,
@@ -614,6 +652,7 @@ class AppointmentController {
     return {
       schema,
       referralInformation,
+      prisons,
     }
   }
 
@@ -702,7 +741,14 @@ class AppointmentController {
       return res.redirect(icsAppointmentDetailsHref(caseRefId))
     }
 
-    const response = await this.appointmentService.submitICS(caseRefId, createAppointmentRequest, username)
+    const response = await this.appointmentService.submitICS(
+      caseRefId,
+      {
+        ...createAppointmentRequest,
+        sessionCommunication: toApiInformedBy(createAppointmentRequest.sessionCommunication),
+      },
+      username,
+    )
 
     delete req.session.createAppointmentRequest
 
@@ -1269,7 +1315,10 @@ class AppointmentController {
 
     const response = await this.appointmentService.submitRescheduleICS(
       caseRefId,
-      createAppointmentRequest,
+      {
+        ...createAppointmentRequest,
+        sessionCommunication: toApiInformedBy(createAppointmentRequest.sessionCommunication),
+      },
       ChangeAppointmentDetails,
       username,
     )
