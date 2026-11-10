@@ -14,7 +14,7 @@ import prisonApi from '../mockApis/prisonApi'
 import buildReferralProgress from '../../server/testutils/buildReferralProgress'
 import { referralInformationInCommunity } from '../mockData/referralInformationData'
 import { probationOfficesData } from '../mockData/referenceData'
-import ScheduleIcsPage from '../pages/scheduleIcsPage'
+import CreateAppointmentDetailsPage from '../pages/createAppointmentDetailsPage'
 import ReferralProgressPage from '../pages/referralProgressPage'
 import ChangeIcsDetailsReasonPage from '../pages/ChangeIcsDetailsReasonPage'
 import initialContactSessionDetailsPageData from '../mockData/initialContactSessionDetailsPageData'
@@ -191,7 +191,7 @@ test.describe('Confirm ICS Page', () => {
     const confirmIcsPage = await ConfirmIcsPage.verifyOnPage(page)
     await expect(confirmIcsPage.changeLinks).toBeVisible()
     await confirmIcsPage.changeLinks.click()
-    await expect(page).toHaveURL(ScheduleIcsPage.url(CASE_REF_ID))
+    await expect(page).toHaveURL(CreateAppointmentDetailsPage.url(CASE_REF_ID, 'ICS'))
   })
 
   test('should display the Submit button', async ({ page }) => {
@@ -201,11 +201,11 @@ test.describe('Confirm ICS Page', () => {
     await expect(confirmIcsPage.submitButton).toBeVisible()
   })
 
-  test('should redirect to schedule-ics when no session data is present', async ({ page }) => {
+  test('should redirect to the ICS appointment details page when no session data is present', async ({ page }) => {
     await communitySupport.stubGetProbationOffices(probationOfficesData)
     await prisonApi.stubGetPrisons()
     await page.goto(ConfirmIcsPage.url(CASE_REF_ID))
-    await expect(page).toHaveURL(ScheduleIcsPage.url(CASE_REF_ID))
+    await expect(page).toHaveURL(CreateAppointmentDetailsPage.url(CASE_REF_ID, 'ICS'))
   })
 
   test('should display the notification banner when the appointment date and time is in the past', async ({ page }) => {
@@ -288,6 +288,7 @@ test.describe('Confirm ICS Page', () => {
     await test.step('Given a retrospective ICS appointment has been scheduled', async () => {
       await seedAppointmentSession(page, pastAppointmentRequest)
       await communitySupport.stubSubmitICS(CASE_REF_ID, mockAppointmentIcsResponse, 200)
+      await communitySupport.stubGetIcsFeedbackAttendance(CASE_REF_ID, mockAppointmentIcsResponse)
 
       await page.goto(ConfirmIcsPage.url(CASE_REF_ID))
     })
@@ -395,7 +396,7 @@ test.describe('Confirm ICS Page', () => {
       await expect(icsDetailsChangeLink).toBeVisible()
       await expect(icsReasonChangeLink).toBeVisible()
       await icsDetailsChangeLink.click()
-      await expect(page).toHaveURL(ScheduleIcsPage.rescheduleUrl(CASE_REF_ID))
+      await expect(page).toHaveURL(`/referral/${CASE_REF_ID}/ics-change-details`)
     })
     test('Reason for change summary change link', async ({ page }) => {
       await seedAppointmentSession(page, phoneAppointmentRequest)
@@ -451,6 +452,7 @@ test.describe('Confirm ICS Page', () => {
     ])
     await communitySupport.stubGetReferralProgress(referralProgressWithRescheduledAppointments, CASE_REF_ID)
     await communitySupport.stubRescheduleICS(CASE_REF_ID, mockAppointmentIcsResponse, 200)
+    await communitySupport.stubGetIcsFeedbackAttendance(CASE_REF_ID, mockAppointmentIcsResponse)
     await seedAppointmentSession(page, informedOtherAppointmentRequest)
     await seedChangeAppointmentDetails(page, changeAppointmentDetails)
     await page.goto(ConfirmIcsPage.rescheduleUrl(CASE_REF_ID))

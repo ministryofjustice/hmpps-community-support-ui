@@ -7,6 +7,7 @@ import {
   ReferralCriminogenicNeedsDto,
   ProbationPractitionerDetails,
   ReferralDetailsResponseDto,
+  ReferralAppointmentsBffResponseDto,
 } from '@community-support-api'
 import ReferralController from './referralController'
 import ReferralService from '../services/referralService'
@@ -26,6 +27,8 @@ import AddContactDetailsPresenter from './addContactDetails/addContactDetailsPre
 import ConfirmContactDetailsPresenter from './addContactDetails/confirmContactDetailsPresenter'
 import ReferralDetailsPresenter from './referralDetails/ReferralDetailsPresenter'
 import { HmppsUser } from '../interfaces/hmppsUser'
+import type { ReferralAppointmentsContent } from './appointments/referralAppointmentsViewModel'
+import { globalContent } from '../../assets/content/GlobalContent'
 
 jest.mock('../services/referralService')
 jest.mock('../services/communityServiceProviderService')
@@ -70,6 +73,7 @@ describe('ReferralController', () => {
       getPDUs: jest.fn(),
       submitContactDetails: jest.fn(),
       getCaseDetailsByCaseIdentifier: jest.fn(),
+      getReferralAppointments: jest.fn(),
     } as unknown as jest.Mocked<ReferralService>
     personService = {
       getPersonByIdentifier: jest.fn(),
@@ -117,6 +121,44 @@ describe('ReferralController', () => {
       expect(res.render).toHaveBeenCalledWith('referral/referral', { referral: mockReferralData })
     })
   })
+
+  describe('showReferralAppointments', () => {
+    it('renders the session success alert once and clears it', async () => {
+      const caseReference = 'AB1234CD'
+      const content: ReferralAppointmentsContent = globalContent['/referral/:id/appointments']
+      const appointments: ReferralAppointmentsBffResponseDto = {
+        personDetails: { firstName: 'Alex', lastName: 'Example', dateOfBirth: '1980-01-01', crn: 'X123456' },
+        appointments: [],
+      }
+      const successAlert = {
+        title: 'Contact session booked',
+        message: 'Contact session booked for 09 October 2026 at 2:30pm',
+      }
+      req = {
+        params: { caseReference },
+        session: { createdAppointmentMessage: successAlert },
+      } as unknown as Request
+      res.locals.content = content
+      referralService.getReferralAppointments.mockResolvedValue(appointments)
+
+      await referralController.showReferralAppointments(req, res)
+
+      expect(req.session.createdAppointmentMessage).toBeUndefined()
+      expect(res.render).toHaveBeenCalledWith(
+        'referral/appointments',
+        expect.objectContaining({
+          content: expect.objectContaining({
+            notificationBanner: expect.objectContaining({
+              variant: 'success',
+              title: successAlert.title,
+              html: successAlert.message,
+            }),
+          }),
+        }),
+      )
+    })
+  })
+
   describe('showFindPersonPage', () => {
     it('should render the find a person page on a GET request', async () => {
       await referralController.handleGetFindPersonRequest(req, res, next)

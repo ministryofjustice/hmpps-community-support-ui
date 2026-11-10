@@ -5,6 +5,8 @@ import {
   ConfirmPersonDetailsBffDto,
   CommunitySupportRiskDto,
   CommunitySupportRiskInformationDto,
+  IcsFeedbackAttendanceBffDto,
+  IcsFeedbackDidSessionTakePlaceBffDto,
   IcsFeedbackSubmission,
   IcsFeedbackSubmissionResponse,
   ActionPlanSummaryDto,
@@ -54,9 +56,9 @@ export interface ReferralProgress {
   actionPlanStatus: components['schemas']['ActionPlanStatusDto']
 }
 
-type TaskListStatusStub = Pick<TaskListStatusDto, 'fullName'> &
+type TaskListStatusStub = Pick<TaskListStatusDto, 'refereeName'> &
   Partial<{
-    [K in keyof Omit<TaskListStatusDto, 'fullName'>]: Omit<TaskListStatusDto, 'fullName'>[K] | null
+    [K in keyof Omit<TaskListStatusDto, 'refereeName'>]: Omit<TaskListStatusDto, 'refereeName'>[K] | null
   }>
 
 const incompleteTaskStatus = {
@@ -70,7 +72,7 @@ const cannotStartTaskStatus = { completed: false, statusText: 'Cannot Start Yet'
 const completeTaskStatus = { completed: true, statusText: 'Completed', tag: 'govuk-tag--blue' } as const
 
 const buildTaskListStatus = (taskListStatus: TaskListStatusStub): TaskListStatusDto => ({
-  fullName: taskListStatus.fullName,
+  refereeName: taskListStatus.refereeName,
   confirmPersonalDetailsStatus: taskListStatus.confirmPersonalDetailsStatus || completeTaskStatus,
   checkRiskInformationStatus: taskListStatus.checkRiskInformationStatus || incompleteTaskStatus,
   selectThePersonsNeedsStatus: taskListStatus.selectThePersonsNeedsStatus || incompleteTaskStatus,
@@ -84,7 +86,43 @@ const buildTaskListStatus = (taskListStatus: TaskListStatusStub): TaskListStatus
   checkYourAnswersStatus: taskListStatus.checkYourAnswersStatus || cannotStartTaskStatus,
 })
 
+const stubGetIcsFeedbackPage = (
+  caseRefId: string,
+  page: string,
+  jsonBody: object,
+  httpStatus = 200,
+): SuperAgentRequest =>
+  stubFor({
+    request: {
+      method: 'GET',
+      urlPathPattern: `/community-support/bff/ics-feedback/${caseRefId}/${page}`,
+    },
+    response: {
+      status: httpStatus,
+      headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+      jsonBody,
+      transformers: ['response-template'],
+    },
+  })
+
+const stubGetIcsFeedbackDidSessionTakePlace = (caseRefId: string, appointment: AppointmentIcsResponse) => {
+  const body: IcsFeedbackDidSessionTakePlaceBffDto = { sessionMethod: appointment.sessionMethod }
+  return stubGetIcsFeedbackPage(caseRefId, 'did-session-take-place', body)
+}
+
+const stubGetIcsFeedbackAttendance = (caseRefId: string, appointment: AppointmentIcsResponse) => {
+  const body: IcsFeedbackAttendanceBffDto = {
+    referralFirstName: appointment.referralFirstName,
+    date: appointment.appointmentDate,
+    time: appointment.appointmentTime,
+  }
+  return stubGetIcsFeedbackPage(caseRefId, 'attendance', body)
+}
+
 export default {
+  stubGetIcsFeedbackPage,
+  stubGetIcsFeedbackDidSessionTakePlace,
+  stubGetIcsFeedbackAttendance,
   stubPing: (httpStatus = 200): SuperAgentRequest =>
     stubFor({
       request: {
@@ -737,6 +775,18 @@ export default {
         status: httpStatus,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: checkYourAnswers,
+      },
+    }),
+  stubSubmitActionPlan: (caseReference: string): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'POST',
+        urlPath: `/community-support/referral/${caseReference}/action-plan`,
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: { success: true, message: 'Submitted' },
       },
     }),
   stubSubmitServiceDelivery: (

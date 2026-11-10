@@ -89,6 +89,7 @@ export declare module 'express-session' {
       pduName: string
       probationOfficeName?: string
     }
+    createdAppointmentMessage?: { title: string; message: string }
   }
 }
 

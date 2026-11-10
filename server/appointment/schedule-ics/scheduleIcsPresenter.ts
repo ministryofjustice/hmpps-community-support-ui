@@ -152,7 +152,7 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
           html: buildSelect({
             id: 'probationOfficeList',
             name: 'probationOfficeList',
-            label: {},
+            label: { text: content.howSessionTakePlace.radioItems.probation.label },
             items: buildProbationOfficesSelectItems(this.probationOffices, this.formData, content),
             value: this.formData?.probationOffice,
             errorMessage: this.validationErrors?.messages?.probationOfficeList,
@@ -183,7 +183,7 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
           html: buildSelect({
             id: 'prisonList',
             name: 'prisonList',
-            label: {},
+            label: { text: content.howSessionTakePlace.radioItems.prison.label },
             items: buildPrisonOfficesSelectItems(this.prisonOffices, this.formData, content),
             value: this.formData?.prison,
             errorMessage: this.validationErrors?.messages?.prisonList,
@@ -195,7 +195,7 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
   }
 
   private buildRadioItems(content: ScheduleIcsContent): WithConditional<GovukFrontendRadiosItem>[] {
-    const items: WithConditional<GovukFrontendRadiosItem>[] = [
+    const remoteItemsWithReasons: WithConditional<GovukFrontendRadiosItem>[] = [
       {
         value: 'ByPhone',
         text: content.howSessionTakePlace.radioItems.phone.text,
@@ -236,12 +236,24 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
     const locationItems = this.inCustody
       ? this.buildInCustodyRadioItems(content)
       : this.buildInCommunityRadioItems(content)
-    return items.concat(locationItems, this.rules?.inPerson ? this.buildInPersonRadioItems(content) : [])
+    const inPersonItems = locationItems.concat(this.rules?.inPerson ? this.buildInPersonRadioItems(content) : [])
+
+    const { groupHeadings } = content.howSessionTakePlace
+    if (!groupHeadings) {
+      return remoteItemsWithReasons.concat(inPersonItems)
+    }
+    return [
+      ...(inPersonItems.length > 0 ? [{ divider: groupHeadings.inPerson, value: '' }, ...inPersonItems] : []),
+      { divider: groupHeadings.remote, value: '' },
+      ...remoteItemsWithReasons,
+    ]
   }
 
   private buildHowWillTheSessionTakePlaceRadios(content: ScheduleIcsContent): GovukFrontendRadiosWithConditional {
+    const { hint, groupHeadings } = content.howSessionTakePlace
     return {
       name: 'sessionTakePlace',
+      classes: groupHeadings ? 'grouped-radio' : undefined,
       fieldset: {
         legend: {
           text: content.howSessionTakePlace.label,
@@ -252,9 +264,7 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
       },
       value: this.formData?.sessionTakePlace || '',
       errorMessage: this.validationErrors?.messages?.sessionTakePlace,
-      hint: {
-        text: content.howSessionTakePlace.hint,
-      },
+      hint: hint ? { text: hint } : undefined,
       items: this.buildRadioItems(content),
       attributes: { 'data-testid': 'sessionTakePlace-radios' },
     }
@@ -277,10 +287,20 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
   }
 
   private buildTimeInput(content: ScheduleIcsContent): ComponentsTimeInput {
+    const messages = this.validationErrors?.messages
+    const wholeFieldError = Boolean(messages?.sessionTime)
+    const hasError = (part: 'hour' | 'minute' | 'meridiem') =>
+      wholeFieldError || Boolean(messages?.[`sessionTime-${part}`])
+    const inputClasses = (part: 'hour' | 'minute') =>
+      `govuk-input govuk-date-input__input govuk-input--width-2${hasError(part) ? ' govuk-input--error' : ''}`
     return {
       id: 'sessionTime',
       namePrefix: 'sessionTime',
-      errorMessage: this.validationErrors?.messages?.sessionTime,
+      errorMessage:
+        messages?.sessionTime ??
+        messages?.['sessionTime-hour'] ??
+        messages?.['sessionTime-minute'] ??
+        messages?.['sessionTime-meridiem'],
       hint: {
         text: content.time.hint,
       },
@@ -294,18 +314,21 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
       items: [
         {
           name: 'hour',
+          label: content.time.hourLabel,
           value: this.formData ? this.formData['sessionTime-hour'] : '',
-          classes: 'govuk-input govuk-date-input__input govuk-input--width-2',
+          classes: inputClasses('hour'),
         },
         {
           name: 'minute',
+          label: content.time.minuteLabel,
           value: this.formData ? this.formData['sessionTime-minute'] : '',
-          classes: 'govuk-input govuk-date-input__input govuk-input--width-2',
+          classes: inputClasses('minute'),
         },
       ],
       meridiemParams: {
         label: content.time.AMorPM,
         value: this.formData ? this.formData['sessionTime-meridiem'] : '',
+        classes: hasError('meridiem') ? 'govuk-select--error' : undefined,
       },
     }
   }
@@ -327,6 +350,12 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
       },
       items: [
         {
+          value: 'informedByEmail',
+          text: content.informed.selectionItems.email,
+          checked:
+            this.formData && this.formData.informedMethods && this.formData.informedMethods.includes('informedByEmail'),
+        },
+        {
           value: 'informedByPhone',
           text: content.informed.selectionItems.phone,
           checked:
@@ -341,15 +370,11 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
             this.formData.informedMethods.includes('informedByTextMessage'),
         },
         {
-          value: 'informedByEmail',
-          text: content.informed.selectionItems.email,
-          checked:
-            this.formData && this.formData.informedMethods && this.formData.informedMethods.includes('informedByEmail'),
-        },
-        {
           value: 'informedByOtherMethod',
           text: content.informed.selectionItems.other.text,
-          checked: this.formData?.otherMethodOfContact !== undefined && this.formData.otherMethodOfContact.length > 0,
+          checked:
+            Boolean(this.formData?.informedMethods?.includes('informedByOtherMethod')) ||
+            Boolean(this.formData?.otherMethodOfContact),
           conditional: {
             html: buildInput({
               id: 'otherMethodOfContact',

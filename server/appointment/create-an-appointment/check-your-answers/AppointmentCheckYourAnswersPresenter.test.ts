@@ -9,6 +9,37 @@ const res = {
 } as unknown as Response
 
 describe('AppointmentCheckYourAnswersPresenter', () => {
+  it.each([
+    ['ICS', 'ICS'],
+    ['CONTACT_SESSION', 'contact session'],
+    ['PRE_RELEASE_SESSION', 'pre-release session'],
+    ['POST_RELEASE_SESSION', 'post-release session'],
+    ['HANDOVER_SESSION', 'handover session'],
+  ])('uses booking wording in the title and heading for %s', (appointmentType, label) => {
+    const presenter = new AppointmentCheckYourAnswersPresenter('AB1234CD', 'John', { appointmentType }, [])
+
+    const viewModel = presenter.buildViewModel(res)
+
+    expect(viewModel.pageTitle).toBe(`Check the details before booking the ${label}`)
+    expect(viewModel.pageHeader).toBe(`Check the details before booking the ${label}`)
+  })
+
+  it('abbreviates the initial contact session heading but keeps the full summary card label', () => {
+    const presenter = new AppointmentCheckYourAnswersPresenter(
+      'AB1234CD',
+      'John',
+      { appointmentType: 'ICS' },
+      [],
+      [{ value: 'ICS', name: 'Initial contact session' }],
+    )
+
+    const viewModel = presenter.buildViewModel(res)
+
+    expect(viewModel.pageTitle).toBe('Check the details before booking the ICS')
+    expect(viewModel.pageHeader).toBe('Check the details before booking the ICS')
+    expect(viewModel.appointmentSummary.card.title.text).toBe('Initial contact session')
+  })
+
   it('uses the selected pre-release appointment type in the page title and summary card', () => {
     const presenter = new AppointmentCheckYourAnswersPresenter(
       'AB1234CD',
@@ -26,12 +57,19 @@ describe('AppointmentCheckYourAnswersPresenter', () => {
 
     const viewModel = presenter.buildViewModel(res)
 
-    expect(viewModel.pageTitle).toBe('Check the details before scheduling the pre-release session')
-    expect(viewModel.pageHeader).toBe('Check the details before scheduling the pre-release session')
-    expect(viewModel.appointmentSummary.card.title.text).toBe('Pre-release session details')
+    expect(viewModel.pageTitle).toBe('Check the details before booking the pre-release session')
+    expect(viewModel.pageHeader).toBe('Check the details before booking the pre-release session')
+    expect(viewModel.appointmentSummary.card.title.text).toBe('Pre-release session')
+    expect(viewModel.appointmentSummary.card.actions.items[0].visuallyHiddenText).toBe('Pre-release session')
+    expect(viewModel.appointmentSummary.rows.some(row => row.key.text === content.probationOfficeLabel)).toBe(true)
+    expect(
+      viewModel.appointmentSummary.rows.some(
+        row => row.key.text === content.methodLabel && row.value.text === 'In person: probation office',
+      ),
+    ).toBe(true)
   })
 
-  it('omits the location row when the appointment method no longer requires a location', () => {
+  it('shows the reason instead of location details for a phone appointment', () => {
     const presenter = new AppointmentCheckYourAnswersPresenter(
       'AB1234CD',
       'John',
@@ -40,6 +78,7 @@ describe('AppointmentCheckYourAnswersPresenter', () => {
         date: '2026-10-16',
         startTime: '1:30pm',
         method: 'PHONE',
+        reasonSessionNotInPerson: 'The person is unwell and cannot attend in person',
         probationOfficeLocationId: '2',
         informedBy: ['informedByPhone'],
       },
@@ -48,7 +87,34 @@ describe('AppointmentCheckYourAnswersPresenter', () => {
 
     const viewModel = presenter.buildViewModel(res)
 
-    expect(viewModel.appointmentSummary.rows.some(row => row.key.text === content.locationLabel)).toBe(false)
+    expect(
+      viewModel.appointmentSummary.rows.some(row =>
+        [content.probationOfficeLabel, content.appointmentAddressLabel].includes(row.key.text),
+      ),
+    ).toBe(false)
+    expect(
+      viewModel.appointmentSummary.rows.some(
+        row =>
+          row.key.text === content.reasonSessionNotInPersonLabel &&
+          row.value.text === 'The person is unwell and cannot attend in person',
+      ),
+    ).toBe(true)
+  })
+
+  it.each(['PHONE', 'VIDEO'] as const)('shows the remote reason for a contact session by %s', method => {
+    const viewModel = new AppointmentCheckYourAnswersPresenter(
+      'AB1234CD',
+      'John',
+      { appointmentType: 'CONTACT_SESSION', method, reasonSessionNotInPerson: 'The person cannot attend in person' },
+      [],
+    ).buildViewModel(res)
+    expect(
+      viewModel.appointmentSummary.rows.some(
+        row =>
+          row.key.text === content.reasonSessionNotInPersonLabel &&
+          row.value.text === 'The person cannot attend in person',
+      ),
+    ).toBe(true)
   })
 
   it('shows the meet at the gate answer for a post-release session', () => {
@@ -103,7 +169,7 @@ describe('AppointmentCheckYourAnswersPresenter', () => {
         date: '2026-10-16',
         startTime: '1:30pm',
         method: 'IN_PERSON_OTHER_LOCATION',
-        location: '14 High Street, Bristol, BS1 1AA',
+        addressLines: ['14 High Street', 'Flat 2', 'Bath', 'Somerset', 'BA1 1AA'],
         informedBy: ['informedByPhone'],
       },
       [{ id: 2, name: 'Derbyshire: Buxton Probation Office' }],
@@ -113,8 +179,61 @@ describe('AppointmentCheckYourAnswersPresenter', () => {
 
     expect(
       viewModel.appointmentSummary.rows.some(
-        row => row.key.text === content.locationLabel && row.value.text === '14 High Street, Bristol, BS1 1AA',
+        row =>
+          row.key.text === content.appointmentAddressLabel &&
+          row.value.html === '14 High Street<br>Flat 2<br>Bath<br>Somerset<br>BA1 1AA',
       ),
     ).toBe(true)
+    expect(viewModel.appointmentSummary.rows.some(row => row.key.text === content.methodLabel)).toBe(true)
+    expect(
+      viewModel.appointmentSummary.rows.some(
+        row => row.key.text === content.methodLabel && row.value.text === 'In person: another address',
+      ),
+    ).toBe(true)
+  })
+
+  it.each([
+    ['PHONE', 'The person is unwell and cannot attend in person'],
+    ['VIDEO', 'The person cannot travel to the probation office'],
+  ] as const)('shows the reason the session is not in person for a %s appointment', (method, reason) => {
+    const presenter = new AppointmentCheckYourAnswersPresenter(
+      'AB1234CD',
+      'John',
+      {
+        appointmentType: 'ICS',
+        date: '2026-10-16',
+        startTime: '1:30pm',
+        method,
+        reasonSessionNotInPerson: reason,
+        informedBy: ['informedByPhone'],
+      },
+      [],
+    )
+
+    const viewModel = presenter.buildViewModel(res)
+
+    expect(
+      viewModel.appointmentSummary.rows.some(
+        row => row.key.text === content.reasonSessionNotInPersonLabel && row.value.text === reason,
+      ),
+    ).toBe(true)
+  })
+
+  it.each([
+    ['04/11/2026', '4 November 2026'],
+    ['4/11/2026', '4 November 2026'],
+    ['2026-11-04', '4 November 2026'],
+    ['25/12/2026', '25 December 2026'],
+  ])('formats the date %s as %s', (date, expected) => {
+    const presenter = new AppointmentCheckYourAnswersPresenter(
+      'AB1234CD',
+      'John',
+      { appointmentType: 'ICS', date, startTime: '1:30pm', method: 'PHONE', informedBy: ['informedByPhone'] },
+      [],
+    )
+
+    const viewModel = presenter.buildViewModel(res)
+
+    expect(viewModel.appointmentSummary.rows.some(row => row.value.text === expected)).toBe(true)
   })
 })

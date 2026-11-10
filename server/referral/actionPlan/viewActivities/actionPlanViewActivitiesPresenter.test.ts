@@ -4,7 +4,7 @@ import { ActionPlanViewActivitiesViewModel } from './actionPlanViewActivitiesVie
 import { globalContent } from '../../../../assets/content/GlobalContent'
 
 describe('ActionPlanViewActivitiesPresenter', () => {
-  const render = (alertType?: 'ADD' | 'REMOVE', firstName?: string) => {
+  const render = (alertType?: 'ADD' | 'REMOVE', firstName?: string, isSubmitted = false) => {
     const res = {
       locals: { content: globalContent['/referral/:id/action-plan/activities'] },
       render: jest.fn(),
@@ -14,7 +14,11 @@ describe('ActionPlanViewActivitiesPresenter', () => {
       'AB1234CD',
       'Accommodation',
       'Find housing',
-      [],
+      [
+        { activityProvider: 'First provider', activityDescription: 'First activity' },
+        { activityProvider: 'Second provider', activityDescription: 'Second activity' },
+      ],
+      isSubmitted,
       alertType,
       firstName,
     ).renderPage(res)
@@ -40,5 +44,22 @@ describe('ActionPlanViewActivitiesPresenter', () => {
 
   it('does not build an alert when no activity alert is active', () => {
     expect(render().alert).toBeUndefined()
+  })
+
+  it.each([false, true])('shows Change on every activity when isSubmitted is %s', isSubmitted => {
+    const { rows } = render(undefined, undefined, isSubmitted).activitiesTable
+
+    expect(rows).toHaveLength(2)
+    rows.forEach((row, index) => {
+      expect(row[2].html).toContain(`activities/add?activityIndex=${index}`)
+      expect(row[2].html).toContain('Change</a>')
+      if (isSubmitted) {
+        expect(row[2].html).not.toContain('Remove')
+        expect(row[2].html).not.toContain('activities/remove')
+      } else {
+        expect(row[2].html).toContain(`activities/remove?activityIndex=${index}`)
+        expect(row[2].html).toContain('Remove</a>')
+      }
+    })
   })
 })

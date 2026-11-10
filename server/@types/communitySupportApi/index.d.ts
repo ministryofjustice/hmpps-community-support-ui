@@ -48,6 +48,7 @@ type ServiceDaysPageDto = components['schemas']['ServiceDaysPageDto']
 type NeedsInterpreterBffResponseDto = components['schemas']['NeedsInterpreterBffResponseDto']
 type CommunitySupportRiskDto = components['schemas']['CommunitySupportRiskDto']
 type ActionPlanSummaryDto = components['schemas']['ActionPlanSummaryDto']
+type ActionPlanSubmitResponse = components['schemas']['ActionPlanSubmitResponse']
 type ActionPlanActionRequest = components['schemas']['ActionPlanActionRequest']
 type ActionPlanActionResponse = components['schemas']['ActionPlanActionResponse']
 type ActionPlanSelectANeedResponse = components['schemas']['ActionPlanSelectANeedResponse']
@@ -84,6 +85,17 @@ type AdditionalInformationForTheDeliveryPartner =
 
 type Selection = components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
 type WithdrawReferralRequest = components['schemas']['WithdrawReferralRequest']
+type ExistingSupportNeedsBffResponseDto = components['schemas']['ExistingSupportNeedsBffResponseDto']
+type IcsFeedbackWhyDidSessionNotHappenBffDto = components['schemas']['IcsFeedbackWhyDidSessionNotHappenBffDto']
+type IcsFeedbackSessionFeedbackBffDto = components['schemas']['IcsFeedbackSessionFeedbackBffDto']
+type IcsFeedbackNextStepsBffDto = components['schemas']['IcsFeedbackNextStepsBffDto']
+type IcsFeedbackIssuesOrConcernsBffDto = components['schemas']['IcsFeedbackIssuesOrConcernsBffDto']
+type IcsFeedbackIdentifiedAdditionalNeedsBffDto = components['schemas']['IcsFeedbackIdentifiedAdditionalNeedsBffDto']
+type IcsFeedbackHowTheyTriedToContactThePersonBffDto =
+  components['schemas']['IcsFeedbackHowTheyTriedToContactThePersonBffDto']
+type IcsFeedbackDidSessionTakePlaceBffDto = components['schemas']['IcsFeedbackDidSessionTakePlaceBffDto']
+type IcsFeedbackCheckAnswersBffDto = components['schemas']['IcsFeedbackCheckAnswersBffDto']
+type IcsFeedbackAttendanceBffDto = components['schemas']['IcsFeedbackAttendanceBffDto']
 
 export type {
   Referral,
@@ -136,6 +148,7 @@ export type {
   Selection,
   CommunitySupportRiskDto,
   ActionPlanSummaryDto,
+  ActionPlanSubmitResponse,
   ActionPlanActionRequest,
   ActionPlanActionResponse,
   ActionPlanSelectANeedResponse,
@@ -165,4 +178,14 @@ export type {
   WithdrawReferralRequest,
   DraftAdditionalReferralInformationTableDataDto,
   DraftMainPOCDetailsTableDataDto,
+  ExistingSupportNeedsBffResponseDto,
+  IcsFeedbackWhyDidSessionNotHappenBffDto,
+  IcsFeedbackSessionFeedbackBffDto,
+  IcsFeedbackNextStepsBffDto,
+  IcsFeedbackIssuesOrConcernsBffDto,
+  IcsFeedbackIdentifiedAdditionalNeedsBffDto,
+  IcsFeedbackHowTheyTriedToContactThePersonBffDto,
+  IcsFeedbackDidSessionTakePlaceBffDto,
+  IcsFeedbackCheckAnswersBffDto,
+  IcsFeedbackAttendanceBffDto,
 }

@@ -25,7 +25,10 @@ test.describe('Why Did The Session Not Happen Page', () => {
 
   test.beforeEach(async ({ page }) => {
     await resetStubs()
-    await communitySupport.stubGetICS(pastMeeting.caseRefId, pastMeeting.data)
+    await communitySupport.stubGetIcsFeedbackAttendance(pastMeeting.caseRefId, pastMeeting.data)
+    await communitySupport.stubGetIcsFeedbackPage(pastMeeting.caseRefId, 'why-did-the-session-not-happen', {
+      referralFirstName: pastMeeting.data.referralFirstName,
+    })
 
     await page.goto('/')
     await login(page)
@@ -189,5 +192,6 @@ test.describe('Why Did The Session Not Happen Page', () => {
     const whyDidSessionNotHappenPage = await IcsFeedbackWhyDidTheSessionNotHappenPage.verifyOnPage(page)
     await whyDidSessionNotHappenPage.backLink.click()
     await expect(page).toHaveURL(RecordSessionAttendancePage.url(pastMeeting.caseRefId))
+    await RecordSessionAttendancePage.verifyOnPage(page)
   })
 })

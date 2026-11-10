@@ -3,6 +3,9 @@ import { addDays, format } from 'date-fns'
 import { ActionPlanSessionDeliveryDetailsResponse } from '@community-support-api'
 import { login, resetStubs } from '../testUtils'
 import communitySupport from '../mockApis/communitySupport'
+import { getMatchingRequests } from '../mockApis/wiremock'
+import buildReferralProgress from '../../server/testutils/buildReferralProgress'
+import ActionPlanPage from '../pages/actionPlanPage'
 import ActionPlanCheckYourAnswersPage from '../pages/actionPlanCheckYourAnswersPage'
 import ActionPlanCheckServiceEndDatePage from '../pages/actionPlanCheckServiceEndDatePage'
 import ActionPlanChangeServiceEndDatePage from '../pages/actionPlanChangeServiceEndDatePage'
@@ -20,6 +23,12 @@ test.describe('Action Plan Check Your Answers Page', () => {
 
   test.beforeEach(async ({ page }) => {
     await resetStubs()
+    await communitySupport.stubGetActionPlanSummary(caseReference, {
+      personDetails: { firstName: 'Alex', lastName: 'River' },
+      needs: [],
+      lastUpdatedAt: '',
+      isSubmitted: false,
+    })
     await page.goto('/')
     await login(page)
   })
@@ -228,6 +237,14 @@ test.describe('Action Plan Check Your Answers Page', () => {
     }
     await communitySupport.stubGetSessionDeliveryCheckYourAnswers(caseReference, checkYourAnswersResponse, false)
     await communitySupport.stubSubmitServiceDelivery(caseReference, checkYourAnswersResponse)
+    await communitySupport.stubSubmitActionPlan(caseReference)
+    await communitySupport.stubGetActionPlanSummary(caseReference, {
+      personDetails: { firstName: 'Alex', lastName: 'River' },
+      needs: [],
+      lastUpdatedAt: '2026-10-12T09:00:00Z',
+      isSubmitted: true,
+    })
+    await communitySupport.stubGetReferralProgress(buildReferralProgress([]), caseReference)
 
     await page.goto(ActionPlanCheckYourAnswersPage.url(caseReference))
     const checkYourAnswersPage = await ActionPlanCheckYourAnswersPage.verifyOnPage(page)
@@ -235,6 +252,13 @@ test.describe('Action Plan Check Your Answers Page', () => {
     await checkYourAnswersPage.submitButton.click()
 
     await expect(page).toHaveURL(`/referral/${caseReference}/action-plan`)
+    const actionPlanPage = await ActionPlanPage.verifyOnPage(page)
+    await expect(actionPlanPage.submitActionPlanButton).toHaveCount(0)
+    const submissionRequests = await getMatchingRequests({
+      method: 'POST',
+      url: `/community-support/referral/${caseReference}/action-plan`,
+    })
+    expect(submissionRequests.body.requests).toHaveLength(1)
   })
 
   test('changes risks and adjustments and returns to check your answers after correcting validation errors', async ({
@@ -255,6 +279,7 @@ test.describe('Action Plan Check Your Answers Page', () => {
       personDetails: { firstName: 'Alex', lastName: 'River' },
       needs: [],
       lastUpdatedAt: '2026-10-12T09:00:00Z',
+      isSubmitted: false,
     })
 
     await page.goto(ActionPlanCheckYourAnswersPage.url(caseReference))

@@ -9,6 +9,7 @@ describe('appointmentMethod', () => {
     it('returns true for canonical appointment methods only', () => {
       expect(isAppointmentMethod('PHONE')).toBe(true)
       expect(isAppointmentMethod('VIDEO')).toBe(true)
+      expect(isAppointmentMethod('IN_PERSON')).toBe(true)
       expect(isAppointmentMethod('IN_PERSON_PROBATION_OFFICE')).toBe(true)
       expect(isAppointmentMethod('IN_PERSON_OTHER_LOCATION')).toBe(true)
       expect(isAppointmentMethod('PHONE CALL')).toBe(false)
@@ -21,6 +22,7 @@ describe('appointmentMethod', () => {
     it('returns the correct labels for canonical appointment methods', () => {
       expect(getAppointmentMethodLabel('PHONE')).toBe('Phone call')
       expect(getAppointmentMethodLabel('VIDEO')).toBe('Video call')
+      expect(getAppointmentMethodLabel('IN_PERSON')).toBe('In person')
       expect(getAppointmentMethodLabel('IN_PERSON_PROBATION_OFFICE')).toBe('In person (Probation office)')
       expect(getAppointmentMethodLabel('IN_PERSON_OTHER_LOCATION')).toBe('In person (Other location)')
     })
@@ -33,15 +35,24 @@ describe('appointmentMethod', () => {
     it('normalises legacy method values used in appointment sessions', () => {
       expect(getAppointmentMethodLabel('ByPhone')).toBe('Phone call')
       expect(getAppointmentMethodLabel('ByVideo')).toBe('Video call')
+      expect(getAppointmentMethodLabel('InPerson')).toBe('In person')
       expect(getAppointmentMethodLabel('InProbationOffice')).toBe('In person (Probation office)')
       expect(getAppointmentMethodLabel('InSomewhereElse')).toBe('In person (Other location)')
     })
   })
 
   describe('buildAppointmentSessionMethodRequest', () => {
-    it('builds requests for remote methods without additional details', () => {
-      expect(buildAppointmentSessionMethodRequest('PHONE', 'ignored')).toEqual({ type: 'PHONE' })
+    it('builds requests for remote methods with their reason when provided', () => {
+      expect(buildAppointmentSessionMethodRequest('PHONE', 'Phone reason')).toEqual({
+        type: 'PHONE',
+        additionalDetails: 'Phone reason',
+      })
+      expect(buildAppointmentSessionMethodRequest('VIDEO', 'Video reason')).toEqual({
+        type: 'VIDEO',
+        additionalDetails: 'Video reason',
+      })
       expect(buildAppointmentSessionMethodRequest('VIDEO')).toEqual({ type: 'VIDEO' })
+      expect(buildAppointmentSessionMethodRequest('IN_PERSON', 'ignored')).toEqual({ type: 'IN_PERSON' })
     })
 
     it('builds requests for in-person methods with additional details', () => {

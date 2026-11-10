@@ -24,8 +24,11 @@ test.describe('HowTheyTriedToContactThePersion', () => {
 
   test.beforeEach(async ({ page }) => {
     await resetStubs()
-    await communitySupport.stubGetICS(pastMeeting.caseRefId, pastMeeting.data)
-    await communitySupport.stubGetICS(differentMeeting.caseRefId, differentMeeting.data)
+    await communitySupport.stubGetIcsFeedbackAttendance(pastMeeting.caseRefId, pastMeeting.data)
+    await communitySupport.stubGetIcsFeedbackAttendance(differentMeeting.caseRefId, differentMeeting.data)
+    await communitySupport.stubGetIcsFeedbackPage(pastMeeting.caseRefId, 'how-they-tried-to-contact-the-person', {
+      referralFirstName: pastMeeting.data.referralFirstName,
+    })
     await page.goto('/')
     await login(page)
   })

@@ -19,6 +19,7 @@ test.describe('Action Plan Page', () => {
       lastName: 'River',
     },
     needs: [],
+    isSubmitted: false,
   }
   test.beforeEach(async ({ page }) => {
     await resetStubs()
@@ -36,11 +37,28 @@ test.describe('Action Plan Page', () => {
 
     await expect(actionPlanPage.header).toHaveText('Action plan')
     await expect(actionPlanPage.backLink).toHaveAttribute('href', `/progress/${caseReference}`)
+    await actionPlanPage.navigation.verify(caseReference, 'Action Plan')
+    await expect(actionPlanPage.sidebarColumn).toHaveCount(0)
+    await expect(actionPlanPage.mainContentColumn).toHaveClass('govuk-grid-column-full')
 
     await actionPlanPage.backLink.click()
 
     await ReferralProgressPage.verifyOnPage(page)
     await expect(page).toHaveURL(ReferralProgressPage.url(caseReference))
+  })
+
+  test('navigates from Progress to Action Plan using the shared navigation', async ({ page }) => {
+    await communitySupport.stubGetActionPlanSummary(caseReference, actionPlanSummary)
+    await communitySupport.stubGetReferralProgress(buildReferralProgress([]), caseReference)
+    await page.goto(ReferralProgressPage.url(caseReference))
+
+    const progressPage = await ReferralProgressPage.verifyOnPage(page)
+    await progressPage.navigation.verify(caseReference, 'Progress')
+    await progressPage.navigation.actionPlanLink.click()
+
+    await expect(page).toHaveURL(ActionPlanPage.url(caseReference))
+    const actionPlanPage = await ActionPlanPage.verifyOnPage(page)
+    await actionPlanPage.navigation.verify(caseReference, 'Action Plan')
   })
 
   test.describe('Submit Action plan', () => {
@@ -64,11 +82,33 @@ test.describe('Action Plan Page', () => {
           ],
         },
       ],
+      isSubmitted: false,
     }
 
     const icsFeedbackSubmittedProgress = buildReferralProgress([
       { event: { status: 'COMPLETED', icsFeedbackId: randomUUID() } },
     ])
+
+    test('uses a quarter-width sidebar and three-quarter-width content for a submitted plan', async ({ page }) => {
+      await communitySupport.stubGetActionPlanSummary(caseReference, {
+        ...actionPlanSummaryWithOutcomes,
+        isSubmitted: true,
+      })
+      await communitySupport.stubGetReferralProgress(icsFeedbackSubmittedProgress, caseReference)
+      await page.goto(ActionPlanPage.url(caseReference))
+
+      const actionPlanPage = await ActionPlanPage.verifyOnPage(page)
+
+      await actionPlanPage.navigation.verify(caseReference, 'Action Plan')
+      await expect(actionPlanPage.sidebarColumn).toBeVisible()
+      await expect(actionPlanPage.sidebarColumn).toHaveClass('govuk-grid-column-one-quarter')
+      await expect(actionPlanPage.mainContentColumn).toBeVisible()
+      await expect(actionPlanPage.mainContentColumn).toHaveClass(/\bgovuk-grid-column-three-quarters\b/)
+      await expect(actionPlanPage.sidebarColumn.getByRole('link')).toHaveText(['Action plan', 'Service details'])
+      await expect(
+        actionPlanPage.sidebarColumn.getByRole('link', { name: 'Action plan', exact: true }),
+      ).toHaveAttribute('aria-current', 'location')
+    })
 
     test('displays an enabled Submit Action plan button when all outcomes are added and ICS feedback is submitted', async ({
       page,
@@ -82,6 +122,34 @@ test.describe('Action Plan Page', () => {
 
       await expect(actionPlanPage.submitActionPlanButton).toBeVisible()
       await expect(actionPlanPage.submitActionPlanButton).toBeEnabled()
+      await expect(actionPlanPage.sidebarColumn).toHaveCount(0)
+      await expect(actionPlanPage.mainContentColumn).toHaveClass('govuk-grid-column-full')
+      await expect(
+        actionPlanPage.mainContentColumn.getByRole('link', { name: 'Remove (Accommodation)', exact: true }),
+      ).toBeVisible()
+    })
+
+    test('hides submission and outcome removal when the action plan is submitted', async ({ page }) => {
+      await communitySupport.stubGetActionPlanSummary(caseReference, {
+        ...actionPlanSummaryWithOutcomes,
+        isSubmitted: true,
+      })
+      await communitySupport.stubGetReferralProgress(icsFeedbackSubmittedProgress, caseReference)
+      await page.goto(ActionPlanPage.url(caseReference))
+
+      const actionPlanPage = await ActionPlanPage.verifyOnPage(page)
+
+      await expect(actionPlanPage.submitActionPlanButton).toHaveCount(0)
+      await expect(
+        actionPlanPage.mainContentColumn.getByRole('link', { name: 'Remove (Accommodation)', exact: true }),
+      ).toHaveCount(0)
+      await expect(
+        actionPlanPage.mainContentColumn.getByRole('link', {
+          name: 'Add or change activities (Accommodation)',
+          exact: true,
+        }),
+      ).toBeVisible()
+      await expect(actionPlanPage.mainContentColumn).toContainText('Find suitable housing')
     })
 
     test('does not display the Submit Action plan button when ICS feedback has not been submitted', async ({

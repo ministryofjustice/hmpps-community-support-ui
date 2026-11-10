@@ -16,8 +16,6 @@ export type ReferralProgressViewModel = {
 
 export interface ReferralProgressContent {
   pageHeader: string
-  progressSubNavTitle: string
-  subNavItems: SubNavItem[]
   progressActiveColumnHeaders: string[]
   progressInactiveColumnHeaders: string[]
   historySummary: string
@@ -25,10 +23,4 @@ export interface ReferralProgressContent {
   actionPlanStatusLabel: string
   actionPlanActionsLabel: string
   actionPlanLinkText: string
-}
-
-export type SubNavItem = {
-  id: string
-  title: string
-  href: string
 }

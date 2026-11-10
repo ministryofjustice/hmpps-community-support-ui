@@ -1,0 +1,24 @@
+{% extends "../partials/layout.njk" %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+
+{% set pageTitle = content.pageTtile %}
+{% set mainClasses = "govuk-body" %}
+
+{% block contentBody %}
+  <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
+  
+  {% if content.existingSupportNeedsDetails %}
+    <p class="govuk-body" data-testid="subheading">{{ content.pageSubHeader }} </p>
+    {{ govukSummaryList(content.existingSupportNeedsDetails) }}
+  {% endif %}
+
+  <form method="post" action="{{ content.submitHref }}">
+  <input type="hidden" name="_csrf" value="{{csrfToken}}">
+
+  {{ govukRadios(content.didYouIdentifyRadio) }}
+  
+  {{ govukButton(content.submitButton) }}
+  </form>
+{% endblock %}

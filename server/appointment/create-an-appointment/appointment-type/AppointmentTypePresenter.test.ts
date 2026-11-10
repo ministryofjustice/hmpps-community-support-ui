@@ -18,17 +18,16 @@ const referralInformation = {
 }
 
 const appointmentTypes = [
-  { name: 'Contact session', value: 'CONTACT_SESSION' },
-  { name: 'Pre-release session', value: 'PRE_RELEASE_SESSION' },
-  { name: 'Post-release session', value: 'POST_RELEASE_SESSION' },
-  { name: 'Handover session', value: 'HANDOVER_SESSION' },
+  { name: 'Contact session', value: 'contact' },
+  { name: 'Initial contact session', value: 'ics' },
+  { name: 'Handover session', value: 'handover' },
+  { name: 'Post-release session', value: 'post-release' },
+  { name: 'Pre-release session', value: 'pre-release' },
 ]
 
 const content = {
-  pageTitle: 'Select the appointment type',
-  heading: 'Create an appointment for {{ personName }}',
-  appointmentTypeLabel: 'Select the appointment type',
-  buttonText: 'Save and continue',
+  pageTitle: 'Appointment type',
+  buttonText: 'Continue',
 }
 
 const res = {
@@ -41,21 +40,19 @@ const noErrors = {
 }
 
 const appointmentTypeErrors = {
-  list: <GovukFrontendErrorSummaryErrorListElement[]>[
-    { href: '#appointmentType', text: 'Select the appointment type' },
-  ],
+  list: <GovukFrontendErrorSummaryErrorListElement[]>[{ href: '#appointmentType', text: 'Select an appointment type' }],
   messages: {
-    appointmentType: { text: 'Select the appointment type' },
+    appointmentType: { text: 'Select an appointment type' },
   },
 }
 
 describe('AppointmentTypePresenter', () => {
-  it('builds the heading from the referral person name', () => {
+  it('builds the page without a person-specific heading', () => {
     const presenter = new AppointmentTypePresenter('AB1234CD', referralInformation, appointmentTypes)
 
     const viewModel = presenter.buildViewModel(res)
 
-    expect(viewModel.heading).toBe('Create an appointment for John Doe')
+    expect(viewModel.heading).toBeUndefined()
   })
 
   it('creates radio items from appointment types in order', () => {
@@ -64,28 +61,25 @@ describe('AppointmentTypePresenter', () => {
     const viewModel = presenter.buildViewModel(res)
 
     expect(viewModel.radios.items).toEqual([
-      { text: 'Contact session', value: 'CONTACT_SESSION' },
-      { text: 'Pre-release session', value: 'PRE_RELEASE_SESSION' },
-      { text: 'Post-release session', value: 'POST_RELEASE_SESSION' },
-      { text: 'Handover session', value: 'HANDOVER_SESSION' },
+      { text: 'Contact session', value: 'contact' },
+      { text: 'Initial contact session', value: 'ics' },
+      { text: 'Handover session', value: 'handover' },
+      { text: 'Post-release session', value: 'post-release' },
+      { text: 'Pre-release session', value: 'pre-release' },
     ])
   })
 
   it('renders appointment types exactly as returned by the BFF', () => {
-    const presenter = new AppointmentTypePresenter('AB1234CD', referralInformation, [
-      { name: 'Contact session', value: 'CONTACT_SESSION' },
-      { name: 'Pre-release session', value: 'PRE_RELEASE_SESSION' },
-      { name: 'Post-release session', value: 'POST_RELEASE_SESSION' },
-      { name: 'Handover session', value: 'HANDOVER_SESSION' },
-    ])
+    const presenter = new AppointmentTypePresenter('AB1234CD', referralInformation, appointmentTypes)
 
     const viewModel = presenter.buildViewModel(res)
 
     expect(viewModel.radios.items).toEqual([
-      { text: 'Contact session', value: 'CONTACT_SESSION' },
-      { text: 'Pre-release session', value: 'PRE_RELEASE_SESSION' },
-      { text: 'Post-release session', value: 'POST_RELEASE_SESSION' },
-      { text: 'Handover session', value: 'HANDOVER_SESSION' },
+      { text: 'Contact session', value: 'contact' },
+      { text: 'Initial contact session', value: 'ics' },
+      { text: 'Handover session', value: 'handover' },
+      { text: 'Post-release session', value: 'post-release' },
+      { text: 'Pre-release session', value: 'pre-release' },
     ])
   })
 
@@ -100,7 +94,18 @@ describe('AppointmentTypePresenter', () => {
 
     const viewModel = presenter.buildViewModel(res)
 
-    expect(viewModel.radios.value).toBe('POST_RELEASE_SESSION')
+    expect(viewModel.radios.value).toBe('post-release')
+  })
+
+  it('preselects contact after details have saved the canonical appointment type', () => {
+    const viewModel = new AppointmentTypePresenter(
+      'AB1234CD',
+      referralInformation,
+      appointmentTypes,
+      undefined,
+      'CONTACT_SESSION',
+    ).buildViewModel(res)
+    expect(viewModel.radios.value).toBe('contact')
   })
 
   it('adds the validation error message to the radios', () => {
@@ -113,7 +118,7 @@ describe('AppointmentTypePresenter', () => {
 
     const viewModel = presenter.buildViewModel(res)
 
-    expect(viewModel.radios.errorMessage).toEqual({ text: 'Select the appointment type' })
+    expect(viewModel.radios.errorMessage).toEqual({ text: 'Select an appointment type' })
   })
 
   it('does not add an error message when there are no validation errors', () => {

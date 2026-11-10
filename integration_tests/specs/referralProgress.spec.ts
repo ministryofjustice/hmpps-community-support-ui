@@ -6,7 +6,7 @@ import communitySupport from '../mockApis/communitySupport'
 import buildReferralProgress from '../../server/testutils/buildReferralProgress'
 import ReferralProgressPage from '../pages/referralProgressPage'
 import CaseListPage from '../pages/caseListPage'
-import ScheduleIcsPage from '../pages/scheduleIcsPage'
+import CreateAppointmentDetailsPage from '../pages/createAppointmentDetailsPage'
 import { ReferralProgressBannerContent } from '../../server/referral/progress/ReferralProgressBannerContent'
 
 test.describe('Referral Progress Page', () => {
@@ -113,6 +113,14 @@ test.describe('Referral Progress Page', () => {
     await login(page)
   })
 
+  test('shows the shared referral navigation with Progress active', async ({ page }) => {
+    await communitySupport.stubGetReferralProgress(referralProgressNoAppointments, caseReference)
+    await page.goto(ReferralProgressPage.url(caseReference))
+
+    const referralProgressPage = await ReferralProgressPage.verifyOnPage(page)
+    await referralProgressPage.navigation.verify(caseReference, 'Progress')
+  })
+
   // IPB-2142:AC1
   test('Navigate back to referral dashboard', async ({ page }) => {
     await communitySupport.stubGetReferralProgress(referralProgressNoAppointments, caseReference)
@@ -180,7 +188,7 @@ test.describe('Referral Progress Page', () => {
 
     await test.step('user can navigate to schedule session screen', async () => {
       await referralProgressPage.scheduleSessionLink.click()
-      await expect(page).toHaveURL(ScheduleIcsPage.url(caseReference))
+      await expect(page).toHaveURL(CreateAppointmentDetailsPage.url(caseReference, 'ICS'))
     })
   })
 

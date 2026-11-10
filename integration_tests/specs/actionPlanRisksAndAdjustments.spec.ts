@@ -19,10 +19,12 @@ test.describe('Action Plan Risks and Adjustments Page', () => {
       lastName: 'River',
     },
     needs: [],
+    isSubmitted: false,
   }
 
   test.beforeEach(async ({ page }) => {
     await resetStubs()
+    await communitySupport.stubGetActionPlanSummary(caseReference, actionPlanSummary)
     await page.goto('/')
     await login(page)
   })

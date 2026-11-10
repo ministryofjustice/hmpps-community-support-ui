@@ -17,7 +17,7 @@ test.describe('Referral Appointments Page', () => {
       {
         id: '11111111-1111-4111-8111-111111111111',
         label: 'Contact session',
-        appointmentDate: '2026-10-09',
+        appointmentDate: '2026-11-01',
         appointmentTime: { hour: 1, minute: 30, amPm: 'pm' },
         appointmentStatus: 'SCHEDULED',
       },
@@ -50,14 +50,70 @@ test.describe('Referral Appointments Page', () => {
 
     const appointmentsPage = new ReferralAppointmentsPage(page)
     await appointmentsPage.verifyOnPage()
+    await appointmentsPage.navigation.verify(caseReference, 'Appointments')
     await expect(appointmentsPage.header).toHaveText('Referral for Alex Example')
-    await expect(page.getByRole('heading', { name: 'Appointments', level: 2 })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Appointments', level: 2, exact: true })).toBeVisible()
     await expect(page.getByText('Referral progress')).toHaveCount(0)
     await expect(appointmentsPage.appointmentsTable).toContainText('Contact session')
     await expect(appointmentsPage.appointmentsTable).toContainText('Handover session')
+    await expect(appointmentsPage.appointmentsTable.getByRole('columnheader')).toHaveText([
+      'Appointment type',
+      'Date',
+      'Start time',
+    ])
+    await expect(appointmentsPage.appointmentsTable.locator('tbody tr').first().locator('td')).toHaveText([
+      'Contact session',
+      '01 November 2026',
+      '1:30pm',
+    ])
+    await expect(page.getByRole('heading', { name: 'Upcoming appointments', exact: true })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Past appointments', exact: true })).toBeVisible()
+    await expect(appointmentsPage.noAppointmentsMessage).toHaveCount(0)
+    await expect(appointmentsPage.bookAppointmentButton).toHaveAttribute('href', AppointmentTypePage.url(caseReference))
 
-    await appointmentsPage.createAppointmentLink.click()
+    await appointmentsPage.bookAppointmentButton.click()
     await expect(page).toHaveURL(AppointmentTypePage.url(caseReference))
     await AppointmentTypePage.verifyOnPage(page)
+  })
+
+  ;[
+    { column: 'Appointment type', ascending: ['Contact session', 'Handover session'] },
+    { column: 'Date', ascending: ['Handover session', 'Contact session'] },
+    { column: 'Start time', ascending: ['Handover session', 'Contact session'] },
+  ].forEach(({ column, ascending }) => {
+    test(`sorts ${column} in both directions`, async ({ page }) => {
+      await communitySupport.stubGetReferralAppointments(appointments, caseReference)
+      await page.goto(ReferralAppointmentsPage.url(caseReference))
+
+      const appointmentsPage = new ReferralAppointmentsPage(page)
+      await appointmentsPage.verifyOnPage()
+      const labels = appointmentsPage.appointmentsTable.locator('tbody tr td:first-child')
+      const header = appointmentsPage.appointmentsTable.getByRole('columnheader', { name: column, exact: true })
+      await expect(header).toHaveAttribute('aria-sort', 'none')
+      await header.getByRole('button').click()
+      await expect(header).toHaveAttribute('aria-sort', 'ascending')
+      await expect(labels).toHaveText(ascending)
+      await header.getByRole('button').click()
+      await expect(header).toHaveAttribute('aria-sort', 'descending')
+      await expect(labels).toHaveText([...ascending].reverse())
+    })
+  })
+
+  test('shows the empty state and booking button when there are no appointments', async ({ page }) => {
+    await communitySupport.stubGetReferralAppointments({ ...appointments, appointments: [] }, caseReference)
+    await page.goto(ReferralAppointmentsPage.url(caseReference))
+
+    const appointmentsPage = new ReferralAppointmentsPage(page)
+    await appointmentsPage.verifyOnPage()
+    await expect(appointmentsPage.header).toHaveText('Referral for Alex Example')
+    await expect(appointmentsPage.noAppointmentsMessage).toHaveText('No appointments scheduled')
+    await expect(appointmentsPage.appointmentsTable).toHaveCount(0)
+    await expect(page.getByRole('heading', { name: 'Upcoming appointments', exact: true })).toHaveCount(0)
+    await expect(page.getByRole('heading', { name: 'Past appointments', exact: true })).toHaveCount(0)
+    await expect(appointmentsPage.bookAppointmentButton).toBeVisible()
+    await expect(appointmentsPage.bookAppointmentButton).toHaveAttribute(
+      'href',
+      `/referral/${caseReference}/create-an-appointment/appointment-type`,
+    )
   })
 })

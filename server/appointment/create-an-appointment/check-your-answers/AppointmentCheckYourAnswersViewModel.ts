@@ -16,7 +16,9 @@ export type AppointmentCheckYourAnswersContent = {
   dateLabel: string
   startTimeLabel: string
   methodLabel: string
-  locationLabel: string
+  probationOfficeLabel: string
+  appointmentAddressLabel: string
+  reasonSessionNotInPersonLabel: string
   meetAtTheGateLabel: string
   informedLabel: string
   changeLinkText: string

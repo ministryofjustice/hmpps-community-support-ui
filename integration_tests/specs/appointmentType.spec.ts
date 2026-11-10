@@ -29,12 +29,12 @@ test.describe('Appointment Type Page', () => {
     await page.goto(AppointmentTypePage.url(CASE_REFERENCE))
     const appointmentTypePage = await AppointmentTypePage.verifyOnPage(page)
 
-    await expect(page).toHaveTitle('Select the appointment type - Community Support')
-    await expect(appointmentTypePage.heading).toHaveText('Create an appointment for John Doe')
-    await expect(appointmentTypePage.radioOption('CONTACT_SESSION')).toBeVisible()
-    await expect(appointmentTypePage.radioOption('PRE_RELEASE_SESSION')).toBeVisible()
-    await expect(appointmentTypePage.radioOption('POST_RELEASE_SESSION')).toBeVisible()
-    await expect(appointmentTypePage.radioOption('HANDOVER_SESSION')).toBeVisible()
+    await expect(page).toHaveTitle('Appointment type - Community Support')
+    await expect(appointmentTypePage.radioOption('ics')).toBeVisible()
+    await expect(appointmentTypePage.radioOption('contact')).toBeVisible()
+    await expect(appointmentTypePage.radioOption('pre-release')).toBeVisible()
+    await expect(appointmentTypePage.radioOption('post-release')).toBeVisible()
+    await expect(appointmentTypePage.radioOption('handover')).toBeVisible()
   })
 
   test('should show a validation error when no appointment type is selected', async ({ page }) => {
@@ -44,7 +44,7 @@ test.describe('Appointment Type Page', () => {
     await appointmentTypePage.continueButton.click()
 
     await expect(page).toHaveURL(AppointmentTypePage.url(CASE_REFERENCE))
-    await expect(appointmentTypePage.errorSummary).toContainText('Select the appointment type')
+    await expect(appointmentTypePage.errorSummary).toContainText('Select an appointment type')
   })
 
   test('should go to the appointment details page after saving the appointment type', async ({ page }) => {
@@ -80,6 +80,6 @@ test.describe('Appointment Type Page', () => {
     await appointmentTypePage.backLink.click()
 
     await expect(page).toHaveURL(`/referral/${CASE_REFERENCE}/appointments`)
-    await expect(page.getByRole('heading', { name: 'Appointments', level: 2 })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Appointments', level: 2, exact: true })).toBeVisible()
   })
 })

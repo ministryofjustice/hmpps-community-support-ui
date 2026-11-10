@@ -79,7 +79,7 @@ test.describe('Full appointment journey', () => {
 
     const appointmentsPage = new ReferralAppointmentsPage(page)
     await appointmentsPage.verifyOnPage()
-    await appointmentsPage.createAppointmentLink.click()
+    await appointmentsPage.bookAppointmentButton.click()
     await expect(page).toHaveURL(AppointmentTypePage.url(CASE_REFERENCE))
     const appointmentTypePage = await AppointmentTypePage.verifyOnPage(page)
 
@@ -94,25 +94,41 @@ test.describe('Full appointment journey', () => {
     await initialDetailsPage.saveAndContinueButton.click()
 
     const initialCyaPage = await AppointmentCheckYourAnswersPage.verifyOnPage(page)
+    await expect(initialCyaPage.methodRow).toContainText('Video call')
+    await expect(initialCyaPage.reasonSessionNotInPersonRow).toContainText('Initial reason')
     await initialCyaPage.changeLink.click()
     await AppointmentTypePage.verifyOnPage(page)
 
     await page.getByRole('radio', { name: 'Pre-release session' }).check()
-    await page.getByRole('button', { name: 'Save and continue' }).click()
+    await page.getByRole('button', { name: 'Continue', exact: true }).click()
 
     const preReleaseDetailsPage = await CreateAppointmentDetailsPage.verifyOnPage(page, 'PRE_RELEASE_SESSION')
     await preReleaseDetailsPage.fillDateAndTime('21/6/2026', '10', '30', 'AM')
     await preReleaseDetailsPage.inSomewhereElseRadioButton.click()
     await preReleaseDetailsPage.addressLine1Input.fill('1 High Street')
     await preReleaseDetailsPage.townInput.fill('Derby')
+    await preReleaseDetailsPage.countyInput.fill('Derbyshire')
     await preReleaseDetailsPage.postcodeInput.fill('DE1 2EQ')
     await preReleaseDetailsPage.informedByPhoneCheckbox.check()
     await preReleaseDetailsPage.saveAndContinueButton.click()
 
     const cyaPage = await AppointmentCheckYourAnswersPage.verifyOnPage(page)
-    await expect(cyaPage.locationRow).toContainText('1 High Street, Derby, DE1 2EQ')
+    await expect(cyaPage.appointmentAddressRow).toContainText('1 High Street')
+    await expect(cyaPage.appointmentAddressRow).toContainText('Derby')
+    await expect(cyaPage.appointmentAddressRow).toContainText('Derbyshire')
+    await expect(cyaPage.appointmentAddressRow).toContainText('DE1 2EQ')
+    await expect(cyaPage.appointmentAddressRow.locator('dd br')).toHaveCount(3)
 
     await cyaPage.submitButton.click()
     await expect(page).toHaveURL(`/referral/${CASE_REFERENCE}/appointments`)
+
+    const appointmentsAfterBooking = new ReferralAppointmentsPage(page)
+    await expect(appointmentsAfterBooking.successAlert).toContainText('Pre-release session booked')
+    await expect(appointmentsAfterBooking.successAlert).toContainText(
+      'Pre-release session booked for 16 October 2026 at 1:30pm',
+    )
+
+    await page.reload()
+    await expect(appointmentsAfterBooking.successAlert).toHaveCount(0)
   })
 })

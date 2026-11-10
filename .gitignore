@@ -126,3 +126,4 @@ integration_tests/screenshots/
 **/Chart.lock
 **/.DS_Store
 .pre-commit-config.yaml
+.env.dev

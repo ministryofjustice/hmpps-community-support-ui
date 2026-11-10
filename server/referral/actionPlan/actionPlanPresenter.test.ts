@@ -16,6 +16,7 @@ describe('ActionPlanPresenter', () => {
       },
       needs: [],
       lastUpdatedAt: '',
+      isSubmitted: false,
     }
 
     const presenter = new ActionPlanPresenter(actionPlanSummary, 'AB1234CD')
@@ -43,6 +44,7 @@ describe('ActionPlanPresenter', () => {
       personDetails: { firstName: 'Alex', lastName: 'River' },
       needs: [],
       lastUpdatedAt: '',
+      isSubmitted: false,
     }
     const res = {
       locals: { content: actionPlanContent },
@@ -54,7 +56,13 @@ describe('ActionPlanPresenter', () => {
     const renderData = (res.render as jest.Mock).mock.calls[0][1] as { content: ActionPlanViewModel }
     expect(renderData.content.subNavigationArgs).toEqual({
       label: 'Sub navigation',
-      items: [{ href: '/referral/AB1234CD/action-plan', text: 'Action plan', active: true }],
+      items: [
+        { href: '/referral-details/AB1234CD', text: 'Case details', active: false },
+        { href: '/progress/AB1234CD', text: 'Progress', active: false },
+        { href: '/referral/AB1234CD/action-plan', text: 'Action Plan', active: true },
+        { href: '/referral/AB1234CD/appointments', text: 'Appointments', active: false },
+        { href: '#', text: 'Change log', active: false },
+      ],
     })
   })
 
@@ -72,6 +80,7 @@ describe('ActionPlanPresenter', () => {
           ]
         : [],
       lastUpdatedAt: '2026-10-15T09:00:00Z',
+      isSubmitted: false,
     })
 
     const render = (summary: ActionPlanSummaryDto) => {
@@ -80,8 +89,8 @@ describe('ActionPlanPresenter', () => {
       return (res.render as jest.Mock).mock.calls[0][1] as { content: ActionPlanViewModel }
     }
 
-    it('builds the side navigation with the action plan item active when there are needs', () => {
-      expect(render(buildSummary(true)).content.horizontalSubNavArgs).toEqual({
+    it('builds the side navigation when the plan is submitted and there are needs', () => {
+      expect(render({ ...buildSummary(true), isSubmitted: true }).content.horizontalSubNavArgs).toEqual({
         label: 'Side navigation',
         items: [
           { href: '/referral/AB1234CD/action-plan', text: 'Action plan', active: true },
@@ -91,7 +100,11 @@ describe('ActionPlanPresenter', () => {
     })
 
     it('does not build the side navigation when there are no needs', () => {
-      expect(render(buildSummary(false)).content.horizontalSubNavArgs).toBeUndefined()
+      expect(render({ ...buildSummary(false), isSubmitted: true }).content.horizontalSubNavArgs).toBeUndefined()
+    })
+
+    it('does not build the side navigation when the plan has needs but is not submitted', () => {
+      expect(render(buildSummary(true)).content.horizontalSubNavArgs).toBeUndefined()
     })
   })
 
@@ -127,6 +140,7 @@ describe('ActionPlanPresenter', () => {
         },
       ],
       lastUpdatedAt: '2026-10-15',
+      isSubmitted: false,
     }
 
     const presenter = new ActionPlanPresenter(actionPlanSummary, 'AB1234CD', true)
@@ -186,6 +200,7 @@ describe('ActionPlanPresenter', () => {
         },
       ],
       lastUpdatedAt: '2026-10-15T09:00:00Z',
+      isSubmitted: false,
     }
     const res = {
       locals: { content: actionPlanContent },
@@ -265,6 +280,7 @@ describe('ActionPlanPresenter', () => {
         },
       ],
       lastUpdatedAt: '2026-10-15',
+      isSubmitted: false,
     }
 
     const presenter = new ActionPlanPresenter(actionPlanSummary, 'AB1234CD')
@@ -321,6 +337,7 @@ describe('ActionPlanPresenter', () => {
         { id: 'need_id_2', label: 'Finances', orderNumber: 2, outcomes: [{ ...outcome, id: 'outcome_id_2' }] },
       ],
       lastUpdatedAt: '2026-10-15',
+      isSubmitted: false,
     }
 
     it('is displayed and links to session details when all outcomes are added and ICS feedback is submitted', () => {
@@ -335,6 +352,26 @@ describe('ActionPlanPresenter', () => {
     it('is not displayed when the ICS feedback has not been submitted', () => {
       expect(render(summaryWithAllOutcomes, false).submitActionPlanButton).toBeUndefined()
       expect(render(summaryWithAllOutcomes).submitActionPlanButton).toBeUndefined()
+    })
+
+    it('hides submission and every outcome removal action when the plan is submitted', () => {
+      const content = render({ ...summaryWithAllOutcomes, isSubmitted: true }, true)
+
+      expect(content.submitActionPlanButton).toBeUndefined()
+      expect(content.needsSummary).toHaveLength(2)
+      content.needsSummary.forEach(need => {
+        expect(need.card.actions.items).toHaveLength(1)
+        expect(need.card.actions.items[0].text).toBe('Add or change activities')
+      })
+      expect(content.addAnotherOutcomeButton).toBeDefined()
+    })
+
+    it('keeps outcome removal actions available when the plan is not submitted', () => {
+      const content = render(summaryWithAllOutcomes, true)
+
+      content.needsSummary.forEach(need => {
+        expect(need.card.actions.items.map(item => item.text)).toEqual(['Add or change activities', 'Remove'])
+      })
     })
 
     it('is not displayed when not all outcomes have been added', () => {
@@ -365,6 +402,7 @@ describe('ActionPlanPresenter', () => {
         },
       ],
       lastUpdatedAt: '2026-10-15T09:00:00Z',
+      isSubmitted: false,
     }
 
     it('renders the correct alert when adding an outcome', () => {

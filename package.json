@@ -36,7 +36,7 @@
     "npm": "^11"
   },
   "dependencies": {
-    "@aws-sdk/client-sqs": "^3.1154.0",
+    "@aws-sdk/client-sqs": "^3.1160.0",
     "@ministryofjustice/frontend": "^11.1.0",
     "@ministryofjustice/hmpps-auth-clients": "^3.0.0",
     "@ministryofjustice/hmpps-monitoring": "^2.1.0",
@@ -44,7 +44,7 @@
     "@playwright/test": "^1.64.1",
     "accessible-autocomplete": "3.0.2",
     "applicationinsights": "^3.17.0",
-    "body-parser": "^2.3.0",
+    "body-parser": "^2.4.0",
     "bunyan": "^1.8.15",
     "bunyan-format": "^0.2.1",
     "compression": "^1.8.2",
@@ -64,7 +64,7 @@
     "nunjucks": "^3.2.4",
     "passport": "^0.7.0",
     "passport-oauth2": "^1.8.0",
-    "redis": "^6.3.0",
+    "redis": "^6.3.1",
     "superagent": "^10.4.1",
     "ts-node": "^10.9.2",
     "zod": "^4.6.7"
@@ -74,7 +74,7 @@
   },
   "devDependencies": {
     "@jgoz/esbuild-plugin-typecheck": "5.0.0",
-    "@ministryofjustice/eslint-config-hmpps": "^1.0.3",
+    "@ministryofjustice/eslint-config-hmpps": "^1.0.4",
     "@ministryofjustice/hmpps-npm-script-allowlist": "0.0.6",
     "@ministryofjustice/hmpps-precommit-hooks": "^3.0.2",
     "@tsconfig/node24": "^24.0.5",

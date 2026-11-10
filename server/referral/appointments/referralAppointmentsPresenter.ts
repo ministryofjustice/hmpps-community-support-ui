@@ -1,31 +1,21 @@
 import type { Response } from 'express'
-import type { GovukFrontendTable } from '@govuk-frontend'
-import type { MojSubNavigation } from '@moj-frontend'
+import type { GovukFrontendButton, GovukFrontendTable } from '@govuk-frontend'
 import type { ReferralAppointmentsBffResponseDto } from '@community-support-api'
 import { formatDate } from 'date-fns'
-import { formatTime12Hr } from '../../utils/timeFormat'
-import PresenterBase from '../../presenter/presenterBase'
+import { formatTime12Hr, formatTime24Hr } from '../../utils/timeFormat'
+import ReferralLayoutPresenter, { ReferralNavigationValues } from '../referralLayout/referralLayoutPresenter'
 import type { ReferralAppointmentsContent, ReferralAppointmentsViewModel } from './referralAppointmentsViewModel'
 
-type ReferralTab = 'caseDetails' | 'progress' | 'appointments' | 'changeLog'
-
-export default class ReferralAppointmentsPresenter extends PresenterBase<
+export default class ReferralAppointmentsPresenter extends ReferralLayoutPresenter<
   ReferralAppointmentsViewModel,
   ReferralAppointmentsContent
 > {
-  private readonly tabPaths: Record<ReferralTab, string>
-
   constructor(
     private readonly referralAppointments: ReferralAppointmentsBffResponseDto,
     private readonly caseReference: string,
+    private readonly successAlert: { title: string; message: string } = undefined,
   ) {
-    super()
-    this.tabPaths = {
-      caseDetails: `/referral-details/${caseReference}`,
-      progress: `/progress/${caseReference}`,
-      appointments: `/referral/${caseReference}/appointments`,
-      changeLog: '#',
-    }
+    super(ReferralNavigationValues.appointmentsTab, caseReference)
   }
 
   protected getTemplatePath(): string {
@@ -39,24 +29,32 @@ export default class ReferralAppointmentsPresenter extends PresenterBase<
 
     return {
       pageHeader: `${content.pageHeader} ${firstName} ${lastName}`,
-      navBar: this.buildSubNav(content),
+      navBar: this.getMojSubNavigationArgs(),
       appointmentsTitle: content.appointmentsTitle,
-      createAppointmentText: content.createAppointmentText,
+      createAppointmentButton: this.buildAppointmentButton(content),
       noAppointmentsMessage: content.noAppointmentsMessage,
-      createAppointmentHref: `/referral/${this.caseReference}/create-an-appointment/appointment-type`,
       appointmentsTable: this.buildAppointmentsTable(content),
       hasAppointments: appointments.length > 0,
+      notificationBanner:
+        this.successAlert !== undefined
+          ? {
+              variant: 'success',
+              html: this.successAlert.message,
+              title: this.successAlert.title,
+              dismissible: true,
+              showTitleAsHeading: true,
+            }
+          : undefined,
+      upcomingAppointmentsTitle: content.upcomingAppointmentsTitle,
+      pastAppointmentsTitle: content.pastAppointmentsTitle,
     }
   }
 
-  private buildSubNav(content: ReferralAppointmentsContent): MojSubNavigation {
+  private buildAppointmentButton(content: ReferralAppointmentsContent): GovukFrontendButton {
     return {
-      label: content.subNavTitle,
-      items: (Object.keys(this.tabPaths) as ReferralTab[]).map(tab => ({
-        text: content.subNavItems.find(item => item.id === tab)?.title ?? tab,
-        href: this.tabPaths[tab],
-        active: tab === 'appointments',
-      })),
+      text: content.bookAppointmentText,
+      href: content.bookAppointmentHref.replace('{{ id }}', this.caseReference),
+      preventDoubleClick: true,
     }
   }
 
@@ -66,15 +64,48 @@ export default class ReferralAppointmentsPresenter extends PresenterBase<
         'data-module': 'moj-sortable-table',
         'data-testid': 'referral-appointments-table',
       },
-      head: [{ text: content.appointmentTypeColumnHeader }, { text: content.dateTimeColumnHeader }],
-      rows: this.referralAppointments.appointments.map(appointment => [
-        { text: appointment.label },
+      head: [
         {
-          text: `${formatDate(new Date(appointment.appointmentDate), 'dd MMMM yyyy')} at ${formatTime12Hr(
+          text: content.appointmentTypeColumnHeader,
+          attributes: {
+            'aria-sort': 'none',
+          },
+        },
+        {
+          text: content.dateColumnHeader,
+          attributes: {
+            'aria-sort': 'none',
+          },
+        },
+        {
+          text: content.timeColumnHeader,
+          attributes: {
+            'aria-sort': 'none',
+          },
+        },
+      ],
+      rows: this.referralAppointments.appointments.map(appointment => [
+        {
+          text: appointment.label,
+          attributes: {
+            'data-sort-value': appointment.label,
+          },
+        },
+        {
+          text: `${formatDate(new Date(appointment.appointmentDate), 'dd MMMM yyyy')}`,
+          attributes: {
+            'data-sort-value': appointment.appointmentDate,
+          },
+        },
+        {
+          text: `${formatTime12Hr(
             appointment.appointmentTime.hour,
             appointment.appointmentTime.minute,
             appointment.appointmentTime.amPm,
           )}`,
+          attributes: {
+            'data-sort-value': formatTime24Hr(appointment.appointmentTime),
+          },
         },
       ]),
     }

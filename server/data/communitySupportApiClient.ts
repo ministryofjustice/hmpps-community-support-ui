@@ -30,6 +30,7 @@ import type {
   ReferralCriminogenicNeedsDto,
   CriminogenicNeedsRequest,
   ActionPlanSummaryDto,
+  ActionPlanSubmitResponse,
   ActionPlanActionRequest,
   ActionPlanActionResponse,
   ActionPlanSessionDeliveryDetailsResponse,
@@ -54,6 +55,16 @@ import type {
   OffenceSentenceInfoBffResponseDto,
   WithdrawReferralRequest,
   ActionPlanNeedsOrderRequest,
+  ExistingSupportNeedsBffResponseDto,
+  IcsFeedbackWhyDidSessionNotHappenBffDto,
+  IcsFeedbackSessionFeedbackBffDto,
+  IcsFeedbackNextStepsBffDto,
+  IcsFeedbackIssuesOrConcernsBffDto,
+  IcsFeedbackIdentifiedAdditionalNeedsBffDto,
+  IcsFeedbackHowTheyTriedToContactThePersonBffDto,
+  IcsFeedbackDidSessionTakePlaceBffDto,
+  IcsFeedbackCheckAnswersBffDto,
+  IcsFeedbackAttendanceBffDto,
 } from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
@@ -130,6 +141,54 @@ export default class CommunitySupportApiClient extends RestClient {
     return this.get({ path: `/bff/referral-details/${caseRefId}/ics` }, asSystem(username))
   }
 
+  getIcsFeedbackWhyDidSessionNotHappen(
+    caseRefId: string,
+    username: string,
+  ): Promise<IcsFeedbackWhyDidSessionNotHappenBffDto> {
+    return this.get({ path: `/bff/ics-feedback/${caseRefId}/why-did-the-session-not-happen` }, asSystem(username))
+  }
+
+  getIcsFeedbackSessionFeedback(caseRefId: string, username: string): Promise<IcsFeedbackSessionFeedbackBffDto> {
+    return this.get({ path: `/bff/ics-feedback/${caseRefId}/session-feedback` }, asSystem(username))
+  }
+
+  getIcsFeedbackNextSteps(caseRefId: string, username: string): Promise<IcsFeedbackNextStepsBffDto> {
+    return this.get({ path: `/bff/ics-feedback/${caseRefId}/next-steps` }, asSystem(username))
+  }
+
+  getIcsFeedbackIssuesOrConcerns(caseRefId: string, username: string): Promise<IcsFeedbackIssuesOrConcernsBffDto> {
+    return this.get({ path: `/bff/ics-feedback/${caseRefId}/issues-or-concerns` }, asSystem(username))
+  }
+
+  getIcsFeedbackIdentifiedAdditionalNeeds(
+    caseRefId: string,
+    username: string,
+  ): Promise<IcsFeedbackIdentifiedAdditionalNeedsBffDto> {
+    return this.get({ path: `/bff/ics-feedback/${caseRefId}/identified-additional-needs` }, asSystem(username))
+  }
+
+  getIcsFeedbackHowTheyTriedToContactThePerson(
+    caseRefId: string,
+    username: string,
+  ): Promise<IcsFeedbackHowTheyTriedToContactThePersonBffDto> {
+    return this.get({ path: `/bff/ics-feedback/${caseRefId}/how-they-tried-to-contact-the-person` }, asSystem(username))
+  }
+
+  getIcsFeedbackDidSessionTakePlace(
+    caseRefId: string,
+    username: string,
+  ): Promise<IcsFeedbackDidSessionTakePlaceBffDto> {
+    return this.get({ path: `/bff/ics-feedback/${caseRefId}/did-session-take-place` }, asSystem(username))
+  }
+
+  getIcsFeedbackCheckAnswers(caseRefId: string, username: string): Promise<IcsFeedbackCheckAnswersBffDto> {
+    return this.get({ path: `/bff/ics-feedback/${caseRefId}/check-answers` }, asSystem(username))
+  }
+
+  getIcsFeedbackAttendance(caseRefId: string, username: string): Promise<IcsFeedbackAttendanceBffDto> {
+    return this.get({ path: `/bff/ics-feedback/${caseRefId}/attendance` }, asSystem(username))
+  }
+
   getCreateAppointmentReferenceData(
     caseReference: string,
     username: string,
@@ -195,6 +254,10 @@ export default class CommunitySupportApiClient extends RestClient {
       { path: `/bff/referral/${caseReference}/action-plan/session-delivery-details/session-delivery` },
       asSystem(username),
     )
+  }
+
+  submitActionPlan(caseReference: string, username: string): Promise<ActionPlanSubmitResponse> {
+    return this.post({ path: `/referral/${caseReference}/action-plan` }, asSystem(username))
   }
 
   submitServiceDeliveryDetails(
@@ -287,6 +350,25 @@ export default class CommunitySupportApiClient extends RestClient {
 
   getAdditionalSupportNeeds(id: string, username: string): Promise<AdditionalSupportNeedsDto> {
     return this.get({ path: `/bff/draft-referral/additional-support-needs/${id}` }, asSystem(username))
+  }
+
+  async getExistingSupportNeeds(
+    caseReference: string,
+    username: string,
+  ): Promise<ExistingSupportNeedsBffResponseDto | null> {
+    try {
+      return await this.get<ExistingSupportNeedsBffResponseDto>(
+        { path: `/bff/referral/${caseReference}/existing-support-needs` },
+        asSystem(username),
+      )
+    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const err = error as any
+      if ((err?.responseStatus ?? err?.status ?? err?.response?.status) === 404) {
+        return null
+      }
+      throw error
+    }
   }
 
   getTaskListStatus(referralId: string, username: string): Promise<TaskListStatusDto> {

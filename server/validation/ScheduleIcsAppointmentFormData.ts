@@ -1,6 +1,5 @@
 import { z } from 'zod'
-import { addMonths, isBefore, isAfter, startOfDay, isExists } from 'date-fns'
-import { britishDateFormat } from '../utils/dateFormat'
+import { addDays, addMonths, isBefore, isAfter, startOfDay, isExists } from 'date-fns'
 import { appointmentTypeRules, SessionAppointmentType } from '../appointment/appointmentTypeRules'
 
 const validCharRegex: RegExp = /^[a-zA-Z0-9\s\-']*$/
@@ -8,10 +7,13 @@ const dateRegex: RegExp = /^$|^(\d{1,2})\/(\d{1,2})\/(\d{4})$/
 const hourRegex: RegExp = /^$|^(0?[1-9]|1[0-2])$/
 const minuteRegex: RegExp = /^$|^(0?\d|[1-5]\d)$/
 const postcodeRegex: RegExp = /^[a-zA-Z0-9\s]*$/
+// UK postcode format, e.g. SW1A 1AA, M1 1AE, B33 8TH, CR2 6XH, DN55 1PT (space optional), plus GIR 0AA
+const ukPostcodeRegex: RegExp = /^(GIR\s*0AA|[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2})$/i
+const POSTCODE_MAX_LENGTH = 100
 
 const informedMethodItemSchema = z.enum(
   ['informedByPhone', 'informedByTextMessage', 'informedByEmail', 'informedByOtherMethod'],
-  { error: 'Select how {{ firstname }} was informed about the session' },
+  { error: 'Select how they were informed about the session' },
 )
 
 const informedMethodArraySchema = z.preprocess(
@@ -25,8 +27,8 @@ const informedMethodArraySchema = z.preprocess(
     return val
   },
   z
-    .array(informedMethodItemSchema, { error: 'Select how {{ firstname }} was informed about the session' })
-    .min(1, { error: 'Select how {{ firstname }} was informed about the session' })
+    .array(informedMethodItemSchema, { error: 'Select how they were informed about the session' })
+    .min(1, { error: 'Select how they were informed about the session' })
     .max(4)
     .refine(arr => new Set(arr).size === arr.length, { message: 'Array must have unique values' }),
 )
@@ -49,7 +51,7 @@ const informedMethodSchema = z
       ctx.addIssue({
         code: 'custom',
         path: ['otherMethodOfContact'],
-        message: 'Enter the other method of contact',
+        message: 'Enter other contact method',
       })
     }
   })
@@ -68,7 +70,7 @@ const getDate = (dateStr: string): Date | undefined => {
 const buildDateSchema = (min: Date, max: Date) =>
   z
     .string()
-    .nonempty({ error: 'Enter the date of the session' })
+    .nonempty({ error: 'Enter a session date' })
     .superRefine((data, ctx) => {
       if (data.length === 0) {
         return
@@ -85,7 +87,7 @@ const buildDateSchema = (min: Date, max: Date) =>
       if (isBefore(date, min)) {
         ctx.addIssue({
           code: 'custom',
-          message: `The session date must be after the referral date, ${britishDateFormat(min)}`,
+          message: 'Session date must be after the referral date',
           path: ['sessionDate'],
         })
         return
@@ -93,19 +95,17 @@ const buildDateSchema = (min: Date, max: Date) =>
       if (isAfter(date, max)) {
         ctx.addIssue({
           code: 'custom',
-          message: `The session date must be before ${britishDateFormat(max)}`,
+          message: 'Session date must not be more than 6 months in the future',
           path: ['sessionDate'],
         })
       }
     })
 
-const hourSchema = z.string().regex(hourRegex, { error: 'Enter a session start time in the correct format' })
+const hourSchema = z.string().regex(hourRegex, { error: 'Enter a real start time' })
 
-const minuteSchema = z.string().regex(minuteRegex, { error: 'Enter a session start time in the correct format' })
+const minuteSchema = z.string().regex(minuteRegex, { error: 'Enter a real start time' })
 
-const meridiemSchema = z
-  .enum(['am', 'AM', 'pm', 'PM'], { error: 'Select whether the session start time is AM or PM' })
-  .or(z.literal(''))
+const meridiemSchema = z.enum(['am', 'AM', 'pm', 'PM', ''], { error: 'Select am or pm' })
 
 const timeSchema = z
   .object({
@@ -118,26 +118,26 @@ const timeSchema = z
     const minuteEmpty = data['sessionTime-minute'] === ''
     const meridiemEmpty = data['sessionTime-meridiem'] === ''
     if (hourEmpty && minuteEmpty && meridiemEmpty) {
-      ctx.addIssue({ code: 'custom', message: 'Enter the start time of the session', path: ['sessionTime'] })
+      ctx.addIssue({ code: 'custom', message: 'Enter a start time', path: ['sessionTime'] })
       return
     }
     if (hourEmpty) {
       ctx.addIssue({
         code: 'custom',
-        message: 'Session start time must include an hour and minute',
+        message: 'Start time must include hours',
         path: ['sessionTime-hour'],
       })
     } else if (minuteEmpty) {
       ctx.addIssue({
         code: 'custom',
-        message: 'Session start time must include an hour and minute',
+        message: 'Start time must include minutes',
         path: ['sessionTime-minute'],
       })
     }
     if (meridiemEmpty) {
       ctx.addIssue({
         code: 'custom',
-        message: 'Select whether the session start time is AM or PM',
+        message: 'Select am or pm',
         path: ['sessionTime-meridiem'],
       })
     }
@@ -150,7 +150,7 @@ const buildSessionDateSchema = (min: Date, max: Date) =>
 
 const whyIsThisSessionNotInPersonStringSchema = z
   .string()
-  .nonempty({ error: 'Enter why the session is not in person' })
+  .nonempty({ error: 'Enter the reason the session is not in person' })
   .max(100, { error: 'Why is this session not in person must be 100 characters or less' })
   .regex(validCharRegex, {
     error:
@@ -197,8 +197,17 @@ const inSomewhereElseSchema = z.object({
   addressPostcode: z
     .string()
     .nonempty({ error: 'Enter a postcode' })
-    .max(100, { error: 'Postcode must be 100 characters or less' })
-    .regex(postcodeRegex, { error: 'Postcode must only include letters a to z, numbers 0 to 9 or spaces' }),
+    .max(POSTCODE_MAX_LENGTH, { error: 'Postcode must be 100 characters or less' })
+    .regex(postcodeRegex, { error: 'Postcode must only include letters a to z, numbers 0 to 9 or spaces' })
+    .refine(
+      postcode =>
+        // only check the format once the checks above have passed, so the user sees a single error
+        postcode.length === 0 ||
+        postcode.length > POSTCODE_MAX_LENGTH ||
+        !postcodeRegex.test(postcode) ||
+        ukPostcodeRegex.test(postcode.trim()),
+      { error: 'Enter a real postcode' },
+    ),
 })
 
 const howSessionTookPlaceSchema = z.discriminatedUnion(
@@ -218,18 +227,16 @@ const meetAtTheGateSchema = z.object({
 export const buildCreateAppointmentFormData = (referralDate: Date, appointmentType: SessionAppointmentType) => {
   const rules = appointmentTypeRules[appointmentType]
   const methodSchemas = [
-    byPhoneSchema,
     byVideoSchema,
     ...(rules.probationOffice ? [inProbationOfficeSchema] : []),
     ...(rules.somewhereElse ? [inSomewhereElseSchema] : []),
     ...(rules.inPerson ? [inPersonSchema] : []),
   ]
-  const howSessionTookPlace = z.discriminatedUnion(
-    'sessionTakePlace',
-    methodSchemas as [typeof byPhoneSchema, ...(typeof methodSchemas)[number][]],
-    { error: 'Select how the session will take place' },
-  )
-  const schema: z.ZodType = buildSessionDateSchema(referralDate, addMonths(new Date(), 6))
+  const howSessionTookPlace = z.discriminatedUnion('sessionTakePlace', [byPhoneSchema, ...methodSchemas], {
+    error: 'Select how the session will take place',
+  })
+  const minDate = appointmentType === 'CONTACT_SESSION' ? addDays(startOfDay(referralDate), 1) : referralDate
+  const schema: z.ZodType = buildSessionDateSchema(minDate, addMonths(new Date(), 6))
     .and(timeSchema)
     .and(howSessionTookPlace)
   const withGate = rules.meetAtTheGate ? schema.and(meetAtTheGateSchema) : schema

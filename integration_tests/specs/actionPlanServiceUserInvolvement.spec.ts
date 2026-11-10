@@ -15,12 +15,14 @@ test.describe('Action Plan Service User Involvement Page', () => {
       lastName: 'River',
     },
     needs: [],
+    isSubmitted: false,
   }
 
   const emptyPersonInvolvementFactory = actionPlanPersonInvolvementFactory.transient({ savedResponses: [] })
 
   test.beforeEach(async ({ page }) => {
     await resetStubs()
+    await communitySupport.stubGetActionPlanSummary(caseReference, actionPlanSummary)
     await page.goto('/')
     await login(page)
   })

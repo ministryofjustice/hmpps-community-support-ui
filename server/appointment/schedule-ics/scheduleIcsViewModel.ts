@@ -88,8 +88,8 @@ export interface ScheduleIcsContent {
   pageHeaders?: Record<string, string>
   meetAtTheGate?: { label: string; yes: string; no: string }
   date: LabelAndHint
-  time: LabelAndHint & { AMorPM: string }
-  howSessionTakePlace: LabelAndHint & RadioItems
+  time: LabelAndHint & { AMorPM: string; hourLabel?: string; minuteLabel?: string }
+  howSessionTakePlace: LabelAndHint & RadioItems & { groupHeadings?: { inPerson: string; remote: string } }
   informed: LabelAndHint & SelectionItems
   submitButtonText: string
   submitHref: string
