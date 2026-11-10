@@ -30,3 +30,14 @@ $guidance-panel-background-colour: #eaf4f9;
   border-left-color: govuk-colour('blue');
   background-color: $guidance-panel-background-colour;
 }
+
+.appointments-table {
+  .govuk-table__cell,
+  .govuk-table__header {
+    vertical-align: middle;
+  }
+  .govuk-tag {
+    padding-top: 3px;
+  }
+}
+

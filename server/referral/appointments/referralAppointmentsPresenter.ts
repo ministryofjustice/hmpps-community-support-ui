@@ -6,6 +6,15 @@ import { formatTime12Hr, formatTime24Hr } from '../../utils/timeFormat'
 import ReferralLayoutPresenter, { ReferralNavigationValues } from '../referralLayout/referralLayoutPresenter'
 import type { ReferralAppointmentsContent, ReferralAppointmentsViewModel } from './referralAppointmentsViewModel'
 
+const StatusLabel = {
+  SCHEDULED: {text:'Scheduled', classes: 'govuk-tag--blue', actions: [{text: 'View or change details', href: ''}]},
+  NEEDS_FEEDBACK: {text:'Needs feedback', classes: 'govuk-tag--red', actions: [{text: 'Add attendance and feedback', href: ''}]},
+  COMPLETED: {text:'Completed', classes: 'govuk-tag--green', actions: [{text: 'View feedback', href: ''}]},
+  CHANGED: {text:'Changed', classes: 'govuk-tag--orange', actions: [{text: 'View session details', href: ''}]},
+  DID_NOT_ATTEND: {text:'Did not attend', classes: 'govuk-tag--magenta', actions: [{text: 'Reschedule', href: ''}, {text: 'View feedback', href: ''}]},
+  DID_NOT_HAPPEN: {text:'Did not happen', classes: 'govuk-tag--magenta', actions: [{text: 'Reschedule', href: ''}, {text: 'View feedback', href: ''}]},
+}
+
 export default class ReferralAppointmentsPresenter extends ReferralLayoutPresenter<
   ReferralAppointmentsViewModel,
   ReferralAppointmentsContent
@@ -33,12 +42,16 @@ export default class ReferralAppointmentsPresenter extends ReferralLayoutPresent
       appointmentsTitle: content.appointmentsTitle,
       createAppointmentButton: this.buildAppointmentButton(content),
       noAppointmentsMessage: content.noAppointmentsMessage,
+      noUpcomingAppointmentsMessage: content.noUpcomingAppointmentsMessage,
+      noPastAppointmentsMessage: content.noPastAppointmentsMessage,
       upcomingAppointmentsTable: this.buildAppointmentsTable(
         content,
         upcomingAppointments,
         'referral-upcoming-appointments-table',
       ),
       pastAppointmentsTable: this.buildAppointmentsTable(content, pastAppointments, 'referral-past-appointments-table'),
+      hasUpcomingAppointments: upcomingAppointments.length > 0,
+      hasPastAppointments: pastAppointments.length > 0,
       hasAppointments: upcomingAppointments.length > 0 || pastAppointments.length > 0,
       notificationBanner:
         this.successAlert !== undefined
@@ -69,6 +82,7 @@ export default class ReferralAppointmentsPresenter extends ReferralLayoutPresent
     testId: string,
   ): GovukFrontendTable {
     return {
+      classes: 'appointments-table',
       attributes: {
         'data-module': 'moj-sortable-table',
         'data-testid': testId,
@@ -83,11 +97,24 @@ export default class ReferralAppointmentsPresenter extends ReferralLayoutPresent
         {
           text: content.dateColumnHeader,
           attributes: {
-            'aria-sort': 'none',
+            'aria-sort': 'ascending',
           },
         },
         {
           text: content.timeColumnHeader,
+          attributes: {
+            'aria-sort': 'none',
+          },
+        },
+        {
+          text: content.statusColumnHeader,
+          attributes: {
+            'aria-sort': 'none',
+          },
+        },
+        {
+          text: content.actionColumnHeader,
+          classes: 'govuk-table__header--numeric',
           attributes: {
             'aria-sort': 'none',
           },
@@ -103,7 +130,7 @@ export default class ReferralAppointmentsPresenter extends ReferralLayoutPresent
         {
           text: `${formatDate(new Date(appointment.appointmentDate), 'dd MMMM yyyy')}`,
           attributes: {
-            'data-sort-value': appointment.appointmentDate,
+            'data-sort-value': `${appointment.appointmentDate}T${formatTime24Hr(appointment.appointmentTime)}`,
           },
         },
         {
@@ -114,6 +141,19 @@ export default class ReferralAppointmentsPresenter extends ReferralLayoutPresent
           )}`,
           attributes: {
             'data-sort-value': formatTime24Hr(appointment.appointmentTime),
+          },
+        },
+        {
+          html: `<strong class="govuk-tag ${StatusLabel[appointment.appointmentStatus].classes}">${StatusLabel[appointment.appointmentStatus].text}</strong>`,
+          attributes: {
+            'data-sort-value': StatusLabel[appointment.appointmentStatus].text,
+          },
+        },
+        {
+          classes: 'govuk-table__cell--numeric',
+          html: `${StatusLabel[appointment.appointmentStatus].actions.map(action => `<a href="${action.href}">${action.text}</a>`).join('<br> ')}`,
+          attributes: {
+            'data-sort-value': StatusLabel[appointment.appointmentStatus].text,
           },
         },
       ]),
