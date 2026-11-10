@@ -58,7 +58,7 @@ test.describe('Full appointment journey', () => {
             dateOfBirth: '1980-01-01',
             crn: 'X123456',
           },
-          appointments: [
+          upcomingAppointments: [
             {
               id: '11111111-1111-4111-8111-111111111111',
               label: 'Contact session',
@@ -67,6 +67,7 @@ test.describe('Full appointment journey', () => {
               appointmentStatus: 'SCHEDULED',
             },
           ],
+          pastAppointments: [],
         },
         CASE_REFERENCE,
       ),

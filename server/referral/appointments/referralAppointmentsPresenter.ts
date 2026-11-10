@@ -25,7 +25,7 @@ export default class ReferralAppointmentsPresenter extends ReferralLayoutPresent
   buildViewModel(res: Response): ReferralAppointmentsViewModel {
     const content = this.buildStaticContent(res)
     const { firstName, lastName } = this.referralAppointments.personDetails
-    const { appointments } = this.referralAppointments
+    const { upcomingAppointments, pastAppointments } = this.referralAppointments
 
     return {
       pageHeader: `${content.pageHeader} ${firstName} ${lastName}`,
@@ -33,8 +33,13 @@ export default class ReferralAppointmentsPresenter extends ReferralLayoutPresent
       appointmentsTitle: content.appointmentsTitle,
       createAppointmentButton: this.buildAppointmentButton(content),
       noAppointmentsMessage: content.noAppointmentsMessage,
-      appointmentsTable: this.buildAppointmentsTable(content),
-      hasAppointments: appointments.length > 0,
+      upcomingAppointmentsTable: this.buildAppointmentsTable(
+        content,
+        upcomingAppointments,
+        'referral-upcoming-appointments-table',
+      ),
+      pastAppointmentsTable: this.buildAppointmentsTable(content, pastAppointments, 'referral-past-appointments-table'),
+      hasAppointments: upcomingAppointments.length > 0 || pastAppointments.length > 0,
       notificationBanner:
         this.successAlert !== undefined
           ? {
@@ -58,11 +63,15 @@ export default class ReferralAppointmentsPresenter extends ReferralLayoutPresent
     }
   }
 
-  private buildAppointmentsTable(content: ReferralAppointmentsContent): GovukFrontendTable {
+  private buildAppointmentsTable(
+    content: ReferralAppointmentsContent,
+    appointments: ReferralAppointmentsBffResponseDto['upcomingAppointments'],
+    testId: string,
+  ): GovukFrontendTable {
     return {
       attributes: {
         'data-module': 'moj-sortable-table',
-        'data-testid': 'referral-appointments-table',
+        'data-testid': testId,
       },
       head: [
         {
@@ -84,7 +93,7 @@ export default class ReferralAppointmentsPresenter extends ReferralLayoutPresent
           },
         },
       ],
-      rows: this.referralAppointments.appointments.map(appointment => [
+      rows: appointments.map(appointment => [
         {
           text: appointment.label,
           attributes: {

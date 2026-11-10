@@ -25,12 +25,21 @@ describe('ReferralAppointmentsPresenter', () => {
   it('renders appointments and activates the appointments tab', () => {
     const response: ReferralAppointmentsBffResponseDto = {
       personDetails: { firstName: 'Alex', lastName: 'Example', dateOfBirth: '1980-01-01', crn: 'X123456' },
-      appointments: [
+      upcomingAppointments: [
         {
           id: 'appointment-id',
           label: 'Contact session',
           appointmentDate: '2026-10-09',
           appointmentTime: { hour: 2, minute: 30, amPm: 'pm' },
+          appointmentStatus: 'SCHEDULED',
+        },
+      ],
+      pastAppointments: [
+        {
+          id: 'past-appointment-id',
+          label: 'Initial assessment',
+          appointmentDate: '2026-09-01',
+          appointmentTime: { hour: 9, minute: 0, amPm: 'am' },
           appointmentStatus: 'SCHEDULED',
         },
       ],
@@ -40,21 +49,33 @@ describe('ReferralAppointmentsPresenter', () => {
 
     expect(viewModel.pageHeader).toBe('Referral for Alex Example')
     expect(viewModel.hasAppointments).toBe(true)
-    expect(viewModel.appointmentsTable.head).toEqual([
+    expect(viewModel.upcomingAppointmentsTable.head).toEqual([
       { text: 'Appointment type', attributes: { 'aria-sort': 'none' } },
       { text: 'Date', attributes: { 'aria-sort': 'none' } },
       { text: 'Start time', attributes: { 'aria-sort': 'none' } },
     ])
-    expect(viewModel.appointmentsTable.rows).toEqual([
+    expect(viewModel.upcomingAppointmentsTable.rows).toEqual([
       [
         { text: 'Contact session', attributes: { 'data-sort-value': 'Contact session' } },
         { text: '09 October 2026', attributes: { 'data-sort-value': '2026-10-09' } },
         { text: '2:30pm', attributes: { 'data-sort-value': '14:30' } },
       ],
     ])
-    expect(viewModel.appointmentsTable.attributes).toEqual({
+    expect(viewModel.upcomingAppointmentsTable.attributes).toEqual({
       'data-module': 'moj-sortable-table',
-      'data-testid': 'referral-appointments-table',
+      'data-testid': 'referral-upcoming-appointments-table',
+    })
+    expect(viewModel.pastAppointmentsTable.head).toEqual(viewModel.upcomingAppointmentsTable.head)
+    expect(viewModel.pastAppointmentsTable.rows).toEqual([
+      [
+        { text: 'Initial assessment', attributes: { 'data-sort-value': 'Initial assessment' } },
+        { text: '01 September 2026', attributes: { 'data-sort-value': '2026-09-01' } },
+        { text: '9:00am', attributes: { 'data-sort-value': '09:00' } },
+      ],
+    ])
+    expect(viewModel.pastAppointmentsTable.attributes).toEqual({
+      'data-module': 'moj-sortable-table',
+      'data-testid': 'referral-past-appointments-table',
     })
     expect(viewModel.createAppointmentButton).toEqual({
       text: 'Book appointment',
@@ -91,7 +112,7 @@ describe('ReferralAppointmentsPresenter', () => {
   ])('uses a 24-hour sort value for %j while retaining the display time', (appointmentTime, text, sortValue) => {
     const response: ReferralAppointmentsBffResponseDto = {
       personDetails: { firstName: 'Alex', lastName: 'Example', dateOfBirth: '1980-01-01', crn: 'X123456' },
-      appointments: [
+      upcomingAppointments: [
         {
           id: 'appointment-id',
           label: 'Contact session',
@@ -100,11 +121,12 @@ describe('ReferralAppointmentsPresenter', () => {
           appointmentStatus: 'SCHEDULED',
         },
       ],
+      pastAppointments: [],
     }
 
     const viewModel = new ReferralAppointmentsPresenter(response, caseReference).buildViewModel(makeResponse())
 
-    expect(viewModel.appointmentsTable.rows).toEqual([
+    expect(viewModel.upcomingAppointmentsTable.rows).toEqual([
       [
         { text: 'Contact session', attributes: { 'data-sort-value': 'Contact session' } },
         { text: '09 October 2026', attributes: { 'data-sort-value': '2026-10-09' } },
@@ -113,16 +135,44 @@ describe('ReferralAppointmentsPresenter', () => {
     ])
   })
 
+  it.each(['upcomingAppointments', 'pastAppointments'] as const)(
+    'renders appointments when only %s is populated',
+    appointmentList => {
+      const response: ReferralAppointmentsBffResponseDto = {
+        personDetails: { firstName: 'Alex', lastName: 'Example', dateOfBirth: '1980-01-01', crn: 'X123456' },
+        upcomingAppointments: [],
+        pastAppointments: [],
+        [appointmentList]: [
+          {
+            id: 'appointment-id',
+            label: 'Contact session',
+            appointmentDate: '2026-10-09',
+            appointmentTime: { hour: 2, minute: 30, amPm: 'pm' },
+            appointmentStatus: 'SCHEDULED',
+          },
+        ],
+      }
+
+      const viewModel = new ReferralAppointmentsPresenter(response, caseReference).buildViewModel(makeResponse())
+
+      expect(viewModel.hasAppointments).toBe(true)
+      expect(viewModel.upcomingAppointmentsTable.rows).toHaveLength(appointmentList === 'upcomingAppointments' ? 1 : 0)
+      expect(viewModel.pastAppointmentsTable.rows).toHaveLength(appointmentList === 'pastAppointments' ? 1 : 0)
+    },
+  )
+
   it('renders an empty appointment list when the API returns no appointments', () => {
     const response: ReferralAppointmentsBffResponseDto = {
       personDetails: { firstName: 'Alex', lastName: 'Example', dateOfBirth: '1980-01-01', crn: 'X123456' },
-      appointments: [],
+      upcomingAppointments: [],
+      pastAppointments: [],
     }
 
     const viewModel = new ReferralAppointmentsPresenter(response, caseReference).buildViewModel(makeResponse())
 
     expect(viewModel.hasAppointments).toBe(false)
-    expect(viewModel.appointmentsTable.rows).toEqual([])
+    expect(viewModel.upcomingAppointmentsTable.rows).toEqual([])
+    expect(viewModel.pastAppointmentsTable.rows).toEqual([])
     expect(viewModel.noAppointmentsMessage).toBe('No appointments scheduled')
     expect(viewModel.createAppointmentButton).toEqual({
       text: 'Book appointment',
@@ -134,7 +184,8 @@ describe('ReferralAppointmentsPresenter', () => {
   it('shows a success alert after an appointment has been created', () => {
     const response: ReferralAppointmentsBffResponseDto = {
       personDetails: { firstName: 'Alex', lastName: 'Example', dateOfBirth: '1980-01-01', crn: 'X123456' },
-      appointments: [],
+      upcomingAppointments: [],
+      pastAppointments: [],
     }
     const successAlert = {
       title: 'Contact session booked',
@@ -157,7 +208,8 @@ describe('ReferralAppointmentsPresenter', () => {
   it('does not show a notification banner when there is no success alert', () => {
     const response: ReferralAppointmentsBffResponseDto = {
       personDetails: { firstName: 'Alex', lastName: 'Example', dateOfBirth: '1980-01-01', crn: 'X123456' },
-      appointments: [],
+      upcomingAppointments: [],
+      pastAppointments: [],
     }
 
     const viewModel = new ReferralAppointmentsPresenter(response, caseReference).buildViewModel(makeResponse())
