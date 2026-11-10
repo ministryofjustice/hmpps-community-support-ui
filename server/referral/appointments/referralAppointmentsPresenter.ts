@@ -6,6 +6,8 @@ import { formatTime12Hr, formatTime24Hr } from '../../utils/timeFormat'
 import ReferralLayoutPresenter, { ReferralNavigationValues } from '../referralLayout/referralLayoutPresenter'
 import type { ReferralAppointmentsContent, ReferralAppointmentsViewModel } from './referralAppointmentsViewModel'
 
+const INITIAL_CONTACT_SESSION_LABEL = 'Initial contact session'
+
 const statusTagClasses: Record<string, string> = {
   SCHEDULED: 'govuk-tag--blue',
   NEEDS_FEEDBACK: 'govuk-tag--red',
@@ -153,7 +155,13 @@ export default class ReferralAppointmentsPresenter extends ReferralLayoutPresent
           },
           {
             classes: 'govuk-table__cell--numeric',
-            html: status.actions.map(action => `<a href="${action.href}">${action.text}</a>`).join('<br> '),
+            html: status.actions
+              .filter(
+                action =>
+                  !('initialContactSessionOnly' in action) || appointment.label === INITIAL_CONTACT_SESSION_LABEL,
+              )
+              .map(action => `<a href="${action.href}">${action.text}</a>`)
+              .join('<br> '),
             attributes: {
               'data-sort-value': status.text,
             },

@@ -351,14 +351,14 @@
       "DID_NOT_ATTEND": {
         "text": "Did not attend",
         "actions": [
-          { "text": "Reschedule", "href": "#" },
+          { "text": "Reschedule", "href": "#", "initialContactSessionOnly": true },
           { "text": "View feedback", "href": "#" }
         ]
       },
       "DID_NOT_HAPPEN": {
         "text": "Did not happen",
         "actions": [
-          { "text": "Reschedule", "href": "#" },
+          { "text": "Reschedule", "href": "#", "initialContactSessionOnly": true },
           { "text": "View feedback", "href": "#" }
         ]
       }

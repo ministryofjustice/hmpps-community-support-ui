@@ -165,8 +165,8 @@ describe('ReferralAppointmentsPresenter', () => {
     ['NEEDS_FEEDBACK', 'Needs feedback', 'govuk-tag--red', ['Add attendance and feedback']],
     ['COMPLETED', 'Completed', 'govuk-tag--green', ['View feedback']],
     ['CHANGED', 'Changed', 'govuk-tag--orange', ['View session details']],
-    ['DID_NOT_ATTEND', 'Did not attend', 'govuk-tag--magenta', ['Reschedule', 'View feedback']],
-    ['DID_NOT_HAPPEN', 'Did not happen', 'govuk-tag--magenta', ['Reschedule', 'View feedback']],
+    ['DID_NOT_ATTEND', 'Did not attend', 'govuk-tag--magenta', ['View feedback']],
+    ['DID_NOT_HAPPEN', 'Did not happen', 'govuk-tag--magenta', ['View feedback']],
   ] as const)('renders status tag and actions for %s', (status, text, tagClass, actions) => {
     const response = {
       personDetails: { firstName: 'Alex', lastName: 'Example', dateOfBirth: '1980-01-01', crn: 'X123456' },
@@ -195,6 +195,34 @@ describe('ReferralAppointmentsPresenter', () => {
       attributes: { 'data-sort-value': text },
     })
   })
+
+  it.each(['DID_NOT_ATTEND', 'DID_NOT_HAPPEN'] as const)(
+    'shows Reschedule for %s only on an Initial contact session',
+    status => {
+      const buildRows = (label: string) =>
+        new ReferralAppointmentsPresenter(
+          {
+            personDetails: { firstName: 'Alex', lastName: 'Example', dateOfBirth: '1980-01-01', crn: 'X123456' },
+            upcomingAppointments: [],
+            pastAppointments: [
+              {
+                id: 'appointment-id',
+                label,
+                appointmentDate: '2026-10-09',
+                appointmentTime: { hour: 2, minute: 30, amPm: 'pm' },
+                appointmentStatus: status,
+              },
+            ],
+          },
+          caseReference,
+        ).buildViewModel(makeResponse()).pastAppointmentsTable.rows
+
+      expect(buildRows('Initial contact session')[0][4]).toMatchObject({
+        html: '<a href="#">Reschedule</a><br> <a href="#">View feedback</a>',
+      })
+      expect(buildRows('Contact session')[0][4]).toMatchObject({ html: '<a href="#">View feedback</a>' })
+    },
+  )
 
   it.each(['upcomingAppointments', 'pastAppointments'] as const)(
     'renders appointments when only %s is populated',

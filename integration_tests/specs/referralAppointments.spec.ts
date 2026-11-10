@@ -81,9 +81,9 @@ test.describe('Referral Appointments Page', () => {
       'Action',
     ])
     await expect(appointmentsPage.upcomingAppointmentsTable.locator('tbody tr').first().locator('td')).toHaveText([
-      'Contact session',
-      '01 November 2026',
-      '1:30pm',
+      'Handover session',
+      '12 October 2026',
+      '9:00am',
       'Scheduled',
       'View or change details',
     ])
