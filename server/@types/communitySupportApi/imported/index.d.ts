@@ -657,7 +657,10 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /** Get referral appointments for the appointments tab */
+    /**
+     * Get upcoming and past referral appointments for the appointments tab
+     * @description Appointments move into the past list once their start time has passed. Both lists retain the existing newest-created-first ordering.
+     */
     get: operations['getReferralAppointments']
     put?: never
     post?: never
@@ -1343,8 +1346,10 @@ export interface components {
     }
     SessionMethodRequest: {
       /** @enum {string} */
-      type: 'PHONE' | 'VIDEO' | 'IN_PERSON' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION'
+      type:
+        'PHONE' | 'VIDEO' | 'IN_PERSON' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION' | 'IN_PERSON_PRISON'
       additionalDetails?: string | null
+      prisonCode?: string | null
       pdu?: string | null
       addressLine1?: string | null
       addressLine2?: string | null
@@ -1385,6 +1390,8 @@ export interface components {
     }
     InPersonAppointment: Omit<WithRequired<components['schemas']['SessionMethod'], 'type'>, 'appointmentCategory'> & {
       probationOfficeName?: string | null
+      prisonCode?: string | null
+      prisonName?: string | null
       addressLine1?: string | null
       addressLine2?: string | null
       townOrCity?: string | null
@@ -1554,8 +1561,15 @@ export interface components {
       /** Format: uuid */
       id: string
       /** @enum {string} */
-      method: 'PHONE_CALL' | 'VIDEO_CALL' | 'IN_PERSON' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION'
+      method:
+        | 'PHONE_CALL'
+        | 'VIDEO_CALL'
+        | 'IN_PERSON'
+        | 'IN_PERSON_PROBATION_OFFICE'
+        | 'IN_PERSON_OTHER_LOCATION'
+        | 'IN_PERSON_PRISON'
       methodDetails?: string | null
+      prisonCode?: string | null
       addressLine1?: string | null
       addressLine2?: string | null
       townOrCity?: string | null
@@ -1904,7 +1918,13 @@ export interface components {
     AppointmentDetailsDto: {
       /** @enum {string|null} */
       method?:
-        'PHONE_CALL' | 'VIDEO_CALL' | 'IN_PERSON' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION' | null
+        | 'PHONE_CALL'
+        | 'VIDEO_CALL'
+        | 'IN_PERSON'
+        | 'IN_PERSON_PROBATION_OFFICE'
+        | 'IN_PERSON_OTHER_LOCATION'
+        | 'IN_PERSON_PRISON'
+        | null
       date?: string | null
       time?: string | null
     }
@@ -1944,7 +1964,8 @@ export interface components {
     }
     ReferralAppointmentsBffResponseDto: {
       personDetails: components['schemas']['ReferralAppointmentsPersonDetailsDto']
-      appointments: components['schemas']['ReferralAppointmentSummaryDto'][]
+      upcomingAppointments: components['schemas']['ReferralAppointmentSummaryDto'][]
+      pastAppointments: components['schemas']['ReferralAppointmentSummaryDto'][]
     }
     ReferralAppointmentsPersonDetailsDto: {
       firstName: string
