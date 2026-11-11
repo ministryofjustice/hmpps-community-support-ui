@@ -141,10 +141,6 @@ export default class CommunitySupportApiClient extends RestClient {
     return this.get({ path: '/bff/referral/withdrawal-reasons' }, asSystem(username))
   }
 
-  getICS(caseRefId: string, username: string): Promise<AppointmentIcsResponse> {
-    return this.get({ path: `/bff/referral-details/${caseRefId}/ics` }, asSystem(username))
-  }
-
   getIcsFeedbackWhyDidSessionNotHappen(
     caseRefId: string,
     username: string,

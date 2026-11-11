@@ -12,10 +12,6 @@ import CommunitySupportApiClient from '../data/communitySupportApiClient'
 export default class AppointmentService {
   constructor(private communitySupportApiClient: CommunitySupportApiClient) {}
 
-  getICS(icsId: string, username: string): Promise<AppointmentIcsResponse> {
-    return this.communitySupportApiClient.getICS(icsId, username)
-  }
-
   getCreateAppointmentReferenceData(
     caseReference: string,
     username: string,

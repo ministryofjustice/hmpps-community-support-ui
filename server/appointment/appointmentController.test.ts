@@ -70,7 +70,6 @@ describe('AppointmentController', () => {
       await appointmentController.changeIcsDetailsReason(req, res)
 
       expect(appointmentService.getIcsChangeReason).toHaveBeenCalledWith(caseRefId, 'user1')
-      expect(appointmentService.getICS).not.toHaveBeenCalled()
       expect(ChangeIcsDetailsReasonPresenter).toHaveBeenCalledWith(
         caseRefId,
         'John Smith',
@@ -1822,7 +1821,6 @@ describe('AppointmentController', () => {
         referralFirstName: mockAppointmentIcsResponse.referralFirstName,
         appointmentIcsId: mockAppointmentIcsResponse.appointmentIcsId,
       })
-      const getIcsSpy = jest.spyOn(appointmentService, 'getICS')
       const username = 'user1'
       const mockSubmission = {
         record: {
@@ -1849,7 +1847,6 @@ describe('AppointmentController', () => {
         mockSubmission,
         username,
       )
-      expect(getIcsSpy).not.toHaveBeenCalled()
       expect(icsFeedbackCheckReq.session.icsFeedbackSubmission).toBeFalsy()
       expect(icsFeedbackCheckReq.session.referralProgressBanner).toEqual(bannerContent)
       expect(icsFeedbackCheckRes.redirect).toHaveBeenCalledWith(`/progress/${caseRefId}`)

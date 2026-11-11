@@ -5,9 +5,9 @@ import AppointmentValidator from '../AppointmentValidator'
 import { saveFormToSession, ScheduledIcsFormDataResolver } from './ScheduledIcsFormDataResolver'
 
 describe('ScheduledIcsFormDataResolver', () => {
-  const getICS = jest.fn()
+  const getIcsChangeDetails = jest.fn()
   const service = {
-    getIcsChangeDetails: getICS,
+    getIcsChangeDetails,
   } as unknown as AppointmentService
   const resolver = new ScheduledIcsFormDataResolver(service, new AppointmentValidator())
   describe('resolve from session', () => {
@@ -168,7 +168,7 @@ describe('ScheduledIcsFormDataResolver', () => {
 
   describe('resolve from ics', () => {
     beforeEach(() => {
-      getICS.mockClear()
+      getIcsChangeDetails.mockClear()
     })
     test('meeting by phone', async () => {
       const ics: AppointmentIcsResponse = {
@@ -198,7 +198,7 @@ describe('ScheduledIcsFormDataResolver', () => {
           reasonForChange: null,
         },
       }
-      getICS.mockResolvedValue(ics)
+      getIcsChangeDetails.mockResolvedValue(ics)
       const req = {
         params: { caseRefId: 'RF9364SE' },
       } as unknown as Request
@@ -208,7 +208,7 @@ describe('ScheduledIcsFormDataResolver', () => {
         },
       } as unknown as Response
       const formData = await resolver.resolve(req, res)
-      expect(getICS).toHaveBeenCalledWith('RF9364SE', 'name')
+      expect(getIcsChangeDetails).toHaveBeenCalledWith('RF9364SE', 'name')
       expect(formData.informedMethods).toStrictEqual(['informedByPhone', 'informedByTextMessage'])
       expect(formData.sessionDate).toBe('18/6/2026')
       expect(formData.sessionTakePlace).toBe('ByPhone')
@@ -245,7 +245,7 @@ describe('ScheduledIcsFormDataResolver', () => {
           reasonForChange: null,
         },
       }
-      getICS.mockResolvedValue(ics)
+      getIcsChangeDetails.mockResolvedValue(ics)
       const req = {
         params: { caseRefId: 'RF9364SE' },
       } as unknown as Request
@@ -296,7 +296,7 @@ describe('ScheduledIcsFormDataResolver', () => {
           reasonForChange: null,
         },
       }
-      getICS.mockResolvedValue(ics)
+      getIcsChangeDetails.mockResolvedValue(ics)
       const req = {
         params: { caseRefId: 'RF9364SE' },
       } as unknown as Request
@@ -351,7 +351,7 @@ describe('ScheduledIcsFormDataResolver', () => {
           reasonForChange: null,
         },
       }
-      getICS.mockResolvedValue(ics)
+      getIcsChangeDetails.mockResolvedValue(ics)
       const req = {
         params: { caseRefId: 'RF9364SE' },
       } as unknown as Request
