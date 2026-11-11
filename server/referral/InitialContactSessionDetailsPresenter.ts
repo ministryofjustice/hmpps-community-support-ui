@@ -139,9 +139,8 @@ export default class InitialContactSessionDetailsPresenter extends PresenterBase
     ${sessionCommunications.map(str => `<li>${showSessionCommunication(str)}</li>`).join(`\n`)}
     </ul>`
 
-    const sessionMethodKeys = Object.keys(sessionMethod)
     this.locationLine = locationFields
-      .filter(field => sessionMethodKeys.includes(field))
+      .filter(field => field in sessionMethod)
       .map(field => sessionMethod[field])
       .map(str => (str ? `<p>${str}</p>` : ''))
       .join('\n')

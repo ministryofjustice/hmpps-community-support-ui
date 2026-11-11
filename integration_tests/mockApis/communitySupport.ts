@@ -33,6 +33,7 @@ import {
   OffenceSentenceInfoBffResponseDto,
   WithdrawReferralRequest,
   IcsViewOrChangeBffDto,
+  IcsChangeDetailsBffDto,
 } from '@community-support-api'
 import { stubFor } from './wiremock'
 import { duplicateData } from '../testUtils'
@@ -154,12 +155,37 @@ const stubGetIcsViewOrChange = (caseRefId: string, appointment: AppointmentIcsRe
   })
 }
 
+const stubGetIcsChangeDetails = (caseRefId: string, appointment: AppointmentIcsResponse) => {
+  const body: IcsChangeDetailsBffDto = {
+    firstName: appointment.referralFirstName,
+    personIdentifier: referralInformationInCommunity.personIdentifier,
+    referralDate: referralInformationInCommunity.referralDate,
+    appointmentDate: appointment.appointmentDate,
+    appointmentTime: appointment.appointmentTime,
+    sessionMethod: appointment.sessionMethod,
+    sessionCommunications: appointment.sessionCommunications,
+  }
+  return stubFor({
+    request: {
+      method: 'GET',
+      urlPathPattern: `/community-support/bff/referral/${caseRefId}/ics-change-details`,
+    },
+    response: {
+      status: 200,
+      headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+      jsonBody: body,
+      transformers: ['response-template'],
+    },
+  })
+}
+
 export default {
   stubGetIcsFeedbackPage,
   stubGetIcsFeedbackDidSessionTakePlace,
   stubGetIcsFeedbackAttendance,
   stubGetIcsFeedbackSessionDetails,
   stubGetIcsViewOrChange,
+  stubGetIcsChangeDetails,
   stubPing: (httpStatus = 200): SuperAgentRequest =>
     stubFor({
       request: {

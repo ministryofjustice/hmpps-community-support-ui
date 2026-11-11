@@ -26,6 +26,8 @@ test.describe('Change Session Details Page', () => {
       communitySupport.stubGetICS(inPerson.caseRefId, inPerson.data),
       communitySupport.stubGetIcsViewOrChange(virtual.caseRefId, virtual.data),
       communitySupport.stubGetIcsViewOrChange(inPerson.caseRefId, inPerson.data),
+      communitySupport.stubGetIcsChangeDetails(virtual.caseRefId, virtual.data),
+      communitySupport.stubGetIcsChangeDetails(inPerson.caseRefId, inPerson.data),
       communitySupport.stubGetReferralInformation(200, virtual.caseRefId),
       prisonApi.stubGetPrisons(),
       communitySupport.stubGetProbationOffices(probationOfficesData),

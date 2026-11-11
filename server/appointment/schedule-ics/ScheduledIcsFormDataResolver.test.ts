@@ -7,7 +7,7 @@ import { saveFormToSession, ScheduledIcsFormDataResolver } from './ScheduledIcsF
 describe('ScheduledIcsFormDataResolver', () => {
   const getICS = jest.fn()
   const service = {
-    getICS,
+    getIcsChangeDetails: getICS,
   } as unknown as AppointmentService
   const resolver = new ScheduledIcsFormDataResolver(service, new AppointmentValidator())
   describe('resolve from session', () => {

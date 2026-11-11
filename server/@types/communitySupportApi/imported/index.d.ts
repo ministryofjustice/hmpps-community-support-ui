@@ -616,6 +616,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/bff/referral/{caseReference}/ics-change-details': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get referral information and ICS prefill for the change details page */
+    get: operations['getIcsChangeDetails']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/bff/referral/{caseReference}/existing-support-needs': {
     parameters: {
       query?: never
@@ -1930,6 +1947,17 @@ export interface components {
       appointmentDetails?: components['schemas']['AppointmentDetailsDto'] | null
       otherAppointmentMethods?: string[] | null
     }
+    IcsChangeDetailsBffDto: {
+      firstName: string
+      personIdentifier: string
+      /** Format: date */
+      referralDate: string
+      /** Format: date */
+      appointmentDate: string
+      appointmentTime: components['schemas']['AppointmentTimeResponse']
+      sessionMethod: components['schemas']['SessionMethod']
+      sessionCommunications: string[]
+    }
     ExistingSupportNeedsBffResponseDto: {
       physicalHealthDetails?: string | null
       mentalEmotionalHealthDetails?: string | null
@@ -2126,21 +2154,9 @@ export interface components {
       /** Format: date */
       appointmentDate: string
       appointmentTime: components['schemas']['AppointmentTimeResponse']
-      sessionMethod: components['schemas']['IcsViewOrChangeSessionMethodDto']
+      sessionMethod: components['schemas']['SessionMethod']
       sessionCommunications: string[]
       changeAppointmentDetails?: components['schemas']['ChangeAppointmentDetails'] | null
-    }
-    IcsViewOrChangeSessionMethodDto: {
-      /** @enum {string} */
-      type:
-        'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION' | 'IN_PERSON_PRISON_ESTABLISMENT' | 'PHONE' | 'VIDEO'
-      whyNotInPersonReason?: string | null
-      probationOfficeName?: string | null
-      addressLine1?: string | null
-      addressLine2?: string | null
-      townOrCity?: string | null
-      county?: string | null
-      postcode?: string | null
     }
     ProbationOffice: {
       /** Format: int32 */
@@ -3764,6 +3780,37 @@ export interface operations {
         }
       }
       /** @description Appointment not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getIcsChangeDetails: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        caseReference: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description ICS change details found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['IcsChangeDetailsBffDto']
+        }
+      }
+      /** @description Referral or ICS appointment not found */
       404: {
         headers: {
           [name: string]: unknown

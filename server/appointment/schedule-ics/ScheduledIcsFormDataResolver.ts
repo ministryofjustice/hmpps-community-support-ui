@@ -1,6 +1,6 @@
 import {
-  AppointmentIcsResponse,
   CreateAppointmentRequest,
+  IcsChangeDetailsBffDto,
   SessionMethod,
   SessionMethodRequest,
 } from '@community-support-api'
@@ -200,15 +200,20 @@ const createIcsSessionData = ({
   appointmentTime,
   sessionMethod,
   sessionCommunications,
-}: AppointmentIcsResponse): CreateAppointmentRequest => ({
+}: Pick<
+  IcsChangeDetailsBffDto,
+  'appointmentDate' | 'appointmentTime' | 'sessionMethod' | 'sessionCommunications'
+>): CreateAppointmentRequest => ({
   date: appointmentDate,
   time: appointmentTime,
   sessionMethodRequest: createMethodSessionData(sessionMethod),
   sessionCommunication: sessionCommunications,
 })
 
-const loadFormFromICS = (ics: AppointmentIcsResponse, validator: AppointmentValidator): ScheduledIcsFormData =>
-  loadFormFromSession(createIcsSessionData(ics), validator)
+const loadFormFromICS = (
+  ics: Pick<IcsChangeDetailsBffDto, 'appointmentDate' | 'appointmentTime' | 'sessionMethod' | 'sessionCommunications'>,
+  validator: AppointmentValidator,
+): ScheduledIcsFormData => loadFormFromSession(createIcsSessionData(ics), validator)
 
 const getReasonFromFormData = (formData: ScheduledIcsFormData, sessionTakePlace: string): string | undefined => {
   switch (sessionTakePlace) {
@@ -336,7 +341,7 @@ export class ScheduledIcsFormDataResolver {
     const { username } = res.locals.user
     const caseRefId = req.params.caseRefId as string
     return this.appointmentService
-      .getICS(caseRefId, username)
+      .getIcsChangeDetails(caseRefId, username)
       .then(ics => (ics ? loadFormFromICS(ics, this.validator) : undefined))
       .catch(() => Promise.resolve(undefined))
   }
