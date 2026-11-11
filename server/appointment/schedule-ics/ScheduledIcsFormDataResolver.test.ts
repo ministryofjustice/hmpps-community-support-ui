@@ -11,6 +11,25 @@ describe('ScheduledIcsFormDataResolver', () => {
   } as unknown as AppointmentService
   const resolver = new ScheduledIcsFormDataResolver(service, new AppointmentValidator())
   describe('resolve from session', () => {
+    test('retains the selected prison when returning to the form', () => {
+      const createAppointmentRequest = saveFormToSession({
+        appointmentType: 'PRE_RELEASE_SESSION',
+        sessionDate: '20/6/2026',
+        'sessionTime-hour': '11',
+        'sessionTime-minute': '30',
+        'sessionTime-meridiem': 'am',
+        sessionTakePlace: 'InPrison',
+        prison: 'MDI',
+      })
+      expect(createAppointmentRequest.sessionMethodRequest).toEqual({ type: 'IN_PERSON_PRISON', prisonCode: 'MDI' })
+      const req = { session: { createAppointmentRequest } } as unknown as Request
+      expect(resolver.resolveFromSession(req)).toMatchObject({
+        sessionDate: '20/6/2026',
+        sessionTakePlace: 'InPrison',
+        prison: 'MDI',
+      })
+    })
+
     test('meeting by phone', async () => {
       const existing = {
         date: '2026-06-18',
@@ -378,6 +397,14 @@ describe('ScheduledIcsFormDataResolver', () => {
         otherMethodOfContact: 'Letter',
       })
       expect(request.sessionCommunication).toStrictEqual(['informedByEmail', 'Letter'])
+    })
+
+    it('keeps typed text that happens to equal the checkbox value', () => {
+      const request = saveFormToSession({
+        informedMethods: ['informedByEmail', 'informedByOtherMethod'],
+        otherMethodOfContact: 'informedByOtherMethod',
+      })
+      expect(request.sessionCommunication).toStrictEqual(['informedByEmail', 'informedByOtherMethod'])
     })
   })
 })

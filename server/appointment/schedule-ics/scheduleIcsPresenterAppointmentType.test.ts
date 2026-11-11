@@ -17,7 +17,7 @@ describe('ScheduleIcsPresenter with appointment type', () => {
     pageHeaders: {
       ICS: 'Book initial contact session (ICS)',
       CONTACT_SESSION: 'Schedule the contact session',
-      PRE_RELEASE_SESSION: 'Schedule the pre-release session',
+      PRE_RELEASE_SESSION: 'Book pre-release session',
       POST_RELEASE_SESSION: 'Schedule the post-release session',
       HANDOVER_SESSION: 'Schedule the handover session',
     },
@@ -50,7 +50,7 @@ describe('ScheduleIcsPresenter with appointment type', () => {
   test.each([
     ['ICS', ['ByPhone', 'ByVideo', 'InProbationOffice', 'InSomewhereElse']],
     ['CONTACT_SESSION', ['ByPhone', 'ByVideo', 'InProbationOffice', 'InSomewhereElse']],
-    ['PRE_RELEASE_SESSION', ['ByPhone', 'ByVideo', 'InSomewhereElse']],
+    ['PRE_RELEASE_SESSION', ['ByPhone', 'ByVideo', 'InPrison']],
     ['POST_RELEASE_SESSION', ['ByPhone', 'ByVideo', 'InProbationOffice', 'InSomewhereElse']],
     ['HANDOVER_SESSION', ['ByPhone', 'ByVideo', 'InPerson']],
   ] as [SessionAppointmentType, string[]][])('%s shows the correct methods', (type, expected) => {
@@ -68,7 +68,7 @@ describe('ScheduleIcsPresenter with appointment type', () => {
   test.each([
     ['ICS', 'Book initial contact session (ICS)'],
     ['CONTACT_SESSION', 'Schedule the contact session'],
-    ['PRE_RELEASE_SESSION', 'Schedule the pre-release session'],
+    ['PRE_RELEASE_SESSION', 'Book pre-release session'],
     ['POST_RELEASE_SESSION', 'Schedule the post-release session'],
     ['HANDOVER_SESSION', 'Schedule the handover session'],
   ] as [SessionAppointmentType, string][])('%s page header and submit href', (type, header) => {
@@ -99,8 +99,9 @@ describe('ScheduleIcsPresenter with appointment type', () => {
     })
   })
 
-  test('informed question is hidden for handover sessions only', () => {
+  test('informed question is hidden for pre-release and handover sessions', () => {
     expect(build('HANDOVER_SESSION').howWasTheyInformedAboutTheSessionInput).toBeUndefined()
+    expect(build('PRE_RELEASE_SESSION').howWasTheyInformedAboutTheSessionInput).toBeUndefined()
     expect(build('ICS').howWasTheyInformedAboutTheSessionInput).toBeDefined()
     expect(build('CONTACT_SESSION').howWasTheyInformedAboutTheSessionInput).toBeDefined()
     expect(build('POST_RELEASE_SESSION').howWasTheyInformedAboutTheSessionInput).toBeDefined()
@@ -171,6 +172,26 @@ describe('ScheduleIcsPresenter with appointment type', () => {
         itemsSummary('ICS', referralInformationInPrison),
       )
     })
+
+    test.each([referralInformationInCommunity, referralInformationInPrison])(
+      'pre-release sessions show the prison selector before the remote options',
+      referral => {
+        const viewModel = buildWithPageContent('PRE_RELEASE_SESSION', referral)
+        expect(viewModel.pageHeader).toBe('Book pre-release session')
+        expect(itemsSummary('PRE_RELEASE_SESSION', referral)).toEqual([
+          'divider:In person',
+          'InPrison',
+          'divider:Remote',
+          'ByPhone',
+          'ByVideo',
+        ])
+        expect(viewModel.meetAtTheGateInput).toBeUndefined()
+        expect(viewModel.howWasTheyInformedAboutTheSessionInput).toBeUndefined()
+        const prison = viewModel.howWillTheSessionTakePlaceInput.items.find(item => item.value === 'InPrison')
+        expect(prison.conditional.html).toContain('prisonList')
+        expect(prison.conditional.html).toContain('Albany (HMP)')
+      },
+    )
 
     test.each(['sessionDate', 'sessionTakePlace', 'probationOfficeList', 'otherMethodOfContact'])(
       'contact session renders the %s inline error',

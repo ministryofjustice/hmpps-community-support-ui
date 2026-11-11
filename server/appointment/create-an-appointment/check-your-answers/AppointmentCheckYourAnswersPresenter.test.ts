@@ -160,6 +160,33 @@ describe('AppointmentCheckYourAnswersPresenter', () => {
     expect(viewModel.appointmentSummary.rows.some(row => row.key.text === content.informedLabel)).toBe(false)
   })
 
+  it('shows the selected prison and omits stale informed-by data for a pre-release session', () => {
+    const viewModel = new AppointmentCheckYourAnswersPresenter(
+      'AB1234CD',
+      'John',
+      {
+        appointmentType: 'PRE_RELEASE_SESSION',
+        method: 'IN_PERSON_PRISON',
+        prisonCode: 'MDI',
+        prisonName: 'Moorland (HMP & YOI)',
+        informedBy: ['informedByPhone'],
+        meetAtTheGate: true,
+      },
+      [],
+    ).buildViewModel(res)
+
+    expect(viewModel.appointmentSummary.rows).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ key: { text: content.methodLabel }, value: { text: 'In person: prison' } }),
+        expect.objectContaining({ key: { text: content.prisonLabel }, value: { text: 'Moorland (HMP & YOI)' } }),
+      ]),
+    )
+    expect(viewModel.appointmentSummary.rows.some(row => row.key.text.includes('informed about the session'))).toBe(
+      false,
+    )
+    expect(viewModel.appointmentSummary.rows.some(row => row.key.text === content.meetAtTheGateLabel)).toBe(false)
+  })
+
   it('shows the entered address for an other-location appointment', () => {
     const presenter = new AppointmentCheckYourAnswersPresenter(
       'AB1234CD',

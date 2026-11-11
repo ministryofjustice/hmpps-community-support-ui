@@ -11,6 +11,7 @@ export default AppointmentCheckYourAnswersContentFactory.define(() => ({
   startTimeLabel: 'Start time',
   methodLabel: 'Method',
   probationOfficeLabel: 'Probation office',
+  prisonLabel: 'Prison',
   appointmentAddressLabel: 'Appointment address',
   reasonSessionNotInPersonLabel: 'Reason session is not in person',
   meetAtTheGateLabel: 'Meeting at the gate',

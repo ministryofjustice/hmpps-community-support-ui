@@ -184,14 +184,18 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
             id: 'prisonList',
             name: 'prisonList',
             label: { text: content.howSessionTakePlace.radioItems.prison.label },
-            items: buildPrisonOfficesSelectItems(this.prisonOffices, this.formData, content),
+            items: buildPrisonOfficesSelectItems(
+              this.rules?.prison ? this.prisonOffices.filter(prison => prison.active) : this.prisonOffices,
+              this.formData,
+              content,
+            ),
             value: this.formData?.prison,
             errorMessage: this.validationErrors?.messages?.prisonList,
           }),
         },
       },
     ]
-    return this.rules && !this.rules.probationOffice && !this.rules.somewhereElse ? [] : items
+    return this.rules && !this.rules.prison && !this.rules.probationOffice && !this.rules.somewhereElse ? [] : items
   }
 
   private buildRadioItems(content: ScheduleIcsContent): WithConditional<GovukFrontendRadiosItem>[] {
@@ -233,9 +237,10 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
         },
       },
     ]
-    const locationItems = this.inCustody
-      ? this.buildInCustodyRadioItems(content)
-      : this.buildInCommunityRadioItems(content)
+    const locationItems =
+      this.inCustody || this.rules?.prison
+        ? this.buildInCustodyRadioItems(content)
+        : this.buildInCommunityRadioItems(content)
     const inPersonItems = locationItems.concat(this.rules?.inPerson ? this.buildInPersonRadioItems(content) : [])
 
     const { groupHeadings } = content.howSessionTakePlace

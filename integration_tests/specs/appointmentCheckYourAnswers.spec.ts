@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 import { randomUUID } from 'node:crypto'
-import { createAppointmentReferenceData, probationOfficesData } from '../mockData/referenceData'
+import { createAppointmentReferenceData, prisonsData, probationOfficesData } from '../mockData/referenceData'
 import { referralInformationInCommunity } from '../mockData/referralInformationData'
 import { login, resetStubs, seedAppointmentSession } from '../testUtils'
 import communitySupport from '../mockApis/communitySupport'
@@ -60,7 +60,8 @@ test.describe('Appointment Check Your Answers Page', () => {
             dateOfBirth: '1980-01-01',
             crn: 'X123456',
           },
-          appointments: [],
+          upcomingAppointments: [],
+          pastAppointments: [],
         },
         CASE_REFERENCE,
       ),
@@ -129,9 +130,7 @@ test.describe('Appointment Check Your Answers Page', () => {
     await expect(cyaPage.informedByRow).toHaveCount(0)
   })
 
-  test('shows the entered other-location address in the appointment address row after changing to a pre-release session', async ({
-    page,
-  }) => {
+  test('shows the selected prison after changing to a pre-release session', async ({ page }) => {
     await seedAppointmentSession(page, {
       appointmentType: 'CONTACT_SESSION',
       date: '2026-10-16',
@@ -151,19 +150,12 @@ test.describe('Appointment Check Your Answers Page', () => {
 
     const detailsPage = await CreateAppointmentDetailsPage.verifyOnPage(page, 'PRE_RELEASE_SESSION')
     await detailsPage.fillDateAndTime('21/6/2026', '10', '30', 'AM')
-    await detailsPage.inSomewhereElseRadioButton.click()
-    await detailsPage.addressLine1Input.fill('1 High Street')
-    await detailsPage.addressLine2Input.fill('Flat 2')
-    await detailsPage.townInput.fill('Derby')
-    await detailsPage.postcodeInput.fill('DE1 2EQ')
-    await detailsPage.informedByPhoneCheckbox.check()
+    await detailsPage.prisonRadioButton.check()
+    await detailsPage.prisonSelect.selectOption(prisonsData[0].agencyId)
     await detailsPage.saveAndContinueButton.click()
 
     const updatedCyaPage = await AppointmentCheckYourAnswersPage.verifyOnPage(page)
-    await expect(updatedCyaPage.appointmentAddressRow).toContainText('1 High Street')
-    await expect(updatedCyaPage.appointmentAddressRow).toContainText('Flat 2')
-    await expect(updatedCyaPage.appointmentAddressRow).toContainText('Derby')
-    await expect(updatedCyaPage.appointmentAddressRow).toContainText('DE1 2EQ')
-    await expect(updatedCyaPage.appointmentAddressRow.locator('dd br')).toHaveCount(3)
+    await expect(updatedCyaPage.methodRow).toContainText('In person: prison')
+    await expect(updatedCyaPage.prisonRow).toContainText(prisonsData[0].description)
   })
 })
