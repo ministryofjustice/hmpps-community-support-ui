@@ -8,8 +8,12 @@ export type ReferralAppointmentsViewModel = {
   appointmentsTitle: string
   createAppointmentButton: GovukFrontendButton
   noAppointmentsMessage: string
+  noUpcomingAppointmentsMessage: string
+  noPastAppointmentsMessage: string
   upcomingAppointmentsTable: GovukFrontendTable
   pastAppointmentsTable: GovukFrontendTable
+  hasUpcomingAppointments: boolean
+  hasPastAppointments: boolean
   hasAppointments: boolean
   notificationBanner?: MojAlert
   upcomingAppointmentsTitle: string

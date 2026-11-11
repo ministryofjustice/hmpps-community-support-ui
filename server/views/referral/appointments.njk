@@ -22,9 +22,17 @@
 
   {% if content.hasAppointments %}
     <h2 class="govuk-heading-m">{{ content.upcomingAppointmentsTitle }}</h2>
-    {{ govukTable(content.upcomingAppointmentsTable) }}
+    {% if content.hasUpcomingAppointments %}
+      {{ govukTable(content.upcomingAppointmentsTable) }}
+    {% else %}
+      <p class="govuk-body" data-testid="no-upcoming-appointments-message">{{ content.noUpcomingAppointmentsMessage }}</p>
+    {% endif %}
     <h2 class="govuk-heading-m">{{ content.pastAppointmentsTitle }}</h2>
-    {{ govukTable(content.pastAppointmentsTable) }}
+    {% if content.hasPastAppointments %}
+      {{ govukTable(content.pastAppointmentsTable) }}
+    {% else %}
+      <p class="govuk-body" data-testid="no-past-appointments-message">{{ content.noPastAppointmentsMessage }}</p>
+    {% endif %}
   {% else %}
     <p class="govuk-body" data-testid="no-appointments-message">{{ content.noAppointmentsMessage }}</p>
   {% endif %}

@@ -70,17 +70,24 @@ test.describe('Referral Appointments Page', () => {
       'Initial assessment',
       '01 September 2026',
       '10:00am',
+      'Scheduled',
+      'View or change details',
     ])
     await expect(appointmentsPage.upcomingAppointmentsTable.getByRole('columnheader')).toHaveText([
       'Appointment type',
       'Date',
       'Start time',
+      'Status',
+      'Action',
     ])
     await expect(appointmentsPage.upcomingAppointmentsTable.locator('tbody tr').first().locator('td')).toHaveText([
-      'Contact session',
-      '01 November 2026',
-      '1:30pm',
+      'Handover session',
+      '12 October 2026',
+      '9:00am',
+      'Scheduled',
+      'View or change details',
     ])
+    await expect(appointmentsPage.upcomingAppointmentsTable.locator('.govuk-tag--blue').first()).toHaveText('Scheduled')
     await expect(page.getByRole('heading', { name: 'Upcoming appointments', exact: true })).toBeVisible()
     await expect(page.getByRole('heading', { name: 'Past appointments', exact: true })).toBeVisible()
     await expect(appointmentsPage.noAppointmentsMessage).toHaveCount(0)
@@ -104,10 +111,15 @@ test.describe('Referral Appointments Page', () => {
       await appointmentsPage.verifyOnPage()
       const labels = appointmentsPage.upcomingAppointmentsTable.locator('tbody tr td:first-child')
       const header = appointmentsPage.upcomingAppointmentsTable.getByRole('columnheader', { name: column, exact: true })
-      await expect(header).toHaveAttribute('aria-sort', 'none')
-      await header.getByRole('button').click()
-      await expect(header).toHaveAttribute('aria-sort', 'ascending')
-      await expect(labels).toHaveText(ascending)
+      if (column === 'Date') {
+        await expect(header).toHaveAttribute('aria-sort', 'ascending')
+        await expect(labels).toHaveText(ascending)
+      } else {
+        await expect(header).toHaveAttribute('aria-sort', 'none')
+        await header.getByRole('button').click()
+        await expect(header).toHaveAttribute('aria-sort', 'ascending')
+        await expect(labels).toHaveText(ascending)
+      }
       await header.getByRole('button').click()
       await expect(header).toHaveAttribute('aria-sort', 'descending')
       await expect(labels).toHaveText([...ascending].reverse())
@@ -136,6 +148,18 @@ test.describe('Referral Appointments Page', () => {
     )
   })
 
+  test('shows a message when there are no past appointments', async ({ page }) => {
+    await communitySupport.stubGetReferralAppointments({ ...appointments, pastAppointments: [] }, caseReference)
+    await page.goto(ReferralAppointmentsPage.url(caseReference))
+
+    const appointmentsPage = new ReferralAppointmentsPage(page)
+    await appointmentsPage.verifyOnPage()
+    await expect(appointmentsPage.pastAppointmentsTable).toHaveCount(0)
+    await expect(appointmentsPage.noPastAppointmentsMessage).toHaveText('No past appointments')
+    await expect(appointmentsPage.noUpcomingAppointmentsMessage).toHaveCount(0)
+    await expect(appointmentsPage.upcomingAppointmentsTable).toContainText('Contact session')
+  })
+
   test('shows past appointments when there are no upcoming appointments', async ({ page }) => {
     await communitySupport.stubGetReferralAppointments({ ...appointments, upcomingAppointments: [] }, caseReference)
     await page.goto(ReferralAppointmentsPage.url(caseReference))
@@ -143,7 +167,9 @@ test.describe('Referral Appointments Page', () => {
     const appointmentsPage = new ReferralAppointmentsPage(page)
     await appointmentsPage.verifyOnPage()
     await expect(appointmentsPage.noAppointmentsMessage).toHaveCount(0)
-    await expect(appointmentsPage.upcomingAppointmentsTable.locator('tbody tr')).toHaveCount(0)
+    await expect(appointmentsPage.upcomingAppointmentsTable).toHaveCount(0)
+    await expect(appointmentsPage.noUpcomingAppointmentsMessage).toHaveText('No upcoming appointments')
+    await expect(appointmentsPage.noPastAppointmentsMessage).toHaveCount(0)
     await expect(appointmentsPage.pastAppointmentsTable).toContainText('Initial assessment')
     await expect(appointmentsPage.bookAppointmentButton).toBeVisible()
   })

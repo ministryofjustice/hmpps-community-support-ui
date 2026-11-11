@@ -6,6 +6,17 @@ import { formatTime12Hr, formatTime24Hr } from '../../utils/timeFormat'
 import ReferralLayoutPresenter, { ReferralNavigationValues } from '../referralLayout/referralLayoutPresenter'
 import type { ReferralAppointmentsContent, ReferralAppointmentsViewModel } from './referralAppointmentsViewModel'
 
+const INITIAL_CONTACT_SESSION_LABEL = 'Initial contact session'
+
+const statusTagClasses: Record<string, string> = {
+  SCHEDULED: 'govuk-tag--blue',
+  NEEDS_FEEDBACK: 'govuk-tag--red',
+  COMPLETED: 'govuk-tag--green',
+  CHANGED: 'govuk-tag--orange',
+  DID_NOT_ATTEND: 'govuk-tag--magenta',
+  DID_NOT_HAPPEN: 'govuk-tag--magenta',
+}
+
 export default class ReferralAppointmentsPresenter extends ReferralLayoutPresenter<
   ReferralAppointmentsViewModel,
   ReferralAppointmentsContent
@@ -33,12 +44,16 @@ export default class ReferralAppointmentsPresenter extends ReferralLayoutPresent
       appointmentsTitle: content.appointmentsTitle,
       createAppointmentButton: this.buildAppointmentButton(content),
       noAppointmentsMessage: content.noAppointmentsMessage,
+      noUpcomingAppointmentsMessage: content.noUpcomingAppointmentsMessage,
+      noPastAppointmentsMessage: content.noPastAppointmentsMessage,
       upcomingAppointmentsTable: this.buildAppointmentsTable(
         content,
         upcomingAppointments,
         'referral-upcoming-appointments-table',
       ),
       pastAppointmentsTable: this.buildAppointmentsTable(content, pastAppointments, 'referral-past-appointments-table'),
+      hasUpcomingAppointments: upcomingAppointments.length > 0,
+      hasPastAppointments: pastAppointments.length > 0,
       hasAppointments: upcomingAppointments.length > 0 || pastAppointments.length > 0,
       notificationBanner:
         this.successAlert !== undefined
@@ -69,6 +84,7 @@ export default class ReferralAppointmentsPresenter extends ReferralLayoutPresent
     testId: string,
   ): GovukFrontendTable {
     return {
+      classes: 'appointments-table',
       attributes: {
         'data-module': 'moj-sortable-table',
         'data-testid': testId,
@@ -83,7 +99,7 @@ export default class ReferralAppointmentsPresenter extends ReferralLayoutPresent
         {
           text: content.dateColumnHeader,
           attributes: {
-            'aria-sort': 'none',
+            'aria-sort': 'ascending',
           },
         },
         {
@@ -92,31 +108,66 @@ export default class ReferralAppointmentsPresenter extends ReferralLayoutPresent
             'aria-sort': 'none',
           },
         },
+        {
+          text: content.statusColumnHeader,
+          attributes: {
+            'aria-sort': 'none',
+          },
+        },
+        {
+          text: content.actionColumnHeader,
+          classes: 'govuk-table__header--numeric',
+          attributes: {
+            'aria-sort': 'none',
+          },
+        },
       ],
-      rows: appointments.map(appointment => [
-        {
-          text: appointment.label,
-          attributes: {
-            'data-sort-value': appointment.label,
+      rows: appointments.map(appointment => {
+        const status = content.statuses[appointment.appointmentStatus]
+        return [
+          {
+            text: appointment.label,
+            attributes: {
+              'data-sort-value': appointment.label,
+            },
           },
-        },
-        {
-          text: `${formatDate(new Date(appointment.appointmentDate), 'dd MMMM yyyy')}`,
-          attributes: {
-            'data-sort-value': appointment.appointmentDate,
+          {
+            text: `${formatDate(new Date(appointment.appointmentDate), 'dd MMMM yyyy')}`,
+            attributes: {
+              'data-sort-value': `${appointment.appointmentDate}T${formatTime24Hr(appointment.appointmentTime)}`,
+            },
           },
-        },
-        {
-          text: `${formatTime12Hr(
-            appointment.appointmentTime.hour,
-            appointment.appointmentTime.minute,
-            appointment.appointmentTime.amPm,
-          )}`,
-          attributes: {
-            'data-sort-value': formatTime24Hr(appointment.appointmentTime),
+          {
+            text: `${formatTime12Hr(
+              appointment.appointmentTime.hour,
+              appointment.appointmentTime.minute,
+              appointment.appointmentTime.amPm,
+            )}`,
+            attributes: {
+              'data-sort-value': formatTime24Hr(appointment.appointmentTime),
+            },
           },
-        },
-      ]),
+          {
+            html: `<strong class="govuk-tag ${statusTagClasses[appointment.appointmentStatus]}">${status.text}</strong>`,
+            attributes: {
+              'data-sort-value': status.text,
+            },
+          },
+          {
+            classes: 'govuk-table__cell--numeric',
+            html: status.actions
+              .filter(
+                action =>
+                  !('initialContactSessionOnly' in action) || appointment.label === INITIAL_CONTACT_SESSION_LABEL,
+              )
+              .map(action => `<a href="${action.href}">${action.text}</a>`)
+              .join('<br> '),
+            attributes: {
+              'data-sort-value': status.text,
+            },
+          },
+        ]
+      }),
     }
   }
 }
