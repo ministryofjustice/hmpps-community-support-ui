@@ -68,6 +68,7 @@ import type {
   IcsFeedbackSessionDetailsBffDto,
   IcsViewOrChangeBffDto,
   IcsChangeDetailsBffDto,
+  IcsChangeReasonBffDto,
 } from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
@@ -202,6 +203,10 @@ export default class CommunitySupportApiClient extends RestClient {
 
   getIcsChangeDetails(caseRefId: string, username: string): Promise<IcsChangeDetailsBffDto> {
     return this.get({ path: `/bff/referral/${caseRefId}/ics-change-details` }, asSystem(username))
+  }
+
+  getIcsChangeReason(caseRefId: string, username: string): Promise<IcsChangeReasonBffDto> {
+    return this.get({ path: `/bff/referral/${caseRefId}/ics-change-details/reason` }, asSystem(username))
   }
 
   getCreateAppointmentReferenceData(

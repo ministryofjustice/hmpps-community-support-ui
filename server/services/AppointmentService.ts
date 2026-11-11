@@ -120,4 +120,8 @@ export default class AppointmentService {
   getIcsChangeDetails(caseRefId: string, username: string) {
     return this.communitySupportApiClient.getIcsChangeDetails(caseRefId, username)
   }
+
+  getIcsChangeReason(caseRefId: string, username: string) {
+    return this.communitySupportApiClient.getIcsChangeReason(caseRefId, username)
+  }
 }
