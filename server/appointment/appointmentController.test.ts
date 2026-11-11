@@ -413,7 +413,7 @@ describe('AppointmentController', () => {
             type: 'IN_PERSON_PROBATION_OFFICE',
             additionalDetails: 'Derbyshire: Buxton Probation Office',
           },
-          sessionCommunication: ['informedByPhone', 'informedByEmail'],
+          sessionCommunication: ['Phone', 'Email'],
         },
         'user1',
       )
@@ -426,16 +426,54 @@ describe('AppointmentController', () => {
       expect(res.redirect).toHaveBeenCalledWith(`/referral/${caseRefId}/appointments`)
     })
 
+    it('sends Email and the typed other-method text to the API', async () => {
+      req = {
+        params: { caseReference: caseRefId },
+        session: {
+          appointmentSessionData: {
+            appointmentType: 'CONTACT_SESSION',
+            date: '2026-03-27',
+            startTime: '1:30pm',
+            method: 'IN_PERSON_PROBATION_OFFICE',
+            probationOfficeLocationId: '2',
+            informedBy: ['informedByEmail', 'Carrier pigeon'],
+          },
+        },
+        flash: jest.fn().mockReturnValue([]),
+      } as unknown as Request
+
+      jest.spyOn(appointmentService, 'getCreateAppointmentReferenceData').mockResolvedValue({
+        appointmentTypes: mockCreateAppointmentReferenceData.appointmentTypes,
+        probationOfficeLocations: [{ id: 2, name: 'Derbyshire: Buxton Probation Office' }],
+      } as never)
+      jest.spyOn(appointmentService, 'submitAppointment').mockResolvedValue(mockAppointmentIcsResponse)
+
+      await appointmentController.submitAppointment(req, res)
+
+      expect(appointmentService.submitAppointment).toHaveBeenCalledWith(
+        caseRefId,
+        expect.objectContaining({ sessionCommunication: ['Email', 'Carrier pigeon'] }),
+        'user1',
+      )
+    })
+
     it('submits the complete other-location address from location lines', async () => {
       req = {
         params: { caseReference: caseRefId },
         session: {
           appointmentSessionData: {
-            appointmentType: 'PRE_RELEASE_SESSION',
+            appointmentType: 'CONTACT_SESSION',
             date: '2026-03-27',
             startTime: '1:30pm',
             method: 'IN_PERSON_OTHER_LOCATION',
             addressLines: ['14 High Street', 'Flat 2', 'Bath', 'Somerset', 'BA1 1AA'],
+            address: {
+              addressLine1: '14 High Street',
+              addressLine2: 'Flat 2',
+              townOrCity: 'Bath',
+              county: 'Somerset',
+              postcode: 'BA1 1AA',
+            },
             informedBy: ['informedByPhone'],
           },
         },
@@ -454,12 +492,75 @@ describe('AppointmentController', () => {
           sessionMethodRequest: {
             type: 'IN_PERSON_OTHER_LOCATION',
             additionalDetails: '14 High Street, Flat 2, Bath, Somerset, BA1 1AA',
+            addressLine1: '14 High Street',
+            addressLine2: 'Flat 2',
+            townOrCity: 'Bath',
+            county: 'Somerset',
+            postcode: 'BA1 1AA',
           },
         }),
         'user1',
       )
       expect(req.session.appointmentSessionData).toBeUndefined()
       expect(res.redirect).toHaveBeenCalledWith(`/referral/${caseRefId}/appointments`)
+    })
+
+    it('submits the prison code without stale notification or gate answers', async () => {
+      req = {
+        params: { caseReference: caseRefId },
+        session: {
+          appointmentSessionData: {
+            appointmentType: 'PRE_RELEASE_SESSION',
+            date: '2026-03-27',
+            startTime: '1:30pm',
+            method: 'IN_PERSON_PRISON',
+            prisonCode: 'MDI',
+            prisonName: 'Moorland (HMP & YOI)',
+            informedBy: ['informedByPhone'],
+            meetAtTheGate: true,
+          },
+        },
+      } as unknown as Request
+      jest
+        .spyOn(appointmentService, 'getCreateAppointmentReferenceData')
+        .mockResolvedValue(mockCreateAppointmentReferenceData)
+      jest.spyOn(appointmentService, 'submitAppointment').mockResolvedValue(mockAppointmentIcsResponse)
+
+      await appointmentController.submitAppointment(req, res)
+
+      expect(appointmentService.submitAppointment).toHaveBeenCalledWith(
+        caseRefId,
+        expect.objectContaining({
+          appointmentType: 'PRE_RELEASE_SESSION',
+          sessionMethodRequest: { type: 'IN_PERSON_PRISON', prisonCode: 'MDI' },
+          sessionCommunication: [],
+          meetAtTheGate: undefined,
+        }),
+        'user1',
+      )
+    })
+
+    it('does not submit a prison booking with a missing prison code', async () => {
+      req = {
+        params: { caseReference: caseRefId },
+        session: {
+          appointmentSessionData: {
+            appointmentType: 'PRE_RELEASE_SESSION',
+            date: '2026-03-27',
+            startTime: '1:30pm',
+            method: 'IN_PERSON_PRISON',
+          },
+        },
+      } as unknown as Request
+      jest
+        .spyOn(appointmentService, 'getCreateAppointmentReferenceData')
+        .mockResolvedValue(mockCreateAppointmentReferenceData)
+
+      await expect(appointmentController.submitAppointment(req, res)).rejects.toThrow(
+        'A prison code is required to book a prison session',
+      )
+      expect(appointmentService.submitAppointment).not.toHaveBeenCalled()
+      expect(req.session.appointmentSessionData).toBeDefined()
     })
 
     it('propagates appointment creation errors without setting the success alert or clearing session data', async () => {
@@ -497,6 +598,8 @@ describe('AppointmentController', () => {
       ['ICS', 'VIDEO', 'The person cannot attend by video'],
       ['CONTACT_SESSION', 'PHONE', 'The person cannot attend by phone'],
       ['CONTACT_SESSION', 'VIDEO', 'The person cannot attend by video'],
+      ['PRE_RELEASE_SESSION', 'PHONE', 'The person cannot attend by phone'],
+      ['PRE_RELEASE_SESSION', 'VIDEO', 'The person cannot attend by video'],
     ])('submits an %s %s reason', async (appointmentType, method, reason) => {
       req = {
         params: { caseReference: caseRefId },
@@ -523,6 +626,7 @@ describe('AppointmentController', () => {
         caseRefId,
         expect.objectContaining({
           sessionMethodRequest: { type: method, additionalDetails: reason },
+          sessionCommunication: appointmentType === 'PRE_RELEASE_SESSION' ? [] : ['Phone'],
         }),
         'user1',
       )
@@ -862,6 +966,8 @@ describe('AppointmentController', () => {
       ['ICS', '10/6/2026', true],
       ['CONTACT_SESSION', '10/6/2026', false],
       ['CONTACT_SESSION', '11/6/2026', true],
+      ['PRE_RELEASE_SESSION', '10/6/2026', false],
+      ['PRE_RELEASE_SESSION', '11/6/2026', true],
     ])('validates %s on %s against the referral date', async (appointmentType, date, isValid) => {
       referralService.getReferralInformation.mockResolvedValue({
         ...mockReferralInformationInCommunity,
@@ -879,6 +985,49 @@ describe('AppointmentController', () => {
       } else {
         expect(createReq.flash).toHaveBeenCalledWith('sessionDateError', 'Session date must be after the referral date')
       }
+    })
+
+    it('saves a pre-release prison and clears stale answers from a previous appointment type', async () => {
+      createReq.query = { session: 'PRE_RELEASE_SESSION' }
+      createReq.session.appointmentSessionData = {
+        appointmentType: 'POST_RELEASE_SESSION',
+        method: 'PHONE',
+        reasonSessionNotInPerson: 'Old reason',
+        informedBy: ['informedByPhone'],
+        meetAtTheGate: true,
+      }
+      createReq.body = { ...validBody, sessionTakePlace: 'InPrison', prisonList: prisonsData[0].agencyId }
+
+      await appointmentController.createAppointmentDetails(createReq, scheduleIcsRes)
+
+      expect(createReq.session.createAppointmentRequest).toMatchObject({
+        appointmentType: 'PRE_RELEASE_SESSION',
+        sessionMethodRequest: { type: 'IN_PERSON_PRISON', prisonCode: prisonsData[0].agencyId },
+        sessionCommunication: [],
+      })
+      expect(createReq.session.createAppointmentRequest.meetAtTheGate).toBeUndefined()
+      expect(createReq.session.appointmentSessionData).toMatchObject({
+        method: 'IN_PERSON_PRISON',
+        prisonCode: prisonsData[0].agencyId,
+        prisonName: prisonsData[0].description,
+        reasonSessionNotInPerson: undefined,
+        informedBy: [],
+        meetAtTheGate: undefined,
+      })
+      expect(scheduleIcsRes.redirect).toHaveBeenCalledWith(
+        `/referral/${caseRefId}/create-an-appointment/check-your-answers`,
+      )
+    })
+
+    it.each(['', 'UNKNOWN'])('rejects a missing or unknown prison code %s', async prisonList => {
+      createReq.query = { session: 'PRE_RELEASE_SESSION' }
+      createReq.body = { ...validBody, sessionTakePlace: 'InPrison', prisonList }
+
+      await appointmentController.createAppointmentDetails(createReq, scheduleIcsRes)
+
+      expect(createReq.flash).toHaveBeenCalledWith('prisonListError', 'Select a prison')
+      expect(scheduleIcsRes.redirect).toHaveBeenCalledWith(createReq.url)
+      expect(createReq.session.appointmentSessionData).toBeUndefined()
     })
 
     it('saves an inline contact session address and continues to check your answers', async () => {

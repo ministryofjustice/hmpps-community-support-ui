@@ -193,7 +193,8 @@ describe('Referral service tests', () => {
       const caseReference = 'AB1234CD'
       const appointments: ReferralAppointmentsBffResponseDto = {
         personDetails: { firstName: 'Alex', lastName: 'Example', dateOfBirth: '1980-01-01', crn: 'X123456' },
-        appointments: [],
+        upcomingAppointments: [],
+        pastAppointments: [],
       }
 
       communitySupportApiClient.getReferralAppointments.mockResolvedValue(appointments)

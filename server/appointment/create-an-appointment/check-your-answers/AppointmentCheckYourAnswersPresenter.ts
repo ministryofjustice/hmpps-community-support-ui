@@ -13,6 +13,7 @@ import {
   AppointmentCheckYourAnswersViewModel,
 } from './AppointmentCheckYourAnswersViewModel'
 import { getInformedByLabel } from '../../informedByLabels'
+import { appointmentTypeRules, parseAppointmentType } from '../../appointmentTypeRules'
 
 export default class AppointmentCheckYourAnswersPresenter extends PresenterBase<
   AppointmentCheckYourAnswersViewModel,
@@ -104,7 +105,8 @@ export default class AppointmentCheckYourAnswersPresenter extends PresenterBase<
     const { appointmentType } = this.appointmentSessionData
     const informedBy = this.appointmentSessionData.informedBy || []
 
-    if (!appointmentType || appointmentType === 'HANDOVER_SESSION') {
+    const type = parseAppointmentType(appointmentType)
+    if (!type || !appointmentTypeRules[type].informed) {
       return false
     }
 
@@ -117,6 +119,13 @@ export default class AppointmentCheckYourAnswersPresenter extends PresenterBase<
       return govFrontendSummaryListRow(
         content.reasonSessionNotInPersonLabel,
         this.appointmentSessionData.reasonSessionNotInPerson || '',
+      )
+    }
+
+    if (method === 'IN_PERSON_PRISON') {
+      return govFrontendSummaryListRow(
+        content.prisonLabel,
+        this.appointmentSessionData.prisonName || this.appointmentSessionData.prisonCode || '',
       )
     }
 
@@ -198,6 +207,9 @@ export default class AppointmentCheckYourAnswersPresenter extends PresenterBase<
     }
     if (normalisedMethod === 'IN_PERSON_OTHER_LOCATION') {
       return 'In person: another address'
+    }
+    if (normalisedMethod === 'IN_PERSON_PRISON') {
+      return 'In person: prison'
     }
 
     return getAppointmentMethodLabel(method)

@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { addDays, addMonths, isBefore, isAfter, startOfDay, isExists } from 'date-fns'
+import { Prison } from '@prison-api'
 import { appointmentTypeRules, SessionAppointmentType } from '../appointment/appointmentTypeRules'
 
 const validCharRegex: RegExp = /^[a-zA-Z0-9\s\-']*$/
@@ -150,6 +151,7 @@ const buildSessionDateSchema = (min: Date, max: Date) =>
 
 const whyIsThisSessionNotInPersonStringSchema = z
   .string()
+  .trim()
   .nonempty({ error: 'Enter the reason the session is not in person' })
   .max(100, { error: 'Why is this session not in person must be 100 characters or less' })
   .regex(validCharRegex, {
@@ -171,6 +173,18 @@ const inProbationOfficeSchema = z.object({
   sessionTakePlace: z.literal('InProbationOffice'),
   probationOfficeList: z.string().nonempty({ error: 'Select a probation office' }),
 })
+
+const buildInPrisonSchema = (prisons: Prison[]) =>
+  z.object({
+    sessionTakePlace: z.literal('InPrison'),
+    prisonList: z
+      .string({ error: 'Select a prison' })
+      .trim()
+      .min(1, { error: 'Select a prison' })
+      .refine(code => !code || prisons.some(prison => prison.active && prison.agencyId === code), {
+        error: 'Select a prison',
+      }),
+  })
 
 const inSomewhereElseSchema = z.object({
   sessionTakePlace: z.literal('InSomewhereElse'),
@@ -224,18 +238,23 @@ const meetAtTheGateSchema = z.object({
   meetAtTheGate: z.enum(['yes', 'no'], { error: 'Select whether this is a meet at the gate session' }),
 })
 
-export const buildCreateAppointmentFormData = (referralDate: Date, appointmentType: SessionAppointmentType) => {
+export const buildCreateAppointmentFormData = (
+  referralDate: Date,
+  appointmentType: SessionAppointmentType,
+  prisons: Prison[] = [],
+) => {
   const rules = appointmentTypeRules[appointmentType]
   const methodSchemas = [
     byVideoSchema,
     ...(rules.probationOffice ? [inProbationOfficeSchema] : []),
     ...(rules.somewhereElse ? [inSomewhereElseSchema] : []),
     ...(rules.inPerson ? [inPersonSchema] : []),
+    ...(rules.prison ? [buildInPrisonSchema(prisons)] : []),
   ]
   const howSessionTookPlace = z.discriminatedUnion('sessionTakePlace', [byPhoneSchema, ...methodSchemas], {
     error: 'Select how the session will take place',
   })
-  const minDate = appointmentType === 'CONTACT_SESSION' ? addDays(startOfDay(referralDate), 1) : referralDate
+  const minDate = rules.dateAfterReferral ? addDays(startOfDay(referralDate), 1) : referralDate
   const schema: z.ZodType = buildSessionDateSchema(minDate, addMonths(new Date(), 6))
     .and(timeSchema)
     .and(howSessionTookPlace)
