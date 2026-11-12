@@ -1073,11 +1073,11 @@
       "radioItems": {
         "phone": {
           "text": "Phone call",
-          "label": "Reason the session is not in person"
+          "label": "Reason session is not in person"
         },
         "video": {
           "text": "Video call",
-          "label": "Reason the session is not in person"
+          "label": "Reason session is not in person"
         },
         "prison": {
           "text": "Prison",
@@ -1122,7 +1122,7 @@
       "ICS": "Book initial contact session (ICS)",
       "CONTACT_SESSION": "Book contact session",
       "PRE_RELEASE_SESSION": "Book pre-release session",
-      "POST_RELEASE_SESSION": "Schedule the post-release session",
+      "POST_RELEASE_SESSION": "Book post-release session",
       "HANDOVER_SESSION": "Schedule the handover session"
     },
     "meetAtTheGate": {

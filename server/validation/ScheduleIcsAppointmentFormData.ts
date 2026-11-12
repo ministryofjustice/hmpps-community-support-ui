@@ -235,7 +235,7 @@ const inPersonSchema = z.object({
 })
 
 const meetAtTheGateSchema = z.object({
-  meetAtTheGate: z.enum(['yes', 'no'], { error: 'Select whether this is a meet at the gate session' }),
+  meetAtTheGate: z.enum(['yes', 'no'], { error: 'Select yes if this is a meet at the gate session' }),
 })
 
 export const buildCreateAppointmentFormData = (
