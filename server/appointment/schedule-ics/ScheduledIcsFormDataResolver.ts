@@ -206,20 +206,15 @@ const createIcsSessionData = ({
   appointmentTime,
   sessionMethod,
   sessionCommunications,
-}: Pick<
-  IcsChangeDetailsBffDto,
-  'appointmentDate' | 'appointmentTime' | 'sessionMethod' | 'sessionCommunications'
->): CreateAppointmentRequest => ({
+}: IcsChangeDetailsBffDto): CreateAppointmentRequest => ({
   date: appointmentDate,
   time: appointmentTime,
   sessionMethodRequest: createMethodSessionData(sessionMethod),
   sessionCommunication: sessionCommunications,
 })
 
-const loadFormFromICS = (
-  ics: Pick<IcsChangeDetailsBffDto, 'appointmentDate' | 'appointmentTime' | 'sessionMethod' | 'sessionCommunications'>,
-  validator: AppointmentValidator,
-): ScheduledIcsFormData => loadFormFromSession(createIcsSessionData(ics), validator)
+const loadFormFromICS = (ics: IcsChangeDetailsBffDto, validator: AppointmentValidator): ScheduledIcsFormData =>
+  loadFormFromSession(createIcsSessionData(ics), validator)
 
 const getReasonFromFormData = (formData: ScheduledIcsFormData, sessionTakePlace: string): string | undefined => {
   switch (sessionTakePlace) {
