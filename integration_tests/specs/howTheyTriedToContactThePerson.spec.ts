@@ -38,7 +38,6 @@ test.describe('HowTheyTriedToContactThePersion', () => {
     await page.goto(RecordSessionAttendancePage.url(pastMeeting.caseRefId))
     const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
     await recordSessionAttendancePage.selectHappened('No')
-    await recordSessionAttendancePage.selectAttended('No')
     await recordSessionAttendancePage.clickContinue()
     await expect(page).toHaveURL(IcsFeedbackHowTheyTriedToContactThePersionPage.url(pastMeeting.caseRefId))
   })
@@ -53,7 +52,6 @@ test.describe('HowTheyTriedToContactThePersion', () => {
     await page.goto(RecordSessionAttendancePage.url(pastMeeting.caseRefId))
     const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
     await recordSessionAttendancePage.selectHappened('No')
-    await recordSessionAttendancePage.selectAttended('No')
     await recordSessionAttendancePage.clickContinue()
 
     await page.goto(IcsFeedbackHowTheyTriedToContactThePersionPage.url(differentMeeting.caseRefId))
@@ -66,7 +64,6 @@ test.describe('HowTheyTriedToContactThePersion', () => {
       await page.goto(RecordSessionAttendancePage.url(pastMeeting.caseRefId))
       const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
       await recordSessionAttendancePage.selectHappened('No')
-      await recordSessionAttendancePage.selectAttended('No')
       await recordSessionAttendancePage.clickContinue()
     })
     await test.step('click backLink', async () => {
@@ -78,9 +75,6 @@ test.describe('HowTheyTriedToContactThePersion', () => {
       const sessionDidNotHappenOption = recordSessionAttendancePage.sessionHappenedRadios.getItem('No')
       expect(sessionDidNotHappenOption).toBeDefined()
       await expect(sessionDidNotHappenOption!.input).toBeChecked()
-      const sessionNotAttendedOption = recordSessionAttendancePage.sessionAttendedRadios.getItem('No')
-      expect(sessionNotAttendedOption).toBeDefined()
-      await expect(sessionNotAttendedOption!.input).toBeChecked()
     })
   })
 })

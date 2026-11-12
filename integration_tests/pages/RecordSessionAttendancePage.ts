@@ -13,7 +13,6 @@ export default class RecordSessionAttendancePage extends AbstractPage {
     readonly backLink: Locator,
     readonly summary: SummaryList,
     readonly sessionHappenedRadios: RadiosWithFieldSet,
-    readonly sessionAttendedRadios: RadiosWithFieldSet,
     readonly continueButton: Locator,
   ) {
     super(page)
@@ -21,10 +20,6 @@ export default class RecordSessionAttendancePage extends AbstractPage {
 
   async selectHappened(option: string) {
     await this.sessionHappenedRadios.select(option)
-  }
-
-  async selectAttended(option: string) {
-    await this.sessionAttendedRadios.select(option)
   }
 
   async clickContinue() {
@@ -46,21 +41,7 @@ export default class RecordSessionAttendancePage extends AbstractPage {
       page.locator('[data-testid="happened"]'),
       page.locator('[data-testid="fieldset-happened"]'),
     )
-    const attended = await RadiosWithFieldSet.create(
-      page.locator('[data-testid="attended"]'),
-      page.locator('[data-testid="fieldset-attended"]'),
-    )
     const submit = page.getByRole('button', { name: 'Continue' })
-    return new RecordSessionAttendancePage(
-      page,
-      errorSummary,
-      header,
-      subheading,
-      backLink,
-      summary,
-      happened,
-      attended,
-      submit,
-    )
+    return new RecordSessionAttendancePage(page, errorSummary, header, subheading, backLink, summary, happened, submit)
   }
 }

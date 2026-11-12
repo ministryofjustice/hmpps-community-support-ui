@@ -1209,21 +1209,17 @@ describe('AppointmentController', () => {
       expect(req.flash).not.toHaveBeenCalledWith('attendedError')
       expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseRefId}/attendance`)
     })
-    test('happened selected, but attended unselected', async () => {
+    test('happened is not yes or no', async () => {
       req = {
         ...req,
         params: { caseRefId },
-        body: { happened: 'No' },
+        body: { happened: 'Maybe' },
         url: `/ics-feedback/${caseRefId}/attendance`,
       } as unknown as Request
       await appointmentController.recordIcsAppointmentAttendance(req, res)
 
-      const { formKeys } = req.session
-      expect(formKeys).toHaveLength(1)
-      expect(formKeys).toContain('attended')
-
-      expect(req.flash).not.toHaveBeenCalledWith('happenedError')
-      expect(req.flash).toHaveBeenCalledWith('attendedError', 'Select yes if {{ firstname }} came to the appointment')
+      expect(req.session.formKeys).toEqual(['happened'])
+      expect(req.flash).toHaveBeenCalledWith('happenedError', 'Select yes if the session happened')
       expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseRefId}/attendance`)
     })
     test('bad body data', async () => {
@@ -1259,27 +1255,11 @@ describe('AppointmentController', () => {
       expect(req.flash).not.toHaveBeenCalledWith('attendedError')
       expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseRefId}/did-session-take-place`)
     })
-    test('session did not happen but was attended', async () => {
+    test('session did not happen', async () => {
       req = {
         ...req,
         params: { caseRefId },
-        body: { happened: 'No', attended: 'Yes' },
-        url: `/ics-feedback/${caseRefId}/attendance`,
-      } as unknown as Request
-      await appointmentController.recordIcsAppointmentAttendance(req, res)
-      expect(req.session.icsFeedbackSubmission).toStrictEqual({
-        caseReferenceId: caseRefId,
-        record: { didPersonAttend: true, didSessionHappen: false },
-      })
-      expect(req.flash).not.toHaveBeenCalledWith('happenedError')
-      expect(req.flash).not.toHaveBeenCalledWith('attendedError')
-      expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseRefId}/why-did-the-session-not-happen`)
-    })
-    test('session did not happen and was not attended', async () => {
-      req = {
-        ...req,
-        params: { caseRefId },
-        body: { happened: 'No', attended: 'No' },
+        body: { happened: 'No' },
         url: `/ics-feedback/${caseRefId}/attendance`,
       } as unknown as Request
       await appointmentController.recordIcsAppointmentAttendance(req, res)
@@ -1288,7 +1268,6 @@ describe('AppointmentController', () => {
         record: { didPersonAttend: false, didSessionHappen: false },
       })
       expect(req.flash).not.toHaveBeenCalledWith('happenedError')
-      expect(req.flash).not.toHaveBeenCalledWith('attendedError')
       expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseRefId}/how-they-tried-to-contact-the-person`)
     })
   })
