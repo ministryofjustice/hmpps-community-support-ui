@@ -108,4 +108,8 @@ export default class AppointmentService {
   getIcsFeedbackAttendance(caseRefId: string, username: string) {
     return this.communitySupportApiClient.getIcsFeedbackAttendance(caseRefId, username)
   }
+
+  getIcsFeedbackSessionDetails(caseRefId: string, username: string) {
+    return this.communitySupportApiClient.getIcsFeedbackSessionDetails(caseRefId, username)
+  }
 }

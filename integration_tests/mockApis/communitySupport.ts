@@ -6,6 +6,7 @@ import {
   CommunitySupportRiskDto,
   CommunitySupportRiskInformationDto,
   IcsFeedbackAttendanceBffDto,
+  IcsFeedbackSessionDetailsBffDto,
   IcsFeedbackDidSessionTakePlaceBffDto,
   IcsFeedbackSubmission,
   IcsFeedbackSubmissionResponse,
@@ -119,10 +120,20 @@ const stubGetIcsFeedbackAttendance = (caseRefId: string, appointment: Appointmen
   return stubGetIcsFeedbackPage(caseRefId, 'attendance', body)
 }
 
+const stubGetIcsFeedbackSessionDetails = (caseRefId: string, appointment: AppointmentIcsResponse) => {
+  const body: IcsFeedbackSessionDetailsBffDto = {
+    referralFirstName: appointment.referralFirstName,
+    date: appointment.appointmentDate,
+    time: appointment.appointmentTime,
+  }
+  return stubGetIcsFeedbackPage(caseRefId, 'session-details', body)
+}
+
 export default {
   stubGetIcsFeedbackPage,
   stubGetIcsFeedbackDidSessionTakePlace,
   stubGetIcsFeedbackAttendance,
+  stubGetIcsFeedbackSessionDetails,
   stubPing: (httpStatus = 200): SuperAgentRequest =>
     stubFor({
       request: {

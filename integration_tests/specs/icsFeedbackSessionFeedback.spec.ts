@@ -38,6 +38,7 @@ test.describe('Session Feedback Page', () => {
     await communitySupport.stubGetIcsFeedbackPage(CASE_REFERENCE, 'session-feedback', {
       referralFirstName: mockAppointment.referralFirstName,
     })
+    await communitySupport.stubGetIcsFeedbackSessionDetails(CASE_REFERENCE, mockAppointment)
   })
 
   test('AC1 - Session feedback', async ({ page }) => {
