@@ -22,7 +22,7 @@ const getStatusConfig = (
   isCurrent: boolean,
   authSource?: AuthSource,
 ): Record<StatusKey, StatusConfig> => {
-  const isProbationPractitioner = false
+  const isProbationPractitioner = authSource === 'delius'
   const rescheduleActions = isProbationPractitioner
     ? [{ label: 'View feedback', href: `/ics-feedback/${caseReference}/session/${icsFeedbackId}` }]
     : buildRescheduleActions(caseReference, icsFeedbackId, isCurrent, isProbationPractitioner)
