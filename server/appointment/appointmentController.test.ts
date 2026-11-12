@@ -1116,7 +1116,7 @@ describe('AppointmentController', () => {
       await appointmentController.createAppointmentDetails(createReq, scheduleIcsRes)
       expect(createReq.flash).toHaveBeenCalledWith(
         'meetAtTheGateError',
-        'Select whether this is a meet at the gate session',
+        'Select yes if this is a meet at the gate session',
       )
       expect(scheduleIcsRes.redirect).toHaveBeenCalledWith(createReq.url)
     })

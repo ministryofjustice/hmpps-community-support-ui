@@ -58,8 +58,10 @@ test.describe('Create an appointment - appointment details page', () => {
     test('post-release session', async ({ page }) => {
       await page.goto(CreateAppointmentDetailsPage.url(CASE_REFERENCE, 'POST_RELEASE_SESSION'))
       const appointmentPage = await CreateAppointmentDetailsPage.verifyOnPage(page, 'POST_RELEASE_SESSION')
+      await expect(page).toHaveTitle('Book post-release session - Community Support')
       await expect(appointmentPage.inProbationOfficeRadioButton).toBeVisible()
       await expect(appointmentPage.inSomewhereElseRadioButton).toBeVisible()
+      await expect(page.getByText('Is this a meet at the gate session?', { exact: true })).toBeVisible()
       await expect(appointmentPage.meetAtTheGateYesRadioButton).toBeVisible()
       await expect(appointmentPage.meetAtTheGateNoRadioButton).toBeVisible()
       await expect(appointmentPage.informedByPhoneCheckbox).toBeVisible()
@@ -152,7 +154,7 @@ test.describe('Create an appointment - appointment details page', () => {
       await expect(
         page
           .locator('[data-testid="error-messages"] a[href*="#meetAtTheGate"]')
-          .filter({ hasText: 'Select whether this is a meet at the gate session' }),
+          .filter({ hasText: 'Select yes if this is a meet at the gate session' }),
       ).toBeVisible()
     })
 

@@ -257,7 +257,7 @@ describe('ScheduleIcsPresenter with appointment type', () => {
         'Select probation office',
       )
       expect(how.items.find(item => item.value === 'ByPhone').conditional.html).toContain(
-        'Reason the session is not in person',
+        'Reason session is not in person',
       )
       const informed = viewModel.howWasTheyInformedAboutTheSessionInput
       expect(informed.fieldset.legend.text).toBe(

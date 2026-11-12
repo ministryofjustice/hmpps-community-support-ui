@@ -8,7 +8,7 @@ const headers: Record<SessionType, string> = {
   ICS: 'Book initial contact session (ICS)',
   CONTACT_SESSION: 'Book contact session',
   PRE_RELEASE_SESSION: 'Book pre-release session',
-  POST_RELEASE_SESSION: 'Schedule the post-release session',
+  POST_RELEASE_SESSION: 'Book post-release session',
   HANDOVER_SESSION: 'Schedule the handover session',
 }
 

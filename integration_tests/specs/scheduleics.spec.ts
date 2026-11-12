@@ -86,7 +86,7 @@ test.describe('Book initial contact session (ICS) page', () => {
       await expect(icsPage.phoneCallReasonInput).toBeVisible()
       await icsPage.videoCallRadioButton.click()
       await expect(icsPage.videoCallReasonInput).toBeVisible()
-      await expect(page.getByLabel('Reason the session is not in person').last()).toBeVisible()
+      await expect(page.getByLabel('Reason session is not in person').last()).toBeVisible()
     })
 
     await test.step('how was the person informed about the session', async () => {
