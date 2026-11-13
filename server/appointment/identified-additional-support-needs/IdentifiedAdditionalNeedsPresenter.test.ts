@@ -1,28 +1,29 @@
 import { Response } from 'express'
-import { ExistingSupportNeedsBffResponseDto } from '@community-support-api'
+import { IcsFeedbackIdentifiedAdditionalSupportNeedsBffResponseDto } from '@community-support-api'
 import contentJson from '../../../assets/content/content.json'
 import IdentifiedAdditionalNeedsPresenter from './IdentifiedAdditionalNeedsPresenter'
-import { IdentifiedAdditionalNeedsContent } from './IdentifiedAdditionalNeedsViewModel'
 
 describe('IdentifiedAdditionalNeedsPresenter', () => {
   const caseRefId = 'ics-test-123'
   const firstName = 'Alex'
-  let content: IdentifiedAdditionalNeedsContent
+  const content = contentJson['/ics-feedback/:id/identified-additional-needs']
   let res: Response
-  let existingSupportNeeds: ExistingSupportNeedsBffResponseDto
+  let dto: IcsFeedbackIdentifiedAdditionalSupportNeedsBffResponseDto
 
   beforeEach(() => {
-    content = contentJson['/ics-feedback/:id/identified-additional-needs']
     res = {
       locals: { content },
       render: jest.fn(),
     } as unknown as Response
-    existingSupportNeeds = {}
+    dto = {
+      referralFirstName: '',
+      referralSupportNeeds: {},
+    }
   })
 
   describe('renderPage', () => {
     it('renders the identified-additional-needs template with the view model', () => {
-      const presenter = new IdentifiedAdditionalNeedsPresenter(caseRefId, firstName, existingSupportNeeds, {})
+      const presenter = new IdentifiedAdditionalNeedsPresenter(caseRefId, firstName, dto, {})
 
       presenter.renderPage(res)
 
@@ -35,7 +36,7 @@ describe('IdentifiedAdditionalNeedsPresenter', () => {
 
   describe('buildViewModel', () => {
     it('includes page content, personalised text and navigation links', () => {
-      const presenter = new IdentifiedAdditionalNeedsPresenter(caseRefId, firstName, existingSupportNeeds, {})
+      const presenter = new IdentifiedAdditionalNeedsPresenter(caseRefId, firstName, dto, {})
 
       const viewModel = presenter.buildViewModel(res)
 
@@ -45,7 +46,6 @@ describe('IdentifiedAdditionalNeedsPresenter', () => {
         pageSubHeader: content.pageSubHeader.replace('{{ firstname }}', firstName),
         firstname: firstName,
         submitButton: { text: content.submitButtonText },
-        submitHref: `/ics-feedback/${caseRefId}/identified-additional-needs`,
         backLink: { href: `/ics-feedback/${caseRefId}/issues-or-concerns` },
       })
       expect(viewModel.didYouIdentifyRadio).toMatchObject({
@@ -63,7 +63,7 @@ describe('IdentifiedAdditionalNeedsPresenter', () => {
     })
 
     it('leaves both radio options unselected when form data is missing', () => {
-      const presenter = new IdentifiedAdditionalNeedsPresenter(caseRefId, firstName, existingSupportNeeds, undefined)
+      const presenter = new IdentifiedAdditionalNeedsPresenter(caseRefId, firstName, dto, undefined)
 
       const viewModel = presenter.buildViewModel(res)
 
@@ -85,7 +85,7 @@ describe('IdentifiedAdditionalNeedsPresenter', () => {
 
     it.each([true, false])('restores a previously selected answer of %s', didYouIdentify => {
       const formData = { didYouIdentify, identifyDetails: 'Help with reading' }
-      const presenter = new IdentifiedAdditionalNeedsPresenter(caseRefId, firstName, existingSupportNeeds, formData)
+      const presenter = new IdentifiedAdditionalNeedsPresenter(caseRefId, firstName, dto, formData)
 
       const viewModel = presenter.buildViewModel(res)
 
@@ -96,7 +96,7 @@ describe('IdentifiedAdditionalNeedsPresenter', () => {
     })
 
     it('personalises the conditional textarea label and sets its field identifiers', () => {
-      const presenter = new IdentifiedAdditionalNeedsPresenter(caseRefId, firstName, existingSupportNeeds, {})
+      const presenter = new IdentifiedAdditionalNeedsPresenter(caseRefId, firstName, dto, {})
 
       const { html } = presenter.buildViewModel(res).didYouIdentifyRadio.items[0].conditional
 
@@ -109,7 +109,7 @@ describe('IdentifiedAdditionalNeedsPresenter', () => {
     })
 
     it('escapes special characters in previously entered details', () => {
-      const presenter = new IdentifiedAdditionalNeedsPresenter(caseRefId, firstName, existingSupportNeeds, {
+      const presenter = new IdentifiedAdditionalNeedsPresenter(caseRefId, firstName, dto, {
         didYouIdentify: true,
         identifyDetails: '<script>alert("test")</script> & \'details\'',
       })
@@ -126,7 +126,7 @@ describe('IdentifiedAdditionalNeedsPresenter', () => {
       const presenter = new IdentifiedAdditionalNeedsPresenter(
         caseRefId,
         firstName,
-        existingSupportNeeds,
+        dto,
         { didYouIdentify: true, identifyDetails: 'Existing details' },
         {
           list: [
@@ -149,7 +149,7 @@ describe('IdentifiedAdditionalNeedsPresenter', () => {
     })
 
     it.each([undefined, { list: [], messages: {} }])('does not show validation errors when errors are %j', errors => {
-      const presenter = new IdentifiedAdditionalNeedsPresenter(caseRefId, firstName, existingSupportNeeds, {}, errors)
+      const presenter = new IdentifiedAdditionalNeedsPresenter(caseRefId, firstName, dto, {}, errors)
 
       const viewModel = presenter.buildViewModel(res)
       const { html } = viewModel.didYouIdentifyRadio.items[0].conditional
@@ -162,56 +162,83 @@ describe('IdentifiedAdditionalNeedsPresenter', () => {
 
   describe('existing support needs', () => {
     it('renders all populated support needs in order with the card title', () => {
-      existingSupportNeeds = {
-        physicalHealthDetails: 'Physical health support',
-        mentalEmotionalHealthDetails: 'Mental health support',
-        neurodiversityDetails: 'Neurodiversity support',
-        locationTravelDetails: 'Travel support',
-        caringResponsibilitiesDetails: 'Caring support',
-        employmentResponsibilitiesDetails: 'Employment support',
-        diversityDetails: 'Diversity support',
-        anythingElseDetails: 'Other support',
+      dto = {
+        referralFirstName: 'Firstname',
+        referralSupportNeeds: {
+          physicalHealthDetails: 'Physical health support',
+          mentalEmotionalHealthDetails: 'Mental health support',
+          neurodiversityDetails: 'Neurodiversity support',
+          locationTravelDetails: 'Travel support',
+          caringResponsibilitiesDetails: 'Caring support',
+          employmentResponsibilitiesDetails: 'Employment support',
+          diversityDetails: 'Diversity support',
+          anythingElseDetails: 'Other support',
+        },
       }
-      const presenter = new IdentifiedAdditionalNeedsPresenter(caseRefId, firstName, existingSupportNeeds, {})
+      const presenter = new IdentifiedAdditionalNeedsPresenter(caseRefId, firstName, dto, {})
 
-      const summaryList = presenter.buildViewModel(res).existingSupportNeedsDetails
+      const { existingSupportNeedsDetails } = presenter.buildViewModel(res)
 
-      expect(summaryList).toEqual({
+      expect(existingSupportNeedsDetails).toEqual({
         card: { title: { text: content.cardTitle } },
         rows: [
-          { key: { text: content.supportNeedsTitle.physicalHealth }, value: { html: 'Physical health support' } },
-          { key: { text: content.supportNeedsTitle.mentalEmotionalHealth }, value: { html: 'Mental health support' } },
-          { key: { text: content.supportNeedsTitle.neurodiversity }, value: { html: 'Neurodiversity support' } },
-          { key: { text: content.supportNeedsTitle.locationTravel }, value: { html: 'Travel support' } },
-          { key: { text: content.supportNeedsTitle.caringResponsibilities }, value: { html: 'Caring support' } },
+          {
+            key: { text: content.supportNeedsTitle.physicalHealth },
+            value: { text: 'Physical health support' },
+            actions: null,
+          },
+          {
+            key: { text: content.supportNeedsTitle.mentalEmotionalHealth },
+            value: { text: 'Mental health support' },
+            actions: null,
+          },
+          {
+            key: { text: content.supportNeedsTitle.neurodiversity },
+            value: { text: 'Neurodiversity support' },
+            actions: null,
+          },
+          { key: { text: content.supportNeedsTitle.locationTravel }, value: { text: 'Travel support' }, actions: null },
+          {
+            key: { text: content.supportNeedsTitle.caringResponsibilities },
+            value: { text: 'Caring support' },
+            actions: null,
+          },
           {
             key: { text: content.supportNeedsTitle.employmentResponsibilities },
-            value: { html: 'Employment support' },
+            value: { text: 'Employment support' },
+            actions: null,
           },
-          { key: { text: content.supportNeedsTitle.diversity }, value: { html: 'Diversity support' } },
-          { key: { text: content.supportNeedsTitle.anythingElse }, value: { html: 'Other support' } },
+          { key: { text: content.supportNeedsTitle.diversity }, value: { text: 'Diversity support' }, actions: null },
+          { key: { text: content.supportNeedsTitle.anythingElse }, value: { text: 'Other support' }, actions: null },
         ],
         attributes: { 'data-testid': 'exisiting-support-needs-details' },
       })
     })
 
     it('omits empty, null and missing support needs', () => {
-      existingSupportNeeds = {
-        physicalHealthDetails: '',
-        mentalEmotionalHealthDetails: null,
-        neurodiversityDetails: 'Use plain language',
+      dto = {
+        referralFirstName: 'Firstname',
+        referralSupportNeeds: {
+          physicalHealthDetails: '',
+          mentalEmotionalHealthDetails: null,
+          neurodiversityDetails: 'Use plain language',
+        },
       }
-      const presenter = new IdentifiedAdditionalNeedsPresenter(caseRefId, firstName, existingSupportNeeds, {})
+      const presenter = new IdentifiedAdditionalNeedsPresenter(caseRefId, firstName, dto, {})
 
       expect(presenter.buildViewModel(res).existingSupportNeedsDetails.rows).toEqual([
-        { key: { text: content.supportNeedsTitle.neurodiversity }, value: { html: 'Use plain language' } },
+        {
+          key: { text: content.supportNeedsTitle.neurodiversity },
+          value: { text: 'Use plain language' },
+          actions: null,
+        },
       ])
     })
 
     it('returns an empty list of rows when no support needs are populated', () => {
-      const presenter = new IdentifiedAdditionalNeedsPresenter(caseRefId, firstName, existingSupportNeeds, {})
+      const presenter = new IdentifiedAdditionalNeedsPresenter(caseRefId, firstName, dto, {})
 
-      expect(presenter.buildViewModel(res).existingSupportNeedsDetails.rows).toEqual([])
+      expect(presenter.buildViewModel(res).existingSupportNeedsDetails).toBeUndefined()
     })
 
     it('omits the summary list when existing support needs data is missing', () => {

@@ -27,7 +27,6 @@ export type IdentifiedAdditionalNeedsViewModel = {
   existingSupportNeedsDetails?: GovukFrontendSummaryList
   didYouIdentifyRadio: GovukFrontendRadiosWithConditional
   submitButton: GovukFrontendButton
-  submitHref: string
   backLink: GovukFrontendBackLink
   formData: IdentifiedAdditionalNeedsFormData
 }
