@@ -77,6 +77,7 @@ test.describe('Create an appointment - appointment details page', () => {
       await expect(appointmentPage.inSomewhereElseRadioButton).toHaveCount(0)
       await expect(appointmentPage.meetAtTheGateFieldset).toHaveCount(0)
       await expect(appointmentPage.informedByPhoneCheckbox).toHaveCount(0)
+      await expect(page.locator('.govuk-radios__divider')).toHaveCount(0)
     })
 
     test('handover session for a person in prison has no prison option', async ({ page }) => {

@@ -9,7 +9,7 @@ const headers: Record<SessionType, string> = {
   CONTACT_SESSION: 'Book contact session',
   PRE_RELEASE_SESSION: 'Book pre-release session',
   POST_RELEASE_SESSION: 'Book post-release session',
-  HANDOVER_SESSION: 'Schedule the handover session',
+  HANDOVER_SESSION: 'Book handover session',
 }
 
 export default class CreateAppointmentDetailsPage extends AbstractPage {
