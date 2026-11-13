@@ -650,23 +650,6 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/bff/referral/{caseReference}/existing-support-needs': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get Existing support needs */
-    get: operations['getExistingSupportNeeds']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
   '/bff/referral/{caseReference}/create-an-appointment/appointment-type': {
     parameters: {
       query?: never
@@ -1061,6 +1044,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/bff/ics-feedback/{caseReference}/identified-additional-support-needs': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get Existing support needs */
+    get: operations['getIdentifiedAdditionalSupportNeeds']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/bff/ics-feedback/{caseReference}/identified-additional-needs': {
     parameters: {
       query?: never
@@ -1386,7 +1386,7 @@ export interface components {
     CreateAppointmentRequest: {
       /** @enum {string|null} */
       appointmentType?:
-        'ICS' | 'CONTACT_SESSION' | 'POST_RELEASE_SESSION' | 'PRE_RELEASE_SESSION' | 'HANDOVER_SESSION' | null
+      'ICS' | 'CONTACT_SESSION' | 'POST_RELEASE_SESSION' | 'PRE_RELEASE_SESSION' | 'HANDOVER_SESSION' | null
       /** Format: date */
       date: string
       time: components['schemas']['AppointmentTimeRequest']
@@ -1398,7 +1398,7 @@ export interface components {
     SessionMethodRequest: {
       /** @enum {string} */
       type:
-        'PHONE' | 'VIDEO' | 'IN_PERSON' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION' | 'IN_PERSON_PRISON'
+      'PHONE' | 'VIDEO' | 'IN_PERSON' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION' | 'IN_PERSON_PRISON'
       additionalDetails?: string | null
       prisonCode?: string | null
       pdu?: string | null
@@ -1613,12 +1613,12 @@ export interface components {
       id: string
       /** @enum {string} */
       method:
-        | 'PHONE_CALL'
-        | 'VIDEO_CALL'
-        | 'IN_PERSON'
-        | 'IN_PERSON_PROBATION_OFFICE'
-        | 'IN_PERSON_OTHER_LOCATION'
-        | 'IN_PERSON_PRISON'
+      | 'PHONE_CALL'
+      | 'VIDEO_CALL'
+      | 'IN_PERSON'
+      | 'IN_PERSON_PROBATION_OFFICE'
+      | 'IN_PERSON_OTHER_LOCATION'
+      | 'IN_PERSON_PRISON'
       methodDetails?: string | null
       prisonCode?: string | null
       addressLine1?: string | null
@@ -1931,13 +1931,13 @@ export interface components {
       refereeName: components['schemas']['RefereeNameDto']
       physicalHealth: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       mentalEmotionalHealth:
-        components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
+      components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       neurodiversity: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       locationTravel: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       caringResponsibilities:
-        components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
+      components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       employmentResponsibilities:
-        components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
+      components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       diversity: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       anythingElse: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       needsAdditionalSupport?: boolean | null
@@ -1969,13 +1969,13 @@ export interface components {
     AppointmentDetailsDto: {
       /** @enum {string|null} */
       method?:
-        | 'PHONE_CALL'
-        | 'VIDEO_CALL'
-        | 'IN_PERSON'
-        | 'IN_PERSON_PROBATION_OFFICE'
-        | 'IN_PERSON_OTHER_LOCATION'
-        | 'IN_PERSON_PRISON'
-        | null
+      | 'PHONE_CALL'
+      | 'VIDEO_CALL'
+      | 'IN_PERSON'
+      | 'IN_PERSON_PROBATION_OFFICE'
+      | 'IN_PERSON_OTHER_LOCATION'
+      | 'IN_PERSON_PRISON'
+      | null
       date?: string | null
       time?: string | null
     }
@@ -1997,17 +1997,6 @@ export interface components {
     }
     IcsChangeReasonBffDto: {
       fullName: string
-    }
-    ExistingSupportNeedsBffResponseDto: {
-      physicalHealthDetails?: string | null
-      mentalEmotionalHealthDetails?: string | null
-      neurodiversityDetails?: string | null
-      locationTravelDetails?: string | null
-      caringResponsibilitiesDetails?: string | null
-      employmentResponsibilitiesDetails?: string | null
-      diversityDetails?: string | null
-      anythingElseDetails?: string | null
-      interpreterLanguage?: string | null
     }
     CreateAppointmentReferenceDataBffDto: {
       appointmentTypes: components['schemas']['CreateAppointmentTypeOptionDto'][]
@@ -2286,6 +2275,12 @@ export interface components {
     }
     IcsFeedbackIssuesOrConcernsBffDto: {
       referralFirstName: string
+    }
+    IcsFeedbackIdentifiedAdditionalSupportNeedsBffResponseDto: {
+      referralFirstName: string
+      referralSupportNeeds: {
+        [key: string]: string
+      }
     }
     IcsFeedbackIdentifiedAdditionalNeedsBffDto: {
       referralFirstName: string
@@ -3400,7 +3395,7 @@ export interface operations {
     requestBody: {
       content: {
         'application/json':
-          components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
+        components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       }
     }
     responses: {
@@ -3883,37 +3878,6 @@ export interface operations {
         }
       }
       /** @description Referral or ICS appointment not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  getExistingSupportNeeds: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        caseReference: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Existing support needs found */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ExistingSupportNeedsBffResponseDto']
-        }
-      }
-      /** @description Existing support needs found */
       404: {
         headers: {
           [name: string]: unknown
@@ -4611,6 +4575,37 @@ export interface operations {
         }
       }
       /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getIdentifiedAdditionalSupportNeeds: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        caseReference: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Existing support needs found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['IcsFeedbackIdentifiedAdditionalSupportNeedsBffResponseDto']
+        }
+      }
+      /** @description Existing support needs found */
       404: {
         headers: {
           [name: string]: unknown
