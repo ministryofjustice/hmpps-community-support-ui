@@ -55,7 +55,6 @@ import type {
   OffenceSentenceInfoBffResponseDto,
   WithdrawReferralRequest,
   ActionPlanNeedsOrderRequest,
-  ExistingSupportNeedsBffResponseDto,
   IcsFeedbackWhyDidSessionNotHappenBffDto,
   IcsFeedbackSessionFeedbackBffDto,
   IcsFeedbackNextStepsBffDto,
@@ -69,6 +68,7 @@ import type {
   IcsViewOrChangeBffDto,
   IcsChangeDetailsBffDto,
   IcsChangeReasonBffDto,
+  IcsFeedbackIdentifiedAdditionalSupportNeedsBffResponseDto,
 } from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
@@ -371,10 +371,10 @@ export default class CommunitySupportApiClient extends RestClient {
   async getExistingSupportNeeds(
     caseReference: string,
     username: string,
-  ): Promise<ExistingSupportNeedsBffResponseDto | null> {
+  ): Promise<IcsFeedbackIdentifiedAdditionalSupportNeedsBffResponseDto | null> {
     try {
-      return await this.get<ExistingSupportNeedsBffResponseDto>(
-        { path: `/bff/referral/${caseReference}/existing-support-needs` },
+      return await this.get<IcsFeedbackIdentifiedAdditionalSupportNeedsBffResponseDto>(
+        { path: `/bff/ics-feedback/${caseReference}/existing-support-needs` },
         asSystem(username),
       )
     } catch (error) {
