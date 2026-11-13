@@ -22,8 +22,16 @@ test.describe('Change Session Details Page', () => {
   test.beforeEach(async ({ page }) => {
     await resetStubs()
     await Promise.all([
-      communitySupport.stubGetICS(virtual.caseRefId, virtual.data),
-      communitySupport.stubGetICS(inPerson.caseRefId, inPerson.data),
+      communitySupport.stubGetIcsChangeReason(virtual.caseRefId, {
+        fullName: `${virtual.data.referralFirstName} ${virtual.data.referralLastName}`,
+      }),
+      communitySupport.stubGetIcsChangeReason(inPerson.caseRefId, {
+        fullName: `${inPerson.data.referralFirstName} ${inPerson.data.referralLastName}`,
+      }),
+      communitySupport.stubGetIcsViewOrChange(virtual.caseRefId, virtual.data),
+      communitySupport.stubGetIcsViewOrChange(inPerson.caseRefId, inPerson.data),
+      communitySupport.stubGetIcsChangeDetails(virtual.caseRefId, virtual.data),
+      communitySupport.stubGetIcsChangeDetails(inPerson.caseRefId, inPerson.data),
       communitySupport.stubGetReferralInformation(200, virtual.caseRefId),
       prisonApi.stubGetPrisons(),
       communitySupport.stubGetProbationOffices(probationOfficesData),

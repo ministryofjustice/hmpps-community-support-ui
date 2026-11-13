@@ -12,10 +12,6 @@ import CommunitySupportApiClient from '../data/communitySupportApiClient'
 export default class AppointmentService {
   constructor(private communitySupportApiClient: CommunitySupportApiClient) {}
 
-  getICS(icsId: string, username: string): Promise<AppointmentIcsResponse> {
-    return this.communitySupportApiClient.getICS(icsId, username)
-  }
-
   getCreateAppointmentReferenceData(
     caseReference: string,
     username: string,
@@ -111,5 +107,17 @@ export default class AppointmentService {
 
   getIcsFeedbackSessionDetails(caseRefId: string, username: string) {
     return this.communitySupportApiClient.getIcsFeedbackSessionDetails(caseRefId, username)
+  }
+
+  getIcsViewOrChange(caseRefId: string, username: string) {
+    return this.communitySupportApiClient.getIcsViewOrChange(caseRefId, username)
+  }
+
+  getIcsChangeDetails(caseRefId: string, username: string) {
+    return this.communitySupportApiClient.getIcsChangeDetails(caseRefId, username)
+  }
+
+  getIcsChangeReason(caseRefId: string, username: string) {
+    return this.communitySupportApiClient.getIcsChangeReason(caseRefId, username)
   }
 }

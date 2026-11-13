@@ -97,6 +97,9 @@ type IcsFeedbackDidSessionTakePlaceBffDto = components['schemas']['IcsFeedbackDi
 type IcsFeedbackCheckAnswersBffDto = components['schemas']['IcsFeedbackCheckAnswersBffDto']
 type IcsFeedbackAttendanceBffDto = components['schemas']['IcsFeedbackAttendanceBffDto']
 type IcsFeedbackSessionDetailsBffDto = components['schemas']['IcsFeedbackSessionDetailsBffDto']
+type IcsViewOrChangeBffDto = components['schemas']['IcsViewOrChangeBffDto']
+type IcsChangeDetailsBffDto = components['schemas']['IcsChangeDetailsBffDto']
+type IcsChangeReasonBffDto = components['schemas']['IcsChangeReasonBffDto']
 
 export type {
   Referral,
@@ -190,4 +193,7 @@ export type {
   IcsFeedbackCheckAnswersBffDto,
   IcsFeedbackAttendanceBffDto,
   IcsFeedbackSessionDetailsBffDto,
+  IcsViewOrChangeBffDto,
+  IcsChangeDetailsBffDto,
+  IcsChangeReasonBffDto,
 }

@@ -616,6 +616,40 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/bff/referral/{caseReference}/ics-change-details': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get referral information and ICS prefill for the change details page */
+    get: operations['getIcsChangeDetails']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/referral/{caseReference}/ics-change-details/reason': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get referral full name for the ICS change reason page */
+    get: operations['getIcsChangeReason']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/bff/referral/{caseReference}/existing-support-needs': {
     parameters: {
       query?: never
@@ -798,6 +832,23 @@ export interface paths {
     }
     /** Get ICS Details */
     get: operations['getICSDetails']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/referral-details/{caseReference}/ics-view-or-change': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get the latest ICS appointment for the view or change page */
+    get: operations['getIcsViewOrChange']
     put?: never
     post?: never
     delete?: never
@@ -1933,6 +1984,20 @@ export interface components {
       appointmentDetails?: components['schemas']['AppointmentDetailsDto'] | null
       otherAppointmentMethods?: string[] | null
     }
+    IcsChangeDetailsBffDto: {
+      firstName: string
+      personIdentifier: string
+      /** Format: date */
+      referralDate: string
+      /** Format: date */
+      appointmentDate: string
+      appointmentTime: components['schemas']['AppointmentTimeResponse']
+      sessionMethod: components['schemas']['SessionMethod']
+      sessionCommunications: string[]
+    }
+    IcsChangeReasonBffDto: {
+      fullName: string
+    }
     ExistingSupportNeedsBffResponseDto: {
       physicalHealthDetails?: string | null
       mentalEmotionalHealthDetails?: string | null
@@ -2123,6 +2188,16 @@ export interface components {
       fullName: string
       appointments: components['schemas']['ReferralAppointmentHistoryDto'][]
       actionPlanStatus: components['schemas']['ActionPlanStatusDto']
+    }
+    IcsViewOrChangeBffDto: {
+      referralFirstName: string
+      referralLastName: string
+      /** Format: date */
+      appointmentDate: string
+      appointmentTime: components['schemas']['AppointmentTimeResponse']
+      sessionMethod: components['schemas']['SessionMethod']
+      sessionCommunications: string[]
+      changeAppointmentDetails?: components['schemas']['ChangeAppointmentDetails'] | null
     }
     ProbationOffice: {
       /** Format: int32 */
@@ -3756,6 +3831,68 @@ export interface operations {
       }
     }
   }
+  getIcsChangeDetails: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        caseReference: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description ICS change details found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['IcsChangeDetailsBffDto']
+        }
+      }
+      /** @description Referral or ICS appointment not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getIcsChangeReason: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        caseReference: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description ICS change reason found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['IcsChangeReasonBffDto']
+        }
+      }
+      /** @description Referral or ICS appointment not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
   getExistingSupportNeeds: {
     parameters: {
       query?: never
@@ -4075,6 +4212,37 @@ export interface operations {
         }
       }
       /** @description ICS details not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getIcsViewOrChange: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        caseReference: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description ICS view or change details found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['IcsViewOrChangeBffDto']
+        }
+      }
+      /** @description Referral or ICS appointment not found */
       404: {
         headers: {
           [name: string]: unknown

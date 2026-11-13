@@ -29,6 +29,7 @@ import ViewChangeSessionDetailsPresenter from './view-change-session-details/Vie
 import IcsFeedbackCheckYourAnswersPresenter from './check-ics-feedback/icsFeedbackCheckYourAnswersPresenter'
 import { ReferralProgressBannerContent } from '../referral/progress/ReferralProgressBannerContent'
 import { ChangeRequesterType } from './change-ics-details-reason/ChangeAppointmentDetails'
+import ChangeIcsDetailsReasonPresenter from './change-ics-details-reason/ChangeIcsDetailsReasonPresenter'
 
 jest.mock('./confirm-ics/confirmIcsPresenter')
 jest.mock('../services/AppointmentService')
@@ -40,6 +41,7 @@ jest.mock('../services/referralService')
 jest.mock('../services/referenceDataService')
 jest.mock('./view-change-session-details/ViewChangeSessionDetailsPresenter')
 jest.mock('./check-ics-feedback/icsFeedbackCheckYourAnswersPresenter')
+jest.mock('./change-ics-details-reason/ChangeIcsDetailsReasonPresenter')
 
 describe('AppointmentController', () => {
   let appointmentService: AppointmentService
@@ -54,6 +56,29 @@ describe('AppointmentController', () => {
   const mockIcsId = randomUUID()
   const referralId = randomUUID()
   const caseRefId = 'AB1234CD'
+
+  describe('changeIcsDetailsReason', () => {
+    it('uses the reason BFF full name and preserves session values and validation errors', async () => {
+      const errors = {
+        list: [{ href: '#reasonForChange', text: 'Enter the reason for this change' }],
+        messages: { reasonForChange: { text: 'Enter the reason for this change' } },
+      }
+      jest.mocked(appointmentService.getIcsChangeReason).mockResolvedValue({ fullName: 'John Smith' })
+      req.session.ChangeAppointmentDetails = mockChangeAppointmentDetails
+      res.locals.errors = errors
+
+      await appointmentController.changeIcsDetailsReason(req, res)
+
+      expect(appointmentService.getIcsChangeReason).toHaveBeenCalledWith(caseRefId, 'user1')
+      expect(ChangeIcsDetailsReasonPresenter).toHaveBeenCalledWith(
+        caseRefId,
+        'John Smith',
+        mockChangeAppointmentDetails,
+        errors,
+      )
+      expect(ChangeIcsDetailsReasonPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+    })
+  })
 
   const mockCreateAppointmentRequest: CreateAppointmentRequest = {
     date: '2026-03-27',
@@ -1796,7 +1821,6 @@ describe('AppointmentController', () => {
         referralFirstName: mockAppointmentIcsResponse.referralFirstName,
         appointmentIcsId: mockAppointmentIcsResponse.appointmentIcsId,
       })
-      const getIcsSpy = jest.spyOn(appointmentService, 'getICS')
       const username = 'user1'
       const mockSubmission = {
         record: {
@@ -1823,7 +1847,6 @@ describe('AppointmentController', () => {
         mockSubmission,
         username,
       )
-      expect(getIcsSpy).not.toHaveBeenCalled()
       expect(icsFeedbackCheckReq.session.icsFeedbackSubmission).toBeFalsy()
       expect(icsFeedbackCheckReq.session.referralProgressBanner).toEqual(bannerContent)
       expect(icsFeedbackCheckRes.redirect).toHaveBeenCalledWith(`/progress/${caseRefId}`)
