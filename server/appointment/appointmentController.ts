@@ -74,9 +74,6 @@ const recordAttendanceRedirectUrl = (data: RecordSessionAttendanceFormData, case
   if (data.happened === 'Yes') {
     return `/ics-feedback/${caseRefId}/did-session-take-place`
   }
-  if (data.attended === 'Yes') {
-    return `/ics-feedback/${caseRefId}/why-did-the-session-not-happen`
-  }
   return `/ics-feedback/${caseRefId}/how-they-tried-to-contact-the-person`
 }
 
@@ -816,7 +813,7 @@ class AppointmentController {
           caseReferenceId: caseRefId.toString(),
           record: {
             didSessionHappen: data.happened === 'Yes',
-            didPersonAttend: data.happened === 'No' ? data.attended === 'Yes' : true,
+            didPersonAttend: data.happened === 'Yes',
           },
         }
         res.redirect(recordAttendanceRedirectUrl(data, caseRefId.toString()))
