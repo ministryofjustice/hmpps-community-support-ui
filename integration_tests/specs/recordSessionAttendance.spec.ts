@@ -9,7 +9,7 @@ import RecordSessionAttendancePage from '../pages/RecordSessionAttendancePage'
 import ReferralProgressPage from '../pages/referralProgressPage'
 import buildReferralProgress from '../../server/testutils/buildReferralProgress'
 import IcsFeedbackHowSessionTookPlacePage from '../pages/icsFeedbackHowSessionTookPlacePage'
-import IcsFeedbackHowTheyTriedToContactThePersonPage from '../pages/IcsFeedbackHowTheyTriedToContactThePersonPage'
+import DidAttendPage from '../pages/DidAttendPage'
 import { probationOfficesData } from '../mockData/referenceData'
 
 test.describe('RecordSessionAttendancePage', () => {
@@ -47,9 +47,6 @@ test.describe('RecordSessionAttendancePage', () => {
     await communitySupport.stubGetIcsFeedbackAttendance(fixedTimePmMeeting.caseRefId, fixedTimePmMeeting.data)
     await communitySupport.stubGetIcsFeedbackDidSessionTakePlace(pastMeeting.caseRefId, pastMeeting.data)
     await communitySupport.stubGetProbationOffices(probationOfficesData)
-    await communitySupport.stubGetIcsFeedbackPage(pastMeeting.caseRefId, 'how-they-tried-to-contact-the-person', {
-      referralFirstName: pastMeeting.data.referralFirstName,
-    })
     await page.goto('/')
     await login(page)
   })
@@ -280,6 +277,6 @@ test.describe('RecordSessionAttendancePage', () => {
     const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
     await recordSessionAttendancePage.sessionHappenedRadios.items[1].input.click()
     await recordSessionAttendancePage.continueButton.click()
-    await expect(page).toHaveURL(IcsFeedbackHowTheyTriedToContactThePersonPage.url(pastMeeting.caseRefId))
+    await expect(page).toHaveURL(DidAttendPage.url(pastMeeting.caseRefId))
   })
 })

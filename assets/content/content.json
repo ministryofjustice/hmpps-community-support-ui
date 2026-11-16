@@ -603,6 +603,22 @@
     },
     "backLink": "/progress/{{ id }}"
   },
+  "/ics-feedback/:id/did-attend": {
+    "appointmentDetails": {
+      "dateLabel": "Date",
+      "startTimeLabel": "Start time"
+    },
+    "attendanceForm": {
+      "didAttendRadios": {
+        "id": "didAttend",
+        "heading": "Did {{ firstname }} come to the session?",
+        "yesLabel": "Yes",
+        "noLabel": "No"
+      },
+      "submitButtonText": "Continue"
+    },
+    "backLink": "/ics-feedback/{{ id }}/attendance"
+  },
   "/ics-feedback/:id/session-feedback": {
     "pageTitle": "Session feedback – ICS feedback – Community Support",
     "pageHeader": "Session feedback",
@@ -944,7 +960,7 @@
       }
     },
     "submitButtonText": "Continue",
-    "backLinkHref": "/ics-feedback/{{ id }}/attendance"
+    "backLinkHref": "/ics-feedback/{{ id }}/did-attend"
   },
   "/ics-feedback/:id/how-they-tried-to-contact-the-person": {
     "pageHeader": "How did you try to contact {{ firstname }} and what do you know about why they did not attend?",
@@ -959,7 +975,7 @@
       },
       "submitButtonText": "Continue"
     },
-    "backLink": "/ics-feedback/{{ id }}/attendance"
+    "backLink": "/ics-feedback/{{ id }}/did-attend"
   },
   "/referral/:id/ics-change-details/reason": {
     "pageHeader": "Reason for changing the session details",

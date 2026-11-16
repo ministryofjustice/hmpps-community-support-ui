@@ -5,7 +5,7 @@ import initialContactSessionDetailsPageData from '../mockData/initialContactSess
 import { login, resetStubs, seedSessionFeedbackSession } from '../testUtils'
 import communitySupport from '../mockApis/communitySupport'
 import IcsFeedbackWhyDidTheSessionNotHappenPage from '../pages/IcsFeedbackWhyDidTheSessionNotHappenPage'
-import RecordSessionAttendancePage from '../pages/RecordSessionAttendancePage'
+import DidAttendPage from '../pages/DidAttendPage'
 
 const NOTHING_SELECTED_ERROR_MESSAGE = 'Select why the session did not happen'
 const SERVICE_PROVIDER_ISSUE_DETAILS_EMPTY_ERROR_MESSAGE =
@@ -191,7 +191,7 @@ test.describe('Why Did The Session Not Happen Page', () => {
   test('Back link navigation', async ({ page }) => {
     const whyDidSessionNotHappenPage = await IcsFeedbackWhyDidTheSessionNotHappenPage.verifyOnPage(page)
     await whyDidSessionNotHappenPage.backLink.click()
-    await expect(page).toHaveURL(RecordSessionAttendancePage.url(pastMeeting.caseRefId))
-    await RecordSessionAttendancePage.verifyOnPage(page)
+    await expect(page).toHaveURL(DidAttendPage.url(pastMeeting.caseRefId))
+    await DidAttendPage.verifyOnPage(page)
   })
 })

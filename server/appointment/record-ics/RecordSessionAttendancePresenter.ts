@@ -23,7 +23,6 @@ export interface RecordSessionAttendanceViewModel {
   radioArgs: GovukFrontendRadiosWithConditional
   buttonArgs: GovukFrontendButton
   backLink: GovukFrontendBackLink
-  submitHref: string
 }
 
 export type RecordSessionAttendanceContent = GlobalContent['/ics-feedback/:id/attendance']
@@ -67,7 +66,7 @@ export default class RecordSessionAttendancePresenter extends PresenterBase<
       fieldset: {
         attributes: { 'data-testid': `fieldset-${id}` },
         legend: {
-          text: heading.replace('{{ firstname }}', this.data.referralFirstName),
+          text: heading,
           classes: 'govuk-fieldset__legend--m',
         },
       },
@@ -89,7 +88,6 @@ export default class RecordSessionAttendancePresenter extends PresenterBase<
       pageHeader: content.pageHeader,
       description: content.description,
       appointment: buildAppointmentDetails(content.appointmentDetails, appointment),
-      submitHref: `/ics-feedback/${this.caseRefId}/attendance`,
       buttonArgs: {
         text: content.attendanceForm.submitButtonText,
       },

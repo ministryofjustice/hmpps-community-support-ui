@@ -6,6 +6,7 @@ import { login, resetStubs } from '../testUtils'
 import communitySupport from '../mockApis/communitySupport'
 import initialContactSessionDetailsPageData from '../mockData/initialContactSessionDetailsPageData'
 import RecordSessionAttendancePage from '../pages/RecordSessionAttendancePage'
+import DidAttendPage from '../pages/DidAttendPage'
 import IcsFeedbackHowTheyTriedToContactThePersionPage from '../pages/icsFeedbackHowTheyTriedToContactThePersionPage'
 
 test.describe('HowTheyTriedToContactThePersion', () => {
@@ -39,6 +40,7 @@ test.describe('HowTheyTriedToContactThePersion', () => {
     const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
     await recordSessionAttendancePage.selectHappened('No')
     await recordSessionAttendancePage.clickContinue()
+    await (await DidAttendPage.verifyOnPage(page)).selectDidAttendAndContinue('No')
     await expect(page).toHaveURL(IcsFeedbackHowTheyTriedToContactThePersionPage.url(pastMeeting.caseRefId))
   })
 
@@ -53,6 +55,7 @@ test.describe('HowTheyTriedToContactThePersion', () => {
     const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
     await recordSessionAttendancePage.selectHappened('No')
     await recordSessionAttendancePage.clickContinue()
+    await (await DidAttendPage.verifyOnPage(page)).selectDidAttendAndContinue('No')
 
     await page.goto(IcsFeedbackHowTheyTriedToContactThePersionPage.url(differentMeeting.caseRefId))
     await expect(page).toHaveURL(RecordSessionAttendancePage.url(differentMeeting.caseRefId))
@@ -65,16 +68,18 @@ test.describe('HowTheyTriedToContactThePersion', () => {
       const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
       await recordSessionAttendancePage.selectHappened('No')
       await recordSessionAttendancePage.clickContinue()
+      await (await DidAttendPage.verifyOnPage(page)).selectDidAttendAndContinue('No')
+      await (await DidAttendPage.verifyOnPage(page)).selectDidAttendAndContinue('No')
     })
     await test.step('click backLink', async () => {
       const feedbackPage = await IcsFeedbackHowTheyTriedToContactThePersionPage.create(page)
       await feedbackPage.clickBackLink()
     })
     await test.step('check record session attendance page has correct content', async () => {
-      const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
-      const sessionDidNotHappenOption = recordSessionAttendancePage.sessionHappenedRadios.getItem('No')
-      expect(sessionDidNotHappenOption).toBeDefined()
-      await expect(sessionDidNotHappenOption!.input).toBeChecked()
+      const didAttendPage = await DidAttendPage.verifyOnPage(page)
+      const didNotAttendOption = didAttendPage.didAttendRadios.getItem('No')
+      expect(didNotAttendOption).toBeDefined()
+      await expect(didNotAttendOption!.input).toBeChecked()
     })
   })
 })

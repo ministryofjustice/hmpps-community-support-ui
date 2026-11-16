@@ -21,13 +21,12 @@ describe('RecordSessionAttendancePresenter', () => {
       locals: { content, errors },
     } as unknown as Response)
 
-  it('builds the static page content, back link and submit href', () => {
+  it('builds the static page content, back link', () => {
     const viewModel = buildViewModel()
 
     expect(viewModel.pageHeader).toBe(content.pageHeader)
     expect(viewModel.description).toBe(content.description)
     expect(viewModel.backLink).toEqual({ href: `/progress/${caseRefId}` })
-    expect(viewModel.submitHref).toBe(`/ics-feedback/${caseRefId}/attendance`)
     expect(viewModel.buttonArgs).toEqual({ text: 'Continue' })
   })
 
@@ -86,7 +85,7 @@ describe('RecordSessionAttendancePresenter', () => {
     presenter.renderPage(res)
 
     expect(res.render).toHaveBeenCalledWith('appointment/recordSessionAttendance', {
-      content: expect.objectContaining({ submitHref: `/ics-feedback/${caseRefId}/attendance` }),
+      content: expect.objectContaining({ pageHeader: content.pageHeader }),
     })
   })
 })

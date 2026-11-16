@@ -69,10 +69,19 @@ import { toApiInformedBy } from './informedByLabels'
 import IdentifiedAdditionalNeedsPresenter from './identified-additional-support-needs/IdentifiedAdditionalNeedsPresenter'
 import { IdentifiedAdditionalNeedsFormDataSchema } from '../validation/IdentifiedAdditonalNeedsFormData'
 import { getAppointmentTypeLabel } from './create-an-appointment/appointmentTypeLabel'
+import DidAttendPresenter from './did-attend/DidAttendPresenter'
+import DidAttendFormData, { DidAttendFormDataSchema } from '../validation/DidAttendFormData'
 
 const recordAttendanceRedirectUrl = (data: RecordSessionAttendanceFormData, caseRefId: string): string => {
   if (data.happened === 'Yes') {
     return `/ics-feedback/${caseRefId}/did-session-take-place`
+  }
+  return `/ics-feedback/${caseRefId}/did-attend`
+}
+
+const didAttendRedirectUrl = (data: DidAttendFormData, caseRefId: string): string => {
+  if (data.didAttend === 'Yes') {
+    return `/ics-feedback/${caseRefId}/why-did-the-session-not-happen`
   }
   return `/ics-feedback/${caseRefId}/how-they-tried-to-contact-the-person`
 }
@@ -813,10 +822,37 @@ class AppointmentController {
           caseReferenceId: caseRefId.toString(),
           record: {
             didSessionHappen: data.happened === 'Yes',
-            didPersonAttend: data.happened === 'Yes',
+            ...(data.happened === 'Yes' && { didPersonAttend: true }),
           },
         }
         res.redirect(recordAttendanceRedirectUrl(data, caseRefId.toString()))
+      }
+    })
+  }
+
+  async getDidAttend(req: Request, res: Response): Promise<void> {
+    const caseRefId = req.params.caseRefId as string
+    const { username } = res.locals.user
+
+    const record = req.session.icsFeedbackSubmission?.record || {}
+    const attendanceResponse = await this.appointmentService.getIcsFeedbackAttendance(caseRefId.toString(), username)
+
+    const presenter = new DidAttendPresenter(caseRefId, attendanceResponse, record)
+    presenter.renderPage(res)
+  }
+
+  recordDidAttend(req: Request, res: Response): Promise<void> {
+    return validateRequestBodyAgainstSchema(DidAttendFormDataSchema, req, res, data => {
+      if (data) {
+        const { caseRefId } = req.params
+        req.session.icsFeedbackSubmission = {
+          caseReferenceId: caseRefId.toString(),
+          record: {
+            ...req.session.icsFeedbackSubmission?.record,
+            didPersonAttend: data.didAttend === 'Yes',
+          },
+        }
+        res.redirect(didAttendRedirectUrl(data, caseRefId.toString()))
       }
     })
   }
