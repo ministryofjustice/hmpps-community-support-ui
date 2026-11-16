@@ -789,7 +789,7 @@
           {
             "text": "Did {{ firstname }} come to the appointment?",
             "hint": "Did {{ firstname }} come to the appointment",
-            "changeHref": "/ics-feedback/caseRefId/attendance"
+            "changeHref": "/ics-feedback/caseRefId/did-attend"
           },
           {
             "text": "How the session took place",
