@@ -19,7 +19,7 @@ describe('ScheduleIcsPresenter with appointment type', () => {
       CONTACT_SESSION: 'Schedule the contact session',
       PRE_RELEASE_SESSION: 'Book pre-release session',
       POST_RELEASE_SESSION: 'Schedule the post-release session',
-      HANDOVER_SESSION: 'Schedule the handover session',
+      HANDOVER_SESSION: 'Book handover session',
     },
     meetAtTheGate: { label: 'Is this a meet at the gate session?', yes: 'Yes', no: 'No' },
     submitHref: '/referral/{{ caseRef }}/create-an-appointment/appointment-details',
@@ -27,7 +27,7 @@ describe('ScheduleIcsPresenter with appointment type', () => {
       ...ScheduleIcsContentFactory.build().howSessionTakePlace,
       radioItems: {
         ...ScheduleIcsContentFactory.build().howSessionTakePlace.radioItems,
-        inPerson: { text: 'In-person meeting' },
+        inPerson: { text: 'In person' },
       },
     },
   })
@@ -70,7 +70,7 @@ describe('ScheduleIcsPresenter with appointment type', () => {
     ['CONTACT_SESSION', 'Schedule the contact session'],
     ['PRE_RELEASE_SESSION', 'Book pre-release session'],
     ['POST_RELEASE_SESSION', 'Schedule the post-release session'],
-    ['HANDOVER_SESSION', 'Schedule the handover session'],
+    ['HANDOVER_SESSION', 'Book handover session'],
   ] as [SessionAppointmentType, string][])('%s page header and submit href', (type, header) => {
     const viewModel = build(type)
     expect(viewModel.pageHeader).toBe(header)
@@ -225,14 +225,8 @@ describe('ScheduleIcsPresenter with appointment type', () => {
       ])
     })
 
-    test('handover session groups the in-person meeting option', () => {
-      expect(itemsSummary('HANDOVER_SESSION')).toEqual([
-        'divider:In person',
-        'InPerson',
-        'divider:Remote',
-        'ByPhone',
-        'ByVideo',
-      ])
+    test('handover session has no group headings and the in-person option first', () => {
+      expect(itemsSummary('HANDOVER_SESSION')).toEqual(['InPerson', 'ByPhone', 'ByVideo'])
     })
 
     test('ICS page content matches the design', () => {

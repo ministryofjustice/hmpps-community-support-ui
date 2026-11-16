@@ -244,8 +244,12 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
     const inPersonItems = locationItems.concat(this.rules?.inPerson ? this.buildInPersonRadioItems(content) : [])
 
     const { groupHeadings } = content.howSessionTakePlace
+    const showGroupHeadings = Boolean(groupHeadings) && !(this.rules?.inPerson && locationItems.length === 0)
     if (!groupHeadings) {
       return remoteItemsWithReasons.concat(inPersonItems)
+    }
+    if (!showGroupHeadings) {
+      return inPersonItems.concat(remoteItemsWithReasons)
     }
     return [
       ...(inPersonItems.length > 0 ? [{ divider: groupHeadings.inPerson, value: '' }, ...inPersonItems] : []),
@@ -256,9 +260,10 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
 
   private buildHowWillTheSessionTakePlaceRadios(content: ScheduleIcsContent): GovukFrontendRadiosWithConditional {
     const { hint, groupHeadings } = content.howSessionTakePlace
+    const grouped = Boolean(groupHeadings) && !this.rules?.inPerson
     return {
       name: 'sessionTakePlace',
-      classes: groupHeadings ? 'grouped-radio' : undefined,
+      classes: grouped ? 'grouped-radio' : undefined,
       fieldset: {
         legend: {
           text: content.howSessionTakePlace.label,
