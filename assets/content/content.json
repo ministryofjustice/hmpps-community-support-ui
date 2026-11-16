@@ -372,9 +372,11 @@
     "noNotesMessage": "No notes recorded",
     "dateColumnHeader": "Date",
     "addedByColumnHeader": "Added by",
-    "titleColumnHeader": "Title",
+    "titleColumnHeader": "Note",
     "actionColumnHeader": "Action",
-    "viewDetailsLinkText": "View details"
+    "viewDetailsLinkText": "View details",
+    "addNoteButtonText": "Add note",
+    "addedNotesSubheading": "Added notes"
   },
   "/referral/:id/appointment/select-type": {
     "pageTitle": "Select appointment type",

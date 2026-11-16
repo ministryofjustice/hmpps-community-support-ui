@@ -34,6 +34,10 @@ export default class ReferralNotesPresenter extends ReferralLayoutPresenter<
       viewDetailsLinkText: content.viewDetailsLinkText,
       // Placeholder until the note details page exists
       viewDetailsHref: `/referral/${this.caseReference}/notes`,
+      addNoteButtonText: content.addNoteButtonText,
+      // Placeholder until the add note page exists
+      addNoteHref: `/referral/${this.caseReference}/notes`,
+      addedNotesSubheading: content.addedNotesSubheading,
       notes: notesAndNonContactSessions.map(note => ({
         createdAt: note.createdAt,
         createdBy: note.createdBy,

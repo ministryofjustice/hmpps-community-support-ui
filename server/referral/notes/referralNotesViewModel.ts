@@ -20,6 +20,9 @@ export type ReferralNotesViewModel = {
   actionColumnHeader: string
   viewDetailsLinkText: string
   viewDetailsHref: string
+  addNoteButtonText: string
+  addNoteHref: string
+  addedNotesSubheading: string
   notes: ReferralNoteRow[]
   hasNotes: boolean
 }
