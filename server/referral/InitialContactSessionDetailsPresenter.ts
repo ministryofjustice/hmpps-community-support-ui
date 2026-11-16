@@ -5,7 +5,7 @@ import {
   GovukFrontendSummaryListRow,
   GovukFrontendSummaryListCardActions,
 } from '@govuk-frontend'
-import { AppointmentIcsResponse } from '@community-support-api'
+import { IcsViewOrChangeBffDto } from '@community-support-api'
 import nunjucks from 'nunjucks'
 import PresenterBase from '../presenter/presenterBase'
 import dateFormat from '../utils/dateFormat'
@@ -51,7 +51,7 @@ export interface InitialContactSessionDetailsContent {
   links: Links
 }
 
-const locationFields: string[] = [
+const locationFields: (keyof IcsViewOrChangeBffDto['sessionMethod'])[] = [
   'probationOfficeName',
   'prisonName',
   'addressLine1',
@@ -132,7 +132,7 @@ export default class InitialContactSessionDetailsPresenter extends PresenterBase
       sessionMethod,
       sessionCommunications,
       changeAppointmentDetails,
-    }: AppointmentIcsResponse,
+    }: IcsViewOrChangeBffDto,
     private readonly caseRef: string,
     private readonly historical: boolean = false,
   ) {
@@ -147,9 +147,8 @@ export default class InitialContactSessionDetailsPresenter extends PresenterBase
     ${sessionCommunications.map(str => `<li>${showSessionCommunication(str)}</li>`).join(`\n`)}
     </ul>`
 
-    const sessionMethodKeys = Object.keys(sessionMethod)
     this.locationLine = locationFields
-      .filter(field => sessionMethodKeys.includes(field))
+      .filter(field => field in sessionMethod)
       .map(field => sessionMethod[field])
       .map(str => (str ? `<p>${escapeSpecialHtmlCharacters(str)}</p>` : ''))
       .join('\n')

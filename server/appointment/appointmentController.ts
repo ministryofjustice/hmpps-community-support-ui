@@ -660,7 +660,7 @@ class AppointmentController {
     const caseRefId = req.params.caseRefId as string
     const { username } = res.locals.user
     return this.appointmentService
-      .getICS(caseRefId.toString(), username)
+      .getIcsViewOrChange(caseRefId.toString(), username)
       .then(data => new InitialContactSessionDetailsPresenter(data, caseRefId, false))
       .then(presenter => presenter.renderPage(res))
   }
@@ -1267,10 +1267,10 @@ class AppointmentController {
     const { username } = res.locals.user
     const { ChangeAppointmentDetails } = req.session
     const validationErrors: ErrorMiddlewareErrors = res.locals.errors
-    const appointmentData = await this.appointmentService.getICS(caseRefId.toString(), username)
+    const appointmentData = await this.appointmentService.getIcsChangeReason(caseRefId.toString(), username)
     const presenter = new ChangeIcsDetailsReasonPresenter(
       caseRefId,
-      `${appointmentData.referralFirstName} ${appointmentData.referralLastName}`,
+      appointmentData.fullName,
       ChangeAppointmentDetails,
       validationErrors,
     )

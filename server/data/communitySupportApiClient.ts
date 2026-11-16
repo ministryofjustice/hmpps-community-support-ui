@@ -55,7 +55,6 @@ import type {
   OffenceSentenceInfoBffResponseDto,
   WithdrawReferralRequest,
   ActionPlanNeedsOrderRequest,
-  ExistingSupportNeedsBffResponseDto,
   IcsFeedbackWhyDidSessionNotHappenBffDto,
   IcsFeedbackSessionFeedbackBffDto,
   IcsFeedbackNextStepsBffDto,
@@ -66,6 +65,10 @@ import type {
   IcsFeedbackCheckAnswersBffDto,
   IcsFeedbackAttendanceBffDto,
   IcsFeedbackSessionDetailsBffDto,
+  IcsViewOrChangeBffDto,
+  IcsChangeDetailsBffDto,
+  IcsChangeReasonBffDto,
+  IcsFeedbackIdentifiedAdditionalSupportNeedsBffResponseDto,
 } from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
@@ -138,10 +141,6 @@ export default class CommunitySupportApiClient extends RestClient {
     return this.get({ path: '/bff/referral/withdrawal-reasons' }, asSystem(username))
   }
 
-  getICS(caseRefId: string, username: string): Promise<AppointmentIcsResponse> {
-    return this.get({ path: `/bff/referral-details/${caseRefId}/ics` }, asSystem(username))
-  }
-
   getIcsFeedbackWhyDidSessionNotHappen(
     caseRefId: string,
     username: string,
@@ -192,6 +191,18 @@ export default class CommunitySupportApiClient extends RestClient {
 
   getIcsFeedbackSessionDetails(caseRefId: string, username: string): Promise<IcsFeedbackSessionDetailsBffDto> {
     return this.get({ path: `/bff/ics-feedback/${caseRefId}/session-details` }, asSystem(username))
+  }
+
+  getIcsViewOrChange(caseRefId: string, username: string): Promise<IcsViewOrChangeBffDto> {
+    return this.get({ path: `/bff/referral-details/${caseRefId}/ics-view-or-change` }, asSystem(username))
+  }
+
+  getIcsChangeDetails(caseRefId: string, username: string): Promise<IcsChangeDetailsBffDto> {
+    return this.get({ path: `/bff/referral/${caseRefId}/ics-change-details` }, asSystem(username))
+  }
+
+  getIcsChangeReason(caseRefId: string, username: string): Promise<IcsChangeReasonBffDto> {
+    return this.get({ path: `/bff/referral/${caseRefId}/ics-change-details/reason` }, asSystem(username))
   }
 
   getCreateAppointmentReferenceData(
@@ -360,10 +371,10 @@ export default class CommunitySupportApiClient extends RestClient {
   async getExistingSupportNeeds(
     caseReference: string,
     username: string,
-  ): Promise<ExistingSupportNeedsBffResponseDto | null> {
+  ): Promise<IcsFeedbackIdentifiedAdditionalSupportNeedsBffResponseDto | null> {
     try {
-      return await this.get<ExistingSupportNeedsBffResponseDto>(
-        { path: `/bff/referral/${caseReference}/existing-support-needs` },
+      return await this.get<IcsFeedbackIdentifiedAdditionalSupportNeedsBffResponseDto>(
+        { path: `/bff/ics-feedback/${caseReference}/existing-support-needs` },
         asSystem(username),
       )
     } catch (error) {

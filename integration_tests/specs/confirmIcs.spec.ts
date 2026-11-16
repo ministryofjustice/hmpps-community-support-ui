@@ -152,7 +152,10 @@ test.describe('Confirm ICS Page', () => {
     await login(page)
     await communitySupport.stubGetReferralProgress(referralProgressWithAppointments, CASE_REF_ID)
     await communitySupport.stubGetReferralInformation(200, CASE_REF_ID)
-    await communitySupport.stubGetICS(pastMeeting.caseRefId, pastMeeting.data)
+    await communitySupport.stubGetIcsChangeReason(pastMeeting.caseRefId, {
+      fullName: `${pastMeeting.data.referralFirstName} ${pastMeeting.data.referralLastName}`,
+    })
+    await communitySupport.stubGetIcsChangeDetails(pastMeeting.caseRefId, pastMeeting.data)
     await prisonApi.stubGetPrisons()
     await communitySupport.stubGetProbationOffices(probationOfficesData)
   })
