@@ -53,7 +53,7 @@ export default class AppointmentCheckYourAnswersPage extends AbstractPage {
       .filter({ has: page.getByText('Reason session is not in person', { exact: true }) })
     this.informedByRow = page.locator('.govuk-summary-list__row', { hasText: 'was informed about the session' })
     this.changeLink = page.getByRole('link', { name: /change/i })
-    this.submitButton = page.getByRole('button', { name: 'Submit' })
+    this.submitButton = page.getByRole('button', { name: /^(Submit|Continue)$/ })
   }
 
   static async verifyOnPage(page: Page): Promise<AppointmentCheckYourAnswersPage> {

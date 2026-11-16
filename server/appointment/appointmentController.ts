@@ -538,6 +538,20 @@ class AppointmentController {
     const response = await this.appointmentService.submitAppointment(caseReference, createAppointmentRequest, username)
     delete req.session.appointmentSessionData
 
+    if (
+      response.appointmentType === 'ICS' &&
+      this.isRetrospectiveAppointment(response.appointmentDate, response.appointmentTime)
+    ) {
+      req.session.retrospectiveBooking = {
+        caseReference,
+        appointmentIcsId: response.appointmentIcsId,
+      }
+      delete req.session.createAppointmentRequest
+      delete req.session.icsFeedbackSubmission
+      delete req.session.pending
+      return res.redirect(`/ics-feedback/${caseReference}/attendance`)
+    }
+
     req.session.createdAppointmentMessage = generateSuccessMessage(
       response.appointmentType,
       response.appointmentDate,
@@ -788,6 +802,19 @@ class AppointmentController {
     if (icsFeedbackSubmission && appointmentIcsId) {
       await this.appointmentService.submitIcsFeedback(caseRefId, appointmentIcsId, icsFeedbackSubmission, username)
       delete req.session.icsFeedbackSubmission
+      const { retrospectiveBooking } = req.session
+      if (
+        retrospectiveBooking?.caseReference === caseRefId &&
+        retrospectiveBooking.appointmentIcsId === appointmentIcsId
+      ) {
+        delete req.session.retrospectiveBooking
+        req.session.createdAppointmentMessage = {
+          title: 'Session feedback submitted',
+          message: 'The ICS is now complete.',
+        }
+        res.redirect(`/referral/${caseRefId}/appointments`)
+        return
+      }
       this.setReferralProgressBanner(req, caseRefId, 'Session feedback submitted', 'The ICS is now complete.')
       res.redirect(`/progress/${caseRefId}`)
     }
