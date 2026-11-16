@@ -1098,7 +1098,7 @@
           }
         },
         "inPerson": {
-          "text": "In-person meeting"
+          "text": "In person"
         }
       }
     },
@@ -1123,7 +1123,7 @@
       "CONTACT_SESSION": "Book contact session",
       "PRE_RELEASE_SESSION": "Book pre-release session",
       "POST_RELEASE_SESSION": "Book post-release session",
-      "HANDOVER_SESSION": "Schedule the handover session"
+      "HANDOVER_SESSION": "Book handover session"
     },
     "meetAtTheGate": {
       "label": "Is this a meet at the gate session?",
