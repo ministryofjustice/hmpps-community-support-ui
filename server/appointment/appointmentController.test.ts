@@ -31,6 +31,7 @@ import IcsFeedbackCheckYourAnswersPresenter from './check-ics-feedback/icsFeedba
 import { ReferralProgressBannerContent } from '../referral/progress/ReferralProgressBannerContent'
 import { ChangeRequesterType } from './change-ics-details-reason/ChangeAppointmentDetails'
 import ChangeIcsDetailsReasonPresenter from './change-ics-details-reason/ChangeIcsDetailsReasonPresenter'
+import { parseTime12Hr } from '../utils/timeFormat'
 
 jest.mock('./confirm-ics/confirmIcsPresenter')
 jest.mock('../services/AppointmentService')
@@ -361,6 +362,68 @@ describe('AppointmentController', () => {
   })
 
   describe('submitAppointment', () => {
+    beforeEach(() => {
+      jest.useFakeTimers().setSystemTime(new Date(2026, 10, 4, 13, 30))
+    })
+
+    afterEach(() => {
+      jest.useRealTimers()
+    })
+
+    it.each([
+      ['ICS', '2025-01-01', '1:00pm', true],
+      ['ICS', '2026-11-04', '1:29pm', true],
+      ['ICS', '2026-11-04', '1:30pm', false],
+      ['ICS', '2026-11-04', '1:31pm', false],
+      ['ICS', '2099-01-01', '1:00pm', false],
+      ['CONTACT_SESSION', '2025-01-01', '1:00pm', false],
+      ['PRE_RELEASE_SESSION', '2025-01-01', '1:00pm', false],
+      ['POST_RELEASE_SESSION', '2025-01-01', '1:00pm', false],
+      ['HANDOVER_SESSION', '2025-01-01', '1:00pm', false],
+    ] as const)(
+      'routes a %s on %s at %s to feedback: %s',
+      async (appointmentType, date, startTime, shouldCollectFeedback) => {
+        req.params = { caseReference: caseRefId }
+        req.session.appointmentSessionData = { appointmentType, date, startTime, method: 'PHONE' }
+        req.session.createAppointmentRequest = mockCreateAppointmentRequest
+        req.session.icsFeedbackSubmission = {
+          caseReferenceId: 'OTHER123',
+          record: { didSessionHappen: false },
+        }
+        req.session.pending = { didSessionTakePlaceAsPlanned: 'yes' }
+        jest
+          .spyOn(appointmentService, 'getCreateAppointmentReferenceData')
+          .mockResolvedValue(mockCreateAppointmentReferenceData)
+        jest.spyOn(appointmentService, 'submitAppointment').mockResolvedValue({
+          ...mockAppointmentIcsResponse,
+          appointmentType,
+          appointmentDate: date,
+          appointmentTime: parseTime12Hr(startTime),
+        })
+
+        await appointmentController.submitAppointment(req, res)
+
+        expect(appointmentService.submitAppointment).toHaveBeenCalledTimes(1)
+        expect(req.session.appointmentSessionData).toBeUndefined()
+        expect(res.redirect).toHaveBeenCalledWith(
+          shouldCollectFeedback ? `/ics-feedback/${caseRefId}/attendance` : `/referral/${caseRefId}/appointments`,
+        )
+        if (shouldCollectFeedback) {
+          expect(req.session.retrospectiveBooking).toEqual({
+            caseReference: caseRefId,
+            appointmentIcsId: mockIcsId,
+          })
+          expect(req.session.createAppointmentRequest).toBeUndefined()
+          expect(req.session.icsFeedbackSubmission).toBeUndefined()
+          expect(req.session.pending).toBeUndefined()
+          expect(req.session.createdAppointmentMessage).toBeUndefined()
+        } else {
+          expect(req.session.retrospectiveBooking).toBeUndefined()
+          expect(req.session.createdAppointmentMessage).toBeDefined()
+        }
+      },
+    )
+
     it('redirects to appointment type when the session data is missing', async () => {
       req = {
         params: { caseReference: caseRefId },
@@ -482,7 +545,10 @@ describe('AppointmentController', () => {
       jest
         .spyOn(appointmentService, 'getCreateAppointmentReferenceData')
         .mockResolvedValue(mockCreateAppointmentReferenceData)
-      jest.spyOn(appointmentService, 'submitAppointment').mockResolvedValue(mockAppointmentIcsResponse)
+      jest.spyOn(appointmentService, 'submitAppointment').mockResolvedValue({
+        ...mockAppointmentIcsResponse,
+        appointmentType: 'CONTACT_SESSION',
+      })
 
       await appointmentController.submitAppointment(req, res)
 
@@ -563,35 +629,39 @@ describe('AppointmentController', () => {
       expect(req.session.appointmentSessionData).toBeDefined()
     })
 
-    it('propagates appointment creation errors without setting the success alert or clearing session data', async () => {
-      const createError = new Error('Appointment creation failed')
-      req = {
-        params: { caseReference: caseRefId },
-        session: {
-          appointmentSessionData: {
-            appointmentType: 'CONTACT_SESSION',
-            date: '2026-03-27',
-            startTime: '1:30pm',
-            method: 'IN_PERSON_PROBATION_OFFICE',
-            probationOfficeLocationId: '2',
-            informedBy: ['informedByPhone'],
+    it.each(['ICS', 'CONTACT_SESSION'])(
+      'propagates %s creation errors without setting the success alert or clearing session data',
+      async appointmentType => {
+        const createError = new Error('Appointment creation failed')
+        req = {
+          params: { caseReference: caseRefId },
+          session: {
+            appointmentSessionData: {
+              appointmentType,
+              date: '2026-03-27',
+              startTime: '1:30pm',
+              method: 'IN_PERSON_PROBATION_OFFICE',
+              probationOfficeLocationId: '2',
+              informedBy: ['informedByPhone'],
+            },
           },
-        },
-        flash: jest.fn().mockReturnValue([]),
-      } as unknown as Request
+          flash: jest.fn().mockReturnValue([]),
+        } as unknown as Request
 
-      jest.spyOn(appointmentService, 'getCreateAppointmentReferenceData').mockResolvedValue({
-        appointmentTypes: mockCreateAppointmentReferenceData.appointmentTypes,
-        probationOfficeLocations: [{ id: 2, name: 'Derbyshire: Buxton Probation Office' }],
-      } as never)
-      jest.spyOn(appointmentService, 'submitAppointment').mockRejectedValue(createError)
+        jest.spyOn(appointmentService, 'getCreateAppointmentReferenceData').mockResolvedValue({
+          appointmentTypes: mockCreateAppointmentReferenceData.appointmentTypes,
+          probationOfficeLocations: [{ id: 2, name: 'Derbyshire: Buxton Probation Office' }],
+        } as never)
+        jest.spyOn(appointmentService, 'submitAppointment').mockRejectedValue(createError)
 
-      await expect(appointmentController.submitAppointment(req, res)).rejects.toBe(createError)
+        await expect(appointmentController.submitAppointment(req, res)).rejects.toBe(createError)
 
-      expect(req.session.createdAppointmentMessage).toBeUndefined()
-      expect(req.session.appointmentSessionData).toBeDefined()
-      expect(res.redirect).not.toHaveBeenCalled()
-    })
+        expect(req.session.createdAppointmentMessage).toBeUndefined()
+        expect(req.session.retrospectiveBooking).toBeUndefined()
+        expect(req.session.appointmentSessionData).toBeDefined()
+        expect(res.redirect).not.toHaveBeenCalled()
+      },
+    )
 
     it.each([
       ['ICS', 'PHONE', 'The person cannot attend by phone'],
@@ -1903,6 +1973,71 @@ describe('AppointmentController', () => {
       expect(icsFeedbackCheckReq.session.icsFeedbackSubmission).toBeFalsy()
       expect(icsFeedbackCheckReq.session.referralProgressBanner).toEqual(bannerContent)
       expect(icsFeedbackCheckRes.redirect).toHaveBeenCalledWith(`/progress/${caseRefId}`)
+    })
+
+    it.each([
+      [caseRefId, mockIcsId, true],
+      ['OTHER123', mockIcsId, false],
+      [caseRefId, randomUUID(), false],
+    ])(
+      'returns to appointments only for the matching retrospective booking (%s, %s)',
+      async (caseReference, appointmentIcsId, matchesBooking) => {
+        jest.spyOn(appointmentService, 'getIcsFeedbackCheckAnswers').mockResolvedValue({
+          referralFirstName: 'John',
+          appointmentIcsId: mockIcsId,
+        })
+        icsFeedbackCheckReq.session.icsFeedbackSubmission = {
+          caseReferenceId: caseRefId,
+          record: { didSessionHappen: true },
+        }
+        icsFeedbackCheckReq.session.retrospectiveBooking = { caseReference, appointmentIcsId }
+
+        await appointmentController.submitFeedback(icsFeedbackCheckReq, icsFeedbackCheckRes)
+
+        expect(appointmentService.submitIcsFeedback).toHaveBeenCalledWith(
+          caseRefId,
+          mockIcsId,
+          expect.objectContaining({ caseReferenceId: caseRefId }),
+          'user1',
+        )
+        expect(icsFeedbackCheckReq.session.icsFeedbackSubmission).toBeUndefined()
+        expect(icsFeedbackCheckRes.redirect).toHaveBeenCalledWith(
+          matchesBooking ? `/referral/${caseRefId}/appointments` : `/progress/${caseRefId}`,
+        )
+        if (matchesBooking) {
+          expect(icsFeedbackCheckReq.session.retrospectiveBooking).toBeUndefined()
+          expect(icsFeedbackCheckReq.session.referralProgressBanner).toBeUndefined()
+          expect(icsFeedbackCheckReq.session.createdAppointmentMessage).toEqual({
+            title: 'Session feedback submitted',
+            message: 'The ICS is now complete.',
+          })
+        } else {
+          expect(icsFeedbackCheckReq.session.createdAppointmentMessage).toBeUndefined()
+        }
+      },
+    )
+
+    it('retains the retrospective booking and feedback for retry when submission fails', async () => {
+      const feedbackError = new Error('Feedback submission failed')
+      jest.spyOn(appointmentService, 'getIcsFeedbackCheckAnswers').mockResolvedValue({
+        referralFirstName: 'John',
+        appointmentIcsId: mockIcsId,
+      })
+      jest.spyOn(appointmentService, 'submitIcsFeedback').mockRejectedValue(feedbackError)
+      const booking = { caseReference: caseRefId, appointmentIcsId: mockIcsId }
+      const feedback = { caseReferenceId: caseRefId, record: { didSessionHappen: true } }
+      icsFeedbackCheckReq.session.retrospectiveBooking = booking
+      icsFeedbackCheckReq.session.icsFeedbackSubmission = feedback
+
+      await expect(appointmentController.submitFeedback(icsFeedbackCheckReq, icsFeedbackCheckRes)).rejects.toBe(
+        feedbackError,
+      )
+
+      expect(icsFeedbackCheckReq.session.retrospectiveBooking).toEqual(booking)
+      expect(icsFeedbackCheckReq.session.icsFeedbackSubmission).toEqual(feedback)
+      expect(icsFeedbackCheckReq.session.createdAppointmentMessage).toBeUndefined()
+      expect(icsFeedbackCheckRes.redirect).not.toHaveBeenCalled()
+      expect(appointmentService.submitAppointment).not.toHaveBeenCalled()
     })
   })
 })
