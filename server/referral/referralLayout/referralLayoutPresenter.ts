@@ -8,6 +8,7 @@ export enum ReferralNavigationValues {
   progressTab = 'progress',
   actionPlanTab = 'actionPlan',
   appointmentsTab = 'appointments',
+  notesTab = 'notes',
   changeLogTab = 'changeLog',
 }
 

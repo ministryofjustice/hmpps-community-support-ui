@@ -17,6 +17,7 @@ import type {
   AppointmentIcsResponse,
   ReferralProgress,
   ReferralAppointmentsBffResponseDto,
+  ReferralNotesAndNonContactSessionsBffResponseDto,
   ProbationOffice,
   IcsFeedbackSubmission,
   IcsFeedbackSubmissionResponse,
@@ -237,6 +238,10 @@ export default class CommunitySupportApiClient extends RestClient {
 
   getReferralAppointments(caseReference: string, username: string): Promise<ReferralAppointmentsBffResponseDto> {
     return this.get({ path: `/bff/referral/${caseReference}/appointments` }, asSystem(username))
+  }
+
+  getReferralNotes(caseReference: string, username: string): Promise<ReferralNotesAndNonContactSessionsBffResponseDto> {
+    return this.get({ path: `/bff/referral/${caseReference}/notes` }, asSystem(username))
   }
 
   getReferralInformation(caseReference: string, username: string): Promise<ReferralInformation> {

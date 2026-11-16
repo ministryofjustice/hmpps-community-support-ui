@@ -311,6 +311,7 @@
       { "id": "progress", "text": "Progress", "href": "/progress/{{ id }}" },
       { "id": "actionPlan", "text": "Action Plan", "href": "/referral/{{ id }}/action-plan" },
       { "id": "appointments", "text": "Appointments", "href": "/referral/{{ id }}/appointments" },
+      { "id": "notes", "text": "Notes", "href": "/referral/{{ id }}/notes" },
       { "id": "changeLog", "text": "Change log", "href": "#" }
     ],
     "sideNavigationLabel": "Side navigation",
@@ -364,6 +365,16 @@
         ]
       }
     }
+  },
+  "/referral/:id/notes": {
+    "pageHeader": "Referral for",
+    "notesTitle": "Notes",
+    "noNotesMessage": "No notes recorded",
+    "dateColumnHeader": "Date",
+    "addedByColumnHeader": "Added by",
+    "titleColumnHeader": "Title",
+    "actionColumnHeader": "Action",
+    "viewDetailsLinkText": "View details"
   },
   "/referral/:id/appointment/select-type": {
     "pageTitle": "Select appointment type",
