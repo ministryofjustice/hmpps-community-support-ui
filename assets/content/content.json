@@ -158,8 +158,17 @@
         "href": "/cases-in-progress"
       }
     ],
-    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
-    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
+    "unassignedColumnHeaders": [
+      "Name",
+      "CRN/prison number",
+      "Date received"
+    ],
+    "inProgressColumnHeaders": [
+      "Name",
+      "CRN/prison number",
+      "Assigned to",
+      "Date received"
+    ],
     "noCasesMessage": "There are no {0} cases to view."
   },
   "/cases-in-progress": {
@@ -178,8 +187,17 @@
         "href": "/cases-in-progress"
       }
     ],
-    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
-    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
+    "unassignedColumnHeaders": [
+      "Name",
+      "CRN/prison number",
+      "Date received"
+    ],
+    "inProgressColumnHeaders": [
+      "Name",
+      "CRN/prison number",
+      "Assigned to",
+      "Date received"
+    ],
     "noCasesMessage": "There are no {0} cases to view."
   },
   "/referral-details/:id": {
@@ -303,19 +321,50 @@
     "actionPlanStatusLabel": "Status",
     "actionPlanActionsLabel": "Actions",
     "actionPlanLinkText": "View action plan",
-    "progressActiveColumnHeaders": ["Date and time", "Status", "Action"],
-    "progressInactiveColumnHeaders": ["Status", "Action"],
+    "progressActiveColumnHeaders": [
+      "Date and time",
+      "Status",
+      "Action"
+    ],
+    "progressInactiveColumnHeaders": [
+      "Status",
+      "Action"
+    ],
     "historySummary": "View ICS history"
   },
   "/referral/:id": {
     "subNavigationLabel": "Sub navigation",
     "subNavItems": [
-      { "id": "caseDetails", "text": "Case details", "href": "/referral-details/{{ id }}" },
-      { "id": "progress", "text": "Progress", "href": "/progress/{{ id }}" },
-      { "id": "actionPlan", "text": "Action Plan", "href": "/referral/{{ id }}/action-plan" },
-      { "id": "appointments", "text": "Appointments", "href": "/referral/{{ id }}/appointments" },
-      { "id": "notes", "text": "Notes", "href": "/referral/{{ id }}/notes" },
-      { "id": "changeLog", "text": "Change log", "href": "#" }
+      {
+        "id": "caseDetails",
+        "text": "Case details",
+        "href": "/referral-details/{{ id }}"
+      },
+      {
+        "id": "progress",
+        "text": "Progress",
+        "href": "/progress/{{ id }}"
+      },
+      {
+        "id": "actionPlan",
+        "text": "Action Plan",
+        "href": "/referral/{{ id }}/action-plan"
+      },
+      {
+        "id": "appointments",
+        "text": "Appointments",
+        "href": "/referral/{{ id }}/appointments"
+      },
+      {
+        "id": "notes",
+        "text": "Notes",
+        "href": "/referral/{{ id }}/notes"
+      },
+      {
+        "id": "changeLog",
+        "text": "Change log",
+        "href": "#"
+      }
     ],
     "sideNavigationLabel": "Side navigation",
     "actionPlanSideTabText": "Action plan",
@@ -347,25 +396,68 @@
     "upcomingAppointmentsTitle": "Upcoming appointments",
     "pastAppointmentsTitle": "Past appointments",
     "statuses": {
-      "SCHEDULED": { "text": "Scheduled", "actions": [{ "text": "View or change details", "href": "#" }] },
+      "SCHEDULED": {
+        "text": "Scheduled",
+        "actions": [
+          {
+            "text": "View or change details",
+            "href": "#"
+          }
+        ]
+      },
       "NEEDS_FEEDBACK": {
         "text": "Needs feedback",
-        "actions": [{ "text": "Add attendance and feedback", "href": "#" }]
+        "actions": [
+          {
+            "text": "Add attendance and feedback",
+            "href": "#"
+          }
+        ]
       },
-      "COMPLETED": { "text": "Completed", "actions": [{ "text": "View feedback", "href": "#" }] },
-      "CHANGED": { "text": "Changed", "actions": [{ "text": "View session details", "href": "#" }] },
+      "COMPLETED": {
+        "text": "Completed",
+        "actions": [
+          {
+            "text": "View feedback",
+            "href": "#"
+          }
+        ]
+      },
+      "CHANGED": {
+        "text": "Changed",
+        "actions": [
+          {
+            "text": "View session details",
+            "href": "#"
+          }
+        ]
+      },
       "DID_NOT_ATTEND": {
         "text": "Did not attend",
         "actions": [
-          { "text": "Reschedule", "href": "#", "initialContactSessionOnly": true },
-          { "text": "View feedback", "href": "#" }
+          {
+            "text": "Reschedule",
+            "href": "#",
+            "initialContactSessionOnly": true
+          },
+          {
+            "text": "View feedback",
+            "href": "#"
+          }
         ]
       },
       "DID_NOT_HAPPEN": {
         "text": "Did not happen",
         "actions": [
-          { "text": "Reschedule", "href": "#", "initialContactSessionOnly": true },
-          { "text": "View feedback", "href": "#" }
+          {
+            "text": "Reschedule",
+            "href": "#",
+            "initialContactSessionOnly": true
+          },
+          {
+            "text": "View feedback",
+            "href": "#"
+          }
         ]
       }
     }
@@ -389,10 +481,22 @@
     "pageTitle": "Select appointment type",
     "pageHeader": "Select appointment type",
     "appointmentTypes": [
-      { "value": "CONTACT_SESSION", "text": "Contact session" },
-      { "value": "PRE_RELEASE_SESSION", "text": "Pre-release session" },
-      { "value": "POST_RELEASE_SESSION", "text": "Post-release session" },
-      { "value": "HANDOVER_SESSION", "text": "Handover session" }
+      {
+        "value": "CONTACT_SESSION",
+        "text": "Contact session"
+      },
+      {
+        "value": "PRE_RELEASE_SESSION",
+        "text": "Pre-release session"
+      },
+      {
+        "value": "POST_RELEASE_SESSION",
+        "text": "Post-release session"
+      },
+      {
+        "value": "HANDOVER_SESSION",
+        "text": "Handover session"
+      }
     ],
     "backLinkText": "Back to appointments"
   },

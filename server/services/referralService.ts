@@ -5,6 +5,7 @@ import {
   ReferralInformation,
   ReferralProgress,
   ReferralAppointmentsBffResponseDto,
+  ReferralNotesAndNonContactSessionsBffResponseDto,
   ReferralNoteOrNonContactSessionBffDto,
   PagedRequest,
   AdditionalSupportNeedsDto,
@@ -50,7 +51,7 @@ export type ActionPlanCheckYourAnswersDetails = {
 }
 
 export default class ReferralService {
-  constructor(private readonly communitySupportApiClient: CommunitySupportApiClient) {}
+  constructor(private readonly communitySupportApiClient: CommunitySupportApiClient) { }
 
   getCaseDetailsByCaseIdentifier(caseIdentifier: string, username: string): Promise<ReferralDetailsResponseDto> {
     return this.communitySupportApiClient.getCaseDetailsById(caseIdentifier, username)
@@ -94,6 +95,10 @@ export default class ReferralService {
 
   getReferralAppointments(caseReference: string, username: string): Promise<ReferralAppointmentsBffResponseDto> {
     return this.communitySupportApiClient.getReferralAppointments(caseReference, username)
+  }
+
+  getReferralNotes(caseReference: string, username: string): Promise<ReferralNotesAndNonContactSessionsBffResponseDto> {
+    return this.communitySupportApiClient.getReferralNotes(caseReference, username)
   }
 
   getReferralNotes(
