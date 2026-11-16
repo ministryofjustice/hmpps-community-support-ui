@@ -48,7 +48,7 @@ describe('RecordSessionAttendancePresenter', () => {
       classes: 'govuk-radios--inline',
       fieldset: {
         attributes: { 'data-testid': 'fieldset-happened' },
-        legend: { text: 'Did the session happen?', classes: 'govuk-fieldset__legend--m' },
+        legend: { text: 'Did the ICS happen?', classes: 'govuk-fieldset__legend--m' },
       },
       items: [
         { id: 'happened-Yes', value: 'Yes', text: 'Yes', checked: false },

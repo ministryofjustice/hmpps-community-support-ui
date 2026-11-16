@@ -83,7 +83,7 @@ test.describe('RecordSessionAttendancePage', () => {
       await page.goto(RecordSessionAttendancePage.url(pastMeeting.caseRefId))
     })
     const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
-    await expect(recordSessionAttendancePage.header).toHaveText('Session attendance')
+    await expect(recordSessionAttendancePage.header).toHaveText('ICS attendance')
     await expect(recordSessionAttendancePage.subheading).toHaveText(
       'The date and time of the session are a permanent record of where this person was. If the session started late, you must record this as part of the feedback.',
     )
@@ -102,9 +102,7 @@ test.describe('RecordSessionAttendancePage', () => {
       })
     })
     await test.step('session happened radios have the correct content', async () => {
-      await expect(recordSessionAttendancePage.sessionHappenedRadios.fieldset.legend).toHaveText(
-        'Did the session happen?',
-      )
+      await expect(recordSessionAttendancePage.sessionHappenedRadios.fieldset.legend).toHaveText('Did the ICS happen?')
       await expect(recordSessionAttendancePage.sessionHappenedRadios.fieldset.hint).toHaveText(
         'The session happened if something was delivered.',
       )

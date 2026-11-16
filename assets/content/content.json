@@ -585,7 +585,7 @@
     "heading": "View session details"
   },
   "/ics-feedback/:id/attendance": {
-    "pageHeader": "Session attendance",
+    "pageHeader": "ICS attendance",
     "description": "The date and time of the session are a permanent record of where this person was. If the session started late, you must record this as part of the feedback.",
     "appointmentDetails": {
       "dateLabel": "Date",
@@ -594,7 +594,7 @@
     "attendanceForm": {
       "happenedRadios": {
         "id": "happened",
-        "heading": "Did the session happen?",
+        "heading": "Did the ICS happen?",
         "hint": "The session happened if something was delivered. ",
         "yesLabel": "Yes",
         "noLabel": "No"
@@ -611,7 +611,7 @@
     "attendanceForm": {
       "didAttendRadios": {
         "id": "didAttend",
-        "heading": "Did {{ firstname }} come to the session?",
+        "heading": "Did {{ firstname }} come to the ICS?",
         "yesLabel": "Yes",
         "noLabel": "No"
       },

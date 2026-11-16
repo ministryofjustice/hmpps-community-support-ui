@@ -33,7 +33,7 @@ describe('DidAttendPresenter', () => {
       fieldset: {
         attributes: { 'data-testid': 'fieldset-didAttend' },
         legend: {
-          text: 'Did Alex come to the session?',
+          text: 'Did Alex come to the ICS?',
           isPageHeading: true,
           classes: 'govuk-fieldset__legend--xl',
         },

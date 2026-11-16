@@ -44,7 +44,7 @@ test.describe('DidAttendPage', () => {
     const didAttendPage = await goToDidAttend(page)
 
     await expect(didAttendPage.didAttendRadios.fieldset.legend).toContainText(
-      `Did ${pastMeeting.data.referralFirstName} come to the session?`,
+      `Did ${pastMeeting.data.referralFirstName} come to the ICS?`,
     )
     expect(didAttendPage.didAttendRadios.items).toHaveLength(2)
     const [yes, no] = didAttendPage.didAttendRadios.items
