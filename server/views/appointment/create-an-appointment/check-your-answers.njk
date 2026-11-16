@@ -9,6 +9,11 @@
 
     {{ govukSummaryList(content.appointmentSummary) }}
 
+    {% if content.whatHappensNext %}
+      <h2 class="govuk-heading-m">{{ content.whatHappensNext.heading }}</h2>
+      <p class="govuk-body">{{ content.whatHappensNext.text }}</p>
+    {% endif %}
+
     <form method="post" action="{{ content.submitHref }}">
       <input type="hidden" name="_csrf" value="{{csrfToken}}">
       {{ govukButton({
