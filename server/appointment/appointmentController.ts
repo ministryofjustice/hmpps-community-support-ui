@@ -821,8 +821,12 @@ class AppointmentController {
         res.redirect(`/referral/${caseRefId}/appointments`)
         return
       }
-      this.setReferralProgressBanner(req, caseRefId, 'Session feedback submitted', 'The ICS is now complete.')
-      res.redirect(`/progress/${caseRefId}`)
+      if (retrospectiveBooking) {
+        res.redirect(`/progress/${caseRefId}`)
+        return
+      }
+      req.session.appointmentFeedbackMessage = { caseReference: caseRefId }
+      res.redirect(`/referral/${caseRefId}/appointments`)
     }
   }
 

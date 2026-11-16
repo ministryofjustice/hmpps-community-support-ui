@@ -91,6 +91,7 @@ export declare module 'express-session' {
       probationOfficeName?: string
     }
     createdAppointmentMessage?: { title: string; message: string }
+    appointmentFeedbackMessage?: { caseReference: string }
   }
 }
 
