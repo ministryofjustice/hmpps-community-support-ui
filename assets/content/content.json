@@ -287,9 +287,12 @@
     "reasonSessionNotInPersonLabel": "Reason session is not in person",
     "meetAtTheGateLabel": "Meeting at the gate",
     "informedLabel": "How {{ firstname }} was informed about the session",
+    "whatHappensNextHeading": "What happens next",
+    "retrospectiveAppointmentText": "As you've entered a date and time in the past, we'll ask you to add appointment feedback.",
     "changeLinkText": "Change",
     "changeLinkVisualText": "appointment details",
     "changeLinkHref": "/referral/{{ id }}/create-an-appointment/appointment-type",
+    "continueButtonText": "Continue",
     "submitButtonText": "Submit",
     "submitHref": "/referral/{{ id }}/create-an-appointment/check-your-answers",
     "backLink": "/referral/{{ id }}/create-an-appointment/appointment-type"
