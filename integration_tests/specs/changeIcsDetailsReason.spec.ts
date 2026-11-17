@@ -35,7 +35,10 @@ const pastMeeting = {
 test.describe('Reschedule Ics Appointment Reason Page', () => {
   test.beforeEach(async ({ page }) => {
     await resetStubs()
-    await communitySupport.stubGetICS(pastMeeting.caseRefId, pastMeeting.data)
+    await communitySupport.stubGetIcsChangeReason(pastMeeting.caseRefId, {
+      fullName: `${pastMeeting.data.referralFirstName} ${pastMeeting.data.referralLastName}`,
+    })
+    await communitySupport.stubGetIcsChangeDetails(pastMeeting.caseRefId, pastMeeting.data)
     await communitySupport.stubGetReferralInformation(200, pastMeeting.caseRefId)
     await prisonApi.stubGetPrisons()
     await communitySupport.stubGetProbationOffices(probationOfficesData)

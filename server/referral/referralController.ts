@@ -246,6 +246,7 @@ export default class ReferralController {
     const bannerContent = sessionBanner?.caseReference === caseReference ? sessionBanner : undefined
 
     delete req.session.referralProgressBanner
+    delete req.session.icsFeedbackSubmission
 
     const referralProgress = await this.referralService.getReferralProgress(caseReference, username)
 

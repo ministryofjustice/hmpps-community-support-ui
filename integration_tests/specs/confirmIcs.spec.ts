@@ -152,7 +152,10 @@ test.describe('Confirm ICS Page', () => {
     await login(page)
     await communitySupport.stubGetReferralProgress(referralProgressWithAppointments, CASE_REF_ID)
     await communitySupport.stubGetReferralInformation(200, CASE_REF_ID)
-    await communitySupport.stubGetICS(pastMeeting.caseRefId, pastMeeting.data)
+    await communitySupport.stubGetIcsChangeReason(pastMeeting.caseRefId, {
+      fullName: `${pastMeeting.data.referralFirstName} ${pastMeeting.data.referralLastName}`,
+    })
+    await communitySupport.stubGetIcsChangeDetails(pastMeeting.caseRefId, pastMeeting.data)
     await prisonApi.stubGetPrisons()
     await communitySupport.stubGetProbationOffices(probationOfficesData)
   })
@@ -307,7 +310,7 @@ test.describe('Confirm ICS Page', () => {
       const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
 
       await expect(page).toHaveURL(RECORD_SESSION_ATTENDANCE_URL)
-      await expect(recordSessionAttendancePage.header).toHaveText('Record session attendance')
+      await expect(recordSessionAttendancePage.header).toHaveText('ICS attendance')
       await expect(recordSessionAttendancePage.subheading).toContainText(
         'The date and time of the session are a permanent record of where this person was.',
       )
@@ -463,7 +466,7 @@ test.describe('Confirm ICS Page', () => {
     const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
 
     await expect(page).toHaveURL(RECORD_SESSION_ATTENDANCE_URL)
-    await expect(recordSessionAttendancePage.header).toHaveText('Record session attendance')
+    await expect(recordSessionAttendancePage.header).toHaveText('ICS attendance')
     await expect(recordSessionAttendancePage.subheading).toContainText(
       'The date and time of the session are a permanent record of where this person was.',
     )

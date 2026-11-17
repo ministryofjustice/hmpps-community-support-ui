@@ -287,9 +287,12 @@
     "reasonSessionNotInPersonLabel": "Reason session is not in person",
     "meetAtTheGateLabel": "Meeting at the gate",
     "informedLabel": "How {{ firstname }} was informed about the session",
+    "whatHappensNextHeading": "What happens next",
+    "retrospectiveAppointmentText": "As you've entered a date and time in the past, we'll ask you to add appointment feedback.",
     "changeLinkText": "Change",
     "changeLinkVisualText": "appointment details",
     "changeLinkHref": "/referral/{{ id }}/create-an-appointment/appointment-type",
+    "continueButtonText": "Continue",
     "submitButtonText": "Submit",
     "submitHref": "/referral/{{ id }}/create-an-appointment/check-your-answers",
     "backLink": "/referral/{{ id }}/create-an-appointment/appointment-type"
@@ -584,34 +587,40 @@
     "title": "View session details",
     "heading": "View session details"
   },
-  "/ics-feedback": {
-    "attendanceForm": {
-      "happenedRadios": {
-        "id": "happened",
-        "heading": "Did the session happen?",
-        "hint": "The session happened if something was delivered. ",
-        "error": "Select yes if the session happened",
-        "yesLabel": "Yes",
-        "noLabel": "No"
-      },
-      "attendedRadios": {
-        "id": "attended",
-        "heading": "Did {{ firstname }} come to the appointment?",
-        "error": "Select yes if {{ firstname }} came to the appointment",
-        "yesLabel": "Yes",
-        "noLabel": "No"
-      },
-      "submitButtonText": "Continue"
-    }
-  },
   "/ics-feedback/:id/attendance": {
-    "pageHeader": "Record session attendance",
+    "pageHeader": "ICS attendance",
     "description": "The date and time of the session are a permanent record of where this person was. If the session started late, you must record this as part of the feedback.",
     "appointmentDetails": {
       "dateLabel": "Date",
       "startTimeLabel": "Start time"
     },
+    "attendanceForm": {
+      "happenedRadios": {
+        "id": "happened",
+        "heading": "Did the ICS happen?",
+        "hint": "The session happened if something was delivered. ",
+        "yesLabel": "Yes",
+        "noLabel": "No"
+      },
+      "submitButtonText": "Continue"
+    },
     "backLink": "/progress/{{ id }}"
+  },
+  "/ics-feedback/:id/did-attend": {
+    "appointmentDetails": {
+      "dateLabel": "Date",
+      "startTimeLabel": "Start time"
+    },
+    "attendanceForm": {
+      "didAttendRadios": {
+        "id": "didAttend",
+        "heading": "Did {{ firstname }} come to the ICS?",
+        "yesLabel": "Yes",
+        "noLabel": "No"
+      },
+      "submitButtonText": "Continue"
+    },
+    "backLink": "/ics-feedback/{{ id }}/attendance"
   },
   "/ics-feedback/:id/session-feedback": {
     "pageTitle": "Session feedback – ICS feedback – Community Support",
@@ -783,7 +792,7 @@
           {
             "text": "Did {{ firstname }} come to the appointment?",
             "hint": "Did {{ firstname }} come to the appointment",
-            "changeHref": "/ics-feedback/caseRefId/attendance"
+            "changeHref": "/ics-feedback/caseRefId/did-attend"
           },
           {
             "text": "How the session took place",
@@ -954,7 +963,7 @@
       }
     },
     "submitButtonText": "Continue",
-    "backLinkHref": "/ics-feedback/{{ id }}/attendance"
+    "backLinkHref": "/ics-feedback/{{ id }}/did-attend"
   },
   "/ics-feedback/:id/how-they-tried-to-contact-the-person": {
     "pageHeader": "How did you try to contact {{ firstname }} and what do you know about why they did not attend?",
@@ -969,7 +978,7 @@
       },
       "submitButtonText": "Continue"
     },
-    "backLink": "/ics-feedback/{{ id }}/attendance"
+    "backLink": "/ics-feedback/{{ id }}/did-attend"
   },
   "/referral/:id/ics-change-details/reason": {
     "pageHeader": "Reason for changing the session details",
@@ -1098,7 +1107,7 @@
           }
         },
         "inPerson": {
-          "text": "In-person meeting"
+          "text": "In person"
         }
       }
     },
@@ -1123,7 +1132,7 @@
       "CONTACT_SESSION": "Book contact session",
       "PRE_RELEASE_SESSION": "Book pre-release session",
       "POST_RELEASE_SESSION": "Book post-release session",
-      "HANDOVER_SESSION": "Schedule the handover session"
+      "HANDOVER_SESSION": "Book handover session"
     },
     "meetAtTheGate": {
       "label": "Is this a meet at the gate session?",
