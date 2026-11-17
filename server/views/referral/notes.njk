@@ -86,7 +86,7 @@
   <thead class="govuk-table__head">
     <tr class="govuk-table__row">
       <th scope="col" class="govuk-table__header">{{ content.dateColumnHeader }}</th>
-      <th scope="col" class="govuk-table__header">{{ content.titleColumnHeader }}</th>
+      <th scope="col" class="govuk-table__header govuk-!-width-one-half">{{ content.titleColumnHeader }}</th>
       <th scope="col" class="govuk-table__header">{{ content.addedByColumnHeader }}</th>
       <th scope="col" class="govuk-table__header">{{ content.actionColumnHeader }}</th>
     </tr>
@@ -95,7 +95,7 @@
     {% for note in content.notes %}
     <tr class="govuk-table__row">
       <td class="govuk-table__cell">{{ note.createdAt }}</td>
-      <td class="govuk-table__cell">
+      <td class="govuk-table__cell govuk-!-width-one-half">
         {% set detailsHtml %}
         {{ note.details }}
         {% if note.detailsTruncated %}
