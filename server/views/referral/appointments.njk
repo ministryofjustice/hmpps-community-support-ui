@@ -1,30 +1,42 @@
 {% extends "../partials/layout.njk" %}
 
 {% from "moj/components/sub-navigation/macro.njk" import mojSubNavigation %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
-{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+{%- from "moj/components/alert/macro.njk" import mojAlert -%}
 
 {% set pageTitle = "Appointments – " + applicationName %}
 {% set mainClasses = "govuk-body" %}
 
-{% block contentBody %}
+{% block content %}
   <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
 
   {{ mojSubNavigation(content.navBar) }}
 
   {% if content.notificationBanner %}
-    {{ govukNotificationBanner(content.notificationBanner) }}
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-three-quarters">
+        {{ mojAlert(content.notificationBanner) }}
+      </div>
+    </div>
   {% endif %}
 
-  <h2 class="govuk-heading-m">{{ content.appointmentsTitle }}</h2>
-  <p class="govuk-body">
-    <a class="govuk-link" href="{{ content.createAppointmentHref }}" data-testid="create-appointment-link">
-      {{ content.createAppointmentText }}
-    </a>
-  </p>
+  <h2 class="govuk-heading-l">{{ content.appointmentsTitle }}</h2>
+  {{ govukButton(content.createAppointmentButton) }}
 
   {% if content.hasAppointments %}
-    {{ govukTable(content.appointmentsTable) }}
+    <h2 class="govuk-heading-m">{{ content.upcomingAppointmentsTitle }}</h2>
+    {% if content.hasUpcomingAppointments %}
+      {{ govukTable(content.upcomingAppointmentsTable) }}
+    {% else %}
+      <p class="govuk-body" data-testid="no-upcoming-appointments-message">{{ content.noUpcomingAppointmentsMessage }}</p>
+    {% endif %}
+    <h2 class="govuk-heading-m">{{ content.pastAppointmentsTitle }}</h2>
+    {% if content.hasPastAppointments %}
+      {{ govukTable(content.pastAppointmentsTable) }}
+    {% else %}
+      <p class="govuk-body" data-testid="no-past-appointments-message">{{ content.noPastAppointmentsMessage }}</p>
+    {% endif %}
   {% else %}
     <p class="govuk-body" data-testid="no-appointments-message">{{ content.noAppointmentsMessage }}</p>
   {% endif %}

@@ -85,7 +85,22 @@ type AdditionalInformationForTheDeliveryPartner =
 
 type Selection = components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
 type WithdrawReferralRequest = components['schemas']['WithdrawReferralRequest']
-type ExistingSupportNeedsBffResponseDto = components['schemas']['ExistingSupportNeedsBffResponseDto']
+type IcsFeedbackIdentifiedAdditionalSupportNeedsBffResponseDto =
+  components['schemas']['IcsFeedbackIdentifiedAdditionalSupportNeedsBffResponseDto']
+type IcsFeedbackWhyDidSessionNotHappenBffDto = components['schemas']['IcsFeedbackWhyDidSessionNotHappenBffDto']
+type IcsFeedbackSessionFeedbackBffDto = components['schemas']['IcsFeedbackSessionFeedbackBffDto']
+type IcsFeedbackNextStepsBffDto = components['schemas']['IcsFeedbackNextStepsBffDto']
+type IcsFeedbackIssuesOrConcernsBffDto = components['schemas']['IcsFeedbackIssuesOrConcernsBffDto']
+type IcsFeedbackIdentifiedAdditionalNeedsBffDto = components['schemas']['IcsFeedbackIdentifiedAdditionalNeedsBffDto']
+type IcsFeedbackHowTheyTriedToContactThePersonBffDto =
+  components['schemas']['IcsFeedbackHowTheyTriedToContactThePersonBffDto']
+type IcsFeedbackDidSessionTakePlaceBffDto = components['schemas']['IcsFeedbackDidSessionTakePlaceBffDto']
+type IcsFeedbackCheckAnswersBffDto = components['schemas']['IcsFeedbackCheckAnswersBffDto']
+type IcsFeedbackAttendanceBffDto = components['schemas']['IcsFeedbackAttendanceBffDto']
+type IcsFeedbackSessionDetailsBffDto = components['schemas']['IcsFeedbackSessionDetailsBffDto']
+type IcsViewOrChangeBffDto = components['schemas']['IcsViewOrChangeBffDto']
+type IcsChangeDetailsBffDto = components['schemas']['IcsChangeDetailsBffDto']
+type IcsChangeReasonBffDto = components['schemas']['IcsChangeReasonBffDto']
 
 export type {
   Referral,
@@ -168,5 +183,18 @@ export type {
   WithdrawReferralRequest,
   DraftAdditionalReferralInformationTableDataDto,
   DraftMainPOCDetailsTableDataDto,
-  ExistingSupportNeedsBffResponseDto,
+  IcsFeedbackIdentifiedAdditionalSupportNeedsBffResponseDto,
+  IcsFeedbackWhyDidSessionNotHappenBffDto,
+  IcsFeedbackSessionFeedbackBffDto,
+  IcsFeedbackNextStepsBffDto,
+  IcsFeedbackIssuesOrConcernsBffDto,
+  IcsFeedbackIdentifiedAdditionalNeedsBffDto,
+  IcsFeedbackHowTheyTriedToContactThePersonBffDto,
+  IcsFeedbackDidSessionTakePlaceBffDto,
+  IcsFeedbackCheckAnswersBffDto,
+  IcsFeedbackAttendanceBffDto,
+  IcsFeedbackSessionDetailsBffDto,
+  IcsViewOrChangeBffDto,
+  IcsChangeDetailsBffDto,
+  IcsChangeReasonBffDto,
 }

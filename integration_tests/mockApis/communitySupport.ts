@@ -5,6 +5,9 @@ import {
   ConfirmPersonDetailsBffDto,
   CommunitySupportRiskDto,
   CommunitySupportRiskInformationDto,
+  IcsFeedbackAttendanceBffDto,
+  IcsFeedbackSessionDetailsBffDto,
+  IcsFeedbackDidSessionTakePlaceBffDto,
   IcsFeedbackSubmission,
   IcsFeedbackSubmissionResponse,
   ActionPlanSummaryDto,
@@ -29,6 +32,9 @@ import {
   AdditionalInformationForTheDeliveryPartner,
   OffenceSentenceInfoBffResponseDto,
   WithdrawReferralRequest,
+  IcsViewOrChangeBffDto,
+  IcsChangeDetailsBffDto,
+  IcsChangeReasonBffDto,
 } from '@community-support-api'
 import { stubFor } from './wiremock'
 import { duplicateData } from '../testUtils'
@@ -84,7 +90,118 @@ const buildTaskListStatus = (taskListStatus: TaskListStatusStub): TaskListStatus
   checkYourAnswersStatus: taskListStatus.checkYourAnswersStatus || cannotStartTaskStatus,
 })
 
+const stubGetIcsFeedbackPage = (
+  caseRefId: string,
+  page: string,
+  jsonBody: object,
+  httpStatus = 200,
+): SuperAgentRequest =>
+  stubFor({
+    request: {
+      method: 'GET',
+      urlPathPattern: `/community-support/bff/ics-feedback/${caseRefId}/${page}`,
+    },
+    response: {
+      status: httpStatus,
+      headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+      jsonBody,
+      transformers: ['response-template'],
+    },
+  })
+
+const stubGetIcsFeedbackDidSessionTakePlace = (caseRefId: string, appointment: AppointmentIcsResponse) => {
+  const body: IcsFeedbackDidSessionTakePlaceBffDto = { sessionMethod: appointment.sessionMethod }
+  return stubGetIcsFeedbackPage(caseRefId, 'did-session-take-place', body)
+}
+
+const stubGetIcsFeedbackAttendance = (caseRefId: string, appointment: AppointmentIcsResponse) => {
+  const body: IcsFeedbackAttendanceBffDto = {
+    referralFirstName: appointment.referralFirstName,
+    date: appointment.appointmentDate,
+    time: appointment.appointmentTime,
+  }
+  return stubGetIcsFeedbackPage(caseRefId, 'attendance', body)
+}
+
+const stubGetIcsFeedbackSessionDetails = (caseRefId: string, appointment: AppointmentIcsResponse) => {
+  const body: IcsFeedbackSessionDetailsBffDto = {
+    referralFirstName: appointment.referralFirstName,
+    date: appointment.appointmentDate,
+    time: appointment.appointmentTime,
+  }
+  return stubGetIcsFeedbackPage(caseRefId, 'session-details', body)
+}
+
+const stubGetIcsViewOrChange = (caseRefId: string, appointment: AppointmentIcsResponse) => {
+  const body: IcsViewOrChangeBffDto = {
+    referralFirstName: appointment.referralFirstName,
+    referralLastName: appointment.referralLastName,
+    appointmentDate: appointment.appointmentDate,
+    appointmentTime: appointment.appointmentTime,
+    sessionMethod: appointment.sessionMethod,
+    sessionCommunications: appointment.sessionCommunications,
+    changeAppointmentDetails: appointment.changeAppointmentDetails,
+  }
+  return stubFor({
+    request: {
+      method: 'GET',
+      urlPathPattern: `/community-support/bff/referral-details/${caseRefId}/ics-view-or-change`,
+    },
+    response: {
+      status: 200,
+      headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+      jsonBody: body,
+      transformers: ['response-template'],
+    },
+  })
+}
+
+const stubGetIcsChangeDetails = (caseRefId: string, appointment: AppointmentIcsResponse) => {
+  const body: IcsChangeDetailsBffDto = {
+    firstName: appointment.referralFirstName,
+    personIdentifier: referralInformationInCommunity.personIdentifier,
+    referralDate: referralInformationInCommunity.referralDate,
+    appointmentDate: appointment.appointmentDate,
+    appointmentTime: appointment.appointmentTime,
+    sessionMethod: appointment.sessionMethod,
+    sessionCommunications: appointment.sessionCommunications,
+  }
+  return stubFor({
+    request: {
+      method: 'GET',
+      urlPathPattern: `/community-support/bff/referral/${caseRefId}/ics-change-details`,
+    },
+    response: {
+      status: 200,
+      headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+      jsonBody: body,
+      transformers: ['response-template'],
+    },
+  })
+}
+
+const stubGetIcsChangeReason = (caseRefId: string, body: IcsChangeReasonBffDto): SuperAgentRequest =>
+  stubFor({
+    request: {
+      method: 'GET',
+      urlPathPattern: `/community-support/bff/referral/${caseRefId}/ics-change-details/reason`,
+    },
+    response: {
+      status: 200,
+      headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+      jsonBody: body,
+      transformers: ['response-template'],
+    },
+  })
+
 export default {
+  stubGetIcsFeedbackPage,
+  stubGetIcsFeedbackDidSessionTakePlace,
+  stubGetIcsFeedbackAttendance,
+  stubGetIcsFeedbackSessionDetails,
+  stubGetIcsViewOrChange,
+  stubGetIcsChangeDetails,
+  stubGetIcsChangeReason,
   stubPing: (httpStatus = 200): SuperAgentRequest =>
     stubFor({
       request: {

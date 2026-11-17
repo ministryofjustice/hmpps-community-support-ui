@@ -35,7 +35,10 @@ test.describe('Session Feedback Page', () => {
     await resetStubs()
     await page.goto('/')
     await login(page)
-    await communitySupport.stubGetICS(CASE_REFERENCE, mockAppointment)
+    await communitySupport.stubGetIcsFeedbackPage(CASE_REFERENCE, 'session-feedback', {
+      referralFirstName: mockAppointment.referralFirstName,
+    })
+    await communitySupport.stubGetIcsFeedbackSessionDetails(CASE_REFERENCE, mockAppointment)
   })
 
   test('AC1 - Session feedback', async ({ page }) => {

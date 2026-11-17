@@ -616,15 +616,32 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/bff/referral/{caseReference}/existing-support-needs': {
+  '/bff/referral/{caseReference}/ics-change-details': {
     parameters: {
       query?: never
       header?: never
       path?: never
       cookie?: never
     }
-    /** Get Existing support needs */
-    get: operations['getExistingSupportNeeds']
+    /** Get referral information and ICS prefill for the change details page */
+    get: operations['getIcsChangeDetails']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/referral/{caseReference}/ics-change-details/reason': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get referral full name for the ICS change reason page */
+    get: operations['getIcsChangeReason']
     put?: never
     post?: never
     delete?: never
@@ -657,7 +674,10 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /** Get referral appointments for the appointments tab */
+    /**
+     * Get upcoming and past referral appointments for the appointments tab
+     * @description Appointments move into the past list once their start time has passed. Both lists retain the existing newest-created-first ordering.
+     */
     get: operations['getReferralAppointments']
     put?: never
     post?: never
@@ -803,6 +823,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/bff/referral-details/{caseReference}/ics-view-or-change': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get the latest ICS appointment for the view or change page */
+    get: operations['getIcsViewOrChange']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/bff/referral-details-page/{caseIdentifier}': {
     parameters: {
       query?: never
@@ -914,6 +951,193 @@ export interface paths {
     }
     /** Get a single ICS feedback record by its ID */
     get: operations['getIcsFeedback']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/ics-feedback/{caseReference}/why-did-the-session-not-happen': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get referral first name for the ICS feedback why session did not happen page */
+    get: operations['getIcsFeedbackWhyDidSessionNotHappen']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/ics-feedback/{caseReference}/session-feedback': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get referral first name for the ICS feedback session feedback page */
+    get: operations['getIcsFeedbackSessionFeedback']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/ics-feedback/{caseReference}/session-details': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get referral first name, appointment date and time for the ICS feedback session details page */
+    get: operations['getIcsFeedbackSessionDetailsPage']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/ics-feedback/{caseReference}/next-steps': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get referral first name for the ICS feedback next steps page */
+    get: operations['getIcsFeedbackNextSteps']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/ics-feedback/{caseReference}/issues-or-concerns': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get referral first name for the ICS feedback issues or concerns page */
+    get: operations['getIcsFeedbackIssuesOrConcerns']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/ics-feedback/{caseReference}/identified-additional-support-needs': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get Existing support needs */
+    get: operations['getIdentifiedAdditionalSupportNeeds']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/ics-feedback/{caseReference}/identified-additional-needs': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get referral first name for the ICS feedback identified additional needs page */
+    get: operations['getIcsFeedbackIdentifiedAdditionalNeeds']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/ics-feedback/{caseReference}/how-they-tried-to-contact-the-person': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get referral first name for the ICS feedback how they tried to contact the person page */
+    get: operations['getIcsFeedbackHowTheyTriedToContactThePerson']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/ics-feedback/{caseReference}/did-session-take-place': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get session method for the ICS feedback did-session-take-place page */
+    get: operations['getIcsFeedbackDidSessionTakePlace']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/ics-feedback/{caseReference}/check-answers': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get referral first name and ICS appointment ID for the ICS feedback check answers page */
+    get: operations['getIcsFeedbackCheckAnswers']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/ics-feedback/{caseReference}/attendance': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get referral first name, appointment date and time for the ICS feedback attendance page */
+    get: operations['getIcsFeedbackAttendance']
     put?: never
     post?: never
     delete?: never
@@ -1173,8 +1397,10 @@ export interface components {
     }
     SessionMethodRequest: {
       /** @enum {string} */
-      type: 'PHONE' | 'VIDEO' | 'IN_PERSON' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION'
+      type:
+        'PHONE' | 'VIDEO' | 'IN_PERSON' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION' | 'IN_PERSON_PRISON'
       additionalDetails?: string | null
+      prisonCode?: string | null
       pdu?: string | null
       addressLine1?: string | null
       addressLine2?: string | null
@@ -1215,6 +1441,8 @@ export interface components {
     }
     InPersonAppointment: Omit<WithRequired<components['schemas']['SessionMethod'], 'type'>, 'appointmentCategory'> & {
       probationOfficeName?: string | null
+      prisonCode?: string | null
+      prisonName?: string | null
       addressLine1?: string | null
       addressLine2?: string | null
       townOrCity?: string | null
@@ -1384,8 +1612,15 @@ export interface components {
       /** Format: uuid */
       id: string
       /** @enum {string} */
-      method: 'PHONE_CALL' | 'VIDEO_CALL' | 'IN_PERSON' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION'
+      method:
+        | 'PHONE_CALL'
+        | 'VIDEO_CALL'
+        | 'IN_PERSON'
+        | 'IN_PERSON_PROBATION_OFFICE'
+        | 'IN_PERSON_OTHER_LOCATION'
+        | 'IN_PERSON_PRISON'
       methodDetails?: string | null
+      prisonCode?: string | null
       addressLine1?: string | null
       addressLine2?: string | null
       townOrCity?: string | null
@@ -1734,7 +1969,13 @@ export interface components {
     AppointmentDetailsDto: {
       /** @enum {string|null} */
       method?:
-        'PHONE_CALL' | 'VIDEO_CALL' | 'IN_PERSON' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION' | null
+        | 'PHONE_CALL'
+        | 'VIDEO_CALL'
+        | 'IN_PERSON'
+        | 'IN_PERSON_PROBATION_OFFICE'
+        | 'IN_PERSON_OTHER_LOCATION'
+        | 'IN_PERSON_PRISON'
+        | null
       date?: string | null
       time?: string | null
     }
@@ -1743,16 +1984,19 @@ export interface components {
       appointmentDetails?: components['schemas']['AppointmentDetailsDto'] | null
       otherAppointmentMethods?: string[] | null
     }
-    ExistingSupportNeedsBffResponseDto: {
-      physicalHealthDetails?: string | null
-      mentalEmotionalHealthDetails?: string | null
-      neurodiversityDetails?: string | null
-      locationTravelDetails?: string | null
-      caringResponsibilitiesDetails?: string | null
-      employmentResponsibilitiesDetails?: string | null
-      diversityDetails?: string | null
-      anythingElseDetails?: string | null
-      interpreterLanguage?: string | null
+    IcsChangeDetailsBffDto: {
+      firstName: string
+      personIdentifier: string
+      /** Format: date */
+      referralDate: string
+      /** Format: date */
+      appointmentDate: string
+      appointmentTime: components['schemas']['AppointmentTimeResponse']
+      sessionMethod: components['schemas']['SessionMethod']
+      sessionCommunications: string[]
+    }
+    IcsChangeReasonBffDto: {
+      fullName: string
     }
     CreateAppointmentReferenceDataBffDto: {
       appointmentTypes: components['schemas']['CreateAppointmentTypeOptionDto'][]
@@ -1774,7 +2018,8 @@ export interface components {
     }
     ReferralAppointmentsBffResponseDto: {
       personDetails: components['schemas']['ReferralAppointmentsPersonDetailsDto']
-      appointments: components['schemas']['ReferralAppointmentSummaryDto'][]
+      upcomingAppointments: components['schemas']['ReferralAppointmentSummaryDto'][]
+      pastAppointments: components['schemas']['ReferralAppointmentSummaryDto'][]
     }
     ReferralAppointmentsPersonDetailsDto: {
       firstName: string
@@ -1933,6 +2178,16 @@ export interface components {
       appointments: components['schemas']['ReferralAppointmentHistoryDto'][]
       actionPlanStatus: components['schemas']['ActionPlanStatusDto']
     }
+    IcsViewOrChangeBffDto: {
+      referralFirstName: string
+      referralLastName: string
+      /** Format: date */
+      appointmentDate: string
+      appointmentTime: components['schemas']['AppointmentTimeResponse']
+      sessionMethod: components['schemas']['SessionMethod']
+      sessionCommunications: string[]
+      changeAppointmentDetails?: components['schemas']['ChangeAppointmentDetails'] | null
+    }
     ProbationOffice: {
       /** Format: int32 */
       probationOfficeId: number
@@ -2002,6 +2257,50 @@ export interface components {
       subDescription?: string | null
       /** Format: date-time */
       updatedAt?: string | null
+    }
+    IcsFeedbackWhyDidSessionNotHappenBffDto: {
+      referralFirstName: string
+    }
+    IcsFeedbackSessionFeedbackBffDto: {
+      referralFirstName: string
+    }
+    IcsFeedbackSessionDetailsBffDto: {
+      referralFirstName: string
+      /** Format: date */
+      date: string
+      time: components['schemas']['AppointmentTimeResponse']
+    }
+    IcsFeedbackNextStepsBffDto: {
+      referralFirstName: string
+    }
+    IcsFeedbackIssuesOrConcernsBffDto: {
+      referralFirstName: string
+    }
+    IcsFeedbackIdentifiedAdditionalSupportNeedsBffResponseDto: {
+      referralFirstName: string
+      referralSupportNeeds: {
+        [key: string]: string
+      }
+    }
+    IcsFeedbackIdentifiedAdditionalNeedsBffDto: {
+      referralFirstName: string
+    }
+    IcsFeedbackHowTheyTriedToContactThePersonBffDto: {
+      referralFirstName: string
+    }
+    IcsFeedbackDidSessionTakePlaceBffDto: {
+      sessionMethod: components['schemas']['SessionMethod']
+    }
+    IcsFeedbackCheckAnswersBffDto: {
+      referralFirstName: string
+      /** Format: uuid */
+      appointmentIcsId: string
+    }
+    IcsFeedbackAttendanceBffDto: {
+      referralFirstName: string
+      /** Format: date */
+      date: string
+      time: components['schemas']['AppointmentTimeResponse']
     }
     AreaConfirmationBffResponseDto: {
       contractArea: string
@@ -3527,7 +3826,7 @@ export interface operations {
       }
     }
   }
-  getExistingSupportNeeds: {
+  getIcsChangeDetails: {
     parameters: {
       query?: never
       header?: never
@@ -3538,16 +3837,47 @@ export interface operations {
     }
     requestBody?: never
     responses: {
-      /** @description Existing support needs found */
+      /** @description ICS change details found */
       200: {
         headers: {
           [name: string]: unknown
         }
         content: {
-          'application/json': components['schemas']['ExistingSupportNeedsBffResponseDto']
+          'application/json': components['schemas']['IcsChangeDetailsBffDto']
         }
       }
-      /** @description Existing support needs found */
+      /** @description Referral or ICS appointment not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getIcsChangeReason: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        caseReference: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description ICS change reason found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['IcsChangeReasonBffDto']
+        }
+      }
+      /** @description Referral or ICS appointment not found */
       404: {
         headers: {
           [name: string]: unknown
@@ -3856,6 +4186,37 @@ export interface operations {
       }
     }
   }
+  getIcsViewOrChange: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        caseReference: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description ICS view or change details found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['IcsViewOrChangeBffDto']
+        }
+      }
+      /** @description Referral or ICS appointment not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
   getReferralDetailsPage: {
     parameters: {
       query?: never
@@ -4059,6 +4420,347 @@ export interface operations {
         }
       }
       /** @description ICS feedback not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getIcsFeedbackWhyDidSessionNotHappen: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        caseReference: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Referral first name found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['IcsFeedbackWhyDidSessionNotHappenBffDto']
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getIcsFeedbackSessionFeedback: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        caseReference: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Referral first name found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['IcsFeedbackSessionFeedbackBffDto']
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getIcsFeedbackSessionDetailsPage: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        caseReference: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Session details found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['IcsFeedbackSessionDetailsBffDto']
+        }
+      }
+      /** @description Referral or ICS appointment not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getIcsFeedbackNextSteps: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        caseReference: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Referral first name found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['IcsFeedbackNextStepsBffDto']
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getIcsFeedbackIssuesOrConcerns: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        caseReference: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Referral first name found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['IcsFeedbackIssuesOrConcernsBffDto']
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getIdentifiedAdditionalSupportNeeds: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        caseReference: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Existing support needs found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['IcsFeedbackIdentifiedAdditionalSupportNeedsBffResponseDto']
+        }
+      }
+      /** @description Existing support needs found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getIcsFeedbackIdentifiedAdditionalNeeds: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        caseReference: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Referral first name found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['IcsFeedbackIdentifiedAdditionalNeedsBffDto']
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getIcsFeedbackHowTheyTriedToContactThePerson: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        caseReference: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Referral first name found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['IcsFeedbackHowTheyTriedToContactThePersonBffDto']
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getIcsFeedbackDidSessionTakePlace: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        caseReference: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Session method found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['IcsFeedbackDidSessionTakePlaceBffDto']
+        }
+      }
+      /** @description Referral or ICS appointment not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getIcsFeedbackCheckAnswers: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        caseReference: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Check answers page details found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['IcsFeedbackCheckAnswersBffDto']
+        }
+      }
+      /** @description Referral or ICS appointment not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getIcsFeedbackAttendance: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        caseReference: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Attendance page details found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['IcsFeedbackAttendanceBffDto']
+        }
+      }
+      /** @description Referral or ICS appointment not found */
       404: {
         headers: {
           [name: string]: unknown

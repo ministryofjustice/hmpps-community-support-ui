@@ -101,14 +101,31 @@ describe('ServiceDeliveryPresenter', () => {
     it('titles each card from the content and leaves them empty when there are no answers', () => {
       const { viewModel } = render()
 
-      expect(viewModel.serviceDeliverySummaryCard).toEqual({ card: { title: { text: 'Service delivery' } }, rows: [] })
-      expect(viewModel.risksAndAdjustmentsSummaryCard).toEqual({
+      expect(viewModel.serviceDeliverySummaryCard).toMatchObject({
+        card: { title: { text: 'Service delivery' } },
+        rows: [],
+      })
+      expect(viewModel.risksAndAdjustmentsSummaryCard).toMatchObject({
         card: { title: { text: 'Risks and adjustments' } },
         rows: [],
       })
-      expect(viewModel.serviceEndDateSummaryCard).toEqual({
+      expect(viewModel.serviceEndDateSummaryCard).toMatchObject({
         card: { title: { text: 'Service end date' } },
         rows: [],
+      })
+    })
+
+    it.each(['AB1234CD', 'ZZ9876YY'])('links each card to its edit page for referral %s', caseReference => {
+      const { viewModel } = render(caseReference)
+
+      expect(viewModel.serviceDeliverySummaryCard.card.actions).toEqual({
+        items: [{ href: `/referral/${caseReference}/action-plan/change-session-delivery-details`, text: 'Change' }],
+      })
+      expect(viewModel.risksAndAdjustmentsSummaryCard.card.actions).toEqual({
+        items: [{ href: `/referral/${caseReference}/action-plan/change-risks-and-adjustments`, text: 'Change' }],
+      })
+      expect(viewModel.serviceEndDateSummaryCard.card.actions).toEqual({
+        items: [{ href: `/referral/${caseReference}/action-plan/change-service-end-date-check`, text: 'Change' }],
       })
     })
 

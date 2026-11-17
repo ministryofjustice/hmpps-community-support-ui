@@ -4,6 +4,11 @@ interface Time {
   amPm: string
 }
 
+export const formatTime24Hr = ({ hour, minute, amPm }: Time): string => {
+  const hour24 = (hour % 12) + (amPm.toLowerCase() === 'pm' ? 12 : 0)
+  return `${String(hour24).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
+}
+
 export const formatTime12Hr = (hour: number, minute: number | string | undefined, amPm: string): string => {
   const minuteValue = minute !== undefined ? String(minute).padStart(2, '0') : '00'
   return `${hour}:${minuteValue}${amPm.toLowerCase()}`

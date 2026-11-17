@@ -179,6 +179,28 @@ describe('ViewChangeSessionDetailsPresenter', () => {
       expect(locationRow?.value).toMatchObject({ html: expect.stringContaining('LS1 1AA') })
     })
 
+    it('shows a saved prison name as the session location', () => {
+      const appointment: AppointmentIcsResponse = {
+        ...basePhoneResponse,
+        appointmentType: 'PRE_RELEASE_SESSION',
+        sessionMethod: {
+          appointmentCategory: 'IN_PERSON',
+          type: 'IN_PERSON_PRISON',
+          prisonCode: 'MDI',
+          prisonName: 'Moorland (HMP & YOI)',
+        },
+      }
+      const { rows } = new ViewChangeSessionDetailsPresenter(appointment, REFERRAL_ID, ICS_ID).buildViewModel(
+        res,
+      ).icsDetailsSummary
+      expect(rows).toEqual(
+        expect.arrayContaining([
+          { key: { text: 'Method' }, value: { text: 'In person - prison' } },
+          { key: { text: 'Location' }, value: { text: 'Moorland (HMP & YOI)' } },
+        ]),
+      )
+    })
+
     it('should not include Location row for virtual sessions', () => {
       const presenter = new ViewChangeSessionDetailsPresenter(basePhoneResponse, REFERRAL_ID, ICS_ID)
       presenter.renderPage(res)

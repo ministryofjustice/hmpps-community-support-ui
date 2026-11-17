@@ -7,6 +7,7 @@ import {
 
 export interface ComponenstsTimeInputItem {
   name: string
+  label?: string
   value: string
   classes?: string
 }
@@ -14,6 +15,7 @@ export interface ComponenstsTimeInputItem {
 export interface ComponentsTimeMeridiem {
   label: string
   value: string
+  classes?: string
 }
 
 export interface ComponentsTimeInput {

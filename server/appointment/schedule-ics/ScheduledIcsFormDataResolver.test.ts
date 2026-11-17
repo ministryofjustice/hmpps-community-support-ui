@@ -2,15 +2,34 @@ import { Request, Response } from 'express'
 import { AppointmentIcsResponse } from '@community-support-api'
 import AppointmentService from '../../services/AppointmentService'
 import AppointmentValidator from '../AppointmentValidator'
-import { ScheduledIcsFormDataResolver } from './ScheduledIcsFormDataResolver'
+import { saveFormToSession, ScheduledIcsFormDataResolver } from './ScheduledIcsFormDataResolver'
 
 describe('ScheduledIcsFormDataResolver', () => {
-  const getICS = jest.fn()
+  const getIcsChangeDetails = jest.fn()
   const service = {
-    getICS,
+    getIcsChangeDetails,
   } as unknown as AppointmentService
   const resolver = new ScheduledIcsFormDataResolver(service, new AppointmentValidator())
   describe('resolve from session', () => {
+    test('retains the selected prison when returning to the form', () => {
+      const createAppointmentRequest = saveFormToSession({
+        appointmentType: 'PRE_RELEASE_SESSION',
+        sessionDate: '20/6/2026',
+        'sessionTime-hour': '11',
+        'sessionTime-minute': '30',
+        'sessionTime-meridiem': 'am',
+        sessionTakePlace: 'InPrison',
+        prison: 'MDI',
+      })
+      expect(createAppointmentRequest.sessionMethodRequest).toEqual({ type: 'IN_PERSON_PRISON', prisonCode: 'MDI' })
+      const req = { session: { createAppointmentRequest } } as unknown as Request
+      expect(resolver.resolveFromSession(req)).toMatchObject({
+        sessionDate: '20/6/2026',
+        sessionTakePlace: 'InPrison',
+        prison: 'MDI',
+      })
+    })
+
     test('meeting by phone', async () => {
       const existing = {
         date: '2026-06-18',
@@ -37,7 +56,7 @@ describe('ScheduledIcsFormDataResolver', () => {
         'informedByPhone',
         'informedByTextMessage',
         'informedByEmail',
-        'stuff',
+        'informedByOtherMethod',
       ])
       expect(formData.otherMethodOfContact).toBe('stuff')
       expect(formData.sessionDate).toBe('18/6/2026')
@@ -149,7 +168,7 @@ describe('ScheduledIcsFormDataResolver', () => {
 
   describe('resolve from ics', () => {
     beforeEach(() => {
-      getICS.mockClear()
+      getIcsChangeDetails.mockClear()
     })
     test('meeting by phone', async () => {
       const ics: AppointmentIcsResponse = {
@@ -179,7 +198,7 @@ describe('ScheduledIcsFormDataResolver', () => {
           reasonForChange: null,
         },
       }
-      getICS.mockResolvedValue(ics)
+      getIcsChangeDetails.mockResolvedValue(ics)
       const req = {
         params: { caseRefId: 'RF9364SE' },
       } as unknown as Request
@@ -189,7 +208,7 @@ describe('ScheduledIcsFormDataResolver', () => {
         },
       } as unknown as Response
       const formData = await resolver.resolve(req, res)
-      expect(getICS).toHaveBeenCalledWith('RF9364SE', 'name')
+      expect(getIcsChangeDetails).toHaveBeenCalledWith('RF9364SE', 'name')
       expect(formData.informedMethods).toStrictEqual(['informedByPhone', 'informedByTextMessage'])
       expect(formData.sessionDate).toBe('18/6/2026')
       expect(formData.sessionTakePlace).toBe('ByPhone')
@@ -226,7 +245,7 @@ describe('ScheduledIcsFormDataResolver', () => {
           reasonForChange: null,
         },
       }
-      getICS.mockResolvedValue(ics)
+      getIcsChangeDetails.mockResolvedValue(ics)
       const req = {
         params: { caseRefId: 'RF9364SE' },
       } as unknown as Request
@@ -236,7 +255,11 @@ describe('ScheduledIcsFormDataResolver', () => {
         },
       } as unknown as Response
       const formData = await resolver.resolve(req, res)
-      expect(formData.informedMethods).toStrictEqual(['informedByPhone', 'informedByTextMessage', 'abcdef'])
+      expect(formData.informedMethods).toStrictEqual([
+        'informedByPhone',
+        'informedByTextMessage',
+        'informedByOtherMethod',
+      ])
       expect(formData.otherMethodOfContact).toBe('abcdef')
       expect(formData.sessionDate).toBe('18/6/2026')
       expect(formData.sessionTakePlace).toBe('ByVideo')
@@ -273,7 +296,7 @@ describe('ScheduledIcsFormDataResolver', () => {
           reasonForChange: null,
         },
       }
-      getICS.mockResolvedValue(ics)
+      getIcsChangeDetails.mockResolvedValue(ics)
       const req = {
         params: { caseRefId: 'RF9364SE' },
       } as unknown as Request
@@ -283,7 +306,11 @@ describe('ScheduledIcsFormDataResolver', () => {
         },
       } as unknown as Response
       const formData = await resolver.resolve(req, res)
-      expect(formData.informedMethods).toStrictEqual(['informedByPhone', 'informedByTextMessage', 'abcdefg'])
+      expect(formData.informedMethods).toStrictEqual([
+        'informedByPhone',
+        'informedByTextMessage',
+        'informedByOtherMethod',
+      ])
       expect(formData.otherMethodOfContact).toBe('abcdefg')
       expect(formData.sessionDate).toBe('18/6/2026')
       expect(formData.sessionTakePlace).toBe('InProbationOffice')
@@ -324,7 +351,7 @@ describe('ScheduledIcsFormDataResolver', () => {
           reasonForChange: null,
         },
       }
-      getICS.mockResolvedValue(ics)
+      getIcsChangeDetails.mockResolvedValue(ics)
       const req = {
         params: { caseRefId: 'RF9364SE' },
       } as unknown as Request
@@ -334,7 +361,7 @@ describe('ScheduledIcsFormDataResolver', () => {
         },
       } as unknown as Response
       const formData = await resolver.resolve(req, res)
-      expect(formData.informedMethods).toStrictEqual(['abcdefg'])
+      expect(formData.informedMethods).toStrictEqual(['informedByOtherMethod'])
       expect(formData.otherMethodOfContact).toBe('abcdefg')
       expect(formData.sessionDate).toBe('18/6/2026')
       expect(formData.sessionTakePlace).toBe('InSomewhereElse')
@@ -346,6 +373,38 @@ describe('ScheduledIcsFormDataResolver', () => {
       expect(formData['sessionTime-meridiem']).toBe('am')
       expect(formData['sessionTime-minute']).toBe('0')
       expect(formData['sessionTime-hour']).toBe('10')
+    })
+  })
+
+  describe('other contact method ticked without any text', () => {
+    it('keeps Other ticked and does not use the checkbox value as the contact method', async () => {
+      const createAppointmentRequest = saveFormToSession({
+        informedMethods: ['informedByEmail', 'informedByOtherMethod'],
+        otherMethodOfContact: '',
+      })
+      expect(createAppointmentRequest.sessionCommunication).toStrictEqual(['informedByEmail', 'informedByOtherMethod'])
+
+      const req = { session: { createAppointmentRequest } } as unknown as Request
+      const res = { locals: { user: { username: 'user1' } } } as unknown as Response
+      const formData = await resolver.resolve(req, res)
+      expect(formData.informedMethods).toStrictEqual(['informedByEmail', 'informedByOtherMethod'])
+      expect(formData.otherMethodOfContact).toBe('')
+    })
+
+    it('saves the entered text in place of the checkbox value once it is filled in', () => {
+      const request = saveFormToSession({
+        informedMethods: ['informedByEmail', 'informedByOtherMethod'],
+        otherMethodOfContact: 'Letter',
+      })
+      expect(request.sessionCommunication).toStrictEqual(['informedByEmail', 'Letter'])
+    })
+
+    it('keeps typed text that happens to equal the checkbox value', () => {
+      const request = saveFormToSession({
+        informedMethods: ['informedByEmail', 'informedByOtherMethod'],
+        otherMethodOfContact: 'informedByOtherMethod',
+      })
+      expect(request.sessionCommunication).toStrictEqual(['informedByEmail', 'informedByOtherMethod'])
     })
   })
 })

@@ -10,6 +10,12 @@ class IcsFeedbackCheckYourAnswersPage extends AbstractPage {
 
   readonly sessionFeedbackSummary: Locator
 
+  readonly issuesOrConcernsSummary: Locator
+
+  readonly identifiedAdditionalSupportSummary: Locator
+
+  readonly nextStepsSummary: Locator
+
   readonly locationRowTitle: Locator
 
   readonly submitButton: Locator
@@ -26,6 +32,9 @@ class IcsFeedbackCheckYourAnswersPage extends AbstractPage {
     this.attendanceSummary = page.locator('h2', { hasText: 'Record session attendance' })
     this.sessionDetailsSummary = page.locator('h2', { hasText: 'Session details' })
     this.sessionFeedbackSummary = page.locator('h2', { hasText: 'Session feedback' })
+    this.issuesOrConcernsSummary = page.locator('h2', { hasText: 'Issues or concerns' })
+    this.identifiedAdditionalSupportSummary = page.locator('h2', { hasText: 'Needs and additional support' })
+    this.nextStepsSummary = page.locator('h2', { hasText: 'Next steps' })
     this.submitButton = page.locator('button', { hasText: 'Submit feedback' })
     this.locationRowTitle = page.locator('dt', { hasText: 'Location' })
     this.backLink = page.locator('.govuk-back-link')

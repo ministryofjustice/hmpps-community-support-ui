@@ -41,7 +41,7 @@ describe('ScheduleIcsAppointmentFormData', () => {
         expect(result.error.issues).toHaveLength(1)
         const error = result.error.issues.at(0)
         expect(error.path).toContain('sessionDate')
-        expect(error.message).toBe('Enter the date of the session')
+        expect(error.message).toBe('Enter a session date')
       }
     })
     test('incorrect format', () => {
@@ -95,7 +95,7 @@ describe('ScheduleIcsAppointmentFormData', () => {
         expect(result.error.issues).toHaveLength(1)
         const error = result.error.issues.at(0)
         expect(error.path).toContain('sessionDate')
-        expect(error.message).toBe('The session date must be after the referral date, 18/06/2026')
+        expect(error.message).toBe('Session date must be after the referral date')
       }
     })
     test('too far into the future', () => {
@@ -122,7 +122,7 @@ describe('ScheduleIcsAppointmentFormData', () => {
         expect(result.error.issues).toHaveLength(1)
         const error = result.error.issues.at(0)
         expect(error.path).toContain('sessionDate')
-        expect(error.message).toBe('The session date must be before 18/12/2026')
+        expect(error.message).toBe('Session date must not be more than 6 months in the future')
       }
     })
     test('date that does not exist', () => {
@@ -201,7 +201,7 @@ describe('ScheduleIcsAppointmentFormData', () => {
           expect(result.error.issues).toHaveLength(1)
           const error = result.error.issues.at(0)
           expect(error.path).toStrictEqual(['sessionTime-hour'])
-          expect(error.message).toBe('Session start time must include an hour and minute')
+          expect(error.message).toBe('Start time must include hours')
         }
       })
       test('too low', () => {
@@ -228,7 +228,7 @@ describe('ScheduleIcsAppointmentFormData', () => {
           expect(result.error.issues).toHaveLength(1)
           const error = result.error.issues.at(0)
           expect(error.path).toStrictEqual(['sessionTime-hour'])
-          expect(error.message).toBe('Enter a session start time in the correct format')
+          expect(error.message).toBe('Enter a real start time')
         }
       })
       test('too high', () => {
@@ -255,7 +255,7 @@ describe('ScheduleIcsAppointmentFormData', () => {
           expect(result.error.issues).toHaveLength(1)
           const error = result.error.issues.at(0)
           expect(error.path).toStrictEqual(['sessionTime-hour'])
-          expect(error.message).toBe('Enter a session start time in the correct format')
+          expect(error.message).toBe('Enter a real start time')
         }
       })
       test('not a number', () => {
@@ -282,7 +282,7 @@ describe('ScheduleIcsAppointmentFormData', () => {
           expect(result.error.issues).toHaveLength(1)
           const error = result.error.issues.at(0)
           expect(error.path).toStrictEqual(['sessionTime-hour'])
-          expect(error.message).toBe('Enter a session start time in the correct format')
+          expect(error.message).toBe('Enter a real start time')
         }
       })
       test('too many digits', () => {
@@ -309,7 +309,7 @@ describe('ScheduleIcsAppointmentFormData', () => {
           expect(result.error.issues).toHaveLength(1)
           const error = result.error.issues.at(0)
           expect(error.path).toStrictEqual(['sessionTime-hour'])
-          expect(error.message).toBe('Enter a session start time in the correct format')
+          expect(error.message).toBe('Enter a real start time')
         }
       })
     })
@@ -338,7 +338,7 @@ describe('ScheduleIcsAppointmentFormData', () => {
           expect(result.error.issues).toHaveLength(1)
           const error = result.error.issues.at(0)
           expect(error.path).toStrictEqual(['sessionTime-minute'])
-          expect(error.message).toBe('Session start time must include an hour and minute')
+          expect(error.message).toBe('Start time must include minutes')
         }
       })
       test('too low', () => {
@@ -365,7 +365,7 @@ describe('ScheduleIcsAppointmentFormData', () => {
           expect(result.error.issues).toHaveLength(1)
           const error = result.error.issues.at(0)
           expect(error.path).toStrictEqual(['sessionTime-minute'])
-          expect(error.message).toBe('Enter a session start time in the correct format')
+          expect(error.message).toBe('Enter a real start time')
         }
       })
       test('too high', () => {
@@ -392,7 +392,7 @@ describe('ScheduleIcsAppointmentFormData', () => {
           expect(result.error.issues).toHaveLength(1)
           const error = result.error.issues.at(0)
           expect(error.path).toStrictEqual(['sessionTime-minute'])
-          expect(error.message).toBe('Enter a session start time in the correct format')
+          expect(error.message).toBe('Enter a real start time')
         }
       })
       test('not a number', () => {
@@ -419,7 +419,7 @@ describe('ScheduleIcsAppointmentFormData', () => {
           expect(result.error.issues).toHaveLength(1)
           const error = result.error.issues.at(0)
           expect(error.path).toStrictEqual(['sessionTime-minute'])
-          expect(error.message).toBe('Enter a session start time in the correct format')
+          expect(error.message).toBe('Enter a real start time')
         }
       })
       test('too many digits', () => {
@@ -446,7 +446,7 @@ describe('ScheduleIcsAppointmentFormData', () => {
           expect(result.error.issues).toHaveLength(1)
           const error = result.error.issues.at(0)
           expect(error.path).toStrictEqual(['sessionTime-minute'])
-          expect(error.message).toBe('Enter a session start time in the correct format')
+          expect(error.message).toBe('Enter a real start time')
         }
       })
     })
@@ -475,7 +475,7 @@ describe('ScheduleIcsAppointmentFormData', () => {
           expect(result.error.issues).toHaveLength(1)
           const error = result.error.issues.at(0)
           expect(error.path).toStrictEqual(['sessionTime-meridiem'])
-          expect(error.message).toBe('Select whether the session start time is AM or PM')
+          expect(error.message).toBe('Select am or pm')
         }
       })
     })
@@ -503,7 +503,7 @@ describe('ScheduleIcsAppointmentFormData', () => {
         expect(result.error.issues).toHaveLength(1)
         const error = result.error.issues.at(0)
         expect(error.path).toStrictEqual(['sessionTime'])
-        expect(error.message).toBe('Enter the start time of the session')
+        expect(error.message).toBe('Enter a start time')
       }
     })
   })
@@ -559,7 +559,7 @@ describe('ScheduleIcsAppointmentFormData', () => {
         expect(result.error.issues).toHaveLength(1)
         const error = result.error.issues.at(0)
         expect(error.path).toStrictEqual(['ByPhone'])
-        expect(error.message).toBe('Enter why the session is not in person')
+        expect(error.message).toBe('Enter the reason the session is not in person')
       }
     })
     test('byPhone - invalid characters', () => {
@@ -663,7 +663,7 @@ describe('ScheduleIcsAppointmentFormData', () => {
         expect(result.error.issues).toHaveLength(1)
         const error = result.error.issues.at(0)
         expect(error.path).toStrictEqual(['ByVideo'])
-        expect(error.message).toBe('Enter why the session is not in person')
+        expect(error.message).toBe('Enter the reason the session is not in person')
       }
     })
     test('byVideo - too long', () => {
@@ -826,6 +826,63 @@ describe('ScheduleIcsAppointmentFormData', () => {
         expect(error3.message).toBe('Enter a postcode')
       }
     })
+    describe('InSomewhereElse - postcode format', () => {
+      const bodyWithPostcode = (addressPostcode: string) => ({
+        sessionDate: britishDateFormat(addDays(new Date(), 1)),
+        'sessionTime-hour': '11',
+        'sessionTime-minute': '0',
+        'sessionTime-meridiem': 'am',
+        ByPhone: '',
+        ByVideo: '',
+        sessionTakePlace: 'InSomewhereElse',
+        probationOfficeList: '',
+        addressLine1: '1 High Street',
+        addressLine2: '',
+        addressTown: 'Derby',
+        addressCounty: '',
+        addressPostcode,
+        informedMethods: 'informedByPhone',
+        otherMethodOfContact: '',
+      })
+      const postcodeIssues = (postcode: string) => {
+        const result = buildScheduleIcsAppointmentFormData(subDays(new Date(), 1)).safeParse(bodyWithPostcode(postcode))
+        return (result.error?.issues ?? [])
+          .filter(issue => issue.path.includes('addressPostcode'))
+          .map(issue => issue.message)
+      }
+
+      test.each([
+        'SW1A 1AA',
+        'sw1a1aa',
+        'M1 1AE',
+        'B33 8TH',
+        'CR2 6XH',
+        'DN55 1PT',
+        'EC1A 1BB',
+        'GIR 0AA',
+        ' DE1 2EQ ',
+      ])('accepts a real postcode: %s', postcode => {
+        expect(postcodeIssues(postcode)).toStrictEqual([])
+      })
+
+      test.each(['ABC', '12345', 'SW1A', 'SW1A 1A', 'SW1A 1AAA', '1AA 1AA', 'AAA1 1AA'])(
+        'rejects a postcode that is not real: %s',
+        postcode => {
+          expect(postcodeIssues(postcode)).toStrictEqual(['Enter a real postcode'])
+        },
+      )
+
+      test('only shows the invalid characters error for a postcode with symbols', () => {
+        expect(postcodeIssues('SW1A-1AA')).toStrictEqual([
+          'Postcode must only include letters a to z, numbers 0 to 9 or spaces',
+        ])
+      })
+
+      test('only shows the missing postcode error when it is empty', () => {
+        expect(postcodeIssues('')).toStrictEqual(['Enter a postcode'])
+      })
+    })
+
     test('InSomewhereElse - too long', () => {
       const body = {
         sessionDate: '30/6/2026',
@@ -973,7 +1030,7 @@ describe('ScheduleIcsAppointmentFormData', () => {
       if (result.error) {
         const error = result.error.issues.at(0)
         expect(error.path).toStrictEqual(['informedMethods', 0])
-        expect(error.message).toBe('Select how {{ firstname }} was informed about the session')
+        expect(error.message).toBe('Select how they were informed about the session')
       }
     })
     test('other selected - no value', () => {
@@ -999,7 +1056,7 @@ describe('ScheduleIcsAppointmentFormData', () => {
       if (result.error) {
         const error = result.error.issues.at(0)
         expect(error.path).toStrictEqual(['otherMethodOfContact'])
-        expect(error.message).toBe('Enter the other method of contact')
+        expect(error.message).toBe('Enter other contact method')
       }
     })
     test('other selected - too long', () => {

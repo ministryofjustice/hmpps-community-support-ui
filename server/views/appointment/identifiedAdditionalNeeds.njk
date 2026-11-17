@@ -7,18 +7,18 @@
 {% set mainClasses = "govuk-body" %}
 
 {% block contentBody %}
-  <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
-  
-  {% if content.existingSupportNeedsDetails %}
-    <p class="govuk-body" data-testid="subheading">{{ content.pageSubHeader }} </p>
-    {{ govukSummaryList(content.existingSupportNeedsDetails) }}
-  {% endif %}
+<h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
 
-  <form method="post" action="{{ content.submitHref }}">
+{% if content.existingSupportNeedsDetails %}
+<p class="govuk-body" data-testid="subheading">{{ content.pageSubHeader }} </p>
+{{ govukSummaryList(content.existingSupportNeedsDetails) }}
+{% endif %}
+
+<form method="post">
   <input type="hidden" name="_csrf" value="{{csrfToken}}">
 
   {{ govukRadios(content.didYouIdentifyRadio) }}
-  
+
   {{ govukButton(content.submitButton) }}
-  </form>
+</form>
 {% endblock %}

@@ -5,6 +5,8 @@ export interface AppointmentTypeRules {
   probationOffice: boolean
   somewhereElse: boolean
   inPerson: boolean
+  prison: boolean
+  dateAfterReferral: boolean
   meetAtTheGate: boolean
   informed: boolean
 }
@@ -22,6 +24,8 @@ export const appointmentTypeRules: Record<SessionAppointmentType, AppointmentTyp
     probationOffice: true,
     somewhereElse: true,
     inPerson: false,
+    prison: false,
+    dateAfterReferral: false,
     meetAtTheGate: false,
     informed: true,
   },
@@ -29,20 +33,26 @@ export const appointmentTypeRules: Record<SessionAppointmentType, AppointmentTyp
     probationOffice: true,
     somewhereElse: true,
     inPerson: false,
+    prison: false,
+    dateAfterReferral: true,
     meetAtTheGate: false,
     informed: true,
   },
   PRE_RELEASE_SESSION: {
     probationOffice: false,
-    somewhereElse: true,
+    somewhereElse: false,
     inPerson: false,
+    prison: true,
+    dateAfterReferral: true,
     meetAtTheGate: false,
-    informed: true,
+    informed: false,
   },
   POST_RELEASE_SESSION: {
     probationOffice: true,
     somewhereElse: true,
     inPerson: false,
+    prison: false,
+    dateAfterReferral: false,
     meetAtTheGate: true,
     informed: true,
   },
@@ -50,6 +60,8 @@ export const appointmentTypeRules: Record<SessionAppointmentType, AppointmentTyp
     probationOffice: false,
     somewhereElse: false,
     inPerson: true,
+    prison: false,
+    dateAfterReferral: false,
     meetAtTheGate: false,
     informed: false,
   },

@@ -338,7 +338,7 @@ describe('CommunitySupportApiClient tests', () => {
       const caseReference = 'AB1234CD'
       const appointments: ReferralAppointmentsBffResponseDto = {
         personDetails: { firstName: 'Alex', lastName: 'Example', dateOfBirth: '1980-01-01', crn: 'X123456' },
-        appointments: [
+        upcomingAppointments: [
           {
             id: randomUUID(),
             label: 'Contact session',
@@ -347,6 +347,7 @@ describe('CommunitySupportApiClient tests', () => {
             appointmentStatus: 'SCHEDULED',
           },
         ],
+        pastAppointments: [],
       }
 
       nock('http://localhost:8080', {
@@ -552,6 +553,68 @@ describe('CommunitySupportApiClient tests', () => {
       const result = communitySupportApiClient.getIcsSessionFeedback(icsFeedbackId, 'user1')
 
       return expect(result).resolves.toEqual(mockIcsFeedbackResponse)
+    })
+  })
+  describe('ICS feedback BFF tests', () => {
+    const caseRefId = 'AB1234CD'
+    const username = 'user1'
+    const bffPages: Array<[string, string, (client: CommunitySupportApiClient) => Promise<unknown>]> = [
+      [
+        'why-did-the-session-not-happen',
+        'WhyDidSessionNotHappen',
+        c => c.getIcsFeedbackWhyDidSessionNotHappen(caseRefId, username),
+      ],
+      ['session-feedback', 'SessionFeedback', c => c.getIcsFeedbackSessionFeedback(caseRefId, username)],
+      ['next-steps', 'NextSteps', c => c.getIcsFeedbackNextSteps(caseRefId, username)],
+      ['issues-or-concerns', 'IssuesOrConcerns', c => c.getIcsFeedbackIssuesOrConcerns(caseRefId, username)],
+      [
+        'identified-additional-needs',
+        'IdentifiedAdditionalNeeds',
+        c => c.getIcsFeedbackIdentifiedAdditionalNeeds(caseRefId, username),
+      ],
+      [
+        'how-they-tried-to-contact-the-person',
+        'HowTheyTriedToContactThePerson',
+        c => c.getIcsFeedbackHowTheyTriedToContactThePerson(caseRefId, username),
+      ],
+      ['did-session-take-place', 'DidSessionTakePlace', c => c.getIcsFeedbackDidSessionTakePlace(caseRefId, username)],
+      ['check-answers', 'CheckAnswers', c => c.getIcsFeedbackCheckAnswers(caseRefId, username)],
+      ['attendance', 'Attendance', c => c.getIcsFeedbackAttendance(caseRefId, username)],
+      ['session-details', 'SessionDetails', c => c.getIcsFeedbackSessionDetails(caseRefId, username)],
+    ]
+
+    it.each(bffPages)('calls /bff/ics-feedback/{caseRefId}/%s for %s', async (page, _name, call) => {
+      const mockResponse = { page }
+
+      nock('http://localhost:8080').get(`/bff/ics-feedback/${caseRefId}/${page}`).reply(200, mockResponse)
+
+      await expect(call(communitySupportApiClient)).resolves.toEqual(mockResponse)
+    })
+
+    it('calls /bff/referral-details/{caseRefId}/ics-view-or-change', async () => {
+      const mockResponse = { page: 'ics-view-or-change' }
+
+      nock('http://localhost:8080')
+        .get(`/bff/referral-details/${caseRefId}/ics-view-or-change`)
+        .reply(200, mockResponse)
+
+      await expect(communitySupportApiClient.getIcsViewOrChange(caseRefId, username)).resolves.toEqual(mockResponse)
+    })
+
+    it('calls /bff/referral/{caseRefId}/ics-change-details', async () => {
+      const mockResponse = { page: 'ics-change-details' }
+
+      nock('http://localhost:8080').get(`/bff/referral/${caseRefId}/ics-change-details`).reply(200, mockResponse)
+
+      await expect(communitySupportApiClient.getIcsChangeDetails(caseRefId, username)).resolves.toEqual(mockResponse)
+    })
+
+    it('calls /bff/referral/{caseRefId}/ics-change-details/reason', async () => {
+      const mockResponse = { fullName: 'John Smith' }
+
+      nock('http://localhost:8080').get(`/bff/referral/${caseRefId}/ics-change-details/reason`).reply(200, mockResponse)
+
+      await expect(communitySupportApiClient.getIcsChangeReason(caseRefId, username)).resolves.toEqual(mockResponse)
     })
   })
   describe('saveRiskInformation tests', () => {

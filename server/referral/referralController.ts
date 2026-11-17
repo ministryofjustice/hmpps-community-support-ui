@@ -246,6 +246,7 @@ export default class ReferralController {
     const bannerContent = sessionBanner?.caseReference === caseReference ? sessionBanner : undefined
 
     delete req.session.referralProgressBanner
+    delete req.session.icsFeedbackSubmission
 
     const referralProgress = await this.referralService.getReferralProgress(caseReference, username)
 
@@ -257,10 +258,20 @@ export default class ReferralController {
   async showReferralAppointments(req: Request, res: Response) {
     const { caseReference } = req.params as { caseReference: string }
     const { username } = res.locals.user
-    const showSuccessAlert = req.session.referralAppointmentsSuccessCaseReference === caseReference
-    delete req.session.referralAppointmentsSuccessCaseReference
+    const feedbackNotification =
+      req.session.appointmentFeedbackMessage?.caseReference === caseReference
+        ? req.session.appointmentFeedbackMessage
+        : undefined
+    const successNotification = feedbackNotification
+      ? ({ type: 'ICS_FEEDBACK' } as const)
+      : req.session.createdAppointmentMessage
     const appointments = await this.referralService.getReferralAppointments(caseReference, username)
-    const presenter = new ReferralAppointmentsPresenter(appointments, caseReference, showSuccessAlert)
+    const presenter = new ReferralAppointmentsPresenter(appointments, caseReference, successNotification)
+    if (feedbackNotification) {
+      delete req.session.appointmentFeedbackMessage
+    } else {
+      delete req.session.createdAppointmentMessage
+    }
     return presenter.renderPage(res)
   }
 

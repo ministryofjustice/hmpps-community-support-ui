@@ -34,7 +34,9 @@ test.describe('Next Steps Page', () => {
     await resetStubs()
     await page.goto('/')
     await login(page)
-    await communitySupport.stubGetICS(CASE_REFERENCE, mockAppointment)
+    await communitySupport.stubGetIcsFeedbackPage(CASE_REFERENCE, 'next-steps', {
+      referralFirstName: mockAppointment.referralFirstName,
+    })
   })
 
   test('Page displays inputs and labels', async ({ page }) => {

@@ -67,6 +67,14 @@ export default class ServiceDeliveryPresenter extends ActionPlanLayoutPresenter<
         title: {
           text: content.serviceDeliveryCardTitle,
         },
+        actions: {
+          items: [
+            {
+              href: `/referral/${this.caseReference}/action-plan/change-session-delivery-details`,
+              text: 'Change',
+            },
+          ],
+        },
       },
       rows,
     }
@@ -84,6 +92,14 @@ export default class ServiceDeliveryPresenter extends ActionPlanLayoutPresenter<
         title: {
           text: content.risksAndAdjustmentsCardTitle,
         },
+        actions: {
+          items: [
+            {
+              href: `/referral/${this.caseReference}/action-plan/change-risks-and-adjustments`,
+              text: 'Change',
+            },
+          ],
+        },
       },
       rows,
     }
@@ -100,6 +116,14 @@ export default class ServiceDeliveryPresenter extends ActionPlanLayoutPresenter<
       card: {
         title: {
           text: content.serviceEndDateCardTitle,
+        },
+        actions: {
+          items: [
+            {
+              href: `/referral/${this.caseReference}/action-plan/change-service-end-date-check`,
+              text: 'Change',
+            },
+          ],
         },
       },
       rows,

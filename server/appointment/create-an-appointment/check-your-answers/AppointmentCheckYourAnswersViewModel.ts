@@ -7,6 +7,7 @@ export type AppointmentCheckYourAnswersViewModel = {
   submitButtonText: string
   backLink: GovukFrontendBackLink
   appointmentSummary: GovukFrontendSummaryList
+  whatHappensNext?: { heading: string; text: string }
 }
 
 export type AppointmentCheckYourAnswersContent = {
@@ -16,12 +17,18 @@ export type AppointmentCheckYourAnswersContent = {
   dateLabel: string
   startTimeLabel: string
   methodLabel: string
-  locationLabel: string
+  probationOfficeLabel: string
+  prisonLabel: string
+  appointmentAddressLabel: string
+  reasonSessionNotInPersonLabel: string
   meetAtTheGateLabel: string
   informedLabel: string
+  whatHappensNextHeading: string
+  retrospectiveAppointmentText: string
   changeLinkText: string
   changeLinkVisualText: string
   changeLinkHref: string
+  continueButtonText: string
   submitButtonText: string
   submitHref: string
   backLink: string

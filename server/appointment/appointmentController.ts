@@ -8,9 +8,10 @@ import {
   SessionMethod,
   SessionMethodRequest,
 } from '@community-support-api'
-import { format, isBefore, parse } from 'date-fns'
+import { format, formatDate, isBefore, parse, parseISO } from 'date-fns'
+import { Prison } from '@prison-api'
 import { ZodType } from 'zod'
-import timeFormat, { parseTime12Hr } from '../utils/timeFormat'
+import timeFormat, { formatTime12Hr, parseTime12Hr } from '../utils/timeFormat'
 import { ErrorMiddlewareErrors, HowSessionTookPlace, IcsFeedbackHowSessionTookPlaceSession } from '../@types/express'
 import ConfirmIcsPresenter, { type AdditionalInformation } from './confirm-ics/confirmIcsPresenter'
 import InitialContactSessionDetailsPresenter from '../referral/InitialContactSessionDetailsPresenter'
@@ -42,17 +43,20 @@ import { IcsFeedbackFormSchema } from '../validation/IcsFeedbackHowSessionTookPl
 import buildScheduleIcsAppointmentFormData, {
   buildCreateAppointmentFormData,
 } from '../validation/ScheduleIcsAppointmentFormData'
-import { parseAppointmentType, SessionAppointmentType } from './appointmentTypeRules'
+import { appointmentTypeRules, parseAppointmentType, SessionAppointmentType } from './appointmentTypeRules'
 import NextStepsPresenter from './next-steps/NextStepsPresenter'
 import { NextStepsFormDataSchema } from '../validation/NextStepsFormData'
 import ChangeIcsDetailsReasonPresenter from './change-ics-details-reason/ChangeIcsDetailsReasonPresenter'
 import { ChangeIcsDetailsReasonSchema } from '../validation/ChangeIcsDetailsReasonFormData'
-import { saveFormToSession, ScheduledIcsFormDataResolver } from './schedule-ics/ScheduledIcsFormDataResolver'
+import {
+  saveFormToSession,
+  ScheduledIcsFormData,
+  ScheduledIcsFormDataResolver,
+} from './schedule-ics/ScheduledIcsFormDataResolver'
 import IssuesOrConcernsPresenter from './issues-or-concerns/IssuesOrConcernsPresenter'
 import { IssuesOrConcernsFormDataSchema } from '../validation/IssuesOrConcernsFormData'
 import {
   buildAppointmentSessionMethodRequest,
-  appointmentMethodRequiresLocation,
   normaliseAppointmentMethod,
 } from './create-an-appointment/appointmentMethod'
 import AppointmentTypePresenter from './create-an-appointment/appointment-type/AppointmentTypePresenter'
@@ -61,14 +65,22 @@ import { AppointmentTypeSchema } from '../validation/AppointmentTypeFormData'
 import logger from '../../logger'
 import AppointmentSessionData from './create-an-appointment/AppointmentSessionData'
 import { toIsoDate } from '../utils/dateFormat'
+import { toApiInformedBy } from './informedByLabels'
 import IdentifiedAdditionalNeedsPresenter from './identified-additional-support-needs/IdentifiedAdditionalNeedsPresenter'
 import { IdentifiedAdditionalNeedsFormDataSchema } from '../validation/IdentifiedAdditonalNeedsFormData'
+import { getAppointmentTypeLabel } from './create-an-appointment/appointmentTypeLabel'
+import DidAttendPresenter from './did-attend/DidAttendPresenter'
+import DidAttendFormData, { DidAttendFormDataSchema } from '../validation/DidAttendFormData'
 
 const recordAttendanceRedirectUrl = (data: RecordSessionAttendanceFormData, caseRefId: string): string => {
   if (data.happened === 'Yes') {
     return `/ics-feedback/${caseRefId}/did-session-take-place`
   }
-  if (data.attended === 'Yes') {
+  return `/ics-feedback/${caseRefId}/did-attend`
+}
+
+const didAttendRedirectUrl = (data: DidAttendFormData, caseRefId: string): string => {
+  if (data.didAttend === 'Yes') {
     return `/ics-feedback/${caseRefId}/why-did-the-session-not-happen`
   }
   return `/ics-feedback/${caseRefId}/how-they-tried-to-contact-the-person`
@@ -204,36 +216,89 @@ const storePending = (req: Request) => {
   req.session.pending = req.body as Record<string, string>
 }
 
+const icsAppointmentDetailsHref = (caseRefId: string): string =>
+  `/referral/${caseRefId}/create-an-appointment/appointment-details?session=ICS`
+
 const getFlashedFormValues = (req: Request): Record<string, string> | undefined => {
   const flashData = req.flash('value')
   return flashData.length > 0 ? JSON.parse(flashData[0]) : undefined
+}
+
+// After a validation error, show the date and start time exactly as they were typed. The draft in the
+// session stores them as numbers (so a blank hour comes back as 0, and an invalid date as blank).
+const withSubmittedDateAndTime = (
+  formData: ScheduledIcsFormData | undefined,
+  submitted: Record<string, string> | undefined,
+): ScheduledIcsFormData | undefined => {
+  if (!submitted) {
+    return formData
+  }
+  return {
+    ...formData,
+    sessionDate: submitted.sessionDate ?? '',
+    'sessionTime-hour': submitted['sessionTime-hour'] ?? '',
+    'sessionTime-minute': submitted['sessionTime-minute'] ?? '',
+    'sessionTime-meridiem': submitted['sessionTime-meridiem']?.toLowerCase() ?? '',
+  }
 }
 
 const buildSessionMethodRequest = (
   appointmentSessionData: AppointmentSessionData,
   probationOfficeLocations: Array<{ id: number; name: string }>,
 ): SessionMethodRequest => {
+  const { method } = appointmentSessionData
   const locationId = appointmentSessionData.probationOfficeLocationId
   const locationName = probationOfficeLocations.find(office => String(office.id) === String(locationId))?.name
-  const detailValue =
-    appointmentSessionData.method === 'IN_PERSON_OTHER_LOCATION'
-      ? appointmentSessionData.location || locationName || locationId || ''
-      : locationName || locationId || ''
+  let detailValue = locationName || locationId || ''
+  if (method === 'IN_PERSON_OTHER_LOCATION') {
+    detailValue = appointmentSessionData.addressLines?.join(', ') || ''
+  } else if (method === 'IN_PERSON_PRISON') {
+    detailValue = appointmentSessionData.prisonCode || ''
+  } else if (method === 'PHONE' || method === 'VIDEO') {
+    detailValue = appointmentSessionData.reasonSessionNotInPerson || ''
+  }
 
-  return buildAppointmentSessionMethodRequest(appointmentSessionData.method, detailValue)
+  const request = buildAppointmentSessionMethodRequest(method, detailValue)
+  return method === 'IN_PERSON_OTHER_LOCATION' ? { ...request, ...appointmentSessionData.address } : request
 }
 
 const buildCreateAppointmentRequest = (
   appointmentSessionData: AppointmentSessionData,
   probationOfficeLocations: Array<{ id: number; name: string }>,
-): CreateAppointmentRequest => ({
-  appointmentType: appointmentSessionData.appointmentType as CreateAppointmentRequest['appointmentType'],
-  date: toIsoDate(appointmentSessionData.date) || '',
-  time: parseTime12Hr(appointmentSessionData.startTime),
-  sessionMethodRequest: buildSessionMethodRequest(appointmentSessionData, probationOfficeLocations),
-  sessionCommunication: appointmentSessionData.informedBy || [],
-  meetAtTheGate: appointmentSessionData.meetAtTheGate,
-})
+): CreateAppointmentRequest => {
+  const appointmentType = parseAppointmentType(appointmentSessionData.appointmentType)
+  return {
+    appointmentType,
+    date: toIsoDate(appointmentSessionData.date) || '',
+    time: parseTime12Hr(appointmentSessionData.startTime),
+    sessionMethodRequest: buildSessionMethodRequest(appointmentSessionData, probationOfficeLocations),
+    sessionCommunication:
+      appointmentType && !appointmentTypeRules[appointmentType].informed
+        ? []
+        : toApiInformedBy(appointmentSessionData.informedBy),
+    meetAtTheGate:
+      appointmentType && !appointmentTypeRules[appointmentType].meetAtTheGate
+        ? undefined
+        : appointmentSessionData.meetAtTheGate,
+  }
+}
+
+const generateSuccessMessage = (
+  appointmentType: string,
+  appointmentDate: string,
+  appointmentTime: AppointmentTimeResponse,
+): { title: string; message: string } => {
+  const appointmentTypeLabel = getAppointmentTypeLabel(appointmentType)
+
+  return {
+    title: `${appointmentTypeLabel} booked`,
+    message: `${appointmentTypeLabel} booked for ${formatDate(new Date(appointmentDate), 'dd MMMM yyyy')} at ${formatTime12Hr(
+      appointmentTime.hour,
+      appointmentTime.minute,
+      appointmentTime.amPm,
+    )}`,
+  }
+}
 
 class AppointmentController {
   private readonly resolver: ScheduledIcsFormDataResolver
@@ -251,7 +316,7 @@ class AppointmentController {
     const { caseRefId } = req.params as { caseRefId: string }
     const createAppointmentRequest = req.session?.createAppointmentRequest
     if (!createAppointmentRequest) {
-      return res.redirect(`/referral/${caseRefId}/appointment/schedule-ics`)
+      return res.redirect(icsAppointmentDetailsHref(caseRefId))
     }
     const referralInformation = await this.referralService.getReferralInformation(caseRefId, username)
     const additionalDetails: AdditionalInformation = {
@@ -329,7 +394,7 @@ class AppointmentController {
     const sessionType = parseAppointmentType(appointmentType)
     return sessionType
       ? `/referral/${caseRefId}/create-an-appointment/appointment-details`
-      : `/referral/${caseRefId}/appointment/schedule-ics`
+      : icsAppointmentDetailsHref(caseRefId)
   }
 
   async showCreateAppointmentDetails(req: Request, res: Response): Promise<void> {
@@ -344,10 +409,16 @@ class AppointmentController {
       this.referenceDataService.getPrisons(),
       this.referralService.getReferralInformation(caseRefId, username),
     ])
-    const formData =
+    const submitted = getFlashedFormValues(req)
+    const formData = withSubmittedDateAndTime(
       req.session.createAppointmentRequest?.appointmentType === appointmentType
         ? this.resolver.resolveFromSession(req)
-        : undefined
+        : undefined,
+      submitted,
+    )
+    if (submitted && formData) {
+      formData.sessionTakePlace = submitted.sessionTakePlace ?? ''
+    }
 
     const validationErrors: ErrorMiddlewareErrors = formatDynamicErrorMessages(
       res.locals.errors,
@@ -374,13 +445,29 @@ class AppointmentController {
     if (!appointmentType) {
       return res.redirect(`/referral/${caseRefId}/create-an-appointment/appointment-type`)
     }
-    const { schema } = await this.prepareAppointmentRequest(req, username, caseRefId, appointmentType)
+    const { schema, prisons } = await this.prepareAppointmentRequest(req, username, caseRefId, appointmentType)
 
     return validateRequestBodyAgainstSchema(schema, req, res, () => {
       const method = req.body.sessionTakePlace
       const normalisedMethod = normaliseAppointmentMethod(method)
-      const meetAtTheGateValue = req.body.meetAtTheGate
+      const prisonCode = typeof req.body.prisonList === 'string' ? req.body.prisonList.trim() : ''
+      const prison =
+        normalisedMethod === 'IN_PERSON_PRISON' ? prisons.find(item => item.agencyId === prisonCode) : undefined
+      if (normalisedMethod === 'IN_PERSON_PRISON' && !prison) {
+        logger.error('Validated prison was not present in the reference data')
+        throw new Error('Validated prison was not present in the reference data')
+      }
+      const meetAtTheGateValue = appointmentTypeRules[appointmentType].meetAtTheGate
+        ? req.body.meetAtTheGate
+        : undefined
+      let reasonSessionNotInPerson: string | undefined
       let meetAtTheGate: boolean | undefined
+
+      if (normalisedMethod === 'PHONE') {
+        reasonSessionNotInPerson = req.body.ByPhone
+      } else if (normalisedMethod === 'VIDEO') {
+        reasonSessionNotInPerson = req.body.ByVideo
+      }
 
       if (meetAtTheGateValue === 'yes') {
         meetAtTheGate = true
@@ -392,19 +479,37 @@ class AppointmentController {
         ...req.session.appointmentSessionData,
         appointmentType,
         date: req.body.sessionDate,
-        startTime: [
-          req.body['sessionTime-hour'],
+        startTime: formatTime12Hr(
+          Number(req.body['sessionTime-hour']),
           req.body['sessionTime-minute'],
-          req.body['sessionTime-meridiem']?.toLowerCase(),
-        ].join(':'),
+          req.body['sessionTime-meridiem'],
+        ),
         method: normalisedMethod,
-        probationOfficeLocationId: appointmentMethodRequiresLocation(normalisedMethod)
-          ? req.body.probationOfficeList
-          : undefined,
-        location:
+        probationOfficeLocationId:
+          normalisedMethod === 'IN_PERSON_PROBATION_OFFICE' ? req.body.probationOfficeList : undefined,
+        prisonCode: prison?.agencyId,
+        prisonName: prison?.description,
+        addressLines:
           normalisedMethod === 'IN_PERSON_OTHER_LOCATION'
-            ? [req.body.addressLine1, req.body.addressTown, req.body.addressPostcode].filter(Boolean).join(', ')
+            ? [
+                req.body.addressLine1,
+                req.body.addressLine2,
+                req.body.addressTown,
+                req.body.addressCounty,
+                req.body.addressPostcode,
+              ].filter(Boolean)
             : undefined,
+        address:
+          normalisedMethod === 'IN_PERSON_OTHER_LOCATION'
+            ? {
+                addressLine1: req.body.addressLine1,
+                addressLine2: req.body.addressLine2,
+                townOrCity: req.body.addressTown,
+                county: req.body.addressCounty,
+                postcode: req.body.addressPostcode,
+              }
+            : undefined,
+        reasonSessionNotInPerson,
         meetAtTheGate,
         informedBy: req.session.createAppointmentRequest?.sessionCommunication,
       }
@@ -436,48 +541,47 @@ class AppointmentController {
       referenceData.probationOfficeLocations,
     )
 
-    await this.appointmentService.submitAppointment(caseReference, createAppointmentRequest, username)
+    const response = await this.appointmentService.submitAppointment(caseReference, createAppointmentRequest, username)
     delete req.session.appointmentSessionData
+
+    if (
+      response.appointmentType === 'ICS' &&
+      this.isRetrospectiveAppointment(response.appointmentDate, response.appointmentTime)
+    ) {
+      req.session.retrospectiveBooking = {
+        caseReference,
+        appointmentIcsId: response.appointmentIcsId,
+      }
+      delete req.session.createAppointmentRequest
+      delete req.session.icsFeedbackSubmission
+      delete req.session.pending
+      return res.redirect(`/ics-feedback/${caseReference}/attendance`)
+    }
+
+    req.session.createdAppointmentMessage = generateSuccessMessage(
+      response.appointmentType,
+      response.appointmentDate,
+      response.appointmentTime,
+    )
 
     return res.redirect(`/referral/${caseReference}/appointments`)
   }
 
-  async showScheduleIcs(req: Request, res: Response): Promise<void> {
-    const { username } = res.locals.user
+  showScheduleIcs(req: Request, res: Response): void {
     const caseRefId = req.params.caseRefId as string
-    const [probationOffices, prisons, referralInformation, formData] = await Promise.all([
-      this.referenceDataService.getProbationOffices(),
-      this.referenceDataService.getPrisons(),
-      this.referralService.getReferralInformation(caseRefId, username),
-      this.resolver.resolve(req, res),
-    ])
-
-    const validationErrors: ErrorMiddlewareErrors = formatDynamicErrorMessages(
-      res.locals.errors,
-      '{{ firstname }}',
-      referralInformation.firstName,
-    )
-    res.locals.errors = validationErrors
-    const presenter = new ScheduleIcsPresenter(
-      caseRefId,
-      probationOffices,
-      prisons,
-      referralInformation,
-      formData,
-      validationErrors,
-    )
-    return presenter.renderPage(res)
+    return res.redirect(icsAppointmentDetailsHref(caseRefId))
   }
 
   async showRescheduleIcs(req: Request, res: Response): Promise<void> {
     const { username } = res.locals.user
     const caseRefId = req.params.caseRefId as string
-    const [probationOffices, prisons, referralInformation, formData] = await Promise.all([
+    const [probationOffices, prisons, referralInformation, resolvedFormData] = await Promise.all([
       this.referenceDataService.getProbationOffices(),
       this.referenceDataService.getPrisons(),
       this.referralService.getReferralInformation(caseRefId, username),
       this.resolver.resolve(req, res),
     ])
+    const formData = withSubmittedDateAndTime(resolvedFormData, getFlashedFormValues(req))
 
     const validationErrors: ErrorMiddlewareErrors = formatDynamicErrorMessages(
       res.locals.errors,
@@ -527,11 +631,16 @@ class AppointmentController {
   ): Promise<{
     schema: ZodType
     referralInformation: ReferralInformation
+    prisons: Prison[]
   }> {
     const referralInformation = await this.referralService.getReferralInformation(caseRefId, username)
-    const referralDate = new Date(referralInformation.referralDate)
+    const referralDate = parseISO(referralInformation.referralDate)
+    const prisons =
+      appointmentType && appointmentTypeRules[appointmentType].prison && req.body.sessionTakePlace === 'InPrison'
+        ? await this.referenceDataService.getPrisons()
+        : []
     const schema = appointmentType
-      ? buildCreateAppointmentFormData(referralDate, appointmentType)
+      ? buildCreateAppointmentFormData(referralDate, appointmentType, prisons)
       : buildScheduleIcsAppointmentFormData(referralDate)
     const informedMethodArr: string[] =
       typeof req.body.informedMethods === 'string' ? [req.body.informedMethods] : req.body.informedMethods
@@ -545,21 +654,25 @@ class AppointmentController {
       ByPhone: req.body.ByPhone,
       ByVideo: req.body.ByVideo,
       probationOffice: req.body.probationOfficeList,
-      prison: req.body.prisonList,
+      prison: typeof req.body.prisonList === 'string' ? req.body.prisonList.trim() : undefined,
       addressLine1: req.body.addressLine1,
       addressLine2: req.body.addressLine2,
       addressTown: req.body.addressTown,
       addressCounty: req.body.addressCounty,
       addressPostcode: req.body.addressPostcode,
-      informedMethods: informedMethodArr,
-      otherMethodOfContact: req.body.otherMethodOfContact,
-      meetAtTheGate: req.body.meetAtTheGate,
+      informedMethods:
+        !appointmentType || appointmentTypeRules[appointmentType].informed ? informedMethodArr : undefined,
+      otherMethodOfContact:
+        !appointmentType || appointmentTypeRules[appointmentType].informed ? req.body.otherMethodOfContact : undefined,
+      meetAtTheGate:
+        !appointmentType || appointmentTypeRules[appointmentType].meetAtTheGate ? req.body.meetAtTheGate : undefined,
       appointmentType,
     })
 
     return {
       schema,
       referralInformation,
+      prisons,
     }
   }
 
@@ -567,7 +680,7 @@ class AppointmentController {
     const caseRefId = req.params.caseRefId as string
     const { username } = res.locals.user
     return this.appointmentService
-      .getICS(caseRefId.toString(), username)
+      .getIcsViewOrChange(caseRefId.toString(), username)
       .then(data => new InitialContactSessionDetailsPresenter(data, caseRefId, false))
       .then(presenter => presenter.renderPage(res))
   }
@@ -587,7 +700,7 @@ class AppointmentController {
     const { username } = res.locals.user
     const [probationOffices, icsAppointment] = await Promise.all([
       this.referenceDataService.getProbationOffices(),
-      this.appointmentService.getICS(caseRefId, username),
+      this.appointmentService.getIcsFeedbackDidSessionTakePlace(caseRefId, username),
     ])
     const { sessionMethod } = icsAppointment
     const formData = getPendingFormData(req)
@@ -605,7 +718,7 @@ class AppointmentController {
   async recordDidSessionTakePlace(req: Request, res: Response): Promise<void> {
     const { caseRefId } = req.params as { caseRefId: string }
     const { username } = res.locals.user
-    const icsAppointment = await this.appointmentService.getICS(caseRefId, username)
+    const icsAppointment = await this.appointmentService.getIcsFeedbackDidSessionTakePlace(caseRefId, username)
     const { sessionMethod } = icsAppointment
 
     storePending(req)
@@ -645,16 +758,22 @@ class AppointmentController {
     const createAppointmentRequest = req.session?.createAppointmentRequest
 
     if (!createAppointmentRequest) {
-      return res.redirect(`/referral/${caseRefId}/appointment/schedule-ics`)
+      return res.redirect(icsAppointmentDetailsHref(caseRefId))
     }
 
-    const response = await this.appointmentService.submitICS(caseRefId, createAppointmentRequest, username)
+    const response = await this.appointmentService.submitICS(
+      caseRefId,
+      {
+        ...createAppointmentRequest,
+        sessionCommunication: toApiInformedBy(createAppointmentRequest.sessionCommunication),
+      },
+      username,
+    )
 
     delete req.session.createAppointmentRequest
 
     if (response.appointmentType !== 'ICS') {
       delete req.session.appointmentSessionData
-      req.session.referralAppointmentsSuccessCaseReference = caseRefId
       return res.redirect(`/referral/${caseRefId}/appointments`)
     }
 
@@ -684,13 +803,30 @@ class AppointmentController {
     const { username } = res.locals.user
     const { icsFeedbackSubmission } = req.session
 
-    const { appointmentIcsId } = await this.appointmentService.getICS(caseRefId, username)
+    const { appointmentIcsId } = await this.appointmentService.getIcsFeedbackCheckAnswers(caseRefId, username)
 
     if (icsFeedbackSubmission && appointmentIcsId) {
       await this.appointmentService.submitIcsFeedback(caseRefId, appointmentIcsId, icsFeedbackSubmission, username)
       delete req.session.icsFeedbackSubmission
-      this.setReferralProgressBanner(req, caseRefId, 'Session feedback submitted', 'The ICS is now complete.')
-      res.redirect(`/progress/${caseRefId}`)
+      const { retrospectiveBooking } = req.session
+      if (
+        retrospectiveBooking?.caseReference === caseRefId &&
+        retrospectiveBooking.appointmentIcsId === appointmentIcsId
+      ) {
+        delete req.session.retrospectiveBooking
+        req.session.createdAppointmentMessage = {
+          title: 'Session feedback submitted',
+          message: 'The ICS is now complete.',
+        }
+        res.redirect(`/referral/${caseRefId}/appointments`)
+        return
+      }
+      if (retrospectiveBooking) {
+        res.redirect(`/progress/${caseRefId}`)
+        return
+      }
+      req.session.appointmentFeedbackMessage = { caseReference: caseRefId }
+      res.redirect(`/referral/${caseRefId}/appointments`)
     }
   }
 
@@ -698,15 +834,14 @@ class AppointmentController {
     const { caseRefId } = req.params
     const { username } = res.locals.user
 
-    const icsSessionData = await this.appointmentService.getICS(caseRefId.toString(), username)
-
+    const attendanceResponse = await this.appointmentService.getIcsFeedbackAttendance(caseRefId.toString(), username)
     const { list } = res.locals.errors
     const attendedItem = list.find(({ href }) => href === '#attended')
     if (attendedItem) {
-      attendedItem.text = attendedItem.text.replace('{{ firstname }}', icsSessionData.referralFirstName)
+      attendedItem.text = attendedItem.text.replace('{{ firstname }}', attendanceResponse.referralFirstName)
     }
     const record = req.session.icsFeedbackSubmission?.record || {}
-    const presenter = new RecordSessionAttendancePresenter(caseRefId.toString(), icsSessionData, record)
+    const presenter = new RecordSessionAttendancePresenter(caseRefId.toString(), attendanceResponse, record)
     presenter.renderPage(res)
   }
 
@@ -718,7 +853,7 @@ class AppointmentController {
           caseReferenceId: caseRefId.toString(),
           record: {
             didSessionHappen: data.happened === 'Yes',
-            didPersonAttend: data.happened === 'No' ? data.attended === 'Yes' : true,
+            ...(data.happened === 'Yes' && { didPersonAttend: true }),
           },
         }
         res.redirect(recordAttendanceRedirectUrl(data, caseRefId.toString()))
@@ -726,10 +861,37 @@ class AppointmentController {
     })
   }
 
+  async getDidAttend(req: Request, res: Response): Promise<void> {
+    const caseRefId = req.params.caseRefId as string
+    const { username } = res.locals.user
+
+    const record = req.session.icsFeedbackSubmission?.record || {}
+    const attendanceResponse = await this.appointmentService.getIcsFeedbackAttendance(caseRefId.toString(), username)
+
+    const presenter = new DidAttendPresenter(caseRefId, attendanceResponse, record)
+    presenter.renderPage(res)
+  }
+
+  recordDidAttend(req: Request, res: Response): Promise<void> {
+    return validateRequestBodyAgainstSchema(DidAttendFormDataSchema, req, res, data => {
+      if (data) {
+        const { caseRefId } = req.params
+        req.session.icsFeedbackSubmission = {
+          caseReferenceId: caseRefId.toString(),
+          record: {
+            ...req.session.icsFeedbackSubmission?.record,
+            didPersonAttend: data.didAttend === 'Yes',
+          },
+        }
+        res.redirect(didAttendRedirectUrl(data, caseRefId.toString()))
+      }
+    })
+  }
+
   async getSessionFeedback(req: Request, res: Response): Promise<void> {
     const caseRefId = req.params.caseRefId as string
     const { username } = res.locals.user
-    const icsAppointment = await this.appointmentService.getICS(caseRefId, username)
+    const icsAppointment = await this.appointmentService.getIcsFeedbackSessionFeedback(caseRefId, username)
 
     if (!icsAppointment) {
       req.flash('error', 'Appointment not found.')
@@ -755,7 +917,7 @@ class AppointmentController {
   async submitSessionFeedback(req: Request, res: Response): Promise<void> {
     const caseRefId = req.params.caseRefId as string
     const { username } = res.locals.user
-    const icsAppointment = await this.appointmentService.getICS(caseRefId, username)
+    const icsAppointment = await this.appointmentService.getIcsFeedbackSessionFeedback(caseRefId, username)
 
     if (!icsAppointment) {
       req.flash('error', 'Appointment not found.')
@@ -791,7 +953,7 @@ class AppointmentController {
   async getIssuesOrConcerns(req: Request, res: Response): Promise<void> {
     const caseRefId = req.params.caseRefId as string
     const { username } = res.locals.user
-    const icsAppointment = await this.appointmentService.getICS(caseRefId, username)
+    const icsAppointment = await this.appointmentService.getIcsFeedbackIssuesOrConcerns(caseRefId, username)
 
     if (!icsAppointment) {
       logger.info(`Appointment for Case '${caseRefId}' not found for user '${username}'`)
@@ -819,7 +981,7 @@ class AppointmentController {
   async submitIssuesOrConcerns(req: Request, res: Response): Promise<void> {
     const caseRefId = req.params.caseRefId as string
     const { username } = res.locals.user
-    const icsAppointment = await this.appointmentService.getICS(caseRefId, username)
+    const icsAppointment = await this.appointmentService.getIcsFeedbackIssuesOrConcerns(caseRefId, username)
 
     if (!icsAppointment) {
       logger.info(`Appointment for Case '${caseRefId}' not found for user '${username}'`)
@@ -851,7 +1013,7 @@ class AppointmentController {
   async getIdentifiedAdditionalNeeds(req: Request, res: Response): Promise<void> {
     const caseRefId = req.params.caseRefId as string
     const { username } = res.locals.user
-    const icsAppointment = await this.appointmentService.getICS(caseRefId, username)
+    const icsAppointment = await this.appointmentService.getIcsFeedbackIdentifiedAdditionalNeeds(caseRefId, username)
 
     if (!icsAppointment) {
       logger.info(`Appointment for Case '${caseRefId}' not found for user '${username}'`)
@@ -913,7 +1075,7 @@ class AppointmentController {
   async submitIdentifiedAdditionalNeeds(req: Request, res: Response): Promise<void> {
     const caseRefId = req.params.caseRefId as string
     const { username } = res.locals.user
-    const icsAppointment = await this.appointmentService.getICS(caseRefId, username)
+    const icsAppointment = await this.appointmentService.getIcsFeedbackIdentifiedAdditionalNeeds(caseRefId, username)
 
     if (!icsAppointment) {
       logger.info(`Appointment for Case '${caseRefId}' not found for user '${username}'`)
@@ -941,7 +1103,7 @@ class AppointmentController {
   async getNextSteps(req: Request, res: Response): Promise<void> {
     const caseRefId = req.params.caseRefId as string
     const { username } = res.locals.user
-    const icsAppointment = await this.appointmentService.getICS(caseRefId, username)
+    const icsAppointment = await this.appointmentService.getIcsFeedbackNextSteps(caseRefId, username)
 
     if (!icsAppointment) {
       logger.info(`Appointment for Case '${caseRefId}' not found for user '${username}'`)
@@ -969,7 +1131,7 @@ class AppointmentController {
   async submitNextSteps(req: Request, res: Response): Promise<void> {
     const caseRefId = req.params.caseRefId as string
     const { username } = res.locals.user
-    const icsAppointment = await this.appointmentService.getICS(caseRefId, username)
+    const icsAppointment = await this.appointmentService.getIcsFeedbackNextSteps(caseRefId, username)
 
     if (!icsAppointment) {
       logger.info(`Appointment for Case '${caseRefId}' not found for user '${username}'`)
@@ -1003,7 +1165,7 @@ class AppointmentController {
     const caseRefId = req.params.caseRefId as string
     const { username } = res.locals.user
     const { icsFeedbackSubmission } = req.session
-    const appointmentData = await this.appointmentService.getICS(caseRefId, username)
+    const appointmentData = await this.appointmentService.getIcsFeedbackCheckAnswers(caseRefId, username)
 
     if (icsFeedbackSubmission && caseRefId === icsFeedbackSubmission.caseReferenceId) {
       const presenter = new IcsFeedbackCheckYourAnswersPresenter(
@@ -1037,7 +1199,7 @@ class AppointmentController {
     const { username } = res.locals.user
     const { icsFeedbackSubmission } = req.session
     const sessionDetails = icsFeedbackSubmission ? icsFeedbackSubmission.sessionDetails : null
-    const appointmentData = await this.appointmentService.getICS(caseRefId.toString(), username)
+    const appointmentData = await this.appointmentService.getIcsFeedbackSessionDetails(caseRefId.toString(), username)
 
     const validationErrors = formatDynamicErrorMessages(
       res.locals.errors,
@@ -1046,7 +1208,16 @@ class AppointmentController {
     )
     res.locals.errors = validationErrors
 
-    const presenter = new RecordSessionDetailsPresenter(caseRefId, appointmentData, sessionDetails, validationErrors)
+    const presenter = new RecordSessionDetailsPresenter(
+      caseRefId,
+      {
+        referralFirstName: appointmentData.referralFirstName,
+        appointmentDate: appointmentData.date,
+        appointmentTime: appointmentData.time,
+      },
+      sessionDetails,
+      validationErrors,
+    )
     return presenter.renderPage(res)
   }
 
@@ -1077,7 +1248,10 @@ class AppointmentController {
     }
     const caseRefId = req.params.caseRefId as string
     const { username } = res.locals.user
-    const { referralFirstName } = await this.appointmentService.getICS(caseRefId.toString(), username)
+    const { referralFirstName } = await this.appointmentService.getIcsFeedbackHowTheyTriedToContactThePerson(
+      caseRefId.toString(),
+      username,
+    )
     const presenter = new HowTheyTriedToContactThePersonPresenter(
       caseRefId,
       referralFirstName,
@@ -1089,7 +1263,10 @@ class AppointmentController {
   async recordHowTheyTriedToContactThePerson(req: Request, res: Response): Promise<void> {
     const caseRefId = req.params.caseRefId as string
     const { username } = res.locals.user
-    const { referralFirstName } = await this.appointmentService.getICS(caseRefId.toString(), username)
+    const { referralFirstName } = await this.appointmentService.getIcsFeedbackHowTheyTriedToContactThePerson(
+      caseRefId.toString(),
+      username,
+    )
 
     await validateRequestBodyAgainstSchema(
       icsFeedbackHowTheyTriedToContactThePersonFormDataSchema(referralFirstName),
@@ -1114,7 +1291,10 @@ class AppointmentController {
     const validationErrors: ErrorMiddlewareErrors = res.locals.errors
     const icsFeedbackSubmission = req.session?.icsFeedbackSubmission
     const sessionDetails = icsFeedbackSubmission ? icsFeedbackSubmission.record?.sessionNotHappenReason : null
-    const appointmentData = await this.appointmentService.getICS(caseRefId.toString(), username)
+    const appointmentData = await this.appointmentService.getIcsFeedbackWhyDidSessionNotHappen(
+      caseRefId.toString(),
+      username,
+    )
     const presenter = new WhyDidSessionNotHappenPresenter(
       caseRefId,
       appointmentData.referralFirstName,
@@ -1151,10 +1331,10 @@ class AppointmentController {
     const { username } = res.locals.user
     const { ChangeAppointmentDetails } = req.session
     const validationErrors: ErrorMiddlewareErrors = res.locals.errors
-    const appointmentData = await this.appointmentService.getICS(caseRefId.toString(), username)
+    const appointmentData = await this.appointmentService.getIcsChangeReason(caseRefId.toString(), username)
     const presenter = new ChangeIcsDetailsReasonPresenter(
       caseRefId,
-      `${appointmentData.referralFirstName} ${appointmentData.referralLastName}`,
+      appointmentData.fullName,
       ChangeAppointmentDetails,
       validationErrors,
     )
@@ -1208,7 +1388,10 @@ class AppointmentController {
 
     const response = await this.appointmentService.submitRescheduleICS(
       caseRefId,
-      createAppointmentRequest,
+      {
+        ...createAppointmentRequest,
+        sessionCommunication: toApiInformedBy(createAppointmentRequest.sessionCommunication),
+      },
       ChangeAppointmentDetails,
       username,
     )

@@ -12,7 +12,7 @@
         "heading": "View cases",
         "description": "View your cases and other cases in progress.",
         "href": "/cases-in-progress",
-          "noneText": "None",
+        "noneText": "None",
         "dataTestId": "view-cases-tile"
       }
     ]
@@ -275,18 +275,24 @@
     "buttonText": "Continue"
   },
   "/referral/:id/create-an-appointment/check-your-answers": {
-    "pageTitle": "Check the details before scheduling the appointment",
-    "pageHeader": "Check the details before scheduling the appointment",
+    "pageTitle": "Check the details before booking the appointment",
+    "pageHeader": "Check the details before booking the appointment",
     "summaryTitle": "Appointment details",
     "dateLabel": "Date",
     "startTimeLabel": "Start time",
-    "methodLabel": "Method",
-    "locationLabel": "Location",
+    "methodLabel": "How the session will take place",
+    "probationOfficeLabel": "Probation office",
+    "prisonLabel": "Prison",
+    "appointmentAddressLabel": "Appointment address",
+    "reasonSessionNotInPersonLabel": "Reason session is not in person",
     "meetAtTheGateLabel": "Meeting at the gate",
     "informedLabel": "How {{ firstname }} was informed about the session",
+    "whatHappensNextHeading": "What happens next",
+    "retrospectiveAppointmentText": "As you've entered a date and time in the past, we'll ask you to add appointment feedback.",
     "changeLinkText": "Change",
     "changeLinkVisualText": "appointment details",
     "changeLinkHref": "/referral/{{ id }}/create-an-appointment/appointment-type",
+    "continueButtonText": "Continue",
     "submitButtonText": "Submit",
     "submitHref": "/referral/{{ id }}/create-an-appointment/check-your-answers",
     "backLink": "/referral/{{ id }}/create-an-appointment/appointment-type"
@@ -326,17 +332,42 @@
   "/referral/:id/appointments": {
     "pageHeader": "Referral for",
     "appointmentsTitle": "Appointments",
-    "appointmentTypeColumnHeader": "Appointment",
-    "dateTimeColumnHeader": "Date and time",
+    "appointmentTypeColumnHeader": "Appointment type",
+    "dateColumnHeader": "Date",
+    "timeColumnHeader": "Start time",
+    "statusColumnHeader": "Status",
+    "actionColumnHeader": "Action",
     "noAppointmentsMessage": "No appointments scheduled",
-    "createAppointmentText": "Create an Appointment",
-    "appointmentCreatedSuccessfully": "Appointment created successfully",
-    "subNavItems": [
-      { "id": "caseDetails", "title": "Case details" },
-      { "id": "progress", "title": "Progress" },
-      { "id": "appointments", "title": "Appointments" },
-      { "id": "changeLog", "title": "Change log" }
-    ]
+    "noUpcomingAppointmentsMessage": "No upcoming appointments",
+    "noPastAppointmentsMessage": "No past appointments",
+    "icsFeedbackAdded": "ICS feedback added",
+    "bookAppointmentText": "Book appointment",
+    "bookAppointmentHref": "/referral/{{ id }}/create-an-appointment/appointment-type",
+    "upcomingAppointmentsTitle": "Upcoming appointments",
+    "pastAppointmentsTitle": "Past appointments",
+    "statuses": {
+      "SCHEDULED": { "text": "Scheduled", "actions": [{ "text": "View or change details", "href": "#" }] },
+      "NEEDS_FEEDBACK": {
+        "text": "Needs feedback",
+        "actions": [{ "text": "Add attendance and feedback", "href": "#" }]
+      },
+      "COMPLETED": { "text": "Completed", "actions": [{ "text": "View feedback", "href": "#" }] },
+      "CHANGED": { "text": "Changed", "actions": [{ "text": "View session details", "href": "#" }] },
+      "DID_NOT_ATTEND": {
+        "text": "Did not attend",
+        "actions": [
+          { "text": "Reschedule", "href": "#", "initialContactSessionOnly": true },
+          { "text": "View feedback", "href": "#" }
+        ]
+      },
+      "DID_NOT_HAPPEN": {
+        "text": "Did not happen",
+        "actions": [
+          { "text": "Reschedule", "href": "#", "initialContactSessionOnly": true },
+          { "text": "View feedback", "href": "#" }
+        ]
+      }
+    }
   },
   "/referral/:id/appointment/select-type": {
     "pageTitle": "Select appointment type",
@@ -557,34 +588,40 @@
     "title": "View session details",
     "heading": "View session details"
   },
-  "/ics-feedback": {
-    "attendanceForm": {
-      "happenedRadios": {
-        "id": "happened",
-        "heading": "Did the session happen?",
-        "hint": "The session happened if something was delivered. ",
-        "error": "Select yes if the session happened",
-        "yesLabel": "Yes",
-        "noLabel": "No"
-      },
-      "attendedRadios": {
-        "id": "attended",
-        "heading": "Did {{ firstname }} come to the appointment?",
-        "error": "Select yes if {{ firstname }} came to the appointment",
-        "yesLabel": "Yes",
-        "noLabel": "No"
-      },
-      "submitButtonText": "Continue"
-    }
-  },
   "/ics-feedback/:id/attendance": {
-    "pageHeader": "Record session attendance",
+    "pageHeader": "ICS attendance",
     "description": "The date and time of the session are a permanent record of where this person was. If the session started late, you must record this as part of the feedback.",
     "appointmentDetails": {
       "dateLabel": "Date",
       "startTimeLabel": "Start time"
     },
+    "attendanceForm": {
+      "happenedRadios": {
+        "id": "happened",
+        "heading": "Did the ICS happen?",
+        "hint": "The session happened if something was delivered. ",
+        "yesLabel": "Yes",
+        "noLabel": "No"
+      },
+      "submitButtonText": "Continue"
+    },
     "backLink": "/progress/{{ id }}"
+  },
+  "/ics-feedback/:id/did-attend": {
+    "appointmentDetails": {
+      "dateLabel": "Date",
+      "startTimeLabel": "Start time"
+    },
+    "attendanceForm": {
+      "didAttendRadios": {
+        "id": "didAttend",
+        "heading": "Did {{ firstname }} come to the ICS?",
+        "yesLabel": "Yes",
+        "noLabel": "No"
+      },
+      "submitButtonText": "Continue"
+    },
+    "backLink": "/ics-feedback/{{ id }}/attendance"
   },
   "/ics-feedback/:id/session-feedback": {
     "pageTitle": "Session feedback – ICS feedback – Community Support",
@@ -635,7 +672,7 @@
     "pageSubHeader": "These are the support needs identified in {{ firstname }}’s referral.",
     "didYouIdentifyRadio": {
       "name": "didYouIdentify",
-      "title": "Did you identity anything else {{ firstname }} needs support with?",
+      "title": "Did you identify anything else {{ firstname }} needs support with?",
       "items": {
         "yesText": "Yes",
         "noText": "No",
@@ -756,7 +793,7 @@
           {
             "text": "Did {{ firstname }} come to the appointment?",
             "hint": "Did {{ firstname }} come to the appointment",
-            "changeHref": "/ics-feedback/caseRefId/attendance"
+            "changeHref": "/ics-feedback/caseRefId/did-attend"
           },
           {
             "text": "How the session took place",
@@ -905,29 +942,32 @@
     "backLinkHref": "/ics-feedback/{{ id }}/did-session-take-place"
   },
   "/ics-feedback/:id/why-did-the-session-not-happen": {
-    "pageHeader": "Why did the session not happen?",
     "whyDidSessionNotHappenRadio": {
+      "question": "Why did the session not happen?",
       "name": "whyDidSessionNotHappen",
       "items": {
-        "serviceProviderIssueText": "There was an issue with the service provider or logistics, for example a problem with a room booking or a fire alarm",
+        "serviceProviderIssueText": "Issue with service provider or logistics",
+        "serviceProviderIssueHint": "For example, room booking problem or technical issue",
         "serviceProviderIssueDetails": {
           "name": "serviceProviderIssueDetails",
-          "hint": "Give details of any issues that meant the session could not happen."
+          "label": "Give details of any issues that meant the session could not happen."
         },
-        "referralCouldNotTakePartText": "{{ firstname }} could not take part, for example because of illness or a crisis",
+        "referralCouldNotTakePartText": "{{ firstname }} could not take part",
+        "referralCouldNotTakePartHint": "For example, they were ill",
         "referralCouldNotTakePartDetails": {
           "name": "referralCouldNotTakePartDetails",
-          "hint": "Give details about why they were unable to take part, such as what happened and who was involved."
+          "label": "Give details about why they were unable to take part, including what happened and who was involved."
         },
-        "referralDidNotComplyText": "{{ firstname }} did not comply, for example they were disruptive or disengaged",
+        "referralDidNotComplyText": "{{ firstname }} did not comply",
+        "referralDidNotComplyHint": "For example, they were disruptive",
         "referralDidNotComplyDetails": {
           "name": "referralDidNotComplyDetails",
-          "hint": "Give details about their behaviour and how they were unable to take part."
+          "label": "Give details about why they did not comply. For example, their behaviour and how they were unable to take part."
         }
       }
     },
     "submitButtonText": "Continue",
-    "backLinkHref": "/ics-feedback/{{ id }}/attendance"
+    "backLinkHref": "/ics-feedback/{{ id }}/did-attend"
   },
   "/ics-feedback/:id/how-they-tried-to-contact-the-person": {
     "pageHeader": "How did you try to contact {{ firstname }} and what do you know about why they did not attend?",
@@ -942,7 +982,7 @@
       },
       "submitButtonText": "Continue"
     },
-    "backLink": "/ics-feedback/{{ id }}/attendance"
+    "backLink": "/ics-feedback/{{ id }}/did-attend"
   },
   "/referral/:id/ics-change-details/reason": {
     "pageHeader": "Reason for changing the session details",
@@ -1026,36 +1066,42 @@
   "/referral/:id/create-an-appointment/appointment-details": {
     "pageHeader": "Schedule the session",
     "date": {
-      "label": "What is the date of the session?",
-      "hint": "Enter a date, for example 10/7/2025, or select one from the calendar."
+      "label": "Session date",
+      "hint": "For example 10/7/2025"
     },
     "time": {
-      "label": "What time does the session start?",
+      "label": "Start time",
       "hint": "Use the 12-hour clock, for example 11:30am or 3pm.",
-      "AMorPM": "AM or PM"
+      "AMorPM": "am or pm",
+      "hourLabel": "Hours",
+      "minuteLabel": "Minutes"
     },
     "howSessionTakePlace": {
       "label": "How will the session take place?",
-      "hint": "Select one option.",
+      "hint": "",
+      "groupHeadings": {
+        "inPerson": "In person",
+        "remote": "Remote"
+      },
       "radioItems": {
         "phone": {
           "text": "Phone call",
-          "label": "Why is this session not in person?"
+          "label": "Reason session is not in person"
         },
         "video": {
           "text": "Video call",
-          "label": "Why is this session not in person?"
+          "label": "Reason session is not in person"
         },
         "prison": {
-          "text": "In-person meeting - prison establishment",
+          "text": "Prison",
           "label": "Select prison"
         },
         "probation": {
-          "text": "In-person meeting - probation office",
-          "label": "Select a probation office"
+          "text": "Probation office",
+          "label": "Select probation office"
         },
         "somewhereElse": {
-          "text": "In-person meeting - somewhere else",
+          "text": "Another address",
           "addressLabels": {
             "address1": "Address line 1",
             "address2": "Address line 2 (optional)",
@@ -1065,7 +1111,7 @@
           }
         },
         "inPerson": {
-          "text": "In-person meeting"
+          "text": "In person"
         }
       }
     },
@@ -1078,19 +1124,19 @@
         "email": "Email",
         "other": {
           "text": "Other",
-          "label": "Other method of contact"
+          "label": "Other contact method"
         }
       }
     },
-    "submitButtonText": "Save and continue",
+    "submitButtonText": "Continue",
     "submitHref": "/referral/{{ caseRef }}/create-an-appointment/appointment-details",
     "backLink": "/referral/{{ caseRef }}/create-an-appointment/appointment-type",
     "pageHeaders": {
       "ICS": "Book initial contact session (ICS)",
-      "CONTACT_SESSION": "Schedule the contact session",
-      "PRE_RELEASE_SESSION": "Schedule the pre-release session",
-      "POST_RELEASE_SESSION": "Schedule the post-release session",
-      "HANDOVER_SESSION": "Schedule the handover session"
+      "CONTACT_SESSION": "Book contact session",
+      "PRE_RELEASE_SESSION": "Book pre-release session",
+      "POST_RELEASE_SESSION": "Book post-release session",
+      "HANDOVER_SESSION": "Book handover session"
     },
     "meetAtTheGate": {
       "label": "Is this a meet at the gate session?",

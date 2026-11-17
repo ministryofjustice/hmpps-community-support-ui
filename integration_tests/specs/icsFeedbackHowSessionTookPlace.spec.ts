@@ -48,7 +48,7 @@ test.describe('ICS Feedback - Did session take place by phone call?', () => {
 
     await prisonApi.stubGetPrisons()
     await communitySupport.stubGetProbationOffices(probationOfficesData)
-    await communitySupport.stubGetICS(ICS_ID, phoneAppointment)
+    await communitySupport.stubGetIcsFeedbackDidSessionTakePlace(ICS_ID, phoneAppointment)
   })
 
   test('displays the page with phone call yes/no options', async ({ page }) => {
@@ -201,7 +201,7 @@ test.describe('ICS Feedback - Did session take place by video call?', () => {
 
     await prisonApi.stubGetPrisons()
     await communitySupport.stubGetProbationOffices(probationOfficesData)
-    await communitySupport.stubGetICS(videoIcsId, {
+    await communitySupport.stubGetIcsFeedbackDidSessionTakePlace(videoIcsId, {
       ...videoAppointment,
       appointmentIcsId: videoIcsId,
       referralId: videoReferralId,
@@ -287,7 +287,7 @@ test.describe('ICS Feedback - In person appointment location display', () => {
       referralLastName: 'Doe',
       createdAt: '2026-04-21T10:00:00Z',
     }
-    await communitySupport.stubGetICS(inPersonIcsId, appointment)
+    await communitySupport.stubGetIcsFeedbackDidSessionTakePlace(inPersonIcsId, appointment)
 
     await page.goto(IcsFeedbackPage.url(inPersonIcsId))
     const icsFeedbackPage = await IcsFeedbackPage.verifyOnPage(page)
@@ -319,7 +319,7 @@ test.describe('ICS Feedback - In person appointment location display', () => {
       referralLastName: 'Doe',
       createdAt: '2026-04-21T10:00:00Z',
     }
-    await communitySupport.stubGetICS(inPersonIcsId, appointment)
+    await communitySupport.stubGetIcsFeedbackDidSessionTakePlace(inPersonIcsId, appointment)
 
     await page.goto(IcsFeedbackPage.url(inPersonIcsId))
     const icsFeedbackPage = await IcsFeedbackPage.verifyOnPage(page)
@@ -335,7 +335,7 @@ test.describe('ICS Feedback - In person appointment location display', () => {
   test('shows validation error for IN_PERSON_PROBATION_OFFICE appointment when no option is selected', async ({
     page,
   }) => {
-    await communitySupport.stubGetICS(inPersonIcsId, {
+    await communitySupport.stubGetIcsFeedbackDidSessionTakePlace(inPersonIcsId, {
       appointmentIcsId: inPersonIcsId,
       appointmentId: randomUUID(),
       referralId: inPersonReferralId,
@@ -363,7 +363,7 @@ test.describe('ICS Feedback - In person appointment location display', () => {
   test('shows validation error for IN_PERSON_OTHER_LOCATION appointment when no option is selected', async ({
     page,
   }) => {
-    await communitySupport.stubGetICS(inPersonIcsId, {
+    await communitySupport.stubGetIcsFeedbackDidSessionTakePlace(inPersonIcsId, {
       appointmentIcsId: inPersonIcsId,
       appointmentId: randomUUID(),
       referralId: inPersonReferralId,
@@ -391,7 +391,7 @@ test.describe('ICS Feedback - In person appointment location display', () => {
   test('shows validation error when No selected and phone call chosen without a reason for IN_PERSON_PROBATION_OFFICE appointment', async ({
     page,
   }) => {
-    await communitySupport.stubGetICS(inPersonIcsId, {
+    await communitySupport.stubGetIcsFeedbackDidSessionTakePlace(inPersonIcsId, {
       appointmentIcsId: inPersonIcsId,
       appointmentId: randomUUID(),
       referralId: inPersonReferralId,
@@ -417,7 +417,7 @@ test.describe('ICS Feedback - In person appointment location display', () => {
   test('shows validation error when No selected and video call chosen without a reason for IN_PERSON_PROBATION_OFFICE appointment', async ({
     page,
   }) => {
-    await communitySupport.stubGetICS(inPersonIcsId, {
+    await communitySupport.stubGetIcsFeedbackDidSessionTakePlace(inPersonIcsId, {
       appointmentIcsId: inPersonIcsId,
       appointmentId: randomUUID(),
       referralId: inPersonReferralId,
@@ -443,7 +443,7 @@ test.describe('ICS Feedback - In person appointment location display', () => {
   test('submits successfully when No selected and phone call chosen with a reason for IN_PERSON_PROBATION_OFFICE appointment', async ({
     page,
   }) => {
-    await communitySupport.stubGetICS(inPersonIcsId, {
+    await communitySupport.stubGetIcsFeedbackDidSessionTakePlace(inPersonIcsId, {
       appointmentIcsId: inPersonIcsId,
       appointmentId: randomUUID(),
       referralId: inPersonReferralId,
@@ -470,7 +470,7 @@ test.describe('ICS Feedback - In person appointment location display', () => {
   test('submits successfully when No selected and video call chosen with a reason for IN_PERSON_PROBATION_OFFICE appointment', async ({
     page,
   }) => {
-    await communitySupport.stubGetICS(inPersonIcsId, {
+    await communitySupport.stubGetIcsFeedbackDidSessionTakePlace(inPersonIcsId, {
       appointmentIcsId: inPersonIcsId,
       appointmentId: randomUUID(),
       referralId: inPersonReferralId,
@@ -527,7 +527,7 @@ test.describe('ICS Feedback - Did session take place in person at this location 
 
     await prisonApi.stubGetPrisons()
     await communitySupport.stubGetProbationOffices(probationOfficesData)
-    await communitySupport.stubGetICS(otherLocationIcsId, otherLocationAppointment)
+    await communitySupport.stubGetIcsFeedbackDidSessionTakePlace(otherLocationIcsId, otherLocationAppointment)
   })
 
   test('selecting No reveals phone call, video call, probation office and somewhere else options', async ({ page }) => {

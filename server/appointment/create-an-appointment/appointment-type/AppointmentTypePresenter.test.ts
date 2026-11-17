@@ -94,7 +94,18 @@ describe('AppointmentTypePresenter', () => {
 
     const viewModel = presenter.buildViewModel(res)
 
-    expect(viewModel.radios.value).toBe('POST_RELEASE_SESSION')
+    expect(viewModel.radios.value).toBe('post-release')
+  })
+
+  it('preselects contact after details have saved the canonical appointment type', () => {
+    const viewModel = new AppointmentTypePresenter(
+      'AB1234CD',
+      referralInformation,
+      appointmentTypes,
+      undefined,
+      'CONTACT_SESSION',
+    ).buildViewModel(res)
+    expect(viewModel.radios.value).toBe('contact')
   })
 
   it('adds the validation error message to the radios', () => {

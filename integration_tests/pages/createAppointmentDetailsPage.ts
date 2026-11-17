@@ -6,10 +6,10 @@ export type SessionType =
 
 const headers: Record<SessionType, string> = {
   ICS: 'Book initial contact session (ICS)',
-  CONTACT_SESSION: 'Schedule the contact session',
-  PRE_RELEASE_SESSION: 'Schedule the pre-release session',
-  POST_RELEASE_SESSION: 'Schedule the post-release session',
-  HANDOVER_SESSION: 'Schedule the handover session',
+  CONTACT_SESSION: 'Book contact session',
+  PRE_RELEASE_SESSION: 'Book pre-release session',
+  POST_RELEASE_SESSION: 'Book post-release session',
+  HANDOVER_SESSION: 'Book handover session',
 }
 
 export default class CreateAppointmentDetailsPage extends AbstractPage {
@@ -39,11 +39,19 @@ export default class CreateAppointmentDetailsPage extends AbstractPage {
 
   readonly probationOfficeSelect: Locator
 
+  readonly prisonRadioButton: Locator
+
+  readonly prisonSelect: Locator
+
   readonly inSomewhereElseRadioButton: Locator
 
   readonly addressLine1Input: Locator
 
+  readonly addressLine2Input: Locator
+
   readonly townInput: Locator
+
+  readonly countyInput: Locator
 
   readonly postcodeInput: Locator
 
@@ -86,9 +94,13 @@ export default class CreateAppointmentDetailsPage extends AbstractPage {
     this.videoCallReasonInput = page.locator('input[type="text"][name="ByVideo"]')
     this.inProbationOfficeRadioButton = page.locator('input[type="radio"][value="InProbationOffice"]')
     this.probationOfficeSelect = page.locator('#probationOfficeList')
+    this.prisonRadioButton = page.locator('input[type="radio"][value="InPrison"]')
+    this.prisonSelect = page.locator('#prisonList')
     this.inSomewhereElseRadioButton = page.locator('input[type="radio"][value="InSomewhereElse"]')
     this.addressLine1Input = page.locator('input[type="text"][name="addressLine1"]')
+    this.addressLine2Input = page.locator('input[type="text"][name="addressLine2"]')
     this.townInput = page.locator('input[type="text"][name="addressTown"]')
+    this.countyInput = page.locator('input[type="text"][name="addressCounty"]')
     this.postcodeInput = page.locator('input[type="text"][name="addressPostcode"]')
     this.inPersonRadioButton = page.locator('input[type="radio"][value="InPerson"]')
     this.meetAtTheGateFieldset = page.locator('input[type="radio"][name="meetAtTheGate"]')
@@ -99,7 +111,7 @@ export default class CreateAppointmentDetailsPage extends AbstractPage {
     this.informedByEmailCheckbox = page.locator('input[type="checkbox"][value="informedByEmail"]')
     this.informedByOtherMethodCheckbox = page.locator('input[type="checkbox"][value="informedByOtherMethod"]')
     this.informedByOtherMethodInput = page.locator('input[type="text"][name="otherMethodOfContact"]')
-    this.saveAndContinueButton = page.getByRole('button', { name: 'Save and continue', exact: true })
+    this.saveAndContinueButton = page.getByRole('button', { name: 'Continue', exact: true })
   }
 
   static async verifyOnPage(page: Page, session: SessionType): Promise<CreateAppointmentDetailsPage> {

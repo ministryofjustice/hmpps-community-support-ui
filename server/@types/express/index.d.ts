@@ -66,9 +66,9 @@ export declare module 'express-session' {
       target_service_completion_reason?: string
     }
     referralProgressBanner?: ReferralProgressBannerContent
-    referralAppointmentsSuccessCaseReference?: string
     referralDetailsNotification?: ReferralDetailsNotification
     icsFeedbackSubmission: IcsFeedbackSubmission & { caseReferenceId: string }
+    retrospectiveBooking?: { caseReference: string; appointmentIcsId: string }
     draftReferralId: string
     personId: string
     selectedProviderId: string
@@ -90,6 +90,8 @@ export declare module 'express-session' {
       pduName: string
       probationOfficeName?: string
     }
+    createdAppointmentMessage?: { title: string; message: string }
+    appointmentFeedbackMessage?: { caseReference: string }
   }
 }
 

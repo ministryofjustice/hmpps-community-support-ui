@@ -1,6 +1,6 @@
 import {
-  AppointmentIcsResponse,
   CreateAppointmentRequest,
+  IcsChangeDetailsBffDto,
   SessionMethod,
   SessionMethodRequest,
 } from '@community-support-api'
@@ -8,6 +8,7 @@ import { Request, Response } from 'express'
 import { format, parse } from 'date-fns'
 import AppointmentValidator from '../AppointmentValidator'
 import AppointmentService from '../../services/AppointmentService'
+import { fromApiInformedBy } from '../informedByLabels'
 
 export interface ScheduledIcsFormData {
   sessionDate?: string
@@ -52,6 +53,8 @@ const mapTypeToSessionTakePlace = (type: SessionMethodRequest['type']): string =
       return 'InProbationOffice'
     case 'IN_PERSON_OTHER_LOCATION':
       return 'InSomewhereElse'
+    case 'IN_PERSON_PRISON':
+      return 'InPrison'
     case 'IN_PERSON':
       return 'InPerson'
     default:
@@ -87,6 +90,9 @@ const loadSessionMethodFromSession = (
   if (method.type === 'IN_PERSON_PROBATION_OFFICE') {
     updatedFormData.probationOffice = method.additionalDetails
   }
+  if (method.type === 'IN_PERSON_PRISON') {
+    updatedFormData.prison = method.prisonCode
+  }
   if (method.type === 'IN_PERSON_OTHER_LOCATION') {
     updatedFormData.addressLine1 = method.addressLine1 || ''
     updatedFormData.addressLine2 = method.addressLine2 || ''
@@ -102,15 +108,19 @@ const loadInformedMethodsFromSession = (
   sessionCommunications: string[],
   formData: ScheduledIcsFormData,
 ): ScheduledIcsFormData => {
-  let informedMethods = sessionCommunications ? [...sessionCommunications] : []
+  let informedMethods = fromApiInformedBy(sessionCommunications)
 
-  const standardMethods = ['informedByPhone', 'informedByTextMessage', 'informedByEmail']
+  // 'informedByOtherMethod' is the checkbox value itself (saved when "Other" was ticked without
+  // any text), so it must not be treated as the free-text contact method.
+  const checkboxValues = ['informedByPhone', 'informedByTextMessage', 'informedByEmail', 'informedByOtherMethod']
 
-  const otherMethod = informedMethods.find(method => !standardMethods.includes(method))
+  const otherMethod = informedMethods.find(method => !checkboxValues.includes(method))
 
   if (otherMethod) {
     informedMethods = informedMethods.filter(method => method !== otherMethod)
-    informedMethods.push('informedByOtherMethod')
+    if (!informedMethods.includes('informedByOtherMethod')) {
+      informedMethods.push('informedByOtherMethod')
+    }
   }
 
   return {
@@ -179,12 +189,6 @@ const loadFormFromSession = (
     }
   }
 
-  if (Array.isArray(createAppointmentRequest.sessionCommunication)) {
-    formData.informedMethods = [...createAppointmentRequest.sessionCommunication]
-  } else {
-    formData.informedMethods = []
-  }
-
   if (typeof createAppointmentRequest.meetAtTheGate === 'boolean') {
     formData.meetAtTheGate = createAppointmentRequest.meetAtTheGate ? 'yes' : 'no'
   }
@@ -202,14 +206,14 @@ const createIcsSessionData = ({
   appointmentTime,
   sessionMethod,
   sessionCommunications,
-}: AppointmentIcsResponse): CreateAppointmentRequest => ({
+}: IcsChangeDetailsBffDto): CreateAppointmentRequest => ({
   date: appointmentDate,
   time: appointmentTime,
   sessionMethodRequest: createMethodSessionData(sessionMethod),
   sessionCommunication: sessionCommunications,
 })
 
-const loadFormFromICS = (ics: AppointmentIcsResponse, validator: AppointmentValidator): ScheduledIcsFormData =>
+const loadFormFromICS = (ics: IcsChangeDetailsBffDto, validator: AppointmentValidator): ScheduledIcsFormData =>
   loadFormFromSession(createIcsSessionData(ics), validator)
 
 const getReasonFromFormData = (formData: ScheduledIcsFormData, sessionTakePlace: string): string | undefined => {
@@ -233,6 +237,8 @@ const mapSessionTakePlaceToType = (takePlace: string): SessionMethodRequest['typ
       return 'IN_PERSON_PROBATION_OFFICE'
     case 'InSomewhereElse':
       return 'IN_PERSON_OTHER_LOCATION'
+    case 'InPrison':
+      return 'IN_PERSON_PRISON'
     case 'InPerson':
       return 'IN_PERSON'
     default:
@@ -256,7 +262,7 @@ const getSessionMethodFromFormData = (formData: ScheduledIcsFormData): SessionMe
     }
 
     if (sessionTakePlace === 'InPrison' && formData.prison) {
-      sessionMethod.additionalDetails = formData.prison
+      sessionMethod.prisonCode = formData.prison
     }
 
     if (sessionTakePlace === 'InSomewhereElse') {
@@ -338,7 +344,7 @@ export class ScheduledIcsFormDataResolver {
     const { username } = res.locals.user
     const caseRefId = req.params.caseRefId as string
     return this.appointmentService
-      .getICS(caseRefId, username)
+      .getIcsChangeDetails(caseRefId, username)
       .then(ics => (ics ? loadFormFromICS(ics, this.validator) : undefined))
       .catch(() => Promise.resolve(undefined))
   }

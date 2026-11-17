@@ -198,7 +198,7 @@ describe('ScheduleIcsPresenter', () => {
       buildSelect({
         id: 'probationOfficeList',
         name: 'probationOfficeList',
-        label: {},
+        label: { text: 'Select a probation office' },
         items: probationOfficeItems.map(item => {
           if (item.value === formData.probationOffice) {
             return { ...item, selected: true }
@@ -284,21 +284,21 @@ describe('ScheduleIcsPresenter', () => {
     const checked = formData.informedMethods || []
 
     const firstInformedItem = informed.items.at(0)!
-    expect(firstInformedItem.text).toBe('Phone call')
-    expect(firstInformedItem.value).toBe('informedByPhone')
-    if (checked.includes('informedByPhone')) {
+    expect(firstInformedItem.text).toBe('Email')
+    expect(firstInformedItem.value).toBe('informedByEmail')
+    if (checked.includes('informedByEmail')) {
       expect(firstInformedItem.checked).toBe(true)
     }
     const secondInformedItem = informed.items.at(1)!
-    expect(secondInformedItem.text).toBe('Text message')
-    expect(secondInformedItem.value).toBe('informedByTextMessage')
-    if (checked.includes('informedByTextMessage')) {
+    expect(secondInformedItem.text).toBe('Phone call')
+    expect(secondInformedItem.value).toBe('informedByPhone')
+    if (checked.includes('informedByPhone')) {
       expect(secondInformedItem.checked).toBe(true)
     }
     const thirdInformedItem = informed.items.at(2)!
-    expect(thirdInformedItem.text).toBe('Email')
-    expect(thirdInformedItem.value).toBe('informedByEmail')
-    if (checked.includes('informedByEmail')) {
+    expect(thirdInformedItem.text).toBe('Text message')
+    expect(thirdInformedItem.value).toBe('informedByTextMessage')
+    if (checked.includes('informedByTextMessage')) {
       expect(thirdInformedItem.checked).toBe(true)
     }
     const fourthInformedItem = informed.items.at(3)!

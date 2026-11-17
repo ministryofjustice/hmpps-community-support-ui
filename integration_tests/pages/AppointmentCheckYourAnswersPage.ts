@@ -12,7 +12,13 @@ export default class AppointmentCheckYourAnswersPage extends AbstractPage {
 
   readonly methodRow: Locator
 
-  readonly locationRow: Locator
+  readonly probationOfficeRow: Locator
+
+  readonly prisonRow: Locator
+
+  readonly appointmentAddressRow: Locator
+
+  readonly reasonSessionNotInPersonRow: Locator
 
   readonly informedByRow: Locator
 
@@ -26,17 +32,28 @@ export default class AppointmentCheckYourAnswersPage extends AbstractPage {
 
   private constructor(page: Page) {
     super(page)
-    this.heading = page.getByRole('heading', { level: 1, name: /Check the details before scheduling the .+/i })
+    this.heading = page.getByRole('heading', { level: 1, name: /Check the details before booking the .+/i })
     this.summaryCard = page.locator('.govuk-summary-card')
-    this.dateRow = page.locator('.govuk-summary-list__row', { hasText: 'Date' })
-    this.startTimeRow = page.locator('.govuk-summary-list__row', { hasText: 'Start time' })
-    this.methodRow = page.locator('.govuk-summary-list__row', { hasText: 'Method' })
-    this.locationRow = page
+    this.dateRow = page.locator('.govuk-summary-list__row').filter({ has: page.getByText('Date', { exact: true }) })
+    this.startTimeRow = page
       .locator('.govuk-summary-list__row')
-      .filter({ has: page.getByText('Location', { exact: true }) })
+      .filter({ has: page.getByText('Start time', { exact: true }) })
+    this.methodRow = page
+      .locator('.govuk-summary-list__row')
+      .filter({ has: page.getByText('How the session will take place', { exact: true }) })
+    this.probationOfficeRow = page
+      .locator('.govuk-summary-list__row')
+      .filter({ has: page.getByText('Probation office', { exact: true }) })
+    this.prisonRow = page.locator('.govuk-summary-list__row').filter({ has: page.getByText('Prison', { exact: true }) })
+    this.appointmentAddressRow = page
+      .locator('.govuk-summary-list__row')
+      .filter({ has: page.getByText('Appointment address', { exact: true }) })
+    this.reasonSessionNotInPersonRow = page
+      .locator('.govuk-summary-list__row')
+      .filter({ has: page.getByText('Reason session is not in person', { exact: true }) })
     this.informedByRow = page.locator('.govuk-summary-list__row', { hasText: 'was informed about the session' })
     this.changeLink = page.getByRole('link', { name: /change/i })
-    this.submitButton = page.getByRole('button', { name: 'Submit' })
+    this.submitButton = page.getByRole('button', { name: /^(Submit|Continue)$/ })
   }
 
   static async verifyOnPage(page: Page): Promise<AppointmentCheckYourAnswersPage> {

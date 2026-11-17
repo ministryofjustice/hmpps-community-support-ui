@@ -5,12 +5,12 @@ import {
   GovukFrontendSummaryListRow,
   GovukFrontendSummaryListCardActions,
 } from '@govuk-frontend'
-import { AppointmentIcsResponse } from '@community-support-api'
+import { IcsViewOrChangeBffDto } from '@community-support-api'
 import nunjucks from 'nunjucks'
 import PresenterBase from '../presenter/presenterBase'
 import dateFormat from '../utils/dateFormat'
 import timeFormat from '../utils/timeFormat'
-import { govFrontendSummaryListRow } from '../utils/viewUtils'
+import { escapeSpecialHtmlCharacters, govFrontendSummaryListRow } from '../utils/viewUtils'
 
 export interface InitialContactSessionDetailsViewModel {
   backLink: GovukFrontendBackLink
@@ -51,8 +51,9 @@ export interface InitialContactSessionDetailsContent {
   links: Links
 }
 
-const locationFields: string[] = [
+const locationFields: (keyof IcsViewOrChangeBffDto['sessionMethod'])[] = [
   'probationOfficeName',
+  'prisonName',
   'addressLine1',
   'addressLine2',
   'townOrCity',
@@ -61,7 +62,12 @@ const locationFields: string[] = [
 ] as const
 
 type SessionType =
-  'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION' | 'IN_PERSON_PRISON_ESTABLISMENT' | 'PHONE' | 'VIDEO'
+  | 'IN_PERSON_PROBATION_OFFICE'
+  | 'IN_PERSON_OTHER_LOCATION'
+  | 'IN_PERSON_PRISON'
+  | 'IN_PERSON_PRISON_ESTABLISMENT'
+  | 'PHONE'
+  | 'VIDEO'
 
 const showSessionType = (sessionType: SessionType): string => {
   switch (sessionType) {
@@ -71,6 +77,8 @@ const showSessionType = (sessionType: SessionType): string => {
       return 'In person - somewhere else'
     case 'IN_PERSON_PRISON_ESTABLISMENT':
       return 'In person - prison establishment'
+    case 'IN_PERSON_PRISON':
+      return 'In person - prison'
     case 'PHONE':
       return 'Phone call'
     case 'VIDEO':
@@ -124,7 +132,7 @@ export default class InitialContactSessionDetailsPresenter extends PresenterBase
       sessionMethod,
       sessionCommunications,
       changeAppointmentDetails,
-    }: AppointmentIcsResponse,
+    }: IcsViewOrChangeBffDto,
     private readonly caseRef: string,
     private readonly historical: boolean = false,
   ) {
@@ -139,11 +147,10 @@ export default class InitialContactSessionDetailsPresenter extends PresenterBase
     ${sessionCommunications.map(str => `<li>${showSessionCommunication(str)}</li>`).join(`\n`)}
     </ul>`
 
-    const sessionMethodKeys = Object.keys(sessionMethod)
     this.locationLine = locationFields
-      .filter(field => sessionMethodKeys.includes(field))
+      .filter(field => field in sessionMethod)
       .map(field => sessionMethod[field])
-      .map(str => (str ? `<p>${str}</p>` : ''))
+      .map(str => (str ? `<p>${escapeSpecialHtmlCharacters(str)}</p>` : ''))
       .join('\n')
 
     if (changeAppointmentDetails) {

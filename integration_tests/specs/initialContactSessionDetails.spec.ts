@@ -21,6 +21,8 @@ test.describe('Initial Contact Session Details Page', () => {
     await resetStubs()
     await communitySupport.stubGetICS(virtual.caseRefId, virtual.data)
     await communitySupport.stubGetICS(inPerson.caseRefId, inPerson.data)
+    await communitySupport.stubGetIcsViewOrChange(virtual.caseRefId, virtual.data)
+    await communitySupport.stubGetIcsViewOrChange(inPerson.caseRefId, inPerson.data)
     await page.goto('/')
     await login(page)
   })

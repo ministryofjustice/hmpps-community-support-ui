@@ -144,6 +144,26 @@ describe('InitialContactSessionDetailsPresenter', () => {
       const presenter = new InitialContactSessionDetailsPresenter(data, caseRef)
       expect(presenter.buildViewModel(response)).toMatchSnapshot()
     })
+
+    test('shows and escapes a saved prison name', () => {
+      const data: AppointmentIcsResponse = {
+        ...inPersonMeetingData,
+        appointmentType: 'PRE_RELEASE_SESSION',
+        sessionMethod: {
+          appointmentCategory: 'IN_PERSON',
+          type: 'IN_PERSON_PRISON',
+          prisonCode: 'MDI',
+          prisonName: 'Moorland (HMP & YOI)',
+        },
+      }
+      const { rows } = new InitialContactSessionDetailsPresenter(data, caseRef).buildViewModel(response).icsDetails
+      expect(rows).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ key: { text: 'Method' }, value: { text: 'In person - prison' } }),
+          expect.objectContaining({ key: { text: 'Location' }, value: { html: '<p>Moorland (HMP &amp; YOI)</p>' } }),
+        ]),
+      )
+    })
   })
 
   describe('historical meeting', () => {
