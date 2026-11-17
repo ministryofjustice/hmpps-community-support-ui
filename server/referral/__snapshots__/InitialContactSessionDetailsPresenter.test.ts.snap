@@ -3,9 +3,9 @@
 exports[`InitialContactSessionDetailsPresenter historical meeting historical appointment 1`] = `
 {
   "backLink": {
-    "href": "/referral/ref-id/ics-change-details",
+    "href": "/progress/ref-id",
   },
-  "heading": "View or change session details",
+  "heading": "View session details",
   "historical": true,
   "icsDetails": {
     "card": {
@@ -98,14 +98,14 @@ exports[`InitialContactSessionDetailsPresenter historical meeting historical app
       },
     ],
   },
-  "title": "View or change session details",
+  "title": "View session details",
 }
 `;
 
 exports[`InitialContactSessionDetailsPresenter in person meeting buildPageContent the correct view model 1`] = `
 {
   "backLink": {
-    "href": "/referral/ref-id/ics-change-details",
+    "href": "/progress/ref-id",
   },
   "heading": "View or change session details",
   "historical": false,
@@ -210,7 +210,7 @@ exports[`InitialContactSessionDetailsPresenter in person meeting buildPageConten
 exports[`InitialContactSessionDetailsPresenter in person meeting with fullAddress 1`] = `
 {
   "backLink": {
-    "href": "/referral/ref-id/ics-change-details",
+    "href": "/progress/ref-id",
   },
   "heading": "View or change session details",
   "historical": false,
@@ -320,7 +320,7 @@ exports[`InitialContactSessionDetailsPresenter in person meeting with fullAddres
 exports[`InitialContactSessionDetailsPresenter in person meeting with postcode 1`] = `
 {
   "backLink": {
-    "href": "/referral/ref-id/ics-change-details",
+    "href": "/progress/ref-id",
   },
   "heading": "View or change session details",
   "historical": false,
@@ -426,7 +426,7 @@ exports[`InitialContactSessionDetailsPresenter in person meeting with postcode 1
 exports[`InitialContactSessionDetailsPresenter virtual meeting buildPageContent the correct view model 1`] = `
 {
   "backLink": {
-    "href": "/referral/ref-id/ics-change-details",
+    "href": "/progress/ref-id",
   },
   "heading": "View or change session details",
   "historical": false,

@@ -30,7 +30,7 @@ import { ReferralProgressBannerContent } from '../referral/progress/ReferralProg
 import AppointmentValidator from './AppointmentValidator'
 import { IcsFeedbackHowSessionTookPlaceFormData } from './ics-feedback/icsFeedbackHowSessionTookPlaceViewModel'
 import { getChangeRequesterType } from './change-ics-details-reason/ChangeAppointmentDetails'
-import { SessionFeedbackFormContent, SessionFeedbackFormDataSchemaBuilder } from '../validation/SessionFeedbackFormData'
+import { SessionFeedbackFormDataSchemaBuilder } from '../validation/SessionFeedbackFormData'
 import ViewChangeSessionDetailsPresenter from './view-change-session-details/ViewChangeSessionDetailsPresenter'
 import RecordSessionDetailsPresenter from './record-ics/RecordSessionDetailsPresenter'
 import { RecordSessionDetailsFormDataSchema } from '../validation/RecordSessionDetailsFormData'
@@ -71,6 +71,7 @@ import { IdentifiedAdditionalNeedsFormDataSchema } from '../validation/Identifie
 import { getAppointmentTypeLabel } from './create-an-appointment/appointmentTypeLabel'
 import DidAttendPresenter from './did-attend/DidAttendPresenter'
 import DidAttendFormData, { DidAttendFormDataSchema } from '../validation/DidAttendFormData'
+import { globalContent } from '../../assets/content/GlobalContent'
 
 const recordAttendanceRedirectUrl = (data: RecordSessionAttendanceFormData, caseRefId: string): string => {
   if (data.happened === 'Yes') {
@@ -597,6 +598,8 @@ class AppointmentController {
       referralInformation,
       formData,
       validationErrors,
+      undefined,
+      '/referral/:id/ics-change-details',
     )
     return presenter.renderPage(res)
   }
@@ -944,7 +947,7 @@ class AppointmentController {
 
     req.session.icsFeedbackSubmission = savedIcsFeedbackSubmission
 
-    const { feedbackForm } = res.locals.content as { feedbackForm: SessionFeedbackFormContent }
+    const { feedbackForm } = globalContent['/ics-feedback/:id/session-feedback']
     validateRequestBodyAgainstSchema(SessionFeedbackFormDataSchemaBuilder(feedbackForm), req, res, () => {
       res.redirect(`/ics-feedback/${caseRefId}/issues-or-concerns`)
     })

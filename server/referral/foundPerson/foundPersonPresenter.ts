@@ -2,7 +2,7 @@ import { Response } from 'express'
 import { Person } from '@community-support-api'
 import { format } from 'date-fns'
 import PresenterBase from '../../presenter/presenterBase'
-import { FoundPersonContent, FoundPersonViewModel } from './foundPersonViewModel'
+import { FoundPersonViewModel } from './foundPersonViewModel'
 import ViewUtils from '../../utils/viewUtils'
 import { resolveIdentifierRow } from '../personIdentifierUtils'
 import { components } from '../../@types/communitySupportApi/imported'
@@ -78,12 +78,12 @@ const formatAddress = (address?: string, type?: string, startDate?: string, note
 <div>${notes || 'No notes'}</div>`
 }
 
-export default class FoundPersonPresenter extends PresenterBase<FoundPersonViewModel, FoundPersonContent> {
+export default class FoundPersonPresenter extends PresenterBase<FoundPersonViewModel> {
   constructor(private readonly foundPerson: Person) {
     super()
   }
 
-  protected override buildViewModel(res: Response): FoundPersonViewModel {
+  protected override buildViewModel(): FoundPersonViewModel {
     const { foundPerson } = this
     const identifierRow = resolveIdentifierRow(foundPerson)
 
@@ -93,7 +93,7 @@ export default class FoundPersonPresenter extends PresenterBase<FoundPersonViewM
     const disabilitiesLastUpdated = getLatestUpdatedAt(foundPerson.personDetailsAndCircumstances?.disabilities)
 
     const viewModel = {} as FoundPersonViewModel
-    viewModel.staticContent = this.buildStaticContent(res)
+    viewModel.staticContent = this.buildStaticContent()['/referral/new/find-a-person']
     viewModel.pageTitle = viewModel.staticContent.pageTitle
     viewModel.backLink = { href: viewModel.staticContent.backLink }
 
@@ -191,7 +191,7 @@ export default class FoundPersonPresenter extends PresenterBase<FoundPersonViewM
   }
 
   renderPage(res: Response): void {
-    const pageContent = this.buildViewModel(res)
+    const pageContent = this.buildViewModel()
     return res.render(this.getTemplatePath(), {
       content: pageContent,
     })

@@ -1,4 +1,5 @@
 import { GovukFrontendBackLink, GovukFrontendPagination, GovukFrontendTable } from '@govuk-frontend'
+import { GlobalContent } from '../../assets/content/GlobalContent'
 import { MojSubNavigation } from '../@types/mojFrontend'
 
 export type CaseListViewModel = {
@@ -11,21 +12,9 @@ export type CaseListViewModel = {
   backLink: GovukFrontendBackLink
 }
 
-export type CaseListContent = {
-  pageHeader: string
-  unassignedSubNavTitle: string
-  inProgressSubNavTitle: string
-  subNavItems: Array<subNavItem>
-  unassignedColumnHeaders: Array<string>
-  inProgressColumnHeaders: Array<string>
-  noCasesMessage: string
-}
+export type CaseListContent = GlobalContent['/unassigned-cases']
 
-export type subNavItem = {
-  id: string
-  title: string
-  href: string
-}
+export type subNavItem = CaseListContent['subNavItems'][number]
 
 export type CaseListCase = {
   name: string

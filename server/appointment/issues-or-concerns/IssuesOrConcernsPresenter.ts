@@ -1,4 +1,3 @@
-import { Response } from 'express'
 import { GovukFrontendTextarea } from '@govuk-frontend'
 import PresenterBase from '../../presenter/presenterBase'
 import {
@@ -8,10 +7,7 @@ import {
 } from './IssuesOrConcernsViewModel'
 import { ErrorMiddlewareErrors } from '../../@types/express'
 
-export default class IssuesOrConcernsPresenter extends PresenterBase<
-  IssuesOrConcernsViewModel,
-  IssuesOrConcernsContent
-> {
+export default class IssuesOrConcernsPresenter extends PresenterBase<IssuesOrConcernsViewModel> {
   constructor(
     private readonly caseRefId: string,
     private readonly firstName: string,
@@ -41,8 +37,8 @@ export default class IssuesOrConcernsPresenter extends PresenterBase<
     }
   }
 
-  buildViewModel(res: Response): IssuesOrConcernsViewModel {
-    const content = this.buildStaticContent(res)
+  buildViewModel(): IssuesOrConcernsViewModel {
+    const content = this.buildStaticContent()['/ics-feedback/:id/issues-or-concerns']
     return {
       pageTitle: content.pageTitle,
       pageHeader: content.pageHeader,

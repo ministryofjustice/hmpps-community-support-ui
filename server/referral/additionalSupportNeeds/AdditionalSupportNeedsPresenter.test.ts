@@ -1,11 +1,9 @@
-import { Response } from 'express'
 import { AdditionalSupportNeedsDto } from '@community-support-api'
 import { GovukFrontendCheckboxesItem } from '@govuk-frontend'
 import AdditionalSuportNeedsPresenter from './AdditionalSupportNeedsPresenter'
 import { AdditionalSuportNeedsViewModel } from './AdditionalSupportNeedsViewModel'
 import { ErrorMiddlewareErrors } from '../../@types/express'
 import { WithConditional } from '../../@types/govukFrontend/derived'
-import loadContentDataForTest from '../../testutils/loadContentDataForTest'
 
 const firstName = 'Alex' as const
 const lastName = 'Rivers' as const
@@ -81,15 +79,7 @@ interface ExpectedItem {
   textareaLabel?: string
 }
 
-const content = loadContentDataForTest('/referral/task-list/additional-support-needs')
-
 describe('AdditionalSupportNeedsPresenter', () => {
-  const res = {
-    locals: {
-      content,
-    },
-  } as unknown as Response
-
   const checkCheckboxItem = (item: WithConditional<GovukFrontendCheckboxesItem>, expectedItem: ExpectedItem) => {
     expect(item.value).toBe(expectedItem.value)
     expect(item.text).toBe(expectedItem.label)
@@ -193,7 +183,7 @@ describe('AdditionalSupportNeedsPresenter', () => {
 
   test('builds the correct view model from default dto data', () => {
     const presenter = new AdditionalSuportNeedsPresenter(defaultDTO, emptyValidationErrors)
-    const result = presenter.buildViewModel(res)
+    const result = presenter.buildViewModel()
     checkPageContent(result)
     // nothing is selected
     expect(result.checkList.items.map(item => item.checked)).not.toContain(true)
@@ -206,7 +196,7 @@ describe('AdditionalSupportNeedsPresenter', () => {
     }
 
     const presenter = new AdditionalSuportNeedsPresenter(defaultDTO, validationErrors)
-    const result = presenter.buildViewModel(res)
+    const result = presenter.buildViewModel()
     expect(result.checkList.errorMessage.text).toBe(errorMessage.additionalNeeds)
   })
   test('builds the correct view model when everything selected but no values', () => {
@@ -262,7 +252,7 @@ describe('AdditionalSupportNeedsPresenter', () => {
     }
 
     const presenter = new AdditionalSuportNeedsPresenter(dto, validationErrors)
-    const result = presenter.buildViewModel(res)
+    const result = presenter.buildViewModel()
     expect(result.checkList.errorMessage).toBeUndefined()
     expect(result.checkList.items[0].conditional.html).toContain(errorMessage.physical)
     expect(result.checkList.items[1].conditional.html).toContain(errorMessage.mental)
@@ -280,7 +270,7 @@ describe('AdditionalSupportNeedsPresenter', () => {
     }
 
     const presenter = new AdditionalSuportNeedsPresenter(dto, emptyValidationErrors)
-    const result = presenter.buildViewModel(res)
+    const result = presenter.buildViewModel()
     expect(result.checkList.items[9].checked).toBe(true)
   })
 
@@ -333,7 +323,7 @@ describe('AdditionalSupportNeedsPresenter', () => {
     }
 
     const presenter = new AdditionalSuportNeedsPresenter(dto, emptyValidationErrors)
-    const result = presenter.buildViewModel(res)
+    const result = presenter.buildViewModel()
     expect(result.checkList.items[0].conditional.html).toContain(`>${details.physicalHealth}</textarea>`)
     expect(result.checkList.items[1].conditional.html).toContain(`>${details.mentalEmotionalHealth}</textarea>`)
     expect(result.checkList.items[2].conditional.html).toContain(`>${details.neurodiversity}</textarea>`)

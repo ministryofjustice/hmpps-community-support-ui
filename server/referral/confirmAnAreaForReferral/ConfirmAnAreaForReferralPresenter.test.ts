@@ -1,4 +1,3 @@
-import { Response } from 'express'
 import { Person, AreaConfirmationBffResponseDto } from '@community-support-api'
 import ConfirmAnAreaForReferralPresenter from './ConfirmAnAreaForReferralPresenter'
 
@@ -21,29 +20,11 @@ describe('ConfirmAnAreaForReferralPresenter', () => {
     prisonNumbers: [],
   } as unknown as Person
 
-  const res = {
-    locals: {
-      content: {
-        backLink: '/referral/task-list',
-        pageTitle: 'Make a referral to {{ areaName }} – Community Support',
-        pageCaption: 'CRN: {{ CRN }} | Date of birth: {{ DOB }}',
-        defaultFieldValue: 'Not available',
-        cardHeading: 'Make a Community Support referral to {{ areaName }}',
-        deliveryPartnerLabel: 'Delivery partner',
-        areaCoveredLabel: 'Area covered',
-        pdusLabel: 'PDUs in this area',
-        buttonText: 'Save and continue',
-        selectDifferentAreaText: 'Select a different area',
-        selectDifferentAreaHref: '/referral/task-list/select-an-area-for-referral',
-      },
-    },
-  } as unknown as Response
-
   test('builds correct view model', () => {
     const presenter = new ConfirmAnAreaForReferralPresenter(providerDetails, personDetails)
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
 
-    expect(viewModel.backLink.href).toBe('/referral/task-list')
+    expect(viewModel.backLink.href).toBe('/referral/task-list/select-an-area-for-referral')
     expect(viewModel.pageTitle).toBe(
       'Make a referral to Avon and Somerset, Gloucestershire, Wiltshire. – Community Support',
     )
@@ -71,7 +52,7 @@ describe('ConfirmAnAreaForReferralPresenter', () => {
       personDetails,
     )
 
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
 
     expect(viewModel.deliveryPartner).toBe('Not available')
     expect(viewModel.pdus).toEqual([])
@@ -86,7 +67,7 @@ describe('ConfirmAnAreaForReferralPresenter', () => {
       dateOfBirth: '',
     } as unknown as Person)
 
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
 
     expect(viewModel.pageCaption).toBe('CRN: Not available | Date of birth: Not available')
   })

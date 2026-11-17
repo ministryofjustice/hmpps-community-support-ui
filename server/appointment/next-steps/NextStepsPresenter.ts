@@ -1,11 +1,10 @@
-import { Response } from 'express'
 import { GovukFrontendTextarea } from '@govuk-frontend'
 import { IcsFeedbackSubmission } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
 import { ErrorMiddlewareErrors } from '../../@types/express'
-import { NextStepsViewModel, NextStepsContent } from './NextStepsViewModel'
+import { NextStepsViewModel } from './NextStepsViewModel'
 
-export default class NextStepsPresenter extends PresenterBase<NextStepsViewModel, NextStepsContent> {
+export default class NextStepsPresenter extends PresenterBase<NextStepsViewModel> {
   constructor(
     private readonly caseRefId: string,
     private readonly firstName: string,
@@ -34,8 +33,8 @@ export default class NextStepsPresenter extends PresenterBase<NextStepsViewModel
     }
   }
 
-  buildViewModel(res: Response): NextStepsViewModel {
-    const content = this.buildStaticContent(res)
+  buildViewModel(): NextStepsViewModel {
+    const content = this.buildStaticContent()['/ics-feedback/:id/next-steps']
     const fieldErrors = this.errors?.messages || {}
 
     return {

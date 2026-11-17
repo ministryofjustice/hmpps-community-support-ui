@@ -1,4 +1,3 @@
-import { Response } from 'express'
 import { CaseList } from '@community-support-api'
 import { GovukFrontendTable, GovukFrontendTableRow } from '@govuk-frontend'
 import PresenterBase from '../presenter/presenterBase'
@@ -6,7 +5,7 @@ import { CaseListCase, CaseListContent, CaseListViewModel } from './caseListView
 import { MojPagination, MojSubNavigation } from '../@types/mojFrontend'
 import { PagedResponse } from '../@types/communitySupportApi/derived'
 
-export default class CaseListPresenter extends PresenterBase<CaseListViewModel, CaseListContent> {
+export default class CaseListPresenter extends PresenterBase<CaseListViewModel> {
   private caseList: Array<CaseList>
 
   private parsedCaseList: Array<CaseListCase>
@@ -23,9 +22,11 @@ export default class CaseListPresenter extends PresenterBase<CaseListViewModel, 
     this.parsedCaseList = this.buildCaseList(this.caseList)
   }
 
-  protected override buildViewModel(res: Response): CaseListViewModel {
+  protected override buildViewModel(): CaseListViewModel {
     const viewModel = {} as CaseListViewModel
-    viewModel.staticContent = this.buildStaticContent(res)
+    viewModel.staticContent = {
+      ...this.buildStaticContent()[this.selectedTab === 'inProgress' ? '/cases-in-progress' : '/unassigned-cases'],
+    }
     viewModel.navBar = this.buildSubNav(viewModel.staticContent)
     viewModel.hasCases = this.caseListResponse.totalElements > 0
     if (viewModel.hasCases) {

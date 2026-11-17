@@ -1,22 +1,19 @@
 import { ActionPlanSessionDeliveryDetailsResponse, SessionDeliveryQuestion } from '@community-support-api'
-import { Response } from 'express'
 import { GovukFrontendInsetText, GovukFrontendRadios, GovukFrontendRadiosItem } from '@govuk-frontend'
 import PresenterBase from '../../../presenter/presenterBase'
 import { ErrorMiddlewareErrors } from '../../../@types/express'
 import { getServiceEndDateValue } from '../../../validation/ActionPlanServiceEndDateCheckFormData'
-import { ServiceEndDateCheckContent, ServiceEndDateCheckViewModel } from './serviceEndDateCheckViewModel'
+import { ServiceEndDateCheckViewModel } from './serviceEndDateCheckViewModel'
 import SessionDeliveryDetailsQuestions from './sessionDeliveryDetailsQuestions'
 
-export default class ActionPlanServiceEndDateCheckPresenter extends PresenterBase<
-  ServiceEndDateCheckViewModel,
-  ServiceEndDateCheckContent
-> {
+export default class ActionPlanServiceEndDateCheckPresenter extends PresenterBase<ServiceEndDateCheckViewModel> {
   constructor(
     private readonly caseReference: string,
     private readonly sessionDeliveryDetails: ActionPlanSessionDeliveryDetailsResponse,
     private readonly validationErrors?: ErrorMiddlewareErrors,
     private readonly userInputData?: Record<string, string | string[]>,
     private readonly isCheckAnswersEdit = false,
+    private readonly backLink?: string,
   ) {
     super()
   }
@@ -65,8 +62,8 @@ export default class ActionPlanServiceEndDateCheckPresenter extends PresenterBas
     }
   }
 
-  protected buildViewModel(res: Response): ServiceEndDateCheckViewModel {
-    const content = this.buildStaticContent(res)
+  protected buildViewModel(): ServiceEndDateCheckViewModel {
+    const content = this.buildStaticContent()['/referral/:id/action-plan/service-end-date-check']
     const serviceEndDateCheckQuestion = this.sessionDeliveryDetails.questions.find(
       q => q.key === SessionDeliveryDetailsQuestions.SERVICE_END_DATE_CHECK,
     )!
@@ -75,9 +72,11 @@ export default class ActionPlanServiceEndDateCheckPresenter extends PresenterBas
       pageTitle: content.pageTitle,
       pageHeader: content.pageHeader,
       backLink: {
-        href: this.isCheckAnswersEdit
-          ? content.editBackLink.replace('{{ id }}', this.caseReference)
-          : content.backLink.replace('{{ id }}', this.caseReference),
+        href:
+          this.backLink ??
+          (this.isCheckAnswersEdit
+            ? content.editBackLink.replace('{{ id }}', this.caseReference)
+            : content.backLink.replace('{{ id }}', this.caseReference)),
       },
       submitButton: {
         text:

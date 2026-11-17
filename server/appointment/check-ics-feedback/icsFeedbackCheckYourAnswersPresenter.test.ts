@@ -1,8 +1,8 @@
 import { Response } from 'express'
 import { IcsFeedbackSubmission } from '@community-support-api'
+import { globalContent } from '../../../assets/content/GlobalContent'
 import IcsFeedbackCheckYourAnswersPresenter from './icsFeedbackCheckYourAnswersPresenter'
 import { IcsFeedbackCheckYourAnswersContent, SummaryListWithTitle } from './icsFeedbackCheckYourAnswersViewModel'
-import IcsFeedbackCheckContentFactory from '../../testutils/factories/IcsFeedbackCheckContent'
 
 describe('IcsFeedbackCheckYourAnswersPresenter', () => {
   const caseRefId = 'AB1234CD'
@@ -36,136 +36,7 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
     },
   }
 
-  const mockContent: IcsFeedbackCheckYourAnswersContent = IcsFeedbackCheckContentFactory.build({
-    pageHeader: 'Check your answers before submitting feedback',
-    summaryLists: [
-      {
-        summaryTitle: 'Record session attendance',
-        rows: [
-          {
-            text: 'Did the session happen?',
-            hint: 'Whether the session happened',
-            changeHref: '/referral/caseRefId/appointment/session-happened/change',
-          },
-          {
-            text: 'Did {{firstname}} attend?',
-            hint: 'Whether {{firstname}} attended',
-            changeHref: '/referral/caseRefId/appointment/person-attendance/change',
-          },
-          {
-            text: 'How the session took place',
-            hint: 'How the session took place',
-            changeHref: '/referral/caseRefId/appointment/session-method/change',
-          },
-          {
-            text: 'Location',
-            hint: 'Location of the session',
-            changeHref: '/referral/caseRefId/appointment/location/change',
-          },
-          {
-            text: 'Additional details',
-            hint: 'Additional details about the session',
-            changeHref: '/referral/caseRefId/appointment/additional-details/change',
-          },
-        ],
-      },
-      {
-        summaryTitle: 'Session details',
-        rows: [
-          {
-            text: 'Was {{firstname}} late?',
-            hint: 'If {{firstname}} was late',
-            changeHref: '/referral/caseRefId/appointment/was-late/change',
-          },
-          {
-            text: 'Why {{firstname}} was late?',
-            hint: 'Reason for being late',
-            changeHref: '/referral/caseRefId/appointment/late-reason/change',
-          },
-          {
-            text: 'Session duration',
-            hint: 'How long did the session last',
-            changeHref: '/referral/caseRefId/appointment/duration/change',
-          },
-        ],
-      },
-      {
-        summaryTitle: 'Session feedback',
-        rows: [
-          {
-            text: 'What happened in the session?',
-            hint: 'Description of the session',
-            changeHref: '/referral/caseRefId/appointment/what-happened/change',
-          },
-          {
-            text: 'Why did the session not happen?',
-            hint: 'Reason the session did not happen',
-            changeHref: '/referral/caseRefId/appointment/why-not-happened/change',
-          },
-          {
-            text: 'Why did {{firstname}} not attend?',
-            hint: 'Reason {{firstname}} did not attend',
-            changeHref: '/referral/caseRefId/appointment/why-not-attend/change',
-          },
-          {
-            text: '{{firstname}} behaviour',
-            hint: 'How {{firstname}} behaved',
-            changeHref: '/referral/caseRefId/appointment/behaviour/change',
-          },
-          {
-            text: 'Strengths identified',
-            hint: 'Any strengths identified during the session',
-            changeHref: '/referral/caseRefId/appointment/strengths/change',
-          },
-        ],
-      },
-      {
-        summaryTitle: 'Issues or concerns',
-        rows: [
-          {
-            text: 'Issues or concerns',
-            hint: 'Any issues or concerns identified',
-            changeHref: '/referral/caseRefId/appointment/issues-concerns/change',
-          },
-        ],
-      },
-      {
-        summaryTitle: 'Additional support needs',
-        rows: [
-          {
-            text: 'New support needs identified',
-            hint: 'Any new support needs identified',
-            changeHref: '/referral/caseRefId/appointment/new-support-needs/change',
-          },
-        ],
-      },
-      {
-        summaryTitle: 'Next steps',
-        rows: [
-          {
-            text: 'What is planned for the next session?',
-            hint: 'What is planned for the next session',
-            changeHref: '/referral/caseRefId/appointment/next-session-plan/change',
-          },
-          {
-            text: 'What actions are needed before the next session?',
-            hint: 'Actions needed before next session',
-            changeHref: '/referral/caseRefId/appointment/actions-before-next/change',
-          },
-        ],
-      },
-    ],
-    didNotHappenReasonLabels: {
-      serviceProviderIssue: 'Service provider issue',
-      referralCouldNotTakePart: '{{firstname}} could not take part',
-      referralDidNotComply: '{{firstname}} did not comply',
-    },
-    submitButtonText: 'Save and continue',
-    submitHref: '/referral/caseRefId/appointment/submit-feedback',
-    attendedBackLinkHref: '/referral/caseRefId/appointment/feedback',
-    didNotAttendbackLinkHref: '/referral/caseRefId/appointment/no-attendance-info',
-    noSessionbackLinkHref: '/referral/caseRefId/appointment/session-not-happened',
-  })
+  const mockContent: IcsFeedbackCheckYourAnswersContent = globalContent['/ics-feedback/:id/check-answers']
 
   let res: Response
 
@@ -181,7 +52,7 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
       it('should display "Yes" and the support needs content when newlyIdentifiedAdditionalSupportNeeds is provided', () => {
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-        const viewModel = presenter.buildViewModel(res)
+        const viewModel = presenter.buildViewModel()
         const additionalSupportSummary = viewModel.feedbackSummaries.find(
           (summary: SummaryListWithTitle) => summary.summaryTitle === 'Additional support needs',
         )
@@ -192,20 +63,20 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
         expect(row.key.text).toBe('New support needs identified')
         expect(row.value.html).toContain('<p>Yes</p>')
         expect(row.value.html).toContain('<p>Literacy support needed</p>')
-        expect(row.actions.items[0].href).toContain('/referral/AB1234CD/appointment/new-support-needs/change')
+        expect(row.actions.items[0].href).toContain('/ics-feedback/AB1234CD/identified-additional-needs')
       })
 
       it('should include the change action with correct href for Additional support needs', () => {
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-        const viewModel = presenter.buildViewModel(res)
+        const viewModel = presenter.buildViewModel()
         const additionalSupportSummary = viewModel.feedbackSummaries.find(
           (summary: SummaryListWithTitle) => summary.summaryTitle === 'Additional support needs',
         )
 
         const row = additionalSupportSummary.rows[0]
         expect(row.actions.items[0].text).toBe('Change')
-        expect(row.actions.items[0].visuallyHiddenText).toBe('Any new support needs identified')
+        expect(row.actions.items[0].visuallyHiddenText).toBe('New support needs identified')
       })
     })
 
@@ -218,7 +89,7 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
 
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(submission, caseRefId, firstName)
 
-        const viewModel = presenter.buildViewModel(res)
+        const viewModel = presenter.buildViewModel()
         const additionalSupportSummary = viewModel.feedbackSummaries.find(
           (summary: SummaryListWithTitle) => summary.summaryTitle === 'Additional support needs',
         )
@@ -237,7 +108,7 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
 
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(submission, caseRefId, firstName)
 
-        const viewModel = presenter.buildViewModel(res)
+        const viewModel = presenter.buildViewModel()
         const additionalSupportSummary = viewModel.feedbackSummaries.find(
           (summary: SummaryListWithTitle) => summary.summaryTitle === 'Additional support needs',
         )
@@ -259,7 +130,7 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
 
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(submission, caseRefId, firstName)
 
-        const viewModel = presenter.buildViewModel(res)
+        const viewModel = presenter.buildViewModel()
         const additionalSupportSummary = viewModel.feedbackSummaries.find(
           (summary: SummaryListWithTitle) => summary.summaryTitle === 'Additional support needs',
         )
@@ -274,7 +145,7 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
       it('should return a SummaryListWithTitle with correct structure', () => {
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-        const viewModel = presenter.buildViewModel(res)
+        const viewModel = presenter.buildViewModel()
         const additionalSupportSummary = viewModel.feedbackSummaries.find(
           (summary: SummaryListWithTitle) => summary.summaryTitle === 'Additional support needs',
         )
@@ -287,7 +158,7 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
       it('should include all required row properties (key, value, actions)', () => {
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-        const viewModel = presenter.buildViewModel(res)
+        const viewModel = presenter.buildViewModel()
         const additionalSupportSummary = viewModel.feedbackSummaries.find(
           (summary: SummaryListWithTitle) => summary.summaryTitle === 'Additional support needs',
         )
@@ -311,7 +182,7 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
 
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(submission, caseRefId, firstName)
 
-        const viewModel = presenter.buildViewModel(res)
+        const viewModel = presenter.buildViewModel()
         const additionalSupportSummary = viewModel.feedbackSummaries.find(
           (summary: SummaryListWithTitle) => summary.summaryTitle === 'Additional support needs',
         )
@@ -325,7 +196,7 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
       it('should include Additional support needs summary alongside other summaries', () => {
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-        const viewModel = presenter.buildViewModel(res)
+        const viewModel = presenter.buildViewModel()
 
         const summaryTitles = viewModel.feedbackSummaries.map((summary: SummaryListWithTitle) => summary.summaryTitle)
         expect(summaryTitles).toContain('Additional support needs')
@@ -334,7 +205,7 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
       it('should maintain correct order with all feedback sections when support needs are present', () => {
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-        const viewModel = presenter.buildViewModel(res)
+        const viewModel = presenter.buildViewModel()
 
         const summaryTitles = viewModel.feedbackSummaries.map((summary: SummaryListWithTitle) => summary.summaryTitle)
 
@@ -356,7 +227,7 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
 
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(submission, caseRefId, firstName)
 
-        const viewModel = presenter.buildViewModel(res)
+        const viewModel = presenter.buildViewModel()
 
         const additionalSupportSummary = viewModel.feedbackSummaries.find(
           (summary: SummaryListWithTitle) => summary.summaryTitle === 'Additional support needs',
@@ -378,7 +249,7 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
       it('should pass view model with feedbackSummaries to template', () => {
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-        const viewModel = presenter.buildViewModel(res)
+        const viewModel = presenter.buildViewModel()
 
         expect(viewModel).toHaveProperty('feedbackSummaries')
         expect(Array.isArray(viewModel.feedbackSummaries)).toBe(true)
@@ -395,7 +266,7 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
 
       const presenter = new IcsFeedbackCheckYourAnswersPresenter(submission, caseRefId, firstName)
 
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
 
       // Issues or concerns should not be rendered when issuesAndConcerns is null
       const issuesSummary = viewModel.feedbackSummaries.find(
@@ -416,7 +287,7 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
 
       const presenter = new IcsFeedbackCheckYourAnswersPresenter(submission, caseRefId, firstName)
 
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
       const sessionDetailsSummary = viewModel.feedbackSummaries.find(
         (summary: SummaryListWithTitle) => summary.summaryTitle === 'Session details',
       )
@@ -428,7 +299,7 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
     it('should replace firstname placeholders in change link text', () => {
       const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
       const sessionDetailsSummary = viewModel.feedbackSummaries.find(
         (summary: SummaryListWithTitle) => summary.summaryTitle === 'Session details',
       )
@@ -441,7 +312,7 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
     it('should replace firstname placeholders in visually hidden text', () => {
       const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
       const sessionDetailsSummary = viewModel.feedbackSummaries.find(
         (summary: SummaryListWithTitle) => summary.summaryTitle === 'Session details',
       )
@@ -458,18 +329,18 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
     it('should render complete feedback summary with all sections', () => {
       const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
 
       expect(viewModel.pageHeader).toBe('Check your answers before submitting feedback')
       expect(viewModel.feedbackSummaries.length).toBeGreaterThan(0)
-      expect(viewModel.submitButtonText).toBe('Save and continue')
+      expect(viewModel.submitButtonText).toBe('Submit feedback')
       expect(viewModel.backLink).toBeDefined()
     })
 
     it('should replace caseRefId in submit href', () => {
       const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
 
       expect(viewModel.submitHref).toContain(caseRefId)
       expect(viewModel.submitHref).not.toContain('caseRefId')
