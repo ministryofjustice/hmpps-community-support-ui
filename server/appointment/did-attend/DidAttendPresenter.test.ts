@@ -35,7 +35,7 @@ describe('DidAttendPresenter', () => {
         legend: {
           text: 'Did Alex come to the ICS?',
           isPageHeading: true,
-          classes: 'govuk-fieldset__legend--xl',
+          classes: 'govuk-fieldset__legend--l',
         },
       },
       items: [

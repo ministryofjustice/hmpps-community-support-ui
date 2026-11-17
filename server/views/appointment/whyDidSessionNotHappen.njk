@@ -1,15 +1,28 @@
 {% extends "../partials/layout.njk" %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
 
 {% set pageTitle = "Why did the session not happen? – ICS feedback - [service name] " %}
 {% set mainClasses = "govuk-body" %}
 
 {% block contentBody %}
-  <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
-  <form method="post" action="{{ content.submitHref }}">
+  <form method="post">
     <input type="hidden" name="_csrf" value="{{csrfToken}}">
-    {{ govukRadios(content.whyDidSessionNotHappenRadio) }}
+    {% set serviceProviderIssueHtml %}
+    {{ govukTextarea(content.serviceProviderIssueHtmlTextBoxArgs) }}
+    {% endset %}
+    {% set referralCouldNotTakePartHtml %}
+    {{ govukTextarea(content.referralCouldNotTakePartHtmlTextBoxArgs) }}
+    {% endset %}
+    {% set referralDidNotComplyHtml %}
+    {{ govukTextarea(content.referralDidNotComplyHtmlTextBoxArgs) }}
+    {% endset %}
+    {{ govukRadios(content.whyDidSessionNotHappenRadio({
+      serviceProviderIssue: serviceProviderIssueHtml,
+      referralCouldNotTakePart: referralCouldNotTakePartHtml,
+      referralDidNotComply: referralDidNotComplyHtml
+    })) }}
     {{ govukButton(content.submitButton) }}
   </form>
 {% endblock %}
