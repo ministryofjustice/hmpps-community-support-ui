@@ -1,38 +1,27 @@
-import { GovukFrontendBackLink, GovukFrontendButton } from '@govuk-frontend'
+import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendTextarea } from '@govuk-frontend'
 import { components } from '../../@types/communitySupportApi/imported'
 import { GovukFrontendRadiosWithConditional } from '../../@types/govukFrontend/derived'
+import { GlobalContent } from '../../../assets/content/GlobalContent'
+
+export type ConditionalHtml = {
+  serviceProviderIssue: string
+  referralCouldNotTakePart: string
+  referralDidNotComply: string
+}
 
 export type WhyDidSessionNotHappenViewModel = {
   pageHeader: string
-  whyDidSessionNotHappenRadio: GovukFrontendRadiosWithConditional
+  whyDidSessionNotHappenRadio: (conditionalHtml: ConditionalHtml) => GovukFrontendRadiosWithConditional
+  serviceProviderIssueHtmlTextBoxArgs: GovukFrontendTextarea
+  referralCouldNotTakePartHtmlTextBoxArgs: GovukFrontendTextarea
+  referralDidNotComplyHtmlTextBoxArgs: GovukFrontendTextarea
   submitButton: GovukFrontendButton
-  submitHref: string
   backLink: GovukFrontendBackLink
   formData: Partial<components['schemas']['SessionNotHappenReasonRequest']>
 }
 
-export type ConditionalTextAreaDetailsContent = {
-  name: string
-  hint: string
-}
+export type WhyDidSessionNotHappenRadioContent = WhyDidSessionNotHappenContent['whyDidSessionNotHappenRadio']
+export type WhyDidSessionNotHappenRadioItemsContent = WhyDidSessionNotHappenRadioContent['items']
+export type ConditionalTextAreaDetailsContent = WhyDidSessionNotHappenRadioItemsContent['serviceProviderIssueDetails']
 
-export type WhyDidSessionNotHappenRadioItemsContent = {
-  serviceProviderIssueText: string
-  serviceProviderIssueDetails: ConditionalTextAreaDetailsContent
-  referralCouldNotTakePartText: string
-  referralCouldNotTakePartDetails: ConditionalTextAreaDetailsContent
-  referralDidNotComplyText: string
-  referralDidNotComplyDetails: ConditionalTextAreaDetailsContent
-}
-
-export type WhyDidSessionNotHappenRadioContent = {
-  name: string
-  items: WhyDidSessionNotHappenRadioItemsContent
-}
-
-export type WhyDidSessionNotHappenContent = {
-  pageHeader: string
-  whyDidSessionNotHappenRadio: WhyDidSessionNotHappenRadioContent
-  submitButtonText: string
-  backLinkHref: string
-}
+export type WhyDidSessionNotHappenContent = GlobalContent['/ics-feedback/:id/why-did-the-session-not-happen']

@@ -946,20 +946,23 @@
     "whyDidSessionNotHappenRadio": {
       "name": "whyDidSessionNotHappen",
       "items": {
-        "serviceProviderIssueText": "There was an issue with the service provider or logistics, for example a problem with a room booking or a fire alarm",
+        "serviceProviderIssueText": "Issue with service provider or logistics",
+        "serviceProviderIssueHint": "For example, room booking problem or technical issue",
         "serviceProviderIssueDetails": {
           "name": "serviceProviderIssueDetails",
-          "hint": "Give details of any issues that meant the session could not happen."
+          "label": "Give details of any issues that meant the session could not happen."
         },
-        "referralCouldNotTakePartText": "{{ firstname }} could not take part, for example because of illness or a crisis",
+        "referralCouldNotTakePartText": "{{ firstname }} could not take part",
+        "referralCouldNotTakePartHint": "For example, they were ill",
         "referralCouldNotTakePartDetails": {
           "name": "referralCouldNotTakePartDetails",
-          "hint": "Give details about why they were unable to take part, such as what happened and who was involved."
+          "label": "Give details about why they were unable to take part, including what happened and who was involved."
         },
-        "referralDidNotComplyText": "{{ firstname }} did not comply, for example they were disruptive or disengaged",
+        "referralDidNotComplyText": "{{ firstname }} did not comply",
+        "referralDidNotComplyHint": "For example, they were disruptive",
         "referralDidNotComplyDetails": {
           "name": "referralDidNotComplyDetails",
-          "hint": "Give details about their behaviour and how they were unable to take part."
+          "label": "Give details about why they did not comply. For example, their behaviour and how they were unable to take part."
         }
       }
     },
