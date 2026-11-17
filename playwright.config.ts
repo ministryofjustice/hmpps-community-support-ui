@@ -56,6 +56,13 @@ export default defineConfig({
     {
       name: 'default',
       testMatch: '**/*.spec.ts',
+      testIgnore: '**/localCreateReferral.spec.ts',
+    },
+    {
+      // Runs against the locally started UI (port 3000) and real local APIs; no WireMock stubs.
+      name: 'local',
+      testMatch: '**/localCreateReferral.spec.ts',
+      use: { baseURL: process.env.LOCAL_UI_URL ?? 'http://localhost:3000', headless: false },
     },
   ],
 })
