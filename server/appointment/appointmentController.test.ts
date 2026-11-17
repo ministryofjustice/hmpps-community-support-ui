@@ -28,7 +28,6 @@ import { prisonsData, probationOfficesData } from '../../integration_tests/mockD
 import { referralInformationInCommunity } from '../../integration_tests/mockData/referralInformationData'
 import ViewChangeSessionDetailsPresenter from './view-change-session-details/ViewChangeSessionDetailsPresenter'
 import IcsFeedbackCheckYourAnswersPresenter from './check-ics-feedback/icsFeedbackCheckYourAnswersPresenter'
-import { ReferralProgressBannerContent } from '../referral/progress/ReferralProgressBannerContent'
 import { ChangeRequesterType } from './change-ics-details-reason/ChangeAppointmentDetails'
 import ChangeIcsDetailsReasonPresenter from './change-ics-details-reason/ChangeIcsDetailsReasonPresenter'
 import { parseTime12Hr } from '../utils/timeFormat'
@@ -1938,7 +1937,7 @@ describe('AppointmentController', () => {
       expect(IcsFeedbackCheckYourAnswersPresenter.prototype.renderPage).toHaveBeenCalledWith(icsFeedbackCheckRes)
     })
 
-    it('redirects to progress page after submitting feedback', async () => {
+    it('redirects to appointments with a feedback confirmation after submitting feedback', async () => {
       jest.spyOn(appointmentService, 'submitIcsFeedback').mockResolvedValue(undefined)
       jest.spyOn(appointmentService, 'getIcsFeedbackCheckAnswers').mockResolvedValue({
         referralFirstName: mockAppointmentIcsResponse.referralFirstName,
@@ -1952,12 +1951,6 @@ describe('AppointmentController', () => {
         },
         caseReferenceId: caseRefId,
       }
-      const bannerContent = {
-        caseReference: caseRefId,
-        heading: 'Session feedback submitted',
-        body: 'The ICS is now complete.',
-      } as ReferralProgressBannerContent
-
       icsFeedbackCheckReq.method = 'POST'
       icsFeedbackCheckReq.params.caseRefId = caseRefId
       icsFeedbackCheckReq.session.icsFeedbackSubmission = mockSubmission
@@ -1971,8 +1964,10 @@ describe('AppointmentController', () => {
         username,
       )
       expect(icsFeedbackCheckReq.session.icsFeedbackSubmission).toBeFalsy()
-      expect(icsFeedbackCheckReq.session.referralProgressBanner).toEqual(bannerContent)
-      expect(icsFeedbackCheckRes.redirect).toHaveBeenCalledWith(`/progress/${caseRefId}`)
+      expect(icsFeedbackCheckReq.session.appointmentFeedbackMessage).toEqual({
+        caseReference: caseRefId,
+      })
+      expect(icsFeedbackCheckRes.redirect).toHaveBeenCalledWith(`/referral/${caseRefId}/appointments`)
     })
 
     it.each([
@@ -2013,6 +2008,7 @@ describe('AppointmentController', () => {
           })
         } else {
           expect(icsFeedbackCheckReq.session.createdAppointmentMessage).toBeUndefined()
+          expect(icsFeedbackCheckReq.session.appointmentFeedbackMessage).toBeUndefined()
         }
       },
     )

@@ -24,7 +24,7 @@ export default class ReferralAppointmentsPresenter extends ReferralLayoutPresent
   constructor(
     private readonly referralAppointments: ReferralAppointmentsBffResponseDto,
     private readonly caseReference: string,
-    private readonly successAlert: { title: string; message: string } = undefined,
+    private readonly successAlert: { title: string; message: string } | { type: 'ICS_FEEDBACK' } = undefined,
   ) {
     super(ReferralNavigationValues.appointmentsTab, caseReference)
   }
@@ -37,6 +37,10 @@ export default class ReferralAppointmentsPresenter extends ReferralLayoutPresent
     const content = this.buildStaticContent(res)
     const { firstName, lastName } = this.referralAppointments.personDetails
     const { upcomingAppointments, pastAppointments } = this.referralAppointments
+    let notificationBanner: { title: string; message?: string } | undefined
+    if (this.successAlert) {
+      notificationBanner = 'type' in this.successAlert ? { title: content.icsFeedbackAdded } : this.successAlert
+    }
 
     return {
       pageHeader: `${content.pageHeader} ${firstName} ${lastName}`,
@@ -56,11 +60,11 @@ export default class ReferralAppointmentsPresenter extends ReferralLayoutPresent
       hasPastAppointments: pastAppointments.length > 0,
       hasAppointments: upcomingAppointments.length > 0 || pastAppointments.length > 0,
       notificationBanner:
-        this.successAlert !== undefined
+        notificationBanner !== undefined
           ? {
               variant: 'success',
-              html: this.successAlert.message,
-              title: this.successAlert.title,
+              html: 'message' in notificationBanner ? notificationBanner.message : undefined,
+              title: notificationBanner.title,
               dismissible: true,
               showTitleAsHeading: true,
             }

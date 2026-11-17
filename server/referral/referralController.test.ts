@@ -123,6 +123,36 @@ describe('ReferralController', () => {
   })
 
   describe('showReferralAppointments', () => {
+    it('shows the ics feedback success notification once', async () => {
+      const caseReference = 'AB1234CD'
+      req = {
+        params: { caseReference },
+        session: { appointmentFeedbackMessage: { caseReference } },
+      } as unknown as Request
+      res.locals.content = globalContent['/referral/:id/appointments']
+      referralService.getReferralAppointments.mockResolvedValue({
+        personDetails: { firstName: 'Alex', lastName: 'Example', dateOfBirth: '1980-01-01', crn: 'X123456' },
+        upcomingAppointments: [],
+        pastAppointments: [],
+      })
+
+      await referralController.showReferralAppointments(req, res)
+
+      expect(req.session.appointmentFeedbackMessage).toBeUndefined()
+      expect(res.render).toHaveBeenCalledWith(
+        'referral/appointments',
+        expect.objectContaining({
+          content: expect.objectContaining({
+            notificationBanner: expect.objectContaining({
+              variant: 'success',
+              title: 'ICS feedback added',
+              dismissible: true,
+            }),
+          }),
+        }),
+      )
+    })
+
     it('renders the session success alert once and clears it', async () => {
       const caseReference = 'AB1234CD'
       const content: ReferralAppointmentsContent = globalContent['/referral/:id/appointments']
