@@ -375,8 +375,10 @@
     "titleColumnHeader": "Note",
     "actionColumnHeader": "Action",
     "viewDetailsLinkText": "View details",
+    "readFullNoteLinkText": "Read full note",
     "addNoteButtonText": "Add note",
-    "addedNotesSubheading": "Added notes"
+    "addedNotesSubheading": "Added notes",
+    "resultsSummaryText": "Showing {{ from }} to {{ to }} of {{ count }} total results"
   },
   "/referral/:id/appointment/select-type": {
     "pageTitle": "Select appointment type",
