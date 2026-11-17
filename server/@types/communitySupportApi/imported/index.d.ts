@@ -2054,6 +2054,13 @@ export interface components {
       size?: number
       sort?: string[]
     }
+    Pageable: {
+      /** Format: int32 */
+      page?: number
+      /** Format: int32 */
+      size?: number
+      sort?: string[]
+    }
     PageResponse: {
       content: unknown[]
       /** Format: int32 */
@@ -2081,9 +2088,6 @@ export interface components {
       title: string
       details: string
       detailsTruncated: boolean
-    }
-    ReferralNotesAndNonContactSessionsBffResponseDto: {
-      notesAndNonContactSessions: components['schemas']['ReferralNoteOrNonContactSessionBffDto'][]
     }
     AppointmentDetailsDto: {
       /** @enum {string|null} */
@@ -3794,7 +3798,9 @@ export interface operations {
   }
   getNotesAndNonContactSessions: {
     parameters: {
-      query?: never
+      query: {
+        pageable: components['schemas']['Pageable']
+      }
       header?: never
       path: {
         referralReference: string
@@ -3809,7 +3815,7 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          'application/json': components['schemas']['ReferralNotesAndNonContactSessionsBffResponseDto']
+          'application/json': components['schemas']['ReferralNoteOrNonContactSessionBffDto'][]
         }
       }
       /** @description Referral not found */

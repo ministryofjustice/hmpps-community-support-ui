@@ -5,7 +5,6 @@ import {
   ReferralInformation,
   ReferralProgress,
   ReferralAppointmentsBffResponseDto,
-  ReferralNotesAndNonContactSessionsBffResponseDto,
   ReferralNoteOrNonContactSessionBffDto,
   PagedRequest,
   AdditionalSupportNeedsDto,
