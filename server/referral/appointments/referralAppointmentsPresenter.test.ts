@@ -300,6 +300,26 @@ describe('ReferralAppointmentsPresenter', () => {
     })
   })
 
+  it('shows a success notification after ICS feedback has been added', () => {
+    const response: ReferralAppointmentsBffResponseDto = {
+      personDetails: { firstName: 'Alex', lastName: 'Example', dateOfBirth: '1980-01-01', crn: 'X123456' },
+      upcomingAppointments: [],
+      pastAppointments: [],
+    }
+
+    const viewModel = new ReferralAppointmentsPresenter(response, caseReference, {
+      type: 'ICS_FEEDBACK',
+    }).buildViewModel(makeResponse())
+
+    expect(viewModel.notificationBanner).toEqual({
+      variant: 'success',
+      title: 'ICS feedback added',
+      html: undefined,
+      dismissible: true,
+      showTitleAsHeading: true,
+    })
+  })
+
   it('does not show a notification banner when there is no success alert', () => {
     const response: ReferralAppointmentsBffResponseDto = {
       personDetails: { firstName: 'Alex', lastName: 'Example', dateOfBirth: '1980-01-01', crn: 'X123456' },
