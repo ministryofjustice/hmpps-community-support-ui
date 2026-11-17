@@ -10,7 +10,6 @@ export type ConditionalHtml = {
 }
 
 export type WhyDidSessionNotHappenViewModel = {
-  pageHeader: string
   whyDidSessionNotHappenRadio: (conditionalHtml: ConditionalHtml) => GovukFrontendRadiosWithConditional
   serviceProviderIssueHtmlTextBoxArgs: GovukFrontendTextarea
   referralCouldNotTakePartHtmlTextBoxArgs: GovukFrontendTextarea

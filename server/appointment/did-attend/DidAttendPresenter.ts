@@ -59,7 +59,7 @@ export default class DidAttendPresenter extends PresenterBase<DidAttendViewModel
         legend: {
           text: heading.replace('{{ firstname }}', this.data.referralFirstName),
           isPageHeading: true,
-          classes: 'govuk-fieldset__legend--xl',
+          classes: 'govuk-fieldset__legend--l',
         },
       },
       errorMessage: this.errors.messages[id],

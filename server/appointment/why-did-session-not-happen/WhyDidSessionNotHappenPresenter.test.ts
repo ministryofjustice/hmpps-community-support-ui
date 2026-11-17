@@ -27,10 +27,8 @@ describe('WhyDidSessionNotHappenPresenter', () => {
       referralDidNotComply: '<did-not-comply>',
     })
 
-  it('builds the page header, button and back link', () => {
+  it('builds the button and back link', () => {
     const viewModel = buildViewModel()
-
-    expect(viewModel.pageHeader).toBe(content.pageHeader)
     expect(viewModel.submitButton).toEqual({ text: 'Continue', classes: 'govuk-!-margin-top-6' })
     expect(viewModel.backLink).toEqual({ href: `/ics-feedback/${caseRefId}/did-attend` })
     expect(viewModel.formData).toEqual({})
@@ -42,7 +40,14 @@ describe('WhyDidSessionNotHappenPresenter', () => {
 
       expect(radios.name).toBe('whyDidSessionNotHappen')
       expect(radios.attributes).toEqual({ 'data-testid': 'whyDidSessionNotHappen' })
-      expect(radios.fieldset).toEqual({ attributes: { 'data-testid': 'fieldset-whyDidSessionNotHappen' } })
+      expect(radios.fieldset).toEqual({
+        attributes: { 'data-testid': 'fieldset-whyDidSessionNotHappen' },
+        legend: {
+          text: content.whyDidSessionNotHappenRadio.question,
+          isPageHeading: true,
+          classes: 'govuk-fieldset__legend--l',
+        },
+      })
       expect(radios.errorMessage).toBeNull()
       expect(radios.items).toEqual([
         {
@@ -148,7 +153,7 @@ describe('WhyDidSessionNotHappenPresenter', () => {
     new WhyDidSessionNotHappenPresenter(caseRefId, 'Alex', undefined).renderPage(res)
 
     expect(res.render).toHaveBeenCalledWith('appointment/whyDidSessionNotHappen', {
-      content: expect.objectContaining({ pageHeader: content.pageHeader }),
+      content: expect.objectContaining({ backLink: { href: `/ics-feedback/${caseRefId}/did-attend` } }),
     })
   })
 })

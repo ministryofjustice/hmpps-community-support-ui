@@ -87,7 +87,14 @@ export default class WhyDidSessionNotHappenPresenter extends PresenterBase<
   ): GovukFrontendRadiosWithConditional {
     return {
       name: content.name,
-      fieldset: { attributes: { 'data-testid': `fieldset-${content.name}` } },
+      fieldset: {
+        attributes: { 'data-testid': `fieldset-${content.name}` },
+        legend: {
+          text: content.question,
+          isPageHeading: true,
+          classes: 'govuk-fieldset__legend--l',
+        },
+      },
       errorMessage: this.validationErrors?.messages[content.name] ?? null,
       attributes: { 'data-testid': content.name },
       items: this.buildWhyDidSessionNotHappenRadioItems(content.items, formData, conditionalHtml),
@@ -116,7 +123,6 @@ export default class WhyDidSessionNotHappenPresenter extends PresenterBase<
         }
       : {}
     return {
-      pageHeader: content.pageHeader,
       whyDidSessionNotHappenRadio: (conditionalHtml: ConditionalHtml) =>
         this.buildWhyDidSessionNotHappenRadio(content.whyDidSessionNotHappenRadio, formData, conditionalHtml),
       serviceProviderIssueHtmlTextBoxArgs: this.buildWhyDidSessionNotHappenDetailsTextArea(

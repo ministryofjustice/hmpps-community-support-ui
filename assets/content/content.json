@@ -942,8 +942,8 @@
     "backLinkHref": "/ics-feedback/{{ id }}/did-session-take-place"
   },
   "/ics-feedback/:id/why-did-the-session-not-happen": {
-    "pageHeader": "Why did the session not happen?",
     "whyDidSessionNotHappenRadio": {
+      "question": "Why did the session not happen?",
       "name": "whyDidSessionNotHappen",
       "items": {
         "serviceProviderIssueText": "Issue with service provider or logistics",
