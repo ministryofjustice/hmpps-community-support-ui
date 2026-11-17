@@ -587,34 +587,40 @@
     "title": "View session details",
     "heading": "View session details"
   },
-  "/ics-feedback": {
-    "attendanceForm": {
-      "happenedRadios": {
-        "id": "happened",
-        "heading": "Did the session happen?",
-        "hint": "The session happened if something was delivered. ",
-        "error": "Select yes if the session happened",
-        "yesLabel": "Yes",
-        "noLabel": "No"
-      },
-      "attendedRadios": {
-        "id": "attended",
-        "heading": "Did {{ firstname }} come to the appointment?",
-        "error": "Select yes if {{ firstname }} came to the appointment",
-        "yesLabel": "Yes",
-        "noLabel": "No"
-      },
-      "submitButtonText": "Continue"
-    }
-  },
   "/ics-feedback/:id/attendance": {
-    "pageHeader": "Record session attendance",
+    "pageHeader": "ICS attendance",
     "description": "The date and time of the session are a permanent record of where this person was. If the session started late, you must record this as part of the feedback.",
     "appointmentDetails": {
       "dateLabel": "Date",
       "startTimeLabel": "Start time"
     },
+    "attendanceForm": {
+      "happenedRadios": {
+        "id": "happened",
+        "heading": "Did the ICS happen?",
+        "hint": "The session happened if something was delivered. ",
+        "yesLabel": "Yes",
+        "noLabel": "No"
+      },
+      "submitButtonText": "Continue"
+    },
     "backLink": "/progress/{{ id }}"
+  },
+  "/ics-feedback/:id/did-attend": {
+    "appointmentDetails": {
+      "dateLabel": "Date",
+      "startTimeLabel": "Start time"
+    },
+    "attendanceForm": {
+      "didAttendRadios": {
+        "id": "didAttend",
+        "heading": "Did {{ firstname }} come to the ICS?",
+        "yesLabel": "Yes",
+        "noLabel": "No"
+      },
+      "submitButtonText": "Continue"
+    },
+    "backLink": "/ics-feedback/{{ id }}/attendance"
   },
   "/ics-feedback/:id/session-feedback": {
     "pageTitle": "Session feedback – ICS feedback – Community Support",
@@ -786,7 +792,7 @@
           {
             "text": "Did {{ firstname }} come to the appointment?",
             "hint": "Did {{ firstname }} come to the appointment",
-            "changeHref": "/ics-feedback/caseRefId/attendance"
+            "changeHref": "/ics-feedback/caseRefId/did-attend"
           },
           {
             "text": "How the session took place",
@@ -957,7 +963,7 @@
       }
     },
     "submitButtonText": "Continue",
-    "backLinkHref": "/ics-feedback/{{ id }}/attendance"
+    "backLinkHref": "/ics-feedback/{{ id }}/did-attend"
   },
   "/ics-feedback/:id/how-they-tried-to-contact-the-person": {
     "pageHeader": "How did you try to contact {{ firstname }} and what do you know about why they did not attend?",
@@ -972,7 +978,7 @@
       },
       "submitButtonText": "Continue"
     },
-    "backLink": "/ics-feedback/{{ id }}/attendance"
+    "backLink": "/ics-feedback/{{ id }}/did-attend"
   },
   "/referral/:id/ics-change-details/reason": {
     "pageHeader": "Reason for changing the session details",

@@ -7,6 +7,7 @@ import {
 } from '@community-support-api'
 import { randomUUID } from 'crypto'
 import AppointmentController from './appointmentController'
+import DidAttendPresenter from './did-attend/DidAttendPresenter'
 import ConfirmIcsPresenter, { type AdditionalInformation } from './confirm-ics/confirmIcsPresenter'
 import ScheduleIcsPresenter from './schedule-ics/scheduleIcsPresenter'
 import { saveFormToSession } from './schedule-ics/ScheduledIcsFormDataResolver'
@@ -1304,21 +1305,17 @@ describe('AppointmentController', () => {
       expect(req.flash).not.toHaveBeenCalledWith('attendedError')
       expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseRefId}/attendance`)
     })
-    test('happened selected, but attended unselected', async () => {
+    test('happened is not yes or no', async () => {
       req = {
         ...req,
         params: { caseRefId },
-        body: { happened: 'No' },
+        body: { happened: 'Maybe' },
         url: `/ics-feedback/${caseRefId}/attendance`,
       } as unknown as Request
       await appointmentController.recordIcsAppointmentAttendance(req, res)
 
-      const { formKeys } = req.session
-      expect(formKeys).toHaveLength(1)
-      expect(formKeys).toContain('attended')
-
-      expect(req.flash).not.toHaveBeenCalledWith('happenedError')
-      expect(req.flash).toHaveBeenCalledWith('attendedError', 'Select yes if {{ firstname }} came to the appointment')
+      expect(req.session.formKeys).toEqual(['happened'])
+      expect(req.flash).toHaveBeenCalledWith('happenedError', 'Select yes if the session happened')
       expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseRefId}/attendance`)
     })
     test('bad body data', async () => {
@@ -1348,42 +1345,98 @@ describe('AppointmentController', () => {
       await appointmentController.recordIcsAppointmentAttendance(req, res)
       expect(req.session.icsFeedbackSubmission).toStrictEqual({
         caseReferenceId: caseRefId,
-        record: { didPersonAttend: true, didSessionHappen: true },
+        record: { didSessionHappen: true, didPersonAttend: true },
       })
       expect(req.flash).not.toHaveBeenCalledWith('happenedError')
       expect(req.flash).not.toHaveBeenCalledWith('attendedError')
       expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseRefId}/did-session-take-place`)
     })
-    test('session did not happen but was attended', async () => {
+    test('session did not happen', async () => {
       req = {
         ...req,
         params: { caseRefId },
-        body: { happened: 'No', attended: 'Yes' },
+        body: { happened: 'No' },
         url: `/ics-feedback/${caseRefId}/attendance`,
       } as unknown as Request
       await appointmentController.recordIcsAppointmentAttendance(req, res)
       expect(req.session.icsFeedbackSubmission).toStrictEqual({
         caseReferenceId: caseRefId,
-        record: { didPersonAttend: true, didSessionHappen: false },
+        record: { didSessionHappen: false },
       })
       expect(req.flash).not.toHaveBeenCalledWith('happenedError')
-      expect(req.flash).not.toHaveBeenCalledWith('attendedError')
+      expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseRefId}/did-attend`)
+    })
+  })
+
+  describe('didAttend', () => {
+    const attendance = {
+      referralFirstName: 'Alex',
+      date: '2026-10-09',
+      time: { hour: 2, minute: 30, amPm: 'pm' },
+    }
+
+    beforeEach(() => {
+      DidAttendPresenter.prototype.renderPage = jest.fn()
+      appointmentService.getIcsFeedbackAttendance = jest.fn().mockResolvedValue(attendance)
+    })
+
+    test('renders the page with the saved session record', async () => {
+      req.session.icsFeedbackSubmission = { caseReferenceId: caseRefId, record: { didSessionHappen: false } }
+
+      await appointmentController.getDidAttend(req, res)
+
+      expect(appointmentService.getIcsFeedbackAttendance).toHaveBeenCalledWith(caseRefId, 'user1')
+      expect(DidAttendPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+    })
+
+    test('renders the page when there is no saved session record', async () => {
+      await appointmentController.getDidAttend(req, res)
+
+      expect(DidAttendPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+    })
+
+    test('nothing selected', async () => {
+      req = { ...req, body: {}, url: `/ics-feedback/${caseRefId}/did-attend` } as unknown as Request
+
+      await appointmentController.recordDidAttend(req, res)
+
+      expect(req.session.formKeys).toEqual(['didAttend'])
+      expect(req.flash).toHaveBeenCalledWith('didAttendError', 'Select yes if they came to the appointment')
+      expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseRefId}/did-attend`)
+    })
+
+    test('invalid value', async () => {
+      req = { ...req, body: { didAttend: 'Maybe' }, url: `/ics-feedback/${caseRefId}/did-attend` } as unknown as Request
+
+      await appointmentController.recordDidAttend(req, res)
+
+      expect(req.flash).toHaveBeenCalledWith('didAttendError', 'Select yes if they came to the appointment')
+      expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseRefId}/did-attend`)
+    })
+
+    test('person attended', async () => {
+      req.session.icsFeedbackSubmission = { caseReferenceId: caseRefId, record: { didSessionHappen: false } }
+      req = { ...req, body: { didAttend: 'Yes' } } as unknown as Request
+
+      await appointmentController.recordDidAttend(req, res)
+
+      expect(req.session.icsFeedbackSubmission).toStrictEqual({
+        caseReferenceId: caseRefId,
+        record: { didSessionHappen: false, didPersonAttend: true },
+      })
       expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseRefId}/why-did-the-session-not-happen`)
     })
-    test('session did not happen and was not attended', async () => {
-      req = {
-        ...req,
-        params: { caseRefId },
-        body: { happened: 'No', attended: 'No' },
-        url: `/ics-feedback/${caseRefId}/attendance`,
-      } as unknown as Request
-      await appointmentController.recordIcsAppointmentAttendance(req, res)
+
+    test('person did not attend', async () => {
+      req.session.icsFeedbackSubmission = { caseReferenceId: caseRefId, record: { didSessionHappen: false } }
+      req = { ...req, body: { didAttend: 'No' } } as unknown as Request
+
+      await appointmentController.recordDidAttend(req, res)
+
       expect(req.session.icsFeedbackSubmission).toStrictEqual({
         caseReferenceId: caseRefId,
-        record: { didPersonAttend: false, didSessionHappen: false },
+        record: { didSessionHappen: false, didPersonAttend: false },
       })
-      expect(req.flash).not.toHaveBeenCalledWith('happenedError')
-      expect(req.flash).not.toHaveBeenCalledWith('attendedError')
       expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseRefId}/how-they-tried-to-contact-the-person`)
     })
   })

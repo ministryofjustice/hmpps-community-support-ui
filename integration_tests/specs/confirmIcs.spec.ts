@@ -310,7 +310,7 @@ test.describe('Confirm ICS Page', () => {
       const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
 
       await expect(page).toHaveURL(RECORD_SESSION_ATTENDANCE_URL)
-      await expect(recordSessionAttendancePage.header).toHaveText('Record session attendance')
+      await expect(recordSessionAttendancePage.header).toHaveText('ICS attendance')
       await expect(recordSessionAttendancePage.subheading).toContainText(
         'The date and time of the session are a permanent record of where this person was.',
       )
@@ -466,7 +466,7 @@ test.describe('Confirm ICS Page', () => {
     const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
 
     await expect(page).toHaveURL(RECORD_SESSION_ATTENDANCE_URL)
-    await expect(recordSessionAttendancePage.header).toHaveText('Record session attendance')
+    await expect(recordSessionAttendancePage.header).toHaveText('ICS attendance')
     await expect(recordSessionAttendancePage.subheading).toContainText(
       'The date and time of the session are a permanent record of where this person was.',
     )

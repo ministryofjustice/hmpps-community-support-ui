@@ -1,0 +1,14 @@
+{% extends "../partials/layout.njk" %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+
+{% set pageTitle = "Record session attendance - ICS feedback - [service name]" %}
+{% set mainClasses = "govuk-body" %}
+
+{% block contentBody %}
+    <form method="post" novalidate>
+      <input type="hidden" name="_csrf" value="{{csrfToken}}">
+      {{ govukRadios(content.radioArgs) }}
+      {{ govukButton(content.buttonArgs) }}
+    </form>
+{% endblock %}
