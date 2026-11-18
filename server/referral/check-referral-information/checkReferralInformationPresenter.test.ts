@@ -338,7 +338,7 @@ describe('CheckReferralInformationPresenter', () => {
       } as CheckDraftReferralDetailsDto)
 
       const presenter = new CheckReferralInformationPresenter(draftReferralDetails)
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
 
       const { probationPractitionersDetailsSummary } = viewModel
       expect(probationPractitionersDetailsSummary?.card.title.text).toBe("Main point of contact's details")

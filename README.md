@@ -134,6 +134,31 @@ Or run tests with the UI:
 
 `npm run int-test-ui`
 
+### Creating a referral locally with Playwright
+
+`integration_tests/specs/localCreateReferral.spec.ts` drives the real referral journey through the UI (no WireMock) and submits a referral. It uses the `local` Playwright project and needs no stubs.
+
+Prerequisites:
+
+- The UI is running on `http://localhost:3000` (e.g. `npm run start-feature` or your usual local start).
+- Local auth (port 8090) and the community support API (port 8080, e.g. via `docker-compose-localapi.yml`) are running.
+- A local user with the referrer role, e.g. `bernard.beaks`.
+
+Run it, passing credentials as environment variables (don't save them in files):
+
+```
+LOCAL_USERNAME=<username> LOCAL_PASSWORD=<password> npx playwright test --project=local
+```
+
+Optional environment variables:
+
+- `LOCAL_CRN` - the CRN to refer (default `X320741`)
+- `LOCAL_UI_URL` - the UI base URL (default `http://localhost:3000`)
+
+If `LOCAL_USERNAME` or `LOCAL_PASSWORD` is missing, the test is skipped. Each run creates a new referral in your local API.
+
+The `local` project runs headed, so a Chrome window opens and you can watch the journey. When the referral is submitted, the reference number is printed in the terminal (e.g. `Referral submitted. Reference number: VX6320HU`) and also attached to the test report as a `reference-number` annotation. The HTML report is written to `test_results/playwright/report`; open it with `npx playwright show-report test_results/playwright/report`.
+
 ### Slack channel for pipeline security notifications
 
 Ths channel should be specific to your team and is for daily / weekly security scanning job results. It is your team's
@@ -145,29 +170,26 @@ configured by setting GitHub actions environment variable called `SECURITY_ALERT
 
 A changelog for the service is available [in this document.](./CHANGELOG.md)
 
-## Content Middleware
+## Page content
 
-A content middleware is setup to inject content from the content file in ./assets/content/content.json where the request
-path or subpath matches a defined path in the content file. i.e a request to the path /home/help would inject content from both "/home" and "/home/help"
-
-Where the path includes a path param such as a UUID or Case Reference the content middleware will strip this to find the
-relevant match and maintain consistency between the defined express route. This means that all requests whether generating by the service
-or added via integration tests must use params that match the format of the intended param and not a random string otherwise the content middleware
-will not parse this correctly and will fail.
+Static content lives in [content.json](./assets/content/content.json). Presenters select their page's entry from
+`this.buildStaticContent()`, with content types inferred using `GlobalContent['/page/path']`.
+Shared content must be selected explicitly; it is not inherited from the request path or attached to `res.locals`.
+Pass dynamic values such as navigation overrides to the presenter rather than mutating the shared content.
 
 ## Generating API Types
 
-Is your API located in `../hmpps-community-support-api` relative to this UI project? 
+Is your API located in `../hmpps-community-support-api` relative to this UI project?
 
 ```sh
 # If your'e on `main` this will also check you out on a no-ticket branch & commit the types file
 $ make types-local
 ```
 
-Is it somewhere else?  
+Is it somewhere else?
 
 ```sh
-# Before you begin: Start your API in IntelliJ 
+# Before you begin: Start your API in IntelliJ
 $ ./script/generateApiTypes/communitySupportApiTypes --local
 ```
 
@@ -189,4 +211,3 @@ You can also run the script without the `--local` flag to generate types against
 ```sh
 $ ./script/generateApiTypes/communitySupportApiTypes
 ```
-

@@ -127,16 +127,15 @@ class ActionPlanController {
     res: Response,
     isCheckAnswersEdit: boolean,
     isEndDateUpdate = false,
-  ): Promise<boolean> {
+  ): Promise<{ isEdit: boolean; backLink?: string }> {
     const { id: caseReference } = req.params as { id: string }
     const summary = await this.referralService.getActionPlanSummary(caseReference, res.locals.user.username)
-    if (!summary.isSubmitted) return isCheckAnswersEdit
+    if (!summary.isSubmitted) return { isEdit: isCheckAnswersEdit }
 
     const backLink = isEndDateUpdate
       ? `/referral/${caseReference}/action-plan/change-service-end-date-check`
       : `/referral/${caseReference}/service-delivery`
-    res.locals.content = { ...res.locals.content, backLink, editBackLink: backLink }
-    return true
+    return { isEdit: true, backLink }
   }
 
   private async persistSubmittedServiceDelivery(
@@ -447,13 +446,8 @@ class ActionPlanController {
     const activity = Number.isInteger(activityIndex) ? activities[activityIndex] : undefined
     const flashData = req.flash('value')
     const userInputData = flashData.length > 0 ? (JSON.parse(flashData[0]) as Record<string, string>) : undefined
-    if (activities.length === 0) {
-      const destination = (selectedNeed?.outcomes?.length ?? 0) > 1 ? 'select-an-outcome' : 'select-a-need'
-      res.locals.content = {
-        ...res.locals.content,
-        backLink: `/referral/{{ caseReference }}/action-plan/${destination}`,
-      }
-    }
+    const destination = (selectedNeed?.outcomes?.length ?? 0) > 1 ? 'select-an-outcome' : 'select-a-need'
+    const backLink = activities.length === 0 ? `/referral/${caseReference}/action-plan/${destination}` : undefined
 
     const presenter = new ActionPlanAddActivityPresenter(
       caseReference,
@@ -462,6 +456,7 @@ class ActionPlanController {
       activity,
       activity ? activityIndex : undefined,
       userInputData,
+      backLink,
     )
 
     return presenter.renderPage(res)
@@ -599,7 +594,7 @@ class ActionPlanController {
   async showSessionDeliveryDetailsPage(req: Request, res: Response, isCheckAnswersEdit = false) {
     const { id: caseReference } = req.params as { id: string }
     const { username } = res.locals.user
-    const isEdit = await this.prepareServiceDeliveryEdit(req, res, isCheckAnswersEdit)
+    const { isEdit, backLink } = await this.prepareServiceDeliveryEdit(req, res, isCheckAnswersEdit)
 
     const sessionDeliveryDetails = await this.referralService.getSessionDeliveryDetails(caseReference, username)
     const userInputData = this.getFlashedFormValues(req)
@@ -611,6 +606,7 @@ class ActionPlanController {
       validationErrors,
       userInputData,
       isEdit,
+      backLink,
     )
 
     return presenter.renderPage(res)
@@ -642,7 +638,7 @@ class ActionPlanController {
   async showRisksAndAdjustmentsPage(req: Request, res: Response, isCheckAnswersEdit = false) {
     const { id: caseReference } = req.params as { id: string }
     const { username } = res.locals.user
-    const isEdit = await this.prepareServiceDeliveryEdit(req, res, isCheckAnswersEdit)
+    const { isEdit, backLink } = await this.prepareServiceDeliveryEdit(req, res, isCheckAnswersEdit)
 
     const sessionDeliveryDetails = await this.referralService.getRisksAndAdjustments(caseReference, username)
     const userInputData = this.getFlashedFormValues(req)
@@ -655,6 +651,7 @@ class ActionPlanController {
       validationErrors,
       userInputData,
       isEdit,
+      backLink,
     )
 
     return presenter.renderPage(res)
@@ -694,7 +691,7 @@ class ActionPlanController {
   async showServiceEndDateCheckPage(req: Request, res: Response, isCheckAnswersEdit = false) {
     const { id: caseReference } = req.params as { id: string }
     const { username } = res.locals.user
-    const isEdit = await this.prepareServiceDeliveryEdit(req, res, isCheckAnswersEdit)
+    const { isEdit, backLink } = await this.prepareServiceDeliveryEdit(req, res, isCheckAnswersEdit)
 
     const sessionDeliveryDetails = await this.referralService.getServiceEndDateCheck(caseReference, username)
     const userInputData = this.getFlashedFormValues(req)
@@ -706,6 +703,7 @@ class ActionPlanController {
       validationErrors,
       userInputData,
       isEdit,
+      backLink,
     )
     return presenter.renderPage(res)
   }
@@ -746,7 +744,7 @@ class ActionPlanController {
   async showUpdateServiceEndDatePage(req: Request, res: Response, isCheckAnswersEdit = false) {
     const { id: caseReference } = req.params as { id: string }
     const { username } = res.locals.user
-    const isEdit = await this.prepareServiceDeliveryEdit(req, res, isCheckAnswersEdit, true)
+    const { isEdit, backLink } = await this.prepareServiceDeliveryEdit(req, res, isCheckAnswersEdit, true)
 
     const sessionDeliveryDetails = await this.referralService.getUpdateServiceEndDate(caseReference, username)
     const userInputData = this.getFlashedFormValues(req)
@@ -758,6 +756,7 @@ class ActionPlanController {
       validationErrors,
       userInputData,
       isEdit,
+      backLink,
     )
     return presenter.renderPage(res)
   }
@@ -865,7 +864,7 @@ class ActionPlanController {
   async showUserInvolvementPage(req: Request, res: Response, isCheckAnswersEdit = false) {
     const { id: caseReference } = req.params as { id: string }
     const { username } = res.locals.user
-    const isEdit = await this.prepareServiceDeliveryEdit(req, res, isCheckAnswersEdit)
+    const { isEdit, backLink } = await this.prepareServiceDeliveryEdit(req, res, isCheckAnswersEdit)
 
     const sessionDeliveryDetails = await this.referralService.getPersonInvolvement(caseReference, username)
     const userInputData = this.getFlashedFormValues(req)
@@ -877,6 +876,7 @@ class ActionPlanController {
       validationErrors,
       userInputData,
       isEdit,
+      backLink,
     )
     return presenter.renderPage(res)
   }

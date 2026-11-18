@@ -114,6 +114,24 @@ describe('ActionPlanSessionDeliveryDetailsPresenter', () => {
     expect(content.submitButton).toEqual({ text: 'Continue' })
   })
 
+  it.each([false, true])('uses an explicit back link in edit mode %s without middleware content', isEdit => {
+    const res = { render: jest.fn() } as unknown as Response
+    const backLink = '/referral/AB1234CD/service-delivery'
+    new ActionPlanSessionDeliveryDetailsPresenter(
+      'AB1234CD',
+      sessionDeliveryDetails,
+      undefined,
+      undefined,
+      isEdit,
+      backLink,
+    ).renderPage(res)
+
+    expect(res.render).toHaveBeenCalledWith(
+      'referral/actionPlanSessionDeliveryDetails',
+      expect.objectContaining({ content: expect.objectContaining({ backLink: { href: backLink } }) }),
+    )
+  })
+
   it('builds the frequency textarea from the TEXTAREA question', () => {
     const content = renderAndGetContent('AB1234CD', sessionDeliveryDetails)
 

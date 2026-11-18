@@ -1,11 +1,7 @@
-import { Response } from 'express'
 import { CommunitySupportRiskDto } from '@community-support-api'
 import EditRiskSummaryPresenter from './EditRiskSummaryPresenter'
-import loadContentDataForTest from '../../testutils/loadContentDataForTest'
 
 jest.useFakeTimers().setSystemTime(new Date('2026-07-15'))
-
-const content = loadContentDataForTest('/referral/task-list/edit-risk-summary')
 
 describe('EditRiskSummaryPresenter', () => {
   const risk: CommunitySupportRiskDto = {
@@ -68,15 +64,9 @@ describe('EditRiskSummaryPresenter', () => {
     },
   }
 
-  const res = {
-    locals: {
-      content,
-    },
-  } as unknown as Response
-
   test('builds correct view model', () => {
     const presenter = new EditRiskSummaryPresenter(risk)
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
     expect(viewModel.pageTitle).toBe('Change OASys risk information')
     expect(viewModel.backLink.href).toBe('/referral/task-list/view-risk-summary')
     expect(viewModel.heading).toBe('Alex River')
@@ -135,7 +125,7 @@ describe('EditRiskSummaryPresenter', () => {
       summary: null,
     })
 
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
 
     expect(viewModel.lastUpdatedInset.text).toBe('Last updated (OASys): Not available')
     const [whoIsAtRisk, , , selfHarm, , , , additional] = viewModel.textareas

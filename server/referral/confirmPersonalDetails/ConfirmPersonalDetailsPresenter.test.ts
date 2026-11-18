@@ -1,11 +1,8 @@
-import { Response } from 'express'
 import { ConfirmPersonDetailsBffDto } from '@community-support-api'
 import ConfirmPersonalDetailsPresenter from './ConfirmPersonalDetailsPresenter'
-import loadContentDataForTest from '../../testutils/loadContentDataForTest'
 
 jest.useFakeTimers().setSystemTime(new Date('2026-07-03'))
 
-const content = loadContentDataForTest('/referral/task-list/confirm-personal-details')
 const singleLineHtml = (str: string) => str.replaceAll(/>\s+/g, '>').replaceAll(/\s+</g, '<')
 
 describe('ConfirmPersonalDetailsPresenter', () => {
@@ -49,15 +46,9 @@ describe('ConfirmPersonalDetailsPresenter', () => {
     },
   }
 
-  const res = {
-    locals: {
-      content,
-    },
-  } as unknown as Response
-
   test('builds correct view model', () => {
     const presenter = new ConfirmPersonalDetailsPresenter(data)
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
     expect(viewModel.pageTitle).toBe('Confirm personal details - Make a referral')
     expect(viewModel.backLink.href).toBe('/referral/task-list')
     expect(viewModel.heading).toBe('Charlie Robert Smith')
@@ -142,7 +133,7 @@ describe('ConfirmPersonalDetailsPresenter', () => {
       },
     })
 
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
     const [, , , addressRow] = viewModel.contact.rows
 
     expect(singleLineHtml(addressRow.key.html)).toBe(
@@ -165,7 +156,7 @@ describe('ConfirmPersonalDetailsPresenter', () => {
       },
     })
 
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
     const [, , , addressRow] = viewModel.contact.rows
 
     expect(singleLineHtml(addressRow.value.html)).toBe(
@@ -186,7 +177,7 @@ describe('ConfirmPersonalDetailsPresenter', () => {
       },
     })
 
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
     const [, , , addressRow] = viewModel.contact.rows
 
     expect(singleLineHtml(addressRow.value.html)).toContain(
@@ -206,7 +197,7 @@ describe('ConfirmPersonalDetailsPresenter', () => {
       },
     })
 
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
     const [, , , , , circumstancesRow] = viewModel.personal.rows
 
     expect(circumstancesRow.value.text).toBe('Not available')
@@ -224,7 +215,7 @@ describe('ConfirmPersonalDetailsPresenter', () => {
       },
     })
 
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
     const [, , , , , , disabilitiesRow] = viewModel.personal.rows
 
     expect(disabilitiesRow.value.text).toBe('Not available')
@@ -242,7 +233,7 @@ describe('ConfirmPersonalDetailsPresenter', () => {
       },
     })
 
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
     const [, , , , , , disabilitiesRow] = viewModel.personal.rows
 
     expect(disabilitiesRow.value.text).toBe('None')

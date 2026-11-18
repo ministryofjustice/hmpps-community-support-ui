@@ -86,7 +86,7 @@ describe('IssuesOrConcernsPresenter', () => {
     it('sets the form action and textarea attributes', () => {
       const presenter = new IssuesOrConcernsPresenter(caseRefId, firstName)
 
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
 
       expect(viewModel.submitHref).toBe(`/ics-feedback/${caseRefId}/issues-or-concerns`)
       expect(viewModel.issuesOrConcerns).toMatchObject({

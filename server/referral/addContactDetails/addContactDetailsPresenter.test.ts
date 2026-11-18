@@ -1,8 +1,8 @@
-import { Response } from 'express'
 import { GovukFrontendErrorSummaryErrorListElement } from '@govuk-frontend'
 import { PDU, Person, ProbationOffice } from '@community-support-api'
 import AddContactDetailsPresenter from './addContactDetailsPresenter'
 import { ErrorMiddlewareErrors } from '../../@types/express'
+import { globalContent } from '../../../assets/content/GlobalContent'
 
 const personalDetails: Person = {
   firstName: 'Alex',
@@ -34,29 +34,6 @@ const pdus: PDU[] = [
   { id: 'pdu-2', name: 'Manchester PDU' },
 ]
 
-const content = {
-  buttonText: 'Save and continue',
-  backLinkText: 'Back',
-  backLinkHref: '/referral/task-list',
-  ppBackLinkHref: '/referral/new/find-a-person?fromPP=true',
-  heading: 'Add contact details for {{ personName }}',
-  pageCaption: 'CRN: {{ CRN }} | Date of birth: {{ DOB }}',
-  subHeading: 'Contact information',
-  nameInputLabel: 'Name',
-  emailAddressInputLabel: 'Email address',
-  jobRoleInputLabel: 'Job role',
-  phoneNumberInputLabel: 'Phone number',
-  pduInputLabel: 'PDU',
-  probationOfficeInputLabel: 'Probation office',
-  teamPhoneNumberInputLabel: 'Team phone number',
-  hintText: 'Select an option',
-  insetText: 'This information will be used to contact the probation team',
-}
-
-const res = {
-  locals: { content },
-} as unknown as Response
-
 const validationErrors: ErrorMiddlewareErrors = {
   list: <GovukFrontendErrorSummaryErrorListElement[]>[
     { href: '#name', text: 'Enter a name' },
@@ -72,13 +49,13 @@ describe('AddContactDetailsPresenter', () => {
   describe('heading and pageCaption', () => {
     it('builds heading from person name', () => {
       const presenter = new AddContactDetailsPresenter(personalDetails, probationOffices, pdus)
-      const viewModel = presenter.buildViewModel(res)
-      expect(viewModel.heading).toBe('Add contact details for Alex River')
+      const viewModel = presenter.buildViewModel()
+      expect(viewModel.heading).toBe('Alex River')
     })
 
     it('builds pageCaption from CRN and date of birth', () => {
       const presenter = new AddContactDetailsPresenter(personalDetails, probationOffices, pdus)
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
       expect(viewModel.pageCaption).toBe('CRN: X123456 | Date of birth: 20 Feb 1975 (51 years old)')
     })
   })
@@ -86,21 +63,24 @@ describe('AddContactDetailsPresenter', () => {
   describe('back link', () => {
     it('builds back link from content', () => {
       const presenter = new AddContactDetailsPresenter(personalDetails, probationOffices, pdus)
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
       expect(viewModel.backLinkArgs).toEqual({ text: 'Back', href: '/referral/task-list' })
     })
 
     it('builds back link with the PP href when isFromPP is true', () => {
       const presenter = new AddContactDetailsPresenter(personalDetails, probationOffices, pdus, true)
-      const viewModel = presenter.buildViewModel(res)
-      expect(viewModel.backLinkArgs).toEqual({ text: 'Back', href: '/referral/new/find-a-person?fromPP=true' })
+      const viewModel = presenter.buildViewModel()
+      expect(viewModel.backLinkArgs).toEqual({
+        text: 'Back',
+        href: globalContent['/referral/new/add-contact-details'].ppBackLinkHref,
+      })
     })
   })
 
   describe('button', () => {
     it('builds button with preventDoubleClick enabled', () => {
       const presenter = new AddContactDetailsPresenter(personalDetails, probationOffices, pdus)
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
       expect(viewModel.buttonArgs).toEqual({ text: 'Save and continue', preventDoubleClick: true })
     })
   })
@@ -235,7 +215,7 @@ describe('AddContactDetailsPresenter', () => {
   describe('buildViewModel', () => {
     it('builds complete view model with all fields', () => {
       const presenter = new AddContactDetailsPresenter(personalDetails, probationOffices, pdus)
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
       expect(viewModel).toHaveProperty('heading')
       expect(viewModel).toHaveProperty('pageCaption')
       expect(viewModel).toHaveProperty('backLinkArgs')
@@ -253,9 +233,9 @@ describe('AddContactDetailsPresenter', () => {
 
     it('passes static content through to view model', () => {
       const presenter = new AddContactDetailsPresenter(personalDetails, probationOffices, pdus)
-      const viewModel = presenter.buildViewModel(res)
-      expect(viewModel.subHeading).toBe('Contact information')
-      expect(viewModel.insetText).toBe('This information will be used to contact the probation team')
+      const viewModel = presenter.buildViewModel()
+      expect(viewModel.subHeading).toBe(globalContent['/referral/new/add-contact-details'].subHeading)
+      expect(viewModel.insetText).toBe(globalContent['/referral/new/add-contact-details'].insetText)
     })
   })
 

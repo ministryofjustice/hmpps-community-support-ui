@@ -1,4 +1,3 @@
-import type { Response } from 'express'
 import type { GovukFrontendButton, GovukFrontendTable } from '@govuk-frontend'
 import type { ReferralAppointmentsBffResponseDto } from '@community-support-api'
 import { formatDate } from 'date-fns'
@@ -17,10 +16,7 @@ const statusTagClasses: Record<string, string> = {
   DID_NOT_HAPPEN: 'govuk-tag--magenta',
 }
 
-export default class ReferralAppointmentsPresenter extends ReferralLayoutPresenter<
-  ReferralAppointmentsViewModel,
-  ReferralAppointmentsContent
-> {
+export default class ReferralAppointmentsPresenter extends ReferralLayoutPresenter<ReferralAppointmentsViewModel> {
   constructor(
     private readonly referralAppointments: ReferralAppointmentsBffResponseDto,
     private readonly caseReference: string,
@@ -33,8 +29,8 @@ export default class ReferralAppointmentsPresenter extends ReferralLayoutPresent
     return 'referral/appointments'
   }
 
-  buildViewModel(res: Response): ReferralAppointmentsViewModel {
-    const content = this.buildStaticContent(res)
+  buildViewModel(): ReferralAppointmentsViewModel {
+    const content = this.buildStaticContent()['/referral/:id/appointments']
     const { firstName, lastName } = this.referralAppointments.personDetails
     const { upcomingAppointments, pastAppointments } = this.referralAppointments
     let notificationBanner: { title: string; message?: string } | undefined

@@ -1,10 +1,7 @@
-import { Response } from 'express'
 import { ServiceDaysPageDto } from '@community-support-api'
 import ServiceDaysPagePresenter from './ServiceDaysPagePresenter'
 import { ErrorMiddlewareErrors } from '../../@types/express'
-import loadContentDataForTest from '../../testutils/loadContentDataForTest'
 
-const content = loadContentDataForTest('/referral/task-list/service-days')
 const pageContent = {
   pageTitle: 'How many days will you use for this service?',
   h2: 'How many days will you use for this service?',
@@ -20,19 +17,13 @@ const errorMessage = {
 
 describe('ServiceDaysPagePresenter', () => {
   describe('buildViewModel', () => {
-    const res = {
-      locals: {
-        content,
-      },
-    } as unknown as Response
-
     const noErrors: ErrorMiddlewareErrors = { list: [], messages: {} }
 
     test('builds view model from DTO when no form data is provided', () => {
       const dto: ServiceDaysPageDto = { service_days: 20 }
 
       const presenter = new ServiceDaysPagePresenter(dto, noErrors)
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
 
       expect(viewModel.pageTitle).toBe(pageContent.pageTitle)
       expect(viewModel.pageHeader).toBe(pageContent.h2)
@@ -48,7 +39,7 @@ describe('ServiceDaysPagePresenter', () => {
       const dto: ServiceDaysPageDto = { service_days: 20 }
 
       const presenter = new ServiceDaysPagePresenter(dto, noErrors, { serviceDays: '35' })
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
 
       expect(viewModel.input.value).toBe('35')
     })
@@ -57,7 +48,7 @@ describe('ServiceDaysPagePresenter', () => {
       const dto: ServiceDaysPageDto = {}
 
       const presenter = new ServiceDaysPagePresenter(dto, noErrors, undefined)
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
 
       expect(viewModel.input.value).toBe('')
     })
@@ -66,7 +57,7 @@ describe('ServiceDaysPagePresenter', () => {
       const dto: ServiceDaysPageDto = {}
 
       const presenter = new ServiceDaysPagePresenter(dto, noErrors, {})
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
 
       expect(viewModel.input.value).toBe('')
     })
@@ -79,7 +70,7 @@ describe('ServiceDaysPagePresenter', () => {
       }
 
       const presenter = new ServiceDaysPagePresenter(dto, validationErrors)
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
 
       expect(viewModel.input.errorMessage).toEqual({ text: errorMessage.nothingEntered })
     })

@@ -1,28 +1,8 @@
-import type { Response } from 'express'
 import type { ReferralAppointmentsBffResponseDto } from '@community-support-api'
 import ReferralAppointmentsPresenter from './referralAppointmentsPresenter'
-import type { ReferralAppointmentsContent } from './referralAppointmentsViewModel'
-import { globalContent } from '../../../assets/content/GlobalContent'
 
 describe('ReferralAppointmentsPresenter', () => {
   const caseReference = 'AB1234CD'
-  const content: ReferralAppointmentsContent = {
-    ...globalContent['/referral/:id/appointments'],
-    pageHeader: 'Referral for',
-    appointmentsTitle: 'Appointments',
-    appointmentTypeColumnHeader: 'Appointment type',
-    dateColumnHeader: 'Date',
-    timeColumnHeader: 'Start time',
-    statusColumnHeader: 'Status',
-    actionColumnHeader: 'Action',
-    noAppointmentsMessage: 'No appointments scheduled',
-    noUpcomingAppointmentsMessage: 'No upcoming appointments',
-    noPastAppointmentsMessage: 'No past appointments',
-    bookAppointmentText: 'Book appointment',
-    bookAppointmentHref: '/referral/{{ id }}/create-an-appointment/appointment-type',
-    upcomingAppointmentsTitle: 'Upcoming appointments',
-    pastAppointmentsTitle: 'Past appointments',
-  }
 
   const scheduledCells = [
     {
@@ -35,8 +15,6 @@ describe('ReferralAppointmentsPresenter', () => {
       attributes: { 'data-sort-value': 'Scheduled' },
     },
   ]
-
-  const makeResponse = () => ({ locals: { content } }) as unknown as Response
 
   it('renders appointments and activates the appointments tab', () => {
     const response: ReferralAppointmentsBffResponseDto = {
@@ -61,7 +39,7 @@ describe('ReferralAppointmentsPresenter', () => {
       ],
     }
 
-    const viewModel = new ReferralAppointmentsPresenter(response, caseReference).buildViewModel(makeResponse())
+    const viewModel = new ReferralAppointmentsPresenter(response, caseReference).buildViewModel()
 
     expect(viewModel.pageHeader).toBe('Referral for Alex Example')
     expect(viewModel.hasAppointments).toBe(true)
@@ -148,7 +126,7 @@ describe('ReferralAppointmentsPresenter', () => {
       pastAppointments: [],
     }
 
-    const viewModel = new ReferralAppointmentsPresenter(response, caseReference).buildViewModel(makeResponse())
+    const viewModel = new ReferralAppointmentsPresenter(response, caseReference).buildViewModel()
 
     expect(viewModel.upcomingAppointmentsTable.rows).toEqual([
       [
@@ -182,8 +160,8 @@ describe('ReferralAppointmentsPresenter', () => {
       pastAppointments: [],
     } as ReferralAppointmentsBffResponseDto
 
-    const [row] = new ReferralAppointmentsPresenter(response, caseReference).buildViewModel(makeResponse())
-      .upcomingAppointmentsTable.rows
+    const [row] = new ReferralAppointmentsPresenter(response, caseReference).buildViewModel().upcomingAppointmentsTable
+      .rows
 
     expect(row[3]).toEqual({
       html: `<strong class="govuk-tag ${tagClass}">${text}</strong>`,
@@ -215,7 +193,7 @@ describe('ReferralAppointmentsPresenter', () => {
             ],
           },
           caseReference,
-        ).buildViewModel(makeResponse()).pastAppointmentsTable.rows
+        ).buildViewModel().pastAppointmentsTable.rows
 
       expect(buildRows('Initial contact session')[0][4]).toMatchObject({
         html: '<a href="#">Reschedule</a><br> <a href="#">View feedback</a>',
@@ -242,7 +220,7 @@ describe('ReferralAppointmentsPresenter', () => {
         ],
       }
 
-      const viewModel = new ReferralAppointmentsPresenter(response, caseReference).buildViewModel(makeResponse())
+      const viewModel = new ReferralAppointmentsPresenter(response, caseReference).buildViewModel()
 
       expect(viewModel.hasAppointments).toBe(true)
       expect(viewModel.hasUpcomingAppointments).toBe(appointmentList === 'upcomingAppointments')
@@ -261,7 +239,7 @@ describe('ReferralAppointmentsPresenter', () => {
       pastAppointments: [],
     }
 
-    const viewModel = new ReferralAppointmentsPresenter(response, caseReference).buildViewModel(makeResponse())
+    const viewModel = new ReferralAppointmentsPresenter(response, caseReference).buildViewModel()
 
     expect(viewModel.hasAppointments).toBe(false)
     expect(viewModel.hasUpcomingAppointments).toBe(false)
@@ -287,9 +265,7 @@ describe('ReferralAppointmentsPresenter', () => {
       message: 'Contact session booked for 09 October 2026 at 2:30pm',
     }
 
-    const viewModel = new ReferralAppointmentsPresenter(response, caseReference, successAlert).buildViewModel(
-      makeResponse(),
-    )
+    const viewModel = new ReferralAppointmentsPresenter(response, caseReference, successAlert).buildViewModel()
 
     expect(viewModel.notificationBanner).toEqual({
       variant: 'success',
@@ -309,7 +285,7 @@ describe('ReferralAppointmentsPresenter', () => {
 
     const viewModel = new ReferralAppointmentsPresenter(response, caseReference, {
       type: 'ICS_FEEDBACK',
-    }).buildViewModel(makeResponse())
+    }).buildViewModel()
 
     expect(viewModel.notificationBanner).toEqual({
       variant: 'success',
@@ -327,7 +303,7 @@ describe('ReferralAppointmentsPresenter', () => {
       pastAppointments: [],
     }
 
-    const viewModel = new ReferralAppointmentsPresenter(response, caseReference).buildViewModel(makeResponse())
+    const viewModel = new ReferralAppointmentsPresenter(response, caseReference).buildViewModel()
 
     expect(viewModel.notificationBanner).toBeUndefined()
   })
