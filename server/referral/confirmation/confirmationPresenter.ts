@@ -2,19 +2,16 @@ import { Referral } from '@community-support-api'
 import { Response } from 'express'
 import { GovukFrontendPanel } from '@govuk-frontend'
 import PresenterBase from '../../presenter/presenterBase'
-import { ReferralConfirmationContent, ReferralConfirmationViewModel } from './confirmationViewModel'
+import { ReferralConfirmationViewModel } from './confirmationViewModel'
 import ViewUtils from '../../utils/viewUtils'
 
-export default class ConfirmationPresenter extends PresenterBase<
-  ReferralConfirmationViewModel,
-  ReferralConfirmationContent
-> {
+export default class ConfirmationPresenter extends PresenterBase<ReferralConfirmationViewModel> {
   constructor(private readonly referral: Referral) {
     super()
   }
 
-  buildViewModel(res: Response): ReferralConfirmationViewModel {
-    const content = this.buildStaticContent(res)
+  buildViewModel(): ReferralConfirmationViewModel {
+    const content = this.buildStaticContent()['/referral/:id/confirmation']
     const viewModel = {} as ReferralConfirmationViewModel
     viewModel.staticContent = content
     viewModel.startNewReferralLink = content.startNewReferralLink
@@ -37,6 +34,6 @@ export default class ConfirmationPresenter extends PresenterBase<
   }
 
   renderPage(res: Response): void {
-    return res.render(this.getTemplatePath(), this.buildViewModel(res))
+    return res.render(this.getTemplatePath(), this.buildViewModel())
   }
 }

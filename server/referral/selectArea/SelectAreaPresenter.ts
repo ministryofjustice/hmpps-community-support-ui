@@ -1,4 +1,3 @@
-import { Response } from 'express'
 import { CommunitySupportServicesProvider, Person } from '@community-support-api'
 import {
   GovukFrontendBackLink,
@@ -11,9 +10,9 @@ import { ErrorMiddlewareErrors } from '../../@types/express'
 import { SelectAreaContent, SelectAreaViewModel } from './SelectAreaViewModel'
 import formatFullName from '../../utils/presenterFormatters'
 
-export default class SelectAreaPresenter extends PresenterBase<SelectAreaViewModel, SelectAreaContent> {
-  buildViewModel(res: Response) {
-    const content = this.buildStaticContent(res)
+export default class SelectAreaPresenter extends PresenterBase<SelectAreaViewModel> {
+  buildViewModel() {
+    const content = this.buildStaticContent()['/referral/task-list/select-an-area-for-referral']
     return {
       pageTitle: content.pageTitle,
       heading: content.heading.replace(

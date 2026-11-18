@@ -1,4 +1,3 @@
-import { Response } from 'express'
 import {
   GovukFrontendBackLink,
   GovukFrontendButton,
@@ -27,10 +26,7 @@ import { components } from '../../@types/communitySupportApi/imported'
 import { escapeHtml } from '../../utils/utils'
 import { ErrorMiddlewareErrors } from '../../@types/express'
 
-export default class RecordSessionDetailsPresenter extends PresenterBase<
-  RecordSessionDetailsViewModel,
-  RecordSessionDetailsContent
-> {
+export default class RecordSessionDetailsPresenter extends PresenterBase<RecordSessionDetailsViewModel> {
   constructor(
     private readonly caseRefId: string,
     private readonly data: RecordSessionAttendancePresenterData,
@@ -178,8 +174,8 @@ export default class RecordSessionDetailsPresenter extends PresenterBase<
     }
   }
 
-  buildViewModel(res: Response): RecordSessionDetailsViewModel {
-    const content: RecordSessionDetailsContent = this.buildStaticContent(res)
+  buildViewModel(): RecordSessionDetailsViewModel {
+    const content: RecordSessionDetailsContent = this.buildStaticContent()['/ics-feedback/:id/session-details']
     const formData: RecordSessionDetailsFormData = this.session
       ? {
           wasPersonLate: this.session.wasPersonLate,

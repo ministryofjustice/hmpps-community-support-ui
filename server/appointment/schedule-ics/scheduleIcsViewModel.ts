@@ -1,5 +1,6 @@
 import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendRadios } from '@govuk-frontend'
 import { MojDatePicker } from '@moj-frontend'
+import { GlobalContent } from '../../../assets/content/GlobalContent'
 import { ComponentsTimeInput } from '../../@types/components'
 import {
   GovukFrontendCheckboxesWithConditional,
@@ -44,54 +45,6 @@ export interface ScheduleIcsViewModel {
   howWasTheyInformedAboutTheSessionInput: GovukFrontendCheckboxesWithConditional | undefined
 }
 
-export interface LabelAndHint {
-  label: string
-  hint: string
-}
-
-export interface ListItem {
-  text: string
-  label: string
-}
-
-export interface RadioItems {
-  radioItems: {
-    phone: ListItem
-    video: ListItem
-    prison: ListItem
-    probation: ListItem
-    inPerson?: { text: string }
-    somewhereElse: {
-      text: string
-      addressLabels: {
-        address1: string
-        address2: string
-        townOrCity: string
-        county: string
-        postcode: string
-      }
-    }
-  }
-}
-
-export interface SelectionItems {
-  selectionItems: {
-    phone: string
-    text: string
-    email: string
-    other: ListItem
-  }
-}
-
-export interface ScheduleIcsContent {
-  pageHeader: string
-  pageHeaders?: Record<string, string>
-  meetAtTheGate?: { label: string; yes: string; no: string }
-  date: LabelAndHint
-  time: LabelAndHint & { AMorPM: string; hourLabel?: string; minuteLabel?: string }
-  howSessionTakePlace: LabelAndHint & RadioItems & { groupHeadings?: { inPerson: string; remote: string } }
-  informed: LabelAndHint & SelectionItems
-  submitButtonText: string
-  submitHref: string
-  backLink: string
-}
+export type ScheduleIcsContent =
+  | GlobalContent['/referral/:id/create-an-appointment/appointment-details']
+  | GlobalContent['/referral/:id/appointment/schedule-ics']

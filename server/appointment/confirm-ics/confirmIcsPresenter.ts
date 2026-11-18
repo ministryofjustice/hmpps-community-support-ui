@@ -1,8 +1,7 @@
 import { CreateAppointmentRequest, ChangeAppointmentDetails } from '@community-support-api'
 import { GovukFrontendNotificationBanner, GovukFrontendSummaryList, GovukFrontendSummaryListRow } from '@govuk-frontend'
-import { Response } from 'express'
 import PresenterBase from '../../presenter/presenterBase'
-import { ConfirmIcsContent, ConfirmIcsViewModel } from './confirmIcsViewModel'
+import { ConfirmIcsViewModel } from './confirmIcsViewModel'
 import { buildIcsSummaryRows, formatAddress } from '../icsDetailsSummaryBuilder'
 import { getChangeRequesterLabel } from '../change-ics-details-reason/ChangeAppointmentDetails'
 import { formatIsoDateOrNull } from '../../utils/dateFormat'
@@ -18,7 +17,7 @@ export type AdditionalInformation = {
   changeReasonHref?: string
 }
 
-export default class ConfirmIcsPresenter extends PresenterBase<ConfirmIcsViewModel, ConfirmIcsContent> {
+export default class ConfirmIcsPresenter extends PresenterBase<ConfirmIcsViewModel> {
   constructor(
     private readonly createAppointmentRequest: CreateAppointmentRequest,
     private readonly additionalInformation: AdditionalInformation,
@@ -27,9 +26,14 @@ export default class ConfirmIcsPresenter extends PresenterBase<ConfirmIcsViewMod
     super()
   }
 
-  buildViewModel(res: Response): ConfirmIcsViewModel {
+  buildViewModel(): ConfirmIcsViewModel {
     const viewModel = {} as ConfirmIcsViewModel
-    const content = this.buildStaticContent(res)
+    const content =
+      this.buildStaticContent()[
+        this.changeAppointmentDetails
+          ? '/referral/:id/ics-change-details/check-answers'
+          : '/referral/:id/appointment/confirm-ics'
+      ]
     viewModel.pageHeader = content.pageHeader
     viewModel.submitButtonText = content.submitButtonText
     viewModel.submitHref = this.additionalInformation.submitHref

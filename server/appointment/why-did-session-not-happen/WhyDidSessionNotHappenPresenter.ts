@@ -1,4 +1,3 @@
-import { Response } from 'express'
 import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendTextarea } from '@govuk-frontend'
 import PresenterBase from '../../presenter/presenterBase'
 import {
@@ -16,10 +15,7 @@ import {
   GovukFrontendRadiosWithConditional,
 } from '../../@types/govukFrontend/derived'
 
-export default class WhyDidSessionNotHappenPresenter extends PresenterBase<
-  WhyDidSessionNotHappenViewModel,
-  WhyDidSessionNotHappenContent
-> {
+export default class WhyDidSessionNotHappenPresenter extends PresenterBase<WhyDidSessionNotHappenViewModel> {
   constructor(
     private readonly caseRefId: string,
     private readonly referralFirstName: string,
@@ -114,8 +110,9 @@ export default class WhyDidSessionNotHappenPresenter extends PresenterBase<
     }
   }
 
-  protected buildViewModel(res: Response): WhyDidSessionNotHappenViewModel {
-    const content: WhyDidSessionNotHappenContent = this.buildStaticContent(res)
+  buildViewModel(): WhyDidSessionNotHappenViewModel {
+    const content: WhyDidSessionNotHappenContent =
+      this.buildStaticContent()['/ics-feedback/:id/why-did-the-session-not-happen']
     const formData: Partial<components['schemas']['SessionNotHappenReasonRequest']> = this.session
       ? {
           reason: this.session.reason,

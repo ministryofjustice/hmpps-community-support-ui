@@ -1,13 +1,8 @@
-import { Response } from 'express'
 import nunjucks from 'nunjucks'
 import { globalContent } from '../../../../assets/content/GlobalContent'
 import AppointmentCheckYourAnswersPresenter from './AppointmentCheckYourAnswersPresenter'
 
 const content = globalContent['/referral/:id/create-an-appointment/check-your-answers']
-
-const res = {
-  locals: { content },
-} as unknown as Response
 
 describe('AppointmentCheckYourAnswersPresenter', () => {
   describe('retrospective appointments', () => {
@@ -37,7 +32,7 @@ describe('AppointmentCheckYourAnswersPresenter', () => {
         'John',
         { appointmentType: 'ICS', date, startTime },
         [],
-      ).buildViewModel(res)
+      ).buildViewModel()
 
       expect(viewModel.whatHappensNext).toEqual(
         expected
@@ -58,13 +53,13 @@ describe('AppointmentCheckYourAnswersPresenter', () => {
           'John',
           { appointmentType, date: '3/11/2026', startTime: '1:00pm' },
           [],
-        ).buildViewModel(res)
+        ).buildViewModel()
         const futureViewModel = new AppointmentCheckYourAnswersPresenter(
           'AB1234CD',
           'John',
           { appointmentType, date: '4/11/2026', startTime: '1:31pm' },
           [],
-        ).buildViewModel(res)
+        ).buildViewModel()
 
         expect(pastViewModel.whatHappensNext).toEqual({
           heading: 'What happens next',
@@ -82,7 +77,7 @@ describe('AppointmentCheckYourAnswersPresenter', () => {
         'John',
         { appointmentType: 'UNKNOWN', date: '3/11/2026', startTime: '1:00pm' },
         [],
-      ).buildViewModel(res)
+      ).buildViewModel()
 
       expect(viewModel.whatHappensNext).toBeUndefined()
       expect(viewModel.submitButtonText).toBe('Submit')
@@ -103,7 +98,7 @@ describe('AppointmentCheckYourAnswersPresenter', () => {
         'John',
         { appointmentType: 'ICS', date: '3/11/2026', startTime: '1:00pm' },
         [],
-      ).buildViewModel(res)
+      ).buildViewModel()
 
       const html = environment.render('appointment/create-an-appointment/check-your-answers.njk', {
         applicationName: 'Community Support',
@@ -128,7 +123,7 @@ describe('AppointmentCheckYourAnswersPresenter', () => {
   ])('uses booking wording in the title and heading for %s', (appointmentType, label) => {
     const presenter = new AppointmentCheckYourAnswersPresenter('AB1234CD', 'John', { appointmentType }, [])
 
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
 
     expect(viewModel.pageTitle).toBe(`Check the details before booking the ${label}`)
     expect(viewModel.pageHeader).toBe(`Check the details before booking the ${label}`)
@@ -143,7 +138,7 @@ describe('AppointmentCheckYourAnswersPresenter', () => {
       [{ value: 'ICS', name: 'Initial contact session' }],
     )
 
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
 
     expect(viewModel.pageTitle).toBe('Check the details before booking the ICS')
     expect(viewModel.pageHeader).toBe('Check the details before booking the ICS')
@@ -165,7 +160,7 @@ describe('AppointmentCheckYourAnswersPresenter', () => {
       [{ id: 2, name: 'Derbyshire: Buxton Probation Office' }],
     )
 
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
 
     expect(viewModel.pageTitle).toBe('Check the details before booking the pre-release session')
     expect(viewModel.pageHeader).toBe('Check the details before booking the pre-release session')
@@ -195,7 +190,7 @@ describe('AppointmentCheckYourAnswersPresenter', () => {
       [{ id: 2, name: 'Derbyshire: Buxton Probation Office' }],
     )
 
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
 
     expect(
       viewModel.appointmentSummary.rows.some(row =>
@@ -217,7 +212,7 @@ describe('AppointmentCheckYourAnswersPresenter', () => {
       'John',
       { appointmentType: 'CONTACT_SESSION', method, reasonSessionNotInPerson: 'The person cannot attend in person' },
       [],
-    ).buildViewModel(res)
+    ).buildViewModel()
     expect(
       viewModel.appointmentSummary.rows.some(
         row =>
@@ -242,7 +237,7 @@ describe('AppointmentCheckYourAnswersPresenter', () => {
       [{ id: 2, name: 'Derbyshire: Buxton Probation Office' }],
     )
 
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
 
     expect(
       viewModel.appointmentSummary.rows.some(
@@ -265,7 +260,7 @@ describe('AppointmentCheckYourAnswersPresenter', () => {
       [],
     )
 
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
 
     expect(viewModel.appointmentSummary.rows.some(row => row.key.text === content.informedLabel)).toBe(false)
   })
@@ -283,7 +278,7 @@ describe('AppointmentCheckYourAnswersPresenter', () => {
         meetAtTheGate: true,
       },
       [],
-    ).buildViewModel(res)
+    ).buildViewModel()
 
     expect(viewModel.appointmentSummary.rows).toEqual(
       expect.arrayContaining([
@@ -312,7 +307,7 @@ describe('AppointmentCheckYourAnswersPresenter', () => {
       [{ id: 2, name: 'Derbyshire: Buxton Probation Office' }],
     )
 
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
 
     expect(
       viewModel.appointmentSummary.rows.some(
@@ -347,7 +342,7 @@ describe('AppointmentCheckYourAnswersPresenter', () => {
       [],
     )
 
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
 
     expect(
       viewModel.appointmentSummary.rows.some(
@@ -369,7 +364,7 @@ describe('AppointmentCheckYourAnswersPresenter', () => {
       [],
     )
 
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
 
     expect(viewModel.appointmentSummary.rows.some(row => row.value.text === expected)).toBe(true)
   })

@@ -1,15 +1,11 @@
-import { Response } from 'express'
 import { GovukFrontendSummaryListRow } from '@govuk-frontend'
 import type { components } from '../../../@types/communitySupportApi/imported'
 import PresenterBase from '../../../presenter/presenterBase'
-import { ActionPlanRemoveOutcomeContent, ActionPlanRemoveOutcomeViewModel } from './actionPlanRemoveOutcomeViewModel'
+import { ActionPlanRemoveOutcomeViewModel } from './actionPlanRemoveOutcomeViewModel'
 
 type ActionPlanSummaryNeed = components['schemas']['ActionPlanSummaryNeed']
 
-export default class ActionPlanRemoveOutcomePresenter extends PresenterBase<
-  ActionPlanRemoveOutcomeViewModel,
-  ActionPlanRemoveOutcomeContent
-> {
+export default class ActionPlanRemoveOutcomePresenter extends PresenterBase<ActionPlanRemoveOutcomeViewModel> {
   constructor(
     private readonly caseReference: string,
     private readonly firstName: string,
@@ -19,8 +15,8 @@ export default class ActionPlanRemoveOutcomePresenter extends PresenterBase<
     super()
   }
 
-  protected buildViewModel(res: Response): ActionPlanRemoveOutcomeViewModel {
-    const content = this.buildStaticContent(res)
+  protected buildViewModel(): ActionPlanRemoveOutcomeViewModel {
+    const content = this.buildStaticContent()['/referral/:id/action-plan/remove-outcome']
     const outcome = this.need.outcomes.find(item => item.id === this.outcomeAnswerId)
 
     if (!outcome) {

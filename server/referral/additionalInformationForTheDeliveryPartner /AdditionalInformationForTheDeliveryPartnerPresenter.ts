@@ -1,4 +1,3 @@
-import { Response } from 'express'
 import { AdditionalInformationForTheDeliveryPartner, Selection } from '@community-support-api'
 import { GovukFrontendErrorMessage } from '@govuk-frontend'
 import PresenterBase from '../../presenter/presenterBase'
@@ -37,10 +36,7 @@ const buildDetails = (content: AdditionalInformationForTheDeliveryPartnerContent
   items: content.detailsItems.map(item => item.replace('{{ firstName }}', name)),
 })
 
-export default class AdditionalInformationForTheDeliveryPartnerPresenter extends PresenterBase<
-  AdditionalInformationForTheDeliveryPartnerViewModel,
-  AdditionalInformationForTheDeliveryPartnerContent
-> {
+export default class AdditionalInformationForTheDeliveryPartnerPresenter extends PresenterBase<AdditionalInformationForTheDeliveryPartnerViewModel> {
   constructor(
     private readonly data: AdditionalInformationForTheDeliveryPartner,
     private readonly validationErrors: ErrorMiddlewareErrors,
@@ -48,8 +44,8 @@ export default class AdditionalInformationForTheDeliveryPartnerPresenter extends
     super()
   }
 
-  buildViewModel(res: Response): AdditionalInformationForTheDeliveryPartnerViewModel {
-    const content = this.buildStaticContent(res)
+  buildViewModel(): AdditionalInformationForTheDeliveryPartnerViewModel {
+    const content = this.buildStaticContent()['/referral/task-list/additional-information-for-the-delivery-partner']
     const { firstName } = this.data.refereeName
     return {
       pageTitle: content.pageTitle,

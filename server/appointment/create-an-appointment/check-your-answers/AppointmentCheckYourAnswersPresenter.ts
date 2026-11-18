@@ -1,6 +1,5 @@
 import { CreateAppointmentReferenceDataBffDto } from '@community-support-api'
 import { GovukFrontendSummaryListRow } from '@govuk-frontend'
-import { Response } from 'express'
 import { format, isValid, parse } from 'date-fns'
 import PresenterBase from '../../../presenter/presenterBase'
 import { formatIsoDateOrNull, toIsoDate } from '../../../utils/dateFormat'
@@ -23,10 +22,7 @@ const retrospectiveAppointmentTypes: ReadonlySet<SessionAppointmentType> = new S
   'PRE_RELEASE_SESSION',
 ])
 
-export default class AppointmentCheckYourAnswersPresenter extends PresenterBase<
-  AppointmentCheckYourAnswersViewModel,
-  AppointmentCheckYourAnswersContent
-> {
+export default class AppointmentCheckYourAnswersPresenter extends PresenterBase<AppointmentCheckYourAnswersViewModel> {
   constructor(
     private readonly caseRefId: string,
     private readonly firstName: string,
@@ -37,8 +33,8 @@ export default class AppointmentCheckYourAnswersPresenter extends PresenterBase<
     super()
   }
 
-  buildViewModel(res: Response): AppointmentCheckYourAnswersViewModel {
-    const content = this.buildStaticContent(res)
+  buildViewModel(): AppointmentCheckYourAnswersViewModel {
+    const content = this.buildStaticContent()['/referral/:id/create-an-appointment/check-your-answers']
     const appointmentTypeLabel = getAppointmentTypeLabel(
       this.appointmentSessionData.appointmentType,
       this.appointmentTypes,

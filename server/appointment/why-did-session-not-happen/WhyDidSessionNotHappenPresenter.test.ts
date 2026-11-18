@@ -1,7 +1,6 @@
 import type { Response } from 'express'
 import WhyDidSessionNotHappenPresenter from './WhyDidSessionNotHappenPresenter'
 import { globalContent } from '../../../assets/content/GlobalContent'
-import type { WhyDidSessionNotHappenViewModel } from './WhyDidSessionNotHappenViewModel'
 import type { ErrorMiddlewareErrors } from '../../@types/express'
 
 describe('WhyDidSessionNotHappenPresenter', () => {
@@ -14,10 +13,8 @@ describe('WhyDidSessionNotHappenPresenter', () => {
     session: ConstructorParameters<typeof WhyDidSessionNotHappenPresenter>[2] = undefined,
     errors: ErrorMiddlewareErrors = noErrors,
   ) => {
-    const presenter = new WhyDidSessionNotHappenPresenter(caseRefId, 'Alex', session, errors) as unknown as {
-      buildViewModel(res: Response): WhyDidSessionNotHappenViewModel
-    }
-    return presenter.buildViewModel({ locals: { content, errors } } as unknown as Response)
+    const presenter = new WhyDidSessionNotHappenPresenter(caseRefId, 'Alex', session, errors)
+    return presenter.buildViewModel()
   }
 
   const buildRadios = (...args: Parameters<typeof buildViewModel>) =>
