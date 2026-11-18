@@ -3,10 +3,7 @@ import { GovukFrontendRadios } from '@govuk-frontend'
 import { ActionPlanSelectOutcomeContent, ActionPlanSelectOutcomeViewModel } from './actionPlanSelectOutcomeViewModel'
 import PresenterBase from '../../../presenter/presenterBase'
 
-export default class ActionPlanSelectOutcomePresenter extends PresenterBase<
-  ActionPlanSelectOutcomeViewModel,
-  ActionPlanSelectOutcomeContent
-> {
+export default class ActionPlanSelectOutcomePresenter extends PresenterBase<ActionPlanSelectOutcomeViewModel> {
   constructor(
     private readonly caseReference: string,
     private readonly firstName: string,
@@ -40,7 +37,7 @@ export default class ActionPlanSelectOutcomePresenter extends PresenterBase<
   }
 
   protected buildViewModel(res: Response): ActionPlanSelectOutcomeViewModel {
-    const content = this.buildStaticContent(res)
+    const content = this.buildStaticContent()['/referral/:id/action-plan/select-an-outcome']
 
     return {
       backLink: { href: `/referral/${this.caseReference}/action-plan/select-a-need` },

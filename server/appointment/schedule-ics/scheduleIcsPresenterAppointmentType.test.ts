@@ -1,5 +1,3 @@
-import { Response } from 'express'
-import ScheduleIcsContentFactory from '../../testutils/factories/ScheduleIcsContent'
 import ScheduleIcsPresenter from './scheduleIcsPresenter'
 import { probationOfficesData, prisonsData } from '../../../integration_tests/mockData/referenceData'
 import {
@@ -7,31 +5,10 @@ import {
   referralInformationInPrison,
 } from '../../../integration_tests/mockData/referralInformationData'
 import { SessionAppointmentType } from '../appointmentTypeRules'
-import loadContentDataForTest from '../../testutils/loadContentDataForTest'
-import { ScheduleIcsContent } from './scheduleIcsViewModel'
 import { ErrorMiddlewareErrors } from '../../@types/express'
 
 describe('ScheduleIcsPresenter with appointment type', () => {
   const caseReference = 'AB1234CD'
-  const content = ScheduleIcsContentFactory.build({
-    pageHeaders: {
-      ICS: 'Book initial contact session (ICS)',
-      CONTACT_SESSION: 'Schedule the contact session',
-      PRE_RELEASE_SESSION: 'Book pre-release session',
-      POST_RELEASE_SESSION: 'Schedule the post-release session',
-      HANDOVER_SESSION: 'Schedule the handover session',
-    },
-    meetAtTheGate: { label: 'Is this a meet at the gate session?', yes: 'Yes', no: 'No' },
-    submitHref: '/referral/{{ caseRef }}/create-an-appointment/appointment-details',
-    howSessionTakePlace: {
-      ...ScheduleIcsContentFactory.build().howSessionTakePlace,
-      radioItems: {
-        ...ScheduleIcsContentFactory.build().howSessionTakePlace.radioItems,
-        inPerson: { text: 'In-person meeting' },
-      },
-    },
-  })
-  const res = { locals: { content }, render: jest.fn() } as unknown as Response
 
   const build = (type: SessionAppointmentType, referral = referralInformationInCommunity, formData = {}) =>
     new ScheduleIcsPresenter(
@@ -42,10 +19,13 @@ describe('ScheduleIcsPresenter with appointment type', () => {
       formData,
       undefined,
       type,
-    ).buildViewModel(res)
+    ).buildViewModel()
 
   const radioValues = (type: SessionAppointmentType, referral = referralInformationInCommunity) =>
-    build(type, referral).howWillTheSessionTakePlaceInput.items.map(item => item.value)
+    build(type, referral)
+      .howWillTheSessionTakePlaceInput.items.filter(item => !item.divider)
+      .map(item => item.value)
+      .sort()
 
   test.each([
     ['ICS', ['ByPhone', 'ByVideo', 'InProbationOffice', 'InSomewhereElse']],
@@ -54,7 +34,7 @@ describe('ScheduleIcsPresenter with appointment type', () => {
     ['POST_RELEASE_SESSION', ['ByPhone', 'ByVideo', 'InProbationOffice', 'InSomewhereElse']],
     ['HANDOVER_SESSION', ['ByPhone', 'ByVideo', 'InPerson']],
   ] as [SessionAppointmentType, string[]][])('%s shows the correct methods', (type, expected) => {
-    expect(radioValues(type)).toEqual(expected)
+    expect(radioValues(type)).toEqual(expected.sort())
   })
 
   test('handover session for a person in custody shows only phone, video and in-person', () => {
@@ -67,10 +47,10 @@ describe('ScheduleIcsPresenter with appointment type', () => {
 
   test.each([
     ['ICS', 'Book initial contact session (ICS)'],
-    ['CONTACT_SESSION', 'Schedule the contact session'],
+    ['CONTACT_SESSION', 'Book contact session'],
     ['PRE_RELEASE_SESSION', 'Book pre-release session'],
-    ['POST_RELEASE_SESSION', 'Schedule the post-release session'],
-    ['HANDOVER_SESSION', 'Schedule the handover session'],
+    ['POST_RELEASE_SESSION', 'Book post-release session'],
+    ['HANDOVER_SESSION', 'Book handover session'],
   ] as [SessionAppointmentType, string][])('%s page header and submit href', (type, header) => {
     const viewModel = build(type)
     expect(viewModel.pageHeader).toBe(header)
@@ -108,11 +88,6 @@ describe('ScheduleIcsPresenter with appointment type', () => {
   })
 
   describe('with the appointment details page content', () => {
-    const pageContent = loadContentDataForTest(
-      '/referral/:id/create-an-appointment/appointment-details',
-    ) as unknown as ScheduleIcsContent
-    const pageRes = { locals: { content: pageContent }, render: jest.fn() } as unknown as Response
-
     const buildWithPageContent = (
       type: SessionAppointmentType,
       referral = referralInformationInCommunity,
@@ -126,7 +101,7 @@ describe('ScheduleIcsPresenter with appointment type', () => {
         {},
         validationErrors,
         type,
-      ).buildViewModel(pageRes)
+      ).buildViewModel()
 
     const itemsSummary = (type: SessionAppointmentType, referral = referralInformationInCommunity) =>
       buildWithPageContent(type, referral).howWillTheSessionTakePlaceInput.items.map(item =>
@@ -225,14 +200,8 @@ describe('ScheduleIcsPresenter with appointment type', () => {
       ])
     })
 
-    test('handover session groups the in-person meeting option', () => {
-      expect(itemsSummary('HANDOVER_SESSION')).toEqual([
-        'divider:In person',
-        'InPerson',
-        'divider:Remote',
-        'ByPhone',
-        'ByVideo',
-      ])
+    test('handover session has no group headings and the in-person option first', () => {
+      expect(itemsSummary('HANDOVER_SESSION')).toEqual(['InPerson', 'ByPhone', 'ByVideo'])
     })
 
     test('ICS page content matches the design', () => {

@@ -3,7 +3,6 @@ import {
   QuestionChoice,
   SessionDeliveryQuestion,
 } from '@community-support-api'
-import { Response } from 'express'
 import { GovukFrontendTextarea } from '@govuk-frontend'
 import {
   GovukFrontendRadiosItemWithConditional,
@@ -11,22 +10,17 @@ import {
 } from '../../../@types/govukFrontend/derived'
 import PresenterBase from '../../../presenter/presenterBase'
 import { ErrorMiddlewareErrors } from '../../../@types/express'
-import {
-  ActionPlanRisksAndAdjustmentsContent,
-  ActionPlanRisksAndAdjustmentsViewModel,
-} from './actionPlanRisksAndAdjustmentsViewModel'
+import { ActionPlanRisksAndAdjustmentsViewModel } from './actionPlanRisksAndAdjustmentsViewModel'
 import SessionDeliveryDetailsQuestions from './sessionDeliveryDetailsQuestions'
 
-export default class ActionPlanRisksAndAdjustmentsPresenter extends PresenterBase<
-  ActionPlanRisksAndAdjustmentsViewModel,
-  ActionPlanRisksAndAdjustmentsContent
-> {
+export default class ActionPlanRisksAndAdjustmentsPresenter extends PresenterBase<ActionPlanRisksAndAdjustmentsViewModel> {
   constructor(
     private readonly caseReference: string,
     private readonly sessionDeliveryDetails: ActionPlanSessionDeliveryDetailsResponse,
     private readonly validationErrors?: ErrorMiddlewareErrors,
     private readonly userInputData?: Record<string, string | string[]>,
     private readonly isCheckAnswersEdit = false,
+    private readonly backLink?: string,
   ) {
     super()
   }
@@ -105,8 +99,8 @@ export default class ActionPlanRisksAndAdjustmentsPresenter extends PresenterBas
     }
   }
 
-  protected buildViewModel(res: Response): ActionPlanRisksAndAdjustmentsViewModel {
-    const content = this.buildStaticContent(res)
+  protected buildViewModel(): ActionPlanRisksAndAdjustmentsViewModel {
+    const content = this.buildStaticContent()['/referral/:id/action-plan/risks-and-adjustments']
     const plannedActivitiesRiskQuestion = this.sessionDeliveryDetails.questions.find(
       q => q.key === SessionDeliveryDetailsQuestions.RISK_ASSOCIATED_WITH_PLANNED_ACTIVITIES,
     )!
@@ -120,9 +114,11 @@ export default class ActionPlanRisksAndAdjustmentsPresenter extends PresenterBas
       pageTitle: content.pageTitle,
       pageHeader: content.pageHeader,
       backLink: {
-        href: this.isCheckAnswersEdit
-          ? content.editBackLink.replace('{{ id }}', this.caseReference)
-          : content.backLink.replace('{{ id }}', this.caseReference),
+        href:
+          this.backLink ??
+          (this.isCheckAnswersEdit
+            ? content.editBackLink.replace('{{ id }}', this.caseReference)
+            : content.backLink.replace('{{ id }}', this.caseReference)),
       },
       submitButton: { text: this.isCheckAnswersEdit ? content.saveAndContinueButtonText : content.continueButtonText },
       plannedActivitiesRiskRadioArgs: (riskInfoHtml: string) =>

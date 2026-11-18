@@ -287,9 +287,12 @@
     "reasonSessionNotInPersonLabel": "Reason session is not in person",
     "meetAtTheGateLabel": "Meeting at the gate",
     "informedLabel": "How {{ firstname }} was informed about the session",
+    "whatHappensNextHeading": "What happens next",
+    "retrospectiveAppointmentText": "As you've entered a date and time in the past, we'll ask you to add appointment feedback.",
     "changeLinkText": "Change",
     "changeLinkVisualText": "appointment details",
     "changeLinkHref": "/referral/{{ id }}/create-an-appointment/appointment-type",
+    "continueButtonText": "Continue",
     "submitButtonText": "Submit",
     "submitHref": "/referral/{{ id }}/create-an-appointment/check-your-answers",
     "backLink": "/referral/{{ id }}/create-an-appointment/appointment-type"
@@ -338,6 +341,7 @@
     "noAppointmentsMessage": "No appointments scheduled",
     "noUpcomingAppointmentsMessage": "No upcoming appointments",
     "noPastAppointmentsMessage": "No past appointments",
+    "icsFeedbackAdded": "ICS feedback added",
     "bookAppointmentText": "Book appointment",
     "bookAppointmentHref": "/referral/{{ id }}/create-an-appointment/appointment-type",
     "upcomingAppointmentsTitle": "Upcoming appointments",
@@ -599,34 +603,40 @@
     "title": "View session details",
     "heading": "View session details"
   },
-  "/ics-feedback": {
-    "attendanceForm": {
-      "happenedRadios": {
-        "id": "happened",
-        "heading": "Did the session happen?",
-        "hint": "The session happened if something was delivered. ",
-        "error": "Select yes if the session happened",
-        "yesLabel": "Yes",
-        "noLabel": "No"
-      },
-      "attendedRadios": {
-        "id": "attended",
-        "heading": "Did {{ firstname }} come to the appointment?",
-        "error": "Select yes if {{ firstname }} came to the appointment",
-        "yesLabel": "Yes",
-        "noLabel": "No"
-      },
-      "submitButtonText": "Continue"
-    }
-  },
   "/ics-feedback/:id/attendance": {
-    "pageHeader": "Record session attendance",
+    "pageHeader": "ICS attendance",
     "description": "The date and time of the session are a permanent record of where this person was. If the session started late, you must record this as part of the feedback.",
     "appointmentDetails": {
       "dateLabel": "Date",
       "startTimeLabel": "Start time"
     },
+    "attendanceForm": {
+      "happenedRadios": {
+        "id": "happened",
+        "heading": "Did the ICS happen?",
+        "hint": "The session happened if something was delivered. ",
+        "yesLabel": "Yes",
+        "noLabel": "No"
+      },
+      "submitButtonText": "Continue"
+    },
     "backLink": "/progress/{{ id }}"
+  },
+  "/ics-feedback/:id/did-attend": {
+    "appointmentDetails": {
+      "dateLabel": "Date",
+      "startTimeLabel": "Start time"
+    },
+    "attendanceForm": {
+      "didAttendRadios": {
+        "id": "didAttend",
+        "heading": "Did {{ firstname }} come to the ICS?",
+        "yesLabel": "Yes",
+        "noLabel": "No"
+      },
+      "submitButtonText": "Continue"
+    },
+    "backLink": "/ics-feedback/{{ id }}/attendance"
   },
   "/ics-feedback/:id/session-feedback": {
     "pageTitle": "Session feedback – ICS feedback – Community Support",
@@ -798,7 +808,7 @@
           {
             "text": "Did {{ firstname }} come to the appointment?",
             "hint": "Did {{ firstname }} come to the appointment",
-            "changeHref": "/ics-feedback/caseRefId/attendance"
+            "changeHref": "/ics-feedback/caseRefId/did-attend"
           },
           {
             "text": "How the session took place",
@@ -947,29 +957,32 @@
     "backLinkHref": "/ics-feedback/{{ id }}/did-session-take-place"
   },
   "/ics-feedback/:id/why-did-the-session-not-happen": {
-    "pageHeader": "Why did the session not happen?",
     "whyDidSessionNotHappenRadio": {
+      "question": "Why did the session not happen?",
       "name": "whyDidSessionNotHappen",
       "items": {
-        "serviceProviderIssueText": "There was an issue with the service provider or logistics, for example a problem with a room booking or a fire alarm",
+        "serviceProviderIssueText": "Issue with service provider or logistics",
+        "serviceProviderIssueHint": "For example, room booking problem or technical issue",
         "serviceProviderIssueDetails": {
           "name": "serviceProviderIssueDetails",
-          "hint": "Give details of any issues that meant the session could not happen."
+          "label": "Give details of any issues that meant the session could not happen."
         },
-        "referralCouldNotTakePartText": "{{ firstname }} could not take part, for example because of illness or a crisis",
+        "referralCouldNotTakePartText": "{{ firstname }} could not take part",
+        "referralCouldNotTakePartHint": "For example, they were ill",
         "referralCouldNotTakePartDetails": {
           "name": "referralCouldNotTakePartDetails",
-          "hint": "Give details about why they were unable to take part, such as what happened and who was involved."
+          "label": "Give details about why they were unable to take part, including what happened and who was involved."
         },
-        "referralDidNotComplyText": "{{ firstname }} did not comply, for example they were disruptive or disengaged",
+        "referralDidNotComplyText": "{{ firstname }} did not comply",
+        "referralDidNotComplyHint": "For example, they were disruptive",
         "referralDidNotComplyDetails": {
           "name": "referralDidNotComplyDetails",
-          "hint": "Give details about their behaviour and how they were unable to take part."
+          "label": "Give details about why they did not comply. For example, their behaviour and how they were unable to take part."
         }
       }
     },
     "submitButtonText": "Continue",
-    "backLinkHref": "/ics-feedback/{{ id }}/attendance"
+    "backLinkHref": "/ics-feedback/{{ id }}/did-attend"
   },
   "/ics-feedback/:id/how-they-tried-to-contact-the-person": {
     "pageHeader": "How did you try to contact {{ firstname }} and what do you know about why they did not attend?",
@@ -984,7 +997,7 @@
       },
       "submitButtonText": "Continue"
     },
-    "backLink": "/ics-feedback/{{ id }}/attendance"
+    "backLink": "/ics-feedback/{{ id }}/did-attend"
   },
   "/referral/:id/ics-change-details/reason": {
     "pageHeader": "Reason for changing the session details",
@@ -1113,7 +1126,7 @@
           }
         },
         "inPerson": {
-          "text": "In-person meeting"
+          "text": "In person"
         }
       }
     },
@@ -1138,7 +1151,7 @@
       "CONTACT_SESSION": "Book contact session",
       "PRE_RELEASE_SESSION": "Book pre-release session",
       "POST_RELEASE_SESSION": "Book post-release session",
-      "HANDOVER_SESSION": "Schedule the handover session"
+      "HANDOVER_SESSION": "Book handover session"
     },
     "meetAtTheGate": {
       "label": "Is this a meet at the gate session?",

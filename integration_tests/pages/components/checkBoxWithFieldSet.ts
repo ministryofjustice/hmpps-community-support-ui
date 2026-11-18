@@ -1,6 +1,5 @@
 import { Locator } from '@playwright/test'
 import FieldSet from './fieldset'
-import RadioItem from './radioItem'
 import CheckBoxItem from './checkBoxItem'
 
 type CheckBoxRecordEntry = [string, CheckBoxItem]
@@ -37,7 +36,7 @@ export default class CheckBoxWithFieldSet {
     await this.itemsRecord[label]?.select()
   }
 
-  getItem(label: string): RadioItem | undefined {
+  getItem(label: string): CheckBoxItem | undefined {
     return this.itemsRecord[label]
   }
 }

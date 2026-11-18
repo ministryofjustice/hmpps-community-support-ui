@@ -1,4 +1,5 @@
 import { GovukFrontendBackLink, GovukFrontendSummaryList } from '@govuk-frontend'
+import { GlobalContent } from '../../../../assets/content/GlobalContent'
 
 export type AppointmentCheckYourAnswersViewModel = {
   pageTitle: string
@@ -7,25 +8,7 @@ export type AppointmentCheckYourAnswersViewModel = {
   submitButtonText: string
   backLink: GovukFrontendBackLink
   appointmentSummary: GovukFrontendSummaryList
+  whatHappensNext?: { heading: string; text: string }
 }
 
-export type AppointmentCheckYourAnswersContent = {
-  pageTitle: string
-  pageHeader: string
-  summaryTitle: string
-  dateLabel: string
-  startTimeLabel: string
-  methodLabel: string
-  probationOfficeLabel: string
-  prisonLabel: string
-  appointmentAddressLabel: string
-  reasonSessionNotInPersonLabel: string
-  meetAtTheGateLabel: string
-  informedLabel: string
-  changeLinkText: string
-  changeLinkVisualText: string
-  changeLinkHref: string
-  submitButtonText: string
-  submitHref: string
-  backLink: string
-}
+export type AppointmentCheckYourAnswersContent = GlobalContent['/referral/:id/create-an-appointment/check-your-answers']

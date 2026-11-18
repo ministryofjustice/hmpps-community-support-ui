@@ -1,7 +1,7 @@
-import { Response } from 'express'
-import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendErrorMessage } from '@govuk-frontend'
+import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendTextarea } from '@govuk-frontend'
 import PresenterBase from '../../presenter/presenterBase'
 import {
+  ConditionalHtml,
   ConditionalTextAreaDetailsContent,
   WhyDidSessionNotHappenContent,
   WhyDidSessionNotHappenRadioContent,
@@ -14,12 +14,8 @@ import {
   GovukFrontendRadiosItemWithConditional,
   GovukFrontendRadiosWithConditional,
 } from '../../@types/govukFrontend/derived'
-import { escapeHtml } from '../../utils/utils'
 
-export default class WhyDidSessionNotHappenPresenter extends PresenterBase<
-  WhyDidSessionNotHappenViewModel,
-  WhyDidSessionNotHappenContent
-> {
+export default class WhyDidSessionNotHappenPresenter extends PresenterBase<WhyDidSessionNotHappenViewModel> {
   constructor(
     private readonly caseRefId: string,
     private readonly referralFirstName: string,
@@ -33,71 +29,49 @@ export default class WhyDidSessionNotHappenPresenter extends PresenterBase<
     content: ConditionalTextAreaDetailsContent,
     formData: Partial<components['schemas']['SessionNotHappenReasonRequest']>,
     selected: boolean,
-    errorMessage?: GovukFrontendErrorMessage,
-  ): string {
-    const errorText: string = errorMessage ? errorMessage.text : undefined
-    const errorHtml: string = errorText
-      ? `
-    <p id="${content.name}Error" class="govuk-error-message">
-      <span class="govuk-visually-hidden">Error:</span> ${errorText}
-    </p>`
-      : ''
-    return `
-    <div class="govuk-form-group ${errorText ? 'govuk-form-group--error' : ''}" data-testid=${content.name} ">
-      <div class="govuk-hint"
-        id=${content.name}Hint>
-        ${content.hint}
-      </div>
-      ${errorHtml}
-      <textarea class="govuk-textarea" id=${content.name}Input name=${content.name} rows="5" spellcheck="false"
-        data-testid=${content.name}>${selected ? (escapeHtml(formData.details) ?? '') : ''}</textarea>
-    </div>`
+  ): GovukFrontendTextarea {
+    return {
+      id: content.name,
+      name: content.name,
+      label: {
+        text: content.label,
+      },
+      rows: '5',
+      formGroup: { attributes: { 'data-testid': content.name } },
+      errorMessage: this.validationErrors?.messages[content.name] ?? null,
+      value: selected ? (formData.details ?? '') : '',
+    }
   }
 
   private buildWhyDidSessionNotHappenRadioItems(
     content: WhyDidSessionNotHappenRadioItemsContent,
     formData: Partial<components['schemas']['SessionNotHappenReasonRequest']>,
-    errorMessages?: Record<string, GovukFrontendErrorMessage>,
+    conditionalHtml: ConditionalHtml,
   ): GovukFrontendRadiosItemWithConditional[] {
-    const serviceProviderIssueHtml = this.buildWhyDidSessionNotHappenDetailsTextArea(
-      content.serviceProviderIssueDetails,
-      formData,
-      formData.reason === 'SERVICE_PROVIDER_ISSUE',
-      errorMessages.serviceProviderIssueDetails,
-    )
-    const referralCouldNotTakePartHtml = this.buildWhyDidSessionNotHappenDetailsTextArea(
-      content.referralCouldNotTakePartDetails,
-      formData,
-      formData.reason === 'REFERRAL_COULD_NOT_TAKE_PART',
-      errorMessages.referralCouldNotTakePartDetails,
-    )
-    const referralDidNotComplyHtml = this.buildWhyDidSessionNotHappenDetailsTextArea(
-      content.referralDidNotComplyDetails,
-      formData,
-      formData.reason === 'REFERRAL_DID_NOT_COMPLY',
-      errorMessages.referralDidNotComplyDetails,
-    )
     return [
       {
         id: 'SERVICE_PROVIDER_ISSUE',
         value: 'SERVICE_PROVIDER_ISSUE',
         text: content.serviceProviderIssueText,
+        hint: { text: content.serviceProviderIssueHint },
         checked: formData.reason === 'SERVICE_PROVIDER_ISSUE',
-        conditional: { html: serviceProviderIssueHtml },
+        conditional: { html: conditionalHtml.serviceProviderIssue },
       },
       {
         id: 'REFERRAL_COULD_NOT_TAKE_PART',
         value: 'REFERRAL_COULD_NOT_TAKE_PART',
         text: content.referralCouldNotTakePartText.replace('{{ firstname }}', this.referralFirstName),
+        hint: { text: content.referralCouldNotTakePartHint },
         checked: formData.reason === 'REFERRAL_COULD_NOT_TAKE_PART',
-        conditional: { html: referralCouldNotTakePartHtml },
+        conditional: { html: conditionalHtml.referralCouldNotTakePart },
       },
       {
         id: 'REFERRAL_DID_NOT_COMPLY',
         value: 'REFERRAL_DID_NOT_COMPLY',
         text: content.referralDidNotComplyText.replace('{{ firstname }}', this.referralFirstName),
+        hint: { text: content.referralDidNotComplyHint },
         checked: formData.reason === 'REFERRAL_DID_NOT_COMPLY',
-        conditional: { html: referralDidNotComplyHtml },
+        conditional: { html: conditionalHtml.referralDidNotComply },
       },
     ]
   }
@@ -105,14 +79,21 @@ export default class WhyDidSessionNotHappenPresenter extends PresenterBase<
   private buildWhyDidSessionNotHappenRadio(
     content: WhyDidSessionNotHappenRadioContent,
     formData: Partial<components['schemas']['SessionNotHappenReasonRequest']>,
-    errorMessages?: Record<string, GovukFrontendErrorMessage>,
+    conditionalHtml: ConditionalHtml,
   ): GovukFrontendRadiosWithConditional {
     return {
       name: content.name,
-      fieldset: { attributes: { 'data-testid': `fieldset-${content.name}` } },
-      errorMessage: errorMessages.whyDidSessionNotHappen,
+      fieldset: {
+        attributes: { 'data-testid': `fieldset-${content.name}` },
+        legend: {
+          text: content.question,
+          isPageHeading: true,
+          classes: 'govuk-fieldset__legend--l',
+        },
+      },
+      errorMessage: this.validationErrors?.messages[content.name] ?? null,
       attributes: { 'data-testid': content.name },
-      items: this.buildWhyDidSessionNotHappenRadioItems(content.items, formData, errorMessages),
+      items: this.buildWhyDidSessionNotHappenRadioItems(content.items, formData, conditionalHtml),
     }
   }
 
@@ -129,8 +110,9 @@ export default class WhyDidSessionNotHappenPresenter extends PresenterBase<
     }
   }
 
-  protected buildViewModel(res: Response): WhyDidSessionNotHappenViewModel {
-    const content: WhyDidSessionNotHappenContent = this.buildStaticContent(res)
+  buildViewModel(): WhyDidSessionNotHappenViewModel {
+    const content: WhyDidSessionNotHappenContent =
+      this.buildStaticContent()['/ics-feedback/:id/why-did-the-session-not-happen']
     const formData: Partial<components['schemas']['SessionNotHappenReasonRequest']> = this.session
       ? {
           reason: this.session.reason,
@@ -138,14 +120,24 @@ export default class WhyDidSessionNotHappenPresenter extends PresenterBase<
         }
       : {}
     return {
-      pageHeader: content.pageHeader,
-      whyDidSessionNotHappenRadio: this.buildWhyDidSessionNotHappenRadio(
-        content.whyDidSessionNotHappenRadio,
+      whyDidSessionNotHappenRadio: (conditionalHtml: ConditionalHtml) =>
+        this.buildWhyDidSessionNotHappenRadio(content.whyDidSessionNotHappenRadio, formData, conditionalHtml),
+      serviceProviderIssueHtmlTextBoxArgs: this.buildWhyDidSessionNotHappenDetailsTextArea(
+        content.whyDidSessionNotHappenRadio.items.serviceProviderIssueDetails,
         formData,
-        this.validationErrors?.messages,
+        formData.reason === 'SERVICE_PROVIDER_ISSUE',
+      ),
+      referralCouldNotTakePartHtmlTextBoxArgs: this.buildWhyDidSessionNotHappenDetailsTextArea(
+        content.whyDidSessionNotHappenRadio.items.referralCouldNotTakePartDetails,
+        formData,
+        formData.reason === 'REFERRAL_COULD_NOT_TAKE_PART',
+      ),
+      referralDidNotComplyHtmlTextBoxArgs: this.buildWhyDidSessionNotHappenDetailsTextArea(
+        content.whyDidSessionNotHappenRadio.items.referralDidNotComplyDetails,
+        formData,
+        formData.reason === 'REFERRAL_DID_NOT_COMPLY',
       ),
       submitButton: this.buildSubmitButton(content.submitButtonText),
-      submitHref: `/ics-feedback/${this.caseRefId}/why-did-the-session-not-happen`,
       backLink: this.buildBackLink(content.backLinkHref),
       formData,
     }

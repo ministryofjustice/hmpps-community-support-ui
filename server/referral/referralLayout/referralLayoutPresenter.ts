@@ -12,7 +12,7 @@ export enum ReferralNavigationValues {
   changeLogTab = 'changeLog',
 }
 
-export default abstract class ReferralLayoutPresenter<ViewModel, Content> extends PresenterBase<ViewModel, Content> {
+export default abstract class ReferralLayoutPresenter<ViewModel> extends PresenterBase<ViewModel> {
   protected constructor(
     readonly activePage: ReferralNavigationValues,
     readonly referralId: string,

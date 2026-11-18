@@ -1,11 +1,7 @@
-import { Response } from 'express'
 import { CommunitySupportRiskDto } from '@community-support-api'
 import RiskSummaryPresenter from './RiskSummaryPresenter'
-import loadContentDataForTest from '../../testutils/loadContentDataForTest'
 
 jest.useFakeTimers().setSystemTime(new Date('2026-07-15'))
-
-const content = loadContentDataForTest('/referral/task-list/view-risk-summary')
 
 describe('RiskSummaryPresenter', () => {
   const risk: CommunitySupportRiskDto = {
@@ -67,16 +63,10 @@ describe('RiskSummaryPresenter', () => {
     },
   }
 
-  const res = {
-    locals: {
-      content,
-    },
-  } as unknown as Response
-
   test('builds correct view model', () => {
     // Deliberately distinct from the CRN, to prove the back link uses the referral id, not the CRN.
     const presenter = new RiskSummaryPresenter(risk, 'referral-uuid-1')
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
 
     expect(viewModel.pageTitle).toBe('OASys risk information')
     expect(viewModel.backLink.href).toBe('/referral/task-list')
@@ -140,7 +130,7 @@ describe('RiskSummaryPresenter', () => {
       'referral-uuid-1',
     )
 
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
 
     expect(viewModel.lastUpdated).toBe('Not available')
     const [whoIsAtRisk, , , selfHarm, , , , additional] = viewModel.rows
@@ -162,7 +152,7 @@ describe('RiskSummaryPresenter', () => {
       'referral-uuid-1',
     )
 
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
 
     const [, , , , suicide] = viewModel.rows
     expect(suicide.indicator).toBe('Yes')

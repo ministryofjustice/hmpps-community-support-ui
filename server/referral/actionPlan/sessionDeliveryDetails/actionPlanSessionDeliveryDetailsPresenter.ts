@@ -3,7 +3,6 @@ import {
   QuestionChoice,
   SessionDeliveryQuestion,
 } from '@community-support-api'
-import { Response } from 'express'
 import { GovukFrontendTextarea } from '@govuk-frontend'
 import {
   GovukFrontendCheckboxesWithConditional,
@@ -11,23 +10,18 @@ import {
   GovukFrontendRadiosWithConditional,
 } from '../../../@types/govukFrontend/derived'
 import PresenterBase from '../../../presenter/presenterBase'
-import {
-  ActionPlanSessionDeliveryDetailsContent,
-  ActionPlanSessionDeliveryDetailsViewModel,
-} from './actionPlanSessionDeliveryDetailsViewModel'
+import { ActionPlanSessionDeliveryDetailsViewModel } from './actionPlanSessionDeliveryDetailsViewModel'
 import { ErrorMiddlewareErrors } from '../../../@types/express'
 import SessionDeliveryDetailsQuestions from './sessionDeliveryDetailsQuestions'
 
-export default class ActionPlanSessionDeliveryDetailsPresenter extends PresenterBase<
-  ActionPlanSessionDeliveryDetailsViewModel,
-  ActionPlanSessionDeliveryDetailsContent
-> {
+export default class ActionPlanSessionDeliveryDetailsPresenter extends PresenterBase<ActionPlanSessionDeliveryDetailsViewModel> {
   constructor(
     private readonly caseReference: string,
     private readonly sessionDeliveryDetails: ActionPlanSessionDeliveryDetailsResponse,
     private readonly validationErrors?: ErrorMiddlewareErrors,
     private readonly userInputData?: Record<string, string | string[]>,
     private readonly isCheckAnswersEdit = false,
+    private readonly backLink?: string,
   ) {
     super()
   }
@@ -149,8 +143,8 @@ export default class ActionPlanSessionDeliveryDetailsPresenter extends Presenter
     }
   }
 
-  protected buildViewModel(res: Response): ActionPlanSessionDeliveryDetailsViewModel {
-    const content = this.buildStaticContent(res)
+  protected buildViewModel(): ActionPlanSessionDeliveryDetailsViewModel {
+    const content = this.buildStaticContent()['/referral/:id/action-plan/session-delivery-details']
     const frequencyQuestion = this.sessionDeliveryDetails.questions.find(
       q => q.key === SessionDeliveryDetailsQuestions.SESSION_FREQUENCY,
     )!
@@ -167,9 +161,11 @@ export default class ActionPlanSessionDeliveryDetailsPresenter extends Presenter
       pageTitle: content.pageTitle,
       pageHeader: content.pageHeader,
       backLink: {
-        href: this.isCheckAnswersEdit
-          ? content.editBackLink.replace('{{ id }}', this.caseReference)
-          : content.backLink.replace('{{ id }}', this.caseReference),
+        href:
+          this.backLink ??
+          (this.isCheckAnswersEdit
+            ? content.editBackLink.replace('{{ id }}', this.caseReference)
+            : content.backLink.replace('{{ id }}', this.caseReference)),
       },
       submitButton: { text: this.isCheckAnswersEdit ? content.saveAndContinueButtonText : content.continueButtonText },
       frequencyTextBoxArgs: this.buildTextareaQuestion(frequencyQuestion),

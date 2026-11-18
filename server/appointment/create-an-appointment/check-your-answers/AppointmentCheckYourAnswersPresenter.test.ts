@@ -1,14 +1,119 @@
-import { Response } from 'express'
+import nunjucks from 'nunjucks'
 import { globalContent } from '../../../../assets/content/GlobalContent'
 import AppointmentCheckYourAnswersPresenter from './AppointmentCheckYourAnswersPresenter'
 
 const content = globalContent['/referral/:id/create-an-appointment/check-your-answers']
 
-const res = {
-  locals: { content },
-} as unknown as Response
-
 describe('AppointmentCheckYourAnswersPresenter', () => {
+  describe('retrospective appointments', () => {
+    beforeEach(() => {
+      jest.useFakeTimers().setSystemTime(new Date(2026, 10, 4, 13, 30))
+    })
+
+    afterEach(() => {
+      jest.useRealTimers()
+    })
+
+    it.each([
+      ['3/11/2026', '11:59pm', true],
+      ['2026-11-04', '1:29pm', true],
+      ['4/11/2026', '12:00am', true],
+      ['4/11/2026', '12:00pm', true],
+      ['4/11/2026', '1:30pm', false],
+      ['4/11/2026', '1:31pm', false],
+      ['5/11/2026', '12:00am', false],
+      ['invalid', '1:00pm', false],
+      ['4/11/2026', 'invalid', false],
+      [undefined, '1:00pm', false],
+      ['4/11/2026', undefined, false],
+    ])('shows the next steps for %s at %s: %s', (date, startTime, expected) => {
+      const viewModel = new AppointmentCheckYourAnswersPresenter(
+        'AB1234CD',
+        'John',
+        { appointmentType: 'ICS', date, startTime },
+        [],
+      ).buildViewModel()
+
+      expect(viewModel.whatHappensNext).toEqual(
+        expected
+          ? {
+              heading: 'What happens next',
+              text: "As you've entered a date and time in the past, we'll ask you to add appointment feedback.",
+            }
+          : undefined,
+      )
+      expect(viewModel.submitButtonText).toBe(expected ? 'Continue' : 'Submit')
+    })
+
+    it.each(['ICS', 'CONTACT_SESSION', 'PRE_RELEASE_SESSION', 'POST_RELEASE_SESSION', 'HANDOVER_SESSION'])(
+      'shows the message for a past %s and not for a future appointment',
+      appointmentType => {
+        const pastViewModel = new AppointmentCheckYourAnswersPresenter(
+          'AB1234CD',
+          'John',
+          { appointmentType, date: '3/11/2026', startTime: '1:00pm' },
+          [],
+        ).buildViewModel()
+        const futureViewModel = new AppointmentCheckYourAnswersPresenter(
+          'AB1234CD',
+          'John',
+          { appointmentType, date: '4/11/2026', startTime: '1:31pm' },
+          [],
+        ).buildViewModel()
+
+        expect(pastViewModel.whatHappensNext).toEqual({
+          heading: 'What happens next',
+          text: "As you've entered a date and time in the past, we'll ask you to add appointment feedback.",
+        })
+        expect(futureViewModel.whatHappensNext).toBeUndefined()
+        expect(pastViewModel.submitButtonText).toBe(appointmentType === 'ICS' ? 'Continue' : 'Submit')
+        expect(futureViewModel.submitButtonText).toBe('Submit')
+      },
+    )
+
+    it('does not show the message for an unknown appointment type', () => {
+      const viewModel = new AppointmentCheckYourAnswersPresenter(
+        'AB1234CD',
+        'John',
+        { appointmentType: 'UNKNOWN', date: '3/11/2026', startTime: '1:00pm' },
+        [],
+      ).buildViewModel()
+
+      expect(viewModel.whatHappensNext).toBeUndefined()
+      expect(viewModel.submitButtonText).toBe('Submit')
+    })
+
+    it('renders the message below the summary without a notification banner', () => {
+      const environment = new nunjucks.Environment(
+        new nunjucks.FileSystemLoader([
+          'server/views',
+          'node_modules/govuk-frontend/dist/',
+          'node_modules/@ministryofjustice/frontend/',
+        ]),
+        { autoescape: true },
+      )
+      environment.addFilter('assetMap', (url: string) => url)
+      const viewModel = new AppointmentCheckYourAnswersPresenter(
+        'AB1234CD',
+        'John',
+        { appointmentType: 'ICS', date: '3/11/2026', startTime: '1:00pm' },
+        [],
+      ).buildViewModel()
+
+      const html = environment.render('appointment/create-an-appointment/check-your-answers.njk', {
+        applicationName: 'Community Support',
+        content: viewModel,
+      })
+
+      expect(html).toMatch(/govuk-summary-card[\s\S]*<h2 class="govuk-heading-m">What happens next<\/h2>/)
+      expect(html).toContain(
+        'As you&#39;ve entered a date and time in the past, we&#39;ll ask you to add appointment feedback.',
+      )
+      expect(html).not.toContain('govuk-notification-banner')
+      expect(html).not.toContain('role="alert"')
+    })
+  })
+
   it.each([
     ['ICS', 'ICS'],
     ['CONTACT_SESSION', 'contact session'],
@@ -18,7 +123,7 @@ describe('AppointmentCheckYourAnswersPresenter', () => {
   ])('uses booking wording in the title and heading for %s', (appointmentType, label) => {
     const presenter = new AppointmentCheckYourAnswersPresenter('AB1234CD', 'John', { appointmentType }, [])
 
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
 
     expect(viewModel.pageTitle).toBe(`Check the details before booking the ${label}`)
     expect(viewModel.pageHeader).toBe(`Check the details before booking the ${label}`)
@@ -33,7 +138,7 @@ describe('AppointmentCheckYourAnswersPresenter', () => {
       [{ value: 'ICS', name: 'Initial contact session' }],
     )
 
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
 
     expect(viewModel.pageTitle).toBe('Check the details before booking the ICS')
     expect(viewModel.pageHeader).toBe('Check the details before booking the ICS')
@@ -55,7 +160,7 @@ describe('AppointmentCheckYourAnswersPresenter', () => {
       [{ id: 2, name: 'Derbyshire: Buxton Probation Office' }],
     )
 
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
 
     expect(viewModel.pageTitle).toBe('Check the details before booking the pre-release session')
     expect(viewModel.pageHeader).toBe('Check the details before booking the pre-release session')
@@ -85,7 +190,7 @@ describe('AppointmentCheckYourAnswersPresenter', () => {
       [{ id: 2, name: 'Derbyshire: Buxton Probation Office' }],
     )
 
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
 
     expect(
       viewModel.appointmentSummary.rows.some(row =>
@@ -107,7 +212,7 @@ describe('AppointmentCheckYourAnswersPresenter', () => {
       'John',
       { appointmentType: 'CONTACT_SESSION', method, reasonSessionNotInPerson: 'The person cannot attend in person' },
       [],
-    ).buildViewModel(res)
+    ).buildViewModel()
     expect(
       viewModel.appointmentSummary.rows.some(
         row =>
@@ -132,7 +237,7 @@ describe('AppointmentCheckYourAnswersPresenter', () => {
       [{ id: 2, name: 'Derbyshire: Buxton Probation Office' }],
     )
 
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
 
     expect(
       viewModel.appointmentSummary.rows.some(
@@ -155,7 +260,7 @@ describe('AppointmentCheckYourAnswersPresenter', () => {
       [],
     )
 
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
 
     expect(viewModel.appointmentSummary.rows.some(row => row.key.text === content.informedLabel)).toBe(false)
   })
@@ -173,7 +278,7 @@ describe('AppointmentCheckYourAnswersPresenter', () => {
         meetAtTheGate: true,
       },
       [],
-    ).buildViewModel(res)
+    ).buildViewModel()
 
     expect(viewModel.appointmentSummary.rows).toEqual(
       expect.arrayContaining([
@@ -202,7 +307,7 @@ describe('AppointmentCheckYourAnswersPresenter', () => {
       [{ id: 2, name: 'Derbyshire: Buxton Probation Office' }],
     )
 
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
 
     expect(
       viewModel.appointmentSummary.rows.some(
@@ -237,7 +342,7 @@ describe('AppointmentCheckYourAnswersPresenter', () => {
       [],
     )
 
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
 
     expect(
       viewModel.appointmentSummary.rows.some(
@@ -259,7 +364,7 @@ describe('AppointmentCheckYourAnswersPresenter', () => {
       [],
     )
 
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
 
     expect(viewModel.appointmentSummary.rows.some(row => row.value.text === expected)).toBe(true)
   })

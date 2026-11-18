@@ -2,13 +2,13 @@ import { Response } from 'express'
 import { globalContent } from '../../../assets/content/GlobalContent'
 import ReferralLayoutPresenter, { ReferralNavigationValues } from './referralLayoutPresenter'
 
-class TestReferralLayoutPresenter extends ReferralLayoutPresenter<{ title: string }, Record<string, string>> {
+class TestReferralLayoutPresenter extends ReferralLayoutPresenter<{ title: string }> {
   constructor(activePage: ReferralNavigationValues, referralId: string) {
     super(activePage, referralId)
   }
 
-  protected buildViewModel(res: Response): { title: string } {
-    return { title: this.buildStaticContent(res).title }
+  protected buildViewModel(): { title: string } {
+    return { title: this.buildStaticContent()['/'].pageHeader }
   }
 
   protected getTemplatePath(): string {
@@ -81,10 +81,10 @@ describe('ReferralLayoutPresenter', () => {
   })
 
   it('renders through PresenterBase using the subclass template and view model', () => {
-    const res = { locals: { content: { title: 'Hello' } }, render: jest.fn() } as unknown as Response
+    const res = { render: jest.fn() } as unknown as Response
 
     new TestReferralLayoutPresenter(ReferralNavigationValues.actionPlanTab, 'AB1234CD').renderPage(res)
 
-    expect(res.render).toHaveBeenCalledWith('referral/test', { content: { title: 'Hello' } })
+    expect(res.render).toHaveBeenCalledWith('referral/test', { content: { title: globalContent['/'].pageHeader } })
   })
 })

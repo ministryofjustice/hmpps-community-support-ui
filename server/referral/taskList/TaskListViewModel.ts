@@ -1,44 +1,9 @@
 import { GovukFrontendTaskList, GovukFrontendBackLink } from '@govuk-frontend'
+import { GlobalContent } from '../../../assets/content/GlobalContent'
 
-export interface TaskListContent {
-  personalDetails: {
-    title: string
-    subTasks: {
-      confirmPersonalDetails: { text: string; href: string }
-      checkRiskInformation: { text: string; href: string }
-      addSupportNeeds: { text: string; href: string }
-    }
-  }
-  referralInformation: {
-    title: string
-    subTasks: {
-      selectPersonNeeds: { text: string; href: string }
-      selectArea: { text: string; href: string }
-      additionalReferralInformation: { text: string; href: string }
-    }
-  }
-  contactDetails: {
-    title: string
-    subTasks: {
-      addContactDetails: { text: string; href: string }
-      checkPPDetails: { text: string; href: string }
-    }
-  }
-  checkAnswers: {
-    title: string
-    subTasks: {
-      checkAnswersAndSubmit: { text: string; href: string }
-    }
-  }
-}
+export type TaskListContent = TaskListPageContent['taskList']
 
-export interface TaskListPageContent {
-  pageTitle: string
-  pageHeader: string
-  pageSubHeader: string
-  backLink: string
-  taskList: TaskListContent
-}
+export type TaskListPageContent = GlobalContent['/referral/task-list']
 
 export interface TaskListViewModel {
   pageTitle: string

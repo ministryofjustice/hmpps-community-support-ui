@@ -1,6 +1,7 @@
 import { Response } from 'express'
 import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendTextarea } from '@govuk-frontend'
 import { IcsFeedbackSubmission } from '@community-support-api'
+import { GlobalContent } from '../../../assets/content/GlobalContent'
 import PresenterBase from '../../presenter/presenterBase'
 import { ErrorMiddlewareErrors } from '../../@types/express'
 
@@ -14,29 +15,12 @@ export interface HowTheyTriedToContactThePersonViewModel {
   backLink: GovukFrontendBackLink
 }
 
-interface TextAreaContent {
-  id: string
-  name: string
-  label: string
-  hint: string
-  error: string
-  rows: string
-}
+type FormContent = HowTheyTriedToContactThePersonContent['feedbackForm']
 
-interface FormContent {
-  textarea: TextAreaContent
-  submitButtonText: string
-}
+export type HowTheyTriedToContactThePersonContent =
+  GlobalContent['/ics-feedback/:id/how-they-tried-to-contact-the-person']
 
-export interface HowTheyTriedToContactThePersonContent {
-  feedbackForm: FormContent
-  backLink: string
-}
-
-export default class HowTheyTriedToContactThePersonPresenter extends PresenterBase<
-  HowTheyTriedToContactThePersonViewModel,
-  HowTheyTriedToContactThePersonContent
-> {
+export default class HowTheyTriedToContactThePersonPresenter extends PresenterBase<HowTheyTriedToContactThePersonViewModel> {
   constructor(
     private readonly caseRefId: string,
     private readonly firstName: string,
@@ -75,7 +59,7 @@ export default class HowTheyTriedToContactThePersonPresenter extends PresenterBa
   }
 
   buildViewModel(res: Response): HowTheyTriedToContactThePersonViewModel {
-    const content = this.buildStaticContent(res)
+    const content = this.buildStaticContent()['/ics-feedback/:id/how-they-tried-to-contact-the-person']
     return {
       form: this.buildForm(content.feedbackForm, res.locals?.errors),
       backLink: { href: content.backLink.replace('{{ id }}', this.caseRefId) },

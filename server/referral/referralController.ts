@@ -4,6 +4,7 @@ import {
   AssignmentFailureDto,
   UpdateProbationPractitionerDetailsRequest,
 } from '@community-support-api'
+import { globalContent } from '../../assets/content/GlobalContent'
 import ReferralService from '../services/referralService'
 import PersonService from '../services/personService'
 import CommunityServiceProviderService from '../services/communityServiceProviderService'
@@ -246,6 +247,7 @@ export default class ReferralController {
     const bannerContent = sessionBanner?.caseReference === caseReference ? sessionBanner : undefined
 
     delete req.session.referralProgressBanner
+    delete req.session.icsFeedbackSubmission
 
     const referralProgress = await this.referralService.getReferralProgress(caseReference, username)
 
@@ -257,21 +259,32 @@ export default class ReferralController {
   async showReferralAppointments(req: Request, res: Response) {
     const { caseReference } = req.params as { caseReference: string }
     const { username } = res.locals.user
-    const successAlert = req.session.createdAppointmentMessage
+    const feedbackNotification =
+      req.session.appointmentFeedbackMessage?.caseReference === caseReference
+        ? req.session.appointmentFeedbackMessage
+        : undefined
+    const successNotification = feedbackNotification
+      ? ({ type: 'ICS_FEEDBACK' } as const)
+      : req.session.createdAppointmentMessage
     const appointments = await this.referralService.getReferralAppointments(caseReference, username)
-    const presenter = new ReferralAppointmentsPresenter(appointments, caseReference, successAlert)
-    delete req.session.createdAppointmentMessage
+    const presenter = new ReferralAppointmentsPresenter(appointments, caseReference, successNotification)
+    if (feedbackNotification) {
+      delete req.session.appointmentFeedbackMessage
+    } else {
+      delete req.session.createdAppointmentMessage
+    }
     return presenter.renderPage(res)
   }
 
   showSelectAppointmentType(req: Request, res: Response) {
     const { caseReference } = req.params as { caseReference: string }
+    const content = globalContent['/referral/:id/appointment/select-type']
     return res.render('referral/selectAppointmentType', {
       content: {
-        ...res.locals.content,
+        ...content,
         backLink: {
           href: `/referral/${caseReference}/appointments`,
-          text: res.locals.content.backLinkText,
+          text: content.backLinkText,
         },
       },
     })
