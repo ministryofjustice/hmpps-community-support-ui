@@ -12,7 +12,7 @@ import IcsFeedbackController from '../appointment/icsFeedbackController'
 import LandingController from '../landing/landingController'
 import ReferralController from '../referral/referralController'
 import NotesController from '../referral/notes/notesController'
-import ReferralNotesController from '../referral/notes/referralNotesController'
+import NotesController from '../referral/notes/notesController'
 import WithdrawalController from '../referral/withdrawal/withdrawalController'
 
 export default function routes({
@@ -34,7 +34,7 @@ export default function routes({
 
   const referralController = new ReferralController(referralService, personService, communityServiceProviderService)
   const notesController = new NotesController(referralService)
-  const referralNotesController = new ReferralNotesController(referralService)
+  const notesController = new NotesController(referralService)
   const getOrPost = (path: string, handler: RequestHandler) =>
     router.route(path).get(asyncMiddleware(handler)).post(asyncMiddleware(handler))
   const draftReferralController = new DraftReferralController(referralService)
