@@ -17,17 +17,17 @@ This skill provides a structured workflow for guiding users through collaborativ
 **Initial offer:**
 Offer the user a structured workflow for co-authoring the document. Explain the three stages:
 
-1. **Context Gathering**: User provides all relevant context while Claude asks clarifying questions
+1. **Context Gathering**: User provides all relevant context while the assistant asks clarifying questions
 2. **Refinement & Structure**: Iteratively build each section through brainstorming and editing
-3. **Reader Testing**: Test the doc with a fresh Claude (no context) to catch blind spots before others read it
+3. **Reader Testing**: Test the doc with a fresh AI assistant session (no prior context) to catch blind spots before others read it
 
-Explain that this approach helps ensure the doc works well when others read it (including when they paste it into Claude). Ask if they want to try this workflow or prefer to work freeform.
+Explain that this approach helps ensure the doc works well when others read it (including when they paste it into an AI assistant such as Copilot). Ask if they want to try this workflow or prefer to work freeform.
 
 If user declines, work freeform. If user accepts, proceed to Stage 1.
 
 ## Stage 1: Context Gathering
 
-**Goal:** Close the gap between what the user knows and what Claude knows, enabling smart guidance later.
+**Goal:** Close the gap between what the user knows and what the assistant knows, enabling smart guidance later.
 
 ### Initial Questions
 
@@ -49,7 +49,7 @@ Inform them they can answer in shorthand or dump information however works best 
 **If user mentions editing an existing shared document:**
 - Use the appropriate integration to read the current state
 - Check for images without alt-text
-- If images exist without alt-text, explain that when others use Claude to understand the doc, Claude won't be able to see them. Ask if they want alt-text generated. If so, request they paste each image into chat for descriptive alt-text generation.
+- If images exist without alt-text, explain that when others use an AI assistant to understand the doc, it may not be able to see them. Ask if they want alt-text generated. If so, request they paste each image into chat for descriptive alt-text generation.
 
 ### Info Dumping
 
@@ -69,15 +69,13 @@ Advise them not to worry about organizing it - just get it all out. Offer multip
 
 **If integrations are available** (e.g., Slack, Teams, Google Drive, SharePoint, or other MCP servers), mention that these can be used to pull in context directly.
 
-**If no integrations are detected and in Claude.ai or Claude app:** Suggest they can enable connectors in their Claude settings to allow pulling context from messaging apps and document storage directly.
-
 Inform them clarifying questions will be asked once they've done their initial dump.
 
 **During context gathering:**
 
 - If user mentions team channels or shared documents:
   - If integrations available: Inform them the content will be read now, then use the appropriate integration
-  - If integrations not available: Explain lack of access. Suggest they enable connectors in Claude settings, or paste the relevant content directly.
+  - If integrations not available: Explain lack of access. Suggest they enable the relevant integrations (e.g. MCP servers) in their tooling, or paste the relevant content directly.
 
 - If user mentions entities/projects that are unknown:
   - Ask if connected tools should be searched to learn more
@@ -131,8 +129,8 @@ Ask if this structure works, or if they want to adjust it.
 
 Create the initial document structure with placeholder text for all sections.
 
-**If access to artifacts is available:**
-Use `create_file` to create an artifact. This gives both Claude and the user a scaffold to work from.
+**If access to artifacts or canvases is available:**
+Use the available file or artifact creation tool to create one. This gives both the assistant and the user a scaffold to work from.
 
 Inform them that the initial structure with placeholders for all sections will be created.
 
@@ -185,7 +183,7 @@ Based on what they've selected, ask if there's anything important missing for th
 
 ### Step 5: Drafting
 
-Use `str_replace` to replace the placeholder text for this section with the actual drafted content.
+Use a targeted edit tool to replace the placeholder text for this section with the actual drafted content.
 
 Announce the [SECTION NAME] section will be drafted now based on what they've selected.
 
@@ -205,7 +203,7 @@ Provide a note: Instead of editing the doc directly, ask them to indicate what t
 ### Step 6: Iterative Refinement
 
 As user provides feedback:
-- Use `str_replace` to make edits (never reprint the whole doc)
+- Use targeted edits (never reprint the whole doc)
 - **If using artifacts:** Provide link to artifact after each edit
 - **If using files:** Just confirm edits are complete
 - If user edits doc directly and asks to read it: mentally note the changes they made and keep them in mind for future sections (this shows their preferences)
@@ -241,14 +239,14 @@ Ask if ready to move to Reader Testing, or if they want to refine anything else.
 
 ## Stage 3: Reader Testing
 
-**Goal:** Test the document with a fresh Claude (no context bleed) to verify it works for readers.
+**Goal:** Test the document with a fresh AI assistant session (no context bleed) to verify it works for readers.
 
 **Instructions to user:**
 Explain that testing will now occur to see if the document actually works for readers. This catches blind spots - things that make sense to the authors but might confuse others.
 
 ### Testing Approach
 
-**If access to sub-agents is available (e.g., in Claude Code):**
+**If access to sub-agents is available (e.g., Copilot CLI or another agentic coding tool):**
 
 Perform the testing directly without user involvement.
 
@@ -260,11 +258,11 @@ Generate 5-10 questions that readers would realistically ask.
 
 ### Step 2: Test with Sub-Agent
 
-Announce that these questions will be tested with a fresh Claude instance (no context from this conversation).
+Announce that these questions will be tested with a fresh sub-agent (no context from this conversation).
 
 For each question, invoke a sub-agent with just the document content and the question.
 
-Summarize what Reader Claude got right/wrong for each question.
+Summarize what the reader agent got right/wrong for each question.
 
 ### Step 3: Run Additional Checks
 
@@ -277,7 +275,7 @@ Summarize any issues found.
 ### Step 4: Report and Fix
 
 If issues found:
-Report that Reader Claude struggled with specific issues.
+Report that the reader agent struggled with specific issues.
 
 List the specific issues.
 
@@ -287,40 +285,40 @@ Loop back to refinement for problematic sections.
 
 ---
 
-**If no access to sub-agents (e.g., claude.ai web interface):**
+**If no access to sub-agents (e.g., a chat-only interface):**
 
 The user will need to do the testing manually.
 
 ### Step 1: Predict Reader Questions
 
-Ask what questions people might ask when trying to discover this document. What would they type into Claude.ai?
+Ask what questions people might ask when trying to discover this document. What would they type into an AI assistant?
 
 Generate 5-10 questions that readers would realistically ask.
 
 ### Step 2: Setup Testing
 
 Provide testing instructions:
-1. Open a fresh Claude conversation: https://claude.ai
+1. Open a fresh conversation in your AI assistant (e.g. a new Copilot Chat session) with no prior context
 2. Paste or share the document content (if using a shared doc platform with connectors enabled, provide the link)
-3. Ask Reader Claude the generated questions
+3. Ask the reader assistant the generated questions
 
-For each question, instruct Reader Claude to provide:
+For each question, instruct the reader assistant to provide:
 - The answer
 - Whether anything was ambiguous or unclear
 - What knowledge/context the doc assumes is already known
 
-Check if Reader Claude gives correct answers or misinterprets anything.
+Check if the reader assistant gives correct answers or misinterprets anything.
 
 ### Step 3: Additional Checks
 
-Also ask Reader Claude:
+Also ask the reader assistant:
 - "What in this doc might be ambiguous or unclear to readers?"
 - "What knowledge or context does this doc assume readers already have?"
 - "Are there any internal contradictions or inconsistencies?"
 
 ### Step 4: Iterate Based on Results
 
-Ask what Reader Claude got wrong or struggled with. Indicate intention to fix those gaps.
+Ask what the reader assistant got wrong or struggled with. Indicate intention to fix those gaps.
 
 Loop back to refinement for any problematic sections.
 
@@ -328,12 +326,12 @@ Loop back to refinement for any problematic sections.
 
 ### Exit Condition (Both Approaches)
 
-When Reader Claude consistently answers questions correctly and doesn't surface new gaps or ambiguities, the doc is ready.
+When the reader assistant consistently answers questions correctly and doesn't surface new gaps or ambiguities, the doc is ready.
 
 ## Final Review
 
 When Reader Testing passes:
-Announce the doc has passed Reader Claude testing. Before completion:
+Announce the doc has passed reader testing. Before completion:
 
 1. Recommend they do a final read-through themselves - they own this document and are responsible for its quality
 2. Suggest double-checking any facts, links, or technical details
@@ -364,9 +362,9 @@ Announce document completion. Provide a few final tips:
 - Don't let gaps accumulate - address them as they come up
 
 **Artifact Management:**
-- Use `create_file` for drafting full sections
-- Use `str_replace` for all edits
-- Provide artifact link after every change
+- Create a file or artifact for drafting full sections
+- Use targeted edits for all changes
+- Provide a link to the artifact or file after every change
 - Never use artifacts for brainstorming lists - that's just conversation
 
 **Quality over Speed:**
