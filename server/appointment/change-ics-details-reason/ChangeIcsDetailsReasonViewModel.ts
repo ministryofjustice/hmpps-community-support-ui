@@ -1,4 +1,5 @@
 import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendRadios, GovukFrontendTextarea } from '@govuk-frontend'
+import { GlobalContent } from '../../../assets/content/GlobalContent'
 
 export interface ChangeIcsDetailsReasonFormData {
   requestedBy?: string
@@ -16,28 +17,10 @@ export type ChangeIcsDetailsReasonViewModel = {
   formData: ChangeIcsDetailsReasonFormData
 }
 
-export type WhoRequestedRadioItemsContent = {
-  deliveryPartnerText: string
-  probationPractitionerText: string
-}
+export type WhoRequestedRadioItemsContent = WhoRequestedRadioContent['items']
 
-export type WhoRequestedRadioContent = {
-  name: string
-  title: string
-  hint: string
-  items: WhoRequestedRadioItemsContent
-}
+export type WhoRequestedRadioContent = ChangeIcsDetailsReasonContent['whoRequestedRadio']
 
-export type ReasonTextareaContent = {
-  name: string
-  label: string
-}
+export type ReasonTextareaContent = ChangeIcsDetailsReasonContent['reasonTextarea']
 
-export type ChangeIcsDetailsReasonContent = {
-  pageHeader: string
-  serviceName: string
-  whoRequestedRadio: WhoRequestedRadioContent
-  reasonTextarea: ReasonTextareaContent
-  submitButtonText: string
-  backLinkHref: string
-}
+export type ChangeIcsDetailsReasonContent = GlobalContent['/referral/:id/ics-change-details/reason']

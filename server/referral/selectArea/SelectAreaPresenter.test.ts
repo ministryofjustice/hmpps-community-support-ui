@@ -1,4 +1,3 @@
-import { Response } from 'express'
 import { GovukFrontendErrorSummaryErrorListElement } from '@govuk-frontend'
 import SelectAreaPresenter from './SelectAreaPresenter'
 
@@ -39,19 +38,6 @@ const locations = {
   },
 }
 
-const content = {
-  areaLabel: 'Select the area you want to make a referral to',
-  backLinkText: 'Back',
-  backLinkHref: '/referral/task-list',
-  buttonText: 'Save and continue',
-  heading: 'Referral for {{ personName }}',
-  pageCaption: 'CRN: {{ CRN }} | Date of birth: {{ DOB }}',
-}
-
-const res = {
-  locals: { content },
-} as unknown as Response
-
 const noErrors = {
   list: <GovukFrontendErrorSummaryErrorListElement[]>[],
   messages: {},
@@ -68,13 +54,13 @@ describe('SelectAreaPresenter', () => {
   describe('heading and pageCaption', () => {
     it('builds heading from person name', () => {
       const presenter = new SelectAreaPresenter(personalDetails, locations)
-      const viewModel = presenter.buildViewModel(res)
-      expect(viewModel.heading).toBe('Referral for Alex River')
+      const viewModel = presenter.buildViewModel()
+      expect(viewModel.heading).toBe('Alex River')
     })
 
     it('builds pageCaption from CRN and date of birth', () => {
       const presenter = new SelectAreaPresenter(personalDetails, locations)
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
       expect(viewModel.pageCaption).toBe('CRN: X123456 | Date of birth: 20 Feb 1975 (51 years old)')
     })
   })
@@ -82,7 +68,7 @@ describe('SelectAreaPresenter', () => {
   describe('back link', () => {
     it('builds back link from content', () => {
       const presenter = new SelectAreaPresenter(personalDetails, locations)
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
       expect(viewModel.backLinkArgs).toEqual({ text: 'Back', href: '/referral/task-list' })
     })
   })
@@ -90,7 +76,7 @@ describe('SelectAreaPresenter', () => {
   describe('radio items', () => {
     it('generates a divider for each region', () => {
       const presenter = new SelectAreaPresenter(personalDetails, locations)
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
       const dividers = viewModel.radioArgs.items.filter(item => 'divider' in item)
       expect(dividers).toHaveLength(2)
       expect(dividers[0].divider).toBe('Cleveland')
@@ -99,7 +85,7 @@ describe('SelectAreaPresenter', () => {
 
     it('generates a radio item for each area with id, text and pdus hint', () => {
       const presenter = new SelectAreaPresenter(personalDetails, locations)
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
       const radioItems = viewModel.radioArgs.items.filter(item => 'value' in item && item.value !== '')
       expect(radioItems).toHaveLength(2)
       expect(radioItems[0]).toMatchObject({
@@ -116,19 +102,19 @@ describe('SelectAreaPresenter', () => {
 
     it('uses the areaLabel from content as the fieldset legend', () => {
       const presenter = new SelectAreaPresenter(personalDetails, locations)
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
       expect(viewModel.radioArgs.fieldset.legend.text).toBe('Select the area you want to make a referral to')
     })
 
     it('sets no checked value when no provider was previously selected', () => {
       const presenter = new SelectAreaPresenter(personalDetails, locations)
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
       expect(viewModel.radioArgs.value).toBeNull()
     })
 
     it('pre-selects the radio matching the previously selected provider id', () => {
       const presenter = new SelectAreaPresenter(personalDetails, locations, undefined, 'service-2')
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
       expect(viewModel.radioArgs.value).toBe('service-2')
     })
   })
@@ -136,13 +122,13 @@ describe('SelectAreaPresenter', () => {
   describe('validation errors', () => {
     it('sets no error message when there are no errors', () => {
       const presenter = new SelectAreaPresenter(personalDetails, locations, noErrors)
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
       expect(viewModel.radioArgs.errorMessage).toBeNull()
     })
 
     it('sets the error message on the radios when selectArea has a validation error', () => {
       const presenter = new SelectAreaPresenter(personalDetails, locations, selectAreaErrors)
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
       expect(viewModel.radioArgs.errorMessage).toEqual({ text: 'Select an area for the referral' })
     })
   })

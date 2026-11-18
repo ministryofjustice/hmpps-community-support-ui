@@ -1,4 +1,3 @@
-import { Response } from 'express'
 import { Person, UpdateProbationPractitionerDetailsRequest } from '@community-support-api'
 import ConfirmContactDetailsPresenter from './confirmContactDetailsPresenter'
 import { ConfirmContactDetailsContent } from './confirmContactDetailsViewModel'
@@ -33,21 +32,17 @@ const ppDetails: PPDetails = {
 
 const content = loadContentDataForTest('/referral/new/confirm-contact-details') as ConfirmContactDetailsContent
 
-const res = {
-  locals: { content },
-} as unknown as Response
-
 describe('ConfirmContactDetailsPresenter', () => {
   describe('heading and pageCaption', () => {
     it('builds heading from person name', () => {
       const presenter = new ConfirmContactDetailsPresenter(personalDetails, ppDetails)
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
       expect(viewModel.heading).toBe('Referral Person')
     })
 
     it('builds pageCaption from CRN and date of birth', () => {
       const presenter = new ConfirmContactDetailsPresenter(personalDetails, ppDetails)
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
       expect(viewModel.pageCaption).toBe('CRN: X123456 | Date of birth: 20 Feb 1975 (51 years old)')
     })
   })
@@ -55,13 +50,13 @@ describe('ConfirmContactDetailsPresenter', () => {
   describe('back link', () => {
     it('builds back link from content when not from PP', () => {
       const presenter = new ConfirmContactDetailsPresenter(personalDetails, ppDetails)
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
       expect(viewModel.backLinkArgs).toEqual({ text: 'Back', href: '/referral/new/add-contact-details' })
     })
 
     it('appends fromPP=true to the back link when isFromPP is true', () => {
       const presenter = new ConfirmContactDetailsPresenter(personalDetails, ppDetails, true)
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
       expect(viewModel.backLinkArgs).toEqual({
         text: 'Back',
         href: '/referral/new/add-contact-details?fromPP=true',
@@ -72,7 +67,7 @@ describe('ConfirmContactDetailsPresenter', () => {
   describe('button', () => {
     it('builds button with preventDoubleClick enabled', () => {
       const presenter = new ConfirmContactDetailsPresenter(personalDetails, ppDetails)
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
       expect(viewModel.buttonArgs).toEqual({ text: 'Save and continue', preventDoubleClick: true })
     })
   })
@@ -80,7 +75,7 @@ describe('ConfirmContactDetailsPresenter', () => {
   describe('subHeading', () => {
     it('passes subHeading through from content', () => {
       const presenter = new ConfirmContactDetailsPresenter(personalDetails, ppDetails)
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
       expect(viewModel.subHeading).toBe('Check contact details')
     })
   })
@@ -146,7 +141,7 @@ describe('ConfirmContactDetailsPresenter', () => {
   describe('buildViewModel', () => {
     it('builds complete view model with all fields', () => {
       const presenter = new ConfirmContactDetailsPresenter(personalDetails, ppDetails)
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
       expect(viewModel).toHaveProperty('heading')
       expect(viewModel).toHaveProperty('pageCaption')
       expect(viewModel).toHaveProperty('backLinkArgs')

@@ -1,4 +1,3 @@
-import { Response } from 'express'
 import { GovukFrontendInput, GovukFrontendSelect } from '@govuk-frontend'
 import { ProbationOffice, SessionMethod } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
@@ -13,10 +12,7 @@ import {
 } from '../../@types/govukFrontend/derived'
 import { ErrorMiddlewareErrors } from '../../@types/express'
 
-export default class IcsFeedbackHowSessionTookPlacePresenter extends PresenterBase<
-  IcsFeedbackHowSessionTookPlaceViewModel,
-  IcsFeedbackHowSessionTookPlaceContent
-> {
+export default class IcsFeedbackHowSessionTookPlacePresenter extends PresenterBase<IcsFeedbackHowSessionTookPlaceViewModel> {
   constructor(
     private readonly caseRefId: string,
     private readonly sessionMethod: SessionMethod,
@@ -218,10 +214,13 @@ export default class IcsFeedbackHowSessionTookPlacePresenter extends PresenterBa
     }
   }
 
-  buildViewModel(res: Response): IcsFeedbackHowSessionTookPlaceViewModel {
-    const content = this.buildStaticContent(res)
+  buildViewModel(): IcsFeedbackHowSessionTookPlaceViewModel {
+    const content = this.buildStaticContent()['/ics-feedback/:id/did-session-take-place']
     const { type } = this.sessionMethod
-    const pageHeader = content.pageHeaders?.[type] ?? content.pageHeaders?.default ?? ''
+    const pageHeader =
+      type in content.pageHeaders
+        ? content.pageHeaders[type as keyof typeof content.pageHeaders]
+        : content.pageHeaders.default
     return {
       pageHeader,
       submitButtonText: content.submitButtonText,

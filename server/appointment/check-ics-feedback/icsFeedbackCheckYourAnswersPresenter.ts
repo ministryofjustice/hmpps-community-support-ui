@@ -1,4 +1,3 @@
-import { Response } from 'express'
 import { IcsFeedbackSubmission } from '@community-support-api'
 import { GovukFrontendSummaryListRow } from '@govuk-frontend'
 import PresenterBase from '../../presenter/presenterBase'
@@ -9,10 +8,7 @@ import {
   IcsFeedbackSummaryListContent,
 } from './icsFeedbackCheckYourAnswersViewModel'
 
-export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
-  IcsFeedbackCheckYourAnswersViewModel,
-  IcsFeedbackCheckYourAnswersContent
-> {
+export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<IcsFeedbackCheckYourAnswersViewModel> {
   constructor(
     private readonly icsFeedbackSubmission: IcsFeedbackSubmission,
     private readonly caseRefId: string,
@@ -21,8 +17,8 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
     super()
   }
 
-  buildViewModel(res: Response) {
-    const content = this.buildStaticContent(res)
+  buildViewModel() {
+    const content = this.buildStaticContent()['/ics-feedback/:id/check-answers']
     return {
       ...content,
       submitHref: content.submitHref.replace('caseRefId', this.caseRefId),

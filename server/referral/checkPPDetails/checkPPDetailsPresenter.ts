@@ -1,4 +1,3 @@
-import { Response } from 'express'
 import { Person, ProbationPractitionerDetails } from '@community-support-api'
 import {
   GovukFrontendBackLink,
@@ -10,9 +9,9 @@ import PresenterBase from '../../presenter/presenterBase'
 import { CheckPPDetailsContent, CheckPPDetailsViewModel } from './checkPPDetailsViewModel'
 import { ErrorMiddlewareErrors } from '../../@types/express'
 
-export default class CheckPPDetailsPresenter extends PresenterBase<CheckPPDetailsViewModel, CheckPPDetailsContent> {
-  buildViewModel(res: Response) {
-    const content = this.buildStaticContent(res)
+export default class CheckPPDetailsPresenter extends PresenterBase<CheckPPDetailsViewModel> {
+  buildViewModel() {
+    const content = this.buildStaticContent()['/referral/task-list/check-probation-practitioner-details']
     return {
       heading: content.heading.replace(
         '{{ personName }}',

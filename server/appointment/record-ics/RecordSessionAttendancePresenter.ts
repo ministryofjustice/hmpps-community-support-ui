@@ -27,10 +27,7 @@ export interface RecordSessionAttendanceViewModel {
 
 export type RecordSessionAttendanceContent = GlobalContent['/ics-feedback/:id/attendance']
 
-export default class RecordSessionAttendancePresenter extends PresenterBase<
-  RecordSessionAttendanceViewModel,
-  RecordSessionAttendanceContent
-> {
+export default class RecordSessionAttendancePresenter extends PresenterBase<RecordSessionAttendanceViewModel> {
   private errors: ErrorMiddlewareErrors
 
   constructor(
@@ -76,7 +73,7 @@ export default class RecordSessionAttendancePresenter extends PresenterBase<
   }
 
   buildViewModel(res: Response): RecordSessionAttendanceViewModel {
-    const content = this.buildStaticContent(res)
+    const content = this.buildStaticContent()['/ics-feedback/:id/attendance']
     this.errors = res.locals.errors
     const appointment = {
       referralFirstName: this.data.referralFirstName,

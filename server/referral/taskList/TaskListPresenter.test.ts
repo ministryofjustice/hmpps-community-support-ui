@@ -1,7 +1,5 @@
-import { Response } from 'express'
 import { TaskListStatusDto } from '@community-support-api'
 import TaskListPresenter from './TaskListPresenter'
-import TaskListContent from '../../testutils/factories/TaskListContent'
 
 const baseTaskListState: TaskListStatusDto = {
   refereeName: { firstName: 'John', lastName: 'Smith' },
@@ -26,13 +24,11 @@ describe('TaskListPresenter - Page Rendering', () => {
   describe('check your answers', () => {
     test('check answers is plain text when it shows Cannot Start Yet', () => {
       const presenter = new TaskListPresenter(baseTaskListState)
-      const content = TaskListContent.build()
-      const response = { locals: { content } } as unknown as Response
-      const viewModel = presenter.buildViewModel(response)
+      const viewModel = presenter.buildViewModel()
 
       const { checkAnswers } = viewModel.taskListItemsBySection
       expect(checkAnswers.taskList.items[0].status).toEqual({ text: 'Cannot Start Yet' })
-      expect(checkAnswers.taskList.items[0].title.text).toBe('Check answers and submit')
+      expect(checkAnswers.taskList.items[0].title.text).toBe('Check answers and submit the referral')
       expect(checkAnswers.taskList.items[0].href).toBeUndefined()
     })
     test('check answers is a link when it shows Incomplete', () => {
@@ -41,15 +37,13 @@ describe('TaskListPresenter - Page Rendering', () => {
         checkYourAnswersStatus: { completed: false, statusText: 'Incomplete', tag: 'govuk-tag--blue' },
       }
       const presenter = new TaskListPresenter(taskListState)
-      const content = TaskListContent.build()
-      const response = { locals: { content } } as unknown as Response
-      const viewModel = presenter.buildViewModel(response)
+      const viewModel = presenter.buildViewModel()
 
       const { checkAnswers } = viewModel.taskListItemsBySection
       expect(checkAnswers.taskList.items[0].status).toEqual({
         tag: { text: 'Incomplete', classes: 'govuk-tag--blue' },
       })
-      expect(checkAnswers.taskList.items[0].title.text).toBe('Check answers and submit')
+      expect(checkAnswers.taskList.items[0].title.text).toBe('Check answers and submit the referral')
       expect(checkAnswers.taskList.items[0].href).toBe('/referral/check-referral-information')
     })
   })
@@ -58,9 +52,7 @@ describe('TaskListPresenter - Page Rendering', () => {
     test('renders correct content', () => {
       const taskListState: TaskListStatusDto = { ...baseTaskListState }
       const presenter = new TaskListPresenter(taskListState)
-      const content = TaskListContent.build()
-      const response = { locals: { content } } as unknown as Response
-      const viewModel = presenter.buildViewModel(response)
+      const viewModel = presenter.buildViewModel()
 
       // Basic page info
       expect(viewModel.pageHeader).toBe('John Smith')
@@ -93,9 +85,7 @@ describe('TaskListPresenter - Page Rendering', () => {
         },
       }
       const presenter = new TaskListPresenter(taskListState)
-      const content = TaskListContent.build()
-      const response = { locals: { content } } as unknown as Response
-      const viewModel = presenter.buildViewModel(response)
+      const viewModel = presenter.buildViewModel()
 
       const { items } = viewModel.taskListItemsBySection.contactDetails.taskList
       expect(items).toHaveLength(1)
@@ -113,9 +103,7 @@ describe('TaskListPresenter - Page Rendering', () => {
         },
       }
       const presenter = new TaskListPresenter(taskListState)
-      const content = TaskListContent.build()
-      const response = { locals: { content } } as unknown as Response
-      const viewModel = presenter.buildViewModel(response)
+      const viewModel = presenter.buildViewModel()
 
       const { items } = viewModel.taskListItemsBySection.contactDetails.taskList
       expect(items[0].status.tag.text).toBe('Incomplete')

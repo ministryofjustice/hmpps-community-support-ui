@@ -601,8 +601,8 @@ describe('ActionPlanController', () => {
         undefined,
         undefined,
         undefined,
+        '/referral/AB1234CD/action-plan/select-a-need',
       )
-      expect(res.locals.content.backLink).toBe('/referral/{{ caseReference }}/action-plan/select-a-need')
       expect(ActionPlanAddActivityPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
     })
 
@@ -644,8 +644,8 @@ describe('ActionPlanController', () => {
           undefined,
           undefined,
           undefined,
+          destination === 'activities' ? undefined : `/referral/AB1234CD/action-plan/${destination}`,
         )
-        expect(res.locals.content.backLink).toBe(`/referral/{{ caseReference }}/action-plan/${destination}`)
       },
     )
 
@@ -716,6 +716,7 @@ describe('ActionPlanController', () => {
         { activityProvider: 'Old provider', activityDescription: 'Old details' },
         0,
         { activityProvider: 'Community group', activityDescription: '   ' },
+        undefined,
       )
     })
 
@@ -1150,8 +1151,8 @@ describe('ActionPlanController', () => {
         undefined,
         undefined,
         undefined,
+        '/referral/ZZ9876YY/action-plan/select-a-need',
       )
-      expect(res.locals.content.backLink).toBe('/referral/{{ caseReference }}/action-plan/select-a-need')
     })
   })
 
@@ -1367,7 +1368,7 @@ describe('ActionPlanController', () => {
 
       await actionPlanController[page.show](req, res, true)
 
-      expect(page.presenter).toHaveBeenCalledWith('AB1234CD', page.details, undefined, undefined, true)
+      expect(page.presenter).toHaveBeenCalledWith('AB1234CD', page.details, undefined, undefined, true, undefined)
     })
 
     describe('submitted action plans', () => {
@@ -1391,8 +1392,7 @@ describe('ActionPlanController', () => {
           page.path === 'update-service-end-date'
             ? '/referral/AB1234CD/action-plan/change-service-end-date-check'
             : '/referral/AB1234CD/service-delivery'
-        expect(res.locals.content).toMatchObject({ backLink, editBackLink: backLink })
-        expect(page.presenter).toHaveBeenCalledWith('AB1234CD', page.details, undefined, undefined, true)
+        expect(page.presenter).toHaveBeenCalledWith('AB1234CD', page.details, undefined, undefined, true, backLink)
       })
 
       it.each(pages)('persists $path without resubmitting the plan or replaying unrelated drafts', async page => {
@@ -1553,6 +1553,7 @@ describe('ActionPlanController', () => {
       undefined,
       undefined,
       false,
+      undefined,
     )
     expect(ActionPlanChangeServiceEndDatePresenter.prototype.renderPage).toHaveBeenCalledWith(res)
   })
@@ -1631,6 +1632,7 @@ describe('ActionPlanController', () => {
         undefined,
         undefined,
         false,
+        undefined,
       )
       expect(ActionPlanRisksAndAdjustmentsPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
     })
@@ -1687,6 +1689,7 @@ describe('ActionPlanController', () => {
       undefined,
       undefined,
       false,
+      undefined,
     )
     expect(ActionPlanSessionDeliveryDetailsPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
   })
@@ -1732,6 +1735,7 @@ describe('ActionPlanController', () => {
       undefined,
       undefined,
       false,
+      undefined,
     )
   })
 
@@ -1757,6 +1761,7 @@ describe('ActionPlanController', () => {
       undefined,
       undefined,
       false,
+      undefined,
     )
   })
 
@@ -1781,6 +1786,7 @@ describe('ActionPlanController', () => {
       validationErrors,
       flashedValue,
       false,
+      undefined,
     )
   })
 
@@ -1928,6 +1934,7 @@ describe('ActionPlanController', () => {
         undefined,
         undefined,
         false,
+        undefined,
       )
       expect(ActionPlanServiceEndDateCheckPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
     })
@@ -1958,6 +1965,7 @@ describe('ActionPlanController', () => {
         undefined,
         undefined,
         false,
+        undefined,
       )
     })
 
@@ -1980,6 +1988,7 @@ describe('ActionPlanController', () => {
         undefined,
         undefined,
         false,
+        undefined,
       )
     })
 
@@ -2001,6 +2010,7 @@ describe('ActionPlanController', () => {
         validationErrors,
         flashedValue,
         false,
+        undefined,
       )
     })
 
@@ -2118,6 +2128,7 @@ describe('ActionPlanController', () => {
           undefined,
           undefined,
           false,
+          undefined,
         )
         expect(ActionPlanServiceUserInvolvementPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
       })
@@ -2144,6 +2155,7 @@ describe('ActionPlanController', () => {
           undefined,
           undefined,
           false,
+          undefined,
         )
       })
 
@@ -2165,6 +2177,7 @@ describe('ActionPlanController', () => {
           undefined,
           undefined,
           false,
+          undefined,
         )
       })
 
@@ -2185,6 +2198,7 @@ describe('ActionPlanController', () => {
           validationErrors,
           flashedValue,
           false,
+          undefined,
         )
       })
     })

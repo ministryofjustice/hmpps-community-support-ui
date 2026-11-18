@@ -1,4 +1,5 @@
 import { GovukFrontendBackLink, GovukFrontendInput, GovukFrontendSelect } from '@govuk-frontend'
+import { GlobalContent } from '../../../assets/content/GlobalContent'
 import { GovukFrontendRadiosWithConditional } from '../../@types/govukFrontend/derived'
 
 export interface IcsFeedbackHowSessionTookPlaceFormData {
@@ -34,24 +35,4 @@ export type IcsFeedbackHowSessionTookPlaceViewModel = {
   didSessionTakePlaceRadiosArgs: (howSessionHtml: string) => GovukFrontendRadiosWithConditional
 }
 
-export type IcsFeedbackHowSessionTookPlaceContent = {
-  submitButtonText: string
-  pageHeaders: Record<string, string>
-  videoCallReasonLabel: string
-  phoneCallReasonLabel: string
-  probationOfficeSelectBlankText: string
-  probationOfficeSelectLabel: string
-  addressLine1Label: string
-  addressLine2Label: string
-  townOrCityLabel: string
-  countyLabel: string
-  postcodeLabel: string
-  howSessionLegend: string
-  howSessionHint: string
-  phoneCallOptionText: string
-  videoCallOptionText: string
-  probationOfficeOptionText: string
-  somewhereElseOptionText: string
-  yesText: string
-  noText: string
-}
+export type IcsFeedbackHowSessionTookPlaceContent = GlobalContent['/ics-feedback/:id/did-session-take-place']

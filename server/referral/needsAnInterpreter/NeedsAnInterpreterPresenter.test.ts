@@ -1,8 +1,6 @@
-import { Response } from 'express'
 import { NeedsInterpreterBffResponseDto } from '@community-support-api'
 import NeedsAnInterpreterPresenter from './NeedsAnInterpreterPresenter'
 import { ErrorMiddlewareErrors } from '../../@types/express'
-import loadContentDataForTest from '../../testutils/loadContentDataForTest'
 
 const firstName = 'Alex' as const
 
@@ -24,16 +22,8 @@ const errorMessage = {
   language: `Enter the language ${firstName} needs an interpreter for`,
 } as const
 
-const content = loadContentDataForTest('/referral/task-list/needs-an-interpreter')
-
 describe('NeedsAnInterpreterPresenter', () => {
   describe('buildViewModel', () => {
-    const res = {
-      locals: {
-        content,
-      },
-    } as unknown as Response
-
     test('buildViewModel creates radios with empty conditional text when no language is selected', () => {
       const dto: NeedsInterpreterBffResponseDto = {
         refereeName: { firstName: 'Alex', lastName: 'River' },
@@ -41,7 +31,7 @@ describe('NeedsAnInterpreterPresenter', () => {
       }
 
       const presenter = new NeedsAnInterpreterPresenter(dto, { list: [], messages: {} })
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
       expect(viewModel.pageTitle).toBe(pageContent.pageTitle)
       expect(viewModel.backLink.href).toBe('/referral/task-list/additional-support-needs')
       expect(viewModel.button).toStrictEqual({ text: pageContent.button })
@@ -80,7 +70,7 @@ describe('NeedsAnInterpreterPresenter', () => {
       }
 
       const presenter = new NeedsAnInterpreterPresenter(dto, validationErrors)
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
 
       const [yesRadio, noRadio] = viewModel.radios.items
 
@@ -104,7 +94,7 @@ describe('NeedsAnInterpreterPresenter', () => {
       }
 
       const presenter = new NeedsAnInterpreterPresenter(dto, validationErrors)
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
 
       const [yesRadio, noRadio] = viewModel.radios.items
       // nothing checked
@@ -125,7 +115,7 @@ describe('NeedsAnInterpreterPresenter', () => {
       }
 
       const presenter = new NeedsAnInterpreterPresenter(dto, validationErrors)
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
 
       const [yesRadio, noRadio] = viewModel.radios.items
       // yes checked

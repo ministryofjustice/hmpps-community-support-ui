@@ -1,6 +1,5 @@
 import { AppointmentIcsResponse } from '@community-support-api'
 import { GovukFrontendSummaryList } from '@govuk-frontend'
-import { Response } from 'express'
 import PresenterBase from '../../presenter/presenterBase'
 import { ViewChangeSessionDetailsViewModel } from './viewChangeSessionDetailsViewModel'
 import dateFormat from '../../utils/dateFormat'
@@ -27,10 +26,7 @@ const SESSION_COMMUNICATION_DISPLAY: Record<string, string> = {
 const VIRTUAL_TYPES = new Set<string>(['PHONE', 'VIDEO'])
 const IN_PERSON_PREFIX = 'IN_PERSON'
 
-export default class ViewChangeSessionDetailsPresenter extends PresenterBase<
-  ViewChangeSessionDetailsViewModel,
-  object
-> {
+export default class ViewChangeSessionDetailsPresenter extends PresenterBase<ViewChangeSessionDetailsViewModel> {
   constructor(
     private readonly appointmentIcsResponse: AppointmentIcsResponse,
     private readonly referralId: string,
@@ -39,7 +35,7 @@ export default class ViewChangeSessionDetailsPresenter extends PresenterBase<
     super()
   }
 
-  buildViewModel(_res: Response): ViewChangeSessionDetailsViewModel {
+  buildViewModel(): ViewChangeSessionDetailsViewModel {
     return {
       pageHeader: 'View session details',
       backLink: { href: `/progress/${this.referralId}` },

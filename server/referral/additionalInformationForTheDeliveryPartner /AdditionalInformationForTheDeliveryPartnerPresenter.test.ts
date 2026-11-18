@@ -1,7 +1,5 @@
-import { Response } from 'express'
 import { AdditionalInformationForTheDeliveryPartner } from '@community-support-api'
 import { ErrorMiddlewareErrors } from '../../@types/express'
-import loadContentDataForTest from '../../testutils/loadContentDataForTest'
 import AdditionalInformationForTheDeliveryPartnerPresenter from './AdditionalInformationForTheDeliveryPartnerPresenter'
 
 const firstName = 'Gavin' as const
@@ -35,16 +33,8 @@ const errorMessage = {
   nothingEntered: `Enter details of anything else the delivery partner should know`,
 } as const
 
-const content = loadContentDataForTest('/referral/task-list/additional-information-for-the-delivery-partner')
-
 describe('AdditionalInformationForTheDeliveryPartnerPresenter', () => {
   describe('buildViewModel', () => {
-    const res = {
-      locals: {
-        content,
-      },
-    } as unknown as Response
-
     test('buildViewModel creates radios with empty conditional text when no information is given', () => {
       const dto: AdditionalInformationForTheDeliveryPartner = {
         refereeName: { firstName, lastName: 'River' },
@@ -52,7 +42,7 @@ describe('AdditionalInformationForTheDeliveryPartnerPresenter', () => {
       }
 
       const presenter = new AdditionalInformationForTheDeliveryPartnerPresenter(dto, { list: [], messages: {} })
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
 
       expect(viewModel.backLink.href).toBe('/referral/task-list/offence-sentence')
       expect(viewModel.heading).toBe(pageContent.h2)
@@ -75,7 +65,7 @@ describe('AdditionalInformationForTheDeliveryPartnerPresenter', () => {
       }
 
       const presenter = new AdditionalInformationForTheDeliveryPartnerPresenter(dto, validationErrors)
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
       expect(viewModel.radios.value.selected).toBe('Yes')
     })
 
@@ -91,7 +81,7 @@ describe('AdditionalInformationForTheDeliveryPartnerPresenter', () => {
       }
 
       const presenter = new AdditionalInformationForTheDeliveryPartnerPresenter(dto, validationErrors)
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
       expect(viewModel.radios.value.selected).toBe('Unanswered')
       expect(viewModel.radios.main.errorMessage.text).toBe(errorMessage.nothingEntered)
     })
@@ -108,7 +98,7 @@ describe('AdditionalInformationForTheDeliveryPartnerPresenter', () => {
       }
 
       const presenter = new AdditionalInformationForTheDeliveryPartnerPresenter(dto, validationErrors)
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
       expect(viewModel.radios.value.selected).toBe('Yes')
       expect(viewModel.radios.details.errorMessage.text).toBe(errorMessage.nothingEntered)
     })

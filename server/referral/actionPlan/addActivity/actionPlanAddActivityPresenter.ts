@@ -1,12 +1,9 @@
 import { Response } from 'express'
 import PresenterBase from '../../../presenter/presenterBase'
 import { escapeHtml } from '../../../utils/utils'
-import { ActionPlanAddActivityContent, ActionPlanAddActivityViewModel } from './actionPlanAddActivityViewModel'
+import { ActionPlanAddActivityViewModel } from './actionPlanAddActivityViewModel'
 
-export default class ActionPlanAddActivityPresenter extends PresenterBase<
-  ActionPlanAddActivityViewModel,
-  ActionPlanAddActivityContent
-> {
+export default class ActionPlanAddActivityPresenter extends PresenterBase<ActionPlanAddActivityViewModel> {
   constructor(
     private readonly caseReference: string,
     private readonly selectedNeedLabel: string,
@@ -14,13 +11,14 @@ export default class ActionPlanAddActivityPresenter extends PresenterBase<
     private readonly activity?: { activityProvider: string; activityDescription: string },
     private readonly activityIndex?: number,
     private readonly userInputData?: Record<string, string>,
+    private readonly backLink?: string,
   ) {
     super()
   }
 
   protected buildViewModel(res: Response): ActionPlanAddActivityViewModel {
-    const content = this.buildStaticContent(res)
-    const href = content.backLink.replace('{{ caseReference }}', this.caseReference)
+    const content = this.buildStaticContent()['/referral/:id/action-plan/activities/add']
+    const href = (this.backLink ?? content.backLink).replace('{{ caseReference }}', this.caseReference)
 
     return {
       pageHeader: content.pageHeader,

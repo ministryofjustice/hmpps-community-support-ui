@@ -1,4 +1,3 @@
-import { Response } from 'express'
 import {
   IcsFeedbackSubmissionResponse,
   CaseWorkerSummary,
@@ -76,10 +75,7 @@ export interface DidNotAttendSessionFeedbackRowInput {
 
 const REMOTE_SESSION_METHODS = new Set(['Phone call', 'Video call'])
 
-export default class ViewSessionFeedbackPresenter extends PresenterBase<
-  ViewSessionFeedbackViewModel,
-  ViewSessionFeedbackContent
-> {
+export default class ViewSessionFeedbackPresenter extends PresenterBase<ViewSessionFeedbackViewModel> {
   constructor(
     private readonly icsFeedbackSubmissionResponse: IcsFeedbackSubmissionResponse,
     private readonly caseRefId: string,
@@ -87,8 +83,8 @@ export default class ViewSessionFeedbackPresenter extends PresenterBase<
     super()
   }
 
-  buildViewModel(res: Response): ViewSessionFeedbackViewModel {
-    const content = this.buildStaticContent(res)
+  buildViewModel(): ViewSessionFeedbackViewModel {
+    const content = this.buildStaticContent()['/ics-feedback/:id/session/:id']
     const didSessionHappen = this.icsFeedbackSubmissionResponse.recordSessionDidSessionHappen === true
 
     return {

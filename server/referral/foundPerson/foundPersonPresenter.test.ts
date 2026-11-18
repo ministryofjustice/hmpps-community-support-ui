@@ -1,7 +1,7 @@
 import { Response } from 'express'
 import type { FoundPersonContent, FoundPersonViewModel } from './foundPersonViewModel'
 import FoundPersonPresenter from './foundPersonPresenter'
-import FoundPersonContentFactory from '../../testutils/factories/FoundPersonContent'
+import { globalContent } from '../../../assets/content/GlobalContent'
 import PersonFactory from '../../testutils/factories/Person'
 
 describe('FoundPersonPresenter', () => {
@@ -9,7 +9,7 @@ describe('FoundPersonPresenter', () => {
   let content: FoundPersonContent
 
   beforeEach(() => {
-    content = FoundPersonContentFactory.build()
+    content = globalContent['/referral/new/find-a-person']
     res = {
       locals: { content },
       render: jest.fn(),

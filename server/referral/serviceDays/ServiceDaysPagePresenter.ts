@@ -1,10 +1,9 @@
-import { Response } from 'express'
 import { ServiceDaysPageDto } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
-import { ServiceDaysPageViewModel, ServiceDaysPageContent } from './ServiceDaysPageModel'
+import { ServiceDaysPageViewModel } from './ServiceDaysPageModel'
 import { ErrorMiddlewareErrors } from '../../@types/express'
 
-export default class ServiceDaysPagePresenter extends PresenterBase<ServiceDaysPageViewModel, ServiceDaysPageContent> {
+export default class ServiceDaysPagePresenter extends PresenterBase<ServiceDaysPageViewModel> {
   constructor(
     private readonly data: ServiceDaysPageDto,
     private readonly validationErrors: ErrorMiddlewareErrors,
@@ -17,13 +16,8 @@ export default class ServiceDaysPagePresenter extends PresenterBase<ServiceDaysP
     return 'referral/service-days'
   }
 
-  protected buildStaticContent(res: Response): ServiceDaysPageContent {
-    const { content } = res.locals
-    return content as ServiceDaysPageContent
-  }
-
-  buildViewModel(res: Response): ServiceDaysPageViewModel {
-    const content = this.buildStaticContent(res)
+  buildViewModel(): ServiceDaysPageViewModel {
+    const content = this.buildStaticContent()['/referral/task-list/service-days']
     const serviceDays = this.formData?.serviceDays ?? this.data.service_days
 
     return {

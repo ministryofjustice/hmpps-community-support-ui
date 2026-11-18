@@ -1,8 +1,7 @@
-import { Response } from 'express'
 import { GovukFrontendTaskListItemStatus } from '@govuk-frontend'
 import { TaskListStatusDto, TaskListStatusItem } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
-import { TaskListViewModel, TaskListPageContent, TaskListContent } from './TaskListViewModel'
+import { TaskListViewModel, TaskListContent } from './TaskListViewModel'
 
 const getStatusTag = (status: TaskListStatusItem): GovukFrontendTaskListItemStatus =>
   status.tag ? { tag: { text: status.statusText, classes: status.tag } } : { text: status.statusText }
@@ -20,7 +19,7 @@ const getTaskListStatus = (data: TaskListStatusDto) => {
   }
 }
 
-export default class TaskListPresenter extends PresenterBase<TaskListViewModel, TaskListPageContent> {
+export default class TaskListPresenter extends PresenterBase<TaskListViewModel> {
   constructor(private readonly data: TaskListStatusDto) {
     super()
   }
@@ -108,8 +107,8 @@ export default class TaskListPresenter extends PresenterBase<TaskListViewModel, 
     }
   }
 
-  buildViewModel(res: Response): TaskListViewModel {
-    const content = this.buildStaticContent(res)
+  buildViewModel(): TaskListViewModel {
+    const content = this.buildStaticContent()['/referral/task-list']
     return {
       pageTitle: content.pageTitle,
       pageHeader: content.pageHeader.replace(

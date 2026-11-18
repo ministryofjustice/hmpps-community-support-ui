@@ -1,4 +1,3 @@
-import { Response } from 'express'
 import { GovukFrontendBackLink, GovukFrontendSummaryList } from '@govuk-frontend'
 import { ReferralDetailsResponseDto, ReferralUserAssignmentsResponse } from '@community-support-api'
 import { differenceInYears } from 'date-fns'
@@ -33,10 +32,7 @@ export interface ReferralDetailsViewModel {
   withdrawReferralLinkText: string
 }
 
-export default class ReferralDetailsPresenter extends ReferralLayoutPresenter<
-  ReferralDetailsViewModel,
-  ReferralDetailsContent
-> {
+export default class ReferralDetailsPresenter extends ReferralLayoutPresenter<ReferralDetailsViewModel> {
   private readonly assignReferralHref: string
 
   private readonly age: number
@@ -191,8 +187,8 @@ export default class ReferralDetailsPresenter extends ReferralLayoutPresenter<
     return null
   }
 
-  buildViewModel(res: Response): ReferralDetailsViewModel {
-    const content = this.buildStaticContent(res)
+  buildViewModel(): ReferralDetailsViewModel {
+    const content = this.buildStaticContent()['/referral-details/:id']
     return {
       name: this.referralDetails.personDetailsTableData.name,
       subNav: this.getMojSubNavigationArgs(undefined, this.isReferralAssigned()),

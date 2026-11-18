@@ -1,5 +1,4 @@
 import { ActionPlanSummaryDto } from '@community-support-api'
-import { Response } from 'express'
 import { GovukFrontendButton, GovukFrontendSummaryListCardActions, GovukFrontendSummaryListRow } from '@govuk-frontend'
 import { formatDate } from 'date-fns'
 import { MojAlert } from '@moj-frontend'
@@ -8,7 +7,7 @@ import { components } from '../../@types/communitySupportApi/imported'
 import { ReferralNavigationValues } from '../referralLayout/referralLayoutPresenter'
 import ActionPlanLayoutPresenter, { ActionPlanNavigationValues } from './actionPlanLayoutPresenter'
 
-export default class ActionPlanPresenter extends ActionPlanLayoutPresenter<ActionPlanViewModel, ActionPlanContent> {
+export default class ActionPlanPresenter extends ActionPlanLayoutPresenter<ActionPlanViewModel> {
   constructor(
     private readonly actionPlanSummary: ActionPlanSummaryDto,
     private readonly caseReference: string,
@@ -18,8 +17,11 @@ export default class ActionPlanPresenter extends ActionPlanLayoutPresenter<Actio
     super(ReferralNavigationValues.actionPlanTab, ActionPlanNavigationValues.actionPlanTab, caseReference)
   }
 
-  protected buildViewModel(res: Response): ActionPlanViewModel {
-    const content = this.buildStaticContent(res)
+  protected buildViewModel(): ActionPlanViewModel {
+    const content = {
+      ...this.buildStaticContent()['/referral/:id'],
+      ...this.buildStaticContent()['/referral/:id/action-plan'],
+    }
     const { firstName } = this.actionPlanSummary.personDetails
 
     const needsSummary = this.buildNeedsSummary(content, this.actionPlanSummary.needs)

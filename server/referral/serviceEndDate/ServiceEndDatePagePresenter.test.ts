@@ -1,24 +1,14 @@
-import { Response } from 'express'
 import ServiceEndDatePagePresenter from './ServiceEndDatePagePresenter'
-import loadContentDataForTest from '../../testutils/loadContentDataForTest'
-
-const content = loadContentDataForTest('/referral/task-list/service-end-date')
 
 describe('ServiceEndDatePagePresenter', () => {
   test('should build view model with page content and data', () => {
-    const res = {
-      locals: {
-        content,
-      },
-    } as unknown as Response
-
     const data = {
       target_service_completion_date: '2026-12-31',
       target_service_completion_reason: 'Test reason',
     }
 
     const presenter = new ServiceEndDatePagePresenter(data)
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
 
     expect(viewModel.pageTitle).toBe('What date does the service need to be completed by?')
     expect(viewModel.pageHeader).toBe('What date does the service need to be completed by?')
@@ -35,15 +25,10 @@ describe('ServiceEndDatePagePresenter', () => {
   })
 
   test('should handle missing optional data fields', () => {
-    const res = {
-      locals: {
-        content,
-      },
-    } as unknown as Response
     const data = {}
 
     const presenter = new ServiceEndDatePagePresenter(data)
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
 
     expect(viewModel.formValues.day).toBeUndefined()
     expect(viewModel.formValues.month).toBeUndefined()
@@ -52,11 +37,6 @@ describe('ServiceEndDatePagePresenter', () => {
   })
 
   test('should prioritize explicit form values when provided so these can be highlighted as erroneous', () => {
-    const res = {
-      locals: {
-        content,
-      },
-    } as unknown as Response
     const presenter = new ServiceEndDatePagePresenter(
       {
         target_service_completion_date: '2026-12-31',
@@ -70,7 +50,7 @@ describe('ServiceEndDatePagePresenter', () => {
       },
     )
 
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
     expect(viewModel.formValues.day).toBe('99')
     expect(viewModel.formValues.month).toBe('13')
     expect(viewModel.formValues.year).toBe('2026')

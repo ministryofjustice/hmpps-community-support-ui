@@ -4,6 +4,7 @@ import {
   AssignmentFailureDto,
   UpdateProbationPractitionerDetailsRequest,
 } from '@community-support-api'
+import { globalContent } from '../../assets/content/GlobalContent'
 import ReferralService from '../services/referralService'
 import PersonService from '../services/personService'
 import CommunityServiceProviderService from '../services/communityServiceProviderService'
@@ -277,12 +278,13 @@ export default class ReferralController {
 
   showSelectAppointmentType(req: Request, res: Response) {
     const { caseReference } = req.params as { caseReference: string }
+    const content = globalContent['/referral/:id/appointment/select-type']
     return res.render('referral/selectAppointmentType', {
       content: {
-        ...res.locals.content,
+        ...content,
         backLink: {
           href: `/referral/${caseReference}/appointments`,
-          text: res.locals.content.backLinkText,
+          text: content.backLinkText,
         },
       },
     })

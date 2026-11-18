@@ -1,4 +1,3 @@
-import { Response } from 'express'
 import { AppointmentIcsResponse } from '@community-support-api'
 import { randomUUID } from 'node:crypto'
 import InitialContactSessionDetailsPresenter, {
@@ -29,7 +28,6 @@ describe('InitialContactSessionDetailsPresenter', () => {
       back: '/referral/{{ id }}/ics-change-details',
     },
   }
-  const response = { locals: { content } } as unknown as Response
 
   const caseRef = 'ref-id'
 
@@ -58,7 +56,7 @@ describe('InitialContactSessionDetailsPresenter', () => {
     } as AppointmentIcsResponse
 
     const presenter = new InitialContactSessionDetailsPresenter(virtualMeetingData, caseRef)
-    const viewModel = presenter.buildViewModel(response)
+    const viewModel = presenter.buildViewModel()
     test('buildPageContent the correct view model', () => {
       expect(viewModel).toMatchSnapshot()
     })
@@ -107,7 +105,7 @@ describe('InitialContactSessionDetailsPresenter', () => {
     } as AppointmentIcsResponse
     test('buildPageContent the correct view model', () => {
       const presenter = new InitialContactSessionDetailsPresenter(inPersonMeetingData, caseRef)
-      const viewModel = presenter.buildViewModel(response)
+      const viewModel = presenter.buildViewModel()
       expect(viewModel).toMatchSnapshot()
       // reason row IS NOT in viewModel
       expect(viewModel.icsDetails.rows).not.toEqual(
@@ -131,7 +129,7 @@ describe('InitialContactSessionDetailsPresenter', () => {
       const data = { ...inPersonMeetingData, sessionMethod: { ...inPersonMeetingData.sessionMethod } }
       data.sessionMethod.postcode = 'A11 11A'
       const presenter = new InitialContactSessionDetailsPresenter(data, caseRef)
-      expect(presenter.buildViewModel(response)).toMatchSnapshot()
+      expect(presenter.buildViewModel()).toMatchSnapshot()
     })
 
     test('with fullAddress', () => {
@@ -142,7 +140,7 @@ describe('InitialContactSessionDetailsPresenter', () => {
       data.sessionMethod.county = 'Mockinghamshire'
       data.sessionMethod.postcode = 'MK0 1AA'
       const presenter = new InitialContactSessionDetailsPresenter(data, caseRef)
-      expect(presenter.buildViewModel(response)).toMatchSnapshot()
+      expect(presenter.buildViewModel()).toMatchSnapshot()
     })
 
     test('shows and escapes a saved prison name', () => {
@@ -156,7 +154,7 @@ describe('InitialContactSessionDetailsPresenter', () => {
           prisonName: 'Moorland (HMP & YOI)',
         },
       }
-      const { rows } = new InitialContactSessionDetailsPresenter(data, caseRef).buildViewModel(response).icsDetails
+      const { rows } = new InitialContactSessionDetailsPresenter(data, caseRef).buildViewModel().icsDetails
       expect(rows).toEqual(
         expect.arrayContaining([
           expect.objectContaining({ key: { text: 'Method' }, value: { text: 'In person - prison' } }),
@@ -197,7 +195,7 @@ describe('InitialContactSessionDetailsPresenter', () => {
     test('historical appointment', () => {
       const data = { ...historicalMeetingData, sessionMethod: { ...historicalMeetingData.sessionMethod } }
       const presenter = new InitialContactSessionDetailsPresenter(data, caseRef, true)
-      const viewModel = presenter.buildViewModel(response)
+      const viewModel = presenter.buildViewModel()
       expect(viewModel).toMatchSnapshot()
 
       expect(viewModel.historical).toBeTruthy()

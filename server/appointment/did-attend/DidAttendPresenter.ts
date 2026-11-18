@@ -22,7 +22,7 @@ export type DidAttendContent = GlobalContent['/ics-feedback/:id/did-attend']
 type SubmissionRecord = IcsFeedbackSubmission['record']
 export type RecordSessionAttendanceSessionData = Partial<Pick<SubmissionRecord, 'didPersonAttend'>>
 
-export default class DidAttendPresenter extends PresenterBase<DidAttendViewModel, DidAttendContent> {
+export default class DidAttendPresenter extends PresenterBase<DidAttendViewModel> {
   private errors: ErrorMiddlewareErrors
 
   constructor(
@@ -68,7 +68,7 @@ export default class DidAttendPresenter extends PresenterBase<DidAttendViewModel
   }
 
   buildViewModel(res: Response): DidAttendViewModel {
-    const content = this.buildStaticContent(res)
+    const content = this.buildStaticContent()['/ics-feedback/:id/did-attend']
     this.errors = res.locals.errors
     return {
       backLink: { href: content.backLink.replace('{{ id }}', this.caseRefId) },

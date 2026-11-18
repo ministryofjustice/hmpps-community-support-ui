@@ -1,4 +1,3 @@
-import { Response } from 'express'
 import OffenceSentencePresenter from './OffenceSentencePresenter'
 import { components } from '../../@types/communitySupportApi/imported'
 import { ErrorMiddlewareErrors } from '../../@types/express'
@@ -36,8 +35,6 @@ const buildResponseDto = (
 })
 
 describe('OffenceSentencePresenter', () => {
-  const res = { locals: { content } } as unknown as Response
-
   test('builds the offence sentence summary and radio selection from DTO values', () => {
     const responseDto = buildResponseDto({
       offenceSentenceInfo: {
@@ -46,7 +43,7 @@ describe('OffenceSentencePresenter', () => {
     })
 
     const presenter = new OffenceSentencePresenter(responseDto, validationErrors)
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
 
     expect(viewModel.pageTitle).toBe(content.pageTitle)
     expect(viewModel.heading).toBe('Alex Smith')
@@ -81,7 +78,7 @@ describe('OffenceSentencePresenter', () => {
     })
 
     const presenter = new OffenceSentencePresenter(responseDto, validationErrors)
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
 
     const { rows } = viewModel.offenceSentenceSummary
     expect(rows[3].key.text).toBe(content.offenceSentenceCard.expectedReleaseDateLabel)
@@ -98,7 +95,7 @@ describe('OffenceSentencePresenter', () => {
     })
 
     const presenter = new OffenceSentencePresenter(responseDto, validationErrors)
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
 
     const { rows } = viewModel.offenceSentenceSummary
     expect(rows[3].key.text).toBe(content.offenceSentenceCard.sentenceEndDateLabel)
@@ -120,7 +117,7 @@ describe('OffenceSentencePresenter', () => {
     })
 
     const presenter = new OffenceSentencePresenter(responseDto, validationErrors)
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
 
     const { rows } = viewModel.offenceSentenceSummary
     expect(rows[0].value.text).toBe(content.notAvailableText)
@@ -150,7 +147,7 @@ describe('OffenceSentencePresenter', () => {
         licenceConditionsOrZonesDetails: '',
       },
     )
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
 
     const { radios } = viewModel
     expect(radios.value.selected).toBe('Yes')
