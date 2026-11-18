@@ -134,6 +134,31 @@ Or run tests with the UI:
 
 `npm run int-test-ui`
 
+### Creating a referral locally with Playwright
+
+`integration_tests/specs/localCreateReferral.spec.ts` drives the real referral journey through the UI (no WireMock) and submits a referral. It uses the `local` Playwright project and needs no stubs.
+
+Prerequisites:
+
+- The UI is running on `http://localhost:3000` (e.g. `npm run start-feature` or your usual local start).
+- Local auth (port 8090) and the community support API (port 8080, e.g. via `docker-compose-localapi.yml`) are running.
+- A local user with the referrer role, e.g. `bernard.beaks`.
+
+Run it, passing credentials as environment variables (don't save them in files):
+
+```
+LOCAL_USERNAME=<username> LOCAL_PASSWORD=<password> npx playwright test --project=local
+```
+
+Optional environment variables:
+
+- `LOCAL_CRN` - the CRN to refer (default `X320741`)
+- `LOCAL_UI_URL` - the UI base URL (default `http://localhost:3000`)
+
+If `LOCAL_USERNAME` or `LOCAL_PASSWORD` is missing, the test is skipped. Each run creates a new referral in your local API.
+
+The `local` project runs headed, so a Chrome window opens and you can watch the journey. When the referral is submitted, the reference number is printed in the terminal (e.g. `Referral submitted. Reference number: VX6320HU`) and also attached to the test report as a `reference-number` annotation. The HTML report is written to `test_results/playwright/report`; open it with `npx playwright show-report test_results/playwright/report`.
+
 ### Slack channel for pipeline security notifications
 
 Ths channel should be specific to your team and is for daily / weekly security scanning job results. It is your team's
@@ -154,17 +179,17 @@ Pass dynamic values such as navigation overrides to the presenter rather than mu
 
 ## Generating API Types
 
-Is your API located in `../hmpps-community-support-api` relative to this UI project? 
+Is your API located in `../hmpps-community-support-api` relative to this UI project?
 
 ```sh
 # If your'e on `main` this will also check you out on a no-ticket branch & commit the types file
 $ make types-local
 ```
 
-Is it somewhere else?  
+Is it somewhere else?
 
 ```sh
-# Before you begin: Start your API in IntelliJ 
+# Before you begin: Start your API in IntelliJ
 $ ./script/generateApiTypes/communitySupportApiTypes --local
 ```
 
@@ -186,4 +211,3 @@ You can also run the script without the `--local` flag to generate types against
 ```sh
 $ ./script/generateApiTypes/communitySupportApiTypes
 ```
-
