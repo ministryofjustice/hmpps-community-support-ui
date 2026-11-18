@@ -1,10 +1,10 @@
 import type { Request, Response } from 'express'
 import ReferralService from '../../services/referralService'
-import ReferralNotesPresenter from './referralNotesPresenter'
+import NotesListPresenter from './notesListPresenter'
 
 const NOTES_PAGE_SIZE = 25
 
-export default class ReferralNotesController {
+export default class NotesController {
   constructor(private readonly referralService: ReferralService) {}
 
   async showReferralNotes(req: Request, res: Response) {
@@ -15,7 +15,7 @@ export default class ReferralNotesController {
       page: page - 1,
       size: NOTES_PAGE_SIZE,
     })
-    const presenter = new ReferralNotesPresenter(notesResponse, caseReference)
+    const presenter = new NotesListPresenter(notesResponse, caseReference)
     return presenter.renderPage(res)
   }
 }

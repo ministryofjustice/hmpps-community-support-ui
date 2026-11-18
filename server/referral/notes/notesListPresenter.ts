@@ -2,9 +2,9 @@ import type { ReferralNoteOrNonContactSessionBffDto } from '@community-support-a
 import type { PagedResponse } from '../../@types/communitySupportApi/derived'
 import type { MojPagination } from '../../@types/mojFrontend'
 import ReferralLayoutPresenter, { ReferralNavigationValues } from '../referralLayout/referralLayoutPresenter'
-import type { ReferralNotesViewModel } from './referralNotesViewModel'
+import type { ReferralNotesViewModel } from './notesListViewModel'
 
-export default class ReferralNotesPresenter extends ReferralLayoutPresenter<ReferralNotesViewModel> {
+export default class NotesListPresenter extends ReferralLayoutPresenter<ReferralNotesViewModel> {
   constructor(
     private readonly notesResponse: PagedResponse<ReferralNoteOrNonContactSessionBffDto>,
     private readonly caseReference: string,
