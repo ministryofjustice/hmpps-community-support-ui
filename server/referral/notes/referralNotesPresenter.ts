@@ -1,14 +1,10 @@
-import type { Response } from 'express'
 import type { ReferralNoteOrNonContactSessionBffDto } from '@community-support-api'
 import type { PagedResponse } from '../../@types/communitySupportApi/derived'
 import type { MojPagination } from '../../@types/mojFrontend'
 import ReferralLayoutPresenter, { ReferralNavigationValues } from '../referralLayout/referralLayoutPresenter'
-import type { ReferralNotesContent, ReferralNotesViewModel } from './referralNotesViewModel'
+import type { ReferralNotesViewModel } from './referralNotesViewModel'
 
-export default class ReferralNotesPresenter extends ReferralLayoutPresenter<
-  ReferralNotesViewModel,
-  ReferralNotesContent
-> {
+export default class ReferralNotesPresenter extends ReferralLayoutPresenter<ReferralNotesViewModel> {
   constructor(
     private readonly notesResponse: PagedResponse<ReferralNoteOrNonContactSessionBffDto>,
     private readonly caseReference: string,
@@ -20,8 +16,8 @@ export default class ReferralNotesPresenter extends ReferralLayoutPresenter<
     return 'referral/notes'
   }
 
-  buildViewModel(res: Response): ReferralNotesViewModel {
-    const content = this.buildStaticContent(res)
+  buildViewModel(): ReferralNotesViewModel {
+    const content = this.buildStaticContent()['/referral/:id/notes']
     const pagination = this.buildPagination()
     const { from, to, count } = pagination.results
 
