@@ -93,6 +93,7 @@ describe('ReferralAppointmentsPresenter', () => {
       'Progress',
       'Action Plan',
       'Appointments',
+      'Notes',
       'Change log',
     ])
     expect(viewModel.navBar.items[2]).toEqual({

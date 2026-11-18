@@ -30,6 +30,7 @@ import {
   type UpdateProbationPractitionerDetailsRequest,
   CheckDraftReferralDetailsDto,
   type ProbationOffice,
+  ConfirmPersonDetailsBffDto,
   PDU,
   Selection,
   WithdrawReferralRequest,
