@@ -1,6 +1,4 @@
-import type { MojSubNavigation } from '@moj-frontend'
-import { MojPagination } from '../../@types/mojFrontend'
-import { GlobalContent } from '../../../assets/content/GlobalContent'
+import type { MojPagination, MojSubNavigation } from '@moj-frontend'
 
 export type ReferralNoteRow = {
   createdAt: string
@@ -30,5 +28,3 @@ export type ReferralNotesViewModel = {
   pagination: MojPagination
   resultsSummary: string
 }
-
-export type ReferralNotesContent = GlobalContent['/referral/:id/notes']
