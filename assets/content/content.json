@@ -373,7 +373,7 @@
   "/referral/:id/notes": {
     "pageHeader": "Referral for",
     "notesTitle": "Notes",
-    "noNotesMessage": "No notes recorded",
+    "noNotesMessage": "No notes have been added yet",
     "dateColumnHeader": "Date",
     "addedByColumnHeader": "Added by",
     "titleColumnHeader": "Note",
