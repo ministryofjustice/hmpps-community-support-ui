@@ -3,7 +3,7 @@ import type { PagedResponse } from '../../@types/communitySupportApi/derived'
 import ReferralLayoutPresenter, { ReferralNavigationValues } from '../referralLayout/referralLayoutPresenter'
 import { NotesPathwaysModel } from './NotesPathwaysModel'
 
-export default class NotesPathwaysPresenter extends ReferralLayoutPresenter<NotesPathwaysModel> {
+export default class NotesPathwaysPresenter extends ReferralLayoutPresenter<NotesPathwaysModel | undefined> {
   constructor(
     private readonly notesResponse: PagedResponse<ReferralNoteOrNonContactSessionBffDto>,
     private readonly caseReference: string,
@@ -15,8 +15,8 @@ export default class NotesPathwaysPresenter extends ReferralLayoutPresenter<Note
     return 'referral/notes'
   }
 
-  buildViewModel(): NotesPathwaysModel {
+  buildViewModel(): NotesPathwaysModel | undefined {
     // const content = this.buildStaticContent()['/referral/:id/notes/pathways']
-    return { temp: 'hello' }
+    return undefined
   }
 }

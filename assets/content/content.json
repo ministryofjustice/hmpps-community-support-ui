@@ -1743,5 +1743,9 @@
     "button": "Save and continue",
     "backlink": "/referral/task-list/offence-sentence"
   },
-  "/referral/:id/notes/pathways": {}
+  "/referral/:id/notes/pathways": {
+    "pageHeader": "What pathway does this non-contact activity relate to?",
+    "hint": "Select all that apply.",
+    "button": "Continue"
+  }
 }

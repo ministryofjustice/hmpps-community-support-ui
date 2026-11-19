@@ -1,3 +1,7 @@
+import { GovukFrontendBackLink, GovukFrontendCheckboxes } from '@govuk-frontend'
+
 export interface NotesPathwaysModel {
-  temp: 'hello'
+  pageHeader: string
+  checkboxes: GovukFrontendCheckboxes
+  backLink: GovukFrontendBackLink
 }
