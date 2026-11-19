@@ -18,4 +18,10 @@ export default class NotesController {
     const presenter = new NotesListPresenter(notesResponse, caseReference)
     return presenter.renderPage(res)
   }
+
+  async showPathways(req: Request, res: Response) {
+    // const { caseReference } = req.params as { caseReference: string }
+    // const { username } = res.locals.user
+    res.send('Hello World!')
+  }
 }

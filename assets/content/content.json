@@ -1742,5 +1742,6 @@
     "noOptionLabel": "No",
     "button": "Save and continue",
     "backlink": "/referral/task-list/offence-sentence"
-  }
+  },
+  "/referral/:id/notes/pathways": {}
 }
