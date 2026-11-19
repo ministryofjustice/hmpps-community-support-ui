@@ -480,23 +480,6 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/bff/referral/{referralReference}/notes': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get case notes and non-contact sessions for a referral */
-    get: operations['getNotesAndNonContactSessions']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
   '/bff/referral/{referralReference}/notes/pathways': {
     parameters: {
       query?: never
@@ -1454,7 +1437,7 @@ export interface components {
     CreateAppointmentRequest: {
       /** @enum {string|null} */
       appointmentType?:
-      'ICS' | 'CONTACT_SESSION' | 'POST_RELEASE_SESSION' | 'PRE_RELEASE_SESSION' | 'HANDOVER_SESSION' | null
+        'ICS' | 'CONTACT_SESSION' | 'POST_RELEASE_SESSION' | 'PRE_RELEASE_SESSION' | 'HANDOVER_SESSION' | null
       /** Format: date */
       date: string
       time: components['schemas']['AppointmentTimeRequest']
@@ -1466,7 +1449,7 @@ export interface components {
     SessionMethodRequest: {
       /** @enum {string} */
       type:
-      'PHONE' | 'VIDEO' | 'IN_PERSON' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION' | 'IN_PERSON_PRISON'
+        'PHONE' | 'VIDEO' | 'IN_PERSON' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION' | 'IN_PERSON_PRISON'
       additionalDetails?: string | null
       prisonCode?: string | null
       pdu?: string | null
@@ -1702,12 +1685,12 @@ export interface components {
       id: string
       /** @enum {string} */
       method:
-      | 'PHONE_CALL'
-      | 'VIDEO_CALL'
-      | 'IN_PERSON'
-      | 'IN_PERSON_PROBATION_OFFICE'
-      | 'IN_PERSON_OTHER_LOCATION'
-      | 'IN_PERSON_PRISON'
+        | 'PHONE_CALL'
+        | 'VIDEO_CALL'
+        | 'IN_PERSON'
+        | 'IN_PERSON_PROBATION_OFFICE'
+        | 'IN_PERSON_OTHER_LOCATION'
+        | 'IN_PERSON_PRISON'
       methodDetails?: string | null
       prisonCode?: string | null
       addressLine1?: string | null
@@ -2020,13 +2003,13 @@ export interface components {
       refereeName: components['schemas']['RefereeNameDto']
       physicalHealth: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       mentalEmotionalHealth:
-      components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
+        components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       neurodiversity: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       locationTravel: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       caringResponsibilities:
-      components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
+        components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       employmentResponsibilities:
-      components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
+        components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       diversity: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       anythingElse: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       needsAdditionalSupport?: boolean | null
@@ -2055,16 +2038,24 @@ export interface components {
       contactDetailsStatus: components['schemas']['ContactDetailsDto']
       checkYourAnswersStatus: components['schemas']['TaskListStatusItem']
     }
+    ReferenceDataReferralPathwayDto: {
+      /** Format: uuid */
+      id: string
+      title: string
+    }
+    ReferenceDataReferralPathwaysDto: {
+      pathways: components['schemas']['ReferenceDataReferralPathwayDto'][]
+    }
     AppointmentDetailsDto: {
       /** @enum {string|null} */
       method?:
-      | 'PHONE_CALL'
-      | 'VIDEO_CALL'
-      | 'IN_PERSON'
-      | 'IN_PERSON_PROBATION_OFFICE'
-      | 'IN_PERSON_OTHER_LOCATION'
-      | 'IN_PERSON_PRISON'
-      | null
+        | 'PHONE_CALL'
+        | 'VIDEO_CALL'
+        | 'IN_PERSON'
+        | 'IN_PERSON_PROBATION_OFFICE'
+        | 'IN_PERSON_OTHER_LOCATION'
+        | 'IN_PERSON_PRISON'
+        | null
       date?: string | null
       time?: string | null
     }
@@ -2595,6 +2586,13 @@ export interface components {
       preferredLanguage: string
       currentCircumstances: components['schemas']['ConfirmPersonalDetailsCurrentCircumstances']
       disabilities: components['schemas']['ConfirmPersonalDetailsDisabilities']
+    }
+    Pageable: {
+      /** Format: int32 */
+      page?: number
+      /** Format: int32 */
+      size?: number
+      sort?: string[]
     }
     ReferralCaseListDto: {
       /** Format: uuid */
@@ -3565,7 +3563,7 @@ export interface operations {
     requestBody: {
       content: {
         'application/json':
-        components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
+          components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       }
     }
     responses: {
@@ -3660,39 +3658,6 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['ServiceDaysPageDto']
-        }
-      }
-      /** @description Referral not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  getNotesAndNonContactSessions: {
-    parameters: {
-      query: {
-        pageable: components['schemas']['Pageable']
-      }
-      header?: never
-      path: {
-        referralReference: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Case notes and non-contact sessions retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['PageResponse']
         }
       }
       /** @description Referral not found */
