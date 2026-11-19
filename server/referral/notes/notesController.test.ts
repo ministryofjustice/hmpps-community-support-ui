@@ -1,4 +1,6 @@
 import type { Request, Response } from 'express'
+import type { ReferralNoteOrNonContactSessionBffDto } from '@community-support-api'
+import type { PagedResponse } from '../../@types/communitySupportApi/derived'
 import ReferralService from '../../services/referralService'
 import NotesController from './notesController'
 import NotesListPresenter from './notesListPresenter'
@@ -8,7 +10,7 @@ jest.mock('./notesListPresenter')
 
 describe('NotesController', () => {
   const caseReference = 'AB1234CD'
-  const notesResponse = {
+  const notesResponse: PagedResponse<ReferralNoteOrNonContactSessionBffDto> = {
     content: [],
     page: 0,
     size: 25,
