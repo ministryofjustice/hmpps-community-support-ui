@@ -1,0 +1,20 @@
+{% extends "../partials/layout.njk" %}
+
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = "Notes – " + applicationName %}
+
+{% block contentBody %}
+  <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
+
+  <p class="govuk-body secondary-text">{{ content.description }}</p>
+  {{ govukDetails(content.details) }}
+  <form method="post" action="{{ content.continueButtonLink }}">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    {{ govukRadios(content.noteTypeRadio) }}
+    {{ govukButton(content.continueButton) }}
+  </form>
+
+{% endblock %}
