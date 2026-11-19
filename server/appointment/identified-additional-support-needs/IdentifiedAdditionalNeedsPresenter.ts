@@ -28,7 +28,7 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
   }
 
   buildViewModel(): IdentifiedAdditionalNeedsViewModel {
-    const content = this.buildStaticContent()['/ics-feedback/:id/identified-additional-needs']
+    const content = this.globalContent().icsFeedback.id.identifiedAdditionalNeeds
     const formData: IdentifiedAdditionalNeedsFormData = this.identifiedAdditionalNeeds
       ? {
           didYouIdentify: this.identifiedAdditionalNeeds.didYouIdentify,

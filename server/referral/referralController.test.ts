@@ -129,7 +129,7 @@ describe('ReferralController', () => {
         params: { caseReference },
         session: { appointmentFeedbackMessage: { caseReference } },
       } as unknown as Request
-      res.locals.content = globalContent['/referral/:id/appointments']
+      res.locals.content = globalContent.referral.id.appointments
       referralService.getReferralAppointments.mockResolvedValue({
         personDetails: { firstName: 'Alex', lastName: 'Example', dateOfBirth: '1980-01-01', crn: 'X123456' },
         upcomingAppointments: [],
@@ -155,7 +155,7 @@ describe('ReferralController', () => {
 
     it('renders the session success alert once and clears it', async () => {
       const caseReference = 'AB1234CD'
-      const content: ReferralAppointmentsContent = globalContent['/referral/:id/appointments']
+      const content: ReferralAppointmentsContent = globalContent.referral.id.appointments
       const appointments: ReferralAppointmentsBffResponseDto = {
         personDetails: { firstName: 'Alex', lastName: 'Example', dateOfBirth: '1980-01-01', crn: 'X123456' },
         upcomingAppointments: [],

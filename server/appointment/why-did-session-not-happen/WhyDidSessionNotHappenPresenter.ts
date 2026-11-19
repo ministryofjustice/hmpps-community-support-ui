@@ -111,8 +111,7 @@ export default class WhyDidSessionNotHappenPresenter extends PresenterBase<WhyDi
   }
 
   buildViewModel(): WhyDidSessionNotHappenViewModel {
-    const content: WhyDidSessionNotHappenContent =
-      this.buildStaticContent()['/ics-feedback/:id/why-did-the-session-not-happen']
+    const content: WhyDidSessionNotHappenContent = this.globalContent().icsFeedback.id.whyDidTheSessionNotHappen
     const formData: Partial<components['schemas']['SessionNotHappenReasonRequest']> = this.session
       ? {
           reason: this.session.reason,

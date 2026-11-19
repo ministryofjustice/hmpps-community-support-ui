@@ -9,4 +9,4 @@ export type ActionPlanRemoveActivityViewModel = {
   formAction: string
 }
 
-export type ActionPlanRemoveActivityContent = GlobalContent['/referral/:id/action-plan/activities/remove']
+export type ActionPlanRemoveActivityContent = GlobalContent['referral']['id']['actionPlan']['activities']['remove']

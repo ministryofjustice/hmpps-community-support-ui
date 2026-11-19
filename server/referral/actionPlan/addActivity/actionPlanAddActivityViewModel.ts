@@ -18,4 +18,4 @@ export type ActionPlanAddActivityViewModel = {
   saveAndContinueLink: string
 }
 
-export type ActionPlanAddActivityContent = GlobalContent['/referral/:id/action-plan/activities/add']
+export type ActionPlanAddActivityContent = GlobalContent['referral']['id']['actionPlan']['activities']['add']

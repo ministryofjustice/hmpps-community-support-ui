@@ -84,7 +84,7 @@ export default class NeedsAnInterpreterPresenter extends PresenterBase<NeedsAnIn
   }
 
   buildViewModel(): NeedsAnInterpreterViewModel {
-    const content = this.buildStaticContent()['/referral/task-list/needs-an-interpreter']
+    const content = this.globalContent().referral.taskList.needsAnInterpreter
     const { firstName } = this.data.refereeName
     return {
       pageTitle: content.pageTitle,

@@ -30,7 +30,7 @@ type FormContent = SessionFeedbackContent['feedbackForm']
 
 type TextareaContent = FormContent['whatDidYouDoTextarea']
 
-export type SessionFeedbackContent = GlobalContent['/ics-feedback/:id/session-feedback']
+export type SessionFeedbackContent = GlobalContent['icsFeedback']['id']['sessionFeedback']
 
 export default class SessionFeedbackPresenter extends PresenterBase<SessionFeedbackViewModel> {
   constructor(
@@ -84,7 +84,7 @@ export default class SessionFeedbackPresenter extends PresenterBase<SessionFeedb
   }
 
   buildViewModel(res: Response): SessionFeedbackViewModel {
-    const content = this.buildStaticContent()['/ics-feedback/:id/session-feedback']
+    const content = this.globalContent().icsFeedback.id.sessionFeedback
     return {
       pageTitle: content.pageTitle,
       pageHeader: content.pageHeader,

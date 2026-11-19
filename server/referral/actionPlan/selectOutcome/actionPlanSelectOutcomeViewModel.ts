@@ -8,4 +8,4 @@ export type ActionPlanSelectOutcomeViewModel = {
   continueButtonLink: string
 }
 
-export type ActionPlanSelectOutcomeContent = GlobalContent['/referral/:id/action-plan/select-an-outcome']
+export type ActionPlanSelectOutcomeContent = GlobalContent['referral']['id']['actionPlan']['selectAnOutcome']

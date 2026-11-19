@@ -16,4 +16,4 @@ export type NextStepsViewModel = {
   backLink: GovukFrontendBackLink
 }
 
-export type NextStepsContent = GlobalContent['/ics-feedback/:id/next-steps']
+export type NextStepsContent = GlobalContent['icsFeedback']['id']['nextSteps']

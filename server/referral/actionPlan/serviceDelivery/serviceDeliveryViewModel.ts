@@ -16,6 +16,6 @@ export type ServiceDeliveryViewModel = {
   serviceEndDateSummaryCard: GovukFrontendSummaryList
 }
 
-export type ServiceDeliveryContent = GlobalContent['/referral/:id/service-delivery'] &
+export type ServiceDeliveryContent = GlobalContent['referral']['id']['serviceDelivery'] &
   ReferralLayoutContent &
   ActionPlanSideNavContent

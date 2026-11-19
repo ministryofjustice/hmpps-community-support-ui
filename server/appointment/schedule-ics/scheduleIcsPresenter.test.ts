@@ -59,7 +59,7 @@ describe('ScheduleIcsPresenter', () => {
     },
   ]
 
-  const content = globalContent['/referral/:id/appointment/schedule-ics']
+  const content = globalContent.referral.id.appointment.scheduleIcs
 
   const caseReference = 'AB1234CD'
   const referralInformation = ReferralInformationFactory.build({ personIdentifier: 'A123456' })
@@ -370,7 +370,7 @@ describe('ScheduleIcsPresenter', () => {
       undefined,
       undefined,
       undefined,
-      '/referral/:id/ics-change-details',
+      'icsChangeDetails',
     )
 
     expect(presenter.buildViewModel()).toMatchObject({

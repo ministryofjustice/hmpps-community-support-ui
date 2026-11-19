@@ -175,7 +175,7 @@ export default class RecordSessionDetailsPresenter extends PresenterBase<RecordS
   }
 
   buildViewModel(): RecordSessionDetailsViewModel {
-    const content: RecordSessionDetailsContent = this.buildStaticContent()['/ics-feedback/:id/session-details']
+    const content: RecordSessionDetailsContent = this.globalContent().icsFeedback.id.sessionDetails
     const formData: RecordSessionDetailsFormData = this.session
       ? {
           wasPersonLate: this.session.wasPersonLate,

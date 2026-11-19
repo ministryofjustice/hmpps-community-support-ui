@@ -77,7 +77,7 @@ export default class EditRiskSummaryPresenter extends PresenterBase<EditRiskSumm
   }
 
   buildViewModel(): EditRiskSummaryViewModel {
-    const content = this.buildStaticContent()['/referral/task-list/edit-risk-summary']
+    const content = this.globalContent().referral.taskList.editRiskSummary
     const { crn, dateOfBirth } = this.risk
     const dobDate = new Date(dateOfBirth)
     const age = differenceInYears(new Date(), dobDate)

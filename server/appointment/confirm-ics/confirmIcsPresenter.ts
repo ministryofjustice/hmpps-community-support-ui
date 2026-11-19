@@ -28,12 +28,9 @@ export default class ConfirmIcsPresenter extends PresenterBase<ConfirmIcsViewMod
 
   buildViewModel(): ConfirmIcsViewModel {
     const viewModel = {} as ConfirmIcsViewModel
-    const content =
-      this.buildStaticContent()[
-        this.changeAppointmentDetails
-          ? '/referral/:id/ics-change-details/check-answers'
-          : '/referral/:id/appointment/confirm-ics'
-      ]
+    const content = this.changeAppointmentDetails
+      ? this.globalContent().referral.id.icsChangeDetails.checkAnswers
+      : this.globalContent().referral.id.appointment.confirmIcs
     viewModel.pageHeader = content.pageHeader
     viewModel.submitButtonText = content.submitButtonText
     viewModel.submitHref = this.additionalInformation.submitHref

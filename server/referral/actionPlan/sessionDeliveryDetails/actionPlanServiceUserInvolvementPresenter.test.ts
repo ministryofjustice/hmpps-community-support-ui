@@ -47,7 +47,7 @@ describe('ActionPlanServiceUserInvolvementPresenter', () => {
   const buildResponse = (): Response =>
     ({
       locals: {
-        content: globalContent['/referral/:id/action-plan/person-involvement'],
+        content: globalContent.referral.id.actionPlan.personInvolvement,
       },
       render: jest.fn(),
     }) as unknown as Response

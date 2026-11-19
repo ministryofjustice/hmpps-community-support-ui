@@ -45,7 +45,7 @@ export default class AdditionalInformationForTheDeliveryPartnerPresenter extends
   }
 
   buildViewModel(): AdditionalInformationForTheDeliveryPartnerViewModel {
-    const content = this.buildStaticContent()['/referral/task-list/additional-information-for-the-delivery-partner']
+    const content = this.globalContent().referral.taskList.additionalInformationForTheDeliveryPartner
     const { firstName } = this.data.refereeName
     return {
       pageTitle: content.pageTitle,

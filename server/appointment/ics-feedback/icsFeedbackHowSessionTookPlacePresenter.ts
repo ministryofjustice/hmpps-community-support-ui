@@ -215,7 +215,7 @@ export default class IcsFeedbackHowSessionTookPlacePresenter extends PresenterBa
   }
 
   buildViewModel(): IcsFeedbackHowSessionTookPlaceViewModel {
-    const content = this.buildStaticContent()['/ics-feedback/:id/did-session-take-place']
+    const content = this.globalContent().icsFeedback.id.didSessionTakePlace
     const { type } = this.sessionMethod
     const pageHeader =
       type in content.pageHeaders

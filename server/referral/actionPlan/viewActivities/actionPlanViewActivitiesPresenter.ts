@@ -21,7 +21,7 @@ export default class ActionPlanViewActivitiesPresenter extends PresenterBase<Act
   }
 
   protected buildViewModel(res: Response): ActionPlanViewActivitiesViewModel {
-    const content = this.buildStaticContent()['/referral/:id/action-plan/activities']
+    const content = this.globalContent().referral.id.actionPlan.activities.page
 
     return {
       pageHeader: content.pageHeader,

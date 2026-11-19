@@ -16,4 +16,5 @@ export type ActionPlanChangeServiceEndDateViewModel = {
   changeServiceEndDateReasonTextBoxArgs: GovukFrontendTextarea
 }
 
-export type ActionPlanChangeServiceEndDateContent = GlobalContent['/referral/:id/action-plan/update-service-end-date']
+export type ActionPlanChangeServiceEndDateContent =
+  GlobalContent['referral']['id']['actionPlan']['updateServiceEndDate']

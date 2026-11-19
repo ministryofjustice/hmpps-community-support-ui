@@ -93,7 +93,7 @@ export default class FoundPersonPresenter extends PresenterBase<FoundPersonViewM
     const disabilitiesLastUpdated = getLatestUpdatedAt(foundPerson.personDetailsAndCircumstances?.disabilities)
 
     const viewModel = {} as FoundPersonViewModel
-    viewModel.staticContent = this.buildStaticContent()['/referral/new/find-a-person']
+    viewModel.staticContent = this.globalContent().referral.new.findAPerson
     viewModel.pageTitle = viewModel.staticContent.pageTitle
     viewModel.backLink = { href: viewModel.staticContent.backLink }
 

@@ -9,7 +9,7 @@ describe('FoundPersonPresenter', () => {
   let content: FoundPersonContent
 
   beforeEach(() => {
-    content = globalContent['/referral/new/find-a-person']
+    content = globalContent.referral.new.findAPerson
     res = {
       locals: { content },
       render: jest.fn(),

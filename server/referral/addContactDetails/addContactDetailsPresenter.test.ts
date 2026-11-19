@@ -72,7 +72,7 @@ describe('AddContactDetailsPresenter', () => {
       const viewModel = presenter.buildViewModel()
       expect(viewModel.backLinkArgs).toEqual({
         text: 'Back',
-        href: globalContent['/referral/new/add-contact-details'].ppBackLinkHref,
+        href: globalContent.referral.new.addContactDetails.ppBackLinkHref,
       })
     })
   })
@@ -234,8 +234,8 @@ describe('AddContactDetailsPresenter', () => {
     it('passes static content through to view model', () => {
       const presenter = new AddContactDetailsPresenter(personalDetails, probationOffices, pdus)
       const viewModel = presenter.buildViewModel()
-      expect(viewModel.subHeading).toBe(globalContent['/referral/new/add-contact-details'].subHeading)
-      expect(viewModel.insetText).toBe(globalContent['/referral/new/add-contact-details'].insetText)
+      expect(viewModel.subHeading).toBe(globalContent.referral.new.addContactDetails.subHeading)
+      expect(viewModel.insetText).toBe(globalContent.referral.new.addContactDetails.insetText)
     })
   })
 

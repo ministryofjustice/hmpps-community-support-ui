@@ -35,4 +35,4 @@ export type IcsFeedbackHowSessionTookPlaceViewModel = {
   didSessionTakePlaceRadiosArgs: (howSessionHtml: string) => GovukFrontendRadiosWithConditional
 }
 
-export type IcsFeedbackHowSessionTookPlaceContent = GlobalContent['/ics-feedback/:id/did-session-take-place']
+export type IcsFeedbackHowSessionTookPlaceContent = GlobalContent['icsFeedback']['id']['didSessionTakePlace']

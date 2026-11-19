@@ -107,7 +107,7 @@ export default class ChangeIcsDetailsReasonPresenter extends PresenterBase<Chang
   }
 
   protected buildViewModel(): ChangeIcsDetailsReasonViewModel {
-    const content: ChangeIcsDetailsReasonContent = this.buildStaticContent()['/referral/:id/ics-change-details/reason']
+    const content: ChangeIcsDetailsReasonContent = this.globalContent().referral.id.icsChangeDetails.reason
     const formData: ChangeIcsDetailsReasonFormData = this.session
       ? {
           requestedBy: this.session.changeRequestedBy,
