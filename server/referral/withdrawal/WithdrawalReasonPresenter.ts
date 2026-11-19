@@ -11,7 +11,7 @@ import { additionalInformationField, WithdrawalFormData, WithdrawalReason } from
 
 const OTHER_REASON_TEXT = 'another reason'
 
-type WithdrawalReasonContent = GlobalContent['/referral/:id/withdraw']
+type WithdrawalReasonContent = GlobalContent['referral']['id']['withdraw']
 
 interface WithdrawalReasonViewModel {
   pageHeader: string
@@ -97,7 +97,7 @@ export default class WithdrawalReasonPresenter extends PresenterBase<WithdrawalR
   }
 
   protected buildViewModel(): WithdrawalReasonViewModel {
-    const content = this.buildStaticContent()['/referral/:id/withdraw']
+    const content = this.globalContent().referral.id.withdraw
     return {
       pageHeader: content.pageHeader.replace('{{ name }}', this.referralName),
       reasonGroups: this.buildReasonGroups(content),

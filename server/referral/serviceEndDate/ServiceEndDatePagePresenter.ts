@@ -33,7 +33,7 @@ export default class ServiceEndDatePagePresenter extends PresenterBase<ServiceEn
   }
 
   buildViewModel(): ServiceEndDatePageViewModel {
-    const content = this.buildStaticContent()['/referral/task-list/service-end-date']
+    const content = this.globalContent().referral.taskList.serviceEndDate
 
     return {
       pageTitle: content.pageTitle,

@@ -3,7 +3,7 @@ import { GlobalContent } from '../../../assets/content/GlobalContent'
 
 export type TaskListContent = TaskListPageContent['taskList']
 
-export type TaskListPageContent = GlobalContent['/referral/task-list']
+export type TaskListPageContent = GlobalContent['referral']['taskList']['page']
 
 export interface TaskListViewModel {
   pageTitle: string

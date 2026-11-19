@@ -36,7 +36,7 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
     },
   }
 
-  const mockContent: IcsFeedbackCheckYourAnswersContent = globalContent['/ics-feedback/:id/check-answers']
+  const mockContent: IcsFeedbackCheckYourAnswersContent = globalContent.icsFeedback.id.checkAnswers
 
   let res: Response
 

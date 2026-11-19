@@ -63,7 +63,7 @@ export default class ActionPlanServiceEndDateCheckPresenter extends PresenterBas
   }
 
   protected buildViewModel(): ServiceEndDateCheckViewModel {
-    const content = this.buildStaticContent()['/referral/:id/action-plan/service-end-date-check']
+    const content = this.globalContent().referral.id.actionPlan.serviceEndDateCheck
     const serviceEndDateCheckQuestion = this.sessionDeliveryDetails.questions.find(
       q => q.key === SessionDeliveryDetailsQuestions.SERVICE_END_DATE_CHECK,
     )!

@@ -18,7 +18,7 @@ export default class ConfirmAnAreaForReferralPresenter extends PresenterBase<Con
   }
 
   buildViewModel(): ConfirmAnAreaForReferralViewModel {
-    const content = this.buildStaticContent()['/referral/task-list/confirm-an-area-for-referral']
+    const content = this.globalContent().referral.taskList.confirmAnAreaForReferral
     const crn = trimOrDefault(this.personDetails.personIdentifier, content.defaultFieldValue)
     const dateOfBirth = trimOrDefault(this.personDetails.dateOfBirth, content.defaultFieldValue)
     const areaCovered = trimOrDefault(this.providerDetails.contractArea, content.defaultFieldValue)

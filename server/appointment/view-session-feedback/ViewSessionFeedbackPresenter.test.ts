@@ -23,7 +23,7 @@ describe('ViewSessionFeedbackPresenter', () => {
 
   beforeEach(() => {
     res = {
-      locals: { content: globalContent['/ics-feedback/:id/session/:id'] },
+      locals: { content: globalContent.icsFeedback.id.session.id },
       render: jest.fn(),
       redirect: jest.fn(),
     } as unknown as Response

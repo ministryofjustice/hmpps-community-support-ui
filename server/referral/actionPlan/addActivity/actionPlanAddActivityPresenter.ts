@@ -17,7 +17,7 @@ export default class ActionPlanAddActivityPresenter extends PresenterBase<Action
   }
 
   protected buildViewModel(res: Response): ActionPlanAddActivityViewModel {
-    const content = this.buildStaticContent()['/referral/:id/action-plan/activities/add']
+    const content = this.globalContent().referral.id.actionPlan.activities.add
     const href = (this.backLink ?? content.backLink).replace('{{ caseReference }}', this.caseReference)
 
     return {

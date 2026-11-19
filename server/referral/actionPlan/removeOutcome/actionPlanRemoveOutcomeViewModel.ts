@@ -13,4 +13,4 @@ export type ActionPlanRemoveOutcomeViewModel = {
   cancelLink: { text: string; href: string }
 }
 
-export type ActionPlanRemoveOutcomeContent = GlobalContent['/referral/:id/action-plan/remove-outcome']
+export type ActionPlanRemoveOutcomeContent = GlobalContent['referral']['id']['actionPlan']['removeOutcome']

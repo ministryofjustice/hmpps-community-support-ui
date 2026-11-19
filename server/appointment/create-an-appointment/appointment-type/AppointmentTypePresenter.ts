@@ -42,7 +42,7 @@ export default class AppointmentTypePresenter extends PresenterBase<AppointmentT
   }
 
   buildViewModel(): AppointmentTypeViewModel {
-    const content = this.buildStaticContent()['/referral/:id/create-an-appointment/appointment-type']
+    const content = this.globalContent().referral.id.createAnAppointment.appointmentType
 
     return {
       pageTitle: content.pageTitle,

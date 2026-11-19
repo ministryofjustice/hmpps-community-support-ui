@@ -16,7 +16,7 @@ export default class ActionPlanRemoveOutcomePresenter extends PresenterBase<Acti
   }
 
   protected buildViewModel(): ActionPlanRemoveOutcomeViewModel {
-    const content = this.buildStaticContent()['/referral/:id/action-plan/remove-outcome']
+    const content = this.globalContent().referral.id.actionPlan.removeOutcome
     const outcome = this.need.outcomes.find(item => item.id === this.outcomeAnswerId)
 
     if (!outcome) {

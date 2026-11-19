@@ -34,7 +34,7 @@ export default class NextStepsPresenter extends PresenterBase<NextStepsViewModel
   }
 
   buildViewModel(): NextStepsViewModel {
-    const content = this.buildStaticContent()['/ics-feedback/:id/next-steps']
+    const content = this.globalContent().icsFeedback.id.nextSteps
     const fieldErrors = this.errors?.messages || {}
 
     return {

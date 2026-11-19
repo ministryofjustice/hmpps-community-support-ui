@@ -26,4 +26,4 @@ export interface EditRiskSummaryViewModel {
   submitHref: string
 }
 
-export type EditRiskSummaryContent = GlobalContent['/referral/task-list/edit-risk-summary']
+export type EditRiskSummaryContent = GlobalContent['referral']['taskList']['editRiskSummary']

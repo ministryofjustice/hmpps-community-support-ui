@@ -278,7 +278,7 @@ export default class ReferralController {
 
   showSelectAppointmentType(req: Request, res: Response) {
     const { caseReference } = req.params as { caseReference: string }
-    const content = globalContent['/referral/:id/appointment/select-type']
+    const content = globalContent.referral.id.appointment.selectType
     return res.render('referral/selectAppointmentType', {
       content: {
         ...content,

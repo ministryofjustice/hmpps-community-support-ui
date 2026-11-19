@@ -40,7 +40,7 @@ export default class ActionPlanSelectANeedPresenter extends PresenterBase<Action
   }
 
   protected buildViewModel(res: Response): ActionPlanSelectANeedViewModel {
-    const content = this.buildStaticContent()['/referral/:id/action-plan/select-a-need']
+    const content = this.globalContent().referral.id.actionPlan.selectANeed
 
     return {
       pageHeader: content.pageHeader,

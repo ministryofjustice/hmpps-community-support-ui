@@ -5,7 +5,7 @@ import ActionPlanPresenter from './actionPlanPresenter'
 import { ActionPlanViewModel } from './actionPlanViewModel'
 import { globalContent } from '../../../assets/content/GlobalContent'
 
-const actionPlanContent = { ...globalContent['/referral/:id'], ...globalContent['/referral/:id/action-plan'] }
+const actionPlanContent = { ...globalContent.referral.id.page, ...globalContent.referral.id.actionPlan.page }
 
 describe('ActionPlanPresenter', () => {
   it('builds the page header and back link from summary data', () => {

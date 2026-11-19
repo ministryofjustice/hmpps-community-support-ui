@@ -15,4 +15,4 @@ export type ReferralProgressViewModel = {
   notificationBanner?: GovukFrontendNotificationBanner
 }
 
-export type ReferralProgressContent = GlobalContent['/progress/:id']
+export type ReferralProgressContent = GlobalContent['progress']['id']

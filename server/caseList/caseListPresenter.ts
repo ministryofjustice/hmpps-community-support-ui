@@ -25,7 +25,9 @@ export default class CaseListPresenter extends PresenterBase<CaseListViewModel> 
   protected override buildViewModel(): CaseListViewModel {
     const viewModel = {} as CaseListViewModel
     viewModel.staticContent = {
-      ...this.buildStaticContent()[this.selectedTab === 'inProgress' ? '/cases-in-progress' : '/unassigned-cases'],
+      ...(this.selectedTab === 'inProgress'
+        ? this.globalContent().casesInProgress
+        : this.globalContent().unassignedCases),
     }
     viewModel.navBar = this.buildSubNav(viewModel.staticContent)
     viewModel.hasCases = this.caseListResponse.totalElements > 0

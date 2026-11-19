@@ -17,7 +17,7 @@ export default class NotesListPresenter extends ReferralLayoutPresenter<Referral
   }
 
   buildViewModel(): ReferralNotesViewModel {
-    const content = this.buildStaticContent()['/referral/:id/notes']
+    const content = this.globalContent().referral.id.notes
     const pagination = this.buildPagination()
     const { from, to, count } = pagination.results
 

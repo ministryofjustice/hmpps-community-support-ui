@@ -16,7 +16,7 @@ describe('ActionPlanSelectANeedPresenter', () => {
     ]
     const presenter = new ActionPlanSelectANeedPresenter('AB1234CD', needs, selectedNeeds)
     const res = {
-      locals: { content: globalContent['/referral/:id/action-plan/select-a-need'] },
+      locals: { content: globalContent.referral.id.actionPlan.selectANeed },
       render: jest.fn(),
     } as unknown as Response
 
@@ -33,7 +33,7 @@ describe('ActionPlanSelectANeedPresenter', () => {
     ]
     const presenter = new ActionPlanSelectANeedPresenter('AB1234CD', needs, [])
     const res = {
-      locals: { content: globalContent['/referral/:id/action-plan/select-a-need'] },
+      locals: { content: globalContent.referral.id.actionPlan.selectANeed },
       render: jest.fn(),
     } as unknown as Response
 
