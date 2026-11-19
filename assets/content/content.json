@@ -782,7 +782,8 @@
         "whySessionDidNotHappen": "Why the session did not happen"
       },
       "didNotAttend": {
-        "triedToContactDidNotAttend": "Details about how you tried to contact {{ firstname }} and why they did not attend"
+        "howTheyTriedToContactThePerson": "How did you try to contact {{ firstname }}?",
+        "reasonsTheyDidNotAttend": "Reason they did not attend"
       }
     },
     "didNotHappenReasonLabels": {
@@ -871,8 +872,13 @@
             "changeHref": "/ics-feedback/caseRefId/why-did-the-session-not-happen"
           },
           {
-            "text": "Details about how you tried to contact {{ firstname }} and why they did not attend ",
-            "hint": "details about how you tried to contact them and why they did not attend’",
+            "text": "How did you try to contact {{ firstname }}?",
+            "hint": "How did you try to contact them?",
+            "changeHref": "/ics-feedback/caseRefId/how-they-tried-to-contact-the-person"
+          },
+          {
+            "text": "Reason they did not attend",
+            "hint": "Reason they did not attend",
             "changeHref": "/ics-feedback/caseRefId/how-they-tried-to-contact-the-person"
           },
           {
@@ -995,14 +1001,19 @@
     "backLinkHref": "/ics-feedback/{{ id }}/did-attend"
   },
   "/ics-feedback/:id/how-they-tried-to-contact-the-person": {
-    "pageHeader": "How did you try to contact {{ firstname }} and what do you know about why they did not attend?",
+    "pageHeading": "Non-attendance details",
     "feedbackForm": {
-      "textarea": {
+      "contactAttemptsTextarea": {
         "id": "howTheyTriedToContactThePerson",
         "name": "howTheyTriedToContactThePerson",
-        "label": "How did you try to contact {{ firstname }} and what do you know about why they did not attend?",
+        "label": "How did you try to contact {{ firstname }}?",
         "hint": "Include when you tried to contact them and how many times.",
-        "error": "Enter how you tried to contact {{ firstname }} and what you know about why they did not attend ",
+        "rows": "5"
+      },
+      "reasonsForNonAttendanceTextarea": {
+        "id": "reasonsTheyDidNotAttend",
+        "name": "reasonsTheyDidNotAttend",
+        "label": "Reason they did not attend",
         "rows": "5"
       },
       "submitButtonText": "Continue"

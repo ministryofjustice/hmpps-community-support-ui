@@ -83,7 +83,8 @@ test.describe('Ics Feedback CYA Page', () => {
     record: {
       didSessionHappen: false,
       didPersonAttend: false,
-      noAttendanceInformation: 'No contact was made with the person',
+      howTheyTriedToContactThePerson: 'No contact was made with the person',
+      reasonsTheyDidNotAttend: 'They were unavailable',
     },
     caseReferenceId: caseRefId,
   }
@@ -249,15 +250,16 @@ test.describe('Ics Feedback CYA Page', () => {
     )
   })
 
-  test('when the ICS was not attended, display no attendance information in session details', async ({ page }) => {
+  test('when the ICS was not attended, display contact attempts and reason', async ({ page }) => {
     await seedSessionWithIcsFeedback(page, icsFeedbackSubmissionDidNotAttend)
     await page.goto(`ics-feedback/${caseRefId}/check-answers`)
     const icsFeedbackCheckYourAnswersPage = await IcsFeedbackCheckYourAnswersPage.verifyOnPage(page)
-    expect(
-      page.getByText(
-        `Details about how you tried to contact ${mockAppointmentIcsResponse.referralFirstName} and why they did not attend`,
-      ),
+    await expect(
+      page.getByText(`How did you try to contact ${mockAppointmentIcsResponse.referralFirstName}?`),
     ).toBeVisible()
+    await expect(page.locator('dt.govuk-summary-list__key', { hasText: 'Reason they did not attend' })).toBeVisible()
+    await expect(page.getByText('No contact was made with the person')).toBeVisible()
+    await expect(page.getByText('They were unavailable')).toBeVisible()
     expect(icsFeedbackCheckYourAnswersPage.sessionFeedbackSummary).toBeVisible()
     expect(icsFeedbackCheckYourAnswersPage.backLink).toHaveAttribute(
       'href',
