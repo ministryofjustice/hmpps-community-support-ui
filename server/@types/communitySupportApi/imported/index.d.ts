@@ -1454,7 +1454,7 @@ export interface components {
     CreateAppointmentRequest: {
       /** @enum {string|null} */
       appointmentType?:
-        'ICS' | 'CONTACT_SESSION' | 'POST_RELEASE_SESSION' | 'PRE_RELEASE_SESSION' | 'HANDOVER_SESSION' | null
+      'ICS' | 'CONTACT_SESSION' | 'POST_RELEASE_SESSION' | 'PRE_RELEASE_SESSION' | 'HANDOVER_SESSION' | null
       /** Format: date */
       date: string
       time: components['schemas']['AppointmentTimeRequest']
@@ -1466,7 +1466,7 @@ export interface components {
     SessionMethodRequest: {
       /** @enum {string} */
       type:
-        'PHONE' | 'VIDEO' | 'IN_PERSON' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION' | 'IN_PERSON_PRISON'
+      'PHONE' | 'VIDEO' | 'IN_PERSON' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION' | 'IN_PERSON_PRISON'
       additionalDetails?: string | null
       prisonCode?: string | null
       pdu?: string | null
@@ -1702,12 +1702,12 @@ export interface components {
       id: string
       /** @enum {string} */
       method:
-        | 'PHONE_CALL'
-        | 'VIDEO_CALL'
-        | 'IN_PERSON'
-        | 'IN_PERSON_PROBATION_OFFICE'
-        | 'IN_PERSON_OTHER_LOCATION'
-        | 'IN_PERSON_PRISON'
+      | 'PHONE_CALL'
+      | 'VIDEO_CALL'
+      | 'IN_PERSON'
+      | 'IN_PERSON_PROBATION_OFFICE'
+      | 'IN_PERSON_OTHER_LOCATION'
+      | 'IN_PERSON_PRISON'
       methodDetails?: string | null
       prisonCode?: string | null
       addressLine1?: string | null
@@ -2020,13 +2020,13 @@ export interface components {
       refereeName: components['schemas']['RefereeNameDto']
       physicalHealth: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       mentalEmotionalHealth:
-        components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
+      components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       neurodiversity: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       locationTravel: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       caringResponsibilities:
-        components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
+      components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       employmentResponsibilities:
-        components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
+      components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       diversity: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       anythingElse: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       needsAdditionalSupport?: boolean | null
@@ -2055,34 +2055,16 @@ export interface components {
       contactDetailsStatus: components['schemas']['ContactDetailsDto']
       checkYourAnswersStatus: components['schemas']['TaskListStatusItem']
     }
-    Pageable: {
-      /** Format: int32 */
-      page?: number
-      /** Format: int32 */
-      size?: number
-      sort?: string[]
-    }
-    PageResponse: {
-      content: unknown[]
-      /** Format: int32 */
-      page: number
-      /** Format: int32 */
-      size: number
-      /** Format: int64 */
-      totalElements: number
-      /** Format: int32 */
-      totalPages: number
-    }
     AppointmentDetailsDto: {
       /** @enum {string|null} */
       method?:
-        | 'PHONE_CALL'
-        | 'VIDEO_CALL'
-        | 'IN_PERSON'
-        | 'IN_PERSON_PROBATION_OFFICE'
-        | 'IN_PERSON_OTHER_LOCATION'
-        | 'IN_PERSON_PRISON'
-        | null
+      | 'PHONE_CALL'
+      | 'VIDEO_CALL'
+      | 'IN_PERSON'
+      | 'IN_PERSON_PROBATION_OFFICE'
+      | 'IN_PERSON_OTHER_LOCATION'
+      | 'IN_PERSON_PRISON'
+      | null
       date?: string | null
       time?: string | null
     }
@@ -3583,7 +3565,7 @@ export interface operations {
     requestBody: {
       content: {
         'application/json':
-          components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
+        components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       }
     }
     responses: {
@@ -3741,7 +3723,7 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          'application/json': unknown
+          'application/json': components['schemas']['ReferenceDataReferralPathwaysDto']
         }
       }
       /** @description Referral pathways not found */
