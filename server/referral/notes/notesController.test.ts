@@ -82,7 +82,7 @@ jest.mock('./notesListPresenter')
 
 describe('NotesController', () => {
   const caseReference = 'AB1234CD'
-  const notesResponse = {
+  const notesResponse: PagedResponse<ReferralNoteOrNonContactSessionBffDto> = {
     content: [],
     page: 0,
     size: 25,
