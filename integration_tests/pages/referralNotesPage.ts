@@ -17,9 +17,9 @@ export default class ReferralNotesPage extends AbstractPage {
   constructor(page: Page) {
     super(page)
     this.header = page.locator('h1')
-    this.addNoteButton = page.getByTestId('add-note-button')
-    this.notesTable = page.getByTestId('referral-notes-table')
-    this.noNotesMessage = page.getByTestId('no-notes-message')
+    this.addNoteButton = page.locator('[data-testid="add-note-button"]')
+    this.notesTable = page.locator('[data-testid="referral-notes-table"]')
+    this.noNotesMessage = page.locator('[data-testid="no-notes-message"]')
   }
 
   async verifyOnPage(): Promise<void> {
