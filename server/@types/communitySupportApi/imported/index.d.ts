@@ -106,40 +106,6 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/referral/{referralReference}/non-contact-session': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** Submit a non contact session */
-    post: operations['submitNonContactSession']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/referral/{referralReference}/case-note': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** Submit a case note */
-    post: operations['submitCaseNote']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
   '/referral/{referralReference}/case-note': {
     parameters: {
       query?: never
@@ -506,23 +472,6 @@ export interface paths {
     }
     /** Get service days page data */
     get: operations['getServiceDaysPage']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/bff/referral/{referralReference}/notes': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get case notes and non-contact sessions for a referral */
-    get: operations['getNotesAndNonContactSessions']
     put?: never
     post?: never
     delete?: never
@@ -1505,7 +1454,7 @@ export interface components {
     CreateAppointmentRequest: {
       /** @enum {string|null} */
       appointmentType?:
-      'ICS' | 'CONTACT_SESSION' | 'POST_RELEASE_SESSION' | 'PRE_RELEASE_SESSION' | 'HANDOVER_SESSION' | null
+        'ICS' | 'CONTACT_SESSION' | 'POST_RELEASE_SESSION' | 'PRE_RELEASE_SESSION' | 'HANDOVER_SESSION' | null
       /** Format: date */
       date: string
       time: components['schemas']['AppointmentTimeRequest']
@@ -1517,7 +1466,7 @@ export interface components {
     SessionMethodRequest: {
       /** @enum {string} */
       type:
-      'PHONE' | 'VIDEO' | 'IN_PERSON' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION' | 'IN_PERSON_PRISON'
+        'PHONE' | 'VIDEO' | 'IN_PERSON' | 'IN_PERSON_PROBATION_OFFICE' | 'IN_PERSON_OTHER_LOCATION' | 'IN_PERSON_PRISON'
       additionalDetails?: string | null
       prisonCode?: string | null
       pdu?: string | null
@@ -1663,27 +1612,6 @@ export interface components {
       shouldNotify: boolean
       pathways: string[]
     }
-    SubmitNonContactSessionRequest: {
-      title: string
-      details: string
-      /** Format: date-time */
-      startDate: string
-      /** Format: int32 */
-      durationHours: number
-      /** Format: int32 */
-      durationMinutes: number
-      pathways: string[]
-    }
-    SuccessMessageResponse: {
-      success: boolean
-      message: string
-    }
-    SubmitCaseNoteRequest: {
-      title: string
-      details: string
-      shouldNotify: boolean
-      pathways: string[]
-    }
     ActionPlanSubmitResponse: {
       success: boolean
       message: string
@@ -1774,12 +1702,12 @@ export interface components {
       id: string
       /** @enum {string} */
       method:
-      | 'PHONE_CALL'
-      | 'VIDEO_CALL'
-      | 'IN_PERSON'
-      | 'IN_PERSON_PROBATION_OFFICE'
-      | 'IN_PERSON_OTHER_LOCATION'
-      | 'IN_PERSON_PRISON'
+        | 'PHONE_CALL'
+        | 'VIDEO_CALL'
+        | 'IN_PERSON'
+        | 'IN_PERSON_PROBATION_OFFICE'
+        | 'IN_PERSON_OTHER_LOCATION'
+        | 'IN_PERSON_PRISON'
       methodDetails?: string | null
       prisonCode?: string | null
       addressLine1?: string | null
@@ -2092,13 +2020,13 @@ export interface components {
       refereeName: components['schemas']['RefereeNameDto']
       physicalHealth: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       mentalEmotionalHealth:
-      components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
+        components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       neurodiversity: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       locationTravel: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       caringResponsibilities:
-      components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
+        components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       employmentResponsibilities:
-      components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
+        components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       diversity: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       anythingElse: components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       needsAdditionalSupport?: boolean | null
@@ -2134,13 +2062,6 @@ export interface components {
       size?: number
       sort?: string[]
     }
-    Pageable: {
-      /** Format: int32 */
-      page?: number
-      /** Format: int32 */
-      size?: number
-      sort?: string[]
-    }
     PageResponse: {
       content: unknown[]
       /** Format: int32 */
@@ -2160,27 +2081,16 @@ export interface components {
     ReferenceDataReferralPathwaysDto: {
       pathways: components['schemas']['ReferenceDataReferralPathwayDto'][]
     }
-    PageResponse: {
-      content: unknown[]
-      /** Format: int32 */
-      page: number
-      /** Format: int32 */
-      size: number
-      /** Format: int64 */
-      totalElements: number
-      /** Format: int32 */
-      totalPages: number
-    }
     AppointmentDetailsDto: {
       /** @enum {string|null} */
       method?:
-      | 'PHONE_CALL'
-      | 'VIDEO_CALL'
-      | 'IN_PERSON'
-      | 'IN_PERSON_PROBATION_OFFICE'
-      | 'IN_PERSON_OTHER_LOCATION'
-      | 'IN_PERSON_PRISON'
-      | null
+        | 'PHONE_CALL'
+        | 'VIDEO_CALL'
+        | 'IN_PERSON'
+        | 'IN_PERSON_PROBATION_OFFICE'
+        | 'IN_PERSON_OTHER_LOCATION'
+        | 'IN_PERSON_PRISON'
+        | null
       date?: string | null
       time?: string | null
     }
@@ -2961,94 +2871,6 @@ export interface operations {
       }
     }
   }
-  submitNonContactSession: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        referralReference: string
-      }
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['SubmitNonContactSessionRequest']
-      }
-    }
-    responses: {
-      /** @description Non contact session submitted successfully */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['SuccessMessageResponse']
-        }
-      }
-      /** @description Validation failure */
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-      /** @description Referral not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  submitCaseNote: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        referralReference: string
-      }
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['SubmitCaseNoteRequest']
-      }
-    }
-    responses: {
-      /** @description Case note submitted successfully */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['SuccessMessageResponse']
-        }
-      }
-      /** @description Validation failure */
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-      /** @description Referral not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
   submitCaseNote: {
     parameters: {
       query?: never
@@ -3769,7 +3591,7 @@ export interface operations {
     requestBody: {
       content: {
         'application/json':
-        components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
+          components['schemas']['No'] | components['schemas']['Unanswered'] | components['schemas']['Yes']
       }
     }
     responses: {
@@ -3931,39 +3753,6 @@ export interface operations {
         }
       }
       /** @description Referral pathways not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  getNotesAndNonContactSessions: {
-    parameters: {
-      query: {
-        pageable: components['schemas']['Pageable']
-      }
-      header?: never
-      path: {
-        referralReference: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Case notes and non-contact sessions retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['ReferralNoteOrNonContactSessionBffDto'][]
-        }
-      }
-      /** @description Referral not found */
       404: {
         headers: {
           [name: string]: unknown

@@ -22,6 +22,8 @@ type AppointmentIcsResponse = components['schemas']['AppointmentIcsResponse']
 type AppointmentTimeResponse = components['schemas']['AppointmentIcsResponse']['appointmentTime']
 type ReferralProgress = components['schemas']['ReferralProgressDto']
 type ReferralAppointmentsBffResponseDto = components['schemas']['ReferralAppointmentsBffResponseDto']
+type ReferenceDataReferralPathwaysDto = components['schemas']['ReferenceDataReferralPathwaysDto']
+type ReferenceDataReferralPathwayDto = components['schemas']['ReferenceDataReferralPathwayDto']
 type ReferralNoteOrNonContactSessionBffDto = components['schemas']['ReferralNoteOrNonContactSessionBffDto']
 type ReferralNoteOrNonContactSessionBffDto = components['schemas']['ReferralNoteOrNonContactSessionBffDto']
 type ReferralAppointmentHistory = components['schemas']['ReferralAppointmentHistoryDto']
@@ -128,7 +130,6 @@ export type {
   ReferralProgress,
   ReferralAppointmentsBffResponseDto,
   ReferralNoteOrNonContactSessionBffDto,
-  ReferralNoteOrNonContactSessionBffDto,
   ReferralAppointmentHistory,
   ProbationOffice,
   IcsFeedbackSubmission,
@@ -201,4 +202,6 @@ export type {
   IcsViewOrChangeBffDto,
   IcsChangeDetailsBffDto,
   IcsChangeReasonBffDto,
+  ReferenceDataReferralPathwaysDto,
+  ReferenceDataReferralPathwayDto,
 }
