@@ -1,21 +1,45 @@
 import { Response } from 'express'
 import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendTextarea } from '@govuk-frontend'
-import { IcsFeedbackSubmission } from '@community-support-api'
-import { GlobalContent } from '../../../assets/content/GlobalContent'
 import PresenterBase from '../../presenter/presenterBase'
 import { ErrorMiddlewareErrors } from '../../@types/express'
+import { GlobalContent } from '../../../assets/content/GlobalContent'
 
 export interface HowTheyTriedToContactThePersonFormViewModel {
-  textarea: GovukFrontendTextarea
+  contactAttemptsTextarea: GovukFrontendTextarea
+  reasonsForNonAttendanceTextarea: GovukFrontendTextarea
   button: GovukFrontendButton
 }
 
 export interface HowTheyTriedToContactThePersonViewModel {
   form: HowTheyTriedToContactThePersonFormViewModel
   backLink: GovukFrontendBackLink
+  pageHeading: string
 }
 
-type FormContent = HowTheyTriedToContactThePersonContent['feedbackForm']
+export interface HowTheyTriedToContactThePersonFormData {
+  howTheyTriedToContactThePerson?: string
+  reasonsTheyDidNotAttend?: string
+}
+
+interface TextAreaContent {
+  id: string
+  name: string
+  label: string
+  hint?: string
+  rows: string
+}
+
+interface FormContent {
+  contactAttemptsTextarea: TextAreaContent
+  reasonsForNonAttendanceTextarea: TextAreaContent
+  submitButtonText: string
+}
+
+interface TextareaOptions {
+  dataTestId: string
+  labelClasses: string
+  label?: string
+}
 
 export type HowTheyTriedToContactThePersonContent = GlobalContent['icsFeedback']['id']['howTheyTriedToContactThePerson']
 
@@ -23,36 +47,62 @@ export default class HowTheyTriedToContactThePersonPresenter extends PresenterBa
   constructor(
     private readonly caseRefId: string,
     private readonly firstName: string,
-    private feedbackData: IcsFeedbackSubmission,
+    private readonly submittedFormData?: HowTheyTriedToContactThePersonFormData,
   ) {
     super()
+  }
+
+  private buildTextarea(
+    content: TextAreaContent,
+    value: string,
+    errors: ErrorMiddlewareErrors | undefined,
+    options: TextareaOptions,
+  ): GovukFrontendTextarea {
+    return {
+      id: content.id,
+      name: content.name,
+      label: {
+        text: options.label ?? content.label,
+        classes: options.labelClasses,
+        attributes: { 'data-testid': `${options.dataTestId}-label` },
+      },
+      hint: content.hint
+        ? {
+            text: content.hint,
+            attributes: { 'data-testid': `${options.dataTestId}-hint` },
+          }
+        : undefined,
+      value,
+      rows: content.rows,
+      attributes: { 'data-testid': `${options.dataTestId}-input` },
+      errorMessage: errors?.messages[content.id],
+    }
   }
 
   private buildForm(
     content: FormContent,
     errors: ErrorMiddlewareErrors | undefined,
   ): HowTheyTriedToContactThePersonFormViewModel {
-    const fieldError = errors?.messages[content.textarea.id]
-    const fieldData = this.feedbackData?.record?.noAttendanceInformation || ''
     return {
-      textarea: {
-        id: content.textarea.id,
-        name: content.textarea.name,
-        label: {
-          text: content.textarea.label.replace('{{ firstname }}', this.firstName),
-          classes: 'govuk-label--l',
-          isPageHeading: true,
-          attributes: { 'data-testid': 'textarea-label' },
+      contactAttemptsTextarea: this.buildTextarea(
+        content.contactAttemptsTextarea,
+        this.submittedFormData?.howTheyTriedToContactThePerson ?? '',
+        errors,
+        {
+          dataTestId: 'contact-textarea',
+          labelClasses: 'govuk-label--m',
+          label: content.contactAttemptsTextarea.label.replace('{{ firstname }}', this.firstName),
         },
-        hint: {
-          text: content.textarea.hint,
-          attributes: { 'data-testid': 'textarea-hint' },
+      ),
+      reasonsForNonAttendanceTextarea: this.buildTextarea(
+        content.reasonsForNonAttendanceTextarea,
+        this.submittedFormData?.reasonsTheyDidNotAttend ?? '',
+        errors,
+        {
+          dataTestId: 'reasons-textarea',
+          labelClasses: 'govuk-label--m',
         },
-        value: fieldData,
-        rows: content.textarea.rows,
-        attributes: { 'data-testid': 'textarea-input' },
-        errorMessage: fieldError,
-      },
+      ),
       button: { text: content.submitButtonText },
     }
   }
@@ -62,6 +112,7 @@ export default class HowTheyTriedToContactThePersonPresenter extends PresenterBa
     return {
       form: this.buildForm(content.feedbackForm, res.locals?.errors),
       backLink: { href: content.backLink.replace('{{ id }}', this.caseRefId) },
+      pageHeading: content.pageHeading,
     }
   }
 
