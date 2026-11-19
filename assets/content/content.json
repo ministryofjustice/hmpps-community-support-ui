@@ -371,6 +371,7 @@
     }
   },
   "/referral/:id/notes": {
+    "pageTitle": "Notes - Community Support",
     "pageHeader": "Referral for",
     "notesTitle": "Notes",
     "noNotesMessage": "No notes have been added yet",

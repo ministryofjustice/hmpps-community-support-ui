@@ -22,6 +22,7 @@ export default class NotesListPresenter extends ReferralLayoutPresenter<Referral
     const { from, to, count } = pagination.results
 
     return {
+      pageTitle: content.pageTitle,
       pageHeader: content.pageHeader,
       navBar: this.getMojSubNavigationArgs(),
       notesTitle: content.notesTitle,
@@ -34,9 +35,12 @@ export default class NotesListPresenter extends ReferralLayoutPresenter<Referral
       readFullNoteLinkText: content.readFullNoteLinkText,
       // Placeholder until the note details page exists
       viewDetailsHref: `/referral/${this.caseReference}/notes`,
-      addNoteButtonText: content.addNoteButtonText,
-      // Placeholder until the add note page exists
-      addNoteHref: `/referral/${this.caseReference}/notes`,
+      addNoteButton: {
+        text: content.addNoteButtonText,
+        // Placeholder until the add note page exists
+        href: `/referral/${this.caseReference}/notes`,
+        attributes: { 'data-testid': 'add-note-button' },
+      },
       addedNotesSubheading: content.addedNotesSubheading,
       notes: this.notesResponse.content.map(note => ({
         createdAt: note.createdAt,

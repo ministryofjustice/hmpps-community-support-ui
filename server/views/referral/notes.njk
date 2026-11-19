@@ -5,7 +5,7 @@
 {% from "moj/components/pagination/macro.njk" import mojPagination %}
 {% from "govuk/components/details/macro.njk" import govukDetails %}
 
-{% set pageTitle = "Notes – " + applicationName %}
+{% set pageTitle = content.pageTitle %}
 {% set mainClasses = "govuk-body" %}
 
 {% block content %}
@@ -15,11 +15,7 @@
 
   <h2 class="govuk-heading-l">{{ content.notesTitle }}</h2>
 
-  {{ govukButton({
-    text: content.addNoteButtonText,
-    href: content.addNoteHref,
-    attributes: { 'data-testid': 'add-note-button' }
-  }) }}
+  {{ govukButton(content.addNoteButton) }}
 
   {% if content.hasNotes %}
     <h3 class="govuk-heading-m">{{ content.addedNotesSubheading }}</h3>

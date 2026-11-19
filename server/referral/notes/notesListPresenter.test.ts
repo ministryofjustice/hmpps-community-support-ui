@@ -28,7 +28,13 @@ describe('NotesListPresenter', () => {
   it('maps notes and marks the notes tab as active', () => {
     const viewModel = new NotesListPresenter(pagedResponse({}), caseReference).buildViewModel()
 
+    expect(viewModel.pageTitle).toBe('Notes')
     expect(viewModel.pageHeader).toBe('Referral for')
+    expect(viewModel.addNoteButton).toEqual({
+      text: 'Add note',
+      href: `/referral/${caseReference}/notes`,
+      attributes: { 'data-testid': 'add-note-button' },
+    })
     expect(viewModel.notesTitle).toBe('Notes')
     expect(viewModel.hasNotes).toBe(true)
     expect(viewModel.notes).toEqual([

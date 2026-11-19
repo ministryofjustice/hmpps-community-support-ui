@@ -9,6 +9,7 @@ export type ReferralNoteRow = {
 }
 
 export type ReferralNotesViewModel = {
+  pageTitle: string
   pageHeader: string
   navBar: MojSubNavigation
   notesTitle: string
@@ -20,8 +21,11 @@ export type ReferralNotesViewModel = {
   viewDetailsLinkText: string
   readFullNoteLinkText: string
   viewDetailsHref: string
-  addNoteButtonText: string
-  addNoteHref: string
+  addNoteButton: {
+    text: string
+    href: string
+    attributes: Record<string, string>
+  }
   addedNotesSubheading: string
   notes: ReferralNoteRow[]
   hasNotes: boolean
