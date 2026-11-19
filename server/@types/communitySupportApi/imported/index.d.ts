@@ -480,6 +480,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/bff/referral/{referralReference}/notes': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get case notes and non-contact sessions for a referral */
+    get: operations['getNotesAndNonContactSessions']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/bff/referral/{referralReference}/notes/pathways': {
     parameters: {
       query?: never
@@ -2038,6 +2055,24 @@ export interface components {
       contactDetailsStatus: components['schemas']['ContactDetailsDto']
       checkYourAnswersStatus: components['schemas']['TaskListStatusItem']
     }
+    Pageable: {
+      /** Format: int32 */
+      page?: number
+      /** Format: int32 */
+      size?: number
+      sort?: string[]
+    }
+    PageResponse: {
+      content: unknown[]
+      /** Format: int32 */
+      page: number
+      /** Format: int32 */
+      size: number
+      /** Format: int64 */
+      totalElements: number
+      /** Format: int32 */
+      totalPages: number
+    }
     AppointmentDetailsDto: {
       /** @enum {string|null} */
       method?:
@@ -2578,13 +2613,6 @@ export interface components {
       preferredLanguage: string
       currentCircumstances: components['schemas']['ConfirmPersonalDetailsCurrentCircumstances']
       disabilities: components['schemas']['ConfirmPersonalDetailsDisabilities']
-    }
-    Pageable: {
-      /** Format: int32 */
-      page?: number
-      /** Format: int32 */
-      size?: number
-      sort?: string[]
     }
     ReferralCaseListDto: {
       /** Format: uuid */
@@ -3650,6 +3678,39 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['ServiceDaysPageDto']
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getNotesAndNonContactSessions: {
+    parameters: {
+      query: {
+        pageable: components['schemas']['Pageable']
+      }
+      header?: never
+      path: {
+        referralReference: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Case notes and non-contact sessions retrieved successfully */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['PageResponse']
         }
       }
       /** @description Referral not found */
