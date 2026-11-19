@@ -2073,6 +2073,14 @@ export interface components {
       /** Format: int32 */
       totalPages: number
     }
+    ReferenceDataReferralPathwayDto: {
+      /** Format: uuid */
+      id: string
+      title: string
+    }
+    ReferenceDataReferralPathwaysDto: {
+      pathways: components['schemas']['ReferenceDataReferralPathwayDto'][]
+    }
     AppointmentDetailsDto: {
       /** @enum {string|null} */
       method?:
@@ -3741,7 +3749,7 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          'application/json': unknown
+          'application/json': components['schemas']['ReferenceDataReferralPathwaysDto']
         }
       }
       /** @description Referral pathways not found */
