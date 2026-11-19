@@ -11,4 +11,4 @@ export type FoundPersonViewModel = {
   backLink: GovukFrontendBackLink
 }
 
-export type FoundPersonContent = GlobalContent['/referral/new/find-a-person']
+export type FoundPersonContent = GlobalContent['referral']['new']['findAPerson']

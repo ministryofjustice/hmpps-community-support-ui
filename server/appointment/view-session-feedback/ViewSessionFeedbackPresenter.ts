@@ -84,7 +84,7 @@ export default class ViewSessionFeedbackPresenter extends PresenterBase<ViewSess
   }
 
   buildViewModel(): ViewSessionFeedbackViewModel {
-    const content = this.buildStaticContent()['/ics-feedback/:id/session/:id']
+    const content = this.globalContent().icsFeedback.id.session.id
     const didSessionHappen = this.icsFeedbackSubmissionResponse.recordSessionDidSessionHappen === true
 
     return {

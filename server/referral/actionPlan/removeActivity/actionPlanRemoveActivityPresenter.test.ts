@@ -7,7 +7,7 @@ describe('ActionPlanRemoveActivityPresenter', () => {
   const render = (isOnlyActivity: boolean, errors?: Response['locals']['errors']) => {
     const res = {
       locals: {
-        content: globalContent['/referral/:id/action-plan/activities/remove'],
+        content: globalContent.referral.id.actionPlan.activities.remove,
         errors,
       },
       render: jest.fn(),

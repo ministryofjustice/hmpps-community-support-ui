@@ -188,7 +188,7 @@ export default class ReferralDetailsPresenter extends ReferralLayoutPresenter<Re
   }
 
   buildViewModel(): ReferralDetailsViewModel {
-    const content = this.buildStaticContent()['/referral-details/:id']
+    const content = this.globalContent().referralDetails.id.page
     return {
       name: this.referralDetails.personDetailsTableData.name,
       subNav: this.getMojSubNavigationArgs(undefined, this.isReferralAssigned()),

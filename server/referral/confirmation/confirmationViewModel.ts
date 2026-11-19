@@ -10,4 +10,4 @@ export type ReferralConfirmationViewModel = {
   panel: GovukFrontendPanel
 }
 
-export type ReferralConfirmationContent = GlobalContent['/referral/:id/confirmation']
+export type ReferralConfirmationContent = GlobalContent['referral']['id']['confirmation']

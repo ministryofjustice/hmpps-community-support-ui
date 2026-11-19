@@ -79,12 +79,9 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
     private readonly formData?: ScheduledIcsFormData,
     private readonly validationErrors?: ErrorMiddlewareErrors,
     private readonly appointmentType?: SessionAppointmentType,
-    private readonly contentPath:
-      | '/referral/:id/create-an-appointment/appointment-details'
-      | '/referral/:id/appointment/schedule-ics'
-      | '/referral/:id/ics-change-details' = appointmentType
-      ? '/referral/:id/create-an-appointment/appointment-details'
-      : '/referral/:id/appointment/schedule-ics',
+    private readonly contentKey: 'appointmentDetails' | 'scheduleIcs' | 'icsChangeDetails' = appointmentType
+      ? 'appointmentDetails'
+      : 'scheduleIcs',
   ) {
     super()
     this.rules = appointmentType ? appointmentTypeRules[appointmentType] : undefined
@@ -441,7 +438,12 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
   }
 
   buildViewModel(): ScheduleIcsViewModel {
-    const content = this.buildStaticContent()[this.contentPath]
+    const referralContent = this.globalContent().referral.id
+    const content = {
+      appointmentDetails: referralContent.createAnAppointment.appointmentDetails,
+      scheduleIcs: referralContent.appointment.scheduleIcs,
+      icsChangeDetails: referralContent.icsChangeDetails.page,
+    }[this.contentKey]
     const submitHref =
       content.submitHref.replace('{{ caseRef }}', this.caseReference) +
       (this.appointmentType ? `?session=${this.appointmentType}` : '')

@@ -25,7 +25,7 @@ export type ActionPlanViewModel = {
 }
 
 export type ActionPlanSideNavContent = Pick<
-  GlobalContent['/referral/:id'],
+  GlobalContent['referral']['id']['page'],
   | 'sideNavigationLabel'
   | 'actionPlanSideTabText'
   | 'actionPlanSideTabHref'
@@ -33,6 +33,6 @@ export type ActionPlanSideNavContent = Pick<
   | 'serviceDeliverySideTabHref'
 >
 
-export type ActionPlanContent = GlobalContent['/referral/:id/action-plan'] &
+export type ActionPlanContent = GlobalContent['referral']['id']['actionPlan']['page'] &
   ReferralLayoutContent &
   ActionPlanSideNavContent

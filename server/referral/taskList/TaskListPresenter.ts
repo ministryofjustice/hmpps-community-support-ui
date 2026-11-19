@@ -108,7 +108,7 @@ export default class TaskListPresenter extends PresenterBase<TaskListViewModel> 
   }
 
   buildViewModel(): TaskListViewModel {
-    const content = this.buildStaticContent()['/referral/task-list']
+    const content = this.globalContent().referral.taskList.page
     return {
       pageTitle: content.pageTitle,
       pageHeader: content.pageHeader.replace(

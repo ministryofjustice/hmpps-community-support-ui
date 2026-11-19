@@ -23,4 +23,4 @@ export type WhoRequestedRadioContent = ChangeIcsDetailsReasonContent['whoRequest
 
 export type ReasonTextareaContent = ChangeIcsDetailsReasonContent['reasonTextarea']
 
-export type ChangeIcsDetailsReasonContent = GlobalContent['/referral/:id/ics-change-details/reason']
+export type ChangeIcsDetailsReasonContent = GlobalContent['referral']['id']['icsChangeDetails']['reason']

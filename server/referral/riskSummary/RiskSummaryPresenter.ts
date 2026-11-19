@@ -96,7 +96,7 @@ export default class RiskSummaryPresenter extends PresenterBase<RiskSummaryViewM
   }
 
   buildViewModel(): RiskSummaryViewModel {
-    const content = this.buildStaticContent()['/referral/task-list/view-risk-summary']
+    const content = this.globalContent().referral.taskList.viewRiskSummary
     const { crn, dateOfBirth } = this.risk
     const dobDate = new Date(dateOfBirth)
     const age = differenceInYears(new Date(), dobDate)

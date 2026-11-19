@@ -54,4 +54,4 @@ export type SessionDurationTimeInputItemsContent = SessionDurationTimeInputConte
 
 export type SessionDurationTimeInputContent = RecordSessionDetailsContent['sessionDurationTimeInput']
 
-export type RecordSessionDetailsContent = GlobalContent['/ics-feedback/:id/session-details']
+export type RecordSessionDetailsContent = GlobalContent['icsFeedback']['id']['sessionDetails']

@@ -11,4 +11,4 @@ export interface PersonNeedsViewModel {
   submitHref: string
 }
 
-export type PersonNeedsContent = GlobalContent['/referral/task-list/select-person-needs']
+export type PersonNeedsContent = GlobalContent['referral']['taskList']['selectPersonNeeds']

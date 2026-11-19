@@ -5,7 +5,7 @@ import { ConfirmContactDetailsContent, ConfirmContactDetailsViewModel } from './
 
 export default class ConfirmContactDetailsPresenter extends PresenterBase<ConfirmContactDetailsViewModel> {
   buildViewModel() {
-    const content = this.buildStaticContent()['/referral/new/confirm-contact-details']
+    const content = this.globalContent().referral.new.confirmContactDetails
     return {
       pageTitle: content.pageTitle,
       heading: content.heading.replace(

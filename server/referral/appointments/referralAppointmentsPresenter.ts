@@ -30,7 +30,7 @@ export default class ReferralAppointmentsPresenter extends ReferralLayoutPresent
   }
 
   buildViewModel(): ReferralAppointmentsViewModel {
-    const content = this.buildStaticContent()['/referral/:id/appointments']
+    const content = this.globalContent().referral.id.appointments
     const { firstName, lastName } = this.referralAppointments.personDetails
     const { upcomingAppointments, pastAppointments } = this.referralAppointments
     let notificationBanner: { title: string; message?: string } | undefined

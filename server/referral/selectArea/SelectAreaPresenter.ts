@@ -12,7 +12,7 @@ import formatFullName from '../../utils/presenterFormatters'
 
 export default class SelectAreaPresenter extends PresenterBase<SelectAreaViewModel> {
   buildViewModel() {
-    const content = this.buildStaticContent()['/referral/task-list/select-an-area-for-referral']
+    const content = this.globalContent().referral.taskList.selectAnAreaForReferral
     return {
       pageTitle: content.pageTitle,
       heading: content.heading.replace(

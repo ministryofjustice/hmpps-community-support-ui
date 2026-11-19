@@ -3,7 +3,7 @@ import { GlobalContent } from '../../../assets/content/GlobalContent'
 
 export type RiskSummaryRowCard = RiskSummaryContent['whoIsAtRiskCard']
 
-export type RiskSummaryContent = GlobalContent['/referral/task-list/view-risk-summary']
+export type RiskSummaryContent = GlobalContent['referral']['taskList']['viewRiskSummary']
 
 export interface RiskSummaryRow {
   heading: string

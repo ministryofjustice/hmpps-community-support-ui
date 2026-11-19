@@ -15,4 +15,4 @@ export type IssuesOrConcernsViewModel = {
   backLink: GovukFrontendBackLink
 }
 
-export type IssuesOrConcernsContent = GlobalContent['/ics-feedback/:id/issues-or-concerns']
+export type IssuesOrConcernsContent = GlobalContent['icsFeedback']['id']['issuesOrConcerns']

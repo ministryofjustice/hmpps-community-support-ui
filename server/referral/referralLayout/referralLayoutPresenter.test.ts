@@ -8,7 +8,7 @@ class TestReferralLayoutPresenter extends ReferralLayoutPresenter<{ title: strin
   }
 
   protected buildViewModel(): { title: string } {
-    return { title: this.buildStaticContent()['/'].pageHeader }
+    return { title: this.globalContent().landing.pageHeader }
   }
 
   protected getTemplatePath(): string {
@@ -17,7 +17,7 @@ class TestReferralLayoutPresenter extends ReferralLayoutPresenter<{ title: strin
 }
 
 describe('ReferralLayoutPresenter', () => {
-  const content = globalContent['/referral/:id']
+  const content = globalContent.referral.id.page
 
   describe('getMojSubNavigationArgs', () => {
     it('builds the shared navigation with Action Plan immediately after Progress', () => {
@@ -85,6 +85,6 @@ describe('ReferralLayoutPresenter', () => {
 
     new TestReferralLayoutPresenter(ReferralNavigationValues.actionPlanTab, 'AB1234CD').renderPage(res)
 
-    expect(res.render).toHaveBeenCalledWith('referral/test', { content: { title: globalContent['/'].pageHeader } })
+    expect(res.render).toHaveBeenCalledWith('referral/test', { content: { title: globalContent.landing.pageHeader } })
   })
 })

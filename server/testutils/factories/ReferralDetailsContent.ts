@@ -5,7 +5,7 @@ import { ReferralDetailsContent } from '../../referral/referralDetails/ReferralD
 class referralDetailsContentFactory extends Factory<ReferralDetailsContent> {}
 
 export default referralDetailsContentFactory.define(({ transientParams }) => ({
-  ...globalContent['/referral-details/:id'],
+  ...globalContent.referralDetails.id.page,
   pageHeader: transientParams.pageHeader || 'Referral for ',
   pageSubHeader: transientParams.pageSubHeader || 'Case details',
   backLink: '/unassigned-cases',

@@ -17,8 +17,8 @@ export default class ServiceDeliveryPresenter extends ActionPlanLayoutPresenter<
 
   protected buildViewModel(): ServiceDeliveryViewModel {
     const content = {
-      ...this.buildStaticContent()['/referral/:id'],
-      ...this.buildStaticContent()['/referral/:id/service-delivery'],
+      ...this.globalContent().referral.id.page,
+      ...this.globalContent().referral.id.serviceDelivery,
     }
 
     const updatedAtText = ''

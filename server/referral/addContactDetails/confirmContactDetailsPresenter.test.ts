@@ -1,7 +1,6 @@
 import { Person, UpdateProbationPractitionerDetailsRequest } from '@community-support-api'
 import ConfirmContactDetailsPresenter from './confirmContactDetailsPresenter'
-import { ConfirmContactDetailsContent } from './confirmContactDetailsViewModel'
-import loadContentDataForTest from '../../testutils/loadContentDataForTest'
+import { globalContent } from '../../../assets/content/GlobalContent'
 
 const personalDetails: Person = {
   firstName: 'Referral',
@@ -30,7 +29,7 @@ const ppDetails: PPDetails = {
   teamPhoneNumber: '11111 222 333',
 }
 
-const content = loadContentDataForTest('/referral/new/confirm-contact-details') as ConfirmContactDetailsContent
+const content = globalContent.referral.new.confirmContactDetails
 
 describe('ConfirmContactDetailsPresenter', () => {
   describe('heading and pageCaption', () => {

@@ -5,7 +5,7 @@ import { globalContent } from '../../../assets/content/GlobalContent'
 
 type OffenceSentenceInfoBffResponseDto = components['schemas']['OffenceSentenceInfoBffResponseDto']
 
-const content = globalContent['/referral/task-list/offence-sentence']
+const content = globalContent.referral.taskList.offenceSentence
 
 const validationErrors: ErrorMiddlewareErrors = { list: [], messages: {} }
 

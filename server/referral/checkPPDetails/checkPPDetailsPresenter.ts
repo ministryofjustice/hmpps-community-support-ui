@@ -11,7 +11,7 @@ import { ErrorMiddlewareErrors } from '../../@types/express'
 
 export default class CheckPPDetailsPresenter extends PresenterBase<CheckPPDetailsViewModel> {
   buildViewModel() {
-    const content = this.buildStaticContent()['/referral/task-list/check-probation-practitioner-details']
+    const content = this.globalContent().referral.taskList.checkProbationPractitionerDetails
     return {
       heading: content.heading.replace(
         '{{ personName }}',

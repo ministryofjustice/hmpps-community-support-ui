@@ -144,7 +144,7 @@ export default class ActionPlanSessionDeliveryDetailsPresenter extends Presenter
   }
 
   protected buildViewModel(): ActionPlanSessionDeliveryDetailsViewModel {
-    const content = this.buildStaticContent()['/referral/:id/action-plan/session-delivery-details']
+    const content = this.globalContent().referral.id.actionPlan.sessionDeliveryDetails
     const frequencyQuestion = this.sessionDeliveryDetails.questions.find(
       q => q.key === SessionDeliveryDetailsQuestions.SESSION_FREQUENCY,
     )!

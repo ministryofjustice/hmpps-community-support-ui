@@ -22,7 +22,7 @@ const need = {
 
 const renderPage = () => {
   const res = {
-    locals: { content: globalContent['/referral/:id/action-plan/remove-outcome'] },
+    locals: { content: globalContent.referral.id.actionPlan.removeOutcome },
     render: jest.fn(),
   } as unknown as Response
 

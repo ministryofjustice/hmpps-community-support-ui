@@ -26,8 +26,8 @@ describe('caseListPresenter', () => {
         totalElements: 0,
         totalPages: 0,
       }
-      const unassignedMessage = globalContent['/unassigned-cases'].noCasesMessage
-      const inProgressMessage = globalContent['/cases-in-progress'].noCasesMessage
+      const unassignedMessage = globalContent.unassignedCases.noCasesMessage
+      const inProgressMessage = globalContent.casesInProgress.noCasesMessage
 
       for (const tab of ['unassigned', 'inProgress', 'unassigned']) {
         new CaseListPresenter(emptyCases, tab).renderPage(res)
@@ -41,8 +41,8 @@ describe('caseListPresenter', () => {
         inProgressMessage.replace('{0}', 'in progress'),
         unassignedMessage.replace('{0}', 'unassigned'),
       ])
-      expect(globalContent['/unassigned-cases'].noCasesMessage).toBe(unassignedMessage)
-      expect(globalContent['/cases-in-progress'].noCasesMessage).toBe(inProgressMessage)
+      expect(globalContent.unassignedCases.noCasesMessage).toBe(unassignedMessage)
+      expect(globalContent.casesInProgress.noCasesMessage).toBe(inProgressMessage)
     })
 
     it('should render the found person page with the correct content and summary list', () => {

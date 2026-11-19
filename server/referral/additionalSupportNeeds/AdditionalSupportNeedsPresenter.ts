@@ -98,7 +98,7 @@ export default class AdditionalSuportNeedsPresenter extends PresenterBase<Additi
   }
 
   buildViewModel(): AdditionalSuportNeedsViewModel {
-    const content = this.buildStaticContent()['/referral/task-list/additional-support-needs']
+    const content = this.globalContent().referral.taskList.additionalSupportNeeds
     const { firstName, lastName } = this.data.refereeName
     const name = formatFullName(firstName, lastName)
     return {

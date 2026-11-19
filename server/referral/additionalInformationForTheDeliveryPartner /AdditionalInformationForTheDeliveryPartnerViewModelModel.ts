@@ -3,7 +3,7 @@ import { GlobalContent } from '../../../assets/content/GlobalContent'
 import { YesWithDetailOrNo } from '../../@types/govukFrontend/derived'
 
 export type AdditionalInformationForTheDeliveryPartnerContent =
-  GlobalContent['/referral/task-list/additional-information-for-the-delivery-partner']
+  GlobalContent['referral']['taskList']['additionalInformationForTheDeliveryPartner']
 
 export interface Details {
   summary: string
