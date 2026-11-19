@@ -28,7 +28,7 @@ describe('NotesListPresenter', () => {
   it('maps notes and marks the notes tab as active', () => {
     const viewModel = new NotesListPresenter(pagedResponse({}), caseReference).buildViewModel()
 
-    expect(viewModel.pageTitle).toBe('Notes')
+    expect(viewModel.pageTitle).toBe('Notes - Community Support')
     expect(viewModel.pageHeader).toBe('Referral for')
     expect(viewModel.addNoteButton).toEqual({
       text: 'Add note',
