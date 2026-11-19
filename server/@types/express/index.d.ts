@@ -47,6 +47,14 @@ export interface ActionPlanActivitiesData {
   activities: ActionPlanActivity[]
 }
 
+export interface NoteData {
+  noteType: 'CASE_NOTE' | 'NON_CONTACT_SESSION'
+  title?: string
+  details?: string
+  shouldNotify?: boolean
+  pathways?: string[]
+}
+
 export declare module 'express-session' {
   // Declare that the session will potentially contain these additional fields
   interface SessionData {
@@ -92,6 +100,7 @@ export declare module 'express-session' {
     }
     createdAppointmentMessage?: { title: string; message: string }
     appointmentFeedbackMessage?: { caseReference: string }
+    note?: NoteData
   }
 }
 
