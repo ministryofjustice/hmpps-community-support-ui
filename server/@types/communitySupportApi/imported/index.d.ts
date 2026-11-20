@@ -1674,7 +1674,8 @@ export interface components {
       howSessionTookPlace?: components['schemas']['SessionMethodRequest'] | null
       didPersonAttend?: boolean | null
       sessionNotHappenReason?: components['schemas']['SessionNotHappenReasonRequest'] | null
-      noAttendanceInformation?: string | null
+      howTheyTriedToContactThePerson?: string | null
+      reasonsTheyDidNotAttend?: string | null
     }
     SessionDetailsRequest: {
       wasPersonLate?: boolean | null
@@ -1734,7 +1735,8 @@ export interface components {
       recordSessionDidPersonAttend?: boolean | null
       recordSessionNotHappenReason?: string | null
       recordSessionNotHappenReasonDetails?: string | null
-      recordSessionNoAttendanceInformation?: string | null
+      recordSessionHowTheyTriedToContactThePerson?: string | null
+      recordSessionReasonsTheyDidNotAttend?: string | null
       sessionDetailsWasPersonLate?: boolean | null
       sessionDetailsLateReason?: string | null
       sessionDetailsDuration?: string | null

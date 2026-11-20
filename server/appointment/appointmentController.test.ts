@@ -31,6 +31,7 @@ import IcsFeedbackCheckYourAnswersPresenter from './check-ics-feedback/icsFeedba
 import { ChangeRequesterType } from './change-ics-details-reason/ChangeAppointmentDetails'
 import ChangeIcsDetailsReasonPresenter from './change-ics-details-reason/ChangeIcsDetailsReasonPresenter'
 import { parseTime12Hr } from '../utils/timeFormat'
+import HowTheyTriedToContactThePersonPresenter from './howTheyTriedToContactThePerson/howTheyTriedToContactThePersonPresenter'
 
 jest.mock('./confirm-ics/confirmIcsPresenter')
 jest.mock('../services/AppointmentService')
@@ -43,6 +44,7 @@ jest.mock('../services/referenceDataService')
 jest.mock('./view-change-session-details/ViewChangeSessionDetailsPresenter')
 jest.mock('./check-ics-feedback/icsFeedbackCheckYourAnswersPresenter')
 jest.mock('./change-ics-details-reason/ChangeIcsDetailsReasonPresenter')
+jest.mock('./howTheyTriedToContactThePerson/howTheyTriedToContactThePersonPresenter')
 
 describe('AppointmentController', () => {
   let appointmentService: AppointmentService
@@ -1835,37 +1837,89 @@ describe('AppointmentController', () => {
         .spyOn(appointmentService, 'getIcsFeedbackHowTheyTriedToContactThePerson')
         .mockResolvedValue({ referralFirstName: mockAppointmentIcsResponse.referralFirstName })
     })
+    test.each([
+      {
+        description: 'saved answers when returning from CYA',
+        flashedValues: [],
+        expectedAnswers: {
+          howTheyTriedToContactThePerson: 'Called twice',
+          reasonsTheyDidNotAttend: 'They were unwell',
+        },
+      },
+      {
+        description: 'submitted answers, including cleared fields, after failed validation',
+        flashedValues: [
+          JSON.stringify({
+            howTheyTriedToContactThePerson: 'Sent a text message',
+            reasonsTheyDidNotAttend: '',
+          }),
+        ],
+        expectedAnswers: {
+          howTheyTriedToContactThePerson: 'Sent a text message',
+          reasonsTheyDidNotAttend: '',
+        },
+      },
+    ])('renders $description', async ({ flashedValues, expectedAnswers }) => {
+      req.session.icsFeedbackSubmission.record.howTheyTriedToContactThePerson = 'Called twice'
+      req.session.icsFeedbackSubmission.record.reasonsTheyDidNotAttend = 'They were unwell'
+      req.flash = jest.fn().mockReturnValue(flashedValues)
+
+      await appointmentController.howTheyTriedToContactThePerson(req, res)
+
+      expect(HowTheyTriedToContactThePersonPresenter).toHaveBeenCalledWith(
+        caseReferenceId,
+        mockAppointmentIcsResponse.referralFirstName,
+        expectedAnswers,
+      )
+    })
     test('empty form data', async () => {
       req.body = {}
       await appointmentController.recordHowTheyTriedToContactThePerson(req, res)
       expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseReferenceId}/how-they-tried-to-contact-the-person`)
       expect(req.flash).toHaveBeenCalledWith(
         'howTheyTriedToContactThePersonError',
-        'Enter how you tried to contact John and what you know about why they did not attend',
+        'Enter how you tried to contact them',
       )
+      expect(req.flash).toHaveBeenCalledWith('reasonsTheyDidNotAttendError', 'Enter a reason they did not attend')
     })
     test('empty text', async () => {
-      req.body = { howTheyTriedToContactThePerson: '' }
+      req.body = { howTheyTriedToContactThePerson: '', reasonsTheyDidNotAttend: 'Reason provided' }
       await appointmentController.recordHowTheyTriedToContactThePerson(req, res)
       expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseReferenceId}/how-they-tried-to-contact-the-person`)
       expect(req.flash).toHaveBeenCalledWith(
         'howTheyTriedToContactThePersonError',
-        'Enter how you tried to contact John and what you know about why they did not attend',
+        'Enter how you tried to contact them',
       )
     })
+    test('missing reason why they did not attend', async () => {
+      req.body = { howTheyTriedToContactThePerson: 'Called twice', reasonsTheyDidNotAttend: '' }
+      await appointmentController.recordHowTheyTriedToContactThePerson(req, res)
+      expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseReferenceId}/how-they-tried-to-contact-the-person`)
+      expect(req.flash).toHaveBeenCalledWith('reasonsTheyDidNotAttendError', 'Enter a reason they did not attend')
+    })
     test('too much text', async () => {
-      req.body = { howTheyTriedToContactThePerson: new Array(401).fill('a').join('') }
+      req.body = {
+        howTheyTriedToContactThePerson: new Array(401).fill('a').join(''),
+        reasonsTheyDidNotAttend: 'Reason provided',
+      }
       await appointmentController.recordHowTheyTriedToContactThePerson(req, res)
       expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseReferenceId}/how-they-tried-to-contact-the-person`)
       expect(req.flash).toHaveBeenCalledWith(
         'howTheyTriedToContactThePersonError',
-        'How you tried to contact John and what you know about why they did not attend must be 400 characters or less',
+        'How you tried to contact them must be 400 characters or less',
       )
     })
     test('happy path', async () => {
-      req.body = { howTheyTriedToContactThePerson: new Array(400).fill('a').join('') }
+      req.body = {
+        howTheyTriedToContactThePerson: new Array(400).fill('a').join(''),
+        reasonsTheyDidNotAttend: 'Reason provided',
+      }
       await appointmentController.recordHowTheyTriedToContactThePerson(req, res)
       expect(req.flash).not.toHaveBeenCalled()
+      expect(req.session.icsFeedbackSubmission.record).toMatchObject({
+        howTheyTriedToContactThePerson: new Array(400).fill('a').join(''),
+        reasonsTheyDidNotAttend: 'Reason provided',
+      })
       expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseReferenceId}/check-answers`)
     })
     test('redirect when case reference id is different from the session', async () => {
