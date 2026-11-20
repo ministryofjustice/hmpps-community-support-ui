@@ -1,5 +1,6 @@
 {% extends "../partials/layout.njk" %}
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% set pageTitle = "Notes – " + applicationName %}
 {% set mainClasses = "govuk-body" %}
@@ -7,7 +8,7 @@
 {% block contentBody %}
 <form method="post" novalidate>
     <input type="hidden" name="_csrf" value="{{csrfToken}}">
-    {{ govukCheckboxes(content.checkboxes)}}
-    {{ govukButton(content.buttonArgs) }}
+    {{ govukCheckboxes(content.checkboxes) }}
+    {{ govukButton(content.button) }}
 </form>
 {% endblock %}
