@@ -91,7 +91,7 @@ services:
         condition: service_healthy
 
   manage-users-db:
-    image: postgres:18
+    image: postgres:19
     networks:
       - hmpps
     container_name: manage-users-db-community-support-ui-api-ghcr
@@ -152,7 +152,7 @@ services:
       - POSTGRES_DB=auth-db
     healthcheck:
       test: ['CMD', 'pg_isready', '--username=admin', '--dbname=auth-db']
-    image: postgres:18
+    image: postgres:19
     networks:
       - hmpps
     ports:
@@ -160,7 +160,7 @@ services:
     restart: always
 
   postgresql:
-    image: postgres:18.6
+    image: postgres:19.0
     container_name: postgres-community-support-ui-api-ghcr
     networks:
       - hmpps
