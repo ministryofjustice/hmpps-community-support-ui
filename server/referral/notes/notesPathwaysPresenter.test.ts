@@ -1,5 +1,6 @@
 import type { ReferenceDataReferralPathwaysDto } from '@community-support-api'
 import NotesPathwaysPresenter from './notesPathwaysPresenter'
+import { ErrorMiddlewareErrors } from '../../@types/express'
 
 describe('NotesPathwaysPresenter', () => {
   const caseReference = 'AB1234CD'
@@ -58,7 +59,34 @@ describe('NotesPathwaysPresenter', () => {
       const model = new NotesPathwaysPresenter(pathwaysResponse, caseReference, 'NON_CONTACT_SESSION').buildViewModel()
 
       expect(model.pageHeader).toBe('What pathway does this note relate to?')
-      expect(model.checkboxes.items).toHaveLength(2)
+      expect(model.checkboxes.items).toEqual([
+        { value: '8f0d6a2e-1b7c-4c4e-9a53-3c1f2b9e0a11', text: 'Accommodation' },
+        { value: '2c9e4b7a-5d3f-4e8a-8b21-7a6f0c1d2e22', text: 'Employment' },
+      ])
+    })
+  })
+
+  describe('validation errors', () => {
+    it('sets the checkbox error message from the pathways validation error', () => {
+      const validationErrors: ErrorMiddlewareErrors = {
+        list: [{ text: 'Select at least one pathway', href: '#pathways' }],
+        messages: { pathways: { text: 'Select at least one pathway' } },
+      }
+
+      const model = new NotesPathwaysPresenter(
+        pathwaysResponse,
+        caseReference,
+        'NON_CONTACT_SESSION',
+        validationErrors,
+      ).buildViewModel()
+
+      expect(model.checkboxes.errorMessage).toEqual({ text: 'Select at least one pathway' })
+    })
+
+    it('has no checkbox error message when there are no validation errors', () => {
+      const model = new NotesPathwaysPresenter(pathwaysResponse, caseReference).buildViewModel()
+
+      expect(model.checkboxes.errorMessage).toBeNull()
     })
   })
 })

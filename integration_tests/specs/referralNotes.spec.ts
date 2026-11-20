@@ -1,7 +1,9 @@
-import { test } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 import { login, resetStubs } from '../testUtils'
 import communitySupport from '../mockApis/communitySupport'
 import ReferralNotesPage from '../pages/referralNotesPage'
+import ReferralNoteTypePage from '../pages/referralNoteTypePage'
+import ReferralPathwaysPage from '../pages/referralPathwaysPage'
 import { referralInformationInCommunity } from '../mockData/referralInformationData'
 
 test.describe('Referral Notes Page', () => {
@@ -13,16 +15,35 @@ test.describe('Referral Notes Page', () => {
     await login(page)
   })
 
-  // Can be replaced or extended into future tests for journeys.
-  test('loads the notes page', async ({ page }) => {
+  test('creates a case note through the notes, note type and pathways pages', async ({ page }) => {
     await communitySupport.stubGetReferralNotes(
       { content: [], page: 0, size: 25, totalElements: 0, totalPages: 0 },
       caseReference,
     )
     await communitySupport.stubGetReferralInformation(200, caseReference, referralInformationInCommunity)
+    await communitySupport.stubGetReferralPathways(
+      {
+        pathways: [
+          { id: '8f0d6a2e-1b7c-4c4e-9a53-3c1f2b9e0a11', title: 'Accommodation' },
+          { id: '2c9e4b7a-5d3f-4e8a-8b21-7a6f0c1d2e22', title: 'Employment' },
+        ],
+      },
+      caseReference,
+    )
     await page.goto(ReferralNotesPage.url(caseReference))
 
     const notesPage = new ReferralNotesPage(page)
     await notesPage.verifyOnPage()
+    await notesPage.addNoteButton.click()
+
+    const noteTypePage = new ReferralNoteTypePage(page)
+    await noteTypePage.verifyOnPage()
+    await noteTypePage.selectCaseNote()
+    await noteTypePage.continue()
+
+    const pathwaysPage = new ReferralPathwaysPage(page)
+    await pathwaysPage.verifyOnPage()
+    await expect(pathwaysPage.pathwayCheckbox('Accommodation')).toBeVisible()
+    await expect(pathwaysPage.pathwayCheckbox('Employment')).toBeVisible()
   })
 })
