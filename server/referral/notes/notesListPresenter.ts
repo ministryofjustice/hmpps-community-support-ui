@@ -37,8 +37,7 @@ export default class NotesListPresenter extends ReferralLayoutPresenter<Referral
       viewDetailsHref: `/referral/${this.caseReference}/notes`,
       addNoteButton: {
         text: content.addNoteButtonText,
-        // Placeholder until the add note page exists
-        href: `/referral/${this.caseReference}/notes`,
+        href: `/referral/${this.caseReference}/notes/type`,
         attributes: { 'data-testid': 'add-note-button' },
       },
       addedNotesSubheading: content.addedNotesSubheading,

@@ -1642,5 +1642,11 @@
     "noOptionLabel": "No",
     "button": "Save and continue",
     "backlink": "/referral/task-list/offence-sentence"
+  },
+  "/referral/:id/notes/pathways": {
+    "pageHeader": "What pathway does this note relate to?",
+    "hint": "Select all that apply.",
+    "noPathwayOption": "It does not relate to a pathway option",
+    "button": "Continue"
   }
 }

@@ -70,6 +70,7 @@ import type {
   IcsChangeDetailsBffDto,
   IcsChangeReasonBffDto,
   IcsFeedbackIdentifiedAdditionalSupportNeedsBffResponseDto,
+  ReferenceDataReferralPathwaysDto,
 } from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
@@ -249,6 +250,10 @@ export default class CommunitySupportApiClient extends RestClient {
       { path: `/bff/referral/${caseReference}/notes?page=${page.page}&size=${page.size}` },
       asSystem(username),
     )
+  }
+
+  getPathways(caseReference: string, username: string): Promise<ReferenceDataReferralPathwaysDto> {
+    return this.get({ path: `/bff/referral/${caseReference}/notes/pathways` }, asSystem(username))
   }
 
   getReferralInformation(caseReference: string, username: string): Promise<ReferralInformation> {
