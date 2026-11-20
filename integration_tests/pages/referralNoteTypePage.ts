@@ -32,6 +32,10 @@ export default class ReferralNoteTypePage extends AbstractPage {
     await this.caseNoteRadio.check()
   }
 
+  async selectNonContactActivity(): Promise<void> {
+    await this.nonContactActivityRadio.check()
+  }
+
   async continue(): Promise<void> {
     await this.continueButton.click()
   }

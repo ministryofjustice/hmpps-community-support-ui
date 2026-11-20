@@ -26,10 +26,20 @@ export default class ReferralPathwaysPage extends AbstractPage {
     return this.page.getByLabel(name, { exact: true })
   }
 
-  async verifyOnPage(): Promise<void> {
-    await expect(this.header).toBeVisible()
+  async verifyCaseNoteOnPage(): Promise<void> {
+    await this.verifyCommonElements()
     await expect(this.orDivider).toBeVisible()
     await expect(this.noPathwayOption).toBeVisible()
+  }
+
+  async verifyNonContactSessionOnPage(): Promise<void> {
+    await this.verifyCommonElements()
+    await expect(this.orDivider).toHaveCount(0)
+    await expect(this.noPathwayOption).toHaveCount(0)
+  }
+
+  private async verifyCommonElements(): Promise<void> {
+    await expect(this.header).toBeVisible()
     await expect(this.continueButton).toBeVisible()
   }
 }

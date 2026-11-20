@@ -42,7 +42,39 @@ test.describe('Referral Notes Page', () => {
     await noteTypePage.continue()
 
     const pathwaysPage = new ReferralPathwaysPage(page)
-    await pathwaysPage.verifyOnPage()
+    await pathwaysPage.verifyCaseNoteOnPage()
+    await expect(pathwaysPage.pathwayCheckbox('Accommodation')).toBeVisible()
+    await expect(pathwaysPage.pathwayCheckbox('Employment')).toBeVisible()
+  })
+
+  test('creates a non-contact activity note without the does not relate option', async ({ page }) => {
+    await communitySupport.stubGetReferralNotes(
+      { content: [], page: 0, size: 25, totalElements: 0, totalPages: 0 },
+      caseReference,
+    )
+    await communitySupport.stubGetReferralInformation(200, caseReference, referralInformationInCommunity)
+    await communitySupport.stubGetReferralPathways(
+      {
+        pathways: [
+          { id: '8f0d6a2e-1b7c-4c4e-9a53-3c1f2b9e0a11', title: 'Accommodation' },
+          { id: '2c9e4b7a-5d3f-4e8a-8b21-7a6f0c1d2e22', title: 'Employment' },
+        ],
+      },
+      caseReference,
+    )
+    await page.goto(ReferralNotesPage.url(caseReference))
+
+    const notesPage = new ReferralNotesPage(page)
+    await notesPage.verifyOnPage()
+    await notesPage.addNoteButton.click()
+
+    const noteTypePage = new ReferralNoteTypePage(page)
+    await noteTypePage.verifyOnPage()
+    await noteTypePage.selectNonContactActivity()
+    await noteTypePage.continue()
+
+    const pathwaysPage = new ReferralPathwaysPage(page)
+    await pathwaysPage.verifyNonContactSessionOnPage()
     await expect(pathwaysPage.pathwayCheckbox('Accommodation')).toBeVisible()
     await expect(pathwaysPage.pathwayCheckbox('Employment')).toBeVisible()
   })
