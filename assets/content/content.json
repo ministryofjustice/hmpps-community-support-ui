@@ -452,6 +452,15 @@
     "addedNotesSubheading": "Added notes",
     "resultsSummaryText": "Showing {{ from }} to {{ to }} of {{ count }} total results"
   },
+  "/referral/:id/notes/type": {
+    "pageHeader": "Note type",
+    "description": "For anything urgent, you should also get in touch with the probation practitioner.",
+    "detailsTitle": "What information should go in each note",
+    "detailsDescription": "Case notes should be used to record important information the probation practitioner should be aware of. For example, emerging risk or a change of circumstances.</br></br>Non-contact activity notes should be used to record details of work you have carried out on behalf of Alex, outside of appointments, to support them in achieving their outcomes. For example, liaising with other professionals or completing duty to refer related activity.",
+    "radioCaseNote": "Case note",
+    "radioNonContactActivity": "Non-contact activity note",
+    "continueText": "Continue"
+  },
   "/referral/:id/appointment/select-type": {
     "pageTitle": "Select appointment type",
     "pageHeader": "Select appointment type",
