@@ -2,7 +2,7 @@ import nunjucks from 'nunjucks'
 import { globalContent } from '../../../../assets/content/GlobalContent'
 import AppointmentCheckYourAnswersPresenter from './AppointmentCheckYourAnswersPresenter'
 
-const content = globalContent['/referral/:id/create-an-appointment/check-your-answers']
+const content = globalContent.referral.id.createAnAppointment.checkYourAnswers
 
 describe('AppointmentCheckYourAnswersPresenter', () => {
   describe('retrospective appointments', () => {

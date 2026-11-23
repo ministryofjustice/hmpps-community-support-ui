@@ -6,7 +6,7 @@ import {
 } from '@govuk-frontend'
 import { GlobalContent } from '../../../assets/content/GlobalContent'
 
-export type CheckPPDetailsContent = GlobalContent['/referral/task-list/check-probation-practitioner-details']
+export type CheckPPDetailsContent = GlobalContent['referral']['taskList']['checkProbationPractitionerDetails']
 
 export interface CheckPPDetailsViewModel {
   heading: string

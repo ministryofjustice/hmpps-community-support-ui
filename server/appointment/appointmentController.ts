@@ -599,7 +599,7 @@ class AppointmentController {
       formData,
       validationErrors,
       undefined,
-      '/referral/:id/ics-change-details',
+      'icsChangeDetails',
     )
     return presenter.renderPage(res)
   }
@@ -947,7 +947,7 @@ class AppointmentController {
 
     req.session.icsFeedbackSubmission = savedIcsFeedbackSubmission
 
-    const { feedbackForm } = globalContent['/ics-feedback/:id/session-feedback']
+    const { feedbackForm } = globalContent.icsFeedback.id.sessionFeedback
     validateRequestBodyAgainstSchema(SessionFeedbackFormDataSchemaBuilder(feedbackForm), req, res, () => {
       res.redirect(`/ics-feedback/${caseRefId}/issues-or-concerns`)
     })

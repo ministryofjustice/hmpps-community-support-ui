@@ -11,4 +11,4 @@ export type ActionPlanSelectANeedViewModel = {
   continueButtonLink: string
 }
 
-export type ActionPlanSelectANeedContent = GlobalContent['/referral/:id/action-plan/select-a-need']
+export type ActionPlanSelectANeedContent = GlobalContent['referral']['id']['actionPlan']['selectANeed']

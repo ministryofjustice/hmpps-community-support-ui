@@ -10,4 +10,4 @@ export type ActionPlanServiceUserInvolvementViewModel = {
   whyNotInvolvedTextBoxArgs: GovukFrontendTextarea
 }
 
-export type ActionPlanServiceUserInvolvementContent = GlobalContent['/referral/:id/action-plan/person-involvement']
+export type ActionPlanServiceUserInvolvementContent = GlobalContent['referral']['id']['actionPlan']['personInvolvement']

@@ -11,4 +11,5 @@ export type AppointmentCheckYourAnswersViewModel = {
   whatHappensNext?: { heading: string; text: string }
 }
 
-export type AppointmentCheckYourAnswersContent = GlobalContent['/referral/:id/create-an-appointment/check-your-answers']
+export type AppointmentCheckYourAnswersContent =
+  GlobalContent['referral']['id']['createAnAppointment']['checkYourAnswers']

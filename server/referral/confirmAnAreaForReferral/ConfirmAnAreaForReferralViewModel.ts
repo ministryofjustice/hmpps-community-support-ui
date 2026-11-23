@@ -2,7 +2,7 @@ import { GovukFrontendBackLink } from '@govuk-frontend'
 import { MojInterruptionCard } from '@moj-frontend'
 import { GlobalContent } from '../../../assets/content/GlobalContent'
 
-export type ConfirmAnAreaForReferralContent = GlobalContent['/referral/task-list/confirm-an-area-for-referral']
+export type ConfirmAnAreaForReferralContent = GlobalContent['referral']['taskList']['confirmAnAreaForReferral']
 
 export interface ConfirmAnAreaForReferralViewModel {
   backLink: GovukFrontendBackLink

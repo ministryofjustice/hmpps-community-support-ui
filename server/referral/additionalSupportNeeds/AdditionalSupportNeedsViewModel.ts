@@ -16,4 +16,4 @@ export interface AdditionalSuportNeedsViewModel {
   backLink: GovukFrontendBackLink
 }
 
-export type AdditionalSuportNeedsContent = GlobalContent['/referral/task-list/additional-support-needs']
+export type AdditionalSuportNeedsContent = GlobalContent['referral']['taskList']['additionalSupportNeeds']

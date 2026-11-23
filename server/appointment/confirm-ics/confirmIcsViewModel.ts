@@ -11,4 +11,4 @@ export type ConfirmIcsViewModel = {
   icsChangeReasonSummary?: GovukFrontendSummaryList
 }
 
-export type ConfirmIcsContent = GlobalContent['/referral/:id/appointment/confirm-ics']
+export type ConfirmIcsContent = GlobalContent['referral']['id']['appointment']['confirmIcs']

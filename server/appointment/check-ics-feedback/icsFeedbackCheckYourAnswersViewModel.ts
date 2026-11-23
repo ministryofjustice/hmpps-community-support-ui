@@ -9,7 +9,7 @@ export type IcsFeedbackCheckYourAnswersViewModel = {
   feedbackSummaries: Array<SummaryListWithTitle>
 }
 
-export type IcsFeedbackCheckYourAnswersContent = GlobalContent['/ics-feedback/:id/check-answers']
+export type IcsFeedbackCheckYourAnswersContent = GlobalContent['icsFeedback']['id']['checkAnswers']
 
 export type SummaryListWithTitle = GovukFrontendSummaryList & {
   summaryTitle: string

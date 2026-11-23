@@ -24,7 +24,7 @@ export default class WithdrawalConfirmPresenter extends PresenterBase<Withdrawal
   }
 
   protected buildViewModel(): WithdrawalConfirmViewModel {
-    const content = this.buildStaticContent()['/referral/:id/withdraw/confirm']
+    const content = this.globalContent().referral.id.withdraw.confirm
     return {
       pageHeader: content.pageHeader,
       reasonSummary: {

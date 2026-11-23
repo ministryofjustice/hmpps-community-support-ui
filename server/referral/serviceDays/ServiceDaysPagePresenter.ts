@@ -17,7 +17,7 @@ export default class ServiceDaysPagePresenter extends PresenterBase<ServiceDaysP
   }
 
   buildViewModel(): ServiceDaysPageViewModel {
-    const content = this.buildStaticContent()['/referral/task-list/service-days']
+    const content = this.globalContent().referral.taskList.serviceDays
     const serviceDays = this.formData?.serviceDays ?? this.data.service_days
 
     return {

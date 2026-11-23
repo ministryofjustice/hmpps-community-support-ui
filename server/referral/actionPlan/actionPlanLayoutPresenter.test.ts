@@ -9,7 +9,7 @@ class TestActionPlanLayoutPresenter extends ActionPlanLayoutPresenter<{ title: s
   }
 
   protected buildViewModel(): { title: string } {
-    return { title: this.buildStaticContent()['/'].pageHeader }
+    return { title: this.globalContent().landing.pageHeader }
   }
 
   protected getTemplatePath(): string {
@@ -19,8 +19,8 @@ class TestActionPlanLayoutPresenter extends ActionPlanLayoutPresenter<{ title: s
 
 describe('ActionPlanLayoutPresenter', () => {
   const content = {
-    ...globalContent['/referral/:id'],
-    ...globalContent['/referral/:id/action-plan'],
+    ...globalContent.referral.id.page,
+    ...globalContent.referral.id.actionPlan.page,
   } as ActionPlanContent
 
   describe('getHorizontalSubNavArgs', () => {

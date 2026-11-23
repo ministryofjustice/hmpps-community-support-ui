@@ -11,7 +11,7 @@ describe('LandingPresenter', () => {
     const presenter = new LandingPresenter()
     presenter.renderPage(res)
 
-    expect(res.render).toHaveBeenCalledWith('pages/index.njk', { content: globalContent['/'] })
+    expect(res.render).toHaveBeenCalledWith('pages/index.njk', { content: globalContent.landing })
   })
 
   it('ignores stale middleware content', () => {
@@ -23,6 +23,6 @@ describe('LandingPresenter', () => {
     const presenter = new LandingPresenter()
 
     presenter.renderPage(res)
-    expect(res.render).toHaveBeenCalledWith('pages/index.njk', { content: globalContent['/'] })
+    expect(res.render).toHaveBeenCalledWith('pages/index.njk', { content: globalContent.landing })
   })
 })

@@ -13,4 +13,4 @@ export type ActionPlanRisksAndAdjustmentsViewModel = {
   adjustmentInfoTextBoxArgs: GovukFrontendTextarea
 }
 
-export type ActionPlanRisksAndAdjustmentsContent = GlobalContent['/referral/:id/action-plan/risks-and-adjustments']
+export type ActionPlanRisksAndAdjustmentsContent = GlobalContent['referral']['id']['actionPlan']['risksAndAdjustments']

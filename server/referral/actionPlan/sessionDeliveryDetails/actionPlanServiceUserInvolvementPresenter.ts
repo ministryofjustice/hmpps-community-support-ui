@@ -101,7 +101,7 @@ export default class ActionPlanServiceUserInvolvementPresenter extends Presenter
   }
 
   protected buildViewModel(): ActionPlanServiceUserInvolvementViewModel {
-    const content = this.buildStaticContent()['/referral/:id/action-plan/person-involvement']
+    const content = this.globalContent().referral.id.actionPlan.personInvolvement
     const userInvolvementInActionPlanQuestion = this.sessionDeliveryDetails.questions.find(
       q => q.key === SessionDeliveryDetailsQuestions.USER_INVOLVEMENT_IN_ACTION_PLAN,
     )!

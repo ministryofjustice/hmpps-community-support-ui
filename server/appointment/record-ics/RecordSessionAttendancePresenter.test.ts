@@ -8,7 +8,7 @@ import type { ErrorMiddlewareErrors } from '../../@types/express'
 
 describe('RecordSessionAttendancePresenter', () => {
   const caseRefId = 'X12345'
-  const content = globalContent['/ics-feedback/:id/attendance']
+  const content = globalContent.icsFeedback.id.attendance
   const data: IcsFeedbackAttendanceBffDto = {
     referralFirstName: 'Alex',
     date: '2026-10-09',

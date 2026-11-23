@@ -46,5 +46,5 @@ export interface ScheduleIcsViewModel {
 }
 
 export type ScheduleIcsContent =
-  | GlobalContent['/referral/:id/create-an-appointment/appointment-details']
-  | GlobalContent['/referral/:id/appointment/schedule-ics']
+  | GlobalContent['referral']['id']['createAnAppointment']['appointmentDetails']
+  | GlobalContent['referral']['id']['appointment']['scheduleIcs']

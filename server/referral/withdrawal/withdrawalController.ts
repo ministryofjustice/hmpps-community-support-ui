@@ -131,7 +131,7 @@ export default class WithdrawalController {
   }
 
   async showServiceError(_req: Request, res: Response): Promise<void> {
-    const content = globalContent['/referral/:id/withdraw/service-error']
+    const content = globalContent.referral.id.withdraw.serviceError
 
     const systemError: SystemError = {
       heading: content.pageHeader,

@@ -19,8 +19,8 @@ export default class ActionPlanPresenter extends ActionPlanLayoutPresenter<Actio
 
   protected buildViewModel(): ActionPlanViewModel {
     const content = {
-      ...this.buildStaticContent()['/referral/:id'],
-      ...this.buildStaticContent()['/referral/:id/action-plan'],
+      ...this.globalContent().referral.id.page,
+      ...this.globalContent().referral.id.actionPlan.page,
     }
     const { firstName } = this.actionPlanSummary.personDetails
 
