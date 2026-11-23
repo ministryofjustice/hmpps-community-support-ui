@@ -1,7 +1,7 @@
 import type { ReferenceDataReferralPathwaysDto } from '@community-support-api'
 import type { GovukFrontendCheckboxesItem } from '@govuk-frontend'
 import ReferralLayoutPresenter, { ReferralNavigationValues } from '../referralLayout/referralLayoutPresenter'
-import { NotesPathwaysContent, NotesPathwaysModel } from './notesPathwaysModels'
+import { NotesPathwaysContent, NotesPathwaysModel } from './notesPathwaysModel'
 import { ErrorMiddlewareErrors } from '../../@types/express'
 import { NO_PATHWAY_VALUE } from '../../validation/NotesPathwaysFormData'
 
