@@ -44,7 +44,7 @@ export default class NotesTypePresenter extends ReferralLayoutPresenter<NotesTyp
   }
 
   buildViewModel(): NotesTypeViewModel {
-    const content: NotesTypeContent = this.buildStaticContent()['/referral/:id/notes/type']
+    const content: NotesTypeContent = this.globalContent().referral.id.notes.type
 
     return {
       pageHeader: content.pageHeader,
