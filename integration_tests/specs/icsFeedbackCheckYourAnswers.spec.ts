@@ -255,7 +255,9 @@ test.describe('Ics Feedback CYA Page', () => {
     await page.goto(`ics-feedback/${caseRefId}/check-answers`)
     const icsFeedbackCheckYourAnswersPage = await IcsFeedbackCheckYourAnswersPage.verifyOnPage(page)
     await expect(
-      page.getByText(`How did you try to contact ${mockAppointmentIcsResponse.referralFirstName}?`),
+      page.locator('dt.govuk-summary-list__key', {
+        hasText: `How did you try to contact ${mockAppointmentIcsResponse.referralFirstName}?`,
+      }),
     ).toBeVisible()
     await expect(page.locator('dt.govuk-summary-list__key', { hasText: 'Reason they did not attend' })).toBeVisible()
     await expect(page.getByText('No contact was made with the person')).toBeVisible()

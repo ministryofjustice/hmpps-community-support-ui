@@ -29,19 +29,13 @@ interface TextAreaContent {
   rows: string
 }
 
-interface FormContent {
-  contactAttemptsTextarea: TextAreaContent
-  reasonsForNonAttendanceTextarea: TextAreaContent
-  submitButtonText: string
-}
-
 interface TextareaOptions {
   dataTestId: string
   labelClasses: string
   label?: string
 }
 
-export type HowTheyTriedToContactThePersonContent = GlobalContent['icsFeedback']['id']['howTheyTriedToContactThePerson']
+type FormContent = GlobalContent['icsFeedback']['id']['howTheyTriedToContactThePerson']['feedbackForm']
 
 export default class HowTheyTriedToContactThePersonPresenter extends PresenterBase<HowTheyTriedToContactThePersonViewModel> {
   constructor(
