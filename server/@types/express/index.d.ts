@@ -53,6 +53,9 @@ export interface NoteData {
   details?: string
   shouldNotify?: boolean
   pathways?: string[]
+  startDate?: Date
+  durationHours?: number
+  durationMinutes?: number
 }
 
 export declare module 'express-session' {

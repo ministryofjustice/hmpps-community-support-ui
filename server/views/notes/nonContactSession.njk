@@ -1,0 +1,22 @@
+{% extends "../partials/layout.njk" %}
+{% from "moj/components/date-picker/macro.njk" import mojDatePicker %}
+{% from "components/time-input-no-meridiem/macro.njk" import timeInputNoMeridiem %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/character-count/macro.njk" import govukCharacterCount %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+
+{% set pageTitle = "Non Contact Session – " + applicationName %}
+{% set mainClasses = "govuk-body" %}
+
+{% block content %}
+<h1 class="govuk-heading-l">{{content.pageHeader}}</h1>
+<form method="post">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    {{ mojDatePicker(content.date) }}
+    {{ timeInputNoMeridiem(content.time) }}
+    {{ govukInput(content.title) }}
+    {{ govukCharacterCount(content.activity) }}
+    {{ govukButton(content.submitButton) }}
+</form>
+{% endblock %}
