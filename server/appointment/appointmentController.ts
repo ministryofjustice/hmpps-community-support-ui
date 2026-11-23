@@ -864,9 +864,19 @@ class AppointmentController {
     })
   }
 
+  private hasSessionNotHappened(req: Request): boolean {
+    const submission = req.session.icsFeedbackSubmission
+    return submission?.caseReferenceId === req.params.caseRefId && submission?.record?.didSessionHappen === false
+  }
+
   async getDidAttend(req: Request, res: Response): Promise<void> {
     const caseRefId = req.params.caseRefId as string
     const { username } = res.locals.user
+
+    if (!this.hasSessionNotHappened(req)) {
+      res.redirect(`/ics-feedback/${caseRefId}/attendance`)
+      return
+    }
 
     const record = req.session.icsFeedbackSubmission?.record || {}
     const attendanceResponse = await this.appointmentService.getIcsFeedbackAttendance(caseRefId.toString(), username)
@@ -875,7 +885,11 @@ class AppointmentController {
     presenter.renderPage(res)
   }
 
-  recordDidAttend(req: Request, res: Response): Promise<void> {
+  async recordDidAttend(req: Request, res: Response): Promise<void> {
+    if (!this.hasSessionNotHappened(req)) {
+      return res.redirect(`/ics-feedback/${req.params.caseRefId}/attendance`)
+    }
+
     return validateRequestBodyAgainstSchema(DidAttendFormDataSchema, req, res, data => {
       if (data) {
         const { caseRefId } = req.params

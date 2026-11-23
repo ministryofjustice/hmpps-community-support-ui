@@ -1388,13 +1388,30 @@ describe('AppointmentController', () => {
       expect(DidAttendPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
     })
 
-    test('renders the page when there is no saved session record', async () => {
+    test.each([
+      ['there is no saved session record', undefined],
+      ['the saved record is for another case', { caseReferenceId: 'OTHER', record: { didSessionHappen: false } }],
+      ['the session happened', { caseReferenceId: caseRefId, record: { didSessionHappen: true } }],
+    ])('redirects to attendance when %s', async (_, submission) => {
+      req.session.icsFeedbackSubmission = submission as typeof req.session.icsFeedbackSubmission
+
       await appointmentController.getDidAttend(req, res)
 
-      expect(DidAttendPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+      expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseRefId}/attendance`)
+      expect(DidAttendPresenter.prototype.renderPage).not.toHaveBeenCalled()
+    })
+
+    test('does not save when there is no saved session record', async () => {
+      req = { ...req, body: { didAttend: 'Yes' } } as unknown as Request
+
+      await appointmentController.recordDidAttend(req, res)
+
+      expect(req.session.icsFeedbackSubmission).toBeFalsy()
+      expect(res.redirect).toHaveBeenCalledWith(`/ics-feedback/${caseRefId}/attendance`)
     })
 
     test('nothing selected', async () => {
+      req.session.icsFeedbackSubmission = { caseReferenceId: caseRefId, record: { didSessionHappen: false } }
       req = { ...req, body: {}, url: `/ics-feedback/${caseRefId}/did-attend` } as unknown as Request
 
       await appointmentController.recordDidAttend(req, res)
@@ -1405,6 +1422,7 @@ describe('AppointmentController', () => {
     })
 
     test('invalid value', async () => {
+      req.session.icsFeedbackSubmission = { caseReferenceId: caseRefId, record: { didSessionHappen: false } }
       req = { ...req, body: { didAttend: 'Maybe' }, url: `/ics-feedback/${caseRefId}/did-attend` } as unknown as Request
 
       await appointmentController.recordDidAttend(req, res)

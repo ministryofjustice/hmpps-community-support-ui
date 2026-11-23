@@ -28,8 +28,8 @@ class IcsFeedbackCheckYourAnswersPage extends AbstractPage {
 
   private constructor(page: Page) {
     super(page)
-    this.header = page.locator('h1', { hasText: 'Check your answers before submitting feedback' })
-    this.attendanceSummary = page.locator('h2', { hasText: 'Record session attendance' })
+    this.header = page.locator('h1', { hasText: 'Check your answers before adding' })
+    this.attendanceSummary = page.locator('h2', { hasText: 'ICS attendance' })
     this.sessionDetailsSummary = page.locator('h2', { hasText: 'Session details' })
     this.sessionFeedbackSummary = page.locator('h2', { hasText: 'Session feedback' })
     this.issuesOrConcernsSummary = page.locator('h2', { hasText: 'Issues or concerns' })

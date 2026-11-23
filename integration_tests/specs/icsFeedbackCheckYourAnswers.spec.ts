@@ -242,7 +242,8 @@ test.describe('Ics Feedback CYA Page', () => {
     await page.goto(`ics-feedback/${caseRefId}/check-answers`)
     const icsFeedbackCheckYourAnswersPage = await IcsFeedbackCheckYourAnswersPage.verifyOnPage(page)
     expect(page.getByText(`${mockAppointmentIcsResponse.referralFirstName} did not comply`)).toBeVisible()
-    expect(icsFeedbackCheckYourAnswersPage.sessionFeedbackSummary).toBeVisible()
+    expect(icsFeedbackCheckYourAnswersPage.attendanceSummary).toBeVisible()
+    expect(icsFeedbackCheckYourAnswersPage.sessionFeedbackSummary).not.toBeVisible()
     expect(icsFeedbackCheckYourAnswersPage.backLink).toHaveAttribute(
       'href',
       `/ics-feedback/${caseRefId}/why-did-the-session-not-happen`,
@@ -253,12 +254,9 @@ test.describe('Ics Feedback CYA Page', () => {
     await seedSessionWithIcsFeedback(page, icsFeedbackSubmissionDidNotAttend)
     await page.goto(`ics-feedback/${caseRefId}/check-answers`)
     const icsFeedbackCheckYourAnswersPage = await IcsFeedbackCheckYourAnswersPage.verifyOnPage(page)
-    expect(
-      page.getByText(
-        `Details about how you tried to contact ${mockAppointmentIcsResponse.referralFirstName} and why they did not attend`,
-      ),
-    ).toBeVisible()
-    expect(icsFeedbackCheckYourAnswersPage.sessionFeedbackSummary).toBeVisible()
+    expect(page.getByText(`How did you try to contact ${mockAppointmentIcsResponse.referralFirstName}?`)).toBeVisible()
+    expect(icsFeedbackCheckYourAnswersPage.attendanceSummary).toBeVisible()
+    expect(icsFeedbackCheckYourAnswersPage.sessionFeedbackSummary).not.toBeVisible()
     expect(icsFeedbackCheckYourAnswersPage.backLink).toHaveAttribute(
       'href',
       `/ics-feedback/${caseRefId}/how-they-tried-to-contact-the-person`,
