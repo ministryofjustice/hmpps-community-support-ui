@@ -105,6 +105,7 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
       this.buildSummary(content.summaryLists.filter(item => item.summaryTitle === 'Session feedback')[0], [
         this.icsFeedbackSubmission.sessionFeedback?.whatHappened || null,
         this.getDidNotHappenReason(content) || null,
+        this.getDidNotAttendContactAttempts() || null,
         this.getDidNotAttendReason() || null,
         this.icsFeedbackSubmission.sessionFeedback?.behaviour || null,
         this.icsFeedbackSubmission.sessionFeedback?.strengthsIdentified || null,
@@ -186,7 +187,14 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
 
   private getDidNotAttendReason(): string | null {
     if (!this.icsFeedbackSubmission.record.didSessionHappen && !this.icsFeedbackSubmission.record.didPersonAttend) {
-      return this.icsFeedbackSubmission.record.noAttendanceInformation
+      return this.icsFeedbackSubmission.record.reasonsTheyDidNotAttend
+    }
+    return null
+  }
+
+  private getDidNotAttendContactAttempts(): string | null {
+    if (!this.icsFeedbackSubmission.record.didSessionHappen && !this.icsFeedbackSubmission.record.didPersonAttend) {
+      return this.icsFeedbackSubmission.record.howTheyTriedToContactThePerson
     }
     return null
   }

@@ -69,7 +69,8 @@ export interface SessionDidNotHappenFeedbackRowInput {
 export interface DidNotAttendSessionFeedbackRowInput {
   content: ViewSessionFeedbackContent['sessionFeedback']['didNotAttend']
   noneText: string
-  triedToContactDidNotAttend?: string
+  howTheyTriedToContactThePerson?: string
+  reasonsTheyDidNotAttend?: string
   personFirstName: string
 }
 
@@ -248,7 +249,8 @@ export default class ViewSessionFeedbackPresenter extends PresenterBase<ViewSess
       rows = buildDidNotAttendSessionFeedbackRows({
         content: content.sessionFeedback.didNotAttend,
         noneText: content.noneText,
-        triedToContactDidNotAttend: response.recordSessionNoAttendanceInformation,
+        howTheyTriedToContactThePerson: response.recordSessionHowTheyTriedToContactThePerson,
+        reasonsTheyDidNotAttend: response.recordSessionReasonsTheyDidNotAttend,
         personFirstName,
       })
     }
@@ -440,14 +442,20 @@ export function buildSessionDidNotHappenFeedbackRows(
 export function buildDidNotAttendSessionFeedbackRows(
   input: DidNotAttendSessionFeedbackRowInput,
 ): GovukFrontendSummaryList['rows'] {
-  const { content, noneText, triedToContactDidNotAttend, personFirstName } = input
+  const { content, noneText, howTheyTriedToContactThePerson, reasonsTheyDidNotAttend, personFirstName } = input
 
   return [
     {
       key: {
-        text: content.triedToContactDidNotAttend.replace('{{ firstname }}', personFirstName),
+        text: content.howTheyTriedToContactThePerson.replace('{{ firstname }}', personFirstName),
       },
-      value: { text: triedToContactDidNotAttend || noneText },
+      value: { text: howTheyTriedToContactThePerson || noneText },
+    },
+    {
+      key: {
+        text: content.reasonsTheyDidNotAttend,
+      },
+      value: { text: reasonsTheyDidNotAttend || noneText },
     },
   ]
 }
