@@ -263,7 +263,8 @@ test.describe('Ics Feedback CYA Page', () => {
     await expect(page.locator('dt.govuk-summary-list__key', { hasText: 'Reason they did not attend' })).toBeVisible()
     await expect(page.getByText('No contact was made with the person')).toBeVisible()
     await expect(page.getByText('They were unavailable')).toBeVisible()
-    expect(icsFeedbackCheckYourAnswersPage.sessionFeedbackSummary).toBeVisible()
+    await expect(icsFeedbackCheckYourAnswersPage.attendanceSummary).toBeVisible()
+    await expect(icsFeedbackCheckYourAnswersPage.sessionFeedbackSummary).not.toBeVisible()
     expect(icsFeedbackCheckYourAnswersPage.backLink).toHaveAttribute(
       'href',
       `/ics-feedback/${caseRefId}/how-they-tried-to-contact-the-person`,
