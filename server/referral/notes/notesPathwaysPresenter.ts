@@ -1,7 +1,7 @@
 import type { ReferenceDataReferralPathwaysDto } from '@community-support-api'
 import type { GovukFrontendCheckboxesItem } from '@govuk-frontend'
 import ReferralLayoutPresenter, { ReferralNavigationValues } from '../referralLayout/referralLayoutPresenter'
-import { NotesPathwaysModel } from './NotesPathwaysModel'
+import { NotesPathwaysContent, NotesPathwaysModel } from './NotesPathwaysModel'
 import { ErrorMiddlewareErrors } from '../../@types/express'
 import { NO_PATHWAY_VALUE } from '../../validation/NotesPathwaysFormData'
 
@@ -21,15 +21,7 @@ export default class NotesPathwaysPresenter extends ReferralLayoutPresenter<Note
 
   buildViewModel(): NotesPathwaysModel {
     const isCaseNote = this.noteType === 'CASE_NOTE'
-    const content: {
-      pageTitle: string
-      nonContactPageTitle: string
-      pageHeader: string
-      nonContactPageHeader: string
-      hint: string
-      button: string
-      noPathwayOption?: string
-    } = this.buildStaticContent()['/referral/:id/notes/pathways']
+    const content: NotesPathwaysContent = this.globalContent().referral.id.notes.pathways
 
     const pathwayItems: GovukFrontendCheckboxesItem[] = this.pathwaysResponse.pathways.map(pathway => ({
       value: pathway.id,

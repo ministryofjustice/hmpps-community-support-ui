@@ -18,7 +18,10 @@ export default class ReferralPathwaysPage extends AbstractPage {
 
   constructor(page: Page) {
     super(page)
-    this.caseNoteHeader = page.getByRole('heading', { name: 'What pathway does this note relate to?', exact: true })
+    this.caseNoteHeader = page.getByRole('heading', {
+      name: 'What pathway does this case note relate to?',
+      exact: true,
+    })
     this.nonContactSessionHeader = page.getByRole('heading', {
       name: 'What pathway does this non-contact activity note relate to?',
       exact: true,

@@ -1,4 +1,6 @@
 import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendCheckboxes } from '@govuk-frontend'
+import { GlobalContent } from '../../../assets/content/GlobalContent'
+
 
 export interface NotesPathwaysModel {
   pageTitle: string
@@ -7,3 +9,5 @@ export interface NotesPathwaysModel {
   button: GovukFrontendButton
   backLink: GovukFrontendBackLink
 }
+
+export type NotesPathwaysContent = GlobalContent['referral']['id']['notes']['pathways']

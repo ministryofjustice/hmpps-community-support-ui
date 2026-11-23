@@ -24,7 +24,7 @@ describe('NotesPathwaysPresenter', () => {
   it('uses the page content for the heading, hint and button', () => {
     const model = new NotesPathwaysPresenter(pathwaysResponse, caseReference, 'CASE_NOTE').buildViewModel()
 
-    expect(model.pageHeader).toBe('What pathway does this note relate to?')
+    expect(model.pageHeader).toBe('What pathway does this case note relate to?')
     expect(model.checkboxes.hint?.text).toBe('Select all that apply.')
     expect(model.button.text).toBe('Continue')
   })
@@ -64,9 +64,7 @@ describe('NotesPathwaysPresenter', () => {
     it('sets the non-contact activity page title', () => {
       const model = new NotesPathwaysPresenter(pathwaysResponse, caseReference, 'NON_CONTACT_SESSION').buildViewModel()
 
-      expect(model.pageTitle).toBe(
-        'What pathway does this non-contact activity note relate to? - Community Support',
-      )
+      expect(model.pageTitle).toBe('What pathway does this non-contact activity note relate to? - Community Support')
     })
 
     it('does not add the divider or the "does not relate" option', () => {
