@@ -16,8 +16,8 @@ describe('NotesPathwaysPresenter', () => {
 
     expect(model.checkboxes.name).toBe('pathways')
     expect(model.checkboxes.items).toEqual([
-      { value: '8f0d6a2e-1b7c-4c4e-9a53-3c1f2b9e0a11', text: 'Accommodation' },
-      { value: '2c9e4b7a-5d3f-4e8a-8b21-7a6f0c1d2e22', text: 'Employment' },
+      { value: '8f0d6a2e-1b7c-4c4e-9a53-3c1f2b9e0a11', text: 'Accommodation', checked: false },
+      { value: '2c9e4b7a-5d3f-4e8a-8b21-7a6f0c1d2e22', text: 'Employment', checked: false },
     ])
   })
 
@@ -33,6 +33,32 @@ describe('NotesPathwaysPresenter', () => {
     const model = new NotesPathwaysPresenter(pathwaysResponse, caseReference).buildViewModel()
 
     expect(model.backLink.href).toBe(`/referral/${caseReference}/notes/type`)
+  })
+
+  it('checks the checkboxes that were previously selected', () => {
+    const model = new NotesPathwaysPresenter(pathwaysResponse, caseReference, 'CASE_NOTE', undefined, [
+      '2c9e4b7a-5d3f-4e8a-8b21-7a6f0c1d2e22',
+    ]).buildViewModel()
+
+    expect(model.checkboxes.items).toEqual([
+      { value: '8f0d6a2e-1b7c-4c4e-9a53-3c1f2b9e0a11', text: 'Accommodation', checked: false },
+      { value: '2c9e4b7a-5d3f-4e8a-8b21-7a6f0c1d2e22', text: 'Employment', checked: true },
+      { divider: 'or', value: '' },
+      { value: 'NONE', text: 'It does not relate to a pathway option', behaviour: 'exclusive', checked: false },
+    ])
+  })
+
+  it('checks the none option when it was previously selected', () => {
+    const model = new NotesPathwaysPresenter(pathwaysResponse, caseReference, 'CASE_NOTE', undefined, [
+      'NONE',
+    ]).buildViewModel()
+
+    expect(model.checkboxes.items[3]).toEqual({
+      value: 'NONE',
+      text: 'It does not relate to a pathway option',
+      behaviour: 'exclusive',
+      checked: true,
+    })
   })
 
   it('renders an empty item list when there are no pathways', () => {
@@ -52,10 +78,10 @@ describe('NotesPathwaysPresenter', () => {
       const model = new NotesPathwaysPresenter(pathwaysResponse, caseReference, 'CASE_NOTE').buildViewModel()
 
       expect(model.checkboxes.items).toEqual([
-        { value: '8f0d6a2e-1b7c-4c4e-9a53-3c1f2b9e0a11', text: 'Accommodation' },
-        { value: '2c9e4b7a-5d3f-4e8a-8b21-7a6f0c1d2e22', text: 'Employment' },
+        { value: '8f0d6a2e-1b7c-4c4e-9a53-3c1f2b9e0a11', text: 'Accommodation', checked: false },
+        { value: '2c9e4b7a-5d3f-4e8a-8b21-7a6f0c1d2e22', text: 'Employment', checked: false },
         { divider: 'or', value: '' },
-        { value: 'NONE', text: 'It does not relate to a pathway option', behaviour: 'exclusive' },
+        { value: 'NONE', text: 'It does not relate to a pathway option', behaviour: 'exclusive', checked: false },
       ])
     })
   })
@@ -72,8 +98,8 @@ describe('NotesPathwaysPresenter', () => {
 
       expect(model.pageHeader).toBe('What pathway does this non-contact activity note relate to?')
       expect(model.checkboxes.items).toEqual([
-        { value: '8f0d6a2e-1b7c-4c4e-9a53-3c1f2b9e0a11', text: 'Accommodation' },
-        { value: '2c9e4b7a-5d3f-4e8a-8b21-7a6f0c1d2e22', text: 'Employment' },
+        { value: '8f0d6a2e-1b7c-4c4e-9a53-3c1f2b9e0a11', text: 'Accommodation', checked: false },
+        { value: '2c9e4b7a-5d3f-4e8a-8b21-7a6f0c1d2e22', text: 'Employment', checked: false },
       ])
     })
   })

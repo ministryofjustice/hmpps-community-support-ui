@@ -6,7 +6,7 @@ import { NoteData } from '../../@types/express'
 import { validateRequestBodyAgainstSchema } from '../../validation/validationUtils'
 import { NotesTypeSchema } from '../../validation/NotesTypeFormData'
 import NotesPathwaysPresenter from './notesPathwaysPresenter'
-import { buildNotesPathwaysSchema, NO_PATHWAY_VALUE } from '../../validation/NotesPathwaysFormData'
+import { buildNotesPathwaysSchema } from '../../validation/NotesPathwaysFormData'
 
 const NOTES_PAGE_SIZE = 25
 
@@ -53,6 +53,7 @@ export default class NotesController {
       caseReference,
       req.session?.note?.noteType,
       res.locals.errors,
+      req.session?.note?.pathways,
     )
     return presenter.renderPage(res)
   }
@@ -64,7 +65,7 @@ export default class NotesController {
       const detailsPath = isCaseNote ? 'case-note-details' : 'non-contact-session-details'
       req.session.note = {
         ...req.session.note,
-        pathways: pathways.filter(pathway => pathway !== NO_PATHWAY_VALUE),
+        pathways,
       } as NoteData
       return res.redirect(`/referral/${caseReference}/notes/${detailsPath}`)
     })

@@ -7,6 +7,7 @@ export const NON_CONTACT_SESSION_PATHWAY_ERROR = 'Select what pathway this case 
 
 export const buildNotesPathwaysSchema = (isCaseNote: boolean) => {
   const error = isCaseNote ? CASE_NOTE_PATHWAY_ERROR : NON_CONTACT_SESSION_PATHWAY_ERROR
+  const pathwayValue = z.union([z.uuid({ error }), z.literal(NO_PATHWAY_VALUE, { error })])
   return z.object({
     pathways: z.preprocess(
       value => {
@@ -14,7 +15,7 @@ export const buildNotesPathwaysSchema = (isCaseNote: boolean) => {
         return Array.isArray(value) ? value : [value]
       },
       z
-        .array(z.string(), { error })
+        .array(pathwayValue, { error })
         .min(1, { error })
         .refine(arr => (arr.includes(NO_PATHWAY_VALUE) ? arr.length === 1 : true), { error }),
     ),

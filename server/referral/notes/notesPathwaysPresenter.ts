@@ -11,6 +11,7 @@ export default class NotesPathwaysPresenter extends ReferralLayoutPresenter<Note
     private readonly caseReference: string,
     private readonly noteType?: string,
     private readonly validationErrors?: ErrorMiddlewareErrors,
+    private readonly selectedPathways: string[] = [],
   ) {
     super(ReferralNavigationValues.notesTab, caseReference)
   }
@@ -26,6 +27,7 @@ export default class NotesPathwaysPresenter extends ReferralLayoutPresenter<Note
     const pathwayItems: GovukFrontendCheckboxesItem[] = this.pathwaysResponse.pathways.map(pathway => ({
       value: pathway.id,
       text: pathway.title,
+      checked: this.selectedPathways.includes(pathway.id),
     }))
 
     const pageHeader = isCaseNote ? content.pageHeader : content.nonContactPageHeader
@@ -33,7 +35,12 @@ export default class NotesPathwaysPresenter extends ReferralLayoutPresenter<Note
       ? [
           ...pathwayItems,
           { value: '', divider: 'or' },
-          { value: NO_PATHWAY_VALUE, text: content.noPathwayOption, behaviour: 'exclusive' },
+          {
+            value: NO_PATHWAY_VALUE,
+            text: content.noPathwayOption,
+            behaviour: 'exclusive',
+            checked: this.selectedPathways.includes(NO_PATHWAY_VALUE),
+          },
         ]
       : pathwayItems
 

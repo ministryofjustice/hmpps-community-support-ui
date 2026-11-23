@@ -26,6 +26,7 @@ export default class ReferralNoteTypePage extends AbstractPage {
     await expect(this.header).toBeVisible()
     await expect(this.caseNoteRadio).toBeVisible()
     await expect(this.nonContactActivityRadio).toBeVisible()
+    await expect(this.continueButton).toBeVisible()
   }
 
   async selectCaseNote(): Promise<void> {

@@ -149,7 +149,7 @@ describe('NotesController', () => {
       await controller.showPathways(buildRequest(), res)
 
       expect(referralService.getPathways).toHaveBeenCalledWith(caseReference, 'testuser')
-      expect(NotesPathwaysPresenter).toHaveBeenCalledWith(pathways, caseReference, undefined, undefined)
+      expect(NotesPathwaysPresenter).toHaveBeenCalledWith(pathways, caseReference, undefined, undefined, undefined)
       expect(NotesPathwaysPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
     })
   })
@@ -157,7 +157,7 @@ describe('NotesController', () => {
   describe('submitPathways', () => {
     it('saves the selected pathways to the session and redirects to the details page', async () => {
       req.session.note = { noteType: 'NON_CONTACT_SESSION' }
-      req.body = { pathways: ['id-1', 'id-2'] }
+      req.body = { pathways: ['8f0d6a2e-1b7c-4c4e-9a53-3c1f2b9e0a11', '2c9e4b7a-5d3f-4e8a-8b21-7a6f0c1d2e22'] }
       await controller.submitPathways(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/notes/non-contact-session-details')
@@ -165,18 +165,18 @@ describe('NotesController', () => {
 
     it('handles a single selected pathway', async () => {
       req.session.note = { noteType: 'CASE_NOTE' }
-      req.body = { pathways: 'id-1' }
+      req.body = { pathways: '8f0d6a2e-1b7c-4c4e-9a53-3c1f2b9e0a11' }
       await controller.submitPathways(req, res)
 
-      expect(req.session.note.pathways).toEqual(['id-1'])
+      expect(req.session.note.pathways).toEqual(['8f0d6a2e-1b7c-4c4e-9a53-3c1f2b9e0a11'])
     })
 
-    it('saves no pathways when the none option is selected', async () => {
+    it('saves the none option so it can be re-checked', async () => {
       req.session.note = { noteType: 'CASE_NOTE' }
       req.body = { pathways: ['NONE'] }
       await controller.submitPathways(req, res)
 
-      expect(req.session.note.pathways).toEqual([])
+      expect(req.session.note.pathways).toEqual(['NONE'])
       expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/notes/case-note-details')
     })
 
@@ -206,7 +206,7 @@ describe('NotesController', () => {
     it('rejects the none option combined with pathways and does not save', async () => {
       req.session.note = { noteType: 'CASE_NOTE' }
       req.url = '/referral/AB1234CD/notes/pathways'
-      req.body = { pathways: ['NONE', 'id-1'] }
+      req.body = { pathways: ['NONE', '8f0d6a2e-1b7c-4c4e-9a53-3c1f2b9e0a11'] }
       await controller.submitPathways(req, res)
 
       expect(req.session.note).toEqual({ noteType: 'CASE_NOTE' })

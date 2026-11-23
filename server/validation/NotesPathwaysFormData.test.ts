@@ -11,8 +11,16 @@ describe('buildNotesPathwaysSchema', () => {
 
   describe('valid input', () => {
     it.each([
-      ['a single pathway as a string', 'id-1', ['id-1']],
-      ['multiple pathways as an array', ['id-1', 'id-2'], ['id-1', 'id-2']],
+      [
+        'a single pathway as a string',
+        '8f0d6a2e-1b7c-4c4e-9a53-3c1f2b9e0a11',
+        ['8f0d6a2e-1b7c-4c4e-9a53-3c1f2b9e0a11'],
+      ],
+      [
+        'multiple pathways as an array',
+        ['8f0d6a2e-1b7c-4c4e-9a53-3c1f2b9e0a11', '2c9e4b7a-5d3f-4e8a-8b21-7a6f0c1d2e22'],
+        ['8f0d6a2e-1b7c-4c4e-9a53-3c1f2b9e0a11', '2c9e4b7a-5d3f-4e8a-8b21-7a6f0c1d2e22'],
+      ],
       ['the none option on its own', [NO_PATHWAY_VALUE], [NO_PATHWAY_VALUE]],
     ])('accepts %s', (_description, pathways, expected) => {
       const result = caseNoteSchema.safeParse({ pathways })
@@ -37,8 +45,15 @@ describe('buildNotesPathwaysSchema', () => {
       expect(result.error?.issues[0].message).toBe(NON_CONTACT_SESSION_PATHWAY_ERROR)
     })
 
+    it('rejects a value that is not a UUID', () => {
+      const result = caseNoteSchema.safeParse({ pathways: ['id-1'] })
+
+      expect(result.success).toBe(false)
+      expect(result.error?.issues[0].message).toBe(CASE_NOTE_PATHWAY_ERROR)
+    })
+
     it('rejects the none option combined with a pathway', () => {
-      const result = caseNoteSchema.safeParse({ pathways: [NO_PATHWAY_VALUE, 'id-1'] })
+      const result = caseNoteSchema.safeParse({ pathways: [NO_PATHWAY_VALUE, '8f0d6a2e-1b7c-4c4e-9a53-3c1f2b9e0a11'] })
 
       expect(result.success).toBe(false)
       expect(result.error?.issues[0].message).toBe(CASE_NOTE_PATHWAY_ERROR)
