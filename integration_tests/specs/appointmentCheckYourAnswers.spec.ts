@@ -11,6 +11,7 @@ import CreateAppointmentDetailsPage from '../pages/createAppointmentDetailsPage'
 import prisonApi from '../mockApis/prisonApi'
 import RecordSessionAttendancePage from '../pages/RecordSessionAttendancePage'
 import IcsFeedbackCheckYourAnswersPage from '../pages/IcsFeedbackCheckYourAnswersPage'
+import IcsFeedbackIssuesOrConcernsPage from '../pages/IcsFeedbackIssuesOrConcernsPage'
 import ReferralAppointmentsPage from '../pages/referralAppointmentsPage'
 import { getMatchingRequests, stubFor } from '../mockApis/wiremock'
 
@@ -157,9 +158,11 @@ test.describe('Appointment Check Your Answers Page', () => {
     await page.locator('[name="strengthsIdentified"]').fill('Strong family support.')
     await page.getByRole('button', { name: 'Continue', exact: true }).click()
 
-    await expect(page).toHaveURL(`/ics-feedback/${CASE_REFERENCE}/issues-or-concerns`)
-    await page.locator('[name="issuesOrConcerns"]').fill('No issues or concerns identified.')
-    await page.getByRole('button', { name: 'Continue', exact: true }).click()
+    await expect(page).toHaveURL(IcsFeedbackIssuesOrConcernsPage.url(CASE_REFERENCE))
+    const issuesOrConcernsPage = await IcsFeedbackIssuesOrConcernsPage.verifyOnPage(page)
+    await issuesOrConcernsPage.issuesOrConcernsInput.fill('No issues or concerns identified.')
+    await issuesOrConcernsPage.notifyProbationPractitionerNo.check()
+    await issuesOrConcernsPage.continueButton.click()
 
     await expect(page).toHaveURL(`/ics-feedback/${CASE_REFERENCE}/identified-additional-needs`)
     await page.locator('[name="didYouIdentify"][value="No"]').check()
@@ -196,6 +199,7 @@ test.describe('Appointment Check Your Answers Page', () => {
     expect(JSON.parse(feedbackRequests.body.requests[0].body)).toMatchObject({
       record: { didSessionHappen: true },
       sessionFeedback: { whatHappened: 'Discussed the support available.' },
+      issuesAndConcerns: { identified: 'No issues or concerns identified.', notifyProbationPractitioner: false },
     })
   })
 
