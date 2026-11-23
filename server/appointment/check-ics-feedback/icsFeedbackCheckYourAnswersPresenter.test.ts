@@ -4,7 +4,6 @@ import { GovukFrontendSummaryList } from '@govuk-frontend'
 import { globalContent } from '../../../assets/content/GlobalContent'
 import IcsFeedbackCheckYourAnswersPresenter from './icsFeedbackCheckYourAnswersPresenter'
 import { IcsFeedbackCheckYourAnswersContent } from './icsFeedbackCheckYourAnswersViewModel'
-import IcsFeedbackCheckContentFactory from '../../testutils/factories/IcsFeedbackCheckContent'
 
 describe('IcsFeedbackCheckYourAnswersPresenter', () => {
   const caseRefId = 'AB1234CD'
@@ -264,7 +263,7 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
   })
 
   describe('Session feedback summary', () => {
-    it('matches non-attendance answers to their labels and change links', () => {
+    it('shows non-attendance answers in the attendance summary with their labels and change links', () => {
       const submission: IcsFeedbackSubmission = {
         ...baseIcsFeedbackSubmission,
         record: {
@@ -279,21 +278,25 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
       const presenter = new IcsFeedbackCheckYourAnswersPresenter(submission, caseRefId, firstName)
       const summary = presenter
         .buildViewModel()
-        .feedbackSummaries.find(item => item.summaryTitle === 'Session feedback')
+        .feedbackSummaries.find(item => item.card?.title?.text === 'ICS attendance')
       const changeHref = `/ics-feedback/${caseRefId}/how-they-tried-to-contact-the-person`
+      const rows = summary.rows.slice(-2)
 
-      expect(summary.rows).toHaveLength(2)
-      expect(summary.rows[0]).toMatchObject({
+      expect(rows[0]).toMatchObject({
         key: { text: 'How did you try to contact John?' },
         value: { text: 'Called twice' },
         actions: {
-          items: [{ href: changeHref, text: 'Change', visuallyHiddenText: 'How did you try to contact John?' }],
+          items: [
+            { href: changeHref, text: 'Change', visuallyHiddenText: 'details about how you tried to contact them' },
+          ],
         },
       })
-      expect(summary.rows[1]).toMatchObject({
-        key: { text: 'Reason they did not attend' },
+      expect(rows[1]).toMatchObject({
+        key: { text: 'Reason they did not attend?' },
         value: { text: 'They were unwell' },
-        actions: { items: [{ href: changeHref, text: 'Change', visuallyHiddenText: 'Reason they did not attend' }] },
+        actions: {
+          items: [{ href: changeHref, text: 'Change', visuallyHiddenText: 'details about why they did not attend' }],
+        },
       })
     })
 
@@ -301,7 +304,7 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
       const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
       const summary = presenter
         .buildViewModel()
-        .feedbackSummaries.find(item => item.summaryTitle === 'Session feedback')
+        .feedbackSummaries.find(item => item.card?.title?.text === 'Session feedback')
 
       expect(summary.rows.map(row => [row.key.text, row.value.text])).toEqual([
         ['What happened in the session', 'Discussed career options'],
