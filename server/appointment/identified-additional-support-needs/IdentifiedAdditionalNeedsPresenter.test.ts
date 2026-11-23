@@ -6,7 +6,7 @@ import IdentifiedAdditionalNeedsPresenter from './IdentifiedAdditionalNeedsPrese
 describe('IdentifiedAdditionalNeedsPresenter', () => {
   const caseRefId = 'ics-test-123'
   const firstName = 'Alex'
-  const content = contentJson['/ics-feedback/:id/identified-additional-needs']
+  const content = contentJson.icsFeedback.id.identifiedAdditionalNeeds
   let res: Response
   let dto: IcsFeedbackIdentifiedAdditionalSupportNeedsBffResponseDto
 

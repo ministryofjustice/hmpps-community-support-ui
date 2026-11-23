@@ -1,5 +1,5 @@
 {
-  "/": {
+  "landing": {
     "pageHeader": "Community Support",
     "tiles": [
       {
@@ -17,1631 +17,1744 @@
       }
     ]
   },
-  "/referral/new/find-a-person": {
-    "pageTitle": "Check and confirm personal details - Make a referral - Community Support",
-    "pageHeader": "Check and confirm personal details",
-    "continueButtonText": "Continue",
-    "continueButtonLink": "/referral/new/confirm-person",
-    "backLink": "/referral/new/find-a-person",
-    "insetText": "If this information is out of date or incorrect, you must update it in NDelius",
-    "enterDifferentIdentifierLinkText": "Enter a different CRN or prison number",
-    "enterDifferentIdentifierLinkHref": "/referral/new/find-a-person"
-  },
-  "/referral/check-referral-information": {
-    "pageTitle": "Check details and submit referral",
-    "pageHeader": "{{ fullName }}",
-    "pageSubHeader": "Check details and submit referral",
-    "personalDetailsHeader": "About {{ firstName }}",
-    "notAvailable": "Not available",
-    "lastUpdatedLabel": "Last updated",
-    "personalDetailsCard": {
-      "heading": "Personal details",
-      "nameLabel": "Name",
-      "crnLabel": "CRN",
-      "prisonNumberLabel": "Prison number",
-      "locationLabel": "Current location",
-      "dobLabel": "Date of birth",
-      "languageLabel": "Preferred language",
-      "currentCircumstancesLabel": "Current circumstances",
-      "disabilitiesLabel": "Disabilities"
-    },
-    "equalityMonitoringCard": {
-      "heading": "Equality monitoring",
-      "nationalityLabel": "Nationality",
-      "ethnicityLabel": "Ethnicity",
-      "religionOrBeliefLabel": "Religion or belief",
-      "sexLabel": "Sex"
-    },
-    "additionalInformationCard": {
-      "heading": "Additional information",
-      "homeOfficeInterestLabel": "Home Office interest",
-      "opdPathwayLabel": "Offender personality disorder (OPD) pathway"
-    },
-    "contactDetailsCard": {
-      "heading": "Contact details",
-      "phoneNumberLabel": "Phone number",
-      "mobileNumberLabel": "Mobile number",
-      "emailAddressLabel": "Email address",
-      "mainAddressLabel": "Main address",
-      "lastKnownAddressLabel": "Last known address",
-      "addressTypeLabel": "Type of address",
-      "addressStartDateLabel": "Start date",
-      "addressNotesLabel": "Notes",
-      "noFixedAbode": "No fixed abode"
-    },
-    "riskInformationCard": {
-      "heading": "Risk information",
-      "whoIsAtRiskLabel": "Who is at risk?",
-      "riskNatureLabel": "What is the nature of the risk?",
-      "riskCircumstancesLabel": "In what circumstances or situations would offending be most likely to occur?",
-      "riskOfSelfHarmLabel": "Risk of self-harm",
-      "riskOfSuicideLabel": "Risk of suicide",
-      "concernsCopingInApprovedPremisesLabel": "Concerns in relation to coping in an approved premises or hostel",
-      "concernsVulnerabilityLabel": "Concerns in relation to vulnerability",
-      "additionalInformationLabel": "Additional information",
-      "noAdditionalInformationText": "None"
-    },
-    "additionalSupportNeedsCard": {
-      "heading": "Additional support needs",
-      "physicalHealthLabel": "Physical health",
-      "mentalOrEmotionalHealthLabel": "Mental or emotional health",
-      "neurodiversityLabel": "Neurodiversity",
-      "locationAndTravelLabel": "Location and travel",
-      "caringResponsibilitiesLabel": "Caring responsibilities",
-      "employmentResponsibilitiesLabel": "Employment responsibilities",
-      "diversityLabel": "Diversity",
-      "anyOtherNeedsLabel": "Any other needs",
-      "interpreterLabel": "Does {{ firstName }} need an interpreter?",
-      "interpreterLanguageLabel": "What language does {{ firstName }} need an interpreter for?"
-    },
-    "personsNeedsCard": {
-      "heading": "Person's needs",
-      "accommodationLabel": "Accommodation",
-      "employmentAndEducationLabel": "Employment and education",
-      "financesLabel": "Finances",
-      "personalRelationshipsAndCommunityLabel": "Personal relationships and community",
-      "drugUseLabel": "Drug use",
-      "alcoholUseLabel": "Alcohol use",
-      "healthAndWellbeingLabel": "Health and wellbeing",
-      "thinkingBehaviourAndAttitudesLabel": "Thinking, behaviour and attitudes"
-    },
-    "additionalReferralInformationCard": {
-      "heading": "Additional referral information",
-      "completedBy": "What date does the service need to be completed by?",
-      "reason": "Why does it need to be completed by this date?",
-      "days": "How many days will you use for this service?",
-      "offence": "Offence",
-      "offenceSubCatagory": "Offence subcategory",
-      "outcome": "Outcome",
-      "endDate": "Sentence end date",
-      "conditions": "Any licence conditions or exclusion zones",
-      "anythingElse": "Anything else the delivery partner should know about {{ name }}"
-    },
-    "probationPractitionerDetailsCard": {
-      "headingProbationPractitioner": "Probation practitioner's details",
-      "headingMainPointOfContact": "Main point of contact's details",
-      "correct": "Are these details correct?",
-      "name": "Name",
-      "role": "Job role",
-      "email": "Email address",
-      "phone": "Phone number",
-      "pdu": "PDU",
-      "office": "Probation office",
-      "teamPhone": "Team phone number"
-    },
-    "referralDetailsHeader": "Referral information",
-    "referralContactDetailsHeader": "Referral contact details",
-    "backLink": "/referral/task-list",
-    "submitButtonText": "Submit referral information"
-  },
-  "/referral/:id/confirmation": {
-    "pageHeader": "The referral has been sent",
-    "referenceNumberIntro": "Your reference number",
-    "startNewReferralLink": "/referral/new/find-a-person",
-    "startNewReferralButtonText": "Start a new referral",
-    "backToCommunityHomeLinkText": "Back to Community Support Homepage",
-    "backToCommunityHomeLink": "/"
-  },
-  "/unassigned-cases": {
-    "pageHeader": "Cases",
-    "unassignedSubNavTitle": "Unassigned cases",
-    "inProgressSubNavTitle": "Cases in progress",
-    "subNavItems": [
-      {
-        "id": "unassigned",
-        "title": "Unassigned",
-        "href": "/unassigned-cases"
+  "referral": {
+    "new": {
+      "findAPerson": {
+        "pageTitle": "Check and confirm personal details - Make a referral - Community Support",
+        "pageHeader": "Check and confirm personal details",
+        "continueButtonText": "Continue",
+        "continueButtonLink": "/referral/new/confirm-person",
+        "backLink": "/referral/new/find-a-person",
+        "insetText": "If this information is out of date or incorrect, you must update it in NDelius",
+        "enterDifferentIdentifierLinkText": "Enter a different CRN or prison number",
+        "enterDifferentIdentifierLinkHref": "/referral/new/find-a-person"
       },
-      {
-        "id": "inProgress",
-        "title": "In progress",
-        "href": "/cases-in-progress"
-      }
-    ],
-    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
-    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
-    "noCasesMessage": "There are no {0} cases to view."
-  },
-  "/cases-in-progress": {
-    "pageHeader": "Cases",
-    "unassignedSubNavTitle": "Unassigned cases",
-    "inProgressSubNavTitle": "Cases in progress",
-    "subNavItems": [
-      {
-        "id": "unassigned",
-        "title": "Unassigned",
-        "href": "/unassigned-cases"
+      "addContactDetails": {
+        "pageTitle": "Add details of the main point of contact",
+        "backLinkText": "Back",
+        "backLinkHref": "/referral/task-list",
+        "ppBackLinkHref": "/referral/task-list/check-probation-practitioner-details",
+        "buttonText": "Save and continue",
+        "heading": "{{ personName }}",
+        "pageCaption": "CRN: {{ CRN }} | Date of birth: {{ DOB }}",
+        "subHeading": "Add details of the main point of contact",
+        "nameInputLabel": "Name",
+        "emailAddressInputLabel": "Email address",
+        "jobRoleInputLabel": "Job role (optional)",
+        "phoneNumberInputLabel": "Phone number (optional)",
+        "pduInputLabel": "PDU",
+        "probationOfficeInputLabel": "Probation office (optional)",
+        "teamPhoneNumberInputLabel": "Team phone number (optional)",
+        "hintText": "Start typing and choose from list",
+        "insetText": "These contact details will be sent to the delivery partner for the referral. They should also be updated in NDelius."
       },
-      {
-        "id": "inProgress",
-        "title": "In progress",
-        "href": "/cases-in-progress"
-      }
-    ],
-    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
-    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
-    "noCasesMessage": "There are no {0} cases to view."
-  },
-  "/referral-details/:id": {
-    "pageHeader": "Referral for ",
-    "pageSubHeader": "Case details",
-    "backLink": "/unassigned-cases",
-    "defaultFieldValue": "Not available",
-    "successBannerHeading": "Case assigned",
-    "withdrawReferralLinkText": "Withdraw referral",
-    "alerts": {
-      "withdrawalCompletedTitle": "Referral withdrawn",
-      "withdrawalAlreadyCompletedBySameUserTitle": "You have already withdrawn this referral",
-      "withdrawalAlreadyCompletedByOtherUserTitle": "Referral already withdrawn by another user",
-      "withdrawnInformationTitle": "Referral withdrawn on {{ date }}"
-    },
-    "personalDetailsCard": {
-      "heading": "Personal details",
-      "nameLabel": "Name",
-      "crnLabel": "CRN",
-      "dobLabel": "Date of birth",
-      "languageLabel": "Preferred language",
-      "disabilitiesLabel": "Disabilities"
-    },
-    "equalityMonitoringCard": {
-      "heading": "Equality monitoring",
-      "ethnicityLabel": "Ethnicity",
-      "religionLabel": "Religion or belief",
-      "sexLabel": "Sex"
-    },
-    "contactDetailsCard": {
-      "heading": "Contact details",
-      "phoneNumberLabel": "Phone number",
-      "mobileNumberLabel": "Mobile number",
-      "emailAddressLabel": "Email address",
-      "mainAddressLabel": "Main address"
-    },
-    "referralDetailsCard": {
-      "heading": "Referral details",
-      "referralDateLabel": "Referral date",
-      "assignedToLabel": "Assigned to",
-      "assignedToDefaultValue": "Unassigned",
-      "link": "Assign to caseworker",
-      "linkChange": "Change",
-      "targetServiceCompletionDateLabel": "What date does the service need to be completed by?",
-      "targetServiceCompletionDateReasonLabel": "Why does it need to be completed by this date?"
-    },
-    "icsDetails": {
-      "heading": "ICS details",
-      "changeLink": "Change",
-      "dateLabel": "Date",
-      "startTimeLabel": "Start time",
-      "methodLabel": "Method",
-      "reasonLabel": "Reason session is not in person",
-      "locationLabel": "Location",
-      "informedLabel": "How {{ name }} was informed about the session"
-    },
-    "reasonForChange": {
-      "heading": "Reason for change",
-      "whoRequestedLabel": "Who requested the change",
-      "reasonLabel": "Reason for the change"
-    },
-    "links": {
-      "change": "/referral/{{ id }}/ics-change-details",
-      "back": "/progress/{{ id }}"
-    }
-  },
-  "/referral/:id/withdraw": {
-    "pageHeader": "Why are you withdrawing {{ name }}'s referral?",
-    "additionalInformationLabel": "Give details",
-    "continueButtonText": "Continue"
-  },
-  "/referral/:id/withdraw/confirm": {
-    "pageHeader": "Check withdrawal details",
-    "questionLabel": "Why are you withdrawing {{ name }}'s referral?",
-    "warningText": "If you are withdrawing this referral, you cannot start or change it again.",
-    "withdrawButtonText": "Withdraw referral",
-    "cancelLinkText": "Cancel",
-    "changeLinkText": "Change"
-  },
-  "/referral/:id/withdraw/service-error": {
-    "pageHeader": "Sorry, there is a problem with this service",
-    "message": "Try again later.",
-    "goToCaseListLink": "/cases-in-progress",
-    "goToCaseListButtonText": "Go to case list"
-  },
-  "/referral/:id/appointment/confirm-ics": {
-    "pageHeader": "Check the details before scheduling the ICS",
-    "submitButtonText": "Submit"
-  },
-  "/referral/:id/create-an-appointment/appointment-type": {
-    "pageTitle": "Appointment type",
-    "appointmentTypeLabel": "Appointment type",
-    "buttonText": "Continue"
-  },
-  "/referral/:id/create-an-appointment/check-your-answers": {
-    "pageTitle": "Check the details before booking the appointment",
-    "pageHeader": "Check the details before booking the appointment",
-    "summaryTitle": "Appointment details",
-    "dateLabel": "Date",
-    "startTimeLabel": "Start time",
-    "methodLabel": "How the session will take place",
-    "probationOfficeLabel": "Probation office",
-    "prisonLabel": "Prison",
-    "appointmentAddressLabel": "Appointment address",
-    "reasonSessionNotInPersonLabel": "Reason session is not in person",
-    "meetAtTheGateLabel": "Meeting at the gate",
-    "informedLabel": "How {{ firstname }} was informed about the session",
-    "whatHappensNextHeading": "What happens next",
-    "retrospectiveAppointmentText": "As you've entered a date and time in the past, we'll ask you to add appointment feedback.",
-    "changeLinkText": "Change",
-    "changeLinkVisualText": "appointment details",
-    "changeLinkHref": "/referral/{{ id }}/create-an-appointment/appointment-type",
-    "continueButtonText": "Continue",
-    "submitButtonText": "Submit",
-    "submitHref": "/referral/{{ id }}/create-an-appointment/check-your-answers",
-    "backLink": "/referral/{{ id }}/create-an-appointment/appointment-type"
-  },
-  "/progress/:id": {
-    "pageHeader": "Referral for",
-    "actionPlanTitle": "Action plan",
-    "actionPlanStatusLabel": "Status",
-    "actionPlanActionsLabel": "Actions",
-    "actionPlanLinkText": "View action plan",
-    "progressActiveColumnHeaders": ["Date and time", "Status", "Action"],
-    "progressInactiveColumnHeaders": ["Status", "Action"],
-    "historySummary": "View ICS history"
-  },
-  "/referral/:id": {
-    "subNavigationLabel": "Sub navigation",
-    "subNavItems": [
-      { "id": "caseDetails", "text": "Case details", "href": "/referral-details/{{ id }}" },
-      { "id": "progress", "text": "Progress", "href": "/progress/{{ id }}" },
-      { "id": "actionPlan", "text": "Action Plan", "href": "/referral/{{ id }}/action-plan" },
-      { "id": "appointments", "text": "Appointments", "href": "/referral/{{ id }}/appointments" },
-      { "id": "notes", "text": "Notes", "href": "/referral/{{ id }}/notes" },
-      { "id": "changeLog", "text": "Change log", "href": "#" }
-    ],
-    "sideNavigationLabel": "Side navigation",
-    "actionPlanSideTabText": "Action plan",
-    "actionPlanSideTabHref": "/referral/{{ id }}/action-plan",
-    "serviceDeliverySideTabText": "Service details",
-    "serviceDeliverySideTabHref": "/referral/{{ id }}/service-delivery"
-  },
-  "/referral/:id/service-delivery": {
-    "pageHeader": "Action plan",
-    "addAnotherOutcomeText": "Add another outcome",
-    "serviceDeliveryCardTitle": "Service delivery",
-    "risksAndAdjustmentsCardTitle": "Risks and adjustments",
-    "serviceEndDateCardTitle": "Service end date"
-  },
-  "/referral/:id/appointments": {
-    "pageHeader": "Referral for",
-    "appointmentsTitle": "Appointments",
-    "appointmentTypeColumnHeader": "Appointment type",
-    "dateColumnHeader": "Date",
-    "timeColumnHeader": "Start time",
-    "statusColumnHeader": "Status",
-    "actionColumnHeader": "Action",
-    "noAppointmentsMessage": "No appointments scheduled",
-    "noUpcomingAppointmentsMessage": "No upcoming appointments",
-    "noPastAppointmentsMessage": "No past appointments",
-    "icsFeedbackAdded": "ICS feedback added",
-    "bookAppointmentText": "Book appointment",
-    "bookAppointmentHref": "/referral/{{ id }}/create-an-appointment/appointment-type",
-    "upcomingAppointmentsTitle": "Upcoming appointments",
-    "pastAppointmentsTitle": "Past appointments",
-    "statuses": {
-      "SCHEDULED": { "text": "Scheduled", "actions": [{ "text": "View or change details", "href": "#" }] },
-      "NEEDS_FEEDBACK": {
-        "text": "Needs feedback",
-        "actions": [{ "text": "Add attendance and feedback", "href": "#" }]
-      },
-      "COMPLETED": { "text": "Completed", "actions": [{ "text": "View feedback", "href": "#" }] },
-      "CHANGED": { "text": "Changed", "actions": [{ "text": "View session details", "href": "#" }] },
-      "DID_NOT_ATTEND": {
-        "text": "Did not attend",
-        "actions": [
-          { "text": "Reschedule", "href": "#", "initialContactSessionOnly": true },
-          { "text": "View feedback", "href": "#" }
-        ]
-      },
-      "DID_NOT_HAPPEN": {
-        "text": "Did not happen",
-        "actions": [
-          { "text": "Reschedule", "href": "#", "initialContactSessionOnly": true },
-          { "text": "View feedback", "href": "#" }
-        ]
-      }
-    }
-  },
-  "/referral/:id/notes": {
-    "pageTitle": "Notes - Community Support",
-    "pageHeader": "Referral for",
-    "notesTitle": "Notes",
-    "noNotesMessage": "No notes have been added yet",
-    "dateColumnHeader": "Date",
-    "addedByColumnHeader": "Added by",
-    "titleColumnHeader": "Note",
-    "actionColumnHeader": "Action",
-    "viewDetailsLinkText": "View details",
-    "readFullNoteLinkText": "Read full note",
-    "addNoteButtonText": "Add note",
-    "addedNotesSubheading": "Added notes",
-    "resultsSummaryText": "Showing {{ from }} to {{ to }} of {{ count }} total results"
-  },
-  "/referral/:id/notes/type": {
-    "pageHeader": "Note type",
-    "description": "For anything urgent, you should also get in touch with the probation practitioner.",
-    "detailsTitle": "What information should go in each note",
-    "detailsDescription": "Case notes should be used to record important information the probation practitioner should be aware of. For example, emerging risk or a change of circumstances.</br></br>Non-contact activity notes should be used to record details of work you have carried out on behalf of Alex, outside of appointments, to support them in achieving their outcomes. For example, liaising with other professionals or completing duty to refer related activity.",
-    "radioCaseNote": "Case note",
-    "radioNonContactActivity": "Non-contact activity note",
-    "continueText": "Continue"
-  },
-  "/referral/:id/appointment/select-type": {
-    "pageTitle": "Select appointment type",
-    "pageHeader": "Select appointment type",
-    "appointmentTypes": [
-      { "value": "CONTACT_SESSION", "text": "Contact session" },
-      { "value": "PRE_RELEASE_SESSION", "text": "Pre-release session" },
-      { "value": "POST_RELEASE_SESSION", "text": "Post-release session" },
-      { "value": "HANDOVER_SESSION", "text": "Handover session" }
-    ],
-    "backLinkText": "Back to appointments"
-  },
-  "/referral/:id/action-plan": {
-    "pageHeader": "Action plan",
-    "noActionPlanText": "{{ firstName }} does not have an action plan yet.",
-    "addAnotherOutcomeText": "Add another outcome",
-    "submitActionPlanText": "Submit action plan",
-    "addOrChangeActivitiesText": "Add or change activities",
-    "removeOutcomeText": "Remove",
-    "outcomePrefixText": "Outcome: ",
-    "whoWillDeliverHeaderText": "Who will deliver this",
-    "activityHeaderText": "Activity",
-    "moveOutcomeDownText": "Move outcome down",
-    "moveOutcomeUpText": "Move outcome up",
-    "createButtonText": "Create an action plan",
-    "addOutcomeNotificationText": "You added an outcome to {{ firstName }}'s plan.",
-    "removeOutcomeNotificationText": "You removed an outcome from {{ firstName }}'s plan."
-  },
-  "/referral/:id/action-plan/remove-outcome": {
-    "pageHeader": "Confirm you want to remove this outcome from {{ firstName }}'s plan",
-    "outcomePrefixText": "Outcome: ",
-    "whoWillDeliverHeaderText": "Who will do this",
-    "activityHeaderText": "Activity",
-    "removeOutcomeWarningText": "If you remove this outcome from the plan, all activities added to this outcome will also be removed.",
-    "removeOutcomeButtonText": "Remove this outcome",
-    "cancelLinkText": "Cancel"
-  },
-  "/referral/:id/action-plan/select-a-need": {
-    "pageHeader": "Area of need",
-    "identifiedNeedsDetailsTitle": "Show the needs identified in the referral",
-    "whichNeedTitle": "Which need do you want to address?",
-    "whichNeedHint": "Select one option. You can select more needs later.",
-    "continueButtonText": "Continue"
-  },
-  "/referral/:id/action-plan/select-an-outcome": {
-    "pageHeader": "Which outcome is appropriate for {{ firstName }}?",
-    "selectOutcomeHint": "Select one option.",
-    "continueButtonText": "Continue"
-  },
-  "/referral/:id/action-plan/activities": {
-    "pageHeader": "Activities",
-    "areaOfNeedLabel": "Area of need",
-    "outcomeLabel": "Outcome",
-    "addActivityNotificationText": "You added an activity to {{ firstName }}'s plan",
-    "removeActivityNotificationText": "You removed an activity from {{ firstName }}'s plan",
-    "activityProviderHeading": "Who will deliver this",
-    "activityDetailsHeading": "Activity details",
-    "actionsHeading": "Action",
-    "changeActionText": "Change",
-    "removeActionText": "Remove",
-    "addAnotherActivityQuestion": "Do you want to add another activity?",
-    "yesOptionText": "Yes",
-    "noOptionText": "No",
-    "saveAndContinueButtonText": "Save and continue"
-  },
-  "/referral/:id/action-plan/session-delivery-details": {
-    "pageTitle": "Session details – Session delivery details",
-    "pageHeader": "Session details",
-    "continueButtonText": "Continue",
-    "saveAndContinueButtonText": "Save and continue",
-    "backLink": "/referral/{{ id }}/action-plan",
-    "editBackLink": "/referral/{{ id }}/action-plan/service-delivery-check-your-answers"
-  },
-  "/referral/:id/action-plan/change-session-delivery-details": {
-    "pageTitle": "Session details – Session delivery details",
-    "pageHeader": "Session details",
-    "continueButtonText": "Continue",
-    "saveAndContinueButtonText": "Save and continue",
-    "backLink": "/referral/{{ id }}/action-plan",
-    "editBackLink": "/referral/{{ id }}/action-plan/service-delivery-check-your-answers"
-  },
-  "/referral/:id/action-plan/risks-and-adjustments": {
-    "pageTitle": "Session details – Risks and adjustments",
-    "pageHeader": "Risks and adjustments",
-    "continueButtonText": "Continue",
-    "saveAndContinueButtonText": "Save and continue",
-    "backLink": "/referral/{{ id }}/action-plan/session-delivery-details",
-    "editBackLink": "/referral/{{ id }}/action-plan/service-delivery-check-your-answers"
-  },
-  "/referral/:id/action-plan/change-risks-and-adjustments": {
-    "pageTitle": "Session details – Risks and adjustments",
-    "pageHeader": "Risks and adjustments",
-    "continueButtonText": "Continue",
-    "saveAndContinueButtonText": "Save and continue",
-    "backLink": "/referral/{{ id }}/action-plan/session-delivery-details",
-    "editBackLink": "/referral/{{ id }}/action-plan/service-delivery-check-your-answers"
-  },
-  "/referral/:id/action-plan/service-end-date-check": {
-    "pageTitle": "Session details – Service end date",
-    "pageHeader": "Service end date",
-    "continueButtonText": "Continue",
-    "saveAndContinueButtonText": "Save and continue",
-    "backLink": "/referral/{{ id }}/action-plan/risks-and-adjustments",
-    "editBackLink": "/referral/{{ id }}/action-plan/service-delivery-check-your-answers"
-  },
-  "/referral/:id/action-plan/change-service-end-date-check": {
-    "pageTitle": "Session details – Service end date",
-    "pageHeader": "Service end date",
-    "continueButtonText": "Continue",
-    "saveAndContinueButtonText": "Save and continue",
-    "backLink": "/referral/{{ id }}/action-plan/risks-and-adjustments",
-    "editBackLink": "/referral/{{ id }}/action-plan/service-delivery-check-your-answers"
-  },
-  "/referral/:id/action-plan/update-service-end-date": {
-    "pageTitle": "Session details – Change the service end date",
-    "pageHeader": "Change the service end date",
-    "continueButtonText": "Continue",
-    "saveAndContinueButtonText": "Save and continue",
-    "backLink": "/referral/{{ id }}/action-plan/service-end-date-check",
-    "editBackLink": "/referral/{{ id }}/action-plan/change-service-end-date-check"
-  },
-  "/referral/:id/action-plan/change-update-service-end-date": {
-    "pageTitle": "Session details – Change the service end date",
-    "pageHeader": "Change the service end date",
-    "continueButtonText": "Continue",
-    "saveAndContinueButtonText": "Save and continue",
-    "backLink": "/referral/{{ id }}/action-plan/service-end-date-check",
-    "editBackLink": "/referral/{{ id }}/action-plan/change-service-end-date-check"
-  },
-  "/referral/:id/action-plan/person-involvement": {
-    "pageTitle": "Session details – Person involvement",
-    "continueButtonText": "Continue",
-    "saveAndContinueButtonText": "Save and continue",
-    "backLink": "/referral/{{ id }}/action-plan/service-end-date-check",
-    "editBackLink": "/referral/{{ id }}/action-plan/service-delivery-check-your-answers"
-  },
-  "/referral/:id/action-plan/change-person-involvement": {
-    "pageTitle": "Session details – Person involvement",
-    "continueButtonText": "Continue",
-    "saveAndContinueButtonText": "Save and continue",
-    "backLink": "/referral/{{ id }}/action-plan/service-end-date-check",
-    "editBackLink": "/referral/{{ id }}/action-plan/service-delivery-check-your-answers"
-  },
-  "/referral/:id/action-plan/service-delivery-check-your-answers": {
-    "pageTitle": "Session details – Check your answers",
-    "pageHeader": "Check service delivery details",
-    "summaryLists": [
-      {
-        "summaryTitle": "Session details",
-        "changeHref": "/referral/{{ id }}/action-plan/change-session-delivery-details"
-      },
-      {
-        "summaryTitle": "Risks and adjustments",
-        "changeHref": "/referral/{{ id }}/action-plan/change-risks-and-adjustments"
-      },
-      {
-        "summaryTitle": "Service end date",
-        "changeHref": "/referral/{{ id }}/action-plan/change-service-end-date-check"
-      },
-      {
-        "summaryTitle": "Involvement in creating action plan",
-        "changeHref": "/referral/{{ id }}/action-plan/change-person-involvement"
-      }
-    ],
-    "submitButtonText": "Submit action plan",
-    "submitHref": "/referral/{{ id }}/action-plan/service-delivery-check-your-answers",
-    "backLink": "/referral/{{ id }}/action-plan/person-involvement"
-  },
-  "/referral/:id/action-plan/activities/add": {
-    "pageHeader": "Add an activity",
-    "backLink": "/referral/{{ caseReference }}/action-plan/activities",
-    "areaOfNeedLabel": "Area of need",
-    "outcomeLabel": "Outcome",
-    "activityProviderLabel": "Who will deliver the activity?",
-    "activityProviderHint": "For example, the name of the organisation or person running the activity.",
-    "activityDescriptionLabel": "What does the activity involve?",
-    "saveAndContinueButtonText": "Save and continue"
-  },
-  "/referral/:id/action-plan/activities/remove": {
-    "pageHeader": "Are you sure you want to remove this activity?",
-    "onlyActivityHint": "This is the only activity in the action plan. If you remove it, you will need to start the action plan again.",
-    "yesOptionText": "Yes",
-    "noOptionText": "No",
-    "saveAndContinueButtonText": "Save and continue"
-  },
-  "/ics-feedback/:id/did-session-take-place": {
-    "submitButtonText": "Continue",
-    "pageHeaders": {
-      "PHONE": "Did the session take place by phone call?",
-      "VIDEO": "Did the session take place by video call?",
-      "IN_PERSON_PROBATION_OFFICE": "Did the session take place in person at this location?",
-      "IN_PERSON_OTHER_LOCATION": "Did the session take place in person at this location?",
-      "default": "Did the session take place?"
-    },
-    "videoCallReasonLabel": "Why was this session not in person?",
-    "phoneCallReasonLabel": "Why was this session not in person?",
-    "probationOfficeSelectBlankText": "Select a probation office",
-    "probationOfficeSelectLabel": "Select a probation office",
-    "addressLine1Label": "Address line 1",
-    "addressLine2Label": "Address line 2 (optional)",
-    "townOrCityLabel": "Town or city",
-    "countyLabel": "County (optional)",
-    "postcodeLabel": "Postcode",
-    "howSessionLegend": "How did the session take place?",
-    "howSessionHint": "Select one option.",
-    "phoneCallOptionText": "Phone call",
-    "videoCallOptionText": "Video call",
-    "probationOfficeOptionText": "In-person meeting - probation office",
-    "somewhereElseOptionText": "In-person meeting - somewhere else",
-    "yesText": "Yes",
-    "noText": "No"
-  },
-  "/referral-details/:id/ics-view-or-change": {
-    "title": "View or change session details",
-    "heading": "View or change session details"
-  },
-  "/referral-details/:id/changed-ics-details/:id": {
-    "title": "View session details",
-    "heading": "View session details"
-  },
-  "/ics-feedback/:id/attendance": {
-    "pageHeader": "ICS attendance",
-    "description": "The date and time of the session are a permanent record of where this person was. If the session started late, you must record this as part of the feedback.",
-    "appointmentDetails": {
-      "dateLabel": "Date",
-      "startTimeLabel": "Start time"
-    },
-    "attendanceForm": {
-      "happenedRadios": {
-        "id": "happened",
-        "heading": "Did the ICS happen?",
-        "hint": "The session happened if something was delivered. ",
-        "yesLabel": "Yes",
-        "noLabel": "No"
-      },
-      "submitButtonText": "Continue"
-    },
-    "backLink": "/progress/{{ id }}"
-  },
-  "/ics-feedback/:id/did-attend": {
-    "appointmentDetails": {
-      "dateLabel": "Date",
-      "startTimeLabel": "Start time"
-    },
-    "attendanceForm": {
-      "didAttendRadios": {
-        "id": "didAttend",
-        "heading": "Did {{ firstname }} come to the ICS?",
-        "yesLabel": "Yes",
-        "noLabel": "No"
-      },
-      "submitButtonText": "Continue"
-    },
-    "backLink": "/ics-feedback/{{ id }}/attendance"
-  },
-  "/ics-feedback/:id/session-feedback": {
-    "pageTitle": "Session feedback – ICS feedback – Community Support",
-    "pageHeader": "Session feedback",
-    "feedbackForm": {
-      "whatDidYouDoTextarea": {
-        "id": "whatDidYouDo",
-        "name": "whatDidYouDo",
-        "label": "What did you do in the session?",
-        "hint": "Give details about what you did, anything that was achieved and what came out of the session.",
-        "nothingEnteredError": "Enter what you did in the session",
-        "tooManyCharactersError": "What you did in the session must be {{ maxCharacters }} characters or less",
-        "rows": "5"
-      },
-      "behaviourTextarea": {
-        "id": "behaviour",
-        "name": "behaviour",
-        "label": "What was {{ firstname }}’s engagement like during the session?",
-        "hint": "Give details about how engaged they seemed and if there was any progress or positive change.",
-        "nothingEnteredError": "Enter what {{ firstname }}’s engagement was like during the session",
-        "tooManyCharactersError": "Details about {{ firstname }}’s engagement during the session must be {{ maxCharacters }} characters or less",
-        "rows": "5"
-      },
-      "strengthsIdentifiedTextarea": {
-        "id": "strengthsIdentified",
-        "name": "strengthsIdentified",
-        "label": "What strengths did you identify?",
-        "hint": "Give details of any skills, experience and capabilities that can support the delivery of the service.",
-        "nothingEnteredError": "Enter what strengths you identified",
-        "tooManyCharactersError": "Strengths you identified must be {{ maxCharacters }} characters or less",
-        "rows": "5"
-      },
-      "submitButtonText": "Continue"
-    },
-    "backLink": "/ics-feedback/{{ id }}/session-details"
-  },
-  "/ics-feedback/:id/issues-or-concerns": {
-    "pageTitle": "Issues or concerns – ICS feedback – Community Support",
-    "pageHeader": "Issues or concerns",
-    "issuesOrConcernsLabel": "What issues or concerns did you identify?",
-    "issuesOrConcernsHint": "Give details of anything that concerned you about {{ firstname }}, or any issues they raised that might impact their engagement in future sessions.",
-    "submitButtonText": "Continue",
-    "backLinkHref": "/ics-feedback/{{ id }}/session-feedback"
-  },
-  "/ics-feedback/:id/identified-additional-needs": {
-    "pageTitle": "Additional support needs – ICS feedback – Community Support",
-    "pageHeader": "Additional support needs",
-    "pageSubHeader": "These are the support needs identified in {{ firstname }}’s referral.",
-    "didYouIdentifyRadio": {
-      "name": "didYouIdentify",
-      "title": "Did you identify anything else {{ firstname }} needs support with?",
-      "items": {
-        "yesText": "Yes",
-        "noText": "No",
-        "identifyDetailsName": "identifyDetails",
-        "identifyDetailsLabel": "Give details of anything else {{ firstname }} needs support with"
+      "confirmContactDetails": {
+        "pageTitle": "Check contact details",
+        "backLinkText": "Back",
+        "backLinkHref": "/referral/new/add-contact-details",
+        "buttonText": "Save and continue",
+        "heading": "{{ personName }}",
+        "pageCaption": "CRN: {{ CRN }} | Date of birth: {{ DOB }}",
+        "subHeading": "Check contact details",
+        "summaryHeading": "Contact details",
+        "nameLabel": "Name",
+        "emailAddressLabel": "Email address",
+        "jobRoleLabel": "Job role",
+        "phoneNumberLabel": "Phone number",
+        "pduLabel": "PDU",
+        "probationOfficeLabel": "Probation office",
+        "teamPhoneNumberLabel": "Team phone number",
+        "changeLabel": "Change",
+        "notEnteredText": "Not entered"
       }
     },
-    "cardTitle": "Additional support needs already identified",
-    "supportNeedsTitle": {
-      "physicalHealth": "Physical Health",
-      "mentalEmotionalHealth": "Mental & Emotional Health",
-      "neurodiversity": "Neurodiversity",
-      "locationTravel": "Location & Travel",
-      "caringResponsibilities": "Caring Responsibilities",
-      "employmentResponsibilities": "Employment Responsibilities",
-      "diversity": "Diversity",
-      "anythingElse": "Anything Else"
-    },
-    "submitButtonText": "Continue",
-    "backLinkHref": "/ics-feedback/{{ id }}/issues-or-concerns"
-  },
-  "/ics-feedback/:id/next-steps": {
-    "pageTitle": "Next steps – ICS feedback – Community Support ",
-    "pageHeader": "Next steps",
-    "plannedForNextSessionLabel": "What do you have planned for the next session?",
-    "plannedForNextSessionHint": "Give details about what you plan to do when you next meet with {{ firstname }}.",
-    "actionsBeforeNextSessionLabel": "What actions do you and {{ firstname }} have before the next session takes place?",
-    "actionsBeforeNextSessionHint": "Give details of any actions or next steps you and {{ firstname }} have agreed to do ahead of your next session.",
-    "submitButtonText": "Continue",
-    "backLinkHref": "/ics-feedback/{{ id }}/identified-additional-needs"
-  },
-  "/ics-feedback/:id/session/:id": {
-    "pageTitle": "View session feedback",
-    "pageHeader": "View session feedback",
-    "backLink": "/progress/{{ id }}",
-    "noneText": "None",
-    "yesText": "Yes",
-    "noText": "No",
-    "appointmentDetails": {
-      "title": "Appointment details",
-      "currentCaseworker": "Current caseworker",
-      "currentCaseworkers": "Current caseworkers",
-      "feedbackSubmittedBy": "Feedback submitted by",
-      "date": "Date",
-      "startTime": "Start time",
-      "method": "Method",
-      "reasonSessionNotInPerson": "Reason session was not in-person",
-      "location": "Location",
-      "howPersonWasInformed": "How {{ firstname }} was informed about the session",
-      "methodDisplay": {
-        "PHONE_CALL": "Phone call",
-        "VIDEO_CALL": "Video call",
-        "IN_PERSON_PROBATION_OFFICE": "In person (probation office)",
-        "IN_PERSON_OTHER_LOCATION": "In person (other location)"
+    "checkReferralInformation": {
+      "pageTitle": "Check details and submit referral",
+      "pageHeader": "{{ fullName }}",
+      "pageSubHeader": "Check details and submit referral",
+      "personalDetailsHeader": "About {{ firstName }}",
+      "notAvailable": "Not available",
+      "lastUpdatedLabel": "Last updated",
+      "personalDetailsCard": {
+        "heading": "Personal details",
+        "nameLabel": "Name",
+        "crnLabel": "CRN",
+        "prisonNumberLabel": "Prison number",
+        "locationLabel": "Current location",
+        "dobLabel": "Date of birth",
+        "languageLabel": "Preferred language",
+        "currentCircumstancesLabel": "Current circumstances",
+        "disabilitiesLabel": "Disabilities"
       },
-      "sessionCommunicationDisplay": {
-        "informedByPhone": "Phone call",
-        "informedByTextMessage": "Text message",
-        "informedByEmail": "Email"
-      }
-    },
-    "sessionDetails": {
-      "title": "Session details",
-      "wasPersonLate": "Was {{ firstname }} late?",
-      "whyWereTheyLate": "Why {{ firstname }} was late",
-      "duration": "Session duration",
-      "notApplicable": "Not applicable because the session did not happen"
-    },
-    "recordSessionAttendance": {
-      "title": "Record session attendance",
-      "didSessionHappen": "Did the session happen?",
-      "didPersonAttend": "Did {{ firstname }} come to the appointment?"
-    },
-    "sessionFeedback": {
-      "title": "Session feedback",
-      "attended": {
-        "whatHappened": "What happened in the session",
-        "behaviour": "How {{ firstname }} behaved",
-        "strengths": "Strengths identified"
+      "equalityMonitoringCard": {
+        "heading": "Equality monitoring",
+        "nationalityLabel": "Nationality",
+        "ethnicityLabel": "Ethnicity",
+        "religionOrBeliefLabel": "Religion or belief",
+        "sexLabel": "Sex"
       },
-      "sessionDidNotHappen": {
-        "whySessionDidNotHappen": "Why the session did not happen"
+      "additionalInformationCard": {
+        "heading": "Additional information",
+        "homeOfficeInterestLabel": "Home Office interest",
+        "opdPathwayLabel": "Offender personality disorder (OPD) pathway"
       },
-      "didNotAttend": {
-        "triedToContactDidNotAttend": "Details about how you tried to contact {{ firstname }} and why they did not attend"
-      }
-    },
-    "didNotHappenReasonLabels": {
-      "serviceProviderIssue": "Service provider issue",
-      "referralCouldNotTakePart": "{{ firstname }} could not take part",
-      "referralDidNotComply": "{{ firstname }} did not comply"
-    },
-    "issuesAndConcerns": {
-      "title": "Issues or concerns",
-      "identified": "Issues or concerns identified"
-    },
-    "additionalSupportNeeds": {
-      "title": "Needs and additional support",
-      "identified": "New support needs identified"
-    },
-    "nextSteps": {
-      "title": "Next steps",
-      "plannedForNextSession": "Planned for the next session",
-      "actionsBeforeNextSession": "Actions before the next session"
-    }
-  },
-  "/ics-feedback/:id/check-answers": {
-    "pageHeader": "Check your answers before submitting feedback",
-    "summaryLists": [
-      {
-        "summaryTitle": "Record session attendance",
-        "rows": [
-          {
-            "text": "Did the session happen?",
-            "hint": "Whether the session happened",
-            "changeHref": "/ics-feedback/caseRefId/attendance"
-          },
-          {
-            "text": "Did {{ firstname }} come to the appointment?",
-            "hint": "Did {{ firstname }} come to the appointment",
-            "changeHref": "/ics-feedback/caseRefId/did-attend"
-          },
-          {
-            "text": "How the session took place",
-            "hint": "How the session took place",
-            "changeHref": "/ics-feedback/caseRefId/did-session-take-place"
-          },
-          {
-            "text": "Location",
-            "hint": "Location of session",
-            "changeHref": "/ics-feedback/caseRefId/did-session-take-place"
-          },
-          {
-            "text": "Reason session was not in person",
-            "hint": "Why was the session not in person",
-            "changeHref": "/ics-feedback/caseRefId/did-session-take-place"
-          }
-        ]
+      "contactDetailsCard": {
+        "heading": "Contact details",
+        "phoneNumberLabel": "Phone number",
+        "mobileNumberLabel": "Mobile number",
+        "emailAddressLabel": "Email address",
+        "mainAddressLabel": "Main address",
+        "lastKnownAddressLabel": "Last known address",
+        "addressTypeLabel": "Type of address",
+        "addressStartDateLabel": "Start date",
+        "addressNotesLabel": "Notes",
+        "noFixedAbode": "No fixed abode"
       },
-      {
-        "summaryTitle": "Session details",
-        "rows": [
-          {
-            "text": "Was {{ firstname }} late?",
-            "hint": "If {{ firstname }} was late",
-            "changeHref": "/ics-feedback/caseRefId/session-details"
-          },
-          {
-            "text": "Why {{ firstname }} was late",
-            "hint": "Why {{ firstname }} was late",
-            "changeHref": "/ics-feedback/caseRefId/session-details"
-          },
-          {
-            "text": "Session duration",
-            "hint": "How long did the session last",
-            "changeHref": "/ics-feedback/caseRefId/session-details"
-          }
-        ]
+      "riskInformationCard": {
+        "heading": "Risk information",
+        "whoIsAtRiskLabel": "Who is at risk?",
+        "riskNatureLabel": "What is the nature of the risk?",
+        "riskCircumstancesLabel": "In what circumstances or situations would offending be most likely to occur?",
+        "riskOfSelfHarmLabel": "Risk of self-harm",
+        "riskOfSuicideLabel": "Risk of suicide",
+        "concernsCopingInApprovedPremisesLabel": "Concerns in relation to coping in an approved premises or hostel",
+        "concernsVulnerabilityLabel": "Concerns in relation to vulnerability",
+        "additionalInformationLabel": "Additional information",
+        "noAdditionalInformationText": "None"
       },
-      {
-        "summaryTitle": "Session feedback",
-        "rows": [
-          {
-            "text": "What happened in the session",
-            "hint": "What happened in the session",
-            "changeHref": "/ics-feedback/caseRefId/session-feedback"
-          },
-          {
-            "text": "Why the session did not happen",
-            "hint": "Why the session did not happen",
-            "changeHref": "/ics-feedback/caseRefId/why-did-the-session-not-happen"
-          },
-          {
-            "text": "Details about how you tried to contact {{ firstname }} and why they did not attend ",
-            "hint": "details about how you tried to contact them and why they did not attend’",
-            "changeHref": "/ics-feedback/caseRefId/how-they-tried-to-contact-the-person"
-          },
-          {
-            "text": "What was {{ firstname }}'s engagement like during the session?",
-            "hint": "What was {{ firstname }}'s engagement like during the session?",
-            "changeHref": "/ics-feedback/caseRefId/session-feedback"
-          },
-          {
-            "text": "What strengths did you identify?",
-            "hint": "What strengths did you identify?",
-            "changeHref": "/ics-feedback/caseRefId/session-feedback"
-          }
-        ]
+      "additionalSupportNeedsCard": {
+        "heading": "Additional support needs",
+        "physicalHealthLabel": "Physical health",
+        "mentalOrEmotionalHealthLabel": "Mental or emotional health",
+        "neurodiversityLabel": "Neurodiversity",
+        "locationAndTravelLabel": "Location and travel",
+        "caringResponsibilitiesLabel": "Caring responsibilities",
+        "employmentResponsibilitiesLabel": "Employment responsibilities",
+        "diversityLabel": "Diversity",
+        "anyOtherNeedsLabel": "Any other needs",
+        "interpreterLabel": "Does {{ firstName }} need an interpreter?",
+        "interpreterLanguageLabel": "What language does {{ firstName }} need an interpreter for?"
       },
-      {
-        "summaryTitle": "Issues or concerns",
-        "rows": [
-          {
-            "text": "What issues or concerns did you identify?",
-            "hint": "What issues or concerns did you identify?",
-            "changeHref": "/ics-feedback/caseRefId/issues-or-concerns"
-          }
-        ]
+      "personsNeedsCard": {
+        "heading": "Person's needs",
+        "accommodationLabel": "Accommodation",
+        "employmentAndEducationLabel": "Employment and education",
+        "financesLabel": "Finances",
+        "personalRelationshipsAndCommunityLabel": "Personal relationships and community",
+        "drugUseLabel": "Drug use",
+        "alcoholUseLabel": "Alcohol use",
+        "healthAndWellbeingLabel": "Health and wellbeing",
+        "thinkingBehaviourAndAttitudesLabel": "Thinking, behaviour and attitudes"
       },
-      {
-        "summaryTitle": "Additional support needs",
-        "rows": [
-          {
-            "text": "New support needs identified",
-            "hint": "New support needs identified",
-            "changeHref": "/ics-feedback/caseRefId/identified-additional-needs"
-          }
-        ]
+      "additionalReferralInformationCard": {
+        "heading": "Additional referral information",
+        "completedBy": "What date does the service need to be completed by?",
+        "reason": "Why does it need to be completed by this date?",
+        "days": "How many days will you use for this service?",
+        "offence": "Offence",
+        "offenceSubCatagory": "Offence subcategory",
+        "outcome": "Outcome",
+        "endDate": "Sentence end date",
+        "conditions": "Any licence conditions or exclusion zones",
+        "anythingElse": "Anything else the delivery partner should know about {{ name }}"
       },
-      {
-        "summaryTitle": "Next steps",
-        "rows": [
-          {
-            "text": "What do you have planned for the next session?",
-            "hint": "What do you have planned for the next session?",
-            "changeHref": "/ics-feedback/caseRefId/next-steps"
-          },
-          {
-            "text": "What actions do you and {{ firstname }} have before the next session takes place?",
-            "hint": "What actions do you and {{ firstname }} have before the next session takes place?",
-            "changeHref": "/ics-feedback/caseRefId/next-steps"
-          }
-        ]
-      }
-    ],
-    "didNotHappenReasonLabels": {
-      "serviceProviderIssue": "Service provider issue",
-      "referralCouldNotTakePart": "{{ firstname }} could not take part",
-      "referralDidNotComply": "{{ firstname }} did not comply"
+      "probationPractitionerDetailsCard": {
+        "headingProbationPractitioner": "Probation practitioner's details",
+        "headingMainPointOfContact": "Main point of contact's details",
+        "correct": "Are these details correct?",
+        "name": "Name",
+        "role": "Job role",
+        "email": "Email address",
+        "phone": "Phone number",
+        "pdu": "PDU",
+        "office": "Probation office",
+        "teamPhone": "Team phone number"
+      },
+      "referralDetailsHeader": "Referral information",
+      "referralContactDetailsHeader": "Referral contact details",
+      "backLink": "/referral/task-list",
+      "submitButtonText": "Submit referral information"
     },
-    "submitButtonText": "Submit feedback",
-    "submitHref": "/ics-feedback/caseRefId/submit",
-    "didNotAttendbackLinkHref": "/ics-feedback/caseRefId/how-they-tried-to-contact-the-person",
-    "noSessionbackLinkHref": "/ics-feedback/caseRefId/why-did-the-session-not-happen",
-    "attendedBackLinkHref": "/ics-feedback/caseRefId/next-steps"
-  },
-  "/ics-feedback/:id/session-details": {
-    "pageHeader": "Session details",
-    "appointmentDetails": {
-      "dateLabel": "Date",
-      "startTimeLabel": "Start time"
-    },
-    "wasPersonLateRadio": {
-      "name": "wasPersonLate",
-      "title": "Was {{ firstname }} late?",
-      "items": {
-        "yesText": "Yes",
-        "noText": "No",
-        "lateReasonName": "lateReason",
-        "lateReasonLabel": "Why was {{ firstname }} late?"
-      }
-    },
-    "sessionDurationTimeInput": {
-      "id": "sessionDuration",
-      "fieldset": {
-        "id": "fieldset-sessionDuration",
-        "text": "How long did the session last?"
+    "id": {
+      "confirmation": {
+        "pageHeader": "The referral has been sent",
+        "referenceNumberIntro": "Your reference number",
+        "startNewReferralLink": "/referral/new/find-a-person",
+        "startNewReferralButtonText": "Start a new referral",
+        "backToCommunityHomeLinkText": "Back to Community Support Homepage",
+        "backToCommunityHomeLink": "/"
       },
-      "items": {
-        "hoursName": "hours",
-        "hoursLabel": "Hour",
-        "minutesName": "minutes",
-        "minutesLabel": "Minute"
-      }
-    },
-    "submitButtonText": "Continue",
-    "backLinkHref": "/ics-feedback/{{ id }}/did-session-take-place"
-  },
-  "/ics-feedback/:id/why-did-the-session-not-happen": {
-    "whyDidSessionNotHappenRadio": {
-      "question": "Why did the session not happen?",
-      "name": "whyDidSessionNotHappen",
-      "items": {
-        "serviceProviderIssueText": "Issue with service provider or logistics",
-        "serviceProviderIssueHint": "For example, room booking problem or technical issue",
-        "serviceProviderIssueDetails": {
-          "name": "serviceProviderIssueDetails",
-          "label": "Give details of any issues that meant the session could not happen."
+      "withdraw": {
+        "pageHeader": "Why are you withdrawing {{ name }}'s referral?",
+        "additionalInformationLabel": "Give details",
+        "continueButtonText": "Continue",
+        "confirm": {
+          "pageHeader": "Check withdrawal details",
+          "questionLabel": "Why are you withdrawing {{ name }}'s referral?",
+          "warningText": "If you are withdrawing this referral, you cannot start or change it again.",
+          "withdrawButtonText": "Withdraw referral",
+          "cancelLinkText": "Cancel",
+          "changeLinkText": "Change"
         },
-        "referralCouldNotTakePartText": "{{ firstname }} could not take part",
-        "referralCouldNotTakePartHint": "For example, they were ill",
-        "referralCouldNotTakePartDetails": {
-          "name": "referralCouldNotTakePartDetails",
-          "label": "Give details about why they were unable to take part, including what happened and who was involved."
+        "serviceError": {
+          "pageHeader": "Sorry, there is a problem with this service",
+          "message": "Try again later.",
+          "goToCaseListLink": "/cases-in-progress",
+          "goToCaseListButtonText": "Go to case list"
+        }
+      },
+      "appointment": {
+        "confirmIcs": {
+          "pageHeader": "Check the details before scheduling the ICS",
+          "submitButtonText": "Submit"
         },
-        "referralDidNotComplyText": "{{ firstname }} did not comply",
-        "referralDidNotComplyHint": "For example, they were disruptive",
-        "referralDidNotComplyDetails": {
-          "name": "referralDidNotComplyDetails",
-          "label": "Give details about why they did not comply. For example, their behaviour and how they were unable to take part."
+        "selectType": {
+          "pageTitle": "Select appointment type",
+          "pageHeader": "Select appointment type",
+          "appointmentTypes": [
+            {
+              "value": "CONTACT_SESSION",
+              "text": "Contact session"
+            },
+            {
+              "value": "PRE_RELEASE_SESSION",
+              "text": "Pre-release session"
+            },
+            {
+              "value": "POST_RELEASE_SESSION",
+              "text": "Post-release session"
+            },
+            {
+              "value": "HANDOVER_SESSION",
+              "text": "Handover session"
+            }
+          ],
+          "backLinkText": "Back to appointments"
+        },
+        "scheduleIcs": {
+          "pageHeader": "Schedule the ICS",
+          "date": {
+            "label": "What is the date of the session?",
+            "hint": "Enter a date, for example 10/7/2025, or select one from the calendar."
+          },
+          "time": {
+            "label": "What time does the session start?",
+            "hint": "Use the 12-hour clock, for example 11:30am or 3pm.",
+            "AMorPM": "AM or PM"
+          },
+          "howSessionTakePlace": {
+            "label": "How will the session take place?",
+            "hint": "Select one option.",
+            "radioItems": {
+              "phone": {
+                "text": "Phone call",
+                "label": "Why is this session not in person?"
+              },
+              "video": {
+                "text": "Video call",
+                "label": "Why is this session not in person?"
+              },
+              "prison": {
+                "text": "In-person meeting - prison establishment",
+                "label": "Select prison"
+              },
+              "probation": {
+                "text": "In-person meeting - probation office",
+                "label": "Select a probation office"
+              },
+              "somewhereElse": {
+                "text": "In-person meeting - somewhere else",
+                "addressLabels": {
+                  "address1": "Address line 1",
+                  "address2": "Address line 2 (optional)",
+                  "townOrCity": "Town or city",
+                  "county": "County (optional)",
+                  "postcode": "Postcode"
+                }
+              }
+            }
+          },
+          "informed": {
+            "label": "How was {{ firstname }} informed about the session?",
+            "hint": "Select all that apply.",
+            "selectionItems": {
+              "phone": "Phone call",
+              "text": "Text message",
+              "email": "Email",
+              "other": {
+                "text": "Other",
+                "label": "Other method of contact"
+              }
+            }
+          },
+          "submitButtonText": "Save and continue",
+          "submitHref": "/referral/{{ caseRef }}/appointment/schedule-ics",
+          "backLink": "/progress/{{ caseRef }}"
+        }
+      },
+      "createAnAppointment": {
+        "appointmentType": {
+          "pageTitle": "Appointment type",
+          "appointmentTypeLabel": "Appointment type",
+          "buttonText": "Continue"
+        },
+        "checkYourAnswers": {
+          "pageTitle": "Check the details before booking the appointment",
+          "pageHeader": "Check the details before booking the appointment",
+          "summaryTitle": "Appointment details",
+          "dateLabel": "Date",
+          "startTimeLabel": "Start time",
+          "methodLabel": "How the session will take place",
+          "probationOfficeLabel": "Probation office",
+          "prisonLabel": "Prison",
+          "appointmentAddressLabel": "Appointment address",
+          "reasonSessionNotInPersonLabel": "Reason session is not in person",
+          "meetAtTheGateLabel": "Meeting at the gate",
+          "informedLabel": "How {{ firstname }} was informed about the session",
+          "whatHappensNextHeading": "What happens next",
+          "retrospectiveAppointmentText": "As you've entered a date and time in the past, we'll ask you to add appointment feedback.",
+          "changeLinkText": "Change",
+          "changeLinkVisualText": "appointment details",
+          "changeLinkHref": "/referral/{{ id }}/create-an-appointment/appointment-type",
+          "continueButtonText": "Continue",
+          "submitButtonText": "Submit",
+          "submitHref": "/referral/{{ id }}/create-an-appointment/check-your-answers",
+          "backLink": "/referral/{{ id }}/create-an-appointment/appointment-type"
+        },
+        "appointmentDetails": {
+          "pageHeader": "Schedule the session",
+          "date": {
+            "label": "Session date",
+            "hint": "For example 10/7/2025"
+          },
+          "time": {
+            "label": "Start time",
+            "hint": "Use the 12-hour clock, for example 11:30am or 3pm.",
+            "AMorPM": "am or pm",
+            "hourLabel": "Hours",
+            "minuteLabel": "Minutes"
+          },
+          "howSessionTakePlace": {
+            "label": "How will the session take place?",
+            "hint": "",
+            "groupHeadings": {
+              "inPerson": "In person",
+              "remote": "Remote"
+            },
+            "radioItems": {
+              "phone": {
+                "text": "Phone call",
+                "label": "Reason session is not in person"
+              },
+              "video": {
+                "text": "Video call",
+                "label": "Reason session is not in person"
+              },
+              "prison": {
+                "text": "Prison",
+                "label": "Select prison"
+              },
+              "probation": {
+                "text": "Probation office",
+                "label": "Select probation office"
+              },
+              "somewhereElse": {
+                "text": "Another address",
+                "addressLabels": {
+                  "address1": "Address line 1",
+                  "address2": "Address line 2 (optional)",
+                  "townOrCity": "Town or city",
+                  "county": "County (optional)",
+                  "postcode": "Postcode"
+                }
+              },
+              "inPerson": {
+                "text": "In person"
+              }
+            }
+          },
+          "informed": {
+            "label": "How was {{ firstname }} informed about the session?",
+            "hint": "Select all that apply.",
+            "selectionItems": {
+              "phone": "Phone call",
+              "text": "Text message",
+              "email": "Email",
+              "other": {
+                "text": "Other",
+                "label": "Other contact method"
+              }
+            }
+          },
+          "submitButtonText": "Continue",
+          "submitHref": "/referral/{{ caseRef }}/create-an-appointment/appointment-details",
+          "backLink": "/referral/{{ caseRef }}/create-an-appointment/appointment-type",
+          "pageHeaders": {
+            "ICS": "Book initial contact session (ICS)",
+            "CONTACT_SESSION": "Book contact session",
+            "PRE_RELEASE_SESSION": "Book pre-release session",
+            "POST_RELEASE_SESSION": "Book post-release session",
+            "HANDOVER_SESSION": "Book handover session"
+          },
+          "meetAtTheGate": {
+            "label": "Is this a meet at the gate session?",
+            "yes": "Yes",
+            "no": "No"
+          }
+        }
+      },
+      "page": {
+        "subNavigationLabel": "Sub navigation",
+        "subNavItems": [
+          {
+            "id": "caseDetails",
+            "text": "Case details",
+            "href": "/referral-details/{{ id }}"
+          },
+          {
+            "id": "progress",
+            "text": "Progress",
+            "href": "/progress/{{ id }}"
+          },
+          {
+            "id": "actionPlan",
+            "text": "Action Plan",
+            "href": "/referral/{{ id }}/action-plan"
+          },
+          {
+            "id": "appointments",
+            "text": "Appointments",
+            "href": "/referral/{{ id }}/appointments"
+          },
+          {
+            "id": "notes",
+            "text": "Notes",
+            "href": "/referral/{{ id }}/notes"
+          },
+          {
+            "id": "changeLog",
+            "text": "Change log",
+            "href": "#"
+          }
+        ],
+        "sideNavigationLabel": "Side navigation",
+        "actionPlanSideTabText": "Action plan",
+        "actionPlanSideTabHref": "/referral/{{ id }}/action-plan",
+        "serviceDeliverySideTabText": "Service details",
+        "serviceDeliverySideTabHref": "/referral/{{ id }}/service-delivery"
+      },
+      "serviceDelivery": {
+        "pageHeader": "Action plan",
+        "addAnotherOutcomeText": "Add another outcome",
+        "serviceDeliveryCardTitle": "Service delivery",
+        "risksAndAdjustmentsCardTitle": "Risks and adjustments",
+        "serviceEndDateCardTitle": "Service end date"
+      },
+      "appointments": {
+        "pageHeader": "Referral for",
+        "appointmentsTitle": "Appointments",
+        "appointmentTypeColumnHeader": "Appointment type",
+        "dateColumnHeader": "Date",
+        "timeColumnHeader": "Start time",
+        "statusColumnHeader": "Status",
+        "actionColumnHeader": "Action",
+        "noAppointmentsMessage": "No appointments scheduled",
+        "noUpcomingAppointmentsMessage": "No upcoming appointments",
+        "noPastAppointmentsMessage": "No past appointments",
+        "icsFeedbackAdded": "ICS feedback added",
+        "bookAppointmentText": "Book appointment",
+        "bookAppointmentHref": "/referral/{{ id }}/create-an-appointment/appointment-type",
+        "upcomingAppointmentsTitle": "Upcoming appointments",
+        "pastAppointmentsTitle": "Past appointments",
+        "statuses": {
+          "SCHEDULED": {
+            "text": "Scheduled",
+            "actions": [
+              {
+                "text": "View or change details",
+                "href": "#"
+              }
+            ]
+          },
+          "NEEDS_FEEDBACK": {
+            "text": "Needs feedback",
+            "actions": [
+              {
+                "text": "Add attendance and feedback",
+                "href": "#"
+              }
+            ]
+          },
+          "COMPLETED": {
+            "text": "Completed",
+            "actions": [
+              {
+                "text": "View feedback",
+                "href": "#"
+              }
+            ]
+          },
+          "CHANGED": {
+            "text": "Changed",
+            "actions": [
+              {
+                "text": "View session details",
+                "href": "#"
+              }
+            ]
+          },
+          "DID_NOT_ATTEND": {
+            "text": "Did not attend",
+            "actions": [
+              {
+                "text": "Reschedule",
+                "href": "#",
+                "initialContactSessionOnly": true
+              },
+              {
+                "text": "View feedback",
+                "href": "#"
+              }
+            ]
+          },
+          "DID_NOT_HAPPEN": {
+            "text": "Did not happen",
+            "actions": [
+              {
+                "text": "Reschedule",
+                "href": "#",
+                "initialContactSessionOnly": true
+              },
+              {
+                "text": "View feedback",
+                "href": "#"
+              }
+            ]
+          }
+        }
+      },
+      "notes": {
+        "page": {
+          "pageTitle": "Notes - Community Support",
+          "pageHeader": "Referral for",
+          "notesTitle": "Notes",
+          "noNotesMessage": "No notes have been added yet",
+          "dateColumnHeader": "Date",
+          "addedByColumnHeader": "Added by",
+          "titleColumnHeader": "Note",
+          "actionColumnHeader": "Action",
+          "viewDetailsLinkText": "View details",
+          "readFullNoteLinkText": "Read full note",
+          "addNoteButtonText": "Add note",
+          "addedNotesSubheading": "Added notes",
+          "resultsSummaryText": "Showing {{ from }} to {{ to }} of {{ count }} total results"
+        },
+        "type": {
+          "pageHeader": "Note type",
+          "description": "For anything urgent, you should also get in touch with the probation practitioner.",
+          "detailsTitle": "What information should go in each note",
+          "detailsDescription": "Case notes should be used to record important information the probation practitioner should be aware of. For example, emerging risk or a change of circumstances.</br></br>Non-contact activity notes should be used to record details of work you have carried out on behalf of Alex, outside of appointments, to support them in achieving their outcomes. For example, liaising with other professionals or completing duty to refer related activity.",
+          "radioCaseNote": "Case note",
+          "radioNonContactActivity": "Non-contact activity note",
+          "continueText": "Continue"
+        }
+      },
+      "actionPlan": {
+        "page": {
+          "pageHeader": "Action plan",
+          "noActionPlanText": "{{ firstName }} does not have an action plan yet.",
+          "addAnotherOutcomeText": "Add another outcome",
+          "submitActionPlanText": "Submit action plan",
+          "addOrChangeActivitiesText": "Add or change activities",
+          "removeOutcomeText": "Remove",
+          "outcomePrefixText": "Outcome: ",
+          "whoWillDeliverHeaderText": "Who will deliver this",
+          "activityHeaderText": "Activity",
+          "moveOutcomeDownText": "Move outcome down",
+          "moveOutcomeUpText": "Move outcome up",
+          "createButtonText": "Create an action plan",
+          "addOutcomeNotificationText": "You added an outcome to {{ firstName }}'s plan.",
+          "removeOutcomeNotificationText": "You removed an outcome from {{ firstName }}'s plan."
+        },
+        "removeOutcome": {
+          "pageHeader": "Confirm you want to remove this outcome from {{ firstName }}'s plan",
+          "outcomePrefixText": "Outcome: ",
+          "whoWillDeliverHeaderText": "Who will do this",
+          "activityHeaderText": "Activity",
+          "removeOutcomeWarningText": "If you remove this outcome from the plan, all activities added to this outcome will also be removed.",
+          "removeOutcomeButtonText": "Remove this outcome",
+          "cancelLinkText": "Cancel"
+        },
+        "selectANeed": {
+          "pageHeader": "Area of need",
+          "identifiedNeedsDetailsTitle": "Show the needs identified in the referral",
+          "whichNeedTitle": "Which need do you want to address?",
+          "whichNeedHint": "Select one option. You can select more needs later.",
+          "continueButtonText": "Continue"
+        },
+        "selectAnOutcome": {
+          "pageHeader": "Which outcome is appropriate for {{ firstName }}?",
+          "selectOutcomeHint": "Select one option.",
+          "continueButtonText": "Continue"
+        },
+        "activities": {
+          "page": {
+            "pageHeader": "Activities",
+            "areaOfNeedLabel": "Area of need",
+            "outcomeLabel": "Outcome",
+            "addActivityNotificationText": "You added an activity to {{ firstName }}'s plan",
+            "removeActivityNotificationText": "You removed an activity from {{ firstName }}'s plan",
+            "activityProviderHeading": "Who will deliver this",
+            "activityDetailsHeading": "Activity details",
+            "actionsHeading": "Action",
+            "changeActionText": "Change",
+            "removeActionText": "Remove",
+            "addAnotherActivityQuestion": "Do you want to add another activity?",
+            "yesOptionText": "Yes",
+            "noOptionText": "No",
+            "saveAndContinueButtonText": "Save and continue"
+          },
+          "add": {
+            "pageHeader": "Add an activity",
+            "backLink": "/referral/{{ caseReference }}/action-plan/activities",
+            "areaOfNeedLabel": "Area of need",
+            "outcomeLabel": "Outcome",
+            "activityProviderLabel": "Who will deliver the activity?",
+            "activityProviderHint": "For example, the name of the organisation or person running the activity.",
+            "activityDescriptionLabel": "What does the activity involve?",
+            "saveAndContinueButtonText": "Save and continue"
+          },
+          "remove": {
+            "pageHeader": "Are you sure you want to remove this activity?",
+            "onlyActivityHint": "This is the only activity in the action plan. If you remove it, you will need to start the action plan again.",
+            "yesOptionText": "Yes",
+            "noOptionText": "No",
+            "saveAndContinueButtonText": "Save and continue"
+          }
+        },
+        "sessionDeliveryDetails": {
+          "pageTitle": "Session details – Session delivery details",
+          "pageHeader": "Session details",
+          "continueButtonText": "Continue",
+          "saveAndContinueButtonText": "Save and continue",
+          "backLink": "/referral/{{ id }}/action-plan",
+          "editBackLink": "/referral/{{ id }}/action-plan/service-delivery-check-your-answers"
+        },
+        "changeSessionDeliveryDetails": {
+          "pageTitle": "Session details – Session delivery details",
+          "pageHeader": "Session details",
+          "continueButtonText": "Continue",
+          "saveAndContinueButtonText": "Save and continue",
+          "backLink": "/referral/{{ id }}/action-plan",
+          "editBackLink": "/referral/{{ id }}/action-plan/service-delivery-check-your-answers"
+        },
+        "risksAndAdjustments": {
+          "pageTitle": "Session details – Risks and adjustments",
+          "pageHeader": "Risks and adjustments",
+          "continueButtonText": "Continue",
+          "saveAndContinueButtonText": "Save and continue",
+          "backLink": "/referral/{{ id }}/action-plan/session-delivery-details",
+          "editBackLink": "/referral/{{ id }}/action-plan/service-delivery-check-your-answers"
+        },
+        "changeRisksAndAdjustments": {
+          "pageTitle": "Session details – Risks and adjustments",
+          "pageHeader": "Risks and adjustments",
+          "continueButtonText": "Continue",
+          "saveAndContinueButtonText": "Save and continue",
+          "backLink": "/referral/{{ id }}/action-plan/session-delivery-details",
+          "editBackLink": "/referral/{{ id }}/action-plan/service-delivery-check-your-answers"
+        },
+        "serviceEndDateCheck": {
+          "pageTitle": "Session details – Service end date",
+          "pageHeader": "Service end date",
+          "continueButtonText": "Continue",
+          "saveAndContinueButtonText": "Save and continue",
+          "backLink": "/referral/{{ id }}/action-plan/risks-and-adjustments",
+          "editBackLink": "/referral/{{ id }}/action-plan/service-delivery-check-your-answers"
+        },
+        "changeServiceEndDateCheck": {
+          "pageTitle": "Session details – Service end date",
+          "pageHeader": "Service end date",
+          "continueButtonText": "Continue",
+          "saveAndContinueButtonText": "Save and continue",
+          "backLink": "/referral/{{ id }}/action-plan/risks-and-adjustments",
+          "editBackLink": "/referral/{{ id }}/action-plan/service-delivery-check-your-answers"
+        },
+        "updateServiceEndDate": {
+          "pageTitle": "Session details – Change the service end date",
+          "pageHeader": "Change the service end date",
+          "continueButtonText": "Continue",
+          "saveAndContinueButtonText": "Save and continue",
+          "backLink": "/referral/{{ id }}/action-plan/service-end-date-check",
+          "editBackLink": "/referral/{{ id }}/action-plan/change-service-end-date-check"
+        },
+        "changeUpdateServiceEndDate": {
+          "pageTitle": "Session details – Change the service end date",
+          "pageHeader": "Change the service end date",
+          "continueButtonText": "Continue",
+          "saveAndContinueButtonText": "Save and continue",
+          "backLink": "/referral/{{ id }}/action-plan/service-end-date-check",
+          "editBackLink": "/referral/{{ id }}/action-plan/change-service-end-date-check"
+        },
+        "personInvolvement": {
+          "pageTitle": "Session details – Person involvement",
+          "continueButtonText": "Continue",
+          "saveAndContinueButtonText": "Save and continue",
+          "backLink": "/referral/{{ id }}/action-plan/service-end-date-check",
+          "editBackLink": "/referral/{{ id }}/action-plan/service-delivery-check-your-answers"
+        },
+        "changePersonInvolvement": {
+          "pageTitle": "Session details – Person involvement",
+          "continueButtonText": "Continue",
+          "saveAndContinueButtonText": "Save and continue",
+          "backLink": "/referral/{{ id }}/action-plan/service-end-date-check",
+          "editBackLink": "/referral/{{ id }}/action-plan/service-delivery-check-your-answers"
+        },
+        "serviceDeliveryCheckYourAnswers": {
+          "pageTitle": "Session details – Check your answers",
+          "pageHeader": "Check service delivery details",
+          "summaryLists": [
+            {
+              "summaryTitle": "Session details",
+              "changeHref": "/referral/{{ id }}/action-plan/change-session-delivery-details"
+            },
+            {
+              "summaryTitle": "Risks and adjustments",
+              "changeHref": "/referral/{{ id }}/action-plan/change-risks-and-adjustments"
+            },
+            {
+              "summaryTitle": "Service end date",
+              "changeHref": "/referral/{{ id }}/action-plan/change-service-end-date-check"
+            },
+            {
+              "summaryTitle": "Involvement in creating action plan",
+              "changeHref": "/referral/{{ id }}/action-plan/change-person-involvement"
+            }
+          ],
+          "submitButtonText": "Submit action plan",
+          "submitHref": "/referral/{{ id }}/action-plan/service-delivery-check-your-answers",
+          "backLink": "/referral/{{ id }}/action-plan/person-involvement"
+        }
+      },
+      "icsChangeDetails": {
+        "reason": {
+          "pageHeader": "Reason for changing the session details",
+          "serviceName": "",
+          "whoRequestedRadio": {
+            "name": "requestedBy",
+            "title": "Who requested this change?",
+            "hint": "Select one option.",
+            "items": {
+              "deliveryPartnerText": "Delivery partner",
+              "probationPractitionerText": "Probation practitioner"
+            }
+          },
+          "reasonTextarea": {
+            "name": "reasonForChange",
+            "label": "What is the reason for this change?"
+          },
+          "submitButtonText": "Save and continue",
+          "backLinkHref": "/referral/{{ id }}/ics-change-details"
+        },
+        "page": {
+          "pageHeader": "Change session details",
+          "date": {
+            "label": "What is the date of the session?",
+            "hint": "Enter a date, for example 10/7/2025, or select one from the calendar."
+          },
+          "time": {
+            "label": "What time does the session start?",
+            "hint": "Use the 12-hour clock, for example 11:30am or 3pm.",
+            "AMorPM": "AM or PM"
+          },
+          "howSessionTakePlace": {
+            "label": "How will the session take place?",
+            "hint": "Select one option.",
+            "radioItems": {
+              "phone": {
+                "text": "Phone call",
+                "label": "Why is this session not in person?"
+              },
+              "video": {
+                "text": "Video call",
+                "label": "Why is this session not in person?"
+              },
+              "prison": {
+                "text": "In-person meeting - prison establishment",
+                "label": "Select prison"
+              },
+              "probation": {
+                "text": "In-person meeting - probation office",
+                "label": "Select a probation office"
+              },
+              "somewhereElse": {
+                "text": "In-person meeting - somewhere else",
+                "addressLabels": {
+                  "address1": "Address line 1",
+                  "address2": "Address line 2 (optional)",
+                  "townOrCity": "Town or city",
+                  "county": "County (optional)",
+                  "postcode": "Postcode"
+                }
+              }
+            }
+          },
+          "informed": {
+            "label": "How was {{ firstname }} informed about the session?",
+            "hint": "Select all that apply.",
+            "selectionItems": {
+              "phone": "Phone call",
+              "text": "Text message",
+              "email": "Email",
+              "other": {
+                "text": "Other",
+                "label": "Other method of contact"
+              }
+            }
+          },
+          "submitButtonText": "Save and continue",
+          "submitHref": "/referral/{{ caseRef }}/ics-change-details",
+          "backLink": "/referral-details/{{ caseRef }}/ics-view-or-change"
+        },
+        "checkAnswers": {
+          "pageHeader": "Check the details before scheduling the ICS",
+          "submitButtonText": "Submit"
         }
       }
     },
-    "submitButtonText": "Continue",
-    "backLinkHref": "/ics-feedback/{{ id }}/did-attend"
-  },
-  "/ics-feedback/:id/how-they-tried-to-contact-the-person": {
-    "pageHeader": "How did you try to contact {{ firstname }} and what do you know about why they did not attend?",
-    "feedbackForm": {
-      "textarea": {
-        "id": "howTheyTriedToContactThePerson",
-        "name": "howTheyTriedToContactThePerson",
-        "label": "How did you try to contact {{ firstname }} and what do you know about why they did not attend?",
-        "hint": "Include when you tried to contact them and how many times.",
-        "error": "Enter how you tried to contact {{ firstname }} and what you know about why they did not attend ",
-        "rows": "5"
-      },
-      "submitButtonText": "Continue"
-    },
-    "backLink": "/ics-feedback/{{ id }}/did-attend"
-  },
-  "/referral/:id/ics-change-details/reason": {
-    "pageHeader": "Reason for changing the session details",
-    "serviceName": "",
-    "whoRequestedRadio": {
-      "name": "requestedBy",
-      "title": "Who requested this change?",
-      "hint": "Select one option.",
-      "items": {
-        "deliveryPartnerText": "Delivery partner",
-        "probationPractitionerText": "Probation practitioner"
-      }
-    },
-    "reasonTextarea": {
-      "name": "reasonForChange",
-      "label": "What is the reason for this change?"
-    },
-    "submitButtonText": "Save and continue",
-    "backLinkHref": "/referral/{{ id }}/ics-change-details"
-  },
-  "/referral/:id/appointment/schedule-ics": {
-    "pageHeader": "Schedule the ICS",
-    "date": {
-      "label": "What is the date of the session?",
-      "hint": "Enter a date, for example 10/7/2025, or select one from the calendar."
-    },
-    "time": {
-      "label": "What time does the session start?",
-      "hint": "Use the 12-hour clock, for example 11:30am or 3pm.",
-      "AMorPM": "AM or PM"
-    },
-    "howSessionTakePlace": {
-      "label": "How will the session take place?",
-      "hint": "Select one option.",
-      "radioItems": {
-        "phone": {
-          "text": "Phone call",
-          "label": "Why is this session not in person?"
-        },
-        "video": {
-          "text": "Video call",
-          "label": "Why is this session not in person?"
-        },
-        "prison": {
-          "text": "In-person meeting - prison establishment",
-          "label": "Select prison"
-        },
-        "probation": {
-          "text": "In-person meeting - probation office",
-          "label": "Select a probation office"
-        },
-        "somewhereElse": {
-          "text": "In-person meeting - somewhere else",
-          "addressLabels": {
-            "address1": "Address line 1",
-            "address2": "Address line 2 (optional)",
-            "townOrCity": "Town or city",
-            "county": "County (optional)",
-            "postcode": "Postcode"
-          }
-        }
-      }
-    },
-    "informed": {
-      "label": "How was {{ firstname }} informed about the session?",
-      "hint": "Select all that apply.",
-      "selectionItems": {
-        "phone": "Phone call",
-        "text": "Text message",
-        "email": "Email",
-        "other": {
-          "text": "Other",
-          "label": "Other method of contact"
-        }
-      }
-    },
-    "submitButtonText": "Save and continue",
-    "submitHref": "/referral/{{ caseRef }}/appointment/schedule-ics",
-    "backLink": "/progress/{{ caseRef }}"
-  },
-  "/referral/:id/create-an-appointment/appointment-details": {
-    "pageHeader": "Schedule the session",
-    "date": {
-      "label": "Session date",
-      "hint": "For example 10/7/2025"
-    },
-    "time": {
-      "label": "Start time",
-      "hint": "Use the 12-hour clock, for example 11:30am or 3pm.",
-      "AMorPM": "am or pm",
-      "hourLabel": "Hours",
-      "minuteLabel": "Minutes"
-    },
-    "howSessionTakePlace": {
-      "label": "How will the session take place?",
-      "hint": "",
-      "groupHeadings": {
-        "inPerson": "In person",
-        "remote": "Remote"
-      },
-      "radioItems": {
-        "phone": {
-          "text": "Phone call",
-          "label": "Reason session is not in person"
-        },
-        "video": {
-          "text": "Video call",
-          "label": "Reason session is not in person"
-        },
-        "prison": {
-          "text": "Prison",
-          "label": "Select prison"
-        },
-        "probation": {
-          "text": "Probation office",
-          "label": "Select probation office"
-        },
-        "somewhereElse": {
-          "text": "Another address",
-          "addressLabels": {
-            "address1": "Address line 1",
-            "address2": "Address line 2 (optional)",
-            "townOrCity": "Town or city",
-            "county": "County (optional)",
-            "postcode": "Postcode"
-          }
-        },
-        "inPerson": {
-          "text": "In person"
-        }
-      }
-    },
-    "informed": {
-      "label": "How was {{ firstname }} informed about the session?",
-      "hint": "Select all that apply.",
-      "selectionItems": {
-        "phone": "Phone call",
-        "text": "Text message",
-        "email": "Email",
-        "other": {
-          "text": "Other",
-          "label": "Other contact method"
-        }
-      }
-    },
-    "submitButtonText": "Continue",
-    "submitHref": "/referral/{{ caseRef }}/create-an-appointment/appointment-details",
-    "backLink": "/referral/{{ caseRef }}/create-an-appointment/appointment-type",
-    "pageHeaders": {
-      "ICS": "Book initial contact session (ICS)",
-      "CONTACT_SESSION": "Book contact session",
-      "PRE_RELEASE_SESSION": "Book pre-release session",
-      "POST_RELEASE_SESSION": "Book post-release session",
-      "HANDOVER_SESSION": "Book handover session"
-    },
-    "meetAtTheGate": {
-      "label": "Is this a meet at the gate session?",
-      "yes": "Yes",
-      "no": "No"
-    }
-  },
-  "/referral/:id/ics-change-details": {
-    "pageHeader": "Change session details",
-    "date": {
-      "label": "What is the date of the session?",
-      "hint": "Enter a date, for example 10/7/2025, or select one from the calendar."
-    },
-    "time": {
-      "label": "What time does the session start?",
-      "hint": "Use the 12-hour clock, for example 11:30am or 3pm.",
-      "AMorPM": "AM or PM"
-    },
-    "howSessionTakePlace": {
-      "label": "How will the session take place?",
-      "hint": "Select one option.",
-      "radioItems": {
-        "phone": {
-          "text": "Phone call",
-          "label": "Why is this session not in person?"
-        },
-        "video": {
-          "text": "Video call",
-          "label": "Why is this session not in person?"
-        },
-        "prison": {
-          "text": "In-person meeting - prison establishment",
-          "label": "Select prison"
-        },
-        "probation": {
-          "text": "In-person meeting - probation office",
-          "label": "Select a probation office"
-        },
-        "somewhereElse": {
-          "text": "In-person meeting - somewhere else",
-          "addressLabels": {
-            "address1": "Address line 1",
-            "address2": "Address line 2 (optional)",
-            "townOrCity": "Town or city",
-            "county": "County (optional)",
-            "postcode": "Postcode"
-          }
-        }
-      }
-    },
-    "informed": {
-      "label": "How was {{ firstname }} informed about the session?",
-      "hint": "Select all that apply.",
-      "selectionItems": {
-        "phone": "Phone call",
-        "text": "Text message",
-        "email": "Email",
-        "other": {
-          "text": "Other",
-          "label": "Other method of contact"
-        }
-      }
-    },
-    "submitButtonText": "Save and continue",
-    "submitHref": "/referral/{{ caseRef }}/ics-change-details",
-    "backLink": "/referral-details/{{ caseRef }}/ics-view-or-change"
-  },
-  "/referral/:id/ics-change-details/check-answers": {
-    "pageHeader": "Check the details before scheduling the ICS",
-    "submitButtonText": "Submit"
-  },
-  "/referral/task-list": {
-    "pageTitle": "Make a referral",
-    "pageHeader": "{{ fullName }}",
-    "pageSubHeader": "Make a referral",
-    "backLink": "/referral/new/find-a-person",
     "taskList": {
-      "personalDetails": {
-        "title": "About {{ firstName }}",
-        "subTasks": {
-          "confirmPersonalDetails": {
-            "text": "Confirm personal details",
-            "href": "/referral/task-list/confirm-personal-details"
+      "page": {
+        "pageTitle": "Make a referral",
+        "pageHeader": "{{ fullName }}",
+        "pageSubHeader": "Make a referral",
+        "backLink": "/referral/new/find-a-person",
+        "taskList": {
+          "personalDetails": {
+            "title": "About {{ firstName }}",
+            "subTasks": {
+              "confirmPersonalDetails": {
+                "text": "Confirm personal details",
+                "href": "/referral/task-list/confirm-personal-details"
+              },
+              "checkRiskInformation": {
+                "text": "Check risk information",
+                "href": "/referral/task-list/view-risk-summary"
+              },
+              "addSupportNeeds": {
+                "text": "Add details of any additional support needs",
+                "href": "/referral/task-list/additional-support-needs"
+              }
+            }
           },
-          "checkRiskInformation": {
-            "text": "Check risk information",
-            "href": "/referral/task-list/view-risk-summary"
+          "referralInformation": {
+            "title": "Referral information",
+            "subTasks": {
+              "selectPersonNeeds": {
+                "text": "Select the person's needs",
+                "href": "/referral/task-list/select-person-needs"
+              },
+              "selectArea": {
+                "text": "Select the area for the referral",
+                "href": "/referral/task-list/select-an-area-for-referral"
+              },
+              "additionalReferralInformation": {
+                "text": "Additional referral information",
+                "href": "/referral/task-list/service-end-date"
+              }
+            }
           },
-          "addSupportNeeds": {
-            "text": "Add details of any additional support needs",
-            "href": "/referral/task-list/additional-support-needs"
+          "contactDetails": {
+            "title": "Referral contact details",
+            "subTasks": {
+              "addContactDetails": {
+                "text": "Add details of main point of contact",
+                "href": "/referral/new/add-contact-details"
+              },
+              "checkPPDetails": {
+                "text": "Check probation practitioner's details",
+                "href": "/referral/task-list/check-probation-practitioner-details"
+              }
+            }
+          },
+          "checkAnswers": {
+            "title": "Check answers and submit",
+            "subTasks": {
+              "checkAnswersAndSubmit": {
+                "text": "Check answers and submit the referral",
+                "href": "/referral/check-referral-information"
+              }
+            }
           }
         }
       },
-      "referralInformation": {
-        "title": "Referral information",
-        "subTasks": {
-          "selectPersonNeeds": {
-            "text": "Select the person's needs",
-            "href": "/referral/task-list/select-person-needs"
-          },
-          "selectArea": {
-            "text": "Select the area for the referral",
-            "href": "/referral/task-list/select-an-area-for-referral"
-          },
-          "additionalReferralInformation": {
-            "text": "Additional referral information",
-            "href": "/referral/task-list/service-end-date"
-          }
+      "confirmPersonalDetails": {
+        "pageTitle": "Confirm personal details - Make a referral",
+        "pageHeader": "{{ name }}",
+        "pageSubHeader": "Confirm personal details",
+        "backLink": "/referral/task-list",
+        "defaultFieldValue": "Not available",
+        "personalDetailsCard": {
+          "heading": "Personal details",
+          "nameLabel": "Name",
+          "crnLabel": "CRN",
+          "prisonLabel": "Prison number",
+          "dobLabel": "Date of birth",
+          "languageLabel": "Preferred language",
+          "circumstancesLabel": "Current circumstances",
+          "disabilitiesLabel": "Disabilities"
+        },
+        "equalityMonitoringCard": {
+          "heading": "Equality monitoring",
+          "nationalityLabel": "Nationality",
+          "ethnicityLabel": "Ethnicity",
+          "religionLabel": "Religion or belief",
+          "sexLabel": "Sex"
+        },
+        "contactDetailsCard": {
+          "heading": "Contact details",
+          "phoneNumberLabel": "Phone number",
+          "mobileNumberLabel": "Mobile number",
+          "emailAddressLabel": "Email address",
+          "mainAddressLabel": "Main address"
+        },
+        "warningText": "If this information is out of date or incorrect, you must update the information in NOMIS",
+        "buttonText": "Continue"
+      },
+      "viewRiskSummary": {
+        "pageTitle": "OASys risk information",
+        "pageSubHeader": "OASys risk information",
+        "backLink": "/referral/task-list",
+        "crnLabel": "CRN",
+        "dateOfBirthLabel": "Date of birth",
+        "lastUpdatedLabel": "Last updated (OASys)",
+        "defaultFieldValue": "Not available",
+        "yesText": "Yes",
+        "noText": "No",
+        "dontKnowText": "Don't know",
+        "noAdditionalInformationText": "None",
+        "changeHref": "/referral/task-list/edit-risk-summary",
+        "whoIsAtRiskCard": {
+          "heading": "Who is at risk",
+          "changeLinkText": "Change"
+        },
+        "natureOfRiskCard": {
+          "heading": "What is the nature of the risk",
+          "changeLinkText": "Change"
+        },
+        "riskImminenceCard": {
+          "heading": "In what circumstances or situations would offending be most likely to occur?",
+          "changeLinkText": "Change"
+        },
+        "selfHarmCard": {
+          "heading": "Risk of self-harm",
+          "changeLinkText": "Change"
+        },
+        "suicideCard": {
+          "heading": "Risk of suicide",
+          "changeLinkText": "Change"
+        },
+        "hostelSettingCard": {
+          "heading": "Concerns in relation to coping in a hostel setting",
+          "changeLinkText": "Change"
+        },
+        "vulnerabilityCard": {
+          "heading": "Concerns in relation to vulnerability",
+          "changeLinkText": "Change"
+        },
+        "additionalInformationCard": {
+          "heading": "Additional information",
+          "changeLinkText": "Change"
+        },
+        "buttonText": "Save and continue"
+      },
+      "editRiskSummary": {
+        "pageTitle": "Change OASys risk information",
+        "pageHeader": "Edit OASys risk information",
+        "backLink": "/referral/task-list/view-risk-summary",
+        "crnLabel": "CRN",
+        "dateOfBirthLabel": "Date of birth",
+        "lastUpdatedLabel": "Last updated (OASys)",
+        "defaultFieldValue": "Not available",
+        "yesText": "Yes",
+        "noText": "No",
+        "dontKnowText": "Don't know",
+        "noAdditionalInformationText": "None",
+        "submitHref": "/referral/task-list/edit-risk-summary",
+        "buttonText": "Save and continue",
+        "whoIsAtRiskField": {
+          "id": "riskSummaryWhoIsAtRisk",
+          "label": "Who is at risk"
+        },
+        "natureOfRiskField": {
+          "id": "riskSummaryNatureOfRisk",
+          "label": "What is the nature of the risk"
+        },
+        "riskImminenceField": {
+          "id": "riskSummaryRiskImminence",
+          "label": "In what circumstances or situations would offending be most likely to occur?"
+        },
+        "selfHarmField": {
+          "id": "riskToSelfSelfHarm",
+          "label": "Risk of self-harm"
+        },
+        "suicideField": {
+          "id": "riskToSelfSuicide",
+          "label": "Risk of suicide"
+        },
+        "hostelSettingField": {
+          "id": "riskToSelfHostelSetting",
+          "label": "Concerns in relation to coping in a hostel setting"
+        },
+        "vulnerabilityField": {
+          "id": "riskToSelfVulnerability",
+          "label": "Concerns in relation to vulnerability"
+        },
+        "additionalInformationField": {
+          "id": "additionalInformation",
+          "label": "Additional information"
         }
       },
-      "contactDetails": {
-        "title": "Referral contact details",
-        "subTasks": {
-          "addContactDetails": {
-            "text": "Add details of main point of contact",
-            "href": "/referral/new/add-contact-details"
+      "confirmAnAreaForReferral": {
+        "backLink": "/referral/task-list/select-an-area-for-referral",
+        "pageTitle": "Make a referral to {{ areaName }} – Community Support",
+        "pageCaption": "CRN: {{ CRN }} | Date of birth: {{ DOB }}",
+        "defaultFieldValue": "Not available",
+        "cardHeading": "Make a Community Support referral to {{ areaName }}",
+        "deliveryPartnerLabel": "Delivery partner",
+        "pdusLabel": "PDUs in this area",
+        "buttonText": "Save and continue",
+        "selectDifferentAreaText": "Select a different area",
+        "selectDifferentAreaHref": "/referral/task-list/select-an-area-for-referral"
+      },
+      "selectPersonNeeds": {
+        "pageTitle": "Select what needs the referral should focus on",
+        "pageHeader": "Select what needs the referral should focus on",
+        "hint": "Select all that apply.",
+        "checkboxes": {
+          "accommodationLabel": "Accommodation",
+          "accommodationHint": "Give details about {{ firstName }}'s accommodation needs",
+          "employmentLabel": "Employment and education",
+          "employmentHint": "Give details about {{ firstName }}'s employment and education needs",
+          "financesLabel": "Finances",
+          "financesHint": "Give details about {{ firstName }}'s finance needs",
+          "relationshipsLabel": "Personal relationships and community",
+          "relationshipsHint": "Give details about {{ firstName }}'s personal relationships and community needs",
+          "drugUseLabel": "Drug use",
+          "drugUseHint": "Give details about {{ firstName }}'s drug use needs",
+          "alcoholUseLabel": "Alcohol use",
+          "alcoholUseHint": "Give details about {{ firstName }}'s alcohol use needs",
+          "healthLabel": "Health and wellbeing",
+          "healthHint": "Give details about {{ firstName }}'s health and wellbeing needs",
+          "thinkingLabel": "Thinking, behaviours and attitudes",
+          "thinkingHint": "Give details about {{ firstName }}'s thinking, behaviours and attitudes needs"
+        },
+        "submitButton": "Save and continue",
+        "backLink": "/referral/task-list"
+      },
+      "additionalSupportNeeds": {
+        "pageTitle": "What additional support do they need to attend or take part in sessions?",
+        "header": "What does {{ firstName }} need support with to attend or take part in sessions?",
+        "hint": "Select all that apply.",
+        "items": [
+          {
+            "label": "Physical health",
+            "hint": "For example, physical disabilities or illnesses that affect their daily life.",
+            "detailsLabel": "Give details of any physical health issues and how the delivery partner can support {{ firstName }}"
           },
-          "checkPPDetails": {
-            "text": "Check probation practitioner's details",
-            "href": "/referral/task-list/check-probation-practitioner-details"
+          {
+            "label": "Mental or emotional health",
+            "hint": "For example, depression, anxiety, behavioural issues or learning difficulties.",
+            "detailsLabel": "Give details of any mental or emotional health issues and how the delivery partner can support {{ firstName }}"
+          },
+          {
+            "label": "Neurodiversity",
+            "hint": "For example, autism, ADHD or dyslexia.",
+            "detailsLabel": "Give details of any conditions and how the delivery partner can support {{ firstName }}"
+          },
+          {
+            "label": "Location and travel",
+            "hint": "For example, if they live in a remote area or do not have access to transport.",
+            "detailsLabel": "Give details of issues regarding travel or location and how this may affect when and where {{ firstName }} can attend sessions"
+          },
+          {
+            "label": "Caring responsibilities",
+            "hint": "For example, if they care for a child which may limit when they can attend sessions.",
+            "detailsLabel": "Give details of any caring responsibilities and how this may affect when and where {{ firstName }} can attend sessions "
+          },
+          {
+            "label": "Employment responsibilities",
+            "hint": "For example, if any work they do may limit when they can attend sessions.",
+            "detailsLabel": "Give details of any employment responsibilities and how this may affect when and where {{ firstName }} can attend sessions"
+          },
+          {
+            "label": "Diversity",
+            "hint": "For example, if they have any additional needs regarding their ethnicity, religion, gender identity or sexual orientation.",
+            "detailsLabel": "Give details of any additional needs {{ firstName }} has regarding diversity and how the delivery partner can support them "
+          },
+          {
+            "label": "Anything else",
+            "hint": "This includes any other support needs the delivery partner should know about.",
+            "detailsLabel": "Give details of any other needs and how the delivery partner can support {{ firstName }}"
+          }
+        ],
+        "defaultItemLabel": "{{ firstName }} does not need any additional support",
+        "button": "Save and continue",
+        "backlink": "/referral/task-list"
+      },
+      "needsAnInterpreter": {
+        "pageTitle": "Do they need an interpreter?",
+        "pageHeader": "Does {{ name }} need an interpreter?",
+        "yesOptionLabel": "Yes",
+        "yesCoditional": "What language does {{ name }} need an interpreter for?",
+        "noOptionLabel": "No",
+        "button": "Save and continue",
+        "backlink": "/referral/task-list/additional-support-needs"
+      },
+      "serviceEndDate": {
+        "pageTitle": "What date does the service need to be completed by?",
+        "pageHeader": "What date does the service need to be completed by?",
+        "dateHint": "This date must allow enough time to deliver the service and complete the end of service report. Do not use the licence end date or sentence end date.",
+        "reasonLabel": "Why does it need to be completed by this date?",
+        "backLink": "/referral/task-list",
+        "continueButton": "Save and continue",
+        "updateError": "Something has gone wrong updating the service end date"
+      },
+      "serviceDays": {
+        "pageTitle": "How many days will you use for this service?",
+        "pageHeader": "How many days will you use for this service?",
+        "bodyText1": "Enter the maximum number of days you want to use for this service. Any unused days will be given back. For community orders or suspended sentences, consider how many RAR days to allocate.",
+        "bodyText2": "Sessions delivered in the community are enforceable.",
+        "backLink": "/referral/task-list/service-end-date",
+        "continueButton": "Save and continue"
+      },
+      "offenceSentence": {
+        "pageTitle": "Check offence and sentence information",
+        "crnLabel": "CRN",
+        "dateOfBirthLabel": "Date of birth",
+        "pageSubHeader": "Check offence and sentence information",
+        "bodyText": "This is the offence associated with this referral.",
+        "offenceSentenceCard": {
+          "heading": "Offence and sentence information",
+          "offenceLabel": "Offence",
+          "offenceSubCategoryLabel": "Offence subcategory",
+          "outcomeLabel": "Outcome",
+          "sentenceEndDateLabel": "Sentence end date",
+          "expectedReleaseDateLabel": "Expected release date"
+        },
+        "hasLicenceConditionsOrZonesLabel": "Are there any licence conditions or exclusion zones the delivery partner should know about?",
+        "yesOptionLabel": "Yes",
+        "licenceConditionsOrZonesDetailsLabel": "Give details of all relevant licence conditions or exclusion zones",
+        "noOptionLabel": "No",
+        "notAvailableText": "Not available",
+        "backLink": "/referral/task-list/service-days",
+        "continueButton": "Save and continue",
+        "submitHref": "/referral/task-list/offence-sentence"
+      },
+      "selectAnAreaForReferral": {
+        "pageTitle": "Select the area you want to make a referral to",
+        "areaLabel": "Select the area you want to make a referral to",
+        "backLinkText": "Back",
+        "backLinkHref": "/referral/task-list",
+        "buttonText": "Continue",
+        "heading": "{{ personName }}",
+        "pageCaption": "CRN: {{ CRN }} | Date of birth: {{ DOB }}"
+      },
+      "checkProbationPractitionerDetails": {
+        "backLinkText": "Back",
+        "backLinkHref": "/referral/task-list",
+        "buttonText": "Save and continue",
+        "heading": "{{ personName }}",
+        "pageCaption": "CRN: {{ CRN }} | Date of birth: {{ DOB }}",
+        "subHeading": "Check probation practitioner's details",
+        "insetText": "These contact details will be sent to the delivery partner. They should also be updated in NDelius.",
+        "nameLabel": "Name",
+        "emailAddressLabel": "Email address",
+        "jobRoleLabel": "Job role",
+        "pduLabel": "PDU",
+        "probationOfficeLabel": "Probation office",
+        "teamPhoneNumberLabel": "Team phone number",
+        "radioQuestion": "Are these details correct?",
+        "radioYes": "Yes",
+        "radioNo": "No"
+      },
+      "additionalInformationForTheDeliveryPartner": {
+        "pageTitle": "Is there anything else the delivery partner should know?",
+        "pageHeader": "Is there anything else the delivery partner should know about {{ firstName }}?",
+        "detailsLink": "What you should consider and include",
+        "detailsHeader": "You should consider letting the delivery partner know if:",
+        "detailsItems": [
+          "there are any relevant registration flags on NDelius, for example, sexual or violent offences, racist behaviour or MAPPA",
+          "{{ firstName }} is a victim or perpetrator of domestic abuse or modern slavery",
+          "it is safe to contact {{ firstName }}, and if not, what the preferred contact methods are",
+          "there are any risks to staff, not already mentioned in the referral",
+          "you think there is anything else important they should know"
+        ],
+        "yesOptionLabel": "Yes",
+        "yesConditional": "Give details of anything else the delivery partner should know",
+        "noOptionLabel": "No",
+        "button": "Save and continue",
+        "backlink": "/referral/task-list/offence-sentence"
+      }
+    }
+  },
+  "unassignedCases": {
+    "pageHeader": "Cases",
+    "unassignedSubNavTitle": "Unassigned cases",
+    "inProgressSubNavTitle": "Cases in progress",
+    "subNavItems": [
+      {
+        "id": "unassigned",
+        "title": "Unassigned",
+        "href": "/unassigned-cases"
+      },
+      {
+        "id": "inProgress",
+        "title": "In progress",
+        "href": "/cases-in-progress"
+      }
+    ],
+    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
+    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
+    "noCasesMessage": "There are no {0} cases to view."
+  },
+  "casesInProgress": {
+    "pageHeader": "Cases",
+    "unassignedSubNavTitle": "Unassigned cases",
+    "inProgressSubNavTitle": "Cases in progress",
+    "subNavItems": [
+      {
+        "id": "unassigned",
+        "title": "Unassigned",
+        "href": "/unassigned-cases"
+      },
+      {
+        "id": "inProgress",
+        "title": "In progress",
+        "href": "/cases-in-progress"
+      }
+    ],
+    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
+    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
+    "noCasesMessage": "There are no {0} cases to view."
+  },
+  "referralDetails": {
+    "id": {
+      "page": {
+        "pageHeader": "Referral for ",
+        "pageSubHeader": "Case details",
+        "backLink": "/unassigned-cases",
+        "defaultFieldValue": "Not available",
+        "successBannerHeading": "Case assigned",
+        "withdrawReferralLinkText": "Withdraw referral",
+        "alerts": {
+          "withdrawalCompletedTitle": "Referral withdrawn",
+          "withdrawalAlreadyCompletedBySameUserTitle": "You have already withdrawn this referral",
+          "withdrawalAlreadyCompletedByOtherUserTitle": "Referral already withdrawn by another user",
+          "withdrawnInformationTitle": "Referral withdrawn on {{ date }}"
+        },
+        "personalDetailsCard": {
+          "heading": "Personal details",
+          "nameLabel": "Name",
+          "crnLabel": "CRN",
+          "dobLabel": "Date of birth",
+          "languageLabel": "Preferred language",
+          "disabilitiesLabel": "Disabilities"
+        },
+        "equalityMonitoringCard": {
+          "heading": "Equality monitoring",
+          "ethnicityLabel": "Ethnicity",
+          "religionLabel": "Religion or belief",
+          "sexLabel": "Sex"
+        },
+        "contactDetailsCard": {
+          "heading": "Contact details",
+          "phoneNumberLabel": "Phone number",
+          "mobileNumberLabel": "Mobile number",
+          "emailAddressLabel": "Email address",
+          "mainAddressLabel": "Main address"
+        },
+        "referralDetailsCard": {
+          "heading": "Referral details",
+          "referralDateLabel": "Referral date",
+          "assignedToLabel": "Assigned to",
+          "assignedToDefaultValue": "Unassigned",
+          "link": "Assign to caseworker",
+          "linkChange": "Change",
+          "targetServiceCompletionDateLabel": "What date does the service need to be completed by?",
+          "targetServiceCompletionDateReasonLabel": "Why does it need to be completed by this date?"
+        },
+        "icsDetails": {
+          "heading": "ICS details",
+          "changeLink": "Change",
+          "dateLabel": "Date",
+          "startTimeLabel": "Start time",
+          "methodLabel": "Method",
+          "reasonLabel": "Reason session is not in person",
+          "locationLabel": "Location",
+          "informedLabel": "How {{ name }} was informed about the session"
+        },
+        "reasonForChange": {
+          "heading": "Reason for change",
+          "whoRequestedLabel": "Who requested the change",
+          "reasonLabel": "Reason for the change"
+        },
+        "links": {
+          "change": "/referral/{{ id }}/ics-change-details",
+          "back": "/progress/{{ id }}"
+        }
+      },
+      "icsViewOrChange": {
+        "title": "View or change session details",
+        "heading": "View or change session details"
+      },
+      "changedIcsDetails": {
+        "id": {
+          "title": "View session details",
+          "heading": "View session details"
+        }
+      }
+    }
+  },
+  "progress": {
+    "id": {
+      "pageHeader": "Referral for",
+      "actionPlanTitle": "Action plan",
+      "actionPlanStatusLabel": "Status",
+      "actionPlanActionsLabel": "Actions",
+      "actionPlanLinkText": "View action plan",
+      "progressActiveColumnHeaders": ["Date and time", "Status", "Action"],
+      "progressInactiveColumnHeaders": ["Status", "Action"],
+      "historySummary": "View ICS history"
+    }
+  },
+  "icsFeedback": {
+    "id": {
+      "didSessionTakePlace": {
+        "submitButtonText": "Continue",
+        "pageHeaders": {
+          "PHONE": "Did the session take place by phone call?",
+          "VIDEO": "Did the session take place by video call?",
+          "IN_PERSON_PROBATION_OFFICE": "Did the session take place in person at this location?",
+          "IN_PERSON_OTHER_LOCATION": "Did the session take place in person at this location?",
+          "default": "Did the session take place?"
+        },
+        "videoCallReasonLabel": "Why was this session not in person?",
+        "phoneCallReasonLabel": "Why was this session not in person?",
+        "probationOfficeSelectBlankText": "Select a probation office",
+        "probationOfficeSelectLabel": "Select a probation office",
+        "addressLine1Label": "Address line 1",
+        "addressLine2Label": "Address line 2 (optional)",
+        "townOrCityLabel": "Town or city",
+        "countyLabel": "County (optional)",
+        "postcodeLabel": "Postcode",
+        "howSessionLegend": "How did the session take place?",
+        "howSessionHint": "Select one option.",
+        "phoneCallOptionText": "Phone call",
+        "videoCallOptionText": "Video call",
+        "probationOfficeOptionText": "In-person meeting - probation office",
+        "somewhereElseOptionText": "In-person meeting - somewhere else",
+        "yesText": "Yes",
+        "noText": "No"
+      },
+      "attendance": {
+        "pageHeader": "ICS attendance",
+        "description": "The date and time of the session are a permanent record of where this person was. If the session started late, you must record this as part of the feedback.",
+        "appointmentDetails": {
+          "dateLabel": "Date",
+          "startTimeLabel": "Start time"
+        },
+        "attendanceForm": {
+          "happenedRadios": {
+            "id": "happened",
+            "heading": "Did the ICS happen?",
+            "hint": "The session happened if something was delivered. ",
+            "yesLabel": "Yes",
+            "noLabel": "No"
+          },
+          "submitButtonText": "Continue"
+        },
+        "backLink": "/progress/{{ id }}"
+      },
+      "didAttend": {
+        "appointmentDetails": {
+          "dateLabel": "Date",
+          "startTimeLabel": "Start time"
+        },
+        "attendanceForm": {
+          "didAttendRadios": {
+            "id": "didAttend",
+            "heading": "Did {{ firstname }} come to the ICS?",
+            "yesLabel": "Yes",
+            "noLabel": "No"
+          },
+          "submitButtonText": "Continue"
+        },
+        "backLink": "/ics-feedback/{{ id }}/attendance"
+      },
+      "sessionFeedback": {
+        "pageTitle": "Session feedback – ICS feedback – Community Support",
+        "pageHeader": "Session feedback",
+        "feedbackForm": {
+          "whatDidYouDoTextarea": {
+            "id": "whatDidYouDo",
+            "name": "whatDidYouDo",
+            "label": "What did you do in the session?",
+            "hint": "Give details about what you did, anything that was achieved and what came out of the session.",
+            "nothingEnteredError": "Enter what you did in the session",
+            "tooManyCharactersError": "What you did in the session must be {{ maxCharacters }} characters or less",
+            "rows": "5"
+          },
+          "behaviourTextarea": {
+            "id": "behaviour",
+            "name": "behaviour",
+            "label": "What was {{ firstname }}’s engagement like during the session?",
+            "hint": "Give details about how engaged they seemed and if there was any progress or positive change.",
+            "nothingEnteredError": "Enter what {{ firstname }}’s engagement was like during the session",
+            "tooManyCharactersError": "Details about {{ firstname }}’s engagement during the session must be {{ maxCharacters }} characters or less",
+            "rows": "5"
+          },
+          "strengthsIdentifiedTextarea": {
+            "id": "strengthsIdentified",
+            "name": "strengthsIdentified",
+            "label": "What strengths did you identify?",
+            "hint": "Give details of any skills, experience and capabilities that can support the delivery of the service.",
+            "nothingEnteredError": "Enter what strengths you identified",
+            "tooManyCharactersError": "Strengths you identified must be {{ maxCharacters }} characters or less",
+            "rows": "5"
+          },
+          "submitButtonText": "Continue"
+        },
+        "backLink": "/ics-feedback/{{ id }}/session-details"
+      },
+      "issuesOrConcerns": {
+        "pageTitle": "Issues or concerns – ICS feedback – Community Support",
+        "pageHeader": "Issues or concerns",
+        "issuesOrConcernsLabel": "What issues or concerns did you identify?",
+        "issuesOrConcernsHint": "Give details of anything that concerned you about {{ firstname }}, or any issues they raised that might impact their engagement in future sessions.",
+        "submitButtonText": "Continue",
+        "backLinkHref": "/ics-feedback/{{ id }}/session-feedback"
+      },
+      "identifiedAdditionalNeeds": {
+        "pageTitle": "Additional support needs – ICS feedback – Community Support",
+        "pageHeader": "Additional support needs",
+        "pageSubHeader": "These are the support needs identified in {{ firstname }}’s referral.",
+        "didYouIdentifyRadio": {
+          "name": "didYouIdentify",
+          "title": "Did you identify anything else {{ firstname }} needs support with?",
+          "items": {
+            "yesText": "Yes",
+            "noText": "No",
+            "identifyDetailsName": "identifyDetails",
+            "identifyDetailsLabel": "Give details of anything else {{ firstname }} needs support with"
+          }
+        },
+        "cardTitle": "Additional support needs already identified",
+        "supportNeedsTitle": {
+          "physicalHealth": "Physical Health",
+          "mentalEmotionalHealth": "Mental & Emotional Health",
+          "neurodiversity": "Neurodiversity",
+          "locationTravel": "Location & Travel",
+          "caringResponsibilities": "Caring Responsibilities",
+          "employmentResponsibilities": "Employment Responsibilities",
+          "diversity": "Diversity",
+          "anythingElse": "Anything Else"
+        },
+        "submitButtonText": "Continue",
+        "backLinkHref": "/ics-feedback/{{ id }}/issues-or-concerns"
+      },
+      "nextSteps": {
+        "pageTitle": "Next steps – ICS feedback – Community Support ",
+        "pageHeader": "Next steps",
+        "plannedForNextSessionLabel": "What do you have planned for the next session?",
+        "plannedForNextSessionHint": "Give details about what you plan to do when you next meet with {{ firstname }}.",
+        "actionsBeforeNextSessionLabel": "What actions do you and {{ firstname }} have before the next session takes place?",
+        "actionsBeforeNextSessionHint": "Give details of any actions or next steps you and {{ firstname }} have agreed to do ahead of your next session.",
+        "submitButtonText": "Continue",
+        "backLinkHref": "/ics-feedback/{{ id }}/identified-additional-needs"
+      },
+      "session": {
+        "id": {
+          "pageTitle": "View session feedback",
+          "pageHeader": "View session feedback",
+          "backLink": "/progress/{{ id }}",
+          "noneText": "None",
+          "yesText": "Yes",
+          "noText": "No",
+          "appointmentDetails": {
+            "title": "Appointment details",
+            "currentCaseworker": "Current caseworker",
+            "currentCaseworkers": "Current caseworkers",
+            "feedbackSubmittedBy": "Feedback submitted by",
+            "date": "Date",
+            "startTime": "Start time",
+            "method": "Method",
+            "reasonSessionNotInPerson": "Reason session was not in-person",
+            "location": "Location",
+            "howPersonWasInformed": "How {{ firstname }} was informed about the session",
+            "methodDisplay": {
+              "PHONE_CALL": "Phone call",
+              "VIDEO_CALL": "Video call",
+              "IN_PERSON_PROBATION_OFFICE": "In person (probation office)",
+              "IN_PERSON_OTHER_LOCATION": "In person (other location)"
+            },
+            "sessionCommunicationDisplay": {
+              "informedByPhone": "Phone call",
+              "informedByTextMessage": "Text message",
+              "informedByEmail": "Email"
+            }
+          },
+          "sessionDetails": {
+            "title": "Session details",
+            "wasPersonLate": "Was {{ firstname }} late?",
+            "whyWereTheyLate": "Why {{ firstname }} was late",
+            "duration": "Session duration",
+            "notApplicable": "Not applicable because the session did not happen"
+          },
+          "recordSessionAttendance": {
+            "title": "Record session attendance",
+            "didSessionHappen": "Did the session happen?",
+            "didPersonAttend": "Did {{ firstname }} come to the appointment?"
+          },
+          "sessionFeedback": {
+            "title": "Session feedback",
+            "attended": {
+              "whatHappened": "What happened in the session",
+              "behaviour": "How {{ firstname }} behaved",
+              "strengths": "Strengths identified"
+            },
+            "sessionDidNotHappen": {
+              "whySessionDidNotHappen": "Why the session did not happen"
+            },
+            "didNotAttend": {
+              "triedToContactDidNotAttend": "Details about how you tried to contact {{ firstname }} and why they did not attend"
+            }
+          },
+          "didNotHappenReasonLabels": {
+            "serviceProviderIssue": "Service provider issue",
+            "referralCouldNotTakePart": "{{ firstname }} could not take part",
+            "referralDidNotComply": "{{ firstname }} did not comply"
+          },
+          "issuesAndConcerns": {
+            "title": "Issues or concerns",
+            "identified": "Issues or concerns identified"
+          },
+          "additionalSupportNeeds": {
+            "title": "Needs and additional support",
+            "identified": "New support needs identified"
+          },
+          "nextSteps": {
+            "title": "Next steps",
+            "plannedForNextSession": "Planned for the next session",
+            "actionsBeforeNextSession": "Actions before the next session"
           }
         }
       },
       "checkAnswers": {
-        "title": "Check answers and submit",
-        "subTasks": {
-          "checkAnswersAndSubmit": {
-            "text": "Check answers and submit the referral",
-            "href": "/referral/check-referral-information"
+        "pageHeader": "Check your answers before submitting feedback",
+        "summaryLists": [
+          {
+            "summaryTitle": "Record session attendance",
+            "rows": [
+              {
+                "text": "Did the session happen?",
+                "hint": "Whether the session happened",
+                "changeHref": "/ics-feedback/caseRefId/attendance"
+              },
+              {
+                "text": "Did {{ firstname }} come to the appointment?",
+                "hint": "Did {{ firstname }} come to the appointment",
+                "changeHref": "/ics-feedback/caseRefId/did-attend"
+              },
+              {
+                "text": "How the session took place",
+                "hint": "How the session took place",
+                "changeHref": "/ics-feedback/caseRefId/did-session-take-place"
+              },
+              {
+                "text": "Location",
+                "hint": "Location of session",
+                "changeHref": "/ics-feedback/caseRefId/did-session-take-place"
+              },
+              {
+                "text": "Reason session was not in person",
+                "hint": "Why was the session not in person",
+                "changeHref": "/ics-feedback/caseRefId/did-session-take-place"
+              }
+            ]
+          },
+          {
+            "summaryTitle": "Session details",
+            "rows": [
+              {
+                "text": "Was {{ firstname }} late?",
+                "hint": "If {{ firstname }} was late",
+                "changeHref": "/ics-feedback/caseRefId/session-details"
+              },
+              {
+                "text": "Why {{ firstname }} was late",
+                "hint": "Why {{ firstname }} was late",
+                "changeHref": "/ics-feedback/caseRefId/session-details"
+              },
+              {
+                "text": "Session duration",
+                "hint": "How long did the session last",
+                "changeHref": "/ics-feedback/caseRefId/session-details"
+              }
+            ]
+          },
+          {
+            "summaryTitle": "Session feedback",
+            "rows": [
+              {
+                "text": "What happened in the session",
+                "hint": "What happened in the session",
+                "changeHref": "/ics-feedback/caseRefId/session-feedback"
+              },
+              {
+                "text": "Why the session did not happen",
+                "hint": "Why the session did not happen",
+                "changeHref": "/ics-feedback/caseRefId/why-did-the-session-not-happen"
+              },
+              {
+                "text": "Details about how you tried to contact {{ firstname }} and why they did not attend ",
+                "hint": "details about how you tried to contact them and why they did not attend’",
+                "changeHref": "/ics-feedback/caseRefId/how-they-tried-to-contact-the-person"
+              },
+              {
+                "text": "What was {{ firstname }}'s engagement like during the session?",
+                "hint": "What was {{ firstname }}'s engagement like during the session?",
+                "changeHref": "/ics-feedback/caseRefId/session-feedback"
+              },
+              {
+                "text": "What strengths did you identify?",
+                "hint": "What strengths did you identify?",
+                "changeHref": "/ics-feedback/caseRefId/session-feedback"
+              }
+            ]
+          },
+          {
+            "summaryTitle": "Issues or concerns",
+            "rows": [
+              {
+                "text": "What issues or concerns did you identify?",
+                "hint": "What issues or concerns did you identify?",
+                "changeHref": "/ics-feedback/caseRefId/issues-or-concerns"
+              }
+            ]
+          },
+          {
+            "summaryTitle": "Additional support needs",
+            "rows": [
+              {
+                "text": "New support needs identified",
+                "hint": "New support needs identified",
+                "changeHref": "/ics-feedback/caseRefId/identified-additional-needs"
+              }
+            ]
+          },
+          {
+            "summaryTitle": "Next steps",
+            "rows": [
+              {
+                "text": "What do you have planned for the next session?",
+                "hint": "What do you have planned for the next session?",
+                "changeHref": "/ics-feedback/caseRefId/next-steps"
+              },
+              {
+                "text": "What actions do you and {{ firstname }} have before the next session takes place?",
+                "hint": "What actions do you and {{ firstname }} have before the next session takes place?",
+                "changeHref": "/ics-feedback/caseRefId/next-steps"
+              }
+            ]
           }
-        }
+        ],
+        "didNotHappenReasonLabels": {
+          "serviceProviderIssue": "Service provider issue",
+          "referralCouldNotTakePart": "{{ firstname }} could not take part",
+          "referralDidNotComply": "{{ firstname }} did not comply"
+        },
+        "submitButtonText": "Submit feedback",
+        "submitHref": "/ics-feedback/caseRefId/submit",
+        "didNotAttendbackLinkHref": "/ics-feedback/caseRefId/how-they-tried-to-contact-the-person",
+        "noSessionbackLinkHref": "/ics-feedback/caseRefId/why-did-the-session-not-happen",
+        "attendedBackLinkHref": "/ics-feedback/caseRefId/next-steps"
+      },
+      "sessionDetails": {
+        "pageHeader": "Session details",
+        "appointmentDetails": {
+          "dateLabel": "Date",
+          "startTimeLabel": "Start time"
+        },
+        "wasPersonLateRadio": {
+          "name": "wasPersonLate",
+          "title": "Was {{ firstname }} late?",
+          "items": {
+            "yesText": "Yes",
+            "noText": "No",
+            "lateReasonName": "lateReason",
+            "lateReasonLabel": "Why was {{ firstname }} late?"
+          }
+        },
+        "sessionDurationTimeInput": {
+          "id": "sessionDuration",
+          "fieldset": {
+            "id": "fieldset-sessionDuration",
+            "text": "How long did the session last?"
+          },
+          "items": {
+            "hoursName": "hours",
+            "hoursLabel": "Hour",
+            "minutesName": "minutes",
+            "minutesLabel": "Minute"
+          }
+        },
+        "submitButtonText": "Continue",
+        "backLinkHref": "/ics-feedback/{{ id }}/did-session-take-place"
+      },
+      "whyDidTheSessionNotHappen": {
+        "whyDidSessionNotHappenRadio": {
+          "question": "Why did the session not happen?",
+          "name": "whyDidSessionNotHappen",
+          "items": {
+            "serviceProviderIssueText": "Issue with service provider or logistics",
+            "serviceProviderIssueHint": "For example, room booking problem or technical issue",
+            "serviceProviderIssueDetails": {
+              "name": "serviceProviderIssueDetails",
+              "label": "Give details of any issues that meant the session could not happen."
+            },
+            "referralCouldNotTakePartText": "{{ firstname }} could not take part",
+            "referralCouldNotTakePartHint": "For example, they were ill",
+            "referralCouldNotTakePartDetails": {
+              "name": "referralCouldNotTakePartDetails",
+              "label": "Give details about why they were unable to take part, including what happened and who was involved."
+            },
+            "referralDidNotComplyText": "{{ firstname }} did not comply",
+            "referralDidNotComplyHint": "For example, they were disruptive",
+            "referralDidNotComplyDetails": {
+              "name": "referralDidNotComplyDetails",
+              "label": "Give details about why they did not comply. For example, their behaviour and how they were unable to take part."
+            }
+          }
+        },
+        "submitButtonText": "Continue",
+        "backLinkHref": "/ics-feedback/{{ id }}/did-attend"
+      },
+      "howTheyTriedToContactThePerson": {
+        "pageHeader": "How did you try to contact {{ firstname }} and what do you know about why they did not attend?",
+        "feedbackForm": {
+          "textarea": {
+            "id": "howTheyTriedToContactThePerson",
+            "name": "howTheyTriedToContactThePerson",
+            "label": "How did you try to contact {{ firstname }} and what do you know about why they did not attend?",
+            "hint": "Include when you tried to contact them and how many times.",
+            "error": "Enter how you tried to contact {{ firstname }} and what you know about why they did not attend ",
+            "rows": "5"
+          },
+          "submitButtonText": "Continue"
+        },
+        "backLink": "/ics-feedback/{{ id }}/did-attend"
       }
     }
-  },
-  "/referral/task-list/confirm-personal-details": {
-    "pageTitle": "Confirm personal details - Make a referral",
-    "pageHeader": "{{ name }}",
-    "pageSubHeader": "Confirm personal details",
-    "backLink": "/referral/task-list",
-    "defaultFieldValue": "Not available",
-    "personalDetailsCard": {
-      "heading": "Personal details",
-      "nameLabel": "Name",
-      "crnLabel": "CRN",
-      "prisonLabel": "Prison number",
-      "dobLabel": "Date of birth",
-      "languageLabel": "Preferred language",
-      "circumstancesLabel": "Current circumstances",
-      "disabilitiesLabel": "Disabilities"
-    },
-    "equalityMonitoringCard": {
-      "heading": "Equality monitoring",
-      "nationalityLabel": "Nationality",
-      "ethnicityLabel": "Ethnicity",
-      "religionLabel": "Religion or belief",
-      "sexLabel": "Sex"
-    },
-    "contactDetailsCard": {
-      "heading": "Contact details",
-      "phoneNumberLabel": "Phone number",
-      "mobileNumberLabel": "Mobile number",
-      "emailAddressLabel": "Email address",
-      "mainAddressLabel": "Main address"
-    },
-    "warningText": "If this information is out of date or incorrect, you must update the information in NOMIS",
-    "buttonText": "Continue"
-  },
-  "/referral/task-list/view-risk-summary": {
-    "pageTitle": "OASys risk information",
-    "pageSubHeader": "OASys risk information",
-    "backLink": "/referral/task-list",
-    "crnLabel": "CRN",
-    "dateOfBirthLabel": "Date of birth",
-    "lastUpdatedLabel": "Last updated (OASys)",
-    "defaultFieldValue": "Not available",
-    "yesText": "Yes",
-    "noText": "No",
-    "dontKnowText": "Don't know",
-    "noAdditionalInformationText": "None",
-    "changeHref": "/referral/task-list/edit-risk-summary",
-    "whoIsAtRiskCard": {
-      "heading": "Who is at risk",
-      "changeLinkText": "Change"
-    },
-    "natureOfRiskCard": {
-      "heading": "What is the nature of the risk",
-      "changeLinkText": "Change"
-    },
-    "riskImminenceCard": {
-      "heading": "In what circumstances or situations would offending be most likely to occur?",
-      "changeLinkText": "Change"
-    },
-    "selfHarmCard": {
-      "heading": "Risk of self-harm",
-      "changeLinkText": "Change"
-    },
-    "suicideCard": {
-      "heading": "Risk of suicide",
-      "changeLinkText": "Change"
-    },
-    "hostelSettingCard": {
-      "heading": "Concerns in relation to coping in a hostel setting",
-      "changeLinkText": "Change"
-    },
-    "vulnerabilityCard": {
-      "heading": "Concerns in relation to vulnerability",
-      "changeLinkText": "Change"
-    },
-    "additionalInformationCard": {
-      "heading": "Additional information",
-      "changeLinkText": "Change"
-    },
-    "buttonText": "Save and continue"
-  },
-  "/referral/task-list/edit-risk-summary": {
-    "pageTitle": "Change OASys risk information",
-    "pageHeader": "Edit OASys risk information",
-    "backLink": "/referral/task-list/view-risk-summary",
-    "crnLabel": "CRN",
-    "dateOfBirthLabel": "Date of birth",
-    "lastUpdatedLabel": "Last updated (OASys)",
-    "defaultFieldValue": "Not available",
-    "yesText": "Yes",
-    "noText": "No",
-    "dontKnowText": "Don't know",
-    "noAdditionalInformationText": "None",
-    "submitHref": "/referral/task-list/edit-risk-summary",
-    "buttonText": "Save and continue",
-    "whoIsAtRiskField": {
-      "id": "riskSummaryWhoIsAtRisk",
-      "label": "Who is at risk"
-    },
-    "natureOfRiskField": {
-      "id": "riskSummaryNatureOfRisk",
-      "label": "What is the nature of the risk"
-    },
-    "riskImminenceField": {
-      "id": "riskSummaryRiskImminence",
-      "label": "In what circumstances or situations would offending be most likely to occur?"
-    },
-    "selfHarmField": {
-      "id": "riskToSelfSelfHarm",
-      "label": "Risk of self-harm"
-    },
-    "suicideField": {
-      "id": "riskToSelfSuicide",
-      "label": "Risk of suicide"
-    },
-    "hostelSettingField": {
-      "id": "riskToSelfHostelSetting",
-      "label": "Concerns in relation to coping in a hostel setting"
-    },
-    "vulnerabilityField": {
-      "id": "riskToSelfVulnerability",
-      "label": "Concerns in relation to vulnerability"
-    },
-    "additionalInformationField": {
-      "id": "additionalInformation",
-      "label": "Additional information"
-    }
-  },
-  "/referral/task-list/confirm-an-area-for-referral": {
-    "backLink": "/referral/task-list/select-an-area-for-referral",
-    "pageTitle": "Make a referral to {{ areaName }} – Community Support",
-    "pageCaption": "CRN: {{ CRN }} | Date of birth: {{ DOB }}",
-    "defaultFieldValue": "Not available",
-    "cardHeading": "Make a Community Support referral to {{ areaName }}",
-    "deliveryPartnerLabel": "Delivery partner",
-    "pdusLabel": "PDUs in this area",
-    "buttonText": "Save and continue",
-    "selectDifferentAreaText": "Select a different area",
-    "selectDifferentAreaHref": "/referral/task-list/select-an-area-for-referral"
-  },
-  "/referral/task-list/select-person-needs": {
-    "pageTitle": "Select what needs the referral should focus on",
-    "pageHeader": "Select what needs the referral should focus on",
-    "hint": "Select all that apply.",
-    "checkboxes": {
-      "accommodationLabel": "Accommodation",
-      "accommodationHint": "Give details about {{ firstName }}'s accommodation needs",
-      "employmentLabel": "Employment and education",
-      "employmentHint": "Give details about {{ firstName }}'s employment and education needs",
-      "financesLabel": "Finances",
-      "financesHint": "Give details about {{ firstName }}'s finance needs",
-      "relationshipsLabel": "Personal relationships and community",
-      "relationshipsHint": "Give details about {{ firstName }}'s personal relationships and community needs",
-      "drugUseLabel": "Drug use",
-      "drugUseHint": "Give details about {{ firstName }}'s drug use needs",
-      "alcoholUseLabel": "Alcohol use",
-      "alcoholUseHint": "Give details about {{ firstName }}'s alcohol use needs",
-      "healthLabel": "Health and wellbeing",
-      "healthHint": "Give details about {{ firstName }}'s health and wellbeing needs",
-      "thinkingLabel": "Thinking, behaviours and attitudes",
-      "thinkingHint": "Give details about {{ firstName }}'s thinking, behaviours and attitudes needs"
-    },
-    "submitButton": "Save and continue",
-    "backLink": "/referral/task-list"
-  },
-  "/referral/task-list/additional-support-needs": {
-    "pageTitle": "What additional support do they need to attend or take part in sessions?",
-    "header": "What does {{ firstName }} need support with to attend or take part in sessions?",
-    "hint": "Select all that apply.",
-    "items": [
-      {
-        "label": "Physical health",
-        "hint": "For example, physical disabilities or illnesses that affect their daily life.",
-        "detailsLabel": "Give details of any physical health issues and how the delivery partner can support {{ firstName }}"
-      },
-      {
-        "label": "Mental or emotional health",
-        "hint": "For example, depression, anxiety, behavioural issues or learning difficulties.",
-        "detailsLabel": "Give details of any mental or emotional health issues and how the delivery partner can support {{ firstName }}"
-      },
-      {
-        "label": "Neurodiversity",
-        "hint": "For example, autism, ADHD or dyslexia.",
-        "detailsLabel": "Give details of any conditions and how the delivery partner can support {{ firstName }}"
-      },
-      {
-        "label": "Location and travel",
-        "hint": "For example, if they live in a remote area or do not have access to transport.",
-        "detailsLabel": "Give details of issues regarding travel or location and how this may affect when and where {{ firstName }} can attend sessions"
-      },
-      {
-        "label": "Caring responsibilities",
-        "hint": "For example, if they care for a child which may limit when they can attend sessions.",
-        "detailsLabel": "Give details of any caring responsibilities and how this may affect when and where {{ firstName }} can attend sessions "
-      },
-      {
-        "label": "Employment responsibilities",
-        "hint": "For example, if any work they do may limit when they can attend sessions.",
-        "detailsLabel": "Give details of any employment responsibilities and how this may affect when and where {{ firstName }} can attend sessions"
-      },
-      {
-        "label": "Diversity",
-        "hint": "For example, if they have any additional needs regarding their ethnicity, religion, gender identity or sexual orientation.",
-        "detailsLabel": "Give details of any additional needs {{ firstName }} has regarding diversity and how the delivery partner can support them "
-      },
-      {
-        "label": "Anything else",
-        "hint": "This includes any other support needs the delivery partner should know about.",
-        "detailsLabel": "Give details of any other needs and how the delivery partner can support {{ firstName }}"
-      }
-    ],
-    "defaultItemLabel": "{{ firstName }} does not need any additional support",
-    "button": "Save and continue",
-    "backlink": "/referral/task-list"
-  },
-  "/referral/task-list/needs-an-interpreter": {
-    "pageTitle": "Do they need an interpreter?",
-    "pageHeader": "Does {{ name }} need an interpreter?",
-    "yesOptionLabel": "Yes",
-    "yesCoditional": "What language does {{ name }} need an interpreter for?",
-    "noOptionLabel": "No",
-    "button": "Save and continue",
-    "backlink": "/referral/task-list/additional-support-needs"
-  },
-  "/referral/task-list/service-end-date": {
-    "pageTitle": "What date does the service need to be completed by?",
-    "pageHeader": "What date does the service need to be completed by?",
-    "dateHint": "This date must allow enough time to deliver the service and complete the end of service report. Do not use the licence end date or sentence end date.",
-    "reasonLabel": "Why does it need to be completed by this date?",
-    "backLink": "/referral/task-list",
-    "continueButton": "Save and continue",
-    "updateError": "Something has gone wrong updating the service end date"
-  },
-  "/referral/task-list/service-days": {
-    "pageTitle": "How many days will you use for this service?",
-    "pageHeader": "How many days will you use for this service?",
-    "bodyText1": "Enter the maximum number of days you want to use for this service. Any unused days will be given back. For community orders or suspended sentences, consider how many RAR days to allocate.",
-    "bodyText2": "Sessions delivered in the community are enforceable.",
-    "backLink": "/referral/task-list/service-end-date",
-    "continueButton": "Save and continue"
-  },
-  "/referral/task-list/offence-sentence": {
-    "pageTitle": "Check offence and sentence information",
-    "crnLabel": "CRN",
-    "dateOfBirthLabel": "Date of birth",
-    "pageSubHeader": "Check offence and sentence information",
-    "bodyText": "This is the offence associated with this referral.",
-    "offenceSentenceCard": {
-      "heading": "Offence and sentence information",
-      "offenceLabel": "Offence",
-      "offenceSubCategoryLabel": "Offence subcategory",
-      "outcomeLabel": "Outcome",
-      "sentenceEndDateLabel": "Sentence end date",
-      "expectedReleaseDateLabel": "Expected release date"
-    },
-    "hasLicenceConditionsOrZonesLabel": "Are there any licence conditions or exclusion zones the delivery partner should know about?",
-    "yesOptionLabel": "Yes",
-    "licenceConditionsOrZonesDetailsLabel": "Give details of all relevant licence conditions or exclusion zones",
-    "noOptionLabel": "No",
-    "notAvailableText": "Not available",
-    "backLink": "/referral/task-list/service-days",
-    "continueButton": "Save and continue",
-    "submitHref": "/referral/task-list/offence-sentence"
-  },
-  "/referral/task-list/select-an-area-for-referral": {
-    "pageTitle": "Select the area you want to make a referral to",
-    "areaLabel": "Select the area you want to make a referral to",
-    "backLinkText": "Back",
-    "backLinkHref": "/referral/task-list",
-    "buttonText": "Continue",
-    "heading": "{{ personName }}",
-    "pageCaption": "CRN: {{ CRN }} | Date of birth: {{ DOB }}"
-  },
-  "/referral/task-list/check-probation-practitioner-details": {
-    "backLinkText": "Back",
-    "backLinkHref": "/referral/task-list",
-    "buttonText": "Save and continue",
-    "heading": "{{ personName }}",
-    "pageCaption": "CRN: {{ CRN }} | Date of birth: {{ DOB }}",
-    "subHeading": "Check probation practitioner's details",
-    "insetText": "These contact details will be sent to the delivery partner. They should also be updated in NDelius.",
-    "nameLabel": "Name",
-    "emailAddressLabel": "Email address",
-    "jobRoleLabel": "Job role",
-    "pduLabel": "PDU",
-    "probationOfficeLabel": "Probation office",
-    "teamPhoneNumberLabel": "Team phone number",
-    "radioQuestion": "Are these details correct?",
-    "radioYes": "Yes",
-    "radioNo": "No"
-  },
-  "/referral/new/add-contact-details": {
-    "pageTitle": "Add details of the main point of contact",
-    "backLinkText": "Back",
-    "backLinkHref": "/referral/task-list",
-    "ppBackLinkHref": "/referral/task-list/check-probation-practitioner-details",
-    "buttonText": "Save and continue",
-    "heading": "{{ personName }}",
-    "pageCaption": "CRN: {{ CRN }} | Date of birth: {{ DOB }}",
-    "subHeading": "Add details of the main point of contact",
-    "nameInputLabel": "Name",
-    "emailAddressInputLabel": "Email address",
-    "jobRoleInputLabel": "Job role (optional)",
-    "phoneNumberInputLabel": "Phone number (optional)",
-    "pduInputLabel": "PDU",
-    "probationOfficeInputLabel": "Probation office (optional)",
-    "teamPhoneNumberInputLabel": "Team phone number (optional)",
-    "hintText": "Start typing and choose from list",
-    "insetText": "These contact details will be sent to the delivery partner for the referral. They should also be updated in NDelius."
-  },
-  "/referral/new/confirm-contact-details": {
-    "pageTitle": "Check contact details",
-    "backLinkText": "Back",
-    "backLinkHref": "/referral/new/add-contact-details",
-    "buttonText": "Save and continue",
-    "heading": "{{ personName }}",
-    "pageCaption": "CRN: {{ CRN }} | Date of birth: {{ DOB }}",
-    "subHeading": "Check contact details",
-    "summaryHeading": "Contact details",
-    "nameLabel": "Name",
-    "emailAddressLabel": "Email address",
-    "jobRoleLabel": "Job role",
-    "phoneNumberLabel": "Phone number",
-    "pduLabel": "PDU",
-    "probationOfficeLabel": "Probation office",
-    "teamPhoneNumberLabel": "Team phone number",
-    "changeLabel": "Change",
-    "notEnteredText": "Not entered"
-  },
-  "/referral/task-list/additional-information-for-the-delivery-partner": {
-    "pageTitle": "Is there anything else the delivery partner should know?",
-    "pageHeader": "Is there anything else the delivery partner should know about {{ firstName }}?",
-    "detailsLink": "What you should consider and include",
-    "detailsHeader": "You should consider letting the delivery partner know if:",
-    "detailsItems": [
-      "there are any relevant registration flags on NDelius, for example, sexual or violent offences, racist behaviour or MAPPA",
-      "{{ firstName }} is a victim or perpetrator of domestic abuse or modern slavery",
-      "it is safe to contact {{ firstName }}, and if not, what the preferred contact methods are",
-      "there are any risks to staff, not already mentioned in the referral",
-      "you think there is anything else important they should know"
-    ],
-    "yesOptionLabel": "Yes",
-    "yesConditional": "Give details of anything else the delivery partner should know",
-    "noOptionLabel": "No",
-    "button": "Save and continue",
-    "backlink": "/referral/task-list/offence-sentence"
   },
   "/referral/:id/notes/pathways": {
     "pageTitle": "What pathway does this case note relate to? - Community Support",

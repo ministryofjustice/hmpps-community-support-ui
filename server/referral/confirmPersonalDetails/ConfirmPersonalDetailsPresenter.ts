@@ -140,7 +140,7 @@ export default class ConfirmPersonalDetailsPresenter extends PresenterBase<Confi
   }
 
   buildViewModel(): ConfirmPersonalDetailsViewModel {
-    const content = this.buildStaticContent()['/referral/task-list/confirm-personal-details']
+    const content = this.globalContent().referral.taskList.confirmPersonalDetails
     return {
       pageTitle: content.pageTitle,
       heading: content.pageHeader.replace('{{ name }}', this.getFullName()),

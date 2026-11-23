@@ -100,7 +100,7 @@ export default class OffenceSentencePresenter extends PresenterBase<OffenceSente
   }
 
   buildViewModel(): OffenceSentencePageViewModel {
-    const content = this.buildStaticContent()['/referral/task-list/offence-sentence']
+    const content = this.globalContent().referral.taskList.offenceSentence
     const offenceSentenceInfo = this.data.offenceSentenceInfo || {}
     const valueOrDefault = (value: string | null | undefined): string => value || content.notAvailableText
     const sentenceEndDate = formatIsoDateOrNull(offenceSentenceInfo.sentenceEndDate)

@@ -1,7 +1,7 @@
 import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendInput } from '@govuk-frontend'
 import { GlobalContent } from '../../../assets/content/GlobalContent'
 
-export type ServiceDaysPageContent = GlobalContent['/referral/task-list/service-days']
+export type ServiceDaysPageContent = GlobalContent['referral']['taskList']['serviceDays']
 
 export interface ServiceDaysPageViewModel {
   pageTitle: string

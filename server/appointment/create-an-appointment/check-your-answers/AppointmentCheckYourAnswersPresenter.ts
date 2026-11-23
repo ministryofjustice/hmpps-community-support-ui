@@ -34,7 +34,7 @@ export default class AppointmentCheckYourAnswersPresenter extends PresenterBase<
   }
 
   buildViewModel(): AppointmentCheckYourAnswersViewModel {
-    const content = this.buildStaticContent()['/referral/:id/create-an-appointment/check-your-answers']
+    const content = this.globalContent().referral.id.createAnAppointment.checkYourAnswers
     const appointmentTypeLabel = getAppointmentTypeLabel(
       this.appointmentSessionData.appointmentType,
       this.appointmentTypes,

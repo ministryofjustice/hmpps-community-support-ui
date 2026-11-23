@@ -17,8 +17,7 @@ export interface HowTheyTriedToContactThePersonViewModel {
 
 type FormContent = HowTheyTriedToContactThePersonContent['feedbackForm']
 
-export type HowTheyTriedToContactThePersonContent =
-  GlobalContent['/ics-feedback/:id/how-they-tried-to-contact-the-person']
+export type HowTheyTriedToContactThePersonContent = GlobalContent['icsFeedback']['id']['howTheyTriedToContactThePerson']
 
 export default class HowTheyTriedToContactThePersonPresenter extends PresenterBase<HowTheyTriedToContactThePersonViewModel> {
   constructor(
@@ -59,7 +58,7 @@ export default class HowTheyTriedToContactThePersonPresenter extends PresenterBa
   }
 
   buildViewModel(res: Response): HowTheyTriedToContactThePersonViewModel {
-    const content = this.buildStaticContent()['/ics-feedback/:id/how-they-tried-to-contact-the-person']
+    const content = this.globalContent().icsFeedback.id.howTheyTriedToContactThePerson
     return {
       form: this.buildForm(content.feedbackForm, res.locals?.errors),
       backLink: { href: content.backLink.replace('{{ id }}', this.caseRefId) },

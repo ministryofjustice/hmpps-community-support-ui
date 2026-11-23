@@ -130,7 +130,7 @@ export default class CheckReferralInformationPresenter extends PresenterBase<Che
   }
 
   buildViewModel(): CheckReferralInformationViewModel {
-    const content = this.buildStaticContent()['/referral/check-referral-information']
+    const content = this.globalContent().referral.checkReferralInformation
     return {
       pageTitle: content.pageTitle,
       pageHeader: resolveName(this.draftReferralDetails.personDetailsTableData.name),

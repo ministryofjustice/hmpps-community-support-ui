@@ -12,7 +12,7 @@ export default class ActionPlanRemoveActivityPresenter extends PresenterBase<Act
   }
 
   protected buildViewModel(res: Response): ActionPlanRemoveActivityViewModel {
-    const content = this.buildStaticContent()['/referral/:id/action-plan/activities/remove']
+    const content = this.globalContent().referral.id.actionPlan.activities.remove
 
     return {
       pageHeader: content.pageHeader,

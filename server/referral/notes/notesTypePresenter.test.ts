@@ -3,7 +3,7 @@ import { globalContent } from '../../../assets/content/GlobalContent'
 
 describe('NotesTypePresenter', () => {
   const caseReference = 'AB1234CD'
-  const content = globalContent['/referral/:id/notes/type']
+  const content = globalContent.referral.id.notes.type
 
   test('builds correct view model', () => {
     const viewModel = new NotesTypePresenter(caseReference).buildViewModel()

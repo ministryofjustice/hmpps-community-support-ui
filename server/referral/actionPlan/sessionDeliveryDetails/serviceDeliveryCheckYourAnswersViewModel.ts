@@ -11,7 +11,7 @@ export type ServiceDeliveryCheckYourAnswersViewModel = {
 }
 
 export type ServiceDeliveryCheckYourAnswersContent =
-  GlobalContent['/referral/:id/action-plan/service-delivery-check-your-answers']
+  GlobalContent['referral']['id']['actionPlan']['serviceDeliveryCheckYourAnswers']
 
 export type ServiceDeliverySummary = {
   summaryList: GovukFrontendSummaryList

@@ -119,7 +119,7 @@ export default class ReferralProgressPresenter extends ReferralLayoutPresenter<R
   }
 
   buildViewModel(): ReferralProgressViewModel {
-    const content = this.buildStaticContent()['/progress/:id']
+    const content = this.globalContent().progress.id
     const [latestAppointment] = this.getAppointments()
 
     return {

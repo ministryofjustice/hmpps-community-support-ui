@@ -11,4 +11,4 @@ export type NotesTypeViewModel = {
   continueButtonLink: string
 }
 
-export type NotesTypeContent = GlobalContent['/referral/:id/notes/type']
+export type NotesTypeContent = GlobalContent['referral']['id']['notes']['type']

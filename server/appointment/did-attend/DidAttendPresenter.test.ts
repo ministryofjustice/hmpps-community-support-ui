@@ -6,7 +6,7 @@ import type { ErrorMiddlewareErrors } from '../../@types/express'
 
 describe('DidAttendPresenter', () => {
   const caseRefId = 'case-ref-1'
-  const content = globalContent['/ics-feedback/:id/did-attend']
+  const content = globalContent.icsFeedback.id.didAttend
   const data: IcsFeedbackAttendanceBffDto = {
     referralFirstName: 'Alex',
     date: '2026-10-09',

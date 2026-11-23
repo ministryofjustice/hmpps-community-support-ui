@@ -98,7 +98,7 @@ export default class PersonNeedsPresenter extends PresenterBase<PersonNeedsViewM
   }
 
   buildViewModel(): PersonNeedsViewModel {
-    const content = this.buildStaticContent()['/referral/task-list/select-person-needs']
+    const content = this.globalContent().referral.taskList.selectPersonNeeds
     return {
       pageTitle: content.pageTitle,
       heading: formatFullName(this.data.refereeName.firstName, this.data.refereeName.lastName),

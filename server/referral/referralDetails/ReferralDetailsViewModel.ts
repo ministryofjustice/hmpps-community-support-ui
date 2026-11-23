@@ -10,7 +10,7 @@ export type ReferralDetailsCard = ReferralDetailsContent['referralDetailsCard']
 
 export type ReferralDetailsAlertsContent = ReferralDetailsContent['alerts']
 
-export type ReferralDetailsContent = GlobalContent['/referral-details/:id']
+export type ReferralDetailsContent = GlobalContent['referralDetails']['id']['page']
 
 export type AssignmentSuccessBanner = {
   successBannerHeading: string
