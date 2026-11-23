@@ -187,7 +187,7 @@ describe('NotesController', () => {
       await controller.submitPathways(req, res)
 
       expect(req.session.note).toEqual({ noteType: 'NON_CONTACT_SESSION' })
-      expect(req.flash).toHaveBeenCalledWith('pathwaysError', 'Select at least one pathway')
+      expect(req.flash).toHaveBeenCalledWith('pathwaysError', 'Select what pathway this case note relates to')
       expect(res.redirect).toHaveBeenCalledWith(req.url)
     })
 

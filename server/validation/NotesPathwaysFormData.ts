@@ -3,7 +3,7 @@ import { z } from 'zod'
 export const NO_PATHWAY_VALUE = 'NONE'
 export const CASE_NOTE_PATHWAY_ERROR =
   "Select what pathway this case note relates to, or select 'it does not relate to a pathway'"
-export const NON_CONTACT_SESSION_PATHWAY_ERROR = 'Select at least one pathway'
+export const NON_CONTACT_SESSION_PATHWAY_ERROR = 'Select what pathway this case note relates to'
 
 export const buildNotesPathwaysSchema = (isCaseNote: boolean) => {
   const error = isCaseNote ? CASE_NOTE_PATHWAY_ERROR : NON_CONTACT_SESSION_PATHWAY_ERROR

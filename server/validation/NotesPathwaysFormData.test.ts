@@ -52,6 +52,6 @@ describe('buildNotesPathwaysSchema', () => {
   })
 
   it('uses the non-contact session error message for non-contact sessions', () => {
-    expect(NON_CONTACT_SESSION_PATHWAY_ERROR).toBe('Select at least one pathway')
+    expect(NON_CONTACT_SESSION_PATHWAY_ERROR).toBe('Select what pathway this case note relates to')
   })
 })

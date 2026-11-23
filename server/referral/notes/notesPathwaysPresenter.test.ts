@@ -83,8 +83,8 @@ describe('NotesPathwaysPresenter', () => {
   describe('validation errors', () => {
     it('sets the checkbox error message from the pathways validation error', () => {
       const validationErrors: ErrorMiddlewareErrors = {
-        list: [{ text: 'Select at least one pathway', href: '#pathways' }],
-        messages: { pathways: { text: 'Select at least one pathway' } },
+        list: [{ text: 'Select what pathway this case note relates to', href: '#pathways' }],
+        messages: { pathways: { text: 'Select what pathway this case note relates to' } },
       }
 
       const model = new NotesPathwaysPresenter(
@@ -94,7 +94,7 @@ describe('NotesPathwaysPresenter', () => {
         validationErrors,
       ).buildViewModel()
 
-      expect(model.checkboxes.errorMessage).toEqual({ text: 'Select at least one pathway' })
+      expect(model.checkboxes.errorMessage).toEqual({ text: 'Select what pathway this case note relates to' })
     })
 
     it('has no checkbox error message when there are no validation errors', () => {
