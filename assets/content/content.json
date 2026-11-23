@@ -1429,8 +1429,13 @@
       "issuesOrConcerns": {
         "pageTitle": "Issues or concerns – ICS feedback – Community Support",
         "pageHeader": "Issues or concerns",
-        "issuesOrConcernsLabel": "What issues or concerns did you identify?",
+        "issuesOrConcernsLabel": "What issues or concerns did you identify in the ICS?",
         "issuesOrConcernsHint": "Give details of anything that concerned you about {{ firstname }}, or any issues they raised that might impact their engagement in future sessions.",
+        "notifyProbationPractitioner": {
+          "title": "Do you want us to send an email to the probation practitioner about the issues or concerns?",
+          "yesText": "Yes",
+          "noText": "No"
+        },
         "submitButtonText": "Continue",
         "backLinkHref": "/ics-feedback/{{ id }}/session-feedback"
       },
