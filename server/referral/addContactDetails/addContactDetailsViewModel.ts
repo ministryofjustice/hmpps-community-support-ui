@@ -1,7 +1,7 @@
 import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendInput, GovukFrontendSelect } from '@govuk-frontend'
 import { GlobalContent } from '../../../assets/content/GlobalContent'
 
-export type AddContactDetailsContent = GlobalContent['/referral/new/add-contact-details']
+export type AddContactDetailsContent = GlobalContent['referral']['new']['addContactDetails']
 
 export interface AddContactDetailsViewModel {
   pageTitle: string

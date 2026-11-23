@@ -12,7 +12,7 @@ import { ErrorMiddlewareErrors } from '../../@types/express'
 
 export default class AddContactDetailsPresenter extends PresenterBase<AddContactDetailsViewModel> {
   buildViewModel() {
-    const content = this.buildStaticContent()['/referral/new/add-contact-details']
+    const content = this.globalContent().referral.new.addContactDetails
     return {
       pageTitle: content.pageTitle,
       heading: content.heading.replace(

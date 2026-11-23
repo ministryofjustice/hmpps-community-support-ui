@@ -225,7 +225,8 @@ export default class DraftReferralController {
       } catch (e) {
         logger.error(e)
         const updateErrorMessage =
-          globalContent[serviceEndDateURL].updateError || 'Something has gone wrong updating the service end date'
+          globalContent.referral.taskList.serviceEndDate.updateError ||
+          'Something has gone wrong updating the service end date'
         req.flash('serviceEndDateError', updateErrorMessage)
         return res.redirect(serviceEndDateURL)
       }

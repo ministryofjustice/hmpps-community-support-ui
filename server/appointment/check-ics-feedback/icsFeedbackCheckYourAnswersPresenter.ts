@@ -18,7 +18,7 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
   }
 
   buildViewModel() {
-    const content = this.buildStaticContent()['/ics-feedback/:id/check-answers']
+    const content = this.globalContent().icsFeedback.id.checkAnswers
     return {
       ...content,
       submitHref: content.submitHref.replace('caseRefId', this.caseRefId),

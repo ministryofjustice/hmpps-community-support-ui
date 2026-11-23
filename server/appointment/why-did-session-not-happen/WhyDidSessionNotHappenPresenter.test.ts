@@ -5,7 +5,7 @@ import type { ErrorMiddlewareErrors } from '../../@types/express'
 
 describe('WhyDidSessionNotHappenPresenter', () => {
   const caseRefId = 'case-ref-1'
-  const content = globalContent['/ics-feedback/:id/why-did-the-session-not-happen']
+  const content = globalContent.icsFeedback.id.whyDidTheSessionNotHappen
   const { items: itemsContent } = content.whyDidSessionNotHappenRadio
   const noErrors: ErrorMiddlewareErrors = { list: [], messages: {} }
 

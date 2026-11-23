@@ -12,7 +12,7 @@ export type CaseListViewModel = {
   backLink: GovukFrontendBackLink
 }
 
-export type CaseListContent = GlobalContent['/unassigned-cases']
+export type CaseListContent = GlobalContent['unassignedCases']
 
 export type subNavItem = CaseListContent['subNavItems'][number]
 

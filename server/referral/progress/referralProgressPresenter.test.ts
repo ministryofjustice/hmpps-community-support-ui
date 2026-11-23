@@ -19,6 +19,7 @@ describe('ReferralProgressPresenter', () => {
         { text: 'Progress', href: `/progress/${caseReference}`, active: true },
         { text: 'Action Plan', href: `/referral/${caseReference}/action-plan`, active: false },
         { text: 'Appointments', href: `/referral/${caseReference}/appointments`, active: false },
+        { text: 'Notes', href: `/referral/${caseReference}/notes`, active: false },
         { text: 'Change log', href: '#', active: false },
       ],
     })

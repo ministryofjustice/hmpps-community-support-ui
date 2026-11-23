@@ -100,7 +100,7 @@ export default class ActionPlanRisksAndAdjustmentsPresenter extends PresenterBas
   }
 
   protected buildViewModel(): ActionPlanRisksAndAdjustmentsViewModel {
-    const content = this.buildStaticContent()['/referral/:id/action-plan/risks-and-adjustments']
+    const content = this.globalContent().referral.id.actionPlan.risksAndAdjustments
     const plannedActivitiesRiskQuestion = this.sessionDeliveryDetails.questions.find(
       q => q.key === SessionDeliveryDetailsQuestions.RISK_ASSOCIATED_WITH_PLANNED_ACTIVITIES,
     )!

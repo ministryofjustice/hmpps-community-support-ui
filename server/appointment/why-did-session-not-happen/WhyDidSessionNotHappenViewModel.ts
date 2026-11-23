@@ -23,4 +23,4 @@ export type WhyDidSessionNotHappenRadioContent = WhyDidSessionNotHappenContent['
 export type WhyDidSessionNotHappenRadioItemsContent = WhyDidSessionNotHappenRadioContent['items']
 export type ConditionalTextAreaDetailsContent = WhyDidSessionNotHappenRadioItemsContent['serviceProviderIssueDetails']
 
-export type WhyDidSessionNotHappenContent = GlobalContent['/ics-feedback/:id/why-did-the-session-not-happen']
+export type WhyDidSessionNotHappenContent = GlobalContent['icsFeedback']['id']['whyDidTheSessionNotHappen']

@@ -187,7 +187,7 @@ describe('ServiceDeliveryCheckYourAnswersPresenter', () => {
   const buildResponse = (): Response =>
     ({
       locals: {
-        content: globalContent['/referral/:id/action-plan/service-delivery-check-your-answers'],
+        content: globalContent.referral.id.actionPlan.serviceDeliveryCheckYourAnswers,
       },
       render: jest.fn(),
     }) as unknown as Response

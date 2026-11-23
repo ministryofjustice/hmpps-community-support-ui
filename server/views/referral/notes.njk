@@ -1,0 +1,60 @@
+{% extends "../partials/layout.njk" %}
+
+{% from "moj/components/sub-navigation/macro.njk" import mojSubNavigation %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "moj/components/pagination/macro.njk" import mojPagination %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+
+{% set pageTitle = content.pageTitle %}
+{% set mainClasses = "govuk-body" %}
+
+{% block content %}
+  <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
+
+  {{ mojSubNavigation(content.navBar) }}
+
+  <h2 class="govuk-heading-l">{{ content.notesTitle }}</h2>
+
+  {{ govukButton(content.addNoteButton) }}
+
+  {% if content.hasNotes %}
+    <h3 class="govuk-heading-m">{{ content.addedNotesSubheading }}</h3>
+    <p class="govuk-body" data-testid="referral-notes-results">{{ content.resultsSummary }}</p>
+    <table class="govuk-table" data-testid="referral-notes-table">
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th scope="col" class="govuk-table__header">{{ content.dateColumnHeader }}</th>
+          <th scope="col" class="govuk-table__header govuk-!-width-one-half">{{ content.titleColumnHeader }}</th>
+          <th scope="col" class="govuk-table__header">{{ content.addedByColumnHeader }}</th>
+          <th scope="col" class="govuk-table__header">{{ content.actionColumnHeader }}</th>
+        </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+        {% for note in content.notes %}
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell">{{ note.createdAt }}</td>
+            <td class="govuk-table__cell govuk-!-width-one-half">
+              {% set detailsHtml %}
+                {{ note.details }}{% if note.detailsTruncated %} <a href="{{ content.viewDetailsHref }}" class="govuk-link">{{ content.readFullNoteLinkText }}</a>{% endif %}
+              {% endset %}
+              {{ govukDetails({
+                summaryText: note.title,
+                html: detailsHtml
+              }) }}
+            </td>
+            <td class="govuk-table__cell">{{ note.createdBy }}</td>
+            <td class="govuk-table__cell">
+              <a href="{{ content.viewDetailsHref }}" class="govuk-link">{{ content.viewDetailsLinkText }}</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="govuk-body" data-testid="no-notes-message">{{ content.noNotesMessage }}</p>
+  {% endif %}
+
+  {%- if content.pagination.previous or content.pagination.next %}
+    {{ mojPagination(content.pagination) }}
+  {%- endif %}
+{% endblock %}

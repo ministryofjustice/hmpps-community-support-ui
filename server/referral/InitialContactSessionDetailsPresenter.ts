@@ -25,8 +25,8 @@ type IcsDetailsCard = InitialContactSessionDetailsContent['icsDetails']
 
 type ReasonForChangeCard = InitialContactSessionDetailsContent['reasonForChange']
 
-export type InitialContactSessionDetailsContent = GlobalContent['/referral-details/:id/ics-view-or-change'] &
-  Pick<GlobalContent['/referral-details/:id'], 'icsDetails' | 'reasonForChange' | 'links'>
+export type InitialContactSessionDetailsContent = GlobalContent['referralDetails']['id']['icsViewOrChange'] &
+  Pick<GlobalContent['referralDetails']['id']['page'], 'icsDetails' | 'reasonForChange' | 'links'>
 
 const locationFields: (keyof IcsViewOrChangeBffDto['sessionMethod'])[] = [
   'probationOfficeName',
@@ -196,10 +196,10 @@ export default class InitialContactSessionDetailsPresenter extends PresenterBase
 
   buildViewModel(): InitialContactSessionDetailsViewModel {
     const content = {
-      ...this.buildStaticContent()['/referral-details/:id'],
-      ...this.buildStaticContent()[
-        this.historical ? '/referral-details/:id/changed-ics-details/:id' : '/referral-details/:id/ics-view-or-change'
-      ],
+      ...this.globalContent().referralDetails.id.page,
+      ...(this.historical
+        ? this.globalContent().referralDetails.id.changedIcsDetails.id
+        : this.globalContent().referralDetails.id.icsViewOrChange),
     }
     return {
       title: content.title,

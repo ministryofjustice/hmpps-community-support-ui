@@ -173,7 +173,9 @@ A changelog for the service is available [in this document.](./CHANGELOG.md)
 ## Page content
 
 Static content lives in [content.json](./assets/content/content.json). Presenters select their page's entry from
-`this.buildStaticContent()`, with content types inferred using `GlobalContent['/page/path']`.
+`this.globalContent()`, with content types inferred using nested keys such as
+`GlobalContent['referral']['new']['findAPerson']`. Where a page is also a namespace for child pages, its own
+content is under `page` (except for withdrawal, whose fields remain directly under `withdraw`).
 Shared content must be selected explicitly; it is not inherited from the request path or attached to `res.locals`.
 Pass dynamic values such as navigation overrides to the presenter rather than mutating the shared content.
 

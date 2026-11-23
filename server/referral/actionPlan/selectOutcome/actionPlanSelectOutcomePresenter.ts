@@ -37,7 +37,7 @@ export default class ActionPlanSelectOutcomePresenter extends PresenterBase<Acti
   }
 
   protected buildViewModel(res: Response): ActionPlanSelectOutcomeViewModel {
-    const content = this.buildStaticContent()['/referral/:id/action-plan/select-an-outcome']
+    const content = this.globalContent().referral.id.actionPlan.selectAnOutcome
 
     return {
       backLink: { href: `/referral/${this.caseReference}/action-plan/select-a-need` },

@@ -25,7 +25,7 @@ export interface RecordSessionAttendanceViewModel {
   backLink: GovukFrontendBackLink
 }
 
-export type RecordSessionAttendanceContent = GlobalContent['/ics-feedback/:id/attendance']
+export type RecordSessionAttendanceContent = GlobalContent['icsFeedback']['id']['attendance']
 
 export default class RecordSessionAttendancePresenter extends PresenterBase<RecordSessionAttendanceViewModel> {
   private errors: ErrorMiddlewareErrors
@@ -73,7 +73,7 @@ export default class RecordSessionAttendancePresenter extends PresenterBase<Reco
   }
 
   buildViewModel(res: Response): RecordSessionAttendanceViewModel {
-    const content = this.buildStaticContent()['/ics-feedback/:id/attendance']
+    const content = this.globalContent().icsFeedback.id.attendance
     this.errors = res.locals.errors
     const appointment = {
       referralFirstName: this.data.referralFirstName,

@@ -38,7 +38,7 @@ export default class IssuesOrConcernsPresenter extends PresenterBase<IssuesOrCon
   }
 
   buildViewModel(): IssuesOrConcernsViewModel {
-    const content = this.buildStaticContent()['/ics-feedback/:id/issues-or-concerns']
+    const content = this.globalContent().icsFeedback.id.issuesOrConcerns
     return {
       pageTitle: content.pageTitle,
       pageHeader: content.pageHeader,

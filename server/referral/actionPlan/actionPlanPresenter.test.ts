@@ -5,7 +5,7 @@ import ActionPlanPresenter from './actionPlanPresenter'
 import { ActionPlanViewModel } from './actionPlanViewModel'
 import { globalContent } from '../../../assets/content/GlobalContent'
 
-const actionPlanContent = { ...globalContent['/referral/:id'], ...globalContent['/referral/:id/action-plan'] }
+const actionPlanContent = { ...globalContent.referral.id.page, ...globalContent.referral.id.actionPlan.page }
 
 describe('ActionPlanPresenter', () => {
   it('builds the page header and back link from summary data', () => {
@@ -61,6 +61,7 @@ describe('ActionPlanPresenter', () => {
         { href: '/progress/AB1234CD', text: 'Progress', active: false },
         { href: '/referral/AB1234CD/action-plan', text: 'Action Plan', active: true },
         { href: '/referral/AB1234CD/appointments', text: 'Appointments', active: false },
+        { href: '/referral/AB1234CD/notes', text: 'Notes', active: false },
         { href: '#', text: 'Change log', active: false },
       ],
     })

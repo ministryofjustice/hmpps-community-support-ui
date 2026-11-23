@@ -25,7 +25,7 @@ export default class ServiceDeliveryCheckYourAnswersPresenter extends PresenterB
   }
 
   protected buildViewModel(): ServiceDeliveryCheckYourAnswersViewModel {
-    const content = this.buildStaticContent()['/referral/:id/action-plan/service-delivery-check-your-answers']
+    const content = this.globalContent().referral.id.actionPlan.serviceDeliveryCheckYourAnswers
     return {
       pageTitle: content.pageTitle,
       pageHeader: content.pageHeader,
