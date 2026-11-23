@@ -1269,30 +1269,32 @@ class AppointmentController {
       caseRefId.toString(),
       username,
     )
-    const presenter = new HowTheyTriedToContactThePersonPresenter(
-      caseRefId,
-      referralFirstName,
-      req.session.icsFeedbackSubmission,
-    )
+    const savedAnswers = req.session.icsFeedbackSubmission.record
+    const formData = getFlashedFormValues(req) ?? {
+      howTheyTriedToContactThePerson: savedAnswers.howTheyTriedToContactThePerson ?? '',
+      reasonsTheyDidNotAttend: savedAnswers.reasonsTheyDidNotAttend ?? '',
+    }
+    const presenter = new HowTheyTriedToContactThePersonPresenter(caseRefId, referralFirstName, formData)
     presenter.renderPage(res)
   }
 
   async recordHowTheyTriedToContactThePerson(req: Request, res: Response): Promise<void> {
     const caseRefId = req.params.caseRefId as string
     const { username } = res.locals.user
-    const { referralFirstName } = await this.appointmentService.getIcsFeedbackHowTheyTriedToContactThePerson(
-      caseRefId.toString(),
-      username,
-    )
+    await this.appointmentService.getIcsFeedbackHowTheyTriedToContactThePerson(caseRefId.toString(), username)
 
     await validateRequestBodyAgainstSchema(
-      icsFeedbackHowTheyTriedToContactThePersonFormDataSchema(referralFirstName),
+      icsFeedbackHowTheyTriedToContactThePersonFormDataSchema(),
       req,
       res,
-      ({ howTheyTriedToContactThePerson }) => {
+      ({ howTheyTriedToContactThePerson, reasonsTheyDidNotAttend }) => {
         const { icsFeedbackSubmission } = req.session
         const { record } = icsFeedbackSubmission || {}
-        const newRecord = { ...record, noAttendanceInformation: howTheyTriedToContactThePerson }
+        const newRecord = {
+          ...record,
+          howTheyTriedToContactThePerson,
+          reasonsTheyDidNotAttend,
+        }
         const newFeedback = { ...icsFeedbackSubmission, record: newRecord }
 
         req.session.icsFeedbackSubmission = newFeedback

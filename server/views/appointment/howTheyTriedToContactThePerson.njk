@@ -4,13 +4,15 @@
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 
-{% set pageTitle = "How did you try to contact the person and why did they not attend? - ICS feedback - [service name]" %}
+{% set pageTitle = "Non-attendance details - ICS feedback - [service name]" %}
 {% set mainClasses = "govuk-body" %}
 
 {% block contentBody %}
 <form method="post">
   <input type="hidden" name="_csrf" value="{{csrfToken}}">
-    {{ govukTextarea(content.form.textarea) }}
-    {{ govukButton(content.form.button) }}
+  <h1 class="govuk-heading-l">{{ content.pageHeading }}</h1>
+  {{ govukTextarea(content.form.contactAttemptsTextarea) }}
+  {{ govukTextarea(content.form.reasonsForNonAttendanceTextarea) }}
+  {{ govukButton(content.form.button) }}
 </form>
 {% endblock %}

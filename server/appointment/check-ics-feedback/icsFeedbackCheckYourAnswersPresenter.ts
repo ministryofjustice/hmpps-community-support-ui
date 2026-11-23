@@ -108,15 +108,14 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
         this.icsFeedbackSubmission.record.didSessionHappen,
       ),
       // Session feedback summary
-      this.buildSummary(
-        content.summaryLists.filter(item => item.summaryTitle === 'Session feedback')[0],
-        [
-          this.icsFeedbackSubmission.sessionFeedback?.whatHappened || null,
-          this.icsFeedbackSubmission.sessionFeedback?.behaviour || null,
-          this.icsFeedbackSubmission.sessionFeedback?.strengthsIdentified || null,
-        ],
-        this.icsFeedbackSubmission.record.didSessionHappen,
-      ),
+      this.buildSummary(content.summaryLists.filter(item => item.summaryTitle === 'Session feedback')[0], [
+        this.icsFeedbackSubmission.sessionFeedback?.whatHappened || null,
+        this.getDidNotHappenReason(content) || null,
+        this.getDidNotAttendContactAttempts() || null,
+        this.getDidNotAttendReason() || null,
+        this.icsFeedbackSubmission.sessionFeedback?.behaviour || null,
+        this.icsFeedbackSubmission.sessionFeedback?.strengthsIdentified || null,
+      ]),
       // Issues or concerns
       this.buildSummary(
         content.summaryLists.filter(item => item.summaryTitle === 'Issues or concerns')[0],
@@ -204,6 +203,14 @@ export default class IcsFeedbackCheckYourAnswersPresenter extends PresenterBase<
   }
 
   private getHowDidYouContactAnswer(): string | null {
+    if (!this.icsFeedbackSubmission.record.didSessionHappen && !this.icsFeedbackSubmission.record.didPersonAttend) {
+      return this.icsFeedbackSubmission.record.howTheyTriedToContactThePerson
+      return this.icsFeedbackSubmission.record.reasonsTheyDidNotAttend
+    }
+    return null
+  }
+
+  private getDidNotAttendContactAttempts(): string | null {
     if (!this.icsFeedbackSubmission.record.didSessionHappen && !this.icsFeedbackSubmission.record.didPersonAttend) {
       return this.icsFeedbackSubmission.record.howTheyTriedToContactThePerson
     }

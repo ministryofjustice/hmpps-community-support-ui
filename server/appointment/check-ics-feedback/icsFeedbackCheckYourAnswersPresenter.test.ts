@@ -263,6 +263,54 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
     })
   })
 
+  describe('Session feedback summary', () => {
+    it('matches non-attendance answers to their labels and change links', () => {
+      const submission: IcsFeedbackSubmission = {
+        ...baseIcsFeedbackSubmission,
+        record: {
+          didSessionHappen: false,
+          didPersonAttend: false,
+          howTheyTriedToContactThePerson: 'Called twice',
+          reasonsTheyDidNotAttend: 'They were unwell',
+        },
+        sessionFeedback: null,
+      }
+
+      const presenter = new IcsFeedbackCheckYourAnswersPresenter(submission, caseRefId, firstName)
+      const summary = presenter
+        .buildViewModel()
+        .feedbackSummaries.find(item => item.summaryTitle === 'Session feedback')
+      const changeHref = `/ics-feedback/${caseRefId}/how-they-tried-to-contact-the-person`
+
+      expect(summary.rows).toHaveLength(2)
+      expect(summary.rows[0]).toMatchObject({
+        key: { text: 'How did you try to contact John?' },
+        value: { text: 'Called twice' },
+        actions: {
+          items: [{ href: changeHref, text: 'Change', visuallyHiddenText: 'How did you try to contact John?' }],
+        },
+      })
+      expect(summary.rows[1]).toMatchObject({
+        key: { text: 'Reason they did not attend' },
+        value: { text: 'They were unwell' },
+        actions: { items: [{ href: changeHref, text: 'Change', visuallyHiddenText: 'Reason they did not attend' }] },
+      })
+    })
+
+    it('keeps attended-session feedback mapped to its labels', () => {
+      const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
+      const summary = presenter
+        .buildViewModel()
+        .feedbackSummaries.find(item => item.summaryTitle === 'Session feedback')
+
+      expect(summary.rows.map(row => [row.key.text, row.value.text])).toEqual([
+        ['What happened in the session', 'Discussed career options'],
+        ["What was John's engagement like during the session?", 'Cooperative'],
+        ['What strengths did you identify?', 'Good communication skills'],
+      ])
+    })
+  })
+
   describe('buildSummary - Generic cases', () => {
     it('should return null when shouldDisplay is false', () => {
       const submission: IcsFeedbackSubmission = {

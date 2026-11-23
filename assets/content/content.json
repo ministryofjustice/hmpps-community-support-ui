@@ -1213,17 +1213,8 @@
         "href": "/cases-in-progress"
       }
     ],
-    "unassignedColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Date received"
-    ],
-    "inProgressColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Assigned to",
-      "Date received"
-    ],
+    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
+    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
     "noCasesMessage": "There are no {0} cases to view."
   },
   "casesInProgress": {
@@ -1242,17 +1233,8 @@
         "href": "/cases-in-progress"
       }
     ],
-    "unassignedColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Date received"
-    ],
-    "inProgressColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Assigned to",
-      "Date received"
-    ],
+    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
+    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
     "noCasesMessage": "There are no {0} cases to view."
   },
   "referralDetails": {
@@ -1340,15 +1322,8 @@
       "actionPlanStatusLabel": "Status",
       "actionPlanActionsLabel": "Actions",
       "actionPlanLinkText": "View action plan",
-      "progressActiveColumnHeaders": [
-        "Date and time",
-        "Status",
-        "Action"
-      ],
-      "progressInactiveColumnHeaders": [
-        "Status",
-        "Action"
-      ],
+      "progressActiveColumnHeaders": ["Date and time", "Status", "Action"],
+      "progressInactiveColumnHeaders": ["Status", "Action"],
       "historySummary": "View ICS history"
     }
   },
@@ -1551,7 +1526,8 @@
               "whySessionDidNotHappen": "Why the session did not happen"
             },
             "didNotAttend": {
-              "triedToContactDidNotAttend": "Details about how you tried to contact {{ firstname }} and why they did not attend"
+              "howTheyTriedToContactThePerson": "How did you try to contact {{ firstname }}?",
+              "reasonsTheyDidNotAttend": "Reason they did not attend"
             }
           },
           "didNotHappenReasonLabels": {
@@ -1770,14 +1746,19 @@
         "backLinkHref": "/ics-feedback/{{ id }}/did-attend"
       },
       "howTheyTriedToContactThePerson": {
-        "pageHeader": "How did you try to contact {{ firstname }} and what do you know about why they did not attend?",
+        "pageHeading": "Non-attendance details",
         "feedbackForm": {
-          "textarea": {
+          "contactAttemptsTextarea": {
             "id": "howTheyTriedToContactThePerson",
             "name": "howTheyTriedToContactThePerson",
-            "label": "How did you try to contact {{ firstname }} and what do you know about why they did not attend?",
+            "label": "How did you try to contact {{ firstname }}?",
             "hint": "Include when you tried to contact them and how many times.",
-            "error": "Enter how you tried to contact {{ firstname }} and what you know about why they did not attend ",
+            "rows": "5"
+          },
+          "reasonsForNonAttendanceTextarea": {
+            "id": "reasonsTheyDidNotAttend",
+            "name": "reasonsTheyDidNotAttend",
+            "label": "Reason they did not attend",
             "rows": "5"
           },
           "submitButtonText": "Continue"
