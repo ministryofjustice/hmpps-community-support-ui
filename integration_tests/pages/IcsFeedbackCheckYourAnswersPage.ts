@@ -35,7 +35,7 @@ class IcsFeedbackCheckYourAnswersPage extends AbstractPage {
     this.issuesOrConcernsSummary = page.locator('h2', { hasText: 'Issues or concerns' })
     this.identifiedAdditionalSupportSummary = page.locator('h2', { hasText: 'Needs and additional support' })
     this.nextStepsSummary = page.locator('h2', { hasText: 'Next steps' })
-    this.submitButton = page.locator('button', { hasText: 'Submit feedback' })
+    this.submitButton = page.locator('button', { hasText: 'Save and continue' })
     this.locationRowTitle = page.locator('dt', { hasText: 'Location' })
     this.backLink = page.locator('.govuk-back-link')
   }

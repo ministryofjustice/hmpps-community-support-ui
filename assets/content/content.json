@@ -1679,7 +1679,7 @@
           "referralCouldNotTakePart": "{{ firstname }} could not take part",
           "referralDidNotComply": "{{ firstname }} did not comply"
         },
-        "submitButtonText": "Submit feedback",
+        "submitButtonText": "Save and continue",
         "submitHref": "/ics-feedback/caseRefId/submit",
         "didNotAttendbackLinkHref": "/ics-feedback/caseRefId/how-they-tried-to-contact-the-person",
         "noSessionbackLinkHref": "/ics-feedback/caseRefId/why-did-the-session-not-happen",

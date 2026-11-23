@@ -507,7 +507,7 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
 
       expect(viewModel.pageHeader).toBe('Check your answers before adding ICS feedback')
       expect(viewModel.feedbackSummaries.length).toBeGreaterThan(0)
-      expect(viewModel.submitButtonText).toBe('Submit feedback')
+      expect(viewModel.submitButtonText).toBe('Save and continue')
       expect(viewModel.backLink).toBeDefined()
     })
 
