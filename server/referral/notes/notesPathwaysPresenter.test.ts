@@ -45,7 +45,7 @@ describe('NotesPathwaysPresenter', () => {
     it('sets the case note page title', () => {
       const model = new NotesPathwaysPresenter(pathwaysResponse, caseReference, 'CASE_NOTE').buildViewModel()
 
-      expect(model.pageTitle).toBe('What area of need does this case note relate to? - Community Support')
+      expect(model.pageTitle).toBe('What pathway does this case note relate to? - Community Support')
     })
 
     it('adds an "or" divider and an exclusive "does not relate" option after the pathways', () => {
@@ -65,7 +65,7 @@ describe('NotesPathwaysPresenter', () => {
       const model = new NotesPathwaysPresenter(pathwaysResponse, caseReference, 'NON_CONTACT_SESSION').buildViewModel()
 
       expect(model.pageTitle).toBe(
-        'What area of need does this non-contact activity note relate to? - Community Support',
+        'What pathway does this non-contact activity note relate to? - Community Support',
       )
     })
 
