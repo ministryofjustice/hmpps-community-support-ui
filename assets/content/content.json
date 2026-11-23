@@ -1644,7 +1644,10 @@
     "backlink": "/referral/task-list/offence-sentence"
   },
   "/referral/:id/notes/pathways": {
+    "pageTitle": "What area of need does this case note relate to? - Community Support",
+    "nonContactPageTitle": "What area of need does this non-contact activity note relate to? - Community Support",
     "pageHeader": "What pathway does this note relate to?",
+    "nonContactPageHeader": "What pathway does this non-contact activity note relate to?",
     "hint": "Select all that apply.",
     "noPathwayOption": "It does not relate to a pathway option",
     "button": "Continue"

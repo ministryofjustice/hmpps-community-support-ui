@@ -21,14 +21,22 @@ export default class NotesPathwaysPresenter extends ReferralLayoutPresenter<Note
 
   buildViewModel(): NotesPathwaysModel {
     const isCaseNote = this.noteType === 'CASE_NOTE'
-    const content: { pageHeader: string; hint: string; button: string; noPathwayOption?: string } =
-      this.buildStaticContent()['/referral/:id/notes/pathways']
+    const content: {
+      pageTitle: string
+      nonContactPageTitle: string
+      pageHeader: string
+      nonContactPageHeader: string
+      hint: string
+      button: string
+      noPathwayOption?: string
+    } = this.buildStaticContent()['/referral/:id/notes/pathways']
 
     const pathwayItems: GovukFrontendCheckboxesItem[] = this.pathwaysResponse.pathways.map(pathway => ({
       value: pathway.id,
       text: pathway.title,
     }))
 
+    const pageHeader = isCaseNote ? content.pageHeader : content.nonContactPageHeader
     const items: GovukFrontendCheckboxesItem[] = isCaseNote
       ? [
           ...pathwayItems,
@@ -38,13 +46,14 @@ export default class NotesPathwaysPresenter extends ReferralLayoutPresenter<Note
       : pathwayItems
 
     return {
-      pageHeader: content.pageHeader,
+      pageTitle: isCaseNote ? content.pageTitle : content.nonContactPageTitle,
+      pageHeader,
       checkboxes: {
         name: 'pathways',
         idPrefix: 'pathways',
         fieldset: {
           legend: {
-            text: content.pageHeader,
+            text: pageHeader,
             isPageHeading: true,
             classes: 'govuk-fieldset__legend--l',
           },
