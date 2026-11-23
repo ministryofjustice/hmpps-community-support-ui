@@ -87,7 +87,8 @@ test.describe('View ICS Session Feedback', () => {
     recordSessionDidSessionHappen: false,
     recordSessionDidPersonAttend: false,
     recordSessionNotHappenReason: 'REFERRAL_COULD_NOT_TAKE_PART',
-    recordSessionNoAttendanceInformation: 'Called Alex twice but no answer, left voicemail',
+    recordSessionHowTheyTriedToContactThePerson: 'Called Alex twice but no answer, left voicemail',
+    recordSessionReasonsTheyDidNotAttend: 'They were unavailable',
     issuesOrConcernsIdentified: 'Unable to contact Alex after the missed appointment',
     additionalSupportNeeds: 'Needs a reminder before the next appointment',
   })
@@ -251,7 +252,8 @@ test.describe('View ICS Session Feedback', () => {
     await expect(sessionFeedbackCard).toContainText('Strengths identified')
     await expect(sessionFeedbackCard).toContainText('Strong family support')
     await expect(sessionFeedbackCard).not.toContainText('Why the session did not happen')
-    await expect(sessionFeedbackCard).not.toContainText('Details about how you tried to contact')
+    await expect(sessionFeedbackCard).not.toContainText('How did you try to contact Alex?')
+    await expect(sessionFeedbackCard).not.toContainText('Reason they did not attend')
 
     const attendanceCard = page.locator('.govuk-summary-card', { hasText: 'Record session attendance' })
     await expect(attendanceCard).toHaveCount(0)
@@ -320,11 +322,11 @@ test.describe('View ICS Session Feedback', () => {
 
     const sessionFeedbackCard = page.locator('.govuk-summary-card', { hasText: 'Session feedback' })
 
-    await expect(sessionFeedbackCard).toContainText(
-      'Details about how you tried to contact Alex and why they did not attend',
-    )
+    await expect(sessionFeedbackCard).toContainText('How did you try to contact Alex?')
     await expect(sessionFeedbackCard).toContainText('Called Alex twice but no answer, left voicemail')
-    await expect(sessionFeedbackCard.locator('.govuk-summary-list__row')).toHaveCount(1)
+    await expect(sessionFeedbackCard).toContainText('Reason they did not attend')
+    await expect(sessionFeedbackCard).toContainText('They were unavailable')
+    await expect(sessionFeedbackCard.locator('.govuk-summary-list__row')).toHaveCount(2)
     await expect(sessionFeedbackCard).not.toContainText('Why the session did not happen')
 
     const attendanceCard = page.locator('.govuk-summary-card', { hasText: 'Record session attendance' })

@@ -534,21 +534,26 @@ describe('ViewSessionFeedbackPresenter', () => {
         expect(viewModel.sessionFeedbackSummary.rows).toHaveLength(1)
       })
 
-      it('shows contact attempt details when the person did not attend', () => {
+      it('shows contact attempt and non-attendance reason when the person did not attend', () => {
         const viewModel = renderViewModel(
           IcsFeedbackResponseFactory.build({
             recordSessionDidSessionHappen: false,
             recordSessionDidPersonAttend: false,
             recordSessionNotHappenReason: 'REFERRAL_DID_NOT_COMPLY',
-            recordSessionNoAttendanceInformation: 'Called and left voicemail',
+            recordSessionHowTheyTriedToContactThePerson: 'Called and left voicemail',
+            recordSessionReasonsTheyDidNotAttend: 'They were unwell',
           }),
         )
 
         expect(viewModel.sessionFeedbackSummary.rows[0]).toEqual({
-          key: { text: 'Details about how you tried to contact Alex and why they did not attend' },
+          key: { text: 'How did you try to contact Alex?' },
           value: { text: 'Called and left voicemail' },
         })
-        expect(viewModel.sessionFeedbackSummary.rows).toHaveLength(1)
+        expect(viewModel.sessionFeedbackSummary.rows[1]).toEqual({
+          key: { text: 'Reason they did not attend' },
+          value: { text: 'They were unwell' },
+        })
+        expect(viewModel.sessionFeedbackSummary.rows).toHaveLength(2)
       })
     })
   })
