@@ -17,7 +17,12 @@ describe('NotesCaseNoteDetailsPresenter', () => {
   })
 
   test('persists inputs from session data', () => {
-    const viewModel = new NotesCaseNoteDetailsPresenter(caseReference, { noteType: 'CASE_NOTE', title: 'Note title', details: 'Note details', shouldNotify: true }).buildViewModel()
+    const viewModel = new NotesCaseNoteDetailsPresenter(caseReference, {
+      noteType: 'CASE_NOTE',
+      title: 'Note title',
+      details: 'Note details',
+      shouldNotify: true,
+    }).buildViewModel()
 
     expect(viewModel.titleInput.value).toEqual('Note title')
     expect(viewModel.detailsCharacterCount.value).toEqual('Note details')

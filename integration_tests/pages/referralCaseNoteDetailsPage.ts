@@ -1,5 +1,5 @@
-import AbstractPage from './abstractPage'
 import { expect, Locator, Page } from '@playwright/test'
+import AbstractPage from './abstractPage'
 
 export default class ReferralCaseNoteDetailsPage extends AbstractPage {
   readonly header: Locator
