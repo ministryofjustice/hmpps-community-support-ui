@@ -36,7 +36,11 @@ import RecordSessionDetailsPresenter from './record-ics/RecordSessionDetailsPres
 import { RecordSessionDetailsFormDataSchema } from '../validation/RecordSessionDetailsFormData'
 import HowTheyTriedToContactThePersonPresenter from './howTheyTriedToContactThePerson/howTheyTriedToContactThePersonPresenter'
 import icsFeedbackHowTheyTriedToContactThePersonFormDataSchema from '../validation/icsFeedbackHowTheyTriedToContactThePersonFormDataSchema'
-import { formatDynamicErrorMessages, validateRequestBodyAgainstSchema } from '../validation/validationUtils'
+import {
+  formatDynamicErrorMessages,
+  validateRequestBody,
+  validateRequestBodyAgainstSchema,
+} from '../validation/validationUtils'
 import WhyDidSessionNotHappenPresenter from './why-did-session-not-happen/WhyDidSessionNotHappenPresenter'
 import { WhyDidSessionNotHappenFormDataSchema } from '../validation/WhyDidSessionNotHappenFormData'
 import { IcsFeedbackFormSchema } from '../validation/IcsFeedbackHowSessionTookPlaceFormData'
@@ -972,43 +976,52 @@ class AppointmentController {
       icsAppointment.referralFirstName,
     )
 
+    const form = res.locals.errors.list.length ? getFlashedFormValues(req) : undefined
+    const notificationChoice = form?.notifyProbationPractitioner
+    const issuesAndConcerns = form
+      ? {
+          identified: typeof form.issuesOrConcerns === 'string' ? form.issuesOrConcerns : '',
+          notifyProbationPractitioner:
+            notificationChoice === 'Yes' || notificationChoice === 'No' ? notificationChoice === 'Yes' : undefined,
+        }
+      : icsFeedbackSubmission?.issuesAndConcerns
+
     const presenter = new IssuesOrConcernsPresenter(
-      caseRefId.toString(),
+      caseRefId,
       icsAppointment.referralFirstName,
-      icsFeedbackSubmission?.issuesAndConcerns,
+      issuesAndConcerns,
       res.locals.errors,
     )
     presenter.renderPage(res)
   }
 
-  async submitIssuesOrConcerns(req: Request, res: Response): Promise<void> {
+  submitIssuesOrConcerns(req: Request, res: Response): Promise<void> {
     const caseRefId = req.params.caseRefId as string
     const { username } = res.locals.user
-    const icsAppointment = await this.appointmentService.getIcsFeedbackIssuesOrConcerns(caseRefId, username)
+    return validateRequestBody(IssuesOrConcernsFormDataSchema.safeParse, req, res, async form => {
+      const { icsFeedbackSubmission } = req.session
+      if (!icsFeedbackSubmission?.record) {
+        logger.warn(`Appointment for Case '${caseRefId}' not found in session`)
+        res.redirect(`/progress/${caseRefId}`)
+        return
+      }
 
-    if (!icsAppointment) {
-      logger.info(`Appointment for Case '${caseRefId}' not found for user '${username}'`)
-      req.flash('error', 'Appointment not found.')
-      res.redirect(`/ics-feedback/${caseRefId}/issues-or-concerns`)
-      return
-    }
+      const icsAppointment = await this.appointmentService.getIcsFeedbackIssuesOrConcerns(caseRefId, username)
+      if (!icsAppointment) {
+        logger.info(`Appointment for Case '${caseRefId}' not found for user '${username}'`)
+        req.flash('error', 'Appointment not found.')
+        res.redirect(`/ics-feedback/${caseRefId}/issues-or-concerns`)
+        return
+      }
 
-    const { icsFeedbackSubmission } = req.session
-    if (!icsFeedbackSubmission?.record) {
-      logger.warn(`Appointment for Case '${caseRefId}' not found in session`)
-      res.redirect(`/progress/${caseRefId}`)
-      return
-    }
-
-    req.session.icsFeedbackSubmission = {
-      ...icsFeedbackSubmission,
-      issuesAndConcerns: {
-        identified: req.body.issuesOrConcerns,
-      },
-      caseReferenceId: caseRefId,
-    } as IcsFeedbackSubmission & { caseReferenceId: string }
-
-    validateRequestBodyAgainstSchema(IssuesOrConcernsFormDataSchema, req, res, () => {
+      req.session.icsFeedbackSubmission = {
+        ...icsFeedbackSubmission,
+        issuesAndConcerns: {
+          identified: form.issuesOrConcerns,
+          notifyProbationPractitioner: form.notifyProbationPractitioner === 'Yes',
+        },
+        caseReferenceId: caseRefId,
+      }
       res.redirect(`/ics-feedback/${caseRefId}/identified-additional-needs`)
     })
   }
