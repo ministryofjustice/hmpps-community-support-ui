@@ -21,7 +21,7 @@ export default class NotesCaseNoteDetailsPresenter extends ReferralLayoutPresent
       name: 'titleInput',
       label: { text: content.titleLabel, classes: 'govuk-label--m' },
       value: this.sessionData?.title || '',
-      errorMessage: this.validationErrors.messages?.titleInput,
+      errorMessage: this.validationErrors?.messages.titleInput,
     }
   }
 
@@ -32,27 +32,22 @@ export default class NotesCaseNoteDetailsPresenter extends ReferralLayoutPresent
       maxwords: null,
       label: { text: content.detailsLabel, classes: 'govuk-label--m' },
       value: this.sessionData?.details || '',
-      errorMessage: this.validationErrors.messages?.detailsInput,
+      errorMessage: this.validationErrors?.messages.detailsInput,
     }
   }
 
   private buildShouldNotifyRadio(content: NotesCaseNoteDetailsContent): GovukFrontendRadios {
-    let radioValue: string
-    if (this.sessionData?.shouldNotify !== undefined) {
-      radioValue = this.sessionData?.shouldNotify ? 'yes' : 'no'
-    }
-
     return {
       name: 'shouldNotify',
+      attributes: { 'data-testid': 'shouldNotifyRadio' },
       fieldset: {
         legend: { text: content.shouldNotifyLabel, classes: 'govuk-fieldset__legend--m' },
       },
       hint: { text: content.shouldNotifyHint },
-      value: radioValue,
-      errorMessage: this.validationErrors.messages.shouldNotify,
+      errorMessage: this.validationErrors?.messages.shouldNotify,
       items: [
-        { value: 'yes', text: 'Yes' },
-        { value: 'no', text: 'No' },
+        { value: 'yes', text: 'Yes', checked: this.sessionData?.shouldNotify === true },
+        { value: 'no', text: 'No', checked: this.sessionData?.shouldNotify === false },
       ],
     }
   }
