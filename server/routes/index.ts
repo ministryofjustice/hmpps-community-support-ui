@@ -124,6 +124,10 @@ export default function routes({
 
   post('/referral/:caseReference/notes/type', (req, res) => notesController.submitNotesType(req, res))
 
+  get('/referral/:caseReference/notes/pathways', (req, res) => notesController.showPathways(req, res))
+
+  post('/referral/:caseReference/notes/pathways', (req, res) => notesController.submitPathways(req, res))
+
   get('/referral/:caseReference/appointment/select-type', (req, res) =>
     referralController.showSelectAppointmentType(req, res),
   )

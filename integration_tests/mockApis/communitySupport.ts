@@ -753,6 +753,18 @@ export default {
         jsonBody: notes,
       },
     }),
+  stubGetReferralPathways: (pathways: object, caseReference: string, httpStatus = 200): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: `/community-support/bff/referral/${caseReference}/notes/pathways`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: pathways,
+      },
+    }),
   stubIcsFeedbackSubmission: (
     icsFeedback: IcsFeedbackSubmission,
     icsId: string,

@@ -1,15 +1,17 @@
 import type { Request, Response } from 'express'
-import type { ReferralNoteOrNonContactSessionBffDto } from '@community-support-api'
+import type { ReferralNoteOrNonContactSessionBffDto, ReferenceDataReferralPathwaysDto } from '@community-support-api'
 import type { PagedResponse } from '../../@types/communitySupportApi/derived'
 import ReferralService from '../../services/referralService'
 import NotesController from './notesController'
 import NotesListPresenter from './notesListPresenter'
 import NotesTypePresenter from './notesTypePresenter'
+import NotesPathwaysPresenter from './notesPathwaysPresenter'
 import type { ErrorMiddlewareErrors } from '../../@types/express'
 
 jest.mock('../../services/referralService')
 jest.mock('./notesListPresenter')
 jest.mock('./notesTypePresenter')
+jest.mock('./notesPathwaysPresenter')
 
 describe('NotesController', () => {
   const caseReference = 'AB1234CD'
@@ -134,6 +136,84 @@ describe('NotesController', () => {
 
       expect(req.session.note).toBeUndefined()
       expect(req.flash).toHaveBeenCalledWith('noteTypeError', 'Select the type of note you want to add')
+      expect(res.redirect).toHaveBeenCalledWith(req.url)
+    })
+  })
+
+  describe('showPathways', () => {
+    it('fetches the pathways and renders the pathways page', async () => {
+      const pathways: ReferenceDataReferralPathwaysDto = { pathways: [] }
+      referralService.getPathways = jest.fn().mockResolvedValue(pathways)
+      NotesPathwaysPresenter.prototype.renderPage = jest.fn()
+
+      await controller.showPathways(buildRequest(), res)
+
+      expect(referralService.getPathways).toHaveBeenCalledWith(caseReference, 'testuser')
+      expect(NotesPathwaysPresenter).toHaveBeenCalledWith(pathways, caseReference, undefined, undefined, undefined)
+      expect(NotesPathwaysPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+    })
+  })
+
+  describe('submitPathways', () => {
+    it('saves the selected pathways to the session and redirects to the details page', async () => {
+      req.session.note = { noteType: 'NON_CONTACT_SESSION' }
+      req.body = { pathways: ['8f0d6a2e-1b7c-4c4e-9a53-3c1f2b9e0a11', '2c9e4b7a-5d3f-4e8a-8b21-7a6f0c1d2e22'] }
+      await controller.submitPathways(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/notes/non-contact-session-details')
+    })
+
+    it('handles a single selected pathway', async () => {
+      req.session.note = { noteType: 'CASE_NOTE' }
+      req.body = { pathways: '8f0d6a2e-1b7c-4c4e-9a53-3c1f2b9e0a11' }
+      await controller.submitPathways(req, res)
+
+      expect(req.session.note.pathways).toEqual(['8f0d6a2e-1b7c-4c4e-9a53-3c1f2b9e0a11'])
+    })
+
+    it('saves the none option so it can be re-checked', async () => {
+      req.session.note = { noteType: 'CASE_NOTE' }
+      req.body = { pathways: ['NONE'] }
+      await controller.submitPathways(req, res)
+
+      expect(req.session.note.pathways).toEqual(['NONE'])
+      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/notes/case-note-details')
+    })
+
+    it('flashes an error and does not save when no checkbox is selected', async () => {
+      req.session.note = { noteType: 'NON_CONTACT_SESSION' }
+      req.url = '/referral/AB1234CD/notes/pathways'
+      req.body = {}
+      await controller.submitPathways(req, res)
+
+      expect(req.session.note).toEqual({ noteType: 'NON_CONTACT_SESSION' })
+      expect(req.flash).toHaveBeenCalledWith('pathwaysError', 'Select what pathway this case note relates to')
+      expect(res.redirect).toHaveBeenCalledWith(req.url)
+    })
+
+    it('flashes the case note error when no checkbox is selected for a case note', async () => {
+      req.session.note = { noteType: 'CASE_NOTE' }
+      req.url = '/referral/AB1234CD/notes/pathways'
+      req.body = {}
+      await controller.submitPathways(req, res)
+
+      expect(req.flash).toHaveBeenCalledWith(
+        'pathwaysError',
+        "Select what pathway this case note relates to, or select 'it does not relate to a pathway'",
+      )
+      expect(res.redirect).toHaveBeenCalledWith(req.url)
+    })
+    it('rejects the none option combined with pathways and does not save', async () => {
+      req.session.note = { noteType: 'CASE_NOTE' }
+      req.url = '/referral/AB1234CD/notes/pathways'
+      req.body = { pathways: ['NONE', '8f0d6a2e-1b7c-4c4e-9a53-3c1f2b9e0a11'] }
+      await controller.submitPathways(req, res)
+
+      expect(req.session.note).toEqual({ noteType: 'CASE_NOTE' })
+      expect(req.flash).toHaveBeenCalledWith(
+        'pathwaysError',
+        "Select what pathway this case note relates to, or select 'it does not relate to a pathway'",
+      )
       expect(res.redirect).toHaveBeenCalledWith(req.url)
     })
   })

@@ -557,6 +557,15 @@
           "radioCaseNote": "Case note",
           "radioNonContactActivity": "Non-contact activity note",
           "continueText": "Continue"
+        },
+        "pathways": {
+          "pageTitle": "What pathway does this case note relate to? - Community Support",
+          "nonContactPageTitle": "What pathway does this non-contact activity note relate to? - Community Support",
+          "pageHeader": "What pathway does this case note relate to?",
+          "nonContactPageHeader": "What pathway does this non-contact activity note relate to?",
+          "hint": "Select all that apply.",
+          "noPathwayOption": "It does not relate to a pathway option",
+          "button": "Continue"
         }
       },
       "actionPlan": {
