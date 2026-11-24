@@ -25,6 +25,7 @@ import type {
   OffenceSentenceInfoBffResponseDto,
   OffenceSentenceRequest,
   WithdrawReferralRequest,
+  SubmitCaseNoteRequest,
 } from '@community-support-api'
 import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import { AgentConfig, ApiConfig } from '@ministryofjustice/hmpps-rest-client'
@@ -434,6 +435,24 @@ describe('CommunitySupportApiClient tests', () => {
         .reply(200, response)
 
       const result = communitySupportApiClient.submitAction(caseReference, request, 'user1')
+
+      return expect(result).resolves.toEqual(response)
+    })
+  })
+  describe('submitCaseNote tests', () => {
+    it('should POST the case note to the referral case-note endpoint', () => {
+      const caseReference = 'AB1234CD'
+      const request: SubmitCaseNoteRequest = {
+        title: 'Case note title',
+        details: 'Case note details',
+        shouldNotify: false,
+        pathways: ['pathway-id-1'],
+      }
+      const response = { success: true, message: 'Case note submitted successfully' }
+
+      nock('http://localhost:8080').post(`/referral/${caseReference}/case-note`).reply(200, response)
+
+      const result = communitySupportApiClient.submitCaseNote(caseReference, request, 'user1')
 
       return expect(result).resolves.toEqual(response)
     })

@@ -575,6 +575,23 @@
           "shouldNotifyLabel": "Do you want to send an email to the probation practitioner about this case note?",
           "shouldNotifyHint": "Only send an email if there's important information in this case note that the probation practitioner needs to know.",
           "continueText": "Continue"
+        },
+        "check-your-answers": {
+          "pageTitle": "Check your answers - Case note",
+          "pageHeader": "Check your answers",
+          "detailsSubHeader": "Details of case note",
+          "noteTypeLabel": "Note type",
+          "caseNoteType": "Case note",
+          "nonContactNoteType": "Non-contact activity note",
+          "pathwayLabel": "Pathway",
+          "noPathwayText": "It does not relate to a pathway",
+          "titleLabel": "Case note title",
+          "detailsLabel": "Case note details",
+          "shouldNotifyLabel": "Send an email to the probation practitioner",
+          "yesText": "Yes",
+          "noText": "No",
+          "changeLinkText": "Change",
+          "submitButtonText": "Submit"
         }
       },
       "actionPlan": {

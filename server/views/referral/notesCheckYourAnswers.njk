@@ -1,0 +1,20 @@
+{% extends "../partials/layout.njk" %}
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = content.pageTitle %}
+
+{% block contentBody %}
+  <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
+
+  <h2 class="govuk-heading-m">{{ content.detailsSubHeader }}</h2>
+
+  {{ govukSummaryList(content.summaryList) }}
+
+  <form method="post" action="{{ content.submitHref }}">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    {{ govukButton(content.submitButton) }}
+  </form>
+
+{% endblock %}

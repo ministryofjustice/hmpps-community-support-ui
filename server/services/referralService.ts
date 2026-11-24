@@ -7,6 +7,8 @@ import {
   ReferralAppointmentsBffResponseDto,
   ReferralNoteOrNonContactSessionBffDto,
   ReferenceDataReferralPathwaysDto,
+  SubmitCaseNoteRequest,
+  SuccessMessageResponse,
   PagedRequest,
   AdditionalSupportNeedsDto,
   TaskListStatusDto,
@@ -107,6 +109,14 @@ export default class ReferralService {
 
   getPathways(caseReference: string, username: string): Promise<ReferenceDataReferralPathwaysDto> {
     return this.communitySupportApiClient.getPathways(caseReference, username)
+  }
+
+  submitCaseNote(
+    caseReference: string,
+    caseNote: SubmitCaseNoteRequest,
+    username: string,
+  ): Promise<SuccessMessageResponse> {
+    return this.communitySupportApiClient.submitCaseNote(caseReference, caseNote, username)
   }
 
   getReferralInformation(caseIdentifier: string, username: string): Promise<ReferralInformation> {

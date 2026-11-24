@@ -8,12 +8,14 @@ import NotesTypePresenter from './notesTypePresenter'
 import NotesPathwaysPresenter from './notesPathwaysPresenter'
 import type { ErrorMiddlewareErrors } from '../../@types/express'
 import NotesCaseNoteDetailsPresenter from './notesCaseNoteDetailsPresenter'
+import NotesCheckYourAnswersPresenter from './notesCheckYourAnswersPresenter'
 
 jest.mock('../../services/referralService')
 jest.mock('./notesListPresenter')
 jest.mock('./notesTypePresenter')
 jest.mock('./notesPathwaysPresenter')
 jest.mock('./notesCaseNoteDetailsPresenter')
+jest.mock('./notesCheckYourAnswersPresenter')
 
 describe('NotesController', () => {
   const caseReference = 'AB1234CD'
@@ -289,6 +291,64 @@ describe('NotesController', () => {
       expect(req.flash).toHaveBeenCalledWith('titleInputError', 'Case note title must be 100 characters or less')
       expect(req.flash).toHaveBeenCalledWith('detailsInputError', 'Case note details must be 12000 characters or less')
       expect(res.redirect).toHaveBeenCalledWith(req.url)
+    })
+  })
+
+  describe('check your answers', () => {
+    const completeCaseNote = {
+      noteType: 'CASE_NOTE' as const,
+      pathways: ['8f0d6a2e-1b7c-4c4e-9a53-3c1f2b9e0a11'],
+      title: 'Note title',
+      details: 'Note details',
+      shouldNotify: true,
+    }
+
+    beforeEach(() => {
+      res.locals.user = { username: 'user1' } as never
+      referralService.getPathways = jest.fn().mockResolvedValue({ pathways: [] })
+      referralService.submitCaseNote = jest.fn().mockResolvedValue({ success: true, message: 'ok' })
+    })
+
+    it('redirects to the note type page when the case note is incomplete', async () => {
+      req.session.note = { noteType: 'CASE_NOTE', title: 'Note title' }
+      await controller.showCheckYourAnswers(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/notes/type')
+      expect(NotesCheckYourAnswersPresenter).not.toHaveBeenCalled()
+    })
+
+    it('renders the check your answers page for a complete case note', async () => {
+      req.session.note = completeCaseNote
+      await controller.showCheckYourAnswers(req, res)
+
+      expect(referralService.getPathways).toHaveBeenCalledWith(caseReference, 'user1')
+      expect(NotesCheckYourAnswersPresenter).toHaveBeenCalledWith(caseReference, completeCaseNote, { pathways: [] })
+    })
+
+    it('submits the case note to the API, clears the session and redirects to the notes list', async () => {
+      req.session.note = completeCaseNote
+      await controller.submitCheckYourAnswers(req, res)
+
+      expect(referralService.submitCaseNote).toHaveBeenCalledWith(
+        caseReference,
+        {
+          title: 'Note title',
+          details: 'Note details',
+          shouldNotify: true,
+          pathways: ['8f0d6a2e-1b7c-4c4e-9a53-3c1f2b9e0a11'],
+        },
+        'user1',
+      )
+      expect(req.session.note).toBeUndefined()
+      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/notes')
+    })
+
+    it('does not submit when the note is incomplete', async () => {
+      req.session.note = { noteType: 'CASE_NOTE' }
+      await controller.submitCheckYourAnswers(req, res)
+
+      expect(referralService.submitCaseNote).not.toHaveBeenCalled()
+      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/notes/type')
     })
   })
 })
