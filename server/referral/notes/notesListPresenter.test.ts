@@ -32,7 +32,7 @@ describe('NotesListPresenter', () => {
     expect(viewModel.pageHeader).toBe('Referral for')
     expect(viewModel.addNoteButton).toEqual({
       text: 'Add note',
-      href: `/referral/${caseReference}/notes`,
+      href: `/referral/${caseReference}/notes/type`,
       attributes: { 'data-testid': 'add-note-button' },
     })
     expect(viewModel.notesTitle).toBe('Notes')

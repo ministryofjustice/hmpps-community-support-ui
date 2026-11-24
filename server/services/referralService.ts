@@ -6,6 +6,7 @@ import {
   ReferralProgress,
   ReferralAppointmentsBffResponseDto,
   ReferralNoteOrNonContactSessionBffDto,
+  ReferenceDataReferralPathwaysDto,
   PagedRequest,
   AdditionalSupportNeedsDto,
   TaskListStatusDto,
@@ -102,6 +103,10 @@ export default class ReferralService {
     page?: PagedRequest,
   ): Promise<PagedResponse<ReferralNoteOrNonContactSessionBffDto>> {
     return this.communitySupportApiClient.getReferralNotes(caseReference, username, page)
+  }
+
+  getPathways(caseReference: string, username: string): Promise<ReferenceDataReferralPathwaysDto> {
+    return this.communitySupportApiClient.getPathways(caseReference, username)
   }
 
   getReferralInformation(caseIdentifier: string, username: string): Promise<ReferralInformation> {

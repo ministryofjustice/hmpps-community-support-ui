@@ -1,0 +1,21 @@
+{% extends "../partials/layout.njk" %}
+
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/character-count/macro.njk" import govukCharacterCount %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = "Case note details – Community Support" %}
+
+{% block contentBody %}
+  <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
+
+  <form method="post" action="{{ content.continueButtonLink }}">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    {{ govukInput(content.titleInput) }}
+    {{ govukCharacterCount(content.detailsCharacterCount) }}
+    {{ govukRadios(content.shouldNotifyRadio) }}
+    {{ govukButton(content.continueButton) }}
+  </form>
+
+{% endblock %}
