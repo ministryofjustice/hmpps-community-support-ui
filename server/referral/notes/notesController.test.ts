@@ -7,11 +7,13 @@ import NotesListPresenter from './notesListPresenter'
 import NotesTypePresenter from './notesTypePresenter'
 import NotesPathwaysPresenter from './notesPathwaysPresenter'
 import type { ErrorMiddlewareErrors } from '../../@types/express'
+import NotesCaseNoteDetailsPresenter from './notesCaseNoteDetailsPresenter'
 
 jest.mock('../../services/referralService')
 jest.mock('./notesListPresenter')
 jest.mock('./notesTypePresenter')
 jest.mock('./notesPathwaysPresenter')
+jest.mock('./notesCaseNoteDetailsPresenter')
 
 describe('NotesController', () => {
   const caseReference = 'AB1234CD'
@@ -51,6 +53,7 @@ describe('NotesController', () => {
 
     NotesListPresenter.prototype.renderPage = jest.fn()
     NotesTypePresenter.prototype.renderPage = jest.fn()
+    NotesCaseNoteDetailsPresenter.prototype.renderPage = jest.fn()
 
     res = {
       locals: { user: { username: 'testuser' } },
@@ -214,6 +217,77 @@ describe('NotesController', () => {
         'pathwaysError',
         "Select what pathway this case note relates to, or select 'it does not relate to a pathway'",
       )
+      expect(res.redirect).toHaveBeenCalledWith(req.url)
+    })
+  })
+
+  describe('showCaseNoteDetails', () => {
+    it('renders the case note details page with no session data', async () => {
+      await controller.showCaseNoteDetails(req, res)
+
+      expect(NotesCaseNoteDetailsPresenter).toHaveBeenCalledWith(caseReference, undefined, undefined)
+      expect(NotesCaseNoteDetailsPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+    })
+
+    it('renders the case note details page with session data', async () => {
+      req.session.note = { noteType: 'CASE_NOTE', pathways: ['id_2', 'id_2'] }
+      await controller.showCaseNoteDetails(req, res)
+
+      expect(NotesCaseNoteDetailsPresenter).toHaveBeenCalledWith(
+        caseReference,
+        { noteType: 'CASE_NOTE', pathways: ['id_2', 'id_2'] },
+        undefined,
+      )
+      expect(NotesCaseNoteDetailsPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+    })
+
+    it('renders the case note details page with validation errors', async () => {
+      res.locals.errors = {
+        list: ['titleInput'],
+        messages: { titleInput: { text: 'Enter a title for the case note' } },
+      } as ErrorMiddlewareErrors
+
+      await controller.showCaseNoteDetails(req, res)
+      expect(NotesCaseNoteDetailsPresenter).toHaveBeenCalledWith(caseReference, undefined, {
+        list: ['titleInput'],
+        messages: { titleInput: { text: 'Enter a title for the case note' } },
+      })
+      expect(NotesCaseNoteDetailsPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+    })
+  })
+
+  describe('submitCaseNoteDetails', () => {
+    it('submits the case note details to the session and redirects', async () => {
+      req.body = { titleInput: 'Note title', detailsInput: 'Note details', shouldNotify: 'yes' }
+      await controller.submitCaseNoteDetails(req, res)
+
+      expect(req.session.note).toEqual({ title: 'Note title', details: 'Note details', shouldNotify: true })
+      expect(res.locals.errors).toBeUndefined()
+      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/notes/check-your-answers')
+    })
+
+    it('flashes errors if no data', async () => {
+      req.url = '/referral/AB1234CD/notes/case-note-details'
+      await controller.submitCaseNoteDetails(req, res)
+
+      expect(req.session.note).toEqual({ title: undefined, details: undefined, shouldNotify: undefined })
+      expect(req.flash).toHaveBeenCalledWith('titleInputError', 'Enter a title for the case note')
+      expect(req.flash).toHaveBeenCalledWith('detailsInputError', 'Enter the details of the case note')
+      expect(req.flash).toHaveBeenCalledWith(
+        'shouldNotifyError',
+        'Select whether you want to send an email to the probation practitioner',
+      )
+      expect(res.redirect).toHaveBeenCalledWith(req.url)
+    })
+
+    it('flashes errors if input too long', async () => {
+      req.body = { titleInput: 'x'.repeat(101), detailsInput: 'x'.repeat(12001), shouldNotify: 'no' }
+      req.url = '/referral/AB1234CD/notes/case-note-details'
+      await controller.submitCaseNoteDetails(req, res)
+
+      expect(req.session.note).toEqual({ title: 'x'.repeat(101), details: 'x'.repeat(12001), shouldNotify: false })
+      expect(req.flash).toHaveBeenCalledWith('titleInputError', 'Case note title must be 100 characters or less')
+      expect(req.flash).toHaveBeenCalledWith('detailsInputError', 'Case note details must be 12000 characters or less')
       expect(res.redirect).toHaveBeenCalledWith(req.url)
     })
   })
