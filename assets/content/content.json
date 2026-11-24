@@ -566,6 +566,15 @@
           "hint": "Select all that apply.",
           "noPathwayOption": "It does not relate to a pathway option",
           "button": "Continue"
+        },
+        "case-note-details": {
+          "pageHeader": "Details of the case note",
+          "titleLabel": "Case note title",
+          "detailsLabel": "Case note details",
+          "detailsMaxLength": "12000",
+          "shouldNotifyLabel": "Do you want to send an email to the probation practitioner about this case note?",
+          "shouldNotifyHint": "Only send an email if there's important information in this case note that the probation practitioner needs to know.",
+          "continueText": "Continue"
         }
       },
       "actionPlan": {

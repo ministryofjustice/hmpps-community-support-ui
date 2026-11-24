@@ -7,6 +7,8 @@ import { validateRequestBodyAgainstSchema } from '../../validation/validationUti
 import { NotesTypeSchema } from '../../validation/NotesTypeFormData'
 import NotesPathwaysPresenter from './notesPathwaysPresenter'
 import { buildNotesPathwaysSchema } from '../../validation/NotesPathwaysFormData'
+import NotesCaseNoteDetailsPresenter from './notesCaseNoteDetailsPresenter'
+import { CaseNoteDetailsSchema } from '../../validation/CaseNoteDetailsFormData'
 
 const NOTES_PAGE_SIZE = 25
 
@@ -68,6 +70,30 @@ export default class NotesController {
         pathways,
       } as NoteData
       return res.redirect(`/referral/${caseReference}/notes/${detailsPath}`)
+    })
+  }
+
+  async showCaseNoteDetails(req: Request, res: Response) {
+    const { caseReference } = req.params as { caseReference: string }
+    const validationErrors = res.locals.errors
+    const noteSessionData: NoteData = req.session?.note
+
+    const presenter = new NotesCaseNoteDetailsPresenter(caseReference, noteSessionData, validationErrors)
+    return presenter.renderPage(res)
+  }
+
+  async submitCaseNoteDetails(req: Request, res: Response) {
+    const { caseReference } = req.params as { caseReference: string }
+
+    const { titleInput, detailsInput, shouldNotify } = req.body
+    req.session.note = {
+      ...req.session.note,
+      title: titleInput,
+      details: detailsInput,
+      shouldNotify: typeof shouldNotify === 'string' ? shouldNotify === 'yes' : undefined,
+    } as NoteData
+    return validateRequestBodyAgainstSchema(CaseNoteDetailsSchema, req, res, async () => {
+      return res.redirect(`/referral/${caseReference}/notes/check-your-answers`)
     })
   }
 }
