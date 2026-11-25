@@ -30,9 +30,7 @@ describe('NextStepsFormData', () => {
     expect(result.error).toBeDefined()
     expect(result.error.issues).toHaveLength(1)
     expect(result.error.issues.at(0).path).toContain('actionsBeforeNextSession')
-    expect(result.error.issues.at(0).message).toEqual(
-      'Enter what actions you have before the next session takes place ',
-    )
+    expect(result.error.issues.at(0).message).toEqual('Enter actions you have before the next session takes place ')
   })
 
   test('plannedForNextSession too big input throws max char validation error', () => {

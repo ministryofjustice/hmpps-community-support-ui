@@ -61,7 +61,7 @@ test.describe('Next Steps Page', () => {
     await IcsFeedbackNextStepsPage.verifyFieldErrorOnPage(
       page,
       'actionsBeforeNextSession',
-      'Enter what actions you have before the next session takes place ',
+      'Enter actions you have before the next session takes place ',
     )
   })
 
