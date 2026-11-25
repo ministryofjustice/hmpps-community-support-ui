@@ -14,19 +14,11 @@ export default class NextStepsPresenter extends PresenterBase<NextStepsViewModel
     super()
   }
 
-  private buildTextarea(
-    id: string,
-    name: string,
-    label: string,
-    hint: string,
-    value = '',
-    error = '',
-  ): GovukFrontendTextarea {
+  private buildTextarea(id: string, name: string, label: string, value = '', error = ''): GovukFrontendTextarea {
     return {
       id,
       name,
       label: { text: label, classes: 'govuk-label--m' },
-      hint: { text: hint },
       value,
       attributes: { 'data-testid': id },
       errorMessage: error ? { text: error } : undefined,
@@ -44,7 +36,6 @@ export default class NextStepsPresenter extends PresenterBase<NextStepsViewModel
         'plannedForNextSession',
         'plannedForNextSession',
         content.plannedForNextSessionLabel,
-        content.plannedForNextSessionHint.replace('{{ firstname }}', this.firstName),
         this.data?.plannedForNextSession ?? '',
         fieldErrors.plannedForNextSession?.text ?? '',
       ),
@@ -52,7 +43,6 @@ export default class NextStepsPresenter extends PresenterBase<NextStepsViewModel
         'actionsBeforeNextSession',
         'actionsBeforeNextSession',
         content.actionsBeforeNextSessionLabel.replace('{{ firstname }}', this.firstName),
-        content.actionsBeforeNextSessionHint.replace('{{ firstname }}', this.firstName),
         this.data?.actionsBeforeNextSession ?? '',
         fieldErrors.actionsBeforeNextSession?.text ?? '',
       ),
