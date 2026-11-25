@@ -5,6 +5,7 @@ import ReferralNotesPage from '../pages/referralNotesPage'
 import ReferralNoteTypePage from '../pages/referralNoteTypePage'
 import ReferralPathwaysPage from '../pages/referralPathwaysPage'
 import { referralInformationInCommunity } from '../mockData/referralInformationData'
+import ReferralCaseNoteDetailsPage from '../pages/referralCaseNoteDetailsPage'
 
 test.describe('Referral Notes Page', () => {
   const caseReference = 'AB1234CD'
@@ -15,7 +16,7 @@ test.describe('Referral Notes Page', () => {
     await login(page)
   })
 
-  test('creates a case note through the notes, note type and pathways pages', async ({ page }) => {
+  test('creates a case note through the notes, note type, pathway and details pages', async ({ page }) => {
     await communitySupport.stubGetReferralNotes(
       { content: [], page: 0, size: 25, totalElements: 0, totalPages: 0 },
       caseReference,
@@ -45,6 +46,15 @@ test.describe('Referral Notes Page', () => {
     await pathwaysPage.verifyCaseNoteOnPage()
     await expect(pathwaysPage.pathwayCheckbox('Accommodation')).toBeVisible()
     await expect(pathwaysPage.pathwayCheckbox('Employment')).toBeVisible()
+    await pathwaysPage.pathwayCheckbox('Accommodation').check()
+    await pathwaysPage.continue()
+
+    const caseNoteDetailsPage = new ReferralCaseNoteDetailsPage(page)
+    await caseNoteDetailsPage.verifyOnPage()
+    await caseNoteDetailsPage.titleInput.fill('Case note title')
+    await caseNoteDetailsPage.detailsInput.fill('Case note details')
+    await caseNoteDetailsPage.shouldNotify()
+    await caseNoteDetailsPage.continue()
   })
 
   test('creates a non-contact activity note without the does not relate option', async ({ page }) => {

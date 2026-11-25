@@ -84,7 +84,9 @@ test.describe('HowTheyTriedToContactThePerson', () => {
     await page.getByRole('button', { name: 'Continue' }).click()
     await expect(page).toHaveURL(`/ics-feedback/${pastMeeting.caseRefId}/check-answers`)
 
-    await page.getByRole('link', { name: 'Change Reason they did not attend', exact: true }).click()
+    await page
+      .getByRole('link', { name: 'Change details about why they did not attend (ICS attendance)', exact: true })
+      .click()
     await expect(contactAttempts).toHaveValue('Called twice and left a voicemail')
     await expect(reason).toHaveValue('They were unwell')
 

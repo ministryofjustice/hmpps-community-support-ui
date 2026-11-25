@@ -6,15 +6,9 @@ export type IcsFeedbackCheckYourAnswersViewModel = {
   submitButtonText: string
   submitHref: string
   backLink: GovukFrontendBackLink
-  feedbackSummaries: Array<SummaryListWithTitle>
+  feedbackSummaries: Array<GovukFrontendSummaryList>
 }
 
 export type IcsFeedbackCheckYourAnswersContent = GlobalContent['icsFeedback']['id']['checkAnswers']
 
-export type SummaryListWithTitle = GovukFrontendSummaryList & {
-  summaryTitle: string
-}
-
 export type IcsFeedbackSummaryListContent = IcsFeedbackCheckYourAnswersContent['summaryLists'][number]
-
-export type IcsFeedbackSummaryListContentRow = IcsFeedbackSummaryListContent['rows'][number]

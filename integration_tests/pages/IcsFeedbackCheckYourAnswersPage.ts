@@ -28,14 +28,14 @@ class IcsFeedbackCheckYourAnswersPage extends AbstractPage {
 
   private constructor(page: Page) {
     super(page)
-    this.header = page.locator('h1', { hasText: 'Check your answers before submitting feedback' })
-    this.attendanceSummary = page.locator('h2', { hasText: 'Record session attendance' })
+    this.header = page.locator('h1', { hasText: 'Check your answers before adding' })
+    this.attendanceSummary = page.locator('h2', { hasText: 'ICS attendance' })
     this.sessionDetailsSummary = page.locator('h2', { hasText: 'Session details' })
     this.sessionFeedbackSummary = page.locator('h2', { hasText: 'Session feedback' })
     this.issuesOrConcernsSummary = page.locator('h2', { hasText: 'Issues or concerns' })
     this.identifiedAdditionalSupportSummary = page.locator('h2', { hasText: 'Needs and additional support' })
     this.nextStepsSummary = page.locator('h2', { hasText: 'Next steps' })
-    this.submitButton = page.locator('button', { hasText: 'Submit feedback' })
+    this.submitButton = page.locator('button', { hasText: 'Save and continue' })
     this.locationRowTitle = page.locator('dt', { hasText: 'Location' })
     this.backLink = page.locator('.govuk-back-link')
   }

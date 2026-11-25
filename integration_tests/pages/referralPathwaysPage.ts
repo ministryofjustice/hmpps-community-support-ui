@@ -51,4 +51,8 @@ export default class ReferralPathwaysPage extends AbstractPage {
     await expect(header).toBeVisible()
     await expect(this.continueButton).toBeVisible()
   }
+
+  async continue(): Promise<void> {
+    await this.continueButton.click()
+  }
 }
