@@ -367,8 +367,24 @@ describe('NotesController', () => {
       })
     })
 
+    it('removes the none option from a mixed pathways list before submitting', async () => {
+      req.session.note = { ...completeCaseNote, pathways: ['8f0d6a2e-1b7c-4c4e-9a53-3c1f2b9e0a11', 'NONE'] }
+      await controller.submitCheckYourAnswers(req, res)
+
+      const [, submitted] = referralService.submitCaseNote.mock.calls[0]
+      expect(submitted.pathways).toEqual(['8f0d6a2e-1b7c-4c4e-9a53-3c1f2b9e0a11'])
+    })
+
     it('does not submit when the note is incomplete', async () => {
       req.session.note = { noteType: 'CASE_NOTE' }
+      await controller.submitCheckYourAnswers(req, res)
+
+      expect(referralService.submitCaseNote).not.toHaveBeenCalled()
+      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/notes/type')
+    })
+
+    it('does not submit a non-contact activity note', async () => {
+      req.session.note = { ...completeCaseNote, noteType: 'NON_CONTACT_SESSION' }
       await controller.submitCheckYourAnswers(req, res)
 
       expect(referralService.submitCaseNote).not.toHaveBeenCalled()

@@ -10,6 +10,8 @@ export default class ReferralNotesPage extends AbstractPage {
 
   readonly noNotesMessage: Locator
 
+  readonly caseNoteSubmittedBanner: Locator
+
   static url(caseReference: string): string {
     return `/referral/${caseReference}/notes`
   }
@@ -20,6 +22,7 @@ export default class ReferralNotesPage extends AbstractPage {
     this.addNoteButton = page.locator('[data-testid="add-note-button"]')
     this.notesTable = page.locator('[data-testid="referral-notes-table"]')
     this.noNotesMessage = page.locator('[data-testid="no-notes-message"]')
+    this.caseNoteSubmittedBanner = page.locator('[data-testid="case-note-submitted-banner"]')
   }
 
   async verifyOnPage(): Promise<void> {
