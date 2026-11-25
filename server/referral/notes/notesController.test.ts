@@ -319,8 +319,8 @@ describe('NotesController', () => {
       referralService.submitCaseNote = jest.fn().mockResolvedValue({ success: true, message: 'ok' })
     })
 
-    it('redirects to the note type page when the case note is incomplete', async () => {
-      req.session.note = { noteType: 'CASE_NOTE', title: 'Note title' }
+    it('redirects to the note type page when there is no note session data', async () => {
+      req.session.note = undefined
       await controller.showCheckYourAnswers(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/notes/type')

@@ -1,10 +1,11 @@
-import type { GovukFrontendSummaryList, GovukFrontendButton } from '@govuk-frontend'
+import type { GovukFrontendSummaryList, GovukFrontendButton, GovukFrontendBackLink } from '@govuk-frontend'
 import { GlobalContent } from '../../../assets/content/GlobalContent'
 
 export type NotesCheckYourAnswersViewModel = {
   pageTitle: string
   pageHeader: string
   detailsSubHeader: string
+  backLink: GovukFrontendBackLink
   summaryList: GovukFrontendSummaryList
   submitButton: GovukFrontendButton
   submitHref: string

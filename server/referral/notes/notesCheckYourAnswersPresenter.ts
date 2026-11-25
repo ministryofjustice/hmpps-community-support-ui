@@ -52,7 +52,7 @@ export default class NotesCheckYourAnswersPresenter extends ReferralLayoutPresen
 
   private buildSummaryRows(content: NotesCheckYourAnswersContent): GovukFrontendSummaryListRow[] {
     const isCaseNote = this.sessionData.noteType === 'CASE_NOTE'
-    const rows: GovukFrontendSummaryListRow[] = [
+    return [
       this.buildRow(
         content.noteTypeLabel,
         { text: isCaseNote ? content.caseNoteType : content.nonContactNoteType },
@@ -60,27 +60,29 @@ export default class NotesCheckYourAnswersPresenter extends ReferralLayoutPresen
         content,
       ),
       this.buildRow(content.pathwayLabel, this.buildPathwaysValue(content), '/notes/pathways', content),
+      this.buildRow(
+        isCaseNote ? content.caseNoteTitleLabel : content.nonContactTitleLabel,
+        { text: this.sessionData.title ?? '' },
+        '/notes/case-note-details',
+        content,
+      ),
+      this.buildRow(
+        isCaseNote ? content.caseNoteDetailsLabel : content.nonContactDetailsLabel,
+        { html: escapeSpecialHtmlCharacters(this.sessionData.details ?? '').replace(/\r?\n/g, '<br>') },
+        '/notes/case-note-details',
+        content,
+      ),
+      ...(isCaseNote
+        ? [
+            this.buildRow(
+              content.shouldNotifyLabel,
+              { text: this.sessionData.shouldNotify ? content.yesText : content.noText },
+              '/notes/case-note-details',
+              content,
+            ),
+          ]
+        : []),
     ]
-
-    if (isCaseNote) {
-      rows.push(
-        this.buildRow(content.titleLabel, { text: this.sessionData.title ?? '' }, '/notes/case-note-details', content),
-        this.buildRow(
-          content.detailsLabel,
-          { html: escapeSpecialHtmlCharacters(this.sessionData.details ?? '').replace(/\r?\n/g, '<br>') },
-          '/notes/case-note-details',
-          content,
-        ),
-        this.buildRow(
-          content.shouldNotifyLabel,
-          { text: this.sessionData.shouldNotify ? content.yesText : content.noText },
-          '/notes/case-note-details',
-          content,
-        ),
-      )
-    }
-
-    return rows
   }
 
   buildViewModel(): NotesCheckYourAnswersViewModel {
@@ -90,6 +92,11 @@ export default class NotesCheckYourAnswersPresenter extends ReferralLayoutPresen
       pageTitle: content.pageTitle,
       pageHeader: content.pageHeader,
       detailsSubHeader: content.detailsSubHeader,
+      backLink: {
+        href: `/referral/${this.caseReference}/notes/${
+          this.sessionData.noteType === 'CASE_NOTE' ? 'case-note-details' : 'non-contact-session-details'
+        }`,
+      },
       summaryList: { rows: this.buildSummaryRows(content) },
       submitButton: { text: content.submitButtonText, preventDoubleClick: true },
       submitHref: `/referral/${this.caseReference}/notes/check-your-answers`,

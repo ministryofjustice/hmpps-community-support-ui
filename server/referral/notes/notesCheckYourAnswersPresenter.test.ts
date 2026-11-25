@@ -32,8 +32,8 @@ describe('NotesCheckYourAnswersPresenter', () => {
     expect(rows.map(row => row.key)).toEqual([
       { text: content.noteTypeLabel },
       { text: content.pathwayLabel },
-      { text: content.titleLabel },
-      { text: content.detailsLabel },
+      { text: content.caseNoteTitleLabel },
+      { text: content.caseNoteDetailsLabel },
       { text: content.shouldNotifyLabel },
     ])
     expect(rows[0].value).toEqual({ text: content.caseNoteType })
@@ -64,20 +64,45 @@ describe('NotesCheckYourAnswersPresenter', () => {
     expect(rows[3].value).toEqual({ html: '&lt;script&gt;x&lt;/script&gt;' })
   })
 
-  it('shows only the type and pathway rows for a non-contact activity note', () => {
-    const rows = buildRows({ noteType: 'NON_CONTACT_SESSION', pathways: [employmentId] })
+  it('shows the type, pathway, title and details rows with activity labels for a non-contact activity note', () => {
+    const rows = buildRows({
+      noteType: 'NON_CONTACT_SESSION',
+      pathways: [employmentId],
+      title: 'Activity title',
+      details: 'Activity details',
+    })
 
-    expect(rows).toHaveLength(2)
+    expect(rows).toHaveLength(4)
     expect(rows[0].value).toEqual({ text: content.nonContactNoteType })
     expect(rows[1].value).toEqual({ html: 'Employment' })
+    expect(rows[2].key).toEqual({ text: content.nonContactTitleLabel })
+    expect(rows[2].value).toEqual({ text: 'Activity title' })
+    expect(rows[3].key).toEqual({ text: content.nonContactDetailsLabel })
+    expect(rows[3].value).toEqual({ html: 'Activity details' })
   })
 
   it('builds the page header and submit button', () => {
     const viewModel = new NotesCheckYourAnswersPresenter(caseReference, caseNote, pathwaysResponse).buildViewModel()
 
     expect(viewModel.pageHeader).toBe(content.pageHeader)
-    expect(viewModel.detailsSubHeader).toBe('Details of case note')
+    expect(viewModel.detailsSubHeader).toBe(content.detailsSubHeader)
     expect(viewModel.submitButton.text).toBe(content.submitButtonText)
     expect(viewModel.submitHref).toBe(`/referral/${caseReference}/notes/check-your-answers`)
+  })
+
+  it('links back to case note details for a case note', () => {
+    const viewModel = new NotesCheckYourAnswersPresenter(caseReference, caseNote, pathwaysResponse).buildViewModel()
+
+    expect(viewModel.backLink.href).toBe(`/referral/${caseReference}/notes/case-note-details`)
+  })
+
+  it('links back to non-contact session details for a non-contact activity note', () => {
+    const viewModel = new NotesCheckYourAnswersPresenter(
+      caseReference,
+      { ...caseNote, noteType: 'NON_CONTACT_SESSION' },
+      pathwaysResponse,
+    ).buildViewModel()
+
+    expect(viewModel.backLink.href).toBe(`/referral/${caseReference}/notes/non-contact-session-details`)
   })
 })

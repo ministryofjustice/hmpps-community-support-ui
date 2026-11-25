@@ -14,11 +14,7 @@ import NotesCheckYourAnswersPresenter from './notesCheckYourAnswersPresenter'
 const NOTES_PAGE_SIZE = 25
 
 const isCaseNoteComplete = (note?: NoteData): boolean =>
-  note?.noteType === 'CASE_NOTE' &&
-  !!note.pathways?.length &&
-  note.title !== undefined &&
-  note.details !== undefined &&
-  note.shouldNotify !== undefined
+  !!note.pathways?.length && note.title !== undefined && note.details !== undefined && note.shouldNotify !== undefined
 
 export default class NotesController {
   constructor(private readonly referralService: ReferralService) {}
@@ -111,7 +107,7 @@ export default class NotesController {
     const { caseReference } = req.params as { caseReference: string }
     const { username } = res.locals.user
     const noteSessionData: NoteData = req.session?.note
-    if (!isCaseNoteComplete(noteSessionData)) {
+    if (!noteSessionData) {
       return res.redirect(`/referral/${caseReference}/notes/type`)
     }
 
@@ -124,22 +120,21 @@ export default class NotesController {
     const { caseReference } = req.params as { caseReference: string }
     const { username } = res.locals.user
     const noteSessionData: NoteData = req.session?.note
-    if (!isCaseNoteComplete(noteSessionData)) {
-      return res.redirect(`/referral/${caseReference}/notes/type`)
+    if (noteSessionData?.noteType === 'CASE_NOTE' && isCaseNoteComplete(noteSessionData)) {
+      await this.referralService.submitCaseNote(
+        caseReference,
+        {
+          title: noteSessionData.title,
+          details: noteSessionData.details,
+          shouldNotify: noteSessionData.shouldNotify,
+          pathways: noteSessionData.pathways.filter(pathway => pathway !== NO_PATHWAY_VALUE),
+        },
+        username,
+      )
+      delete req.session.note
+      req.session.noteAlertType = 'ADD_CASE_NOTE'
+      return res.redirect(`/referral/${caseReference}/notes`)
     }
-
-    await this.referralService.submitCaseNote(
-      caseReference,
-      {
-        title: noteSessionData.title,
-        details: noteSessionData.details,
-        shouldNotify: noteSessionData.shouldNotify,
-        pathways: noteSessionData.pathways.filter(pathway => pathway !== NO_PATHWAY_VALUE),
-      },
-      username,
-    )
-    delete req.session.note
-    req.session.noteAlertType = 'ADD_CASE_NOTE'
-    return res.redirect(`/referral/${caseReference}/notes`)
+    return res.redirect(`/referral/${caseReference}/notes/type`)
   }
 }
