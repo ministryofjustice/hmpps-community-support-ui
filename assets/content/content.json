@@ -1574,10 +1574,10 @@
         }
       },
       "checkAnswers": {
-        "pageHeader": "Check your answers before submitting feedback",
+        "pageHeader": "Check your answers before adding {{session}} feedback",
         "summaryLists": [
           {
-            "summaryTitle": "Record session attendance",
+            "summaryTitle": "{{session}} attendance",
             "rows": [
               {
                 "text": "Did the session happen?",
@@ -1585,7 +1585,7 @@
                 "changeHref": "/ics-feedback/caseRefId/attendance"
               },
               {
-                "text": "Did {{ firstname }} come to the appointment?",
+                "text": "Did {{ firstname }} come to the {{ session }}?",
                 "hint": "Did {{ firstname }} come to the appointment",
                 "changeHref": "/ics-feedback/caseRefId/did-attend"
               },
@@ -1603,6 +1603,21 @@
                 "text": "Reason session was not in person",
                 "hint": "Why was the session not in person",
                 "changeHref": "/ics-feedback/caseRefId/did-session-take-place"
+              },
+              {
+                "text": "Why did the {{ session }} not happen?",
+                "hint": "Why the session did not happen",
+                "changeHref": "/ics-feedback/caseRefId/why-did-the-session-not-happen"
+              },
+              {
+                "text": "How did you try to contact {{ firstname }}?",
+                "hint": "details about how you tried to contact them",
+                "changeHref": "/ics-feedback/caseRefId/how-they-tried-to-contact-the-person"
+              },
+              {
+                "text": "Reason they did not attend?",
+                "hint": "details about why they did not attend",
+                "changeHref": "/ics-feedback/caseRefId/how-they-tried-to-contact-the-person"
               }
             ]
           },
@@ -1633,21 +1648,6 @@
                 "text": "What happened in the session",
                 "hint": "What happened in the session",
                 "changeHref": "/ics-feedback/caseRefId/session-feedback"
-              },
-              {
-                "text": "Why the session did not happen",
-                "hint": "Why the session did not happen",
-                "changeHref": "/ics-feedback/caseRefId/why-did-the-session-not-happen"
-              },
-              {
-                "text": "How did you try to contact {{ firstname }}?",
-                "hint": "How did you try to contact {{ firstname }}?",
-                "changeHref": "/ics-feedback/caseRefId/how-they-tried-to-contact-the-person"
-              },
-              {
-                "text": "Reason they did not attend",
-                "hint": "Reason they did not attend",
-                "changeHref": "/ics-feedback/caseRefId/how-they-tried-to-contact-the-person"
               },
               {
                 "text": "What was {{ firstname }}'s engagement like during the session?",
@@ -1702,7 +1702,7 @@
           "referralCouldNotTakePart": "{{ firstname }} could not take part",
           "referralDidNotComply": "{{ firstname }} did not comply"
         },
-        "submitButtonText": "Submit feedback",
+        "submitButtonText": "Save and continue",
         "submitHref": "/ics-feedback/caseRefId/submit",
         "didNotAttendbackLinkHref": "/ics-feedback/caseRefId/how-they-tried-to-contact-the-person",
         "noSessionbackLinkHref": "/ics-feedback/caseRefId/why-did-the-session-not-happen",

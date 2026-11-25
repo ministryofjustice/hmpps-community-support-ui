@@ -84,6 +84,22 @@ test.describe('DidAttendPage', () => {
     await expect(page).toHaveURL(IcsFeedbackHowTheyTriedToContactThePersonPage.url(pastMeeting.caseRefId))
   })
 
+  test('Redirects to the attendance page when there is no saved attendance answer', async ({ page }) => {
+    await page.goto(DidAttendPage.url(pastMeeting.caseRefId))
+
+    await expect(page).toHaveURL(RecordSessionAttendancePage.url(pastMeeting.caseRefId))
+  })
+
+  test('Redirects to the attendance page when the session happened', async ({ page }) => {
+    await page.goto(RecordSessionAttendancePage.url(pastMeeting.caseRefId))
+    const recordSessionAttendancePage = await RecordSessionAttendancePage.verifyOnPage(page)
+    await recordSessionAttendancePage.selectHappened('Yes')
+    await recordSessionAttendancePage.clickContinue()
+    await page.goto(DidAttendPage.url(pastMeeting.caseRefId))
+
+    await expect(page).toHaveURL(RecordSessionAttendancePage.url(pastMeeting.caseRefId))
+  })
+
   test('Back link returns to the attendance page', async ({ page }) => {
     const didAttendPage = await goToDidAttend(page)
     await didAttendPage.backLink.click()
