@@ -14,13 +14,7 @@ export default class NextStepsPresenter extends PresenterBase<NextStepsViewModel
     super()
   }
 
-  private buildTextarea(
-    id: string,
-    name: string,
-    label: string,
-    value = '',
-    error = '',
-  ): GovukFrontendTextarea {
+  private buildTextarea(id: string, name: string, label: string, value = '', error = ''): GovukFrontendTextarea {
     return {
       id,
       name,
