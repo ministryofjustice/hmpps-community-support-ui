@@ -33,7 +33,7 @@ describe('NotesController', () => {
   let controller: NotesController
 
   const buildRequest = (query: Record<string, unknown> = {}): Request =>
-    ({ params: { caseReference }, query }) as unknown as Request
+    ({ params: { caseReference }, query, session: {} }) as unknown as Request
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -71,8 +71,18 @@ describe('NotesController', () => {
         page: 0,
         size: 25,
       })
-      expect(NotesListPresenter).toHaveBeenCalledWith(notesResponse, caseReference)
+      expect(NotesListPresenter).toHaveBeenCalledWith(notesResponse, caseReference, undefined)
       expect(NotesListPresenter.prototype.renderPage).toHaveBeenCalledWith(res)
+    })
+
+    it('shows the case note added alert once and clears the session flag', async () => {
+      const request = buildRequest()
+      request.session.noteAlertType = 'ADD_CASE_NOTE'
+
+      await controller.showReferralNotes(request, res)
+
+      expect(NotesListPresenter).toHaveBeenCalledWith(notesResponse, caseReference, 'ADD_CASE_NOTE')
+      expect(request.session.noteAlertType).toBeUndefined()
     })
 
     it('converts the 1-based page in the query string to a 0-based API page', async () => {
@@ -340,7 +350,21 @@ describe('NotesController', () => {
         'user1',
       )
       expect(req.session.note).toBeUndefined()
+      expect(req.session.noteAlertType).toBe('ADD_CASE_NOTE')
       expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/notes')
+    })
+
+    it('submits an empty pathways array when the note does not relate to a pathway', async () => {
+      req.session.note = { ...completeCaseNote, pathways: ['NONE'] }
+      await controller.submitCheckYourAnswers(req, res)
+
+      const [, submitted] = referralService.submitCaseNote.mock.calls[0]
+      expect(submitted).toEqual({
+        title: completeCaseNote.title,
+        details: completeCaseNote.details,
+        shouldNotify: completeCaseNote.shouldNotify,
+        pathways: [],
+      })
     })
 
     it('does not submit when the note is incomplete', async () => {

@@ -1,6 +1,6 @@
 import type { ReferralNoteOrNonContactSessionBffDto } from '@community-support-api'
 import type { PagedResponse } from '../../@types/communitySupportApi/derived'
-import type { MojPagination } from '../../@types/mojFrontend'
+import type { MojAlert, MojPagination } from '../../@types/mojFrontend'
 import ReferralLayoutPresenter, { ReferralNavigationValues } from '../referralLayout/referralLayoutPresenter'
 import type { ReferralNotesViewModel } from './notesListViewModel'
 
@@ -8,6 +8,7 @@ export default class NotesListPresenter extends ReferralLayoutPresenter<Referral
   constructor(
     private readonly notesResponse: PagedResponse<ReferralNoteOrNonContactSessionBffDto>,
     private readonly caseReference: string,
+    private readonly alertType?: 'ADD_CASE_NOTE',
   ) {
     super(ReferralNavigationValues.notesTab, caseReference)
   }
@@ -16,12 +17,24 @@ export default class NotesListPresenter extends ReferralLayoutPresenter<Referral
     return 'referral/notes'
   }
 
+  private getAlert(): MojAlert | undefined {
+    if (this.alertType === 'ADD_CASE_NOTE') {
+      return {
+        variant: 'success',
+        title: this.globalContent().referral.id.notes.page.caseNoteSubmittedBannerText,
+        dismissible: true,
+      }
+    }
+    return undefined
+  }
+
   buildViewModel(): ReferralNotesViewModel {
     const content = this.globalContent().referral.id.notes.page
     const pagination = this.buildPagination()
     const { from, to, count } = pagination.results
 
     return {
+      alert: this.getAlert(),
       pageTitle: content.pageTitle,
       pageHeader: content.pageHeader,
       navBar: this.getMojSubNavigationArgs(),

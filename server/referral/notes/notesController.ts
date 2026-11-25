@@ -6,7 +6,7 @@ import { NoteData } from '../../@types/express'
 import { validateRequestBodyAgainstSchema } from '../../validation/validationUtils'
 import { NotesTypeSchema } from '../../validation/NotesTypeFormData'
 import NotesPathwaysPresenter from './notesPathwaysPresenter'
-import { buildNotesPathwaysSchema } from '../../validation/NotesPathwaysFormData'
+import { buildNotesPathwaysSchema, NO_PATHWAY_VALUE } from '../../validation/NotesPathwaysFormData'
 import NotesCaseNoteDetailsPresenter from './notesCaseNoteDetailsPresenter'
 import { CaseNoteDetailsSchema } from '../../validation/CaseNoteDetailsFormData'
 import NotesCheckYourAnswersPresenter from './notesCheckYourAnswersPresenter'
@@ -31,7 +31,9 @@ export default class NotesController {
       page: page - 1,
       size: NOTES_PAGE_SIZE,
     })
-    const presenter = new NotesListPresenter(notesResponse, caseReference)
+    const alertType = req.session?.noteAlertType
+    delete req.session.noteAlertType
+    const presenter = new NotesListPresenter(notesResponse, caseReference, alertType)
     return presenter.renderPage(res)
   }
 
@@ -132,11 +134,12 @@ export default class NotesController {
         title: noteSessionData.title,
         details: noteSessionData.details,
         shouldNotify: noteSessionData.shouldNotify,
-        pathways: noteSessionData.pathways,
+        pathways: noteSessionData.pathways.filter(pathway => pathway !== NO_PATHWAY_VALUE),
       },
       username,
     )
     delete req.session.note
+    req.session.noteAlertType = 'ADD_CASE_NOTE'
     return res.redirect(`/referral/${caseReference}/notes`)
   }
 }

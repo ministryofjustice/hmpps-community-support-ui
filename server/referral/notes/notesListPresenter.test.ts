@@ -57,6 +57,18 @@ describe('NotesListPresenter', () => {
     expect(viewModel.navBar.items.find(item => item.active)?.href).toBe(`/referral/${caseReference}/notes`)
   })
 
+  it('shows the case note added alert only when requested', () => {
+    const withAlert = new NotesListPresenter(pagedResponse({}), caseReference, 'ADD_CASE_NOTE').buildViewModel()
+    expect(withAlert.alert).toEqual({
+      variant: 'success',
+      title: 'You added a case note',
+      dismissible: true,
+    })
+
+    const withoutAlert = new NotesListPresenter(pagedResponse({}), caseReference).buildViewModel()
+    expect(withoutAlert.alert).toBeUndefined()
+  })
+
   it('shows the results summary for a single page', () => {
     const viewModel = new NotesListPresenter(pagedResponse({}), caseReference).buildViewModel()
 
