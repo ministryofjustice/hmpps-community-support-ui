@@ -72,7 +72,7 @@ test.describe('Session Feedback Page', () => {
     await IcsFeedbackSessionFeedbackPage.verifyFieldErrorOnPage(
       page,
       'behaviour',
-      'Enter what John’s engagement was like during the session',
+      'Enter what their engagement was like during the session',
     )
     await IcsFeedbackSessionFeedbackPage.verifyFieldErrorOnPage(
       page,
