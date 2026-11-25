@@ -28,7 +28,7 @@ export default class IcsFeedbackSessionFeedbackPage extends AbstractPage {
 
   private constructor(page: Page) {
     super(page)
-    this.header = page.locator('h1', { hasText: 'Session feedback' })
+    this.header = page.locator('h1', { hasText: 'ICS feedback' })
     this.errorHeader = page.locator('h2', { hasText: 'There is a problem' })
     this.backLink = page.getByRole('link', { name: 'Back', exact: true })
     this.whatDidYouDoInput = page.locator('textarea[name="whatDidYouDo"]')
