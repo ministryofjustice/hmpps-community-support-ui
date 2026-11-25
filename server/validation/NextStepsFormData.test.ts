@@ -31,7 +31,7 @@ describe('NextStepsFormData', () => {
     expect(result.error.issues).toHaveLength(1)
     expect(result.error.issues.at(0).path).toContain('actionsBeforeNextSession')
     expect(result.error.issues.at(0).message).toEqual(
-      'Enter what actions you have before the next session takes place ',
+      'Enter actions you have before the next session takes place ',
     )
   })
 
