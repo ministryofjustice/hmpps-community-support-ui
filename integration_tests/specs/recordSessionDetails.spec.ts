@@ -100,7 +100,7 @@ test.describe('Session Details Page', () => {
     await sessionDetailsPage.duration.items[1].input.fill('15')
     await sessionDetailsPage.continueButton.click()
     await expect(page).toHaveURL(IcsFeedbackSessionFeedbackPage.url(pastMeeting.caseRefId))
-    await expect(page.getByRole('heading', { name: 'Session feedback', exact: true })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'ICS feedback', exact: true })).toBeVisible()
   })
 
   // IPB-2253:AC4.2
@@ -112,7 +112,7 @@ test.describe('Session Details Page', () => {
     await sessionDetailsPage.duration.items[1].input.fill('15')
     await sessionDetailsPage.continueButton.click()
     await expect(page).toHaveURL(IcsFeedbackSessionFeedbackPage.url(pastMeeting.caseRefId))
-    await expect(page.getByRole('heading', { name: 'Session feedback', exact: true })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'ICS feedback', exact: true })).toBeVisible()
   })
 
   // IPB-2253:AC5/AC6
