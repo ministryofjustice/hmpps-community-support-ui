@@ -18,6 +18,9 @@ const HOURS_OOB_ERROR = {
 const MINUTES_OOB_ERROR = {
   error: 'Minute must be between 0 and 60',
 }
+const HOURS_REQUIRED_ERROR = 'How long the session lasted must include hours'
+const MINUTES_REQUIRED_ERROR = 'How long the session lasted must include minutes'
+const EMPTY_DURATION_ERROR = 'Enter how long the session lasted'
 
 const hours = z.coerce
   .number(INVALID_HOURS_ERROR)
@@ -37,9 +40,21 @@ const minutes = z.coerce
     }
   })
 
-const checkDuration = (val: { 'sessionDuration-hours': number; 'sessionDuration-minutes': number }) => {
-  return !(val['sessionDuration-hours'] === 0 && val['sessionDuration-minutes'] === 0)
-}
+const durationInput = (schema: z.ZodType<number>) =>
+  z.preprocess(
+    value => (value === undefined || value === null ? '' : String(value)),
+    z.string().transform((value, ctx): number | '' => {
+      if (value === '') return ''
+
+      const result = schema.safeParse(value)
+      if (!result.success) {
+        result.error.issues.forEach(issue => ctx.addIssue({ code: 'custom', message: issue.message }))
+        return z.NEVER
+      }
+
+      return result.data
+    }),
+  )
 
 const checkLateReason = (val: { wasPersonLate: string; lateReason: string }) => {
   if (val.wasPersonLate === 'Yes') {
@@ -49,26 +64,39 @@ const checkLateReason = (val: { wasPersonLate: string; lateReason: string }) => 
 }
 
 const baseSchema = z.object({
-  wasPersonLate: z.literal(['Yes', 'No'], { error: 'Select yes if {{ firstname }} was late' }),
+  wasPersonLate: z.literal(['Yes', 'No'], { error: 'Select yes if they were late' }),
   lateReason: z.string(),
-  'sessionDuration-hours': hours,
-  'sessionDuration-minutes': minutes,
+  'sessionDuration-hours': durationInput(hours),
+  'sessionDuration-minutes': durationInput(minutes),
 })
+
+const durationFieldsSchema = baseSchema.pick({
+  'sessionDuration-hours': true,
+  'sessionDuration-minutes': true,
+})
+
+const durationFieldsAreValid = (payload: { value: unknown }): boolean =>
+  durationFieldsSchema.safeParse(payload.value).success
 
 export const RecordSessionDetailsFormDataSchema = baseSchema
   .refine(checkLateReason, {
-    message: 'Enter why {{ firstname }} was late',
+    message: 'Enter a reason they were late',
     path: ['lateReason'],
   })
-  .refine(checkDuration, {
-    message: 'Enter how long the session lasted',
+  .refine(val => !(val['sessionDuration-hours'] === '' && val['sessionDuration-minutes'] === ''), {
+    message: EMPTY_DURATION_ERROR,
     path: ['sessionDuration-hours'],
-
-    when(payload) {
-      return baseSchema
-        .pick({ 'sessionDuration-hours': true, 'sessionDuration-minutes': true })
-        .safeParse(payload.value).success
-    },
+    when: durationFieldsAreValid,
+  })
+  .refine(val => val['sessionDuration-hours'] !== '' || val['sessionDuration-minutes'] === '', {
+    message: HOURS_REQUIRED_ERROR,
+    path: ['sessionDuration-hours'],
+    when: durationFieldsAreValid,
+  })
+  .refine(val => val['sessionDuration-minutes'] !== '' || val['sessionDuration-hours'] === '', {
+    message: MINUTES_REQUIRED_ERROR,
+    path: ['sessionDuration-minutes'],
+    when: durationFieldsAreValid,
   })
 
 type RecordSessionDetailsFormData = z.infer<typeof RecordSessionDetailsFormDataSchema>

@@ -53,7 +53,7 @@ export default class RecordSessionDetailsPresenter extends PresenterBase<RecordS
       <h1 class="govuk-label-wrapper govuk-label">
         <label class="govuk-label govuk-label--s"
           id=${content.lateReasonName}Label>
-          ${content.lateReasonLabel.replace('{{ firstname }}', this.data.referralFirstName)}
+          ${content.lateReasonLabel}
         </label>
       </h1>
       ${errorHtml}

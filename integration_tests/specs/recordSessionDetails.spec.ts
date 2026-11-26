@@ -14,9 +14,11 @@ test.describe('Session Details Page', () => {
   const date = new Date()
   const pastDate = subDays(date, 12)
 
-  const EMPTY_RADIO_ERROR_MESSAGE = 'Select yes if Alice was late'
-  const EMPTY_LATE_REASON_ERROR_MESSAGE = 'Enter why Alice was late'
+  const EMPTY_RADIO_ERROR_MESSAGE = 'Select yes if they were late'
+  const EMPTY_LATE_REASON_ERROR_MESSAGE = 'Enter a reason they were late'
   const EMPTY_DURATION_ERROR_MESSAGE = 'Enter how long the session lasted'
+  const HOURS_REQUIRED_ERROR_MESSAGE = 'How long the session lasted must include hours'
+  const MINUTES_REQUIRED_ERROR_MESSAGE = 'How long the session lasted must include minutes'
   const INVALID_HOURS_ERROR_MESSAGE = 'Hour must only include numbers 0 to 9'
   const INVALID_MINUTES_ERROR_MESSAGE = 'Minute must only include numbers 0 to 9'
   const MINUTES_OOB_ERROR_MESSAGE = 'Minute must be between 0 and 60'
@@ -52,7 +54,7 @@ test.describe('Session Details Page', () => {
   })
 
   // IPB-2253:AC1/AC2
-  test('Session Details page should display correct content', async ({ page }) => {
+  test('ICS details page should display correct content', async ({ page }) => {
     const sessionDetailsPage = await SessionDetailsPage.verifyOnPage(page)
     await test.step('check summary content', async () => {
       const { summary } = sessionDetailsPage
@@ -87,7 +89,7 @@ test.describe('Session Details Page', () => {
       const [wasLateYes] = sessionDetailsPage.wasPersonLateRadios.items
       await wasLateYes.input.click()
       await expect(sessionDetailsPage.lateReason.label).toBeVisible()
-      await expect(sessionDetailsPage.lateReason.label).toHaveText('Why was Alice late?')
+      await expect(sessionDetailsPage.lateReason.label).toHaveText('Reason they were late')
       await expect(sessionDetailsPage.lateReason.input).toBeVisible()
     })
   })
@@ -137,6 +139,32 @@ test.describe('Session Details Page', () => {
       const [errorDuration] = await sessionDetailsPage.duration.errorText.all()
       await expect(errorDuration).toBeVisible()
       await expect(errorDuration).toContainText(EMPTY_DURATION_ERROR_MESSAGE)
+    })
+  })
+
+  ;[
+    {
+      name: 'hours are missing',
+      hours: '',
+      minutes: '15',
+      expectedMessage: HOURS_REQUIRED_ERROR_MESSAGE,
+    },
+    {
+      name: 'minutes are missing',
+      hours: '1',
+      minutes: '',
+      expectedMessage: MINUTES_REQUIRED_ERROR_MESSAGE,
+    },
+  ].forEach(({ name, hours, minutes, expectedMessage }) => {
+    test(`shows a specific duration error when ${name}`, async ({ page }) => {
+      const sessionDetailsPage = await SessionDetailsPage.verifyOnPage(page)
+      await sessionDetailsPage.wasPersonLateRadios.items[1].input.click()
+      await sessionDetailsPage.duration.items[0].input.fill(hours)
+      await sessionDetailsPage.duration.items[1].input.fill(minutes)
+      await sessionDetailsPage.continueButton.click()
+
+      await expect(sessionDetailsPage.errorSummary.items).toHaveText([expectedMessage])
+      await expect(sessionDetailsPage.duration.errorText).toContainText(expectedMessage)
     })
   })
 
