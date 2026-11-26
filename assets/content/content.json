@@ -1727,7 +1727,7 @@
         "attendedBackLinkHref": "/ics-feedback/caseRefId/next-steps"
       },
       "sessionDetails": {
-        "pageHeader": "Session details",
+        "pageHeader": "ICS details",
         "appointmentDetails": {
           "dateLabel": "Date",
           "startTimeLabel": "Start time"
@@ -1739,7 +1739,7 @@
             "yesText": "Yes",
             "noText": "No",
             "lateReasonName": "lateReason",
-            "lateReasonLabel": "Why was {{ firstname }} late?"
+            "lateReasonLabel": "Reason they were late"
           }
         },
         "sessionDurationTimeInput": {
