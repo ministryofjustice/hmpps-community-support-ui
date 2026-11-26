@@ -9,6 +9,7 @@ export default abstract class PresenterBase<PageViewModel> {
   // For now returns the raw string, in future will return a computed path
   protected abstract getTemplatePath(): string
 
+  // TO BE REMOVED
   protected globalContent(): GlobalContent {
     return globalContent
   }
