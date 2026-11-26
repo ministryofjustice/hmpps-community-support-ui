@@ -765,6 +765,19 @@ export default {
         jsonBody: pathways,
       },
     }),
+  stubSubmitCaseNote: (caseReference: string, expectedBody?: object, httpStatus = 200): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'POST',
+        urlPathPattern: `/community-support/referral/${caseReference}/case-note`,
+        ...(expectedBody ? { bodyPatterns: [{ equalToJson: JSON.stringify(expectedBody) }] } : {}),
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: { success: true, message: 'Case note submitted' },
+      },
+    }),
   stubIcsFeedbackSubmission: (
     icsFeedback: IcsFeedbackSubmission,
     icsId: string,

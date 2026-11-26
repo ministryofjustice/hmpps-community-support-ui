@@ -78,6 +78,7 @@ export declare module 'express-session' {
     }
     referralProgressBanner?: ReferralProgressBannerContent
     referralDetailsNotification?: ReferralDetailsNotification
+    noteAlertType?: 'ADD_CASE_NOTE'
     icsFeedbackSubmission: IcsFeedbackSubmission & { caseReferenceId: string }
     retrospectiveBooking?: { caseReference: string; appointmentIcsId: string }
     draftReferralId: string

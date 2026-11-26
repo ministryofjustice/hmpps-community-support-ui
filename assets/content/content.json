@@ -547,6 +547,7 @@
           "readFullNoteLinkText": "Read full note",
           "addNoteButtonText": "Add note",
           "addedNotesSubheading": "Added notes",
+          "caseNoteSubmittedBannerText": "You added a case note",
           "resultsSummaryText": "Showing {{ from }} to {{ to }} of {{ count }} total results"
         },
         "type": {
