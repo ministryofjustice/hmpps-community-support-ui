@@ -2064,8 +2064,8 @@ export interface components {
       size?: number
       sort?: string[]
     }
-    PageResponse: {
-      content: unknown[]
+    PageResponseReferralNoteOrNonContactSessionDto: {
+      content: components['schemas']['ReferralNoteOrNonContactSessionDto'][]
       /** Format: int32 */
       page: number
       /** Format: int32 */
@@ -2074,6 +2074,19 @@ export interface components {
       totalElements: number
       /** Format: int32 */
       totalPages: number
+    }
+    ReferralNoteOrNonContactSessionDto: {
+      /** Format: uuid */
+      id: string
+      createdAt: string
+      createdBy: string
+      title: string
+      details: string
+      detailsTruncated: boolean
+    }
+    ReferralNotesBffResponseDto: {
+      fullName: string
+      notesAndNonContactSessions: components['schemas']['PageResponseReferralNoteOrNonContactSessionDto']
     }
     ReferenceDataReferralPathwayDto: {
       /** Format: uuid */
@@ -3720,7 +3733,7 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          'application/json': components['schemas']['PageResponse']
+          'application/json': components['schemas']['ReferralNotesBffResponseDto']
         }
       }
       /** @description Referral not found */

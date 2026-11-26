@@ -5,7 +5,7 @@ import {
   ReferralInformation,
   ReferralProgress,
   ReferralAppointmentsBffResponseDto,
-  ReferralNoteOrNonContactSessionBffDto,
+  ReferralNotesBffResponseDto,
   ReferenceDataReferralPathwaysDto,
   SubmitCaseNoteRequest,
   SuccessMessageResponse,
@@ -40,7 +40,6 @@ import {
   WithdrawalReasonsGroupedBffResponseDto,
   ActionPlanNeedsOrderRequest,
 } from '@community-support-api'
-import { PagedResponse } from '../@types/communitySupportApi/derived'
 import CommunitySupportApiClient from '../data/communitySupportApiClient'
 import { NeedsAnInterpreterFormData } from '../validation/NeedsAnInterpreterFormDataSchema'
 import { AdditionalInformationForTheDeliveryPartnerFormData } from '../validation/AdditionalInformationForTheDeliveryPartnerFormData'
@@ -99,11 +98,7 @@ export default class ReferralService {
     return this.communitySupportApiClient.getReferralAppointments(caseReference, username)
   }
 
-  getReferralNotes(
-    caseReference: string,
-    username: string,
-    page?: PagedRequest,
-  ): Promise<PagedResponse<ReferralNoteOrNonContactSessionBffDto>> {
+  getReferralNotes(caseReference: string, username: string, page?: PagedRequest): Promise<ReferralNotesBffResponseDto> {
     return this.communitySupportApiClient.getReferralNotes(caseReference, username, page)
   }
 
