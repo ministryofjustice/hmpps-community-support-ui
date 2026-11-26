@@ -4,20 +4,16 @@ import SummaryListPagePresenter, { SummaryListPageContent } from './summaryListP
 
 describe('SummaryListPagePresenter', () => {
   const options: SummaryListPageContent = {
-    title: 'Example details',
+    pageTitle: 'Example details',
+    heading: 'Example details',
     backLink: { href: '/previous-page' },
     summaryList: {
       rows: [{ key: { text: 'Name' }, value: { text: 'Alex Smith' } }],
     },
   }
 
-  const createPresenter = (pageContent: unknown = options, pageRoute = 'referral.examplePage') => {
-    const presenter = new SummaryListPagePresenter(pageRoute)
-    jest
-      .spyOn(presenter as unknown as { globalContent: () => unknown }, 'globalContent')
-      .mockReturnValue({ referral: { examplePage: pageContent } })
-    return presenter
-  }
+  const createPresenter = (pageContent: SummaryListPageContent = options) =>
+    new SummaryListPagePresenter(() => pageContent)
 
   it('builds the heading, browser title and GOV.UK component options', () => {
     const presenter = createPresenter()
@@ -66,26 +62,20 @@ describe('SummaryListPagePresenter', () => {
     })
   })
 
-  it.each(['', 'referral.missing', 'missing.examplePage', 'referral.examplePage.title.missing', 'referral.toString'])(
-    'rejects a missing or invalid content route: %s',
-    pageRoute => {
-      expect(() => createPresenter(options, pageRoute).buildViewModel()).toThrow(
-        `Invalid summary list page content at "${pageRoute}"`,
-      )
-    },
-  )
+  it('calls the injected content provider', () => {
+    const getContent = jest.fn(() => options)
+    const presenter = new SummaryListPagePresenter(getContent)
 
-  it.each([
-    null,
-    {},
-    { ...options, title: undefined },
-    { ...options, backLink: {} },
-    { ...options, summaryList: {} },
-    { ...options, summaryList: { rows: 'invalid' } },
-  ])('rejects invalid page content: %p', pageContent => {
-    const presenter = createPresenter(pageContent)
+    expect(presenter.buildViewModel()).toEqual(options)
+    expect(getContent).toHaveBeenCalledTimes(1)
+  })
 
-    expect(() => presenter.buildViewModel()).toThrow('expected title, backLink.href and summaryList.rows')
+  it('propagates content provider errors', () => {
+    const presenter = new SummaryListPagePresenter(() => {
+      throw new Error('Content unavailable')
+    })
+
+    expect(() => presenter.buildViewModel()).toThrow('Content unavailable')
   })
 
   it('renders the shared template with the view model', () => {
@@ -138,7 +128,8 @@ describe('SummaryListPagePresenter', () => {
     it('escapes the title and summary list text', () => {
       const html = renderPage({
         ...options,
-        title: '<script>title</script>',
+        pageTitle: '<script>title</script>',
+        heading: '<script>title</script>',
         summaryList: {
           rows: [{ key: { text: '<b>Name</b>' }, value: { text: '<script>value</script>' } }],
         },

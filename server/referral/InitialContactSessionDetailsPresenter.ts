@@ -108,6 +108,7 @@ export default class InitialContactSessionDetailsPresenter extends PresenterBase
       changeAppointmentDetails,
     }: IcsViewOrChangeBffDto,
     private readonly caseRef: string,
+    private readonly getContent: () => InitialContactSessionDetailsContent,
     private readonly historical: boolean = false,
   ) {
     super()
@@ -195,12 +196,7 @@ export default class InitialContactSessionDetailsPresenter extends PresenterBase
   }
 
   buildViewModel(): InitialContactSessionDetailsViewModel {
-    const content = {
-      ...this.globalContent().referralDetails.id.page,
-      ...(this.historical
-        ? this.globalContent().referralDetails.id.changedIcsDetails.id
-        : this.globalContent().referralDetails.id.icsViewOrChange),
-    }
+    const content = this.getContent()
     return {
       title: content.title,
       heading: content.heading,

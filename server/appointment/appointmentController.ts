@@ -15,6 +15,7 @@ import timeFormat, { formatTime12Hr, parseTime12Hr } from '../utils/timeFormat'
 import { ErrorMiddlewareErrors, HowSessionTookPlace, IcsFeedbackHowSessionTookPlaceSession } from '../@types/express'
 import ConfirmIcsPresenter, { type AdditionalInformation } from './confirm-ics/confirmIcsPresenter'
 import InitialContactSessionDetailsPresenter from '../referral/InitialContactSessionDetailsPresenter'
+import { getInitialContactSessionDetailsContent } from '../content/contentProviders'
 import ReferralService from '../services/referralService'
 import AppointmentService from '../services/AppointmentService'
 import ScheduleIcsPresenter from './schedule-ics/scheduleIcsPresenter'
@@ -688,7 +689,15 @@ class AppointmentController {
     const { username } = res.locals.user
     return this.appointmentService
       .getIcsViewOrChange(caseRefId.toString(), username)
-      .then(data => new InitialContactSessionDetailsPresenter(data, caseRefId, false))
+      .then(
+        data =>
+          new InitialContactSessionDetailsPresenter(
+            data,
+            caseRefId,
+            getInitialContactSessionDetailsContent(false),
+            false,
+          ),
+      )
       .then(presenter => presenter.renderPage(res))
   }
 
@@ -698,7 +707,15 @@ class AppointmentController {
     const { username } = res.locals.user
     return this.appointmentService
       .getIcsById(caseRefId.toString(), icsId, username)
-      .then(data => new InitialContactSessionDetailsPresenter(data, caseRefId, true))
+      .then(
+        data =>
+          new InitialContactSessionDetailsPresenter(
+            data,
+            caseRefId,
+            getInitialContactSessionDetailsContent(true),
+            true,
+          ),
+      )
       .then(presenter => presenter.renderPage(res))
   }
 
