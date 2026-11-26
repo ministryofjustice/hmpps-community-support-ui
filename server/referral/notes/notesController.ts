@@ -15,7 +15,7 @@ import { NonContactSessionDetailsSchema } from '../../validation/NonContactSessi
 const NOTES_PAGE_SIZE = 25
 
 export default class NotesController {
-  constructor(private readonly referralService: ReferralService) { }
+  constructor(private readonly referralService: ReferralService) {}
 
   async showReferralNotes(req: Request, res: Response) {
     const { caseReference } = req.params as { caseReference: string }
