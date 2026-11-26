@@ -1,4 +1,4 @@
-import type { ReferralNoteOrNonContactSessionBffDto } from '@community-support-api'
+import type { ReferralNoteOrNonContactSessionDto, ReferralNotesBffResponseDto } from '@community-support-api'
 import type { PagedResponse } from '../../@types/communitySupportApi/derived'
 import NotesListPresenter from './notesListPresenter'
 
@@ -12,24 +12,27 @@ describe('NotesListPresenter', () => {
       title,
       details: 'Some details about the referral',
       detailsTruncated,
-    }) as unknown as ReferralNoteOrNonContactSessionBffDto
+    }) as unknown as ReferralNoteOrNonContactSessionDto
 
-  const pagedResponse = (
-    overrides: Partial<PagedResponse<ReferralNoteOrNonContactSessionBffDto>>,
-  ): PagedResponse<ReferralNoteOrNonContactSessionBffDto> => ({
-    content: [note('First note'), note('Second note', true)],
-    page: 0,
-    size: 25,
-    totalElements: 2,
-    totalPages: 1,
-    ...overrides,
+  const notesResponse = (
+    overrides: Partial<PagedResponse<ReferralNoteOrNonContactSessionDto>>,
+  ): ReferralNotesBffResponseDto => ({
+    fullName: 'John Smith',
+    notesAndNonContactSessions: {
+      content: [note('First note'), note('Second note', true)],
+      page: 0,
+      size: 25,
+      totalElements: 2,
+      totalPages: 1,
+      ...overrides,
+    },
   })
 
   it('maps notes and marks the notes tab as active', () => {
-    const viewModel = new NotesListPresenter(pagedResponse({}), caseReference).buildViewModel()
+    const viewModel = new NotesListPresenter(notesResponse({}), caseReference).buildViewModel()
 
     expect(viewModel.pageTitle).toBe('Notes - Community Support')
-    expect(viewModel.pageHeader).toBe('Referral for')
+    expect(viewModel.pageHeader).toBe('Referral for John Smith')
     expect(viewModel.addNoteButton).toEqual({
       text: 'Add note',
       href: `/referral/${caseReference}/notes/type`,
@@ -58,26 +61,26 @@ describe('NotesListPresenter', () => {
   })
 
   it('shows the case note added alert only when requested', () => {
-    const withAlert = new NotesListPresenter(pagedResponse({}), caseReference, 'ADD_CASE_NOTE').buildViewModel()
+    const withAlert = new NotesListPresenter(notesResponse({}), caseReference, 'ADD_CASE_NOTE').buildViewModel()
     expect(withAlert.alert).toEqual({
       variant: 'success',
       title: 'You added a case note',
       dismissible: true,
     })
 
-    const withoutAlert = new NotesListPresenter(pagedResponse({}), caseReference).buildViewModel()
+    const withoutAlert = new NotesListPresenter(notesResponse({}), caseReference).buildViewModel()
     expect(withoutAlert.alert).toBeUndefined()
   })
 
   it('shows the results summary for a single page', () => {
-    const viewModel = new NotesListPresenter(pagedResponse({}), caseReference).buildViewModel()
+    const viewModel = new NotesListPresenter(notesResponse({}), caseReference).buildViewModel()
 
     expect(viewModel.resultsSummary).toBe('Showing 1 to 2 of 2 total results')
   })
 
   it('reports an empty list without notes', () => {
     const viewModel = new NotesListPresenter(
-      pagedResponse({ content: [], totalElements: 0, totalPages: 0 }),
+      notesResponse({ content: [], totalElements: 0, totalPages: 0 }),
       caseReference,
     ).buildViewModel()
 
@@ -89,7 +92,7 @@ describe('NotesListPresenter', () => {
 
   it('builds previous and next links on a middle page', () => {
     const viewModel = new NotesListPresenter(
-      pagedResponse({ page: 1, size: 25, totalElements: 60, totalPages: 3 }),
+      notesResponse({ page: 1, size: 25, totalElements: 60, totalPages: 3 }),
       caseReference,
     ).buildViewModel()
 
@@ -106,7 +109,7 @@ describe('NotesListPresenter', () => {
 
   it('omits the next link on the last page', () => {
     const viewModel = new NotesListPresenter(
-      pagedResponse({ page: 2, size: 25, totalElements: 60, totalPages: 3 }),
+      notesResponse({ page: 2, size: 25, totalElements: 60, totalPages: 3 }),
       caseReference,
     ).buildViewModel()
 

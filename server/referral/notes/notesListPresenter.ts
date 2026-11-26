@@ -1,12 +1,11 @@
-import type { ReferralNoteOrNonContactSessionBffDto } from '@community-support-api'
-import type { PagedResponse } from '../../@types/communitySupportApi/derived'
+import type { ReferralNotesBffResponseDto } from '@community-support-api'
 import type { MojAlert, MojPagination } from '../../@types/mojFrontend'
 import ReferralLayoutPresenter, { ReferralNavigationValues } from '../referralLayout/referralLayoutPresenter'
 import type { ReferralNotesViewModel } from './notesListViewModel'
 
 export default class NotesListPresenter extends ReferralLayoutPresenter<ReferralNotesViewModel> {
   constructor(
-    private readonly notesResponse: PagedResponse<ReferralNoteOrNonContactSessionBffDto>,
+    private readonly notesResponse: ReferralNotesBffResponseDto,
     private readonly caseReference: string,
     private readonly alertType?: 'ADD_CASE_NOTE',
   ) {
@@ -32,11 +31,12 @@ export default class NotesListPresenter extends ReferralLayoutPresenter<Referral
     const content = this.globalContent().referral.id.notes.page
     const pagination = this.buildPagination()
     const { from, to, count } = pagination.results
+    const { notesAndNonContactSessions } = this.notesResponse
 
     return {
       alert: this.getAlert(),
       pageTitle: content.pageTitle,
-      pageHeader: content.pageHeader,
+      pageHeader: `${content.pageHeader} ${this.notesResponse.fullName}`,
       navBar: this.getMojSubNavigationArgs(),
       notesTitle: content.notesTitle,
       noNotesMessage: content.noNotesMessage,
@@ -54,14 +54,14 @@ export default class NotesListPresenter extends ReferralLayoutPresenter<Referral
         attributes: { 'data-testid': 'add-note-button' },
       },
       addedNotesSubheading: content.addedNotesSubheading,
-      notes: this.notesResponse.content.map(note => ({
+      notes: notesAndNonContactSessions.content.map(note => ({
         createdAt: note.createdAt,
         createdBy: note.createdBy,
         title: note.title,
         details: note.details,
         detailsTruncated: note.detailsTruncated,
       })),
-      hasNotes: this.notesResponse.content.length > 0,
+      hasNotes: notesAndNonContactSessions.content.length > 0,
       pagination,
       resultsSummary: content.resultsSummaryText
         .replace('{{ from }}', from)
@@ -72,8 +72,9 @@ export default class NotesListPresenter extends ReferralLayoutPresenter<Referral
 
   private buildPagination(): MojPagination {
     const basePath = `/referral/${this.caseReference}/notes`
-    const currentPage = this.notesResponse.page + 1
-    const { totalPages, size, totalElements } = this.notesResponse
+    const { notesAndNonContactSessions } = this.notesResponse
+    const currentPage = notesAndNonContactSessions.page + 1
+    const { totalPages, size, totalElements } = notesAndNonContactSessions
 
     const pagination = {} as MojPagination
     if (currentPage > 1) {

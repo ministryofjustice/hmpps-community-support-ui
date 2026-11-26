@@ -19,7 +19,10 @@ test.describe('Referral Notes Page', () => {
 
   test('creates a case note through the notes, note type, pathway and details pages', async ({ page }) => {
     await communitySupport.stubGetReferralNotes(
-      { content: [], page: 0, size: 25, totalElements: 0, totalPages: 0 },
+      {
+        fullName: 'John Smith',
+        notesAndNonContactSessions: { content: [], page: 0, size: 25, totalElements: 0, totalPages: 0 },
+      },
       caseReference,
     )
     await communitySupport.stubGetReferralInformation(200, caseReference, referralInformationInCommunity)
@@ -77,7 +80,10 @@ test.describe('Referral Notes Page', () => {
 
   test('creates a non-contact activity note without the does not relate option', async ({ page }) => {
     await communitySupport.stubGetReferralNotes(
-      { content: [], page: 0, size: 25, totalElements: 0, totalPages: 0 },
+      {
+        fullName: 'John Smith',
+        notesAndNonContactSessions: { content: [], page: 0, size: 25, totalElements: 0, totalPages: 0 },
+      },
       caseReference,
     )
     await communitySupport.stubGetReferralInformation(200, caseReference, referralInformationInCommunity)
