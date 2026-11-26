@@ -480,8 +480,8 @@
             "text": "Needs feedback",
             "actions": [
               {
-                "text": "Add attendance and feedback",
-                "href": "#"
+                "text": "Add feedback",
+                "href": "/ics-feedback/{{ id }}/attendance"
               }
             ]
           },

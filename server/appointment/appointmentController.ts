@@ -838,32 +838,32 @@ class AppointmentController {
   }
 
   async icsAppointmentAttendance(req: Request, res: Response): Promise<void> {
-    const { caseRefId } = req.params
+    const { appointmentId } = req.params
     const { username } = res.locals.user
 
-    const attendanceResponse = await this.appointmentService.getIcsFeedbackAttendance(caseRefId.toString(), username)
+    const attendanceResponse = await this.appointmentService.getIcsFeedbackAttendance(appointmentId.toString(), username)
     const { list } = res.locals.errors
     const attendedItem = list.find(({ href }) => href === '#attended')
     if (attendedItem) {
       attendedItem.text = attendedItem.text.replace('{{ firstname }}', attendanceResponse.referralFirstName)
     }
     const record = req.session.icsFeedbackSubmission?.record || {}
-    const presenter = new RecordSessionAttendancePresenter(caseRefId.toString(), attendanceResponse, record)
+    const presenter = new RecordSessionAttendancePresenter(appointmentId.toString(), attendanceResponse, record)
     presenter.renderPage(res)
   }
 
   recordIcsAppointmentAttendance(req: Request, res: Response): Promise<void> {
     return validateRequestBodyAgainstSchema(RecordSessionAttendanceFormDataSchema, req, res, data => {
       if (data) {
-        const { caseRefId } = req.params
+        const { appointmentId } = req.params
         req.session.icsFeedbackSubmission = {
-          caseReferenceId: caseRefId.toString(),
+          caseReferenceId: appointmentId.toString(),
           record: {
             didSessionHappen: data.happened === 'Yes',
             ...(data.happened === 'Yes' && { didPersonAttend: true }),
           },
         }
-        res.redirect(recordAttendanceRedirectUrl(data, caseRefId.toString()))
+        res.redirect(recordAttendanceRedirectUrl(data, appointmentId.toString()))
       }
     })
   }

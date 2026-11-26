@@ -160,7 +160,7 @@ export default class ReferralAppointmentsPresenter extends ReferralLayoutPresent
                 action =>
                   !('initialContactSessionOnly' in action) || appointment.label === INITIAL_CONTACT_SESSION_LABEL,
               )
-              .map(action => `<a href="${action.href}">${action.text}</a>`)
+              .map(action => `<a href="${action.href.replace("{{ id }}", appointment.id)}">${action.text}</a>`)
               .join('<br> '),
             attributes: {
               'data-sort-value': status.text,

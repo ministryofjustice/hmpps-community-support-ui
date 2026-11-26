@@ -31,7 +31,7 @@ export default class RecordSessionAttendancePresenter extends PresenterBase<Reco
   private errors: ErrorMiddlewareErrors
 
   constructor(
-    private readonly caseRefId: string,
+    private readonly appointmentId: string,
     private readonly data: IcsFeedbackAttendanceBffDto,
     private readonly record: RecordSessionAttendanceSessionData,
   ) {
@@ -81,7 +81,7 @@ export default class RecordSessionAttendancePresenter extends PresenterBase<Reco
       appointmentTime: this.data.time,
     }
     return {
-      backLink: { href: content.backLink.replace('{{ id }}', this.caseRefId) },
+      backLink: { href: content.backLink.replace('{{ id }}', this.appointmentId) },
       pageHeader: content.pageHeader,
       description: content.description,
       appointment: buildAppointmentDetails(content.appointmentDetails, appointment),

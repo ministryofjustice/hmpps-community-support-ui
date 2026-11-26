@@ -160,11 +160,11 @@ export default function routes({
     appointmentController.submitAppointment(req, res),
   )
 
-  get('/ics-feedback/:caseRefId/attendance', async (req, res) =>
+  get('/ics-feedback/:appointmentId/attendance', async (req, res) =>
     appointmentController.icsAppointmentAttendance(req, res),
   )
 
-  post('/ics-feedback/:caseRefId/attendance', async (req, res) =>
+  post('/ics-feedback/:appointmentId/attendance', async (req, res) =>
     appointmentController.recordIcsAppointmentAttendance(req, res),
   )
 
