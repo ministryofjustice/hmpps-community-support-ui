@@ -575,6 +575,52 @@
           "shouldNotifyLabel": "Do you want to send an email to the probation practitioner about this case note?",
           "shouldNotifyHint": "Only send an email if there's important information in this case note that the probation practitioner needs to know.",
           "continueText": "Continue"
+        },
+        "non-contact-session-details": {
+          "backLink": "/referral/{{ id }}/notes/pathways",
+          "pageHeader": "Details of the non-contact activity",
+          "date": {
+            "label": "When did this activity take place?",
+            "hint": "For example, 17/5/2027."
+          },
+          "time": {
+            "label": "How long did it take?"
+          },
+          "titleLabel": "Activity title",
+          "activity": {
+            "label": "Activity details",
+            "maxLength": 12000
+          },
+          "buttonText": "Continue",
+          "errors": {
+            "date": {
+              "empty": "Enter a session date",
+              "invalid": "Enter a date in the correct format, like 10/7/2025"
+            },
+            "time": {
+              "hour": {
+                "empty": "empty hour",
+                "number": "must be a number",
+                "whole": "must be a whole number",
+                "tooSmall": "must be zero or more"
+              },
+              "minute": {
+                "empty": "empty hour",
+                "number": "must be a number",
+                "whole": "must be a whole number",
+                "tooSmall": "must be zero or more",
+                "tooLarge": "must be less than 60"
+              },
+              "empty": "empty duration"
+            },
+            "title": {
+              "empty": "empty title"
+            },
+            "activity": {
+              "empty": "empty title",
+              "max": "too large"
+            }
+          }
         }
       },
       "actionPlan": {
@@ -1231,8 +1277,17 @@
         "href": "/cases-in-progress"
       }
     ],
-    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
-    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
+    "unassignedColumnHeaders": [
+      "Name",
+      "CRN/prison number",
+      "Date received"
+    ],
+    "inProgressColumnHeaders": [
+      "Name",
+      "CRN/prison number",
+      "Assigned to",
+      "Date received"
+    ],
     "noCasesMessage": "There are no {0} cases to view."
   },
   "casesInProgress": {
@@ -1251,8 +1306,17 @@
         "href": "/cases-in-progress"
       }
     ],
-    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
-    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
+    "unassignedColumnHeaders": [
+      "Name",
+      "CRN/prison number",
+      "Date received"
+    ],
+    "inProgressColumnHeaders": [
+      "Name",
+      "CRN/prison number",
+      "Assigned to",
+      "Date received"
+    ],
     "noCasesMessage": "There are no {0} cases to view."
   },
   "referralDetails": {
@@ -1340,8 +1404,15 @@
       "actionPlanStatusLabel": "Status",
       "actionPlanActionsLabel": "Actions",
       "actionPlanLinkText": "View action plan",
-      "progressActiveColumnHeaders": ["Date and time", "Status", "Action"],
-      "progressInactiveColumnHeaders": ["Status", "Action"],
+      "progressActiveColumnHeaders": [
+        "Date and time",
+        "Status",
+        "Action"
+      ],
+      "progressInactiveColumnHeaders": [
+        "Status",
+        "Action"
+      ],
       "historySummary": "View ICS history"
     }
   },

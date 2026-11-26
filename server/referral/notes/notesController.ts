@@ -9,6 +9,8 @@ import NotesPathwaysPresenter from './notesPathwaysPresenter'
 import { buildNotesPathwaysSchema } from '../../validation/NotesPathwaysFormData'
 import NotesCaseNoteDetailsPresenter from './notesCaseNoteDetailsPresenter'
 import { CaseNoteDetailsSchema } from '../../validation/CaseNoteDetailsFormData'
+import NonContactSessionPresenter from './nonContactSessionPresenter'
+import { NonContactSessionDetailsSchema } from '../../validation/NonContactSessionDetailsFormData'
 
 const NOTES_PAGE_SIZE = 25
 
@@ -36,12 +38,10 @@ export default class NotesController {
     return presenter.renderPage(res)
   }
 
-  async submitNotesType(req: Request, res: Response) {
+  submitNotesType(req: Request, res: Response) {
     const { caseReference } = req.params as { caseReference: string }
-
-    const { noteType } = req.body
-    return validateRequestBodyAgainstSchema(NotesTypeSchema, req, res, async () => {
-      req.session.note = { noteType } satisfies NoteData
+    return validateRequestBodyAgainstSchema(NotesTypeSchema, req, res, async data => {
+      req.session.note = data
       return res.redirect(`/referral/${caseReference}/notes/pathways`)
     })
   }
@@ -93,6 +93,32 @@ export default class NotesController {
       shouldNotify: typeof shouldNotify === 'string' ? shouldNotify === 'yes' : undefined,
     } as NoteData
     return validateRequestBodyAgainstSchema(CaseNoteDetailsSchema, req, res, async () => {
+      return res.redirect(`/referral/${caseReference}/notes/check-your-answers`)
+    })
+  }
+
+  async showNonContactSessionDetails(req: Request, res: Response) {
+    const { caseReference } = req.params as { caseReference: string }
+    const validationErrors = res.locals.errors
+    const formData = JSON.parse(req.flash('value').at(0) || '{}')
+    const presenter = new NonContactSessionPresenter(caseReference, formData, validationErrors)
+    return presenter.renderPage(res)
+  }
+
+  submitNonContactSessionDetails(req: Request, res: Response) {
+    const { caseReference } = req.params as { caseReference: string }
+    return validateRequestBodyAgainstSchema(NonContactSessionDetailsSchema, req, res, data => {
+      const { title, date, activity } = data
+      const caseNotes = req.session.note || {}
+      req.session.note = {
+        ...caseNotes,
+        noteType: 'NON_CONTACT_SESSION',
+        title,
+        details: activity,
+        startDate: date,
+        durationHours: data['time-Hour'],
+        durationMinutes: data['time-Minute'],
+      }
       return res.redirect(`/referral/${caseReference}/notes/check-your-answers`)
     })
   }
