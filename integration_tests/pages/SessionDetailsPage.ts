@@ -27,7 +27,7 @@ export default class SessionDetailsPage extends AbstractPage {
   }
 
   static async verifyOnPage(page: Page): Promise<SessionDetailsPage> {
-    const header = page.locator('h1', { hasText: 'Session Details' })
+    const header = page.getByRole('heading', { name: 'ICS details', level: 1, exact: true })
     await expect(header).toBeVisible()
     const errorSummary = await ErrorSummary.create(page.locator('[data-testid="error-messages"]'))
     const backLink = page.getByRole('link', { name: 'Back', exact: true })

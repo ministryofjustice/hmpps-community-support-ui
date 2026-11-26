@@ -7,10 +7,7 @@ import { ActionPlanViewActivitiesContent, ActionPlanViewActivitiesViewModel } fr
 
 type ActionPlanActivity = { activityProvider: string; activityDescription: string }
 
-export default class ActionPlanViewActivitiesPresenter extends PresenterBase<
-  ActionPlanViewActivitiesViewModel,
-  ActionPlanViewActivitiesContent
-> {
+export default class ActionPlanViewActivitiesPresenter extends PresenterBase<ActionPlanViewActivitiesViewModel> {
   constructor(
     private readonly caseReference: string,
     private readonly selectedNeedLabel: string,
@@ -24,7 +21,7 @@ export default class ActionPlanViewActivitiesPresenter extends PresenterBase<
   }
 
   protected buildViewModel(res: Response): ActionPlanViewActivitiesViewModel {
-    const content = this.buildStaticContent(res)
+    const content = this.globalContent().referral.id.actionPlan.activities.page
 
     return {
       pageHeader: content.pageHeader,

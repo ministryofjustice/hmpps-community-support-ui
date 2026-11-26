@@ -89,6 +89,40 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/referral/{referralReference}/non-contact-session': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Submit a non contact session */
+    post: operations['submitNonContactSession']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/referral/{referralReference}/case-note': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Submit a case note */
+    post: operations['submitCaseNote']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/referral/{referralReference}/action-plan': {
     parameters: {
       query?: never
@@ -438,6 +472,40 @@ export interface paths {
     }
     /** Get service days page data */
     get: operations['getServiceDaysPage']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/referral/{referralReference}/notes': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get case notes and non-contact sessions for a referral */
+    get: operations['getNotesAndNonContactSessions']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/bff/referral/{referralReference}/notes/pathways': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get referral pathways */
+    get: operations['getReferralPathway']
     put?: never
     post?: never
     delete?: never
@@ -1523,6 +1591,27 @@ export interface components {
       reasonCode: string
       additionalDetails?: string | null
     }
+    SubmitNonContactSessionRequest: {
+      title: string
+      details: string
+      /** Format: date-time */
+      startDate: string
+      /** Format: int32 */
+      durationHours: number
+      /** Format: int32 */
+      durationMinutes: number
+      pathways: string[]
+    }
+    SuccessMessageResponse: {
+      success: boolean
+      message: string
+    }
+    SubmitCaseNoteRequest: {
+      title: string
+      details: string
+      shouldNotify: boolean
+      pathways: string[]
+    }
     ActionPlanSubmitResponse: {
       success: boolean
       message: string
@@ -1585,7 +1674,8 @@ export interface components {
       howSessionTookPlace?: components['schemas']['SessionMethodRequest'] | null
       didPersonAttend?: boolean | null
       sessionNotHappenReason?: components['schemas']['SessionNotHappenReasonRequest'] | null
-      noAttendanceInformation?: string | null
+      howTheyTriedToContactThePerson?: string | null
+      reasonsTheyDidNotAttend?: string | null
     }
     SessionDetailsRequest: {
       wasPersonLate?: boolean | null
@@ -1645,7 +1735,8 @@ export interface components {
       recordSessionDidPersonAttend?: boolean | null
       recordSessionNotHappenReason?: string | null
       recordSessionNotHappenReasonDetails?: string | null
-      recordSessionNoAttendanceInformation?: string | null
+      recordSessionHowTheyTriedToContactThePerson?: string | null
+      recordSessionReasonsTheyDidNotAttend?: string | null
       sessionDetailsWasPersonLate?: boolean | null
       sessionDetailsLateReason?: string | null
       sessionDetailsDuration?: string | null
@@ -1965,6 +2056,32 @@ export interface components {
       selectAnAreaForReferralStatus: components['schemas']['TaskListStatusItem']
       contactDetailsStatus: components['schemas']['ContactDetailsDto']
       checkYourAnswersStatus: components['schemas']['TaskListStatusItem']
+    }
+    Pageable: {
+      /** Format: int32 */
+      page?: number
+      /** Format: int32 */
+      size?: number
+      sort?: string[]
+    }
+    PageResponse: {
+      content: unknown[]
+      /** Format: int32 */
+      page: number
+      /** Format: int32 */
+      size: number
+      /** Format: int64 */
+      totalElements: number
+      /** Format: int32 */
+      totalPages: number
+    }
+    ReferenceDataReferralPathwayDto: {
+      /** Format: uuid */
+      id: string
+      title: string
+    }
+    ReferenceDataReferralPathwaysDto: {
+      pathways: components['schemas']['ReferenceDataReferralPathwayDto'][]
     }
     AppointmentDetailsDto: {
       /** @enum {string|null} */
@@ -2507,13 +2624,6 @@ export interface components {
       currentCircumstances: components['schemas']['ConfirmPersonalDetailsCurrentCircumstances']
       disabilities: components['schemas']['ConfirmPersonalDetailsDisabilities']
     }
-    Pageable: {
-      /** Format: int32 */
-      page?: number
-      /** Format: int32 */
-      size?: number
-      sort?: string[]
-    }
     ReferralCaseListDto: {
       /** Format: uuid */
       referralId: string
@@ -2710,6 +2820,94 @@ export interface operations {
       }
       /** @description Referral already withdrawn */
       409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  submitNonContactSession: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralReference: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SubmitNonContactSessionRequest']
+      }
+    }
+    responses: {
+      /** @description Non contact session submitted successfully */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['SuccessMessageResponse']
+        }
+      }
+      /** @description Validation failure */
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  submitCaseNote: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralReference: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SubmitCaseNoteRequest']
+      }
+    }
+    responses: {
+      /** @description Case note submitted successfully */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['SuccessMessageResponse']
+        }
+      }
+      /** @description Validation failure */
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+      /** @description Referral not found */
+      404: {
         headers: {
           [name: string]: unknown
         }
@@ -3493,6 +3691,70 @@ export interface operations {
         }
       }
       /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getNotesAndNonContactSessions: {
+    parameters: {
+      query: {
+        pageable: components['schemas']['Pageable']
+      }
+      header?: never
+      path: {
+        referralReference: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Case notes and non-contact sessions retrieved successfully */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['PageResponse']
+        }
+      }
+      /** @description Referral not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
+  getReferralPathway: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        referralReference: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Referral pathways found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ReferenceDataReferralPathwaysDto']
+        }
+      }
+      /** @description Referral pathways not found */
       404: {
         headers: {
           [name: string]: unknown

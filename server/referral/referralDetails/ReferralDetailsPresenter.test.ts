@@ -1,7 +1,5 @@
-import { Response } from 'express'
 import { ReferralDetailsResponseDto } from '@community-support-api'
 import ReferralDetailsPresenter, { ReferralDetailsViewModel } from './ReferralDetailsPresenter'
-import ReferralDetailsContent from '../../testutils/factories/ReferralDetailsContent'
 
 describe('ReferralDetailsPresenter', () => {
   let dto: ReferralDetailsResponseDto | null = null
@@ -25,6 +23,7 @@ describe('ReferralDetailsPresenter', () => {
         { text: 'Progress', href: `/progress/${inputDto.referenceNumber}`, active: false },
         { text: 'Action Plan', href: `/referral/${inputDto.referenceNumber}/action-plan`, active: false },
         { text: 'Appointments', href: `/referral/${inputDto.referenceNumber}/appointments`, active: false },
+        { text: 'Notes', href: `/referral/${inputDto.referenceNumber}/notes`, active: false },
         { text: 'Change log', href: '#', active: false },
       ],
     },
@@ -56,7 +55,7 @@ describe('ReferralDetailsPresenter', () => {
         },
         {
           key: {
-            text: 'Date of Birth',
+            text: 'Date of birth',
           },
           value: {
             text: '10 February 1973 (52 years old)',
@@ -273,9 +272,7 @@ describe('ReferralDetailsPresenter', () => {
   })
   test('rendering', () => {
     const presenter = new ReferralDetailsPresenter(dto, null, authSource)
-    const content = ReferralDetailsContent.build()
-    const response = { locals: { content } } as unknown as Response
-    const pageContent = presenter.buildViewModel(response)
+    const pageContent = presenter.buildViewModel()
 
     delete expected.referral.rows[1].value.text
     expect(pageContent).toStrictEqual(expected)
@@ -288,9 +285,7 @@ describe('ReferralDetailsPresenter', () => {
     dto.referralDetailsTableData.assignedTo = []
 
     const presenter = new ReferralDetailsPresenter(dto, null, authSource)
-    const content = ReferralDetailsContent.build()
-    const response = { locals: { content } } as unknown as Response
-    const pageContent = presenter.buildViewModel(response)
+    const pageContent = presenter.buildViewModel()
 
     expected = setupUnassignedExpected(dto)
     delete expected.referral.rows[1].value.html
@@ -310,9 +305,7 @@ describe('ReferralDetailsPresenter', () => {
     dto.referralDetailsTableData.assignedTo = null
 
     const presenter = new ReferralDetailsPresenter(dto, null, authSource)
-    const content = ReferralDetailsContent.build()
-    const response = { locals: { content } } as unknown as Response
-    const pageContent = presenter.buildViewModel(response)
+    const pageContent = presenter.buildViewModel()
 
     expected = setupUnassignedExpected(dto)
     delete expected.referral.rows[1].value.html
@@ -332,9 +325,7 @@ describe('ReferralDetailsPresenter', () => {
     dto.referralDetailsTableData.assignedTo = null
 
     const presenter = new ReferralDetailsPresenter(dto, null, 'delius')
-    const content = ReferralDetailsContent.build()
-    const response = { locals: { content } } as unknown as Response
-    const pageContent = presenter.buildViewModel(response)
+    const pageContent = presenter.buildViewModel()
 
     expected = setupUnassignedExpected(dto)
     delete expected.referral.rows[1].value.html
@@ -350,9 +341,7 @@ describe('ReferralDetailsPresenter', () => {
     dto.withdrawReferral = false
 
     const presenter = new ReferralDetailsPresenter(dto, null, authSource)
-    const content = ReferralDetailsContent.build()
-    const response = { locals: { content } } as unknown as Response
-    const pageContent = presenter.buildViewModel(response)
+    const pageContent = presenter.buildViewModel()
 
     expect(pageContent.withdrawReferralHref).toBe('/referral/QD0878DE/withdraw')
   })
@@ -360,9 +349,7 @@ describe('ReferralDetailsPresenter', () => {
     dto.withdrawReferral = true
 
     const presenter = new ReferralDetailsPresenter(dto, null, authSource)
-    const content = ReferralDetailsContent.build()
-    const response = { locals: { content } } as unknown as Response
-    const pageContent = presenter.buildViewModel(response)
+    const pageContent = presenter.buildViewModel()
 
     expect(pageContent.withdrawReferralHref).toBeNull()
   })
@@ -374,9 +361,7 @@ describe('ReferralDetailsPresenter', () => {
         code: 'withdrawalCompleted',
         caseReference: dto.referenceNumber,
       })
-      const content = ReferralDetailsContent.build()
-      const response = { locals: { content } } as unknown as Response
-      const pageContent = presenter.buildViewModel(response)
+      const pageContent = presenter.buildViewModel()
 
       expect(pageContent.alert).toEqual({
         variant: 'success',
@@ -392,9 +377,7 @@ describe('ReferralDetailsPresenter', () => {
         code: 'withdrawalAlreadyCompleted',
         caseReference: dto.referenceNumber,
       })
-      const content = ReferralDetailsContent.build()
-      const response = { locals: { content } } as unknown as Response
-      const pageContent = presenter.buildViewModel(response)
+      const pageContent = presenter.buildViewModel()
 
       expect(pageContent.alert).toEqual({
         variant: 'error',
@@ -410,9 +393,7 @@ describe('ReferralDetailsPresenter', () => {
         code: 'withdrawalAlreadyCompleted',
         caseReference: dto.referenceNumber,
       })
-      const content = ReferralDetailsContent.build()
-      const response = { locals: { content } } as unknown as Response
-      const pageContent = presenter.buildViewModel(response)
+      const pageContent = presenter.buildViewModel()
 
       expect(pageContent.alert).toEqual({
         variant: 'error',
@@ -426,9 +407,7 @@ describe('ReferralDetailsPresenter', () => {
       dto.withdrawalCreationDate = '2026-09-08T11:23:00.780Z'
 
       const presenter = new ReferralDetailsPresenter(dto, null, authSource)
-      const content = ReferralDetailsContent.build()
-      const response = { locals: { content } } as unknown as Response
-      const pageContent = presenter.buildViewModel(response)
+      const pageContent = presenter.buildViewModel()
 
       expect(pageContent.alert).toEqual({
         variant: 'information',
@@ -439,9 +418,7 @@ describe('ReferralDetailsPresenter', () => {
 
     test('shows no alert when the referral has not been withdrawn and there is no notification', () => {
       const presenter = new ReferralDetailsPresenter(dto, null, authSource)
-      const content = ReferralDetailsContent.build()
-      const response = { locals: { content } } as unknown as Response
-      const pageContent = presenter.buildViewModel(response)
+      const pageContent = presenter.buildViewModel()
 
       expect(pageContent.alert).toBeNull()
     })

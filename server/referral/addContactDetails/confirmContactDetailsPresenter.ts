@@ -1,15 +1,11 @@
-import { Response } from 'express'
 import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendSummaryList } from '@govuk-frontend'
 import { Person, UpdateProbationPractitionerDetailsRequest } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
 import { ConfirmContactDetailsContent, ConfirmContactDetailsViewModel } from './confirmContactDetailsViewModel'
 
-export default class ConfirmContactDetailsPresenter extends PresenterBase<
-  ConfirmContactDetailsViewModel,
-  ConfirmContactDetailsContent
-> {
-  buildViewModel(res: Response) {
-    const content = this.buildStaticContent(res)
+export default class ConfirmContactDetailsPresenter extends PresenterBase<ConfirmContactDetailsViewModel> {
+  buildViewModel() {
+    const content = this.globalContent().referral.new.confirmContactDetails
     return {
       pageTitle: content.pageTitle,
       heading: content.heading.replace(

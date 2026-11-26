@@ -1,17 +1,14 @@
 import { Response } from 'express'
 import { CheckDraftReferralDetailsDto } from '@community-support-api'
-import type {
-  CheckReferralInformationContent,
-  CheckReferralInformationViewModel,
-} from './checkReferralInformationViewModel'
+import type { CheckReferralInformationViewModel } from './checkReferralInformationViewModel'
 import CheckReferralInformationPresenter from './checkReferralInformationPresenter'
 import DraftReferralDetailsFactory from '../../testutils/factories/DraftReferralDetails'
-import loadContentDataForTest from '../../testutils/loadContentDataForTest'
+import { globalContent } from '../../../assets/content/GlobalContent'
 
 jest.useFakeTimers()
 jest.setSystemTime(new Date('2026-10-07T00:00:00Z').getTime())
 
-const content = loadContentDataForTest('/referral/check-referral-information') as CheckReferralInformationContent
+const content = globalContent.referral.checkReferralInformation
 
 describe('CheckReferralInformationPresenter', () => {
   let res: Response
@@ -338,7 +335,7 @@ describe('CheckReferralInformationPresenter', () => {
       } as CheckDraftReferralDetailsDto)
 
       const presenter = new CheckReferralInformationPresenter(draftReferralDetails)
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
 
       const { probationPractitionersDetailsSummary } = viewModel
       expect(probationPractitionersDetailsSummary?.card.title.text).toBe("Main point of contact's details")

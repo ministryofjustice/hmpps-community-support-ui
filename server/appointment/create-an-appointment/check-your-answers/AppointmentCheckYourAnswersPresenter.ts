@@ -1,9 +1,8 @@
 import { CreateAppointmentReferenceDataBffDto } from '@community-support-api'
 import { GovukFrontendSummaryListRow } from '@govuk-frontend'
-import { Response } from 'express'
 import { format, isValid, parse } from 'date-fns'
 import PresenterBase from '../../../presenter/presenterBase'
-import { formatIsoDateOrNull } from '../../../utils/dateFormat'
+import { formatIsoDateOrNull, toIsoDate } from '../../../utils/dateFormat'
 import { escapeSpecialHtmlCharacters, govFrontendSummaryListRow } from '../../../utils/viewUtils'
 import AppointmentSessionData from '../AppointmentSessionData'
 import { getAppointmentMethodLabel, normaliseAppointmentMethod } from '../appointmentMethod'
@@ -13,12 +12,17 @@ import {
   AppointmentCheckYourAnswersViewModel,
 } from './AppointmentCheckYourAnswersViewModel'
 import { getInformedByLabel } from '../../informedByLabels'
-import { appointmentTypeRules, parseAppointmentType } from '../../appointmentTypeRules'
+import { appointmentTypeRules, parseAppointmentType, SessionAppointmentType } from '../../appointmentTypeRules'
 
-export default class AppointmentCheckYourAnswersPresenter extends PresenterBase<
-  AppointmentCheckYourAnswersViewModel,
-  AppointmentCheckYourAnswersContent
-> {
+const retrospectiveAppointmentTypes: ReadonlySet<SessionAppointmentType> = new Set([
+  'ICS',
+  'CONTACT_SESSION',
+  'HANDOVER_SESSION',
+  'POST_RELEASE_SESSION',
+  'PRE_RELEASE_SESSION',
+])
+
+export default class AppointmentCheckYourAnswersPresenter extends PresenterBase<AppointmentCheckYourAnswersViewModel> {
   constructor(
     private readonly caseRefId: string,
     private readonly firstName: string,
@@ -29,8 +33,8 @@ export default class AppointmentCheckYourAnswersPresenter extends PresenterBase<
     super()
   }
 
-  buildViewModel(res: Response): AppointmentCheckYourAnswersViewModel {
-    const content = this.buildStaticContent(res)
+  buildViewModel(): AppointmentCheckYourAnswersViewModel {
+    const content = this.globalContent().referral.id.createAnAppointment.checkYourAnswers
     const appointmentTypeLabel = getAppointmentTypeLabel(
       this.appointmentSessionData.appointmentType,
       this.appointmentTypes,
@@ -39,19 +43,37 @@ export default class AppointmentCheckYourAnswersPresenter extends PresenterBase<
       appointmentTypeLabel === 'Initial contact session' || appointmentTypeLabel === 'ICS'
         ? 'ICS'
         : appointmentTypeLabel.toLowerCase()
+    const isRetrospective = this.isRetrospectiveAppointment()
+    const willCollectFeedback =
+      isRetrospective && parseAppointmentType(this.appointmentSessionData.appointmentType) === 'ICS'
 
     return {
       pageTitle: `Check the details before booking the ${appointmentTypeLabelForSentence}`,
       pageHeader: `Check the details before booking the ${appointmentTypeLabelForSentence}`,
       submitHref: content.submitHref.replace(/caseRefId|\{\{ id \}\}/g, this.caseRefId),
-      submitButtonText: content.submitButtonText,
+      submitButtonText: willCollectFeedback ? content.continueButtonText : content.submitButtonText,
       backLink: { href: content.backLink.replace(/caseRefId|\{\{ id \}\}/g, this.caseRefId) },
       appointmentSummary: this.buildAppointmentSummary(content, appointmentTypeLabel),
+      whatHappensNext: isRetrospective
+        ? { heading: content.whatHappensNextHeading, text: content.retrospectiveAppointmentText }
+        : undefined,
     }
   }
 
   protected getTemplatePath(): string {
     return 'appointment/create-an-appointment/check-your-answers'
+  }
+
+  private isRetrospectiveAppointment(): boolean {
+    const { appointmentType, date, startTime } = this.appointmentSessionData
+    const isoDate = toIsoDate(date)
+    const type = parseAppointmentType(appointmentType)
+    if (!type || !retrospectiveAppointmentTypes.has(type) || !isoDate || !startTime) {
+      return false
+    }
+
+    const appointmentDateTime = parse(`${isoDate} ${startTime}`, 'yyyy-MM-dd h:mma', new Date())
+    return isValid(appointmentDateTime) && appointmentDateTime < new Date()
   }
 
   private buildAppointmentSummary(content: AppointmentCheckYourAnswersContent, appointmentTypeLabel: string) {

@@ -1,4 +1,3 @@
-import { Response } from 'express'
 import { GovukFrontendCheckboxesItem } from '@govuk-frontend'
 import type { ReferralCriminogenicNeedsDto } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
@@ -11,7 +10,7 @@ import formatFullName from '../../utils/presenterFormatters'
 
 export type personNeedsFormData = Omit<ReferralCriminogenicNeedsDto, 'id' | 'updatedAt' | 'updatedBy'>
 
-export default class PersonNeedsPresenter extends PresenterBase<PersonNeedsViewModel, PersonNeedsContent> {
+export default class PersonNeedsPresenter extends PresenterBase<PersonNeedsViewModel> {
   constructor(
     private readonly data?: personNeedsFormData,
     private readonly validationErrors?: ErrorMiddlewareErrors,
@@ -98,8 +97,8 @@ export default class PersonNeedsPresenter extends PresenterBase<PersonNeedsViewM
     }
   }
 
-  buildViewModel(res: Response): PersonNeedsViewModel {
-    const content = this.buildStaticContent(res)
+  buildViewModel(): PersonNeedsViewModel {
+    const content = this.globalContent().referral.taskList.selectPersonNeeds
     return {
       pageTitle: content.pageTitle,
       heading: formatFullName(this.data.refereeName.firstName, this.data.refereeName.lastName),

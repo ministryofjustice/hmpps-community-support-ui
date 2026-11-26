@@ -1,4 +1,3 @@
-import { Response } from 'express'
 import {
   IcsFeedbackSubmissionResponse,
   CaseWorkerSummary,
@@ -70,16 +69,14 @@ export interface SessionDidNotHappenFeedbackRowInput {
 export interface DidNotAttendSessionFeedbackRowInput {
   content: ViewSessionFeedbackContent['sessionFeedback']['didNotAttend']
   noneText: string
-  triedToContactDidNotAttend?: string
+  howTheyTriedToContactThePerson?: string
+  reasonsTheyDidNotAttend?: string
   personFirstName: string
 }
 
 const REMOTE_SESSION_METHODS = new Set(['Phone call', 'Video call'])
 
-export default class ViewSessionFeedbackPresenter extends PresenterBase<
-  ViewSessionFeedbackViewModel,
-  ViewSessionFeedbackContent
-> {
+export default class ViewSessionFeedbackPresenter extends PresenterBase<ViewSessionFeedbackViewModel> {
   constructor(
     private readonly icsFeedbackSubmissionResponse: IcsFeedbackSubmissionResponse,
     private readonly caseRefId: string,
@@ -87,8 +84,8 @@ export default class ViewSessionFeedbackPresenter extends PresenterBase<
     super()
   }
 
-  buildViewModel(res: Response): ViewSessionFeedbackViewModel {
-    const content = this.buildStaticContent(res)
+  buildViewModel(): ViewSessionFeedbackViewModel {
+    const content = this.globalContent().icsFeedback.id.session.id
     const didSessionHappen = this.icsFeedbackSubmissionResponse.recordSessionDidSessionHappen === true
 
     return {
@@ -252,7 +249,8 @@ export default class ViewSessionFeedbackPresenter extends PresenterBase<
       rows = buildDidNotAttendSessionFeedbackRows({
         content: content.sessionFeedback.didNotAttend,
         noneText: content.noneText,
-        triedToContactDidNotAttend: response.recordSessionNoAttendanceInformation,
+        howTheyTriedToContactThePerson: response.recordSessionHowTheyTriedToContactThePerson,
+        reasonsTheyDidNotAttend: response.recordSessionReasonsTheyDidNotAttend,
         personFirstName,
       })
     }
@@ -444,14 +442,20 @@ export function buildSessionDidNotHappenFeedbackRows(
 export function buildDidNotAttendSessionFeedbackRows(
   input: DidNotAttendSessionFeedbackRowInput,
 ): GovukFrontendSummaryList['rows'] {
-  const { content, noneText, triedToContactDidNotAttend, personFirstName } = input
+  const { content, noneText, howTheyTriedToContactThePerson, reasonsTheyDidNotAttend, personFirstName } = input
 
   return [
     {
       key: {
-        text: content.triedToContactDidNotAttend.replace('{{ firstname }}', personFirstName),
+        text: content.howTheyTriedToContactThePerson.replace('{{ firstname }}', personFirstName),
       },
-      value: { text: triedToContactDidNotAttend || noneText },
+      value: { text: howTheyTriedToContactThePerson || noneText },
+    },
+    {
+      key: {
+        text: content.reasonsTheyDidNotAttend,
+      },
+      value: { text: reasonsTheyDidNotAttend || noneText },
     },
   ]
 }

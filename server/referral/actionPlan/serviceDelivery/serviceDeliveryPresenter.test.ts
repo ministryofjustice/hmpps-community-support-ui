@@ -8,7 +8,7 @@ import { ActionPlanCheckYourAnswersDetails } from '../../../services/referralSer
 type Question = ActionPlanSessionDeliveryDetailsResponse['questions'][number]
 
 describe('ServiceDeliveryPresenter', () => {
-  const content = { ...globalContent['/referral/:id'], ...globalContent['/referral/:id/service-delivery'] }
+  const content = { ...globalContent.referral.id.page, ...globalContent.referral.id.serviceDelivery }
 
   const buildQuestion = (overrides: Partial<Question> = {}): Question => ({
     id: 'question-1',
@@ -71,6 +71,7 @@ describe('ServiceDeliveryPresenter', () => {
         { href: '/progress/AB1234CD', text: 'Progress', active: false },
         { href: '/referral/AB1234CD/action-plan', text: 'Action Plan', active: true },
         { href: '/referral/AB1234CD/appointments', text: 'Appointments', active: false },
+        { href: '/referral/AB1234CD/notes', text: 'Notes', active: false },
         { href: '#', text: 'Change log', active: false },
       ],
     })

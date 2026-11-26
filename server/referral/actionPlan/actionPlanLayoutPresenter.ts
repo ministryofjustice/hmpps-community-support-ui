@@ -7,10 +7,7 @@ export enum ActionPlanNavigationValues {
   serviceDeliveryTab = 'serviceDelivery',
 }
 
-export default abstract class ActionPlanLayoutPresenter<ViewModel, Content> extends ReferralLayoutPresenter<
-  ViewModel,
-  Content
-> {
+export default abstract class ActionPlanLayoutPresenter<ViewModel> extends ReferralLayoutPresenter<ViewModel> {
   protected constructor(
     readonly activePage: ReferralNavigationValues,
     readonly activeTab: ActionPlanNavigationValues,

@@ -1,11 +1,7 @@
 import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendRadios } from '@govuk-frontend'
+import { GlobalContent } from '../../../../assets/content/GlobalContent'
 
-export interface AppointmentTypeContent {
-  pageTitle: string
-  heading?: string
-  appointmentTypeLabel: string
-  buttonText: string
-}
+export type AppointmentTypeContent = GlobalContent['referral']['id']['createAnAppointment']['appointmentType']
 
 export interface AppointmentTypeViewModel {
   pageTitle: string

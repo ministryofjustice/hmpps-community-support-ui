@@ -4,6 +4,7 @@ import {
   AdditionalSupportNeedsRequest,
   ServiceEndDatePageDto,
 } from '@community-support-api'
+import { globalContent } from '../../assets/content/GlobalContent'
 import ReferralService from '../services/referralService'
 import AdditionalSuportNeedsPresenter from './additionalSupportNeeds/AdditionalSupportNeedsPresenter'
 import {
@@ -224,7 +225,7 @@ export default class DraftReferralController {
       } catch (e) {
         logger.error(e)
         const updateErrorMessage =
-          (res.locals.content as Record<string, string>)?.updateError ||
+          globalContent.referral.taskList.serviceEndDate.updateError ||
           'Something has gone wrong updating the service end date'
         req.flash('serviceEndDateError', updateErrorMessage)
         return res.redirect(serviceEndDateURL)
@@ -272,9 +273,7 @@ export default class DraftReferralController {
         return res.redirect(offenceSentenceURL)
       } catch (e) {
         logger.error(e)
-        const updateErrorMessage =
-          (res.locals.content as Record<string, string>)?.updateError ||
-          'Something has gone wrong updating the service days'
+        const updateErrorMessage = 'Something has gone wrong updating the service days'
         req.flash('serviceDaysError', updateErrorMessage)
         return res.redirect(serviceDaysURL)
       }
@@ -319,9 +318,7 @@ export default class DraftReferralController {
         return res.redirect(additionalInformationForDeliveryPartnerURL)
       } catch (e) {
         logger.error(e)
-        const updateErrorMessage =
-          (res.locals.content as Record<string, string>)?.updateError ||
-          'Something has gone wrong updating the offence sentence'
+        const updateErrorMessage = 'Something has gone wrong updating the offence sentence'
         req.flash('offenceSentenceError', updateErrorMessage)
         return res.redirect(offenceSentenceURL)
       }

@@ -1,5 +1,4 @@
 import { ActionPlanSessionDeliveryDetailsResponse } from '@community-support-api'
-import { Response } from 'express'
 import { format, isValid, parseISO } from 'date-fns'
 import PresenterBase from '../../../presenter/presenterBase'
 import {
@@ -17,10 +16,7 @@ export type ServiceDeliveryCheckYourAnswersSections = [
   personInvolvement: ServiceDeliveryQuestion[],
 ]
 
-export default class ServiceDeliveryCheckYourAnswersPresenter extends PresenterBase<
-  ServiceDeliveryCheckYourAnswersViewModel,
-  ServiceDeliveryCheckYourAnswersContent
-> {
+export default class ServiceDeliveryCheckYourAnswersPresenter extends PresenterBase<ServiceDeliveryCheckYourAnswersViewModel> {
   constructor(
     private readonly sections: ServiceDeliveryCheckYourAnswersSections,
     private readonly caseReference: string,
@@ -28,8 +24,8 @@ export default class ServiceDeliveryCheckYourAnswersPresenter extends PresenterB
     super()
   }
 
-  protected buildViewModel(res: Response): ServiceDeliveryCheckYourAnswersViewModel {
-    const content = this.buildStaticContent(res)
+  protected buildViewModel(): ServiceDeliveryCheckYourAnswersViewModel {
+    const content = this.globalContent().referral.id.actionPlan.serviceDeliveryCheckYourAnswers
     return {
       pageTitle: content.pageTitle,
       pageHeader: content.pageHeader,

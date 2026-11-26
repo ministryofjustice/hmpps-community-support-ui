@@ -1,14 +1,10 @@
-import { Response } from 'express'
 import { Person, AreaConfirmationBffResponseDto } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
-import { ConfirmAnAreaForReferralContent, ConfirmAnAreaForReferralViewModel } from './ConfirmAnAreaForReferralViewModel'
+import { ConfirmAnAreaForReferralViewModel } from './ConfirmAnAreaForReferralViewModel'
 import { trimOrDefault } from '../../utils/utils'
 import formatFullName from '../../utils/presenterFormatters'
 
-export default class ConfirmAnAreaForReferralPresenter extends PresenterBase<
-  ConfirmAnAreaForReferralViewModel,
-  ConfirmAnAreaForReferralContent
-> {
+export default class ConfirmAnAreaForReferralPresenter extends PresenterBase<ConfirmAnAreaForReferralViewModel> {
   constructor(
     private readonly providerDetails: AreaConfirmationBffResponseDto,
     private readonly personDetails: Person,
@@ -21,8 +17,8 @@ export default class ConfirmAnAreaForReferralPresenter extends PresenterBase<
     return formatFullName(firstName, lastName)
   }
 
-  buildViewModel(res: Response): ConfirmAnAreaForReferralViewModel {
-    const content = this.buildStaticContent(res)
+  buildViewModel(): ConfirmAnAreaForReferralViewModel {
+    const content = this.globalContent().referral.taskList.confirmAnAreaForReferral
     const crn = trimOrDefault(this.personDetails.personIdentifier, content.defaultFieldValue)
     const dateOfBirth = trimOrDefault(this.personDetails.dateOfBirth, content.defaultFieldValue)
     const areaCovered = trimOrDefault(this.providerDetails.contractArea, content.defaultFieldValue)

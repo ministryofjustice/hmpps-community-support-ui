@@ -18,4 +18,4 @@ export interface ServiceEndDatePageViewModel {
   formValues: ServiceEndDateFormValues
 }
 
-export type ServiceEndDatePageContent = GlobalContent['/referral/task-list/service-end-date']
+export type ServiceEndDatePageContent = GlobalContent['referral']['taskList']['serviceEndDate']

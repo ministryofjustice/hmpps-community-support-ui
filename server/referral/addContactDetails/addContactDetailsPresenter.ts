@@ -1,4 +1,3 @@
-import { Response } from 'express'
 import {
   GovukFrontendBackLink,
   GovukFrontendButton,
@@ -11,12 +10,9 @@ import PresenterBase from '../../presenter/presenterBase'
 import { AddContactDetailsContent, AddContactDetailsViewModel } from './addContactDetailsViewModel'
 import { ErrorMiddlewareErrors } from '../../@types/express'
 
-export default class AddContactDetailsPresenter extends PresenterBase<
-  AddContactDetailsViewModel,
-  AddContactDetailsContent
-> {
-  buildViewModel(res: Response) {
-    const content = this.buildStaticContent(res)
+export default class AddContactDetailsPresenter extends PresenterBase<AddContactDetailsViewModel> {
+  buildViewModel() {
+    const content = this.globalContent().referral.new.addContactDetails
     return {
       pageTitle: content.pageTitle,
       heading: content.heading.replace(

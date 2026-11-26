@@ -43,11 +43,17 @@ describe('IssuesOrConcernsPresenter', () => {
 
       expect(renderData.content.pageTitle).toEqual('Issues or concerns – ICS feedback – Community Support')
       expect(renderData.content.pageHeader).toEqual('Issues or concerns')
-      expect(renderData.content.issuesOrConcerns.label.text).toEqual('What issues or concerns did you identify?')
+      expect(renderData.content.issuesOrConcerns.label.text).toEqual(
+        'What issues or concerns did you identify in the ICS?',
+      )
       expect(renderData.content.issuesOrConcerns.hint.text).toEqual(
         'Give details of anything that concerned you about Alex, or any issues they raised that might impact their engagement in future sessions.',
       )
       expect(renderData.content.submitButton.text).toEqual('Continue')
+      expect(renderData.content.notifyProbationPractitioner.fieldset.legend.text).toEqual(
+        'Do you want us to send an email to the probation practitioner about the issues or concerns?',
+      )
+      expect(renderData.content.notifyProbationPractitioner.items.map(item => item.text)).toEqual(['Yes', 'No'])
       expect(renderData.content.backLink.href).toEqual('/ics-feedback/ics-test-123/session-feedback')
     })
 
@@ -61,11 +67,16 @@ describe('IssuesOrConcernsPresenter', () => {
     })
 
     it('has textarea populated with values', () => {
-      const presenter = new IssuesOrConcernsPresenter(caseRefId, firstName, { identified: 'Test text' })
+      const presenter = new IssuesOrConcernsPresenter(caseRefId, firstName, {
+        identified: 'Test text',
+        notifyProbationPractitioner: true,
+      })
       presenter.renderPage(res)
       const renderData = (res.render as jest.Mock).mock.calls[0][1] as { content: IssuesOrConcernsViewModel }
 
       expect(renderData.content.issuesOrConcerns.value).toEqual('Test text')
+      expect(renderData.content.notifyProbationPractitioner.items[0].checked).toBe(true)
+      expect(renderData.content.notifyProbationPractitioner.items[1].checked).toBe(false)
     })
 
     it('has error messages rendering correctly', () => {
@@ -86,7 +97,7 @@ describe('IssuesOrConcernsPresenter', () => {
     it('sets the form action and textarea attributes', () => {
       const presenter = new IssuesOrConcernsPresenter(caseRefId, firstName)
 
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
 
       expect(viewModel.submitHref).toBe(`/ics-feedback/${caseRefId}/issues-or-concerns`)
       expect(viewModel.issuesOrConcerns).toMatchObject({
@@ -101,6 +112,14 @@ describe('IssuesOrConcernsPresenter', () => {
           attributes: { 'data-testid': 'textarea-hint' },
         },
         attributes: { 'data-testid': 'textarea-input' },
+      })
+      expect(viewModel.notifyProbationPractitioner).toMatchObject({
+        name: 'notifyProbationPractitioner',
+        classes: 'govuk-radios--inline',
+        items: [
+          { value: 'Yes', checked: false },
+          { value: 'No', checked: false },
+        ],
       })
     })
   })

@@ -1,11 +1,9 @@
-import { Response } from 'express'
 import { GovukFrontendSummaryList, GovukFrontendSummaryListRow } from '@govuk-frontend'
 import { differenceInYears } from 'date-fns'
 import { ConfirmPersonDetailsBffDto } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
 import dateFormat from '../../utils/dateFormat'
 import {
-  ConfirmPersonalDetailsContent,
   ConfirmPersonalDetailsViewModel,
   ContactDetailsCard,
   EqualityMonitoringCard,
@@ -20,10 +18,7 @@ type ContactAddress = ConfirmPersonDetailsBffDto['contactDetails']['address']
 const formatUpdatedAt = (updatedAt: string | undefined | null): string =>
   (updatedAt ?? '').trim() !== '' ? dateFormat(new Date(updatedAt as string)) : 'Not available'
 
-export default class ConfirmPersonalDetailsPresenter extends PresenterBase<
-  ConfirmPersonalDetailsViewModel,
-  ConfirmPersonalDetailsContent
-> {
+export default class ConfirmPersonalDetailsPresenter extends PresenterBase<ConfirmPersonalDetailsViewModel> {
   constructor(private readonly data: ConfirmPersonDetailsBffDto) {
     super()
   }
@@ -144,8 +139,8 @@ export default class ConfirmPersonalDetailsPresenter extends PresenterBase<
     return formatFullName(firstName, lastName, middleNames)
   }
 
-  buildViewModel(res: Response): ConfirmPersonalDetailsViewModel {
-    const content = this.buildStaticContent(res)
+  buildViewModel(): ConfirmPersonalDetailsViewModel {
+    const content = this.globalContent().referral.taskList.confirmPersonalDetails
     return {
       pageTitle: content.pageTitle,
       heading: content.pageHeader.replace('{{ name }}', this.getFullName()),

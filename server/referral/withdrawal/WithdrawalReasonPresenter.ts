@@ -1,5 +1,5 @@
-import { Response } from 'express'
 import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendErrorMessage } from '@govuk-frontend'
+import { GlobalContent } from '../../../assets/content/GlobalContent'
 import { ErrorMiddlewareErrors } from '../../@types/express'
 import {
   GovukFrontendRadiosItemWithConditional,
@@ -11,11 +11,7 @@ import { additionalInformationField, WithdrawalFormData, WithdrawalReason } from
 
 const OTHER_REASON_TEXT = 'another reason'
 
-interface WithdrawalReasonContent {
-  pageHeader: string
-  additionalInformationLabel: string
-  continueButtonText: string
-}
+type WithdrawalReasonContent = GlobalContent['referral']['id']['withdraw']
 
 interface WithdrawalReasonViewModel {
   pageHeader: string
@@ -25,10 +21,7 @@ interface WithdrawalReasonViewModel {
   backLink: GovukFrontendBackLink
 }
 
-export default class WithdrawalReasonPresenter extends PresenterBase<
-  WithdrawalReasonViewModel,
-  WithdrawalReasonContent
-> {
+export default class WithdrawalReasonPresenter extends PresenterBase<WithdrawalReasonViewModel> {
   constructor(
     private readonly caseIdentifier: string,
     private readonly referralName: string,
@@ -103,8 +96,8 @@ export default class WithdrawalReasonPresenter extends PresenterBase<
     </div>`
   }
 
-  protected buildViewModel(res: Response): WithdrawalReasonViewModel {
-    const content = this.buildStaticContent(res)
+  protected buildViewModel(): WithdrawalReasonViewModel {
+    const content = this.globalContent().referral.id.withdraw
     return {
       pageHeader: content.pageHeader.replace('{{ name }}', this.referralName),
       reasonGroups: this.buildReasonGroups(content),

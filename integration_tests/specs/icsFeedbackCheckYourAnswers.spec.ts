@@ -3,6 +3,7 @@ import { ReferralProgress } from '@community-support-api'
 import { randomUUID } from 'crypto'
 import { daysAfter, login, resetStubs, seedSessionWithIcsFeedback } from '../testUtils'
 import IcsFeedbackCheckYourAnswersPage from '../pages/IcsFeedbackCheckYourAnswersPage'
+import ReferralAppointmentsPage from '../pages/referralAppointmentsPage'
 import buildReferralProgress from '../../server/testutils/buildReferralProgress'
 import communitySupport from '../mockApis/communitySupport'
 
@@ -72,7 +73,7 @@ test.describe('Ics Feedback CYA Page', () => {
       didSessionHappen: false,
       didPersonAttend: true,
       sessionNotHappenReason: {
-        reason: 'REFERRAL_DID_NOT_COMPLY',
+        reason: 'REFERRAL_DID_NOT_COMPLY' as const,
         details: 'A reason',
       },
     },
@@ -82,7 +83,8 @@ test.describe('Ics Feedback CYA Page', () => {
     record: {
       didSessionHappen: false,
       didPersonAttend: false,
-      noAttendanceInformation: 'No contact was made with the person',
+      howTheyTriedToContactThePerson: 'No contact was made with the person',
+      reasonsTheyDidNotAttend: 'They were unavailable',
     },
     caseReferenceId: caseRefId,
   }
@@ -129,12 +131,6 @@ test.describe('Ics Feedback CYA Page', () => {
     {
       appointmentIcsId: randomUUID(),
       event: { status: 'SCHEDULED', dateTime: daysAfter(baseDate, 1) },
-    },
-  ])
-  const feedbackCompleted: ReferralProgress = buildReferralProgress([
-    {
-      appointmentIcsId: randomUUID(),
-      event: { status: 'COMPLETED', dateTime: daysAfter(baseDate, 1) },
     },
   ])
   const mockAppointmentIcsResponse = {
@@ -247,23 +243,28 @@ test.describe('Ics Feedback CYA Page', () => {
     await page.goto(`ics-feedback/${caseRefId}/check-answers`)
     const icsFeedbackCheckYourAnswersPage = await IcsFeedbackCheckYourAnswersPage.verifyOnPage(page)
     expect(page.getByText(`${mockAppointmentIcsResponse.referralFirstName} did not comply`)).toBeVisible()
-    expect(icsFeedbackCheckYourAnswersPage.sessionFeedbackSummary).toBeVisible()
+    expect(icsFeedbackCheckYourAnswersPage.attendanceSummary).toBeVisible()
+    expect(icsFeedbackCheckYourAnswersPage.sessionFeedbackSummary).not.toBeVisible()
     expect(icsFeedbackCheckYourAnswersPage.backLink).toHaveAttribute(
       'href',
       `/ics-feedback/${caseRefId}/why-did-the-session-not-happen`,
     )
   })
 
-  test('when the ICS was not attended, display no attendance information in session details', async ({ page }) => {
+  test('when the ICS was not attended, display contact attempts and reason', async ({ page }) => {
     await seedSessionWithIcsFeedback(page, icsFeedbackSubmissionDidNotAttend)
     await page.goto(`ics-feedback/${caseRefId}/check-answers`)
     const icsFeedbackCheckYourAnswersPage = await IcsFeedbackCheckYourAnswersPage.verifyOnPage(page)
-    expect(
-      page.getByText(
-        `Details about how you tried to contact ${mockAppointmentIcsResponse.referralFirstName} and why they did not attend`,
-      ),
+    await expect(
+      page.locator('dt.govuk-summary-list__key', {
+        hasText: `How did you try to contact ${mockAppointmentIcsResponse.referralFirstName}?`,
+      }),
     ).toBeVisible()
-    expect(icsFeedbackCheckYourAnswersPage.sessionFeedbackSummary).toBeVisible()
+    await expect(page.locator('dt.govuk-summary-list__key', { hasText: 'Reason they did not attend' })).toBeVisible()
+    await expect(page.getByText('No contact was made with the person')).toBeVisible()
+    await expect(page.getByText('They were unavailable')).toBeVisible()
+    await expect(icsFeedbackCheckYourAnswersPage.attendanceSummary).toBeVisible()
+    await expect(icsFeedbackCheckYourAnswersPage.sessionFeedbackSummary).not.toBeVisible()
     expect(icsFeedbackCheckYourAnswersPage.backLink).toHaveAttribute(
       'href',
       `/ics-feedback/${caseRefId}/how-they-tried-to-contact-the-person`,
@@ -297,23 +298,38 @@ test.describe('Ics Feedback CYA Page', () => {
     await expect(page.getByText(`${mockAppointmentIcsResponse.referralFirstName} could not take part`)).toBeVisible()
   })
 
-  // AC6
-  test('when I submit feedback successfully I am taken to the referral progress page', async ({ page }) => {
-    await seedSessionWithIcsFeedback(page, icsFeedbackSubmissionNoAddress)
-    await communitySupport.stubIcsFeedbackSubmission(
-      icsFeedbackSubmissionNoAddress,
-      mockAppointmentIcsResponse.appointmentIcsId,
-      caseRefId,
-    )
-    await communitySupport.stubGetReferralProgress(feedbackCompleted, caseRefId)
-    await page.goto(`ics-feedback/${caseRefId}/check-answers`)
-    const icsFeedbackCheckYourAnswersPage = await IcsFeedbackCheckYourAnswersPage.verifyOnPage(page)
-    await icsFeedbackCheckYourAnswersPage.submitButton.click()
-    await test.step('should navigate to the progress screen', async () => {
-      await expect(page).toHaveURL(REFERRAL_PROGRESS_URL)
-      await expect(page.locator('h2', { hasText: 'Referral progress' })).toBeVisible()
-      await expect(page.locator('h3', { hasText: 'Session feedback submitted' })).toBeVisible()
-      await expect(page.locator('p', { hasText: 'The ICS is now complete.' })).toBeVisible()
+  ;[
+    { description: 'the session happened', submission: icsFeedbackSubmissionNoAddress },
+    { description: 'the session did not happen', submission: icsFeedbackSubmissionDidNotComply },
+    { description: 'the person did not attend', submission: icsFeedbackSubmissionDidNotAttend },
+  ].forEach(({ description, submission }) => {
+    test(`shows a dismissible notification on appointments after feedback when ${description}`, async ({ page }) => {
+      await seedSessionWithIcsFeedback(page, submission)
+      await communitySupport.stubIcsFeedbackSubmission(
+        submission,
+        mockAppointmentIcsResponse.appointmentIcsId,
+        caseRefId,
+      )
+      await communitySupport.stubGetReferralAppointments(
+        {
+          personDetails: { firstName: 'John', lastName: 'Smith', dateOfBirth: '1980-01-01', crn: 'X123456' },
+          upcomingAppointments: [],
+          pastAppointments: [],
+        },
+        caseRefId,
+      )
+      await page.goto(`ics-feedback/${caseRefId}/check-answers`)
+      const checkYourAnswersPage = await IcsFeedbackCheckYourAnswersPage.verifyOnPage(page)
+      await checkYourAnswersPage.submitButton.click()
+
+      await expect(page).toHaveURL(ReferralAppointmentsPage.url(caseRefId))
+      const appointmentsPage = new ReferralAppointmentsPage(page)
+      await appointmentsPage.verifyOnPage()
+      await expect(appointmentsPage.successAlert).toContainText('ICS feedback added')
+      await appointmentsPage.successAlert.getByRole('button', { name: 'Dismiss' }).click()
+      await expect(appointmentsPage.successAlert).toHaveCount(0)
+      await page.reload()
+      await expect(appointmentsPage.successAlert).toHaveCount(0)
     })
   })
 })

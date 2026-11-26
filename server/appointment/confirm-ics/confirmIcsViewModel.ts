@@ -1,4 +1,5 @@
 import { GovukFrontendBackLink, GovukFrontendNotificationBanner, GovukFrontendSummaryList } from '@govuk-frontend'
+import { GlobalContent } from '../../../assets/content/GlobalContent'
 
 export type ConfirmIcsViewModel = {
   pageHeader: string
@@ -10,7 +11,4 @@ export type ConfirmIcsViewModel = {
   icsChangeReasonSummary?: GovukFrontendSummaryList
 }
 
-export type ConfirmIcsContent = {
-  pageHeader: string
-  submitButtonText: string
-}
+export type ConfirmIcsContent = GlobalContent['referral']['id']['appointment']['confirmIcs']

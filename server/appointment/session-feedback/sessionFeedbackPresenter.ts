@@ -6,6 +6,7 @@ import {
   GovukFrontendTextarea,
 } from '@govuk-frontend'
 import { IcsFeedbackSubmission } from '@community-support-api'
+import { GlobalContent } from '../../../assets/content/GlobalContent'
 import PresenterBase from '../../presenter/presenterBase'
 import { FormErrors } from '../../interfaces/formErrors'
 
@@ -20,39 +21,18 @@ export interface SessionFeedbackViewModel {
   errorSummary?: GovukFrontendErrorSummary
   pageTitle: string
   pageHeader: string
-  description?: string
-  label: string
   form?: SessionFeedbackFormViewModel
   backLink: GovukFrontendBackLink
   submitHref: string
 }
 
-interface FormContent {
-  label: string
-  whatDidYouDoTextarea: TextareaContent
-  behaviourTextarea: TextareaContent
-  strengthsIdentifiedTextarea: TextareaContent
-  submitButtonText: string
-}
+type FormContent = SessionFeedbackContent['feedbackForm']
 
-interface TextareaContent {
-  id: string
-  name: string
-  label: string
-  hint: string
-  rows?: string
-}
+type TextareaContent = FormContent['whatDidYouDoTextarea']
 
-export interface SessionFeedbackContent {
-  pageTitle: string
-  pageHeader: string
-  description?: string
-  label: string
-  feedbackForm: FormContent
-  backLink: string
-}
+export type SessionFeedbackContent = GlobalContent['icsFeedback']['id']['sessionFeedback']
 
-export default class SessionFeedbackPresenter extends PresenterBase<SessionFeedbackViewModel, SessionFeedbackContent> {
+export default class SessionFeedbackPresenter extends PresenterBase<SessionFeedbackViewModel> {
   constructor(
     private readonly caseRefId: string,
     private formData: IcsFeedbackSubmission = null,
@@ -104,12 +84,10 @@ export default class SessionFeedbackPresenter extends PresenterBase<SessionFeedb
   }
 
   buildViewModel(res: Response): SessionFeedbackViewModel {
-    const content = this.buildStaticContent(res)
+    const content = this.globalContent().icsFeedback.id.sessionFeedback
     return {
       pageTitle: content.pageTitle,
       pageHeader: content.pageHeader,
-      description: content.description,
-      label: content.label,
       form: this.buildForm(content.feedbackForm, res.locals?.errors),
       backLink: { href: content.backLink.replace('{{ id }}', this.caseRefId) },
       submitHref: `/ics-feedback/${this.caseRefId}/session-feedback`,

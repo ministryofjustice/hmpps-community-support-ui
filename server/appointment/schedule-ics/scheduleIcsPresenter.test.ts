@@ -4,8 +4,8 @@ import { Response } from 'express'
 import { ProbationOffice } from '@community-support-api'
 import { MojDatePicker } from '@moj-frontend'
 import { GovukFrontendErrorMessage } from '@govuk-frontend'
+import { globalContent } from '../../../assets/content/GlobalContent'
 import type { ScheduleFormData, ScheduleIcsViewModel } from './scheduleIcsViewModel'
-import ScheduleIcsContentFactory from '../../testutils/factories/ScheduleIcsContent'
 import ReferralInformationFactory from '../../testutils/factories/ReferralInformation'
 import ScheduleIcsPresenter from './scheduleIcsPresenter'
 import { buildInput, buildSelect } from '../../utils/utils'
@@ -59,7 +59,7 @@ describe('ScheduleIcsPresenter', () => {
     },
   ]
 
-  const content = ScheduleIcsContentFactory.build()
+  const content = globalContent.referral.id.appointment.scheduleIcs
 
   const caseReference = 'AB1234CD'
   const referralInformation = ReferralInformationFactory.build({ personIdentifier: 'A123456' })
@@ -361,11 +361,30 @@ describe('ScheduleIcsPresenter', () => {
     expect(res.render).toHaveBeenCalledWith('appointment/scheduleIcsAppointment', expect.objectContaining({}))
   })
 
+  test('uses the change-details content when editing an existing ICS', () => {
+    const presenter = new ScheduleIcsPresenter(
+      caseReference,
+      probationOfficesData,
+      prisonsData,
+      referralInformation,
+      undefined,
+      undefined,
+      undefined,
+      'icsChangeDetails',
+    )
+
+    expect(presenter.buildViewModel()).toMatchObject({
+      pageHeader: 'Change session details',
+      submitHref: `/referral/${caseReference}/ics-change-details`,
+      backLink: { href: `/referral-details/${caseReference}/ics-view-or-change` },
+    })
+  })
+
   describe('buildPageContent', () => {
     describe('no form data, no errors', () => {
       test('correct content when the identifier is a CRN', () => {
         const presenter = new ScheduleIcsPresenter(caseReference, probationOfficesData, [], referralInformation)
-        const viewModel = presenter.buildViewModel(res)
+        const viewModel = presenter.buildViewModel()
         checkContentInCommunity(viewModel, {}, {})
       })
     })
@@ -388,7 +407,7 @@ describe('ScheduleIcsPresenter', () => {
           referralInformation,
           formData,
         )
-        const viewModel = presenter.buildViewModel(res)
+        const viewModel = presenter.buildViewModel()
         checkContentInCommunity(viewModel, formData, {})
       })
       test('correct content when the identifier is a CRN - by video', () => {
@@ -409,7 +428,7 @@ describe('ScheduleIcsPresenter', () => {
           referralInformation,
           formData,
         )
-        const viewModel = presenter.buildViewModel(res)
+        const viewModel = presenter.buildViewModel()
         checkContentInCommunity(viewModel, formData, {})
       })
       test('correct content when the identifier is a CRN - in person probation office', () => {
@@ -430,7 +449,7 @@ describe('ScheduleIcsPresenter', () => {
           referralInformation,
           formData,
         )
-        const viewModel = presenter.buildViewModel(res)
+        const viewModel = presenter.buildViewModel()
         checkContentInCommunity(viewModel, formData, {})
       })
       test('correct content when the identifier is a CRN - in person somewhere else', () => {
@@ -455,7 +474,7 @@ describe('ScheduleIcsPresenter', () => {
           referralInformation,
           formData,
         )
-        const viewModel = presenter.buildViewModel(res)
+        const viewModel = presenter.buildViewModel()
         checkContentInCommunity(viewModel, formData, {})
       })
     })
@@ -501,7 +520,7 @@ describe('ScheduleIcsPresenter', () => {
           formData,
           errors,
         )
-        const viewModel = presenter.buildViewModel(res)
+        const viewModel = presenter.buildViewModel()
         checkContentInCommunity(viewModel, formData, errors.messages)
       })
       test('correct content when the identifier is a CRN - by video', () => {
@@ -535,7 +554,7 @@ describe('ScheduleIcsPresenter', () => {
           formData,
           errors,
         )
-        const viewModel = presenter.buildViewModel(res)
+        const viewModel = presenter.buildViewModel()
         checkContentInCommunity(viewModel, formData, errors.messages)
       })
       test('correct content when the identifier is a CRN - in person probation office', () => {
@@ -570,7 +589,7 @@ describe('ScheduleIcsPresenter', () => {
           formData,
           errors,
         )
-        const viewModel = presenter.buildViewModel(res)
+        const viewModel = presenter.buildViewModel()
         checkContentInCommunity(viewModel, formData, errors.messages)
       })
       test('correct content when the identifier is a CRN - in person somewhere else', () => {
@@ -637,7 +656,7 @@ describe('ScheduleIcsPresenter', () => {
           formData,
           error,
         )
-        const viewModel = presenter.buildViewModel(res)
+        const viewModel = presenter.buildViewModel()
         checkContentInCommunity(viewModel, formData, error.messages)
       })
       test('correct content when the identifier is a CRN - missing informed', () => {
@@ -672,7 +691,7 @@ describe('ScheduleIcsPresenter', () => {
           formData,
           error,
         )
-        const viewModel = presenter.buildViewModel(res)
+        const viewModel = presenter.buildViewModel()
         checkContentInCommunity(viewModel, formData, error.messages)
       })
       test('correct content when the identifier is a CRN - missing informed other method', () => {
@@ -707,7 +726,7 @@ describe('ScheduleIcsPresenter', () => {
           formData,
           error,
         )
-        const viewModel = presenter.buildViewModel(res)
+        const viewModel = presenter.buildViewModel()
         checkContentInCommunity(viewModel, formData, error.messages)
       })
     })

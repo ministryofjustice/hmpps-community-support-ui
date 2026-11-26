@@ -9,4 +9,4 @@ export interface NeedsAnInterpreterViewModel {
   button: GovukFrontendButton
 }
 
-export type NeedsAnInterpreterContent = GlobalContent['/referral/task-list/needs-an-interpreter']
+export type NeedsAnInterpreterContent = GlobalContent['referral']['taskList']['needsAnInterpreter']

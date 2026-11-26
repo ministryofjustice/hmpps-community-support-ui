@@ -4,14 +4,12 @@ import {
   DraftMainPOCDetailsTableDataDto,
 } from '@community-support-api'
 import { GovukFrontendSummaryList } from '@govuk-frontend'
-import { Response } from 'express'
 import { format, differenceInYears, formatDate } from 'date-fns'
 import PresenterBase from '../../presenter/presenterBase'
 import formatFullName from '../../utils/presenterFormatters'
 import ViewUtils, { escapeSpecialHtmlCharacters, govFrontendSummaryListRow } from '../../utils/viewUtils'
 import { components } from '../../@types/communitySupportApi/imported'
 import {
-  CheckReferralInformationContent,
   CheckReferralInformationViewModel,
   EqualityMonitoringCard,
   PersonalDetailsCard,
@@ -126,16 +124,13 @@ const buildReferralDetailsSummary = (area: string): GovukFrontendSummaryList => 
   rows: [govFrontendSummaryListRow('Area the referral is being made to', area || '')],
 })
 
-export default class CheckReferralInformationPresenter extends PresenterBase<
-  CheckReferralInformationViewModel,
-  CheckReferralInformationContent
-> {
+export default class CheckReferralInformationPresenter extends PresenterBase<CheckReferralInformationViewModel> {
   constructor(private readonly draftReferralDetails: CheckDraftReferralDetailsDto) {
     super()
   }
 
-  buildViewModel(res: Response): CheckReferralInformationViewModel {
-    const content = this.buildStaticContent(res)
+  buildViewModel(): CheckReferralInformationViewModel {
+    const content = this.globalContent().referral.checkReferralInformation
     return {
       pageTitle: content.pageTitle,
       pageHeader: resolveName(this.draftReferralDetails.personDetailsTableData.name),

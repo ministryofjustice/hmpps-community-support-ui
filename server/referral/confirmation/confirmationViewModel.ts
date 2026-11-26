@@ -1,4 +1,5 @@
 import { GovukFrontendPanel } from '@govuk-frontend'
+import { GlobalContent } from '../../../assets/content/GlobalContent'
 
 export type ReferralConfirmationViewModel = {
   staticContent: ReferralConfirmationContent
@@ -9,11 +10,4 @@ export type ReferralConfirmationViewModel = {
   panel: GovukFrontendPanel
 }
 
-export type ReferralConfirmationContent = {
-  pageHeader: string
-  referenceNumberIntro: string
-  startNewReferralButtonText: string
-  startNewReferralLink: string
-  backToCommunityHomeLink: string
-  backToCommunityHomeLinkText: string
-}
+export type ReferralConfirmationContent = GlobalContent['referral']['id']['confirmation']

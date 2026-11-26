@@ -41,7 +41,8 @@ describe('IcsFeedbackController', () => {
       recordSessionDidSessionHappen: true,
       recordSessionDidPersonAttend: true,
       recordSessionNotHappenReason: undefined,
-      recordSessionNoAttendanceInformation: undefined,
+      recordSessionHowTheyTriedToContactThePerson: undefined,
+      recordSessionReasonsTheyDidNotAttend: undefined,
       createdAt: '',
     }
 

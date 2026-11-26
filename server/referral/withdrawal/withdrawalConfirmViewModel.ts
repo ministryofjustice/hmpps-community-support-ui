@@ -1,7 +1,7 @@
 import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendSummaryList } from '@govuk-frontend'
 import { GlobalContent } from '../../../assets/content/GlobalContent'
 
-export type WithdrawalConfirmContent = GlobalContent['/referral/:id/withdraw/confirm']
+export type WithdrawalConfirmContent = GlobalContent['referral']['id']['withdraw']['confirm']
 
 export interface WithdrawalConfirmViewModel {
   pageHeader: string

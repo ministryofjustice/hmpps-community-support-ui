@@ -740,6 +740,31 @@ export default {
         jsonBody: appointments,
       },
     }),
+  stubGetReferralNotes: (notes: object, caseReference: string, page?: number, httpStatus = 200): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: `/community-support/bff/referral/${caseReference}/notes`,
+        ...(page === undefined ? {} : { queryParameters: { page: { equalTo: page.toString() } } }),
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: notes,
+      },
+    }),
+  stubGetReferralPathways: (pathways: object, caseReference: string, httpStatus = 200): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: `/community-support/bff/referral/${caseReference}/notes/pathways`,
+      },
+      response: {
+        status: httpStatus,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: pathways,
+      },
+    }),
   stubIcsFeedbackSubmission: (
     icsFeedback: IcsFeedbackSubmission,
     icsId: string,

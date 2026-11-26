@@ -1,18 +1,9 @@
 import { GovukFrontendBackLink, GovukFrontendButton } from '@govuk-frontend'
+import { GlobalContent } from '../../../assets/content/GlobalContent'
 import { YesWithDetailOrNo } from '../../@types/govukFrontend/derived'
 
-export interface AdditionalInformationForTheDeliveryPartnerContent {
-  pageTitle: string
-  pageHeader: string
-  detailsLink: string
-  detailsHeader: string
-  detailsItems: string[]
-  yesOptionLabel: string
-  yesConditional: string
-  noOptionLabel: string
-  button: string
-  backlink: string
-}
+export type AdditionalInformationForTheDeliveryPartnerContent =
+  GlobalContent['referral']['taskList']['additionalInformationForTheDeliveryPartner']
 
 export interface Details {
   summary: string

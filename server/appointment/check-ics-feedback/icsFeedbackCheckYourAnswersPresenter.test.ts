@@ -1,8 +1,9 @@
 import { Response } from 'express'
 import { IcsFeedbackSubmission } from '@community-support-api'
+import { GovukFrontendSummaryList } from '@govuk-frontend'
+import { globalContent } from '../../../assets/content/GlobalContent'
 import IcsFeedbackCheckYourAnswersPresenter from './icsFeedbackCheckYourAnswersPresenter'
-import { IcsFeedbackCheckYourAnswersContent, SummaryListWithTitle } from './icsFeedbackCheckYourAnswersViewModel'
-import IcsFeedbackCheckContentFactory from '../../testutils/factories/IcsFeedbackCheckContent'
+import { IcsFeedbackCheckYourAnswersContent } from './icsFeedbackCheckYourAnswersViewModel'
 
 describe('IcsFeedbackCheckYourAnswersPresenter', () => {
   const caseRefId = 'AB1234CD'
@@ -36,136 +37,7 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
     },
   }
 
-  const mockContent: IcsFeedbackCheckYourAnswersContent = IcsFeedbackCheckContentFactory.build({
-    pageHeader: 'Check your answers before submitting feedback',
-    summaryLists: [
-      {
-        summaryTitle: 'Record session attendance',
-        rows: [
-          {
-            text: 'Did the session happen?',
-            hint: 'Whether the session happened',
-            changeHref: '/referral/caseRefId/appointment/session-happened/change',
-          },
-          {
-            text: 'Did {{firstname}} attend?',
-            hint: 'Whether {{firstname}} attended',
-            changeHref: '/referral/caseRefId/appointment/person-attendance/change',
-          },
-          {
-            text: 'How the session took place',
-            hint: 'How the session took place',
-            changeHref: '/referral/caseRefId/appointment/session-method/change',
-          },
-          {
-            text: 'Location',
-            hint: 'Location of the session',
-            changeHref: '/referral/caseRefId/appointment/location/change',
-          },
-          {
-            text: 'Additional details',
-            hint: 'Additional details about the session',
-            changeHref: '/referral/caseRefId/appointment/additional-details/change',
-          },
-        ],
-      },
-      {
-        summaryTitle: 'Session details',
-        rows: [
-          {
-            text: 'Was {{firstname}} late?',
-            hint: 'If {{firstname}} was late',
-            changeHref: '/referral/caseRefId/appointment/was-late/change',
-          },
-          {
-            text: 'Why {{firstname}} was late?',
-            hint: 'Reason for being late',
-            changeHref: '/referral/caseRefId/appointment/late-reason/change',
-          },
-          {
-            text: 'Session duration',
-            hint: 'How long did the session last',
-            changeHref: '/referral/caseRefId/appointment/duration/change',
-          },
-        ],
-      },
-      {
-        summaryTitle: 'Session feedback',
-        rows: [
-          {
-            text: 'What happened in the session?',
-            hint: 'Description of the session',
-            changeHref: '/referral/caseRefId/appointment/what-happened/change',
-          },
-          {
-            text: 'Why did the session not happen?',
-            hint: 'Reason the session did not happen',
-            changeHref: '/referral/caseRefId/appointment/why-not-happened/change',
-          },
-          {
-            text: 'Why did {{firstname}} not attend?',
-            hint: 'Reason {{firstname}} did not attend',
-            changeHref: '/referral/caseRefId/appointment/why-not-attend/change',
-          },
-          {
-            text: '{{firstname}} behaviour',
-            hint: 'How {{firstname}} behaved',
-            changeHref: '/referral/caseRefId/appointment/behaviour/change',
-          },
-          {
-            text: 'Strengths identified',
-            hint: 'Any strengths identified during the session',
-            changeHref: '/referral/caseRefId/appointment/strengths/change',
-          },
-        ],
-      },
-      {
-        summaryTitle: 'Issues or concerns',
-        rows: [
-          {
-            text: 'Issues or concerns',
-            hint: 'Any issues or concerns identified',
-            changeHref: '/referral/caseRefId/appointment/issues-concerns/change',
-          },
-        ],
-      },
-      {
-        summaryTitle: 'Additional support needs',
-        rows: [
-          {
-            text: 'New support needs identified',
-            hint: 'Any new support needs identified',
-            changeHref: '/referral/caseRefId/appointment/new-support-needs/change',
-          },
-        ],
-      },
-      {
-        summaryTitle: 'Next steps',
-        rows: [
-          {
-            text: 'What is planned for the next session?',
-            hint: 'What is planned for the next session',
-            changeHref: '/referral/caseRefId/appointment/next-session-plan/change',
-          },
-          {
-            text: 'What actions are needed before the next session?',
-            hint: 'Actions needed before next session',
-            changeHref: '/referral/caseRefId/appointment/actions-before-next/change',
-          },
-        ],
-      },
-    ],
-    didNotHappenReasonLabels: {
-      serviceProviderIssue: 'Service provider issue',
-      referralCouldNotTakePart: '{{firstname}} could not take part',
-      referralDidNotComply: '{{firstname}} did not comply',
-    },
-    submitButtonText: 'Save and continue',
-    submitHref: '/referral/caseRefId/appointment/submit-feedback',
-    attendedBackLinkHref: '/referral/caseRefId/appointment/feedback',
-    didNotAttendbackLinkHref: '/referral/caseRefId/appointment/no-attendance-info',
-    noSessionbackLinkHref: '/referral/caseRefId/appointment/session-not-happened',
-  })
+  const mockContent: IcsFeedbackCheckYourAnswersContent = globalContent.icsFeedback.id.checkAnswers
 
   let res: Response
 
@@ -181,9 +53,9 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
       it('should display "Yes" and the support needs content when newlyIdentifiedAdditionalSupportNeeds is provided', () => {
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-        const viewModel = presenter.buildViewModel(res)
+        const viewModel = presenter.buildViewModel()
         const additionalSupportSummary = viewModel.feedbackSummaries.find(
-          (summary: SummaryListWithTitle) => summary.summaryTitle === 'Additional support needs',
+          (summary: GovukFrontendSummaryList) => summary.card?.title?.text === 'Additional support needs',
         )
 
         expect(additionalSupportSummary).toBeDefined()
@@ -192,20 +64,20 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
         expect(row.key.text).toBe('New support needs identified')
         expect(row.value.html).toContain('<p>Yes</p>')
         expect(row.value.html).toContain('<p>Literacy support needed</p>')
-        expect(row.actions.items[0].href).toContain('/referral/AB1234CD/appointment/new-support-needs/change')
+        expect(row.actions.items[0].href).toContain('/ics-feedback/AB1234CD/identified-additional-needs')
       })
 
       it('should include the change action with correct href for Additional support needs', () => {
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-        const viewModel = presenter.buildViewModel(res)
+        const viewModel = presenter.buildViewModel()
         const additionalSupportSummary = viewModel.feedbackSummaries.find(
-          (summary: SummaryListWithTitle) => summary.summaryTitle === 'Additional support needs',
+          (summary: GovukFrontendSummaryList) => summary.card?.title?.text === 'Additional support needs',
         )
 
         const row = additionalSupportSummary.rows[0]
         expect(row.actions.items[0].text).toBe('Change')
-        expect(row.actions.items[0].visuallyHiddenText).toBe('Any new support needs identified')
+        expect(row.actions.items[0].visuallyHiddenText).toBe('New support needs identified')
       })
     })
 
@@ -218,9 +90,9 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
 
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(submission, caseRefId, firstName)
 
-        const viewModel = presenter.buildViewModel(res)
+        const viewModel = presenter.buildViewModel()
         const additionalSupportSummary = viewModel.feedbackSummaries.find(
-          (summary: SummaryListWithTitle) => summary.summaryTitle === 'Additional support needs',
+          (summary: GovukFrontendSummaryList) => summary.card?.title?.text === 'Additional support needs',
         )
 
         expect(additionalSupportSummary).toBeDefined()
@@ -237,9 +109,9 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
 
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(submission, caseRefId, firstName)
 
-        const viewModel = presenter.buildViewModel(res)
+        const viewModel = presenter.buildViewModel()
         const additionalSupportSummary = viewModel.feedbackSummaries.find(
-          (summary: SummaryListWithTitle) => summary.summaryTitle === 'Additional support needs',
+          (summary: GovukFrontendSummaryList) => summary.card?.title?.text === 'Additional support needs',
         )
 
         expect(additionalSupportSummary).toBeDefined()
@@ -259,9 +131,9 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
 
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(submission, caseRefId, firstName)
 
-        const viewModel = presenter.buildViewModel(res)
+        const viewModel = presenter.buildViewModel()
         const additionalSupportSummary = viewModel.feedbackSummaries.find(
-          (summary: SummaryListWithTitle) => summary.summaryTitle === 'Additional support needs',
+          (summary: GovukFrontendSummaryList) => summary.card?.title?.text === 'Additional support needs',
         )
 
         const row = additionalSupportSummary.rows[0]
@@ -271,15 +143,15 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
     })
 
     describe('AC4: Render additional support needs section with correct summary structure', () => {
-      it('should return a SummaryListWithTitle with correct structure', () => {
+      it('should return a summary list card with correct structure', () => {
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-        const viewModel = presenter.buildViewModel(res)
+        const viewModel = presenter.buildViewModel()
         const additionalSupportSummary = viewModel.feedbackSummaries.find(
-          (summary: SummaryListWithTitle) => summary.summaryTitle === 'Additional support needs',
+          (summary: GovukFrontendSummaryList) => summary.card?.title?.text === 'Additional support needs',
         )
 
-        expect(additionalSupportSummary).toHaveProperty('summaryTitle')
+        expect(additionalSupportSummary).toHaveProperty('card.title.text', 'Additional support needs')
         expect(additionalSupportSummary).toHaveProperty('rows')
         expect(Array.isArray(additionalSupportSummary.rows)).toBe(true)
       })
@@ -287,9 +159,9 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
       it('should include all required row properties (key, value, actions)', () => {
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-        const viewModel = presenter.buildViewModel(res)
+        const viewModel = presenter.buildViewModel()
         const additionalSupportSummary = viewModel.feedbackSummaries.find(
-          (summary: SummaryListWithTitle) => summary.summaryTitle === 'Additional support needs',
+          (summary: GovukFrontendSummaryList) => summary.card?.title?.text === 'Additional support needs',
         )
 
         const row = additionalSupportSummary.rows[0]
@@ -311,9 +183,9 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
 
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(submission, caseRefId, firstName)
 
-        const viewModel = presenter.buildViewModel(res)
+        const viewModel = presenter.buildViewModel()
         const additionalSupportSummary = viewModel.feedbackSummaries.find(
-          (summary: SummaryListWithTitle) => summary.summaryTitle === 'Additional support needs',
+          (summary: GovukFrontendSummaryList) => summary.card?.title?.text === 'Additional support needs',
         )
 
         const row = additionalSupportSummary.rows[0]
@@ -325,18 +197,22 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
       it('should include Additional support needs summary alongside other summaries', () => {
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-        const viewModel = presenter.buildViewModel(res)
+        const viewModel = presenter.buildViewModel()
 
-        const summaryTitles = viewModel.feedbackSummaries.map((summary: SummaryListWithTitle) => summary.summaryTitle)
+        const summaryTitles = viewModel.feedbackSummaries.map(
+          (summary: GovukFrontendSummaryList) => summary.card?.title?.text,
+        )
         expect(summaryTitles).toContain('Additional support needs')
       })
 
       it('should maintain correct order with all feedback sections when support needs are present', () => {
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-        const viewModel = presenter.buildViewModel(res)
+        const viewModel = presenter.buildViewModel()
 
-        const summaryTitles = viewModel.feedbackSummaries.map((summary: SummaryListWithTitle) => summary.summaryTitle)
+        const summaryTitles = viewModel.feedbackSummaries.map(
+          (summary: GovukFrontendSummaryList) => summary.card?.title?.text,
+        )
 
         // Verify expected summaries are present in order
         const supportNeedsIndex = summaryTitles.indexOf('Additional support needs')
@@ -356,10 +232,10 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
 
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(submission, caseRefId, firstName)
 
-        const viewModel = presenter.buildViewModel(res)
+        const viewModel = presenter.buildViewModel()
 
         const additionalSupportSummary = viewModel.feedbackSummaries.find(
-          (summary: SummaryListWithTitle) => summary.summaryTitle === 'Additional support needs',
+          (summary: GovukFrontendSummaryList) => summary.card?.title?.text === 'Additional support needs',
         )
         expect(additionalSupportSummary).toBeDefined()
       })
@@ -378,11 +254,63 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
       it('should pass view model with feedbackSummaries to template', () => {
         const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-        const viewModel = presenter.buildViewModel(res)
+        const viewModel = presenter.buildViewModel()
 
         expect(viewModel).toHaveProperty('feedbackSummaries')
         expect(Array.isArray(viewModel.feedbackSummaries)).toBe(true)
       })
+    })
+  })
+
+  describe('Session feedback summary', () => {
+    it('shows non-attendance answers in the attendance summary with their labels and change links', () => {
+      const submission: IcsFeedbackSubmission = {
+        ...baseIcsFeedbackSubmission,
+        record: {
+          didSessionHappen: false,
+          didPersonAttend: false,
+          howTheyTriedToContactThePerson: 'Called twice',
+          reasonsTheyDidNotAttend: 'They were unwell',
+        },
+        sessionFeedback: null,
+      }
+
+      const presenter = new IcsFeedbackCheckYourAnswersPresenter(submission, caseRefId, firstName)
+      const summary = presenter
+        .buildViewModel()
+        .feedbackSummaries.find(item => item.card?.title?.text === 'ICS attendance')
+      const changeHref = `/ics-feedback/${caseRefId}/how-they-tried-to-contact-the-person`
+      const rows = summary.rows.slice(-2)
+
+      expect(rows[0]).toMatchObject({
+        key: { text: 'How did you try to contact John?' },
+        value: { text: 'Called twice' },
+        actions: {
+          items: [
+            { href: changeHref, text: 'Change', visuallyHiddenText: 'details about how you tried to contact them' },
+          ],
+        },
+      })
+      expect(rows[1]).toMatchObject({
+        key: { text: 'Reason they did not attend?' },
+        value: { text: 'They were unwell' },
+        actions: {
+          items: [{ href: changeHref, text: 'Change', visuallyHiddenText: 'details about why they did not attend' }],
+        },
+      })
+    })
+
+    it('keeps attended-session feedback mapped to its labels', () => {
+      const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
+      const summary = presenter
+        .buildViewModel()
+        .feedbackSummaries.find(item => item.card?.title?.text === 'Session feedback')
+
+      expect(summary.rows.map(row => [row.key.text, row.value.text])).toEqual([
+        ['What happened in the session', 'Discussed career options'],
+        ["What was John's engagement like during the session?", 'Cooperative'],
+        ['What strengths did you identify?', 'Good communication skills'],
+      ])
     })
   })
 
@@ -395,11 +323,11 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
 
       const presenter = new IcsFeedbackCheckYourAnswersPresenter(submission, caseRefId, firstName)
 
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
 
       // Issues or concerns should not be rendered when issuesAndConcerns is null
       const issuesSummary = viewModel.feedbackSummaries.find(
-        (summary: SummaryListWithTitle) => summary.summaryTitle === 'Issues or concerns',
+        (summary: GovukFrontendSummaryList) => summary.card?.title?.text === 'Issues or concerns',
       )
       expect(issuesSummary).toBeUndefined()
     })
@@ -416,9 +344,9 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
 
       const presenter = new IcsFeedbackCheckYourAnswersPresenter(submission, caseRefId, firstName)
 
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
       const sessionDetailsSummary = viewModel.feedbackSummaries.find(
-        (summary: SummaryListWithTitle) => summary.summaryTitle === 'Session details',
+        (summary: GovukFrontendSummaryList) => summary.card?.title?.text === 'Session details',
       )
 
       // Should only have 2 rows (wasPersonLate=No, duration), not 3
@@ -428,9 +356,9 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
     it('should replace firstname placeholders in change link text', () => {
       const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
       const sessionDetailsSummary = viewModel.feedbackSummaries.find(
-        (summary: SummaryListWithTitle) => summary.summaryTitle === 'Session details',
+        (summary: GovukFrontendSummaryList) => summary.card?.title?.text === 'Session details',
       )
 
       // Check that firstname was replaced in the key text
@@ -441,9 +369,9 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
     it('should replace firstname placeholders in visually hidden text', () => {
       const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
       const sessionDetailsSummary = viewModel.feedbackSummaries.find(
-        (summary: SummaryListWithTitle) => summary.summaryTitle === 'Session details',
+        (summary: GovukFrontendSummaryList) => summary.card?.title?.text === 'Session details',
       )
 
       // Check that firstname was replaced in the visually hidden text
@@ -454,13 +382,130 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
     })
   })
 
+  describe('Why the session did not happen', () => {
+    // reasonsTheyDidNotAttend and howTheyTriedToContactThePerson are not yet in the API types
+    type FutureRecord = IcsFeedbackSubmission['record'] & {
+      reasonsTheyDidNotAttend?: string
+      howTheyTriedToContactThePerson?: string
+    }
+    const buildSummaryRows = (record: FutureRecord) => {
+      const presenter = new IcsFeedbackCheckYourAnswersPresenter(
+        { ...baseIcsFeedbackSubmission, record } as IcsFeedbackSubmission,
+        caseRefId,
+        firstName,
+      )
+      const viewModel = presenter.buildViewModel()
+      const byTitle = (title: string) =>
+        viewModel.feedbackSummaries.find((summary: GovukFrontendSummaryList) => summary.card?.title?.text === title)
+      return { attendanceRows: byTitle('ICS attendance').rows }
+    }
+
+    it('shows the reason and details in the attendance summary when the session did not happen', () => {
+      const { attendanceRows } = buildSummaryRows({
+        didSessionHappen: false,
+        didPersonAttend: true,
+        sessionNotHappenReason: { reason: 'SERVICE_PROVIDER_ISSUE', details: 'Room unavailable' },
+      })
+
+      const row = attendanceRows.find(r => r.key.text === 'Why did the ICS not happen?')
+      expect(row.value.html).toBe('Service provider issue<br /><br /> Room unavailable')
+      expect(row.actions.items[0].href).toBe('/ics-feedback/AB1234CD/why-did-the-session-not-happen')
+    })
+
+    it('does not show the row when the session happened', () => {
+      const { attendanceRows } = buildSummaryRows({ didSessionHappen: true, didPersonAttend: true })
+
+      expect(attendanceRows.some(r => r.key.text === 'Why did the ICS not happen?')).toBe(false)
+    })
+
+    it('shows how the provider tried to contact the person when they did not attend', () => {
+      const { attendanceRows } = buildSummaryRows({
+        didSessionHappen: false,
+        didPersonAttend: false,
+        howTheyTriedToContactThePerson: 'Called twice',
+      })
+
+      const row = attendanceRows.find(r => r.key.text === 'How did you try to contact John?')
+      expect(row.value.text).toBe('Called twice')
+      expect(row.actions.items[0].visuallyHiddenText).toBe('details about how you tried to contact them')
+    })
+
+    it('shows the reason they did not attend when the session did not happen and they did not attend', () => {
+      const { attendanceRows } = buildSummaryRows({
+        didSessionHappen: false,
+        didPersonAttend: false,
+        reasonsTheyDidNotAttend: 'Was unwell',
+      })
+
+      const row = attendanceRows.find(r => r.key.text === 'Reason they did not attend?')
+      expect(row.value.text).toBe('Was unwell')
+      expect(row.actions.items[0].visuallyHiddenText).toBe('details about why they did not attend')
+    })
+
+    it('does not show the contact or non-attendance rows when the person attended', () => {
+      const { attendanceRows } = buildSummaryRows({
+        didSessionHappen: false,
+        didPersonAttend: true,
+        howTheyTriedToContactThePerson: 'Called twice',
+        reasonsTheyDidNotAttend: 'Was unwell',
+      })
+
+      const keys = attendanceRows.map(r => r.key.text)
+      expect(keys).not.toContain('How did you try to contact John?')
+      expect(keys).not.toContain('Reason they did not attend?')
+    })
+
+    it('does not show the contact or non-attendance rows when the session happened', () => {
+      const { attendanceRows } = buildSummaryRows({
+        didSessionHappen: true,
+        didPersonAttend: false,
+        howTheyTriedToContactThePerson: 'Called twice',
+        reasonsTheyDidNotAttend: 'Was unwell',
+      })
+
+      const keys = attendanceRows.map(r => r.key.text)
+      expect(keys).not.toContain('How did you try to contact John?')
+      expect(keys).not.toContain('Reason they did not attend?')
+    })
+
+    it('does not show the not-happen reason row when the person did not attend', () => {
+      const { attendanceRows } = buildSummaryRows({ didSessionHappen: false, didPersonAttend: false })
+
+      expect(attendanceRows.some(r => r.key.text === 'Why did the ICS not happen?')).toBe(false)
+    })
+  })
+
+  describe('Sections shown when the session did not happen', () => {
+    const titlesFor = (record: IcsFeedbackSubmission['record']) =>
+      new IcsFeedbackCheckYourAnswersPresenter({ ...baseIcsFeedbackSubmission, record }, caseRefId, firstName)
+        .buildViewModel()
+        .feedbackSummaries.map((summary: GovukFrontendSummaryList) => summary.card?.title?.text)
+
+    it('hides session details, session feedback and additional support needs', () => {
+      const titles = titlesFor({ didSessionHappen: false, didPersonAttend: true })
+
+      expect(titles).toContain('ICS attendance')
+      expect(titles).not.toContain('Session details')
+      expect(titles).not.toContain('Session feedback')
+      expect(titles).not.toContain('Additional support needs')
+    })
+
+    it('shows them when the session happened', () => {
+      const titles = titlesFor({ didSessionHappen: true, didPersonAttend: true })
+
+      expect(titles).toEqual(
+        expect.arrayContaining(['Session details', 'Session feedback', 'Additional support needs']),
+      )
+    })
+  })
+
   describe('Full page rendering', () => {
     it('should render complete feedback summary with all sections', () => {
       const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
 
-      expect(viewModel.pageHeader).toBe('Check your answers before submitting feedback')
+      expect(viewModel.pageHeader).toBe('Check your answers before adding ICS feedback')
       expect(viewModel.feedbackSummaries.length).toBeGreaterThan(0)
       expect(viewModel.submitButtonText).toBe('Save and continue')
       expect(viewModel.backLink).toBeDefined()
@@ -469,7 +514,7 @@ describe('IcsFeedbackCheckYourAnswersPresenter', () => {
     it('should replace caseRefId in submit href', () => {
       const presenter = new IcsFeedbackCheckYourAnswersPresenter(baseIcsFeedbackSubmission, caseRefId, firstName)
 
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
 
       expect(viewModel.submitHref).toContain(caseRefId)
       expect(viewModel.submitHref).not.toContain('caseRefId')

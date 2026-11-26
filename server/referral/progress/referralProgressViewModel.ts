@@ -1,5 +1,6 @@
 import { GovukFrontendBackLink, GovukFrontendNotificationBanner, GovukFrontendTable } from '@govuk-frontend'
 import { MojSubNavigation } from '@moj-frontend'
+import { GlobalContent } from '../../../assets/content/GlobalContent'
 
 export type ReferralProgressViewModel = {
   pageHeader: string
@@ -14,13 +15,4 @@ export type ReferralProgressViewModel = {
   notificationBanner?: GovukFrontendNotificationBanner
 }
 
-export interface ReferralProgressContent {
-  pageHeader: string
-  progressActiveColumnHeaders: string[]
-  progressInactiveColumnHeaders: string[]
-  historySummary: string
-  actionPlanTitle: string
-  actionPlanStatusLabel: string
-  actionPlanActionsLabel: string
-  actionPlanLinkText: string
-}
+export type ReferralProgressContent = GlobalContent['progress']['id']

@@ -1,6 +1,6 @@
 import { expect, type Locator, type Page } from '@playwright/test'
 
-type ReferralTab = 'Case details' | 'Progress' | 'Action Plan' | 'Appointments' | 'Change log'
+type ReferralTab = 'Case details' | 'Progress' | 'Action Plan' | 'Appointments' | 'Notes' | 'Change log'
 
 export default class ReferralNavigation {
   readonly links: Locator
@@ -18,6 +18,7 @@ export default class ReferralNavigation {
       { text: 'Progress', href: `/progress/${caseReference}` },
       { text: 'Action Plan', href: `/referral/${caseReference}/action-plan` },
       { text: 'Appointments', href: `/referral/${caseReference}/appointments` },
+      { text: 'Notes', href: `/referral/${caseReference}/notes` },
       { text: 'Change log', href: '#' },
     ].filter(item => isAssigned || ['Case details', 'Change log'].includes(item.text))
 

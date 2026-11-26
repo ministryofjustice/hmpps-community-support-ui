@@ -7,6 +7,7 @@ import { validateRequestBodyAgainstSchema } from '../../validation/validationUti
 import WithdrawalConfirmPresenter from './WithdrawalConfirmPresenter'
 import WithdrawalReasonPresenter from './WithdrawalReasonPresenter'
 import { additionalInformationField, createWithdrawalFormDataSchema, WithdrawalReason } from './WithdrawalFormData'
+import { globalContent } from '../../../assets/content/GlobalContent'
 
 const getResponseStatus = (error: unknown): number | undefined => {
   if (typeof error !== 'object' || error === null || !('responseStatus' in error)) {
@@ -130,12 +131,7 @@ export default class WithdrawalController {
   }
 
   async showServiceError(_req: Request, res: Response): Promise<void> {
-    const content = res.locals.content as {
-      pageHeader: string
-      message: string
-      goToCaseListButtonText: string
-      goToCaseListLink: string
-    }
+    const content = globalContent.referral.id.withdraw.serviceError
 
     const systemError: SystemError = {
       heading: content.pageHeader,

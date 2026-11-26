@@ -1,4 +1,3 @@
-import { Response } from 'express'
 import { CreateAppointmentTypeOptionDto, ReferralInformation } from '@community-support-api'
 import { GovukFrontendRadios } from '@govuk-frontend'
 import PresenterBase from '../../../presenter/presenterBase'
@@ -7,7 +6,7 @@ import { AppointmentTypeContent, AppointmentTypeViewModel } from './AppointmentT
 import { normaliseAppointmentTypeOptions } from '../appointmentTypeLabel'
 import { parseAppointmentType } from '../../appointmentTypeRules'
 
-export default class AppointmentTypePresenter extends PresenterBase<AppointmentTypeViewModel, AppointmentTypeContent> {
+export default class AppointmentTypePresenter extends PresenterBase<AppointmentTypeViewModel> {
   constructor(
     private readonly caseReference: string,
     private readonly referralInformation: ReferralInformation,
@@ -42,8 +41,8 @@ export default class AppointmentTypePresenter extends PresenterBase<AppointmentT
     }
   }
 
-  buildViewModel(res: Response): AppointmentTypeViewModel {
-    const content = this.buildStaticContent(res)
+  buildViewModel(): AppointmentTypeViewModel {
+    const content = this.globalContent().referral.id.createAnAppointment.appointmentType
 
     return {
       pageTitle: content.pageTitle,

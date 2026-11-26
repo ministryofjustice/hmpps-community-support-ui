@@ -1,11 +1,7 @@
-import { Response } from 'express'
 import { randomUUID } from 'node:crypto'
 import { GovukFrontendCheckboxesItem, GovukFrontendErrorSummaryErrorListElement } from '@govuk-frontend'
 import PersonNeedsPresenter, { personNeedsFormData } from './PersonNeedsPresenter'
 import { WithConditional } from '../../@types/govukFrontend/derived'
-import loadContentDataForTest from '../../testutils/loadContentDataForTest'
-
-const content = loadContentDataForTest('/referral/task-list/select-person-needs')
 
 describe('PersonNeedsPresenter', () => {
   const firstName = 'Alex'
@@ -49,12 +45,6 @@ describe('PersonNeedsPresenter', () => {
     hasHealthWellbeingNeeds: true,
     hasThinkingBehavioursAttitudeNeeds: true,
   } as personNeedsFormData
-
-  const res = {
-    locals: {
-      content,
-    },
-  } as unknown as Response
 
   const noErrors = {
     list: <GovukFrontendErrorSummaryErrorListElement[]>[],
@@ -155,7 +145,7 @@ describe('PersonNeedsPresenter', () => {
 
   test('builds correct view model', () => {
     const presenter = new PersonNeedsPresenter(emptyForm, noErrors)
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
 
     expect(viewModel.pageTitle).toBe('Select what needs the referral should focus on')
     expect(viewModel.backLink.href).toBe('/referral/task-list')
@@ -209,7 +199,7 @@ describe('PersonNeedsPresenter', () => {
 
   test('builds correct view model with data', () => {
     const presenter = new PersonNeedsPresenter(fullForm, noErrors)
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
 
     expect(viewModel.backLink.href).toBe('/referral/task-list')
     expect(viewModel.heading).toBe('Alex Smith')
@@ -281,7 +271,7 @@ describe('PersonNeedsPresenter', () => {
 
   test('builds correct view model with errors', () => {
     const presenter = new PersonNeedsPresenter(allSelected, emptyErrors)
-    const viewModel = presenter.buildViewModel(res)
+    const viewModel = presenter.buildViewModel()
 
     expect(viewModel.backLink.href).toBe('/referral/task-list')
     expect(viewModel.heading).toBe('Alex Smith')

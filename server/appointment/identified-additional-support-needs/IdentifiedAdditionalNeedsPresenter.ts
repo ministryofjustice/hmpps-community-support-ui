@@ -1,4 +1,3 @@
-import { Response } from 'express'
 import { GovukFrontendErrorMessage, GovukFrontendSummaryList, GovukFrontendSummaryListRow } from '@govuk-frontend'
 import { IcsFeedbackIdentifiedAdditionalSupportNeedsBffResponseDto } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
@@ -17,10 +16,7 @@ import { escapeHtml } from '../../utils/utils'
 import { ErrorMiddlewareErrors } from '../../@types/express'
 import { govFrontendSummaryListRow } from '../../utils/viewUtils'
 
-export default class IdentifiedAdditionalSupportNeedsPresenter extends PresenterBase<
-  IdentifiedAdditionalNeedsViewModel,
-  IdentifiedAdditionalNeedsContent
-> {
+export default class IdentifiedAdditionalSupportNeedsPresenter extends PresenterBase<IdentifiedAdditionalNeedsViewModel> {
   constructor(
     private readonly caseRefId: string,
     private readonly referralFirstName: string,
@@ -31,8 +27,8 @@ export default class IdentifiedAdditionalSupportNeedsPresenter extends Presenter
     super()
   }
 
-  buildViewModel(res: Response): IdentifiedAdditionalNeedsViewModel {
-    const content = this.buildStaticContent(res)
+  buildViewModel(): IdentifiedAdditionalNeedsViewModel {
+    const content = this.globalContent().icsFeedback.id.identifiedAdditionalNeeds
     const formData: IdentifiedAdditionalNeedsFormData = this.identifiedAdditionalNeeds
       ? {
           didYouIdentify: this.identifiedAdditionalNeeds.didYouIdentify,

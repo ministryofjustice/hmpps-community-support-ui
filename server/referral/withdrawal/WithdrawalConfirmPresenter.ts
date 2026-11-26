@@ -1,7 +1,6 @@
-import { Response } from 'express'
 import PresenterBase from '../../presenter/presenterBase'
 import { WithdrawalFormData } from './WithdrawalFormData'
-import { WithdrawalConfirmContent, WithdrawalConfirmViewModel } from './withdrawalConfirmViewModel'
+import { WithdrawalConfirmViewModel } from './withdrawalConfirmViewModel'
 
 const toWithdrawalReasonLabel = (reason: string): string => {
   if (!reason.includes('_')) {
@@ -15,10 +14,7 @@ const toWithdrawalReasonLabel = (reason: string): string => {
     .join(' ')
 }
 
-export default class WithdrawalConfirmPresenter extends PresenterBase<
-  WithdrawalConfirmViewModel,
-  WithdrawalConfirmContent
-> {
+export default class WithdrawalConfirmPresenter extends PresenterBase<WithdrawalConfirmViewModel> {
   constructor(
     private readonly caseIdentifier: string,
     private readonly referralName: string,
@@ -27,8 +23,8 @@ export default class WithdrawalConfirmPresenter extends PresenterBase<
     super()
   }
 
-  protected buildViewModel(res: Response): WithdrawalConfirmViewModel {
-    const content = this.buildStaticContent(res)
+  protected buildViewModel(): WithdrawalConfirmViewModel {
+    const content = this.globalContent().referral.id.withdraw.confirm
     return {
       pageHeader: content.pageHeader,
       reasonSummary: {

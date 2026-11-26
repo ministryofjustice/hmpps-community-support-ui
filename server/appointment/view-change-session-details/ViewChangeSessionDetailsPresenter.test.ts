@@ -190,9 +190,8 @@ describe('ViewChangeSessionDetailsPresenter', () => {
           prisonName: 'Moorland (HMP & YOI)',
         },
       }
-      const { rows } = new ViewChangeSessionDetailsPresenter(appointment, REFERRAL_ID, ICS_ID).buildViewModel(
-        res,
-      ).icsDetailsSummary
+      const { rows } = new ViewChangeSessionDetailsPresenter(appointment, REFERRAL_ID, ICS_ID).buildViewModel()
+        .icsDetailsSummary
       expect(rows).toEqual(
         expect.arrayContaining([
           { key: { text: 'Method' }, value: { text: 'In person - prison' } },

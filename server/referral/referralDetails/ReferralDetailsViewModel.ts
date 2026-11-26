@@ -1,59 +1,16 @@
-export interface PersonalDetailsCard {
-  heading: string
-  nameLabel: string
-  crnLabel: string
-  dobLabel: string
-  languageLabel: string
-  disabilitiesLabel: string
-}
+import { GlobalContent } from '../../../assets/content/GlobalContent'
 
-export interface EqualityMonitoringCard {
-  heading: string
-  ethnicityLabel: string
-  religionLabel: string
-  sexLabel: string
-}
+export type PersonalDetailsCard = ReferralDetailsContent['personalDetailsCard']
 
-export interface ContactDetailsCard {
-  heading: string
-  phoneNumberLabel: string
-  mobileNumberLabel: string
-  emailAddressLabel: string
-  mainAddressLabel: string
-}
+export type EqualityMonitoringCard = ReferralDetailsContent['equalityMonitoringCard']
 
-export interface ReferralDetailsCard {
-  heading: string
-  referralDateLabel: string
-  assignedToLabel: string
-  assignedToDefaultValue: string
-  link: string
-  linkChange: string
-  targetServiceCompletionDateLabel: string
-  targetServiceCompletionDateReasonLabel: string
-}
+export type ContactDetailsCard = ReferralDetailsContent['contactDetailsCard']
 
-export interface ReferralDetailsAlertsContent {
-  withdrawalCompletedTitle: string
-  withdrawalAlreadyCompletedBySameUserTitle: string
-  withdrawalAlreadyCompletedByOtherUserTitle: string
-  withdrawnInformationTitle: string
-}
+export type ReferralDetailsCard = ReferralDetailsContent['referralDetailsCard']
 
-export interface ReferralDetailsContent {
-  pageHeader: string
-  pageSubHeader: string
-  backLink: string
-  defaultFieldValue: string
-  successBannerHeading: string
-  personalDetailsCard: PersonalDetailsCard
-  equalityMonitoringCard: EqualityMonitoringCard
-  contactDetailsCard: ContactDetailsCard
-  referralDetailsCard: ReferralDetailsCard
-  // TODO - Remove once we have a decision on the entry point for withdrawing referrals
-  withdrawReferralLinkText: string
-  alerts: ReferralDetailsAlertsContent
-}
+export type ReferralDetailsAlertsContent = ReferralDetailsContent['alerts']
+
+export type ReferralDetailsContent = GlobalContent['referralDetails']['id']['page']
 
 export type AssignmentSuccessBanner = {
   successBannerHeading: string

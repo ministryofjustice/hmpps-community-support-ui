@@ -1,8 +1,6 @@
 import { randomUUID } from 'crypto'
-import { Response } from 'express'
 import { ReferralProgress } from '@community-support-api'
 import { addDays, formatDate, subDays } from 'date-fns'
-import { ReferralProgressContent } from './referralProgressViewModel'
 import ReferralProgressPresenter from './referralProgressPresenter'
 import buildReferralProgress from '../../testutils/buildReferralProgress'
 import { ReferralProgressBannerContent } from './ReferralProgressBannerContent'
@@ -11,29 +9,17 @@ describe('ReferralProgressPresenter', () => {
   const baseDate = new Date('2026-03-25T10:00:00')
   const caseReference = 'AB1234CD'
 
-  const mockContent: ReferralProgressContent = {
-    pageHeader: 'Referral for',
-    actionPlanTitle: 'Action plan',
-    actionPlanStatusLabel: 'Status',
-    actionPlanActionsLabel: 'Actions',
-    actionPlanLinkText: 'View action plan',
-    progressActiveColumnHeaders: ['Date and time', 'Status', 'Action'],
-    progressInactiveColumnHeaders: ['Status', 'Action'],
-    historySummary: 'View ICS history',
-  }
-
-  const mockResponse = { locals: { content: mockContent } } as unknown as Response
-
   it('uses the shared navigation with Progress active and Action Plan immediately after it', () => {
     const presenter = new ReferralProgressPresenter(buildReferralProgress([]), caseReference)
 
-    expect(presenter.buildViewModel(mockResponse).navBar).toEqual({
+    expect(presenter.buildViewModel().navBar).toEqual({
       label: 'Sub navigation',
       items: [
         { text: 'Case details', href: `/referral-details/${caseReference}`, active: false },
         { text: 'Progress', href: `/progress/${caseReference}`, active: true },
         { text: 'Action Plan', href: `/referral/${caseReference}/action-plan`, active: false },
         { text: 'Appointments', href: `/referral/${caseReference}/appointments`, active: false },
+        { text: 'Notes', href: `/referral/${caseReference}/notes`, active: false },
         { text: 'Change log', href: '#', active: false },
       ],
     })
@@ -72,7 +58,7 @@ describe('ReferralProgressPresenter', () => {
       const referralProgressNoAppointment: ReferralProgress = buildReferralProgress([])
 
       const presenter = new ReferralProgressPresenter(referralProgressNoAppointment, caseReference)
-      const viewModel = presenter.buildViewModel(mockResponse)
+      const viewModel = presenter.buildViewModel()
 
       expect(viewModel.icsAppointmentTable.head).toEqual([{ text: 'Status' }, { text: 'Action' }])
 
@@ -85,7 +71,7 @@ describe('ReferralProgressPresenter', () => {
       const referralProgressNoAppointment: ReferralProgress = buildReferralProgress([])
 
       const presenter = new ReferralProgressPresenter(referralProgressNoAppointment, caseReference)
-      const viewModel = presenter.buildViewModel(mockResponse)
+      const viewModel = presenter.buildViewModel()
 
       expect(viewModel.actionPlanTitle).toBe('Action plan')
       expect(viewModel.actionPlanTable.head).toEqual([{ text: 'Status' }, { text: 'Actions' }])
@@ -110,7 +96,7 @@ describe('ReferralProgressPresenter', () => {
       ])
 
       const presenter = new ReferralProgressPresenter(referralProgressWithAppointments, caseReference)
-      const viewModel = presenter.buildViewModel(mockResponse)
+      const viewModel = presenter.buildViewModel()
 
       expect(viewModel.icsAppointmentTable.rows).toHaveLength(1)
       expect(viewModel.icsAppointmentHistoryTable.rows).toHaveLength(2)
@@ -149,7 +135,7 @@ describe('ReferralProgressPresenter', () => {
         scheduledIcsSessionBannerContent,
       )
 
-      const viewModel = presenter.buildViewModel(mockResponse)
+      const viewModel = presenter.buildViewModel()
 
       expect(viewModel.notificationBanner?.type).toEqual('success')
       expect(viewModel.notificationBanner?.html).toContain('ICS has been scheduled')
@@ -171,7 +157,7 @@ describe('ReferralProgressPresenter', () => {
         rescheduledIcsSessionBannerContent,
       )
 
-      const viewModel = presenter.buildViewModel(mockResponse)
+      const viewModel = presenter.buildViewModel()
 
       expect(viewModel.notificationBanner?.type).toEqual('success')
       expect(viewModel.notificationBanner?.html).toContain('The ICS details have been changed')
@@ -207,7 +193,7 @@ describe('ReferralProgressPresenter', () => {
           submittedSessionFeedbackBannerContent,
         )
 
-        const viewModel = presenter.buildViewModel(mockResponse)
+        const viewModel = presenter.buildViewModel()
 
         expect(viewModel.notificationBanner?.type).toEqual('success')
         expect(viewModel.notificationBanner?.html).toContain('Session feedback submitted')
@@ -239,7 +225,7 @@ describe('ReferralProgressPresenter', () => {
         completedIcsSessionBannerContent,
       )
 
-      const viewModel = presenter.buildViewModel(mockResponse)
+      const viewModel = presenter.buildViewModel()
 
       expect(viewModel.notificationBanner?.type).toEqual('success')
       expect(viewModel.notificationBanner?.html).toContain('Session feedback submitted')
@@ -284,7 +270,7 @@ describe('ReferralProgressPresenter', () => {
         ])
 
         const presenter = new ReferralProgressPresenter(referralProgressWithAppointment, caseReference)
-        const viewModel = presenter.buildViewModel(mockResponse)
+        const viewModel = presenter.buildViewModel()
 
         expect(viewModel.notificationBanner).toBeUndefined()
         expect(viewModel.icsAppointmentHistoryTable.rows[1][1].html).toContain(statusLabel[scenario.finalStatus])
@@ -313,7 +299,7 @@ describe('ReferralProgressPresenter', () => {
         bannerForDifferentCaseReference,
       )
 
-      const viewModel = presenter.buildViewModel(mockResponse)
+      const viewModel = presenter.buildViewModel()
 
       expect(viewModel.notificationBanner).toBeUndefined()
     })
@@ -334,7 +320,7 @@ describe('ReferralProgressPresenter', () => {
       ])
 
       const presenter = new ReferralProgressPresenter(referralProgressWithAppointments, caseReference)
-      const viewModel = presenter.buildViewModel(mockResponse)
+      const viewModel = presenter.buildViewModel()
 
       expect(viewModel.icsAppointmentTable.rows[0][1].html).toContain('Needs feedback')
       expect(viewModel.icsAppointmentTable.rows[0][1].html).toContain('govuk-tag--red')
@@ -347,7 +333,7 @@ describe('ReferralProgressPresenter', () => {
       const referralProgressNoAppointment: ReferralProgress = buildReferralProgress([])
 
       const presenter = new ReferralProgressPresenter(referralProgressNoAppointment, caseReference, undefined, 'delius')
-      const viewModel = presenter.buildViewModel(mockResponse)
+      const viewModel = presenter.buildViewModel()
 
       expect(viewModel.icsAppointmentTable.head).toEqual([{ text: 'Status' }])
       expect(viewModel.icsAppointmentTable.rows[0][0].html).toContain('Not scheduled')
@@ -368,7 +354,7 @@ describe('ReferralProgressPresenter', () => {
         undefined,
         'delius',
       )
-      const viewModel = presenter.buildViewModel(mockResponse)
+      const viewModel = presenter.buildViewModel()
 
       expect(viewModel.icsAppointmentTable.head).toEqual([{ text: 'Date and time' }, { text: 'Status' }])
       expect(viewModel.icsAppointmentTable.rows[0][1].html).toContain('Scheduled')
@@ -389,7 +375,7 @@ describe('ReferralProgressPresenter', () => {
         undefined,
         'delius',
       )
-      const viewModel = presenter.buildViewModel(mockResponse)
+      const viewModel = presenter.buildViewModel()
 
       expect(viewModel.icsAppointmentTable.head).toEqual([{ text: 'Date and time' }, { text: 'Status' }])
       expect(viewModel.icsAppointmentTable.rows[0][1].html).toContain('Needs feedback')
@@ -410,7 +396,7 @@ describe('ReferralProgressPresenter', () => {
         undefined,
         'delius',
       )
-      const viewModel = presenter.buildViewModel(mockResponse)
+      const viewModel = presenter.buildViewModel()
 
       expect(viewModel.icsAppointmentTable.rows[0][1].html).toContain('Completed')
       expect(viewModel.icsAppointmentTable.rows[0][2].html).toContain('View feedback')
@@ -433,7 +419,7 @@ describe('ReferralProgressPresenter', () => {
         undefined,
         'delius',
       )
-      const viewModel = presenter.buildViewModel(mockResponse)
+      const viewModel = presenter.buildViewModel()
 
       expect(viewModel.icsAppointmentTable.rows[0][1].html).toContain(expectedLabel)
       expect(viewModel.icsAppointmentTable.rows[0][2].html).toContain('View feedback')

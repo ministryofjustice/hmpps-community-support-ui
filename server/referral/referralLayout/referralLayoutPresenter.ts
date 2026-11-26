@@ -8,10 +8,11 @@ export enum ReferralNavigationValues {
   progressTab = 'progress',
   actionPlanTab = 'actionPlan',
   appointmentsTab = 'appointments',
+  notesTab = 'notes',
   changeLogTab = 'changeLog',
 }
 
-export default abstract class ReferralLayoutPresenter<ViewModel, Content> extends PresenterBase<ViewModel, Content> {
+export default abstract class ReferralLayoutPresenter<ViewModel> extends PresenterBase<ViewModel> {
   protected constructor(
     readonly activePage: ReferralNavigationValues,
     readonly referralId: string,
@@ -20,7 +21,7 @@ export default abstract class ReferralLayoutPresenter<ViewModel, Content> extend
   }
 
   getMojSubNavigationArgs(
-    content: ReferralLayoutContent = globalContent['/referral/:id'],
+    content: ReferralLayoutContent = globalContent.referral.id.page,
     isAssigned = true,
   ): MojSubNavigation {
     return {

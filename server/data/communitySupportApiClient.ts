@@ -17,11 +17,12 @@ import type {
   AppointmentIcsResponse,
   ReferralProgress,
   ReferralAppointmentsBffResponseDto,
-  ProbationOffice,
+  ReferralNoteOrNonContactSessionBffDto,
   IcsFeedbackSubmission,
   IcsFeedbackSubmissionResponse,
   ChangeAppointmentDetails,
   ConfirmPersonDetailsBffDto,
+  ProbationOffice,
   AdditionalSupportNeedsDto,
   TaskListStatusDto,
   NeedsInterpreterBffResponseDto,
@@ -69,6 +70,7 @@ import type {
   IcsChangeDetailsBffDto,
   IcsChangeReasonBffDto,
   IcsFeedbackIdentifiedAdditionalSupportNeedsBffResponseDto,
+  ReferenceDataReferralPathwaysDto,
 } from '@community-support-api'
 import config from '../config'
 import logger from '../../logger'
@@ -237,6 +239,21 @@ export default class CommunitySupportApiClient extends RestClient {
 
   getReferralAppointments(caseReference: string, username: string): Promise<ReferralAppointmentsBffResponseDto> {
     return this.get({ path: `/bff/referral/${caseReference}/appointments` }, asSystem(username))
+  }
+
+  async getReferralNotes(
+    caseReference: string,
+    username: string,
+    page: PagedRequest = { page: 0, size: 25 },
+  ): Promise<PagedResponse<ReferralNoteOrNonContactSessionBffDto>> {
+    return this.get(
+      { path: `/bff/referral/${caseReference}/notes?page=${page.page}&size=${page.size}` },
+      asSystem(username),
+    )
+  }
+
+  getPathways(caseReference: string, username: string): Promise<ReferenceDataReferralPathwaysDto> {
+    return this.get({ path: `/bff/referral/${caseReference}/notes/pathways` }, asSystem(username))
   }
 
   getReferralInformation(caseReference: string, username: string): Promise<ReferralInformation> {

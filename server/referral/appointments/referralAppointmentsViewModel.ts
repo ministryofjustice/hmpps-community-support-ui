@@ -20,4 +20,4 @@ export type ReferralAppointmentsViewModel = {
   pastAppointmentsTitle: string
 }
 
-export type ReferralAppointmentsContent = GlobalContent['/referral/:id/appointments']
+export type ReferralAppointmentsContent = GlobalContent['referral']['id']['appointments']

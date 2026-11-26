@@ -1,4 +1,3 @@
-import { Response } from 'express'
 import { differenceInYears } from 'date-fns'
 import { CommunitySupportRiskDto, ArnsRiskDto } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
@@ -7,7 +6,7 @@ import { RiskSummaryContent, RiskSummaryRow, RiskSummaryRowCard, RiskSummaryView
 import { trimOrDefault } from '../../utils/utils'
 import formatFullName from '../../utils/presenterFormatters'
 
-export default class RiskSummaryPresenter extends PresenterBase<RiskSummaryViewModel, RiskSummaryContent> {
+export default class RiskSummaryPresenter extends PresenterBase<RiskSummaryViewModel> {
   constructor(
     private readonly risk: CommunitySupportRiskDto,
     private readonly referralId: string,
@@ -96,8 +95,8 @@ export default class RiskSummaryPresenter extends PresenterBase<RiskSummaryViewM
     ]
   }
 
-  buildViewModel(res: Response): RiskSummaryViewModel {
-    const content = this.buildStaticContent(res)
+  buildViewModel(): RiskSummaryViewModel {
+    const content = this.globalContent().referral.taskList.viewRiskSummary
     const { crn, dateOfBirth } = this.risk
     const dobDate = new Date(dateOfBirth)
     const age = differenceInYears(new Date(), dobDate)

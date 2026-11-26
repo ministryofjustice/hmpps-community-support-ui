@@ -1,69 +1,33 @@
 import { Response } from 'express'
-import { GovukFrontendBackLink, GovukFrontendButton, GovukFrontendSummaryList } from '@govuk-frontend'
-import { isPast } from 'date-fns'
+import {
+  GovukFrontendBackLink,
+  GovukFrontendButton,
+  GovukFrontendRadios,
+  GovukFrontendRadiosItem,
+  GovukFrontendSummaryList,
+} from '@govuk-frontend'
 import { IcsFeedbackAttendanceBffDto, IcsFeedbackSubmission } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
-import getAppointmentDateTime from '../../utils/getAppointmentDateTime'
-import {
-  ConditionalInput,
-  GovukFrontendRadiosItemWithConditional,
-  GovukFrontendRadiosWithConditional,
-} from '../../@types/govukFrontend/derived'
+import { GovukFrontendRadiosWithConditional } from '../../@types/govukFrontend/derived'
 import { ErrorMiddlewareErrors } from '../../@types/express'
 import buildAppointmentDetails from './AppointmentDetailsModel'
+import { GlobalContent } from '../../../assets/content/GlobalContent'
 
 type SubmissionRecord = IcsFeedbackSubmission['record']
-export type RecordSessionAttendanceSessionData = Partial<Pick<SubmissionRecord, 'didSessionHappen' | 'didPersonAttend'>>
-
-export interface RecordSessionAttendanceFormViewModel {
-  radios: GovukFrontendRadiosWithConditional
-  button: GovukFrontendButton
-}
+export type RecordSessionAttendanceSessionData = Partial<Pick<SubmissionRecord, 'didSessionHappen'>>
 
 export interface RecordSessionAttendanceViewModel {
   pageHeader: string
   description: string
   appointment: GovukFrontendSummaryList
-  form?: RecordSessionAttendanceFormViewModel
+  radioArgs: GovukFrontendRadiosWithConditional
+  buttonArgs: GovukFrontendButton
   backLink: GovukFrontendBackLink
-  submitHref: string
 }
 
-interface ApointmentDetailsContent {
-  dateLabel: string
-  startTimeLabel: string
-}
+export type RecordSessionAttendanceContent = GlobalContent['icsFeedback']['id']['attendance']
 
-interface RadiosContent {
-  id: string
-  heading: string
-  error: string
-  yesLabel: string
-  noLabel: string
-}
-
-type RadiosWithHintContent = RadiosContent & {
-  hint: string
-}
-
-interface FormContent {
-  happenedRadios: RadiosWithHintContent
-  attendedRadios: RadiosContent
-  submitButtonText: string
-}
-
-export interface RecordSessionAttendanceContent {
-  pageHeader: string
-  description: string
-  appointmentDetails: ApointmentDetailsContent
-  attendanceForm: FormContent
-  backLink: string
-}
-
-export default class RecordSessionAttendancePresenter extends PresenterBase<
-  RecordSessionAttendanceViewModel,
-  RecordSessionAttendanceContent
-> {
+export default class RecordSessionAttendancePresenter extends PresenterBase<RecordSessionAttendanceViewModel> {
   private errors: ErrorMiddlewareErrors
 
   constructor(
@@ -74,46 +38,10 @@ export default class RecordSessionAttendancePresenter extends PresenterBase<
     super()
   }
 
-  private buildAttendedRadios({ id, error, heading, yesLabel, noLabel }: RadiosContent): ConditionalInput {
-    const { didPersonAttend } = this.record
-    const errorText = this.errors.messages[id]
-      ? error.replace('{{ firstname }}', this.data.referralFirstName)
-      : undefined
-    const errorHtml = errorText
-      ? `
-    <p id="${id}-error" class="govuk-error-message">
-      <span class="govuk-visually-hidden">Error:</span> ${errorText}
-    </p>`
-      : ''
-    const yesRadio: string = `<div class="govuk-radios__item">
-      <input class="govuk-radios__input" id="${id}-${yesLabel}" name="${id}" type="radio" value="${yesLabel}" ${didPersonAttend === true ? 'checked' : ''}>
-        <label class="govuk-radios__label" for="${id}-${yesLabel}">${yesLabel}</label>
-      </div>`
-    const noRadio: string = `<div class="govuk-radios__item">
-        <input class="govuk-radios__input" id="${id}-${noLabel}" name="${id}" type="radio" value="${noLabel}" ${didPersonAttend === false ? 'checked' : ''}>
-        <label class="govuk-radios__label" for="${id}-${noLabel}">${noLabel}</label>
-      </div>`
-    const radiosTemplate = `<div class="govuk-form-group">
-  <fieldset class="govuk-fieldset" data-testid="fieldset-${id}">
-    <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
-      <h2 class="govuk-fieldset__heading">
-        ${heading.replace('{{ firstname }}', this.data.referralFirstName)}
-      </h2>
-    </legend>
-    ${errorHtml}
-    <div class="govuk-radios" data-module="govuk-radios" data-testid="${id}">
-      ${yesRadio}
-      ${noRadio}
-    </div>
-  </fieldset>
-</div>`
-    return { html: radiosTemplate }
-  }
-
-  private buildHappenedRadios(content: FormContent): GovukFrontendRadiosWithConditional {
-    const { id, heading, hint, yesLabel, noLabel, error } = content.happenedRadios
+  private radioArgs(content: RecordSessionAttendanceContent): GovukFrontendRadios {
+    const { id, heading, hint, yesLabel, noLabel } = content.attendanceForm.happenedRadios
     const { didSessionHappen } = this.record
-    const items: GovukFrontendRadiosItemWithConditional[] = [
+    const items: GovukFrontendRadiosItem[] = [
       {
         id: `${id}-${yesLabel}`,
         value: yesLabel,
@@ -124,42 +52,28 @@ export default class RecordSessionAttendancePresenter extends PresenterBase<
         id: `${id}-${noLabel}`,
         value: noLabel,
         text: noLabel,
-        checked: didSessionHappen === false || this.errors.messages.attended, // check if attended so that attended radios is shown
-        conditional: this.buildAttendedRadios(content.attendedRadios),
+        checked: didSessionHappen === false,
       },
     ]
     return {
       name: id,
       hint: hint ? { text: hint } : undefined,
       items,
+      classes: 'govuk-radios--inline',
       fieldset: {
         attributes: { 'data-testid': `fieldset-${id}` },
         legend: {
-          text: heading.replace('{{ firstname }}', this.data.referralFirstName),
+          text: heading,
           classes: 'govuk-fieldset__legend--m',
         },
       },
-      errorMessage: this.errors.messages[id]
-        ? {
-            text: error.replace('{{ firstname }}', this.data.referralFirstName),
-            id,
-          }
-        : null,
+      errorMessage: this.errors.messages[id],
       attributes: { 'data-testid': id },
     }
   }
 
-  private buildForm(content: FormContent): RecordSessionAttendanceFormViewModel | undefined {
-    return {
-      radios: this.buildHappenedRadios(content),
-      button: {
-        text: content.submitButtonText,
-      },
-    }
-  }
-
   buildViewModel(res: Response): RecordSessionAttendanceViewModel {
-    const content = this.buildStaticContent(res)
+    const content = this.globalContent().icsFeedback.id.attendance
     this.errors = res.locals.errors
     const appointment = {
       referralFirstName: this.data.referralFirstName,
@@ -171,8 +85,10 @@ export default class RecordSessionAttendancePresenter extends PresenterBase<
       pageHeader: content.pageHeader,
       description: content.description,
       appointment: buildAppointmentDetails(content.appointmentDetails, appointment),
-      form: isPast(getAppointmentDateTime(appointment)) ? this.buildForm(content.attendanceForm) : undefined,
-      submitHref: `/ics-feedback/${this.caseRefId}/attendance`,
+      buttonArgs: {
+        text: content.attendanceForm.submitButtonText,
+      },
+      radioArgs: this.radioArgs(content),
     }
   }
 

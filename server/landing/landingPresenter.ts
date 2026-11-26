@@ -1,10 +1,9 @@
-import { Response } from 'express'
 import PresenterBase from '../presenter/presenterBase'
-import { LandingContent, LandingViewModel } from './landingViewModel'
+import { LandingViewModel } from './landingViewModel'
 
-export default class LandingPresenter extends PresenterBase<LandingViewModel, LandingContent> {
-  protected override buildViewModel(res: Response): LandingViewModel {
-    const content = this.buildStaticContent(res)
+export default class LandingPresenter extends PresenterBase<LandingViewModel> {
+  protected override buildViewModel(): LandingViewModel {
+    const content = this.globalContent().landing
 
     if (!content || !content.pageHeader || !Array.isArray(content.tiles)) {
       throw new Error('Landing content is missing or invalid for path /')

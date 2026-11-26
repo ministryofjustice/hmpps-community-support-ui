@@ -10,4 +10,4 @@ export interface SelectAreaViewModel {
   buttonArgs: GovukFrontendButton
 }
 
-export type SelectAreaContent = GlobalContent['/referral/task-list/select-an-area-for-referral']
+export type SelectAreaContent = GlobalContent['referral']['taskList']['selectAnAreaForReferral']

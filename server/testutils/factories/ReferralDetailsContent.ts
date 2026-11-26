@@ -1,9 +1,11 @@
 import { Factory } from 'fishery'
+import { globalContent } from '../../../assets/content/GlobalContent'
 import { ReferralDetailsContent } from '../../referral/referralDetails/ReferralDetailsViewModel'
 
 class referralDetailsContentFactory extends Factory<ReferralDetailsContent> {}
 
 export default referralDetailsContentFactory.define(({ transientParams }) => ({
+  ...globalContent.referralDetails.id.page,
   pageHeader: transientParams.pageHeader || 'Referral for ',
   pageSubHeader: transientParams.pageSubHeader || 'Case details',
   backLink: '/unassigned-cases',

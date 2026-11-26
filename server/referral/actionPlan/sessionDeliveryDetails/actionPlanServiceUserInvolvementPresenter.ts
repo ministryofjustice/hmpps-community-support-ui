@@ -3,7 +3,6 @@ import {
   QuestionChoice,
   SessionDeliveryQuestion,
 } from '@community-support-api'
-import { Response } from 'express'
 import { GovukFrontendTextarea } from '@govuk-frontend'
 import {
   GovukFrontendRadiosItemWithConditional,
@@ -12,21 +11,16 @@ import {
 import PresenterBase from '../../../presenter/presenterBase'
 import { ErrorMiddlewareErrors } from '../../../@types/express'
 import SessionDeliveryDetailsQuestions from './sessionDeliveryDetailsQuestions'
-import {
-  ActionPlanServiceUserInvolvementContent,
-  ActionPlanServiceUserInvolvementViewModel,
-} from './actionPlanServiceUserInvolvementViewModel'
+import { ActionPlanServiceUserInvolvementViewModel } from './actionPlanServiceUserInvolvementViewModel'
 
-export default class ActionPlanServiceUserInvolvementPresenter extends PresenterBase<
-  ActionPlanServiceUserInvolvementViewModel,
-  ActionPlanServiceUserInvolvementContent
-> {
+export default class ActionPlanServiceUserInvolvementPresenter extends PresenterBase<ActionPlanServiceUserInvolvementViewModel> {
   constructor(
     private readonly caseReference: string,
     private readonly sessionDeliveryDetails: ActionPlanSessionDeliveryDetailsResponse,
     private readonly validationErrors?: ErrorMiddlewareErrors,
     private readonly userInputData?: Record<string, string | string[]>,
     private readonly isCheckAnswersEdit = false,
+    private readonly backLink?: string,
   ) {
     super()
   }
@@ -106,8 +100,8 @@ export default class ActionPlanServiceUserInvolvementPresenter extends Presenter
     }
   }
 
-  protected buildViewModel(res: Response): ActionPlanServiceUserInvolvementViewModel {
-    const content = this.buildStaticContent(res)
+  protected buildViewModel(): ActionPlanServiceUserInvolvementViewModel {
+    const content = this.globalContent().referral.id.actionPlan.personInvolvement
     const userInvolvementInActionPlanQuestion = this.sessionDeliveryDetails.questions.find(
       q => q.key === SessionDeliveryDetailsQuestions.USER_INVOLVEMENT_IN_ACTION_PLAN,
     )!
@@ -115,9 +109,11 @@ export default class ActionPlanServiceUserInvolvementPresenter extends Presenter
     return {
       pageTitle: content.pageTitle,
       backLink: {
-        href: this.isCheckAnswersEdit
-          ? content.editBackLink.replace('{{ id }}', this.caseReference)
-          : content.backLink.replace('{{ id }}', this.caseReference),
+        href:
+          this.backLink ??
+          (this.isCheckAnswersEdit
+            ? content.editBackLink.replace('{{ id }}', this.caseReference)
+            : content.backLink.replace('{{ id }}', this.caseReference)),
       },
       submitButton: { text: this.isCheckAnswersEdit ? content.saveAndContinueButtonText : content.continueButtonText },
       userInvolvementInActionPlanRadioArgs: (whyNotInvolvedTextHtml: string) =>

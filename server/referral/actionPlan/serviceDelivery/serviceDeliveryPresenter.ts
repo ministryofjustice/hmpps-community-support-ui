@@ -1,4 +1,3 @@
-import { Response } from 'express'
 import { GovukFrontendButton, GovukFrontendSummaryList } from '@govuk-frontend'
 import { ActionPlanSessionDeliveryDetailsResponse } from '@community-support-api'
 import { format, isValid, parseISO } from 'date-fns'
@@ -8,10 +7,7 @@ import { ReferralNavigationValues } from '../../referralLayout/referralLayoutPre
 import { ActionPlanCheckYourAnswersDetails } from '../../../services/referralService'
 
 type ServiceDeliveryQuestion = ActionPlanSessionDeliveryDetailsResponse['questions'][number]
-export default class ServiceDeliveryPresenter extends ActionPlanLayoutPresenter<
-  ServiceDeliveryViewModel,
-  ServiceDeliveryContent
-> {
+export default class ServiceDeliveryPresenter extends ActionPlanLayoutPresenter<ServiceDeliveryViewModel> {
   constructor(
     private readonly caseReference: string,
     private readonly serviceDeliveryDetails: ActionPlanCheckYourAnswersDetails,
@@ -19,8 +15,11 @@ export default class ServiceDeliveryPresenter extends ActionPlanLayoutPresenter<
     super(ReferralNavigationValues.actionPlanTab, ActionPlanNavigationValues.serviceDeliveryTab, caseReference)
   }
 
-  protected buildViewModel(res: Response): ServiceDeliveryViewModel {
-    const content = this.buildStaticContent(res)
+  protected buildViewModel(): ServiceDeliveryViewModel {
+    const content = {
+      ...this.globalContent().referral.id.page,
+      ...this.globalContent().referral.id.serviceDelivery,
+    }
 
     const updatedAtText = ''
 

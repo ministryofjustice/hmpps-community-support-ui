@@ -1,4 +1,3 @@
-import { Response } from 'express'
 import { NeedsInterpreterBffResponseDto } from '@community-support-api'
 import { GovukFrontendErrorMessage } from '@govuk-frontend'
 import PresenterBase from '../../presenter/presenterBase'
@@ -76,10 +75,7 @@ const buildRadiosWithSelection = (
   }
 }
 
-export default class NeedsAnInterpreterPresenter extends PresenterBase<
-  NeedsAnInterpreterViewModel,
-  NeedsAnInterpreterContent
-> {
+export default class NeedsAnInterpreterPresenter extends PresenterBase<NeedsAnInterpreterViewModel> {
   constructor(
     private readonly data: NeedsInterpreterBffResponseDto,
     private readonly validationErrors: ErrorMiddlewareErrors,
@@ -87,8 +83,8 @@ export default class NeedsAnInterpreterPresenter extends PresenterBase<
     super()
   }
 
-  buildViewModel(res: Response): NeedsAnInterpreterViewModel {
-    const content = this.buildStaticContent(res)
+  buildViewModel(): NeedsAnInterpreterViewModel {
+    const content = this.globalContent().referral.taskList.needsAnInterpreter
     const { firstName } = this.data.refereeName
     return {
       pageTitle: content.pageTitle,

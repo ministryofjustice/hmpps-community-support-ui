@@ -1,4 +1,3 @@
-import { Response } from 'express'
 import {
   GovukFrontendSummaryList,
   GovukFrontendBackLink,
@@ -7,6 +6,7 @@ import {
 } from '@govuk-frontend'
 import { IcsViewOrChangeBffDto } from '@community-support-api'
 import nunjucks from 'nunjucks'
+import { GlobalContent } from '../../assets/content/GlobalContent'
 import PresenterBase from '../presenter/presenterBase'
 import dateFormat from '../utils/dateFormat'
 import timeFormat from '../utils/timeFormat'
@@ -21,35 +21,12 @@ export interface InitialContactSessionDetailsViewModel {
   reasonForChange: GovukFrontendSummaryList
 }
 
-interface IcsDetailsCard {
-  heading: string
-  changeLink: string
-  dateLabel: string
-  startTimeLabel: string
-  methodLabel: string
-  reasonLabel: string
-  locationLabel: string
-  informedLabel: string
-}
+type IcsDetailsCard = InitialContactSessionDetailsContent['icsDetails']
 
-interface ReasonForChangeCard {
-  heading: string
-  whoRequestedLabel: string
-  reasonLabel: string
-}
+type ReasonForChangeCard = InitialContactSessionDetailsContent['reasonForChange']
 
-interface Links {
-  change: string
-  back: string
-}
-
-export interface InitialContactSessionDetailsContent {
-  title: string
-  heading: string
-  icsDetails: IcsDetailsCard
-  reasonForChange: ReasonForChangeCard
-  links: Links
-}
+export type InitialContactSessionDetailsContent = GlobalContent['referralDetails']['id']['icsViewOrChange'] &
+  Pick<GlobalContent['referralDetails']['id']['page'], 'icsDetails' | 'reasonForChange' | 'links'>
 
 const locationFields: (keyof IcsViewOrChangeBffDto['sessionMethod'])[] = [
   'probationOfficeName',
@@ -99,10 +76,7 @@ const showSessionCommunication = (communication: string): string => {
   }
 }
 
-export default class InitialContactSessionDetailsPresenter extends PresenterBase<
-  InitialContactSessionDetailsViewModel,
-  InitialContactSessionDetailsContent
-> {
+export default class InitialContactSessionDetailsPresenter extends PresenterBase<InitialContactSessionDetailsViewModel> {
   private readonly firstName: string
 
   private readonly lastName: string
@@ -220,8 +194,13 @@ export default class InitialContactSessionDetailsPresenter extends PresenterBase
     }
   }
 
-  buildViewModel(res: Response): InitialContactSessionDetailsViewModel {
-    const content = this.buildStaticContent(res)
+  buildViewModel(): InitialContactSessionDetailsViewModel {
+    const content = {
+      ...this.globalContent().referralDetails.id.page,
+      ...(this.historical
+        ? this.globalContent().referralDetails.id.changedIcsDetails.id
+        : this.globalContent().referralDetails.id.icsViewOrChange),
+    }
     return {
       title: content.title,
       heading: content.heading,

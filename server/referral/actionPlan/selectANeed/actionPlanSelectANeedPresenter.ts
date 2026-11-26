@@ -4,10 +4,7 @@ import type { ActionPlanSelectANeedNeed, ActionPlanSelectANeedResponse } from '@
 import PresenterBase from '../../../presenter/presenterBase'
 import { ActionPlanSelectANeedContent, ActionPlanSelectANeedViewModel } from './actionPlanSelectANeedViewModel'
 
-export default class ActionPlanSelectANeedPresenter extends PresenterBase<
-  ActionPlanSelectANeedViewModel,
-  ActionPlanSelectANeedContent
-> {
+export default class ActionPlanSelectANeedPresenter extends PresenterBase<ActionPlanSelectANeedViewModel> {
   constructor(
     private readonly caseReference: string,
     private readonly needs: ActionPlanSelectANeedNeed[],
@@ -43,7 +40,7 @@ export default class ActionPlanSelectANeedPresenter extends PresenterBase<
   }
 
   protected buildViewModel(res: Response): ActionPlanSelectANeedViewModel {
-    const content = this.buildStaticContent(res)
+    const content = this.globalContent().referral.id.actionPlan.selectANeed
 
     return {
       pageHeader: content.pageHeader,

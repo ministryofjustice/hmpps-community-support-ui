@@ -1,11 +1,7 @@
 import { ActionPlanSessionDeliveryDetailsResponse, SessionDeliveryQuestion } from '@community-support-api'
-import { Response } from 'express'
 import { GovukFrontendDateInput, GovukFrontendTextarea } from '@govuk-frontend'
 import PresenterBase from '../../../presenter/presenterBase'
-import {
-  ActionPlanChangeServiceEndDateContent,
-  ActionPlanChangeServiceEndDateViewModel,
-} from './actionPlanChangeServiceEndDateViewModel'
+import { ActionPlanChangeServiceEndDateViewModel } from './actionPlanChangeServiceEndDateViewModel'
 import { ErrorMiddlewareErrors } from '../../../@types/express'
 import SessionDeliveryDetailsQuestions from './sessionDeliveryDetailsQuestions'
 
@@ -24,16 +20,14 @@ const parseDateParts = (value?: string | null): { day?: string; month?: string; 
   return { day, month, year }
 }
 
-export default class ActionPlanChangeServiceEndDatePresenter extends PresenterBase<
-  ActionPlanChangeServiceEndDateViewModel,
-  ActionPlanChangeServiceEndDateContent
-> {
+export default class ActionPlanChangeServiceEndDatePresenter extends PresenterBase<ActionPlanChangeServiceEndDateViewModel> {
   constructor(
     private readonly caseReference: string,
     private readonly sessionDeliveryDetails: ActionPlanSessionDeliveryDetailsResponse,
     private readonly validationErrors?: ErrorMiddlewareErrors,
     private readonly userInputData?: Record<string, string | string[]>,
     private readonly isCheckAnswersEdit = false,
+    private readonly backLink?: string,
   ) {
     super()
   }
@@ -103,8 +97,8 @@ export default class ActionPlanChangeServiceEndDatePresenter extends PresenterBa
     }
   }
 
-  protected buildViewModel(res: Response): ActionPlanChangeServiceEndDateViewModel {
-    const content = this.buildStaticContent(res)
+  protected buildViewModel(): ActionPlanChangeServiceEndDateViewModel {
+    const content = this.globalContent().referral.id.actionPlan.updateServiceEndDate
     const updateServiceEndDateQuestion = this.sessionDeliveryDetails.questions.find(
       q => q.key === SessionDeliveryDetailsQuestions.UPDATE_SERVICE_END_DATE,
     )!
@@ -116,9 +110,11 @@ export default class ActionPlanChangeServiceEndDatePresenter extends PresenterBa
       pageTitle: content.pageTitle,
       pageHeader: content.pageHeader,
       backLink: {
-        href: this.isCheckAnswersEdit
-          ? content.editBackLink.replace('{{ id }}', this.caseReference)
-          : content.backLink.replace('{{ id }}', this.caseReference),
+        href:
+          this.backLink ??
+          (this.isCheckAnswersEdit
+            ? content.editBackLink.replace('{{ id }}', this.caseReference)
+            : content.backLink.replace('{{ id }}', this.caseReference)),
       },
       submitButton: { text: this.isCheckAnswersEdit ? content.saveAndContinueButtonText : content.continueButtonText },
       updateServiceEndDateDateInputArgs: this.buildDateQuestion(updateServiceEndDateQuestion),

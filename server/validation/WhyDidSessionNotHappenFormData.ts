@@ -2,13 +2,13 @@ import { z } from 'zod'
 
 const NOTHING_SELECTED_ERROR = { error: 'Select why the session did not happen' }
 const SERVICE_PROVIDER_ISSUE_DETAILS_EMPTY_ERROR = {
-  error: 'Give details of any issues that meant the session could not happen',
+  error: 'Enter details of any issues that meant the session could not happen',
 }
 const REFERRAL_COULD_NOT_TAKE_PART_DETAILS_EMPTY_ERROR = {
-  error: 'Give details about why they were unable to take part',
+  error: 'Enter details about why they could not take part',
 }
 const REFERRAL_DID_NOT_COMPLY_DETAILS_EMPTY_ERROR = {
-  error: 'Give details about their behaviour and how they were unable to take part',
+  error: 'Enter details about why they did not comply',
 }
 
 export const WhyDidSessionNotHappenFormDataSchema = z.discriminatedUnion(

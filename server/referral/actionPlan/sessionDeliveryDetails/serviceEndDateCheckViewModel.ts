@@ -15,4 +15,4 @@ export type ServiceEndDateCheckViewModel = {
   insetTextArgs: GovukFrontendInsetText
 }
 
-export type ServiceEndDateCheckContent = GlobalContent['/referral/:id/action-plan/service-end-date-check']
+export type ServiceEndDateCheckContent = GlobalContent['referral']['id']['actionPlan']['serviceEndDateCheck']

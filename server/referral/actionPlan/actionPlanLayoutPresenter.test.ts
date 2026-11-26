@@ -1,16 +1,15 @@
-import { Response } from 'express'
 import ActionPlanLayoutPresenter, { ActionPlanNavigationValues } from './actionPlanLayoutPresenter'
 import { ReferralNavigationValues } from '../referralLayout/referralLayoutPresenter'
 import { ActionPlanContent } from './actionPlanViewModel'
 import { globalContent } from '../../../assets/content/GlobalContent'
 
-class TestActionPlanLayoutPresenter extends ActionPlanLayoutPresenter<{ title: string }, Record<string, string>> {
+class TestActionPlanLayoutPresenter extends ActionPlanLayoutPresenter<{ title: string }> {
   constructor(activeTab: ActionPlanNavigationValues, referralId: string) {
     super(ReferralNavigationValues.actionPlanTab, activeTab, referralId)
   }
 
-  protected buildViewModel(res: Response): { title: string } {
-    return { title: this.buildStaticContent(res).title }
+  protected buildViewModel(): { title: string } {
+    return { title: this.globalContent().landing.pageHeader }
   }
 
   protected getTemplatePath(): string {
@@ -20,8 +19,8 @@ class TestActionPlanLayoutPresenter extends ActionPlanLayoutPresenter<{ title: s
 
 describe('ActionPlanLayoutPresenter', () => {
   const content = {
-    ...globalContent['/referral/:id'],
-    ...globalContent['/referral/:id/action-plan'],
+    ...globalContent.referral.id.page,
+    ...globalContent.referral.id.actionPlan.page,
   } as ActionPlanContent
 
   describe('getHorizontalSubNavArgs', () => {

@@ -1,14 +1,8 @@
-export type LandingTileContent = {
-  heading: string
-  description: string
-  href: string
-  dataTestId?: string
-}
+import { GlobalContent } from '../../assets/content/GlobalContent'
 
-export type LandingContent = {
-  pageHeader: string
-  tiles: Array<LandingTileContent>
-}
+export type LandingTileContent = LandingContent['tiles'][number]
+
+export type LandingContent = GlobalContent['landing']
 
 export type LandingViewModel = {
   pageHeader: string

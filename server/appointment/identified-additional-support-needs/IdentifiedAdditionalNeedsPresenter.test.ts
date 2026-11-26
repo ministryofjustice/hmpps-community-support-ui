@@ -6,7 +6,7 @@ import IdentifiedAdditionalNeedsPresenter from './IdentifiedAdditionalNeedsPrese
 describe('IdentifiedAdditionalNeedsPresenter', () => {
   const caseRefId = 'ics-test-123'
   const firstName = 'Alex'
-  const content = contentJson['/ics-feedback/:id/identified-additional-needs']
+  const content = contentJson.icsFeedback.id.identifiedAdditionalNeeds
   let res: Response
   let dto: IcsFeedbackIdentifiedAdditionalSupportNeedsBffResponseDto
 
@@ -29,7 +29,7 @@ describe('IdentifiedAdditionalNeedsPresenter', () => {
 
       expect(res.render).toHaveBeenCalledTimes(1)
       expect(res.render).toHaveBeenCalledWith('appointment/identifiedAdditionalNeeds', {
-        content: presenter.buildViewModel(res),
+        content: presenter.buildViewModel(),
       })
     })
   })
@@ -38,7 +38,7 @@ describe('IdentifiedAdditionalNeedsPresenter', () => {
     it('includes page content, personalised text and navigation links', () => {
       const presenter = new IdentifiedAdditionalNeedsPresenter(caseRefId, firstName, dto, {})
 
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
 
       expect(viewModel).toMatchObject({
         pageTitle: content.pageTitle,
@@ -65,7 +65,7 @@ describe('IdentifiedAdditionalNeedsPresenter', () => {
     it('leaves both radio options unselected when form data is missing', () => {
       const presenter = new IdentifiedAdditionalNeedsPresenter(caseRefId, firstName, dto, undefined)
 
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
 
       expect(viewModel.formData).toEqual({})
       expect(viewModel.didYouIdentifyRadio.items).toEqual([
@@ -87,7 +87,7 @@ describe('IdentifiedAdditionalNeedsPresenter', () => {
       const formData = { didYouIdentify, identifyDetails: 'Help with reading' }
       const presenter = new IdentifiedAdditionalNeedsPresenter(caseRefId, firstName, dto, formData)
 
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
 
       expect(viewModel.formData).toEqual(formData)
       expect(viewModel.didYouIdentifyRadio.items[0].checked).toBe(didYouIdentify)
@@ -98,7 +98,7 @@ describe('IdentifiedAdditionalNeedsPresenter', () => {
     it('personalises the conditional textarea label and sets its field identifiers', () => {
       const presenter = new IdentifiedAdditionalNeedsPresenter(caseRefId, firstName, dto, {})
 
-      const { html } = presenter.buildViewModel(res).didYouIdentifyRadio.items[0].conditional
+      const { html } = presenter.buildViewModel().didYouIdentifyRadio.items[0].conditional
 
       expect(html).toContain('data-testid=identifyDetails')
       expect(html).toContain('id=identifyDetailsLabel')
@@ -114,7 +114,7 @@ describe('IdentifiedAdditionalNeedsPresenter', () => {
         identifyDetails: '<script>alert("test")</script> & \'details\'',
       })
 
-      const { html } = presenter.buildViewModel(res).didYouIdentifyRadio.items[0].conditional
+      const { html } = presenter.buildViewModel().didYouIdentifyRadio.items[0].conditional
 
       expect(html).toContain('&lt;script&gt;alert(&quot;test&quot;)&lt;/script&gt; &amp; &apos;details&apos;')
       expect(html).not.toContain('<script>')
@@ -137,7 +137,7 @@ describe('IdentifiedAdditionalNeedsPresenter', () => {
         },
       )
 
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
       const { html } = viewModel.didYouIdentifyRadio.items[0].conditional
 
       expect(viewModel.didYouIdentifyRadio.errorMessage).toEqual(radioError)
@@ -151,7 +151,7 @@ describe('IdentifiedAdditionalNeedsPresenter', () => {
     it.each([undefined, { list: [], messages: {} }])('does not show validation errors when errors are %j', errors => {
       const presenter = new IdentifiedAdditionalNeedsPresenter(caseRefId, firstName, dto, {}, errors)
 
-      const viewModel = presenter.buildViewModel(res)
+      const viewModel = presenter.buildViewModel()
       const { html } = viewModel.didYouIdentifyRadio.items[0].conditional
 
       expect(viewModel.didYouIdentifyRadio.errorMessage).toBeUndefined()
@@ -177,7 +177,7 @@ describe('IdentifiedAdditionalNeedsPresenter', () => {
       }
       const presenter = new IdentifiedAdditionalNeedsPresenter(caseRefId, firstName, dto, {})
 
-      const { existingSupportNeedsDetails } = presenter.buildViewModel(res)
+      const { existingSupportNeedsDetails } = presenter.buildViewModel()
 
       expect(existingSupportNeedsDetails).toEqual({
         card: { title: { text: content.cardTitle } },
@@ -226,7 +226,7 @@ describe('IdentifiedAdditionalNeedsPresenter', () => {
       }
       const presenter = new IdentifiedAdditionalNeedsPresenter(caseRefId, firstName, dto, {})
 
-      expect(presenter.buildViewModel(res).existingSupportNeedsDetails.rows).toEqual([
+      expect(presenter.buildViewModel().existingSupportNeedsDetails.rows).toEqual([
         {
           key: { text: content.supportNeedsTitle.neurodiversity },
           value: { text: 'Use plain language' },
@@ -238,13 +238,13 @@ describe('IdentifiedAdditionalNeedsPresenter', () => {
     it('returns an empty list of rows when no support needs are populated', () => {
       const presenter = new IdentifiedAdditionalNeedsPresenter(caseRefId, firstName, dto, {})
 
-      expect(presenter.buildViewModel(res).existingSupportNeedsDetails).toBeUndefined()
+      expect(presenter.buildViewModel().existingSupportNeedsDetails).toBeUndefined()
     })
 
     it('omits the summary list when existing support needs data is missing', () => {
       const presenter = new IdentifiedAdditionalNeedsPresenter(caseRefId, firstName, undefined, {})
 
-      expect(presenter.buildViewModel(res).existingSupportNeedsDetails).toBeUndefined()
+      expect(presenter.buildViewModel().existingSupportNeedsDetails).toBeUndefined()
     })
   })
 })

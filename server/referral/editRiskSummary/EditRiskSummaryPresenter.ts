@@ -1,4 +1,3 @@
-import { Response } from 'express'
 import { differenceInYears } from 'date-fns'
 import { CommunitySupportRiskDto, ArnsRiskDto } from '@community-support-api'
 import { GovukFrontendTextarea } from '@govuk-frontend'
@@ -12,7 +11,7 @@ import {
 import { trimOrDefault } from '../../utils/utils'
 import formatFullName from '../../utils/presenterFormatters'
 
-export default class EditRiskSummaryPresenter extends PresenterBase<EditRiskSummaryViewModel, EditRiskSummaryContent> {
+export default class EditRiskSummaryPresenter extends PresenterBase<EditRiskSummaryViewModel> {
   constructor(private readonly risk: CommunitySupportRiskDto) {
     super()
   }
@@ -77,8 +76,8 @@ export default class EditRiskSummaryPresenter extends PresenterBase<EditRiskSumm
     ]
   }
 
-  buildViewModel(res: Response): EditRiskSummaryViewModel {
-    const content = this.buildStaticContent(res)
+  buildViewModel(): EditRiskSummaryViewModel {
+    const content = this.globalContent().referral.taskList.editRiskSummary
     const { crn, dateOfBirth } = this.risk
     const dobDate = new Date(dateOfBirth)
     const age = differenceInYears(new Date(), dobDate)

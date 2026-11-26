@@ -1,39 +1,14 @@
 import { GovukFrontendBackLink, GovukFrontendSummaryList } from '@govuk-frontend'
+import { GlobalContent } from '../../../assets/content/GlobalContent'
 
 export type IcsFeedbackCheckYourAnswersViewModel = {
   pageHeader: string
   submitButtonText: string
   submitHref: string
   backLink: GovukFrontendBackLink
-  feedbackSummaries: Array<SummaryListWithTitle>
+  feedbackSummaries: Array<GovukFrontendSummaryList>
 }
 
-export type IcsFeedbackCheckYourAnswersContent = {
-  pageHeader: string
-  summaryLists: Array<IcsFeedbackSummaryListContent>
-  didNotHappenReasonLabels: {
-    serviceProviderIssue: string
-    referralCouldNotTakePart: string
-    referralDidNotComply: string
-  }
-  submitButtonText: string
-  submitHref: string
-  didNotAttendbackLinkHref: string
-  noSessionbackLinkHref: string
-  attendedBackLinkHref: string
-}
+export type IcsFeedbackCheckYourAnswersContent = GlobalContent['icsFeedback']['id']['checkAnswers']
 
-export type SummaryListWithTitle = GovukFrontendSummaryList & {
-  summaryTitle: string
-}
-
-export type IcsFeedbackSummaryListContent = {
-  summaryTitle: string
-  rows: Array<IcsFeedbackSummaryListContentRow>
-}
-
-export type IcsFeedbackSummaryListContentRow = {
-  text: string
-  hint: string
-  changeHref: string
-}
+export type IcsFeedbackSummaryListContent = IcsFeedbackCheckYourAnswersContent['summaryLists'][number]

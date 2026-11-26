@@ -1,4 +1,3 @@
-import { Response } from 'express'
 import { GovukFrontendCheckboxesItem, GovukFrontendErrorMessage } from '@govuk-frontend'
 import { AdditionalSupportNeedsDto } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
@@ -90,10 +89,7 @@ const buildChecklist = (
   items: buildItems(content, data, firstName, needsAdditionalSupport, messages),
 })
 
-export default class AdditionalSuportNeedsPresenter extends PresenterBase<
-  AdditionalSuportNeedsViewModel,
-  AdditionalSuportNeedsContent
-> {
+export default class AdditionalSuportNeedsPresenter extends PresenterBase<AdditionalSuportNeedsViewModel> {
   constructor(
     private readonly data: AdditionalSupportNeedsDto,
     private readonly validationErrors: ErrorMiddlewareErrors,
@@ -101,8 +97,8 @@ export default class AdditionalSuportNeedsPresenter extends PresenterBase<
     super()
   }
 
-  buildViewModel(res: Response): AdditionalSuportNeedsViewModel {
-    const content = this.buildStaticContent(res)
+  buildViewModel(): AdditionalSuportNeedsViewModel {
+    const content = this.globalContent().referral.taskList.additionalSupportNeeds
     const { firstName, lastName } = this.data.refereeName
     const name = formatFullName(firstName, lastName)
     return {

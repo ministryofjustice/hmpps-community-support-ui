@@ -1,7 +1,7 @@
 import type { Response } from 'express'
-import { GlobalContent } from '../../assets/content/GlobalContent'
+import { globalContent, GlobalContent } from '../../assets/content/GlobalContent'
 
-export default abstract class PresenterBase<PageViewModel, StaticContentType = GlobalContent> {
+export default abstract class PresenterBase<PageViewModel> {
   constructor() {}
 
   protected abstract buildViewModel(res: Response): PageViewModel
@@ -9,9 +9,8 @@ export default abstract class PresenterBase<PageViewModel, StaticContentType = G
   // For now returns the raw string, in future will return a computed path
   protected abstract getTemplatePath(): string
 
-  protected buildStaticContent(res: Response): StaticContentType {
-    const { content } = res.locals
-    return content as StaticContentType
+  protected globalContent(): GlobalContent {
+    return globalContent
   }
 
   renderPage(res: Response): void {

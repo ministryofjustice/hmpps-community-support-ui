@@ -1,4 +1,3 @@
-import { Response } from 'express'
 import { ProbationOffice, ReferralInformation } from '@community-support-api'
 import {
   GovukFrontendButton,
@@ -67,7 +66,7 @@ const buildPrisonOfficesSelectItems = (
   )
 }
 
-export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewModel, ScheduleIcsContent> {
+export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewModel> {
   private readonly inCustody: boolean
 
   private readonly rules: AppointmentTypeRules | undefined
@@ -80,6 +79,9 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
     private readonly formData?: ScheduledIcsFormData,
     private readonly validationErrors?: ErrorMiddlewareErrors,
     private readonly appointmentType?: SessionAppointmentType,
+    private readonly contentKey: 'appointmentDetails' | 'scheduleIcs' | 'icsChangeDetails' = appointmentType
+      ? 'appointmentDetails'
+      : 'scheduleIcs',
   ) {
     super()
     this.rules = appointmentType ? appointmentTypeRules[appointmentType] : undefined
@@ -171,7 +173,8 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
   }
 
   private buildInPersonRadioItems(content: ScheduleIcsContent): WithConditional<GovukFrontendRadiosItem>[] {
-    return [{ value: 'InPerson', text: content.howSessionTakePlace.radioItems.inPerson?.text }]
+    const { radioItems } = content.howSessionTakePlace
+    return [{ value: 'InPerson', text: 'inPerson' in radioItems ? radioItems.inPerson.text : undefined }]
   }
 
   private buildInCustodyRadioItems(content: ScheduleIcsContent): WithConditional<GovukFrontendRadiosItem>[] {
@@ -243,9 +246,14 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
         : this.buildInCommunityRadioItems(content)
     const inPersonItems = locationItems.concat(this.rules?.inPerson ? this.buildInPersonRadioItems(content) : [])
 
-    const { groupHeadings } = content.howSessionTakePlace
+    const groupHeadings =
+      'groupHeadings' in content.howSessionTakePlace ? content.howSessionTakePlace.groupHeadings : undefined
+    const showGroupHeadings = Boolean(groupHeadings) && !(this.rules?.inPerson && locationItems.length === 0)
     if (!groupHeadings) {
       return remoteItemsWithReasons.concat(inPersonItems)
+    }
+    if (!showGroupHeadings) {
+      return inPersonItems.concat(remoteItemsWithReasons)
     }
     return [
       ...(inPersonItems.length > 0 ? [{ divider: groupHeadings.inPerson, value: '' }, ...inPersonItems] : []),
@@ -255,10 +263,11 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
   }
 
   private buildHowWillTheSessionTakePlaceRadios(content: ScheduleIcsContent): GovukFrontendRadiosWithConditional {
-    const { hint, groupHeadings } = content.howSessionTakePlace
+    const { hint } = content.howSessionTakePlace
+    const grouped = 'groupHeadings' in content.howSessionTakePlace && !this.rules?.inPerson
     return {
       name: 'sessionTakePlace',
-      classes: groupHeadings ? 'grouped-radio' : undefined,
+      classes: grouped ? 'grouped-radio' : undefined,
       fieldset: {
         legend: {
           text: content.howSessionTakePlace.label,
@@ -319,13 +328,13 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
       items: [
         {
           name: 'hour',
-          label: content.time.hourLabel,
+          label: 'hourLabel' in content.time ? content.time.hourLabel : undefined,
           value: this.formData ? this.formData['sessionTime-hour'] : '',
           classes: inputClasses('hour'),
         },
         {
           name: 'minute',
-          label: content.time.minuteLabel,
+          label: 'minuteLabel' in content.time ? content.time.minuteLabel : undefined,
           value: this.formData ? this.formData['sessionTime-minute'] : '',
           classes: inputClasses('minute'),
         },
@@ -402,7 +411,7 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
   }
 
   private buildMeetAtTheGateInput(content: ScheduleIcsContent): GovukFrontendRadios | undefined {
-    if (!this.rules?.meetAtTheGate || !content.meetAtTheGate) {
+    if (!this.rules?.meetAtTheGate || !('meetAtTheGate' in content)) {
       return undefined
     }
     return {
@@ -428,14 +437,21 @@ export default class ScheduleIcsPresenter extends PresenterBase<ScheduleIcsViewM
     return { text: submitButtonText, classes: 'govuk-!-margin-top-6' }
   }
 
-  buildViewModel(res: Response): ScheduleIcsViewModel {
-    const content = this.buildStaticContent(res)
+  buildViewModel(): ScheduleIcsViewModel {
+    const referralContent = this.globalContent().referral.id
+    const content = {
+      appointmentDetails: referralContent.createAnAppointment.appointmentDetails,
+      scheduleIcs: referralContent.appointment.scheduleIcs,
+      icsChangeDetails: referralContent.icsChangeDetails.page,
+    }[this.contentKey]
     const submitHref =
       content.submitHref.replace('{{ caseRef }}', this.caseReference) +
       (this.appointmentType ? `?session=${this.appointmentType}` : '')
     const backLinkHref = content.backLink.replace('{{ caseRef }}', this.caseReference)
     return {
-      pageHeader: (this.appointmentType && content.pageHeaders?.[this.appointmentType]) || content.pageHeader,
+      pageHeader:
+        (this.appointmentType && 'pageHeaders' in content && content.pageHeaders[this.appointmentType]) ||
+        content.pageHeader,
       submitButton: this.buildSubmit(content),
       submitHref,
       backLink: { href: backLinkHref },

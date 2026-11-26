@@ -132,6 +132,31 @@ test.describe('Book initial contact session (ICS) page', () => {
     await icsPage.informedByOtherMethodInput.fill('Some other method')
     await icsPage.saveAndContinueButton.click()
     await expect(page).toHaveURL(`/referral/${CASE_REFERENCE}/create-an-appointment/check-your-answers`)
+    await expect(page.getByRole('heading', { name: 'What happens next' })).toHaveCount(0)
+  })
+
+  test('shows what happens next section below the summary for an session booked retrospectively', async ({ page }) => {
+    await communitySupport.stubGetReferralInformation(200, CASE_REFERENCE, {
+      ...referralInformationInCommunity,
+      referralDate: format(addDays(new Date(), -30), 'yyyy-MM-dd'),
+    })
+    await page.goto(ICS_URL)
+    const icsPage = await CreateAppointmentDetailsPage.verifyOnPage(page, 'ICS')
+    await icsPage.fillDateAndTime(format(addDays(new Date(), -1), 'd/M/yyyy'), '10', '11', 'AM')
+    await icsPage.inProbationOfficeRadioButton.click()
+    await icsPage.probationOfficeSelect.selectOption({ index: 1 })
+    await icsPage.informedByOtherMethodCheckbox.check()
+    await icsPage.informedByOtherMethodInput.fill('Some other method')
+    await icsPage.saveAndContinueButton.click()
+
+    await expect(page).toHaveURL(`/referral/${CASE_REFERENCE}/create-an-appointment/check-your-answers`)
+    await expect(page.locator('.govuk-summary-card + h2')).toHaveText('What happens next')
+    await expect(
+      page.getByText("As you've entered a date and time in the past, we'll ask you to add appointment feedback.", {
+        exact: true,
+      }),
+    ).toBeVisible()
+    await expect(page.locator('.govuk-notification-banner, [role="alert"]')).toHaveCount(0)
   })
 
   test.describe('error messages', () => {

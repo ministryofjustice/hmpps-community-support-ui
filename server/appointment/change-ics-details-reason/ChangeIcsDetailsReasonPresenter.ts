@@ -1,4 +1,3 @@
-import { Response } from 'express'
 import {
   GovukFrontendBackLink,
   GovukFrontendButton,
@@ -19,10 +18,7 @@ import {
 } from './ChangeIcsDetailsReasonViewModel'
 import { ErrorMiddlewareErrors } from '../../@types/express'
 
-export default class ChangeIcsDetailsReasonPresenter extends PresenterBase<
-  ChangeIcsDetailsReasonViewModel,
-  ChangeIcsDetailsReasonContent
-> {
+export default class ChangeIcsDetailsReasonPresenter extends PresenterBase<ChangeIcsDetailsReasonViewModel> {
   constructor(
     private readonly caseRefId: string,
     private readonly referralFullName: string,
@@ -110,8 +106,8 @@ export default class ChangeIcsDetailsReasonPresenter extends PresenterBase<
     }
   }
 
-  protected buildViewModel(res: Response): ChangeIcsDetailsReasonViewModel {
-    const content: ChangeIcsDetailsReasonContent = this.buildStaticContent(res)
+  protected buildViewModel(): ChangeIcsDetailsReasonViewModel {
+    const content: ChangeIcsDetailsReasonContent = this.globalContent().referral.id.icsChangeDetails.reason
     const formData: ChangeIcsDetailsReasonFormData = this.session
       ? {
           requestedBy: this.session.changeRequestedBy,

@@ -11,7 +11,7 @@ export const NextStepsFormDataSchema = z.object({
   actionsBeforeNextSession: z
     .string()
     .trim()
-    .min(1, 'Enter what actions you have before the next session takes place ')
+    .min(1, 'Enter actions you have before the next session takes place ')
     .max(
       MAX_CHAR,
       `Details about what actions you have before the next session takes place must be ${MAX_CHAR} characters or less`,

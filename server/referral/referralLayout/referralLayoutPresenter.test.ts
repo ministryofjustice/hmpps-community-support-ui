@@ -2,13 +2,13 @@ import { Response } from 'express'
 import { globalContent } from '../../../assets/content/GlobalContent'
 import ReferralLayoutPresenter, { ReferralNavigationValues } from './referralLayoutPresenter'
 
-class TestReferralLayoutPresenter extends ReferralLayoutPresenter<{ title: string }, Record<string, string>> {
+class TestReferralLayoutPresenter extends ReferralLayoutPresenter<{ title: string }> {
   constructor(activePage: ReferralNavigationValues, referralId: string) {
     super(activePage, referralId)
   }
 
-  protected buildViewModel(res: Response): { title: string } {
-    return { title: this.buildStaticContent(res).title }
+  protected buildViewModel(): { title: string } {
+    return { title: this.globalContent().landing.pageHeader }
   }
 
   protected getTemplatePath(): string {
@@ -17,7 +17,7 @@ class TestReferralLayoutPresenter extends ReferralLayoutPresenter<{ title: strin
 }
 
 describe('ReferralLayoutPresenter', () => {
-  const content = globalContent['/referral/:id']
+  const content = globalContent.referral.id.page
 
   describe('getMojSubNavigationArgs', () => {
     it('builds the shared navigation with Action Plan immediately after Progress', () => {
@@ -30,6 +30,7 @@ describe('ReferralLayoutPresenter', () => {
           { href: '/progress/AB1234CD', text: 'Progress', active: false },
           { href: '/referral/AB1234CD/action-plan', text: 'Action Plan', active: true },
           { href: '/referral/AB1234CD/appointments', text: 'Appointments', active: false },
+          { href: '/referral/AB1234CD/notes', text: 'Notes', active: false },
           { href: '#', text: 'Change log', active: false },
         ],
       })
@@ -80,10 +81,10 @@ describe('ReferralLayoutPresenter', () => {
   })
 
   it('renders through PresenterBase using the subclass template and view model', () => {
-    const res = { locals: { content: { title: 'Hello' } }, render: jest.fn() } as unknown as Response
+    const res = { render: jest.fn() } as unknown as Response
 
     new TestReferralLayoutPresenter(ReferralNavigationValues.actionPlanTab, 'AB1234CD').renderPage(res)
 
-    expect(res.render).toHaveBeenCalledWith('referral/test', { content: { title: 'Hello' } })
+    expect(res.render).toHaveBeenCalledWith('referral/test', { content: { title: globalContent.landing.pageHeader } })
   })
 })

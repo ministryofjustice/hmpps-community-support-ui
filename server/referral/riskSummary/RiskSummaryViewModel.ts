@@ -1,34 +1,9 @@
 import { GovukFrontendBackLink, GovukFrontendButton } from '@govuk-frontend'
+import { GlobalContent } from '../../../assets/content/GlobalContent'
 
-export interface RiskSummaryRowCard {
-  heading: string
-  changeLinkText: string
-}
+export type RiskSummaryRowCard = RiskSummaryContent['whoIsAtRiskCard']
 
-export interface RiskSummaryContent {
-  pageTitle: string
-  pageSubHeader: string
-  backLink: string
-  crnLabel: string
-  dateOfBirthLabel: string
-  lastUpdatedLabel: string
-  defaultFieldValue: string
-  yesText: string
-  noText: string
-  dontKnowText: string
-  noAdditionalInformationText: string
-  changeHref: string
-  whoIsAtRiskCard: RiskSummaryRowCard
-  natureOfRiskCard: RiskSummaryRowCard
-  riskImminenceCard: RiskSummaryRowCard
-  selfHarmCard: RiskSummaryRowCard
-  suicideCard: RiskSummaryRowCard
-  hostelSettingCard: RiskSummaryRowCard
-  vulnerabilityCard: RiskSummaryRowCard
-  additionalInformationCard: RiskSummaryRowCard
-  buttonText: string
-  postHref: string
-}
+export type RiskSummaryContent = GlobalContent['referral']['taskList']['viewRiskSummary']
 
 export interface RiskSummaryRow {
   heading: string

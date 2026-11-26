@@ -1,4 +1,3 @@
-import { Response } from 'express'
 import {
   GovukFrontendNotificationBanner,
   GovukFrontendTable,
@@ -106,10 +105,7 @@ const buildRescheduleActions = (
     : [{ label: 'View feedback', href: `/ics-feedback/${caseReference}/session/${icsFeedbackId}` }]
 }
 
-export default class ReferralProgressPresenter extends ReferralLayoutPresenter<
-  ReferralProgressViewModel,
-  ReferralProgressContent
-> {
+export default class ReferralProgressPresenter extends ReferralLayoutPresenter<ReferralProgressViewModel> {
   private readonly name: string
 
   constructor(
@@ -122,8 +118,8 @@ export default class ReferralProgressPresenter extends ReferralLayoutPresenter<
     this.name = referralProgress.fullName
   }
 
-  buildViewModel(res: Response): ReferralProgressViewModel {
-    const content = this.buildStaticContent(res)
+  buildViewModel(): ReferralProgressViewModel {
+    const content = this.globalContent().progress.id
     const [latestAppointment] = this.getAppointments()
 
     return {

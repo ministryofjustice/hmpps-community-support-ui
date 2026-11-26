@@ -1,11 +1,8 @@
 import { Response } from 'express'
 import PresenterBase from '../../../presenter/presenterBase'
-import { ActionPlanRemoveActivityContent, ActionPlanRemoveActivityViewModel } from './actionPlanRemoveActivityViewModel'
+import { ActionPlanRemoveActivityViewModel } from './actionPlanRemoveActivityViewModel'
 
-export default class ActionPlanRemoveActivityPresenter extends PresenterBase<
-  ActionPlanRemoveActivityViewModel,
-  ActionPlanRemoveActivityContent
-> {
+export default class ActionPlanRemoveActivityPresenter extends PresenterBase<ActionPlanRemoveActivityViewModel> {
   constructor(
     private readonly caseReference: string,
     private readonly activityIndex: number,
@@ -15,7 +12,7 @@ export default class ActionPlanRemoveActivityPresenter extends PresenterBase<
   }
 
   protected buildViewModel(res: Response): ActionPlanRemoveActivityViewModel {
-    const content = this.buildStaticContent(res)
+    const content = this.globalContent().referral.id.actionPlan.activities.remove
 
     return {
       pageHeader: content.pageHeader,

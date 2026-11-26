@@ -6,7 +6,7 @@ import { globalContent } from '../../../../assets/content/GlobalContent'
 describe('ActionPlanViewActivitiesPresenter', () => {
   const render = (alertType?: 'ADD' | 'REMOVE', firstName?: string, isSubmitted = false) => {
     const res = {
-      locals: { content: globalContent['/referral/:id/action-plan/activities'] },
+      locals: { content: globalContent.referral.id.actionPlan.activities.page },
       render: jest.fn(),
     } as unknown as Response
 

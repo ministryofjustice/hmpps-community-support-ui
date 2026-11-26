@@ -1,4 +1,3 @@
-import { Response } from 'express'
 import { GovukFrontendErrorMessage } from '@govuk-frontend'
 import { OffenceSentenceDto, OffenceSentenceInfoBffResponseDto, Selection } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
@@ -91,10 +90,7 @@ const buildRadios = (
   }
 }
 
-export default class OffenceSentencePresenter extends PresenterBase<
-  OffenceSentencePageViewModel,
-  OffenceSentencePageContent
-> {
+export default class OffenceSentencePresenter extends PresenterBase<OffenceSentencePageViewModel> {
   constructor(
     private readonly data: OffenceSentenceInfoBffResponseDto,
     private readonly validationErrors: ErrorMiddlewareErrors,
@@ -103,8 +99,8 @@ export default class OffenceSentencePresenter extends PresenterBase<
     super()
   }
 
-  buildViewModel(res: Response): OffenceSentencePageViewModel {
-    const content = this.buildStaticContent(res)
+  buildViewModel(): OffenceSentencePageViewModel {
+    const content = this.globalContent().referral.taskList.offenceSentence
     const offenceSentenceInfo = this.data.offenceSentenceInfo || {}
     const valueOrDefault = (value: string | null | undefined): string => value || content.notAvailableText
     const sentenceEndDate = formatIsoDateOrNull(offenceSentenceInfo.sentenceEndDate)
@@ -144,10 +140,5 @@ export default class OffenceSentencePresenter extends PresenterBase<
 
   getTemplatePath(): string {
     return 'referral/offenceSentence'
-  }
-
-  protected buildStaticContent(res: Response): OffenceSentencePageContent {
-    const { content } = res.locals
-    return content as OffenceSentencePageContent
   }
 }

@@ -6,7 +6,7 @@ import {
   GovukFrontendInput,
   GovukFrontendSummaryList,
 } from '@govuk-frontend'
-import { AppointmentDetailsContent } from './AppointmentDetailsModel'
+import { GlobalContent } from '../../../assets/content/GlobalContent'
 import { GovukFrontendRadiosWithConditional } from '../../@types/govukFrontend/derived'
 
 export interface RecordSessionDetailsFormViewModel {
@@ -44,42 +44,14 @@ export type RecordSessionDetailsViewModel = {
   formData: RecordSessionDetailsFormData
 }
 
-export type WasPersonLateRadioItemsContent = {
-  yesText: string
-  noText: string
-  lateReasonName: string
-  lateReasonLabel: string
-}
+export type WasPersonLateRadioItemsContent = WasPersonLateRadioContent['items']
 
-export type WasPersonLateRadioContent = {
-  name: string
-  title: string
-  items: WasPersonLateRadioItemsContent
-}
+export type WasPersonLateRadioContent = RecordSessionDetailsContent['wasPersonLateRadio']
 
-export type SessionDurationTimeInputFieldsetContent = {
-  id: string
-  text: string
-}
+export type SessionDurationTimeInputFieldsetContent = SessionDurationTimeInputContent['fieldset']
 
-export type SessionDurationTimeInputItemsContent = {
-  hoursName: string
-  hoursLabel: string
-  minutesName: string
-  minutesLabel: string
-}
+export type SessionDurationTimeInputItemsContent = SessionDurationTimeInputContent['items']
 
-export type SessionDurationTimeInputContent = {
-  id: string
-  fieldset: SessionDurationTimeInputFieldsetContent
-  items: SessionDurationTimeInputItemsContent
-}
+export type SessionDurationTimeInputContent = RecordSessionDetailsContent['sessionDurationTimeInput']
 
-export type RecordSessionDetailsContent = {
-  pageHeader: string
-  appointmentDetails: AppointmentDetailsContent
-  wasPersonLateRadio: WasPersonLateRadioContent
-  sessionDurationTimeInput: SessionDurationTimeInputContent
-  submitButtonText: string
-  backLinkHref: string
-}
+export type RecordSessionDetailsContent = GlobalContent['icsFeedback']['id']['sessionDetails']

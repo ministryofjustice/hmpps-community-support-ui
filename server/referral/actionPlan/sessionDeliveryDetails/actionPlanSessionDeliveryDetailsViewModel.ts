@@ -18,4 +18,4 @@ export type ActionPlanSessionDeliveryDetailsViewModel = {
 }
 
 export type ActionPlanSessionDeliveryDetailsContent =
-  GlobalContent['/referral/:id/action-plan/session-delivery-details']
+  GlobalContent['referral']['id']['actionPlan']['sessionDeliveryDetails']

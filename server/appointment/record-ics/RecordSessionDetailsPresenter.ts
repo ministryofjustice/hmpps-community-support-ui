@@ -1,4 +1,3 @@
-import { Response } from 'express'
 import {
   GovukFrontendBackLink,
   GovukFrontendButton,
@@ -27,10 +26,7 @@ import { components } from '../../@types/communitySupportApi/imported'
 import { escapeHtml } from '../../utils/utils'
 import { ErrorMiddlewareErrors } from '../../@types/express'
 
-export default class RecordSessionDetailsPresenter extends PresenterBase<
-  RecordSessionDetailsViewModel,
-  RecordSessionDetailsContent
-> {
+export default class RecordSessionDetailsPresenter extends PresenterBase<RecordSessionDetailsViewModel> {
   constructor(
     private readonly caseRefId: string,
     private readonly data: RecordSessionAttendancePresenterData,
@@ -57,7 +53,7 @@ export default class RecordSessionDetailsPresenter extends PresenterBase<
       <h1 class="govuk-label-wrapper govuk-label">
         <label class="govuk-label govuk-label--s"
           id=${content.lateReasonName}Label>
-          ${content.lateReasonLabel.replace('{{ firstname }}', this.data.referralFirstName)}
+          ${content.lateReasonLabel}
         </label>
       </h1>
       ${errorHtml}
@@ -178,8 +174,8 @@ export default class RecordSessionDetailsPresenter extends PresenterBase<
     }
   }
 
-  buildViewModel(res: Response): RecordSessionDetailsViewModel {
-    const content: RecordSessionDetailsContent = this.buildStaticContent(res)
+  buildViewModel(): RecordSessionDetailsViewModel {
+    const content: RecordSessionDetailsContent = this.globalContent().icsFeedback.id.sessionDetails
     const formData: RecordSessionDetailsFormData = this.session
       ? {
           wasPersonLate: this.session.wasPersonLate,

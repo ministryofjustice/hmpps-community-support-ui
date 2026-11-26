@@ -1,11 +1,6 @@
-import { Response } from 'express'
 import { ServiceEndDatePageDto } from '@community-support-api'
 import PresenterBase from '../../presenter/presenterBase'
-import {
-  ServiceEndDatePageViewModel,
-  ServiceEndDatePageContent,
-  ServiceEndDateFormValues,
-} from './ServiceEndDatePageModel'
+import { ServiceEndDatePageViewModel, ServiceEndDateFormValues } from './ServiceEndDatePageModel'
 
 const toFormValues = (
   targetServiceCompletionDate?: string,
@@ -29,10 +24,7 @@ const toFormValues = (
   return formValues
 }
 
-export default class ServiceEndDatePagePresenter extends PresenterBase<
-  ServiceEndDatePageViewModel,
-  ServiceEndDatePageContent
-> {
+export default class ServiceEndDatePagePresenter extends PresenterBase<ServiceEndDatePageViewModel> {
   constructor(
     private readonly data: ServiceEndDatePageDto,
     private readonly formValues?: ServiceEndDateFormValues,
@@ -40,8 +32,8 @@ export default class ServiceEndDatePagePresenter extends PresenterBase<
     super()
   }
 
-  buildViewModel(res: Response): ServiceEndDatePageViewModel {
-    const content = this.buildStaticContent(res)
+  buildViewModel(): ServiceEndDatePageViewModel {
+    const content = this.globalContent().referral.taskList.serviceEndDate
 
     return {
       pageTitle: content.pageTitle,
