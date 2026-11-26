@@ -59,7 +59,7 @@ export default class NonContactSessionPresenter extends PresenterBase<NonContact
       title: {
         name: 'title',
         label: {
-          text: content.titleLabel,
+          text: content.title.label,
           classes: 'govuk-!-font-weight-bold',
         },
         value: this.formData.title,

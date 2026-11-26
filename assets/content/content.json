@@ -586,7 +586,10 @@
           "time": {
             "label": "How long did it take?"
           },
-          "titleLabel": "Activity title",
+          "title": {
+            "label": "Activity title",
+            "maxLength": 100
+          },
           "activity": {
             "label": "Activity details",
             "maxLength": 12000
@@ -614,7 +617,8 @@
               "empty": "empty duration"
             },
             "title": {
-              "empty": "empty title"
+              "empty": "empty title",
+              "max": "too large"
             },
             "activity": {
               "empty": "empty title",
@@ -1277,17 +1281,8 @@
         "href": "/cases-in-progress"
       }
     ],
-    "unassignedColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Date received"
-    ],
-    "inProgressColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Assigned to",
-      "Date received"
-    ],
+    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
+    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
     "noCasesMessage": "There are no {0} cases to view."
   },
   "casesInProgress": {
@@ -1306,17 +1301,8 @@
         "href": "/cases-in-progress"
       }
     ],
-    "unassignedColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Date received"
-    ],
-    "inProgressColumnHeaders": [
-      "Name",
-      "CRN/prison number",
-      "Assigned to",
-      "Date received"
-    ],
+    "unassignedColumnHeaders": ["Name", "CRN/prison number", "Date received"],
+    "inProgressColumnHeaders": ["Name", "CRN/prison number", "Assigned to", "Date received"],
     "noCasesMessage": "There are no {0} cases to view."
   },
   "referralDetails": {
@@ -1404,15 +1390,8 @@
       "actionPlanStatusLabel": "Status",
       "actionPlanActionsLabel": "Actions",
       "actionPlanLinkText": "View action plan",
-      "progressActiveColumnHeaders": [
-        "Date and time",
-        "Status",
-        "Action"
-      ],
-      "progressInactiveColumnHeaders": [
-        "Status",
-        "Action"
-      ],
+      "progressActiveColumnHeaders": ["Date and time", "Status", "Action"],
+      "progressInactiveColumnHeaders": ["Status", "Action"],
       "historySummary": "View ICS history"
     }
   },

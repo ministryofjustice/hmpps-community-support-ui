@@ -2,7 +2,7 @@ import { isExists, startOfDay } from 'date-fns'
 import { z } from 'zod'
 import { globalContent } from '../../assets/content/GlobalContent'
 
-const { errors, activity } = globalContent.referral.id.notes['non-contact-session-details']
+const { errors, activity, title } = globalContent.referral.id.notes['non-contact-session-details']
 
 const dateRegex: RegExp = /^$|^(\d{1,2})\/(\d{1,2})\/(\d{4})$/
 
@@ -51,7 +51,7 @@ export const NonContactSessionDetailsSchema = z
     date: DateSchema,
     'time-Hour': hourStringSchema,
     'time-Minute': minuteStringSchema,
-    title: z.string().min(1, { error: errors.title.empty }),
+    title: z.string().min(1, { error: errors.title.empty }).max(title.maxLength, { error: errors.title.max }),
     activity: z
       .string()
       .trim()
