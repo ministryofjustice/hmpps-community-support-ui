@@ -6,6 +6,7 @@ import ReferralNoteTypePage from '../pages/referralNoteTypePage'
 import ReferralPathwaysPage from '../pages/referralPathwaysPage'
 import { referralInformationInCommunity } from '../mockData/referralInformationData'
 import ReferralCaseNoteDetailsPage from '../pages/referralCaseNoteDetailsPage'
+import ReferralCheckYourAnswersPage from '../pages/referralCheckYourAnswersPage'
 
 test.describe('Referral Notes Page', () => {
   const caseReference = 'AB1234CD'
@@ -55,6 +56,23 @@ test.describe('Referral Notes Page', () => {
     await caseNoteDetailsPage.detailsInput.fill('Case note details')
     await caseNoteDetailsPage.shouldNotify()
     await caseNoteDetailsPage.continue()
+
+    const checkYourAnswersPage = new ReferralCheckYourAnswersPage(page)
+    await checkYourAnswersPage.verifyOnPage()
+    await expect(checkYourAnswersPage.summaryValue('Pathway')).toHaveText('Accommodation')
+    await expect(checkYourAnswersPage.summaryValue('Send an email')).toHaveText('Yes')
+    await expect(checkYourAnswersPage.backLink).toHaveAttribute('href', ReferralCaseNoteDetailsPage.url(caseReference))
+
+    await communitySupport.stubSubmitCaseNote(caseReference, {
+      title: 'Case note title',
+      details: 'Case note details',
+      shouldNotify: true,
+      pathways: ['8f0d6a2e-1b7c-4c4e-9a53-3c1f2b9e0a11'],
+    })
+    await checkYourAnswersPage.submit()
+
+    await expect(page).toHaveURL(ReferralNotesPage.url(caseReference))
+    await expect(notesPage.caseNoteSubmittedBanner).toBeVisible()
   })
 
   test('creates a non-contact activity note without the does not relate option', async ({ page }) => {

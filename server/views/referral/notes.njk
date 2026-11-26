@@ -4,6 +4,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "moj/components/pagination/macro.njk" import mojPagination %}
 {% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from "moj/components/alert/macro.njk" import mojAlert %}
 
 {% set pageTitle = content.pageTitle %}
 {% set mainClasses = "govuk-body" %}
@@ -12,6 +13,17 @@
   <h1 class="govuk-heading-l">{{ content.pageHeader }}</h1>
 
   {{ mojSubNavigation(content.navBar) }}
+
+  {% if content.alert %}
+    {{ mojAlert({
+      variant: content.alert.variant,
+      title: content.alert.title,
+      dismissible: content.alert.dismissible,
+      attributes: {
+        "data-testid": "case-note-submitted-banner"
+      }
+    }) }}
+  {% endif %}
 
   <h2 class="govuk-heading-l">{{ content.notesTitle }}</h2>
 

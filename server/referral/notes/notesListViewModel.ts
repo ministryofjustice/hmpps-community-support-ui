@@ -1,4 +1,4 @@
-import type { MojPagination, MojSubNavigation } from '@moj-frontend'
+import type { MojAlert, MojPagination, MojSubNavigation } from '@moj-frontend'
 
 export type ReferralNoteRow = {
   createdAt: string
@@ -31,4 +31,5 @@ export type ReferralNotesViewModel = {
   hasNotes: boolean
   pagination: MojPagination
   resultsSummary: string
+  alert?: MojAlert
 }
