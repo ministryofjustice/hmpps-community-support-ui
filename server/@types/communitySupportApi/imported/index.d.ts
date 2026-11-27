@@ -1146,6 +1146,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/bff/ics-feedback/{caseReference}/ics/{icsId}/attendance': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get referral first name, appointment date and time for the ICS feedback attendance page */
+    get: operations['getIcsFeedbackAttendance']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/bff/ics-feedback/{caseReference}/how-they-tried-to-contact-the-person': {
     parameters: {
       query?: never
@@ -1189,23 +1206,6 @@ export interface paths {
     }
     /** Get referral first name and ICS appointment ID for the ICS feedback check answers page */
     get: operations['getIcsFeedbackCheckAnswers']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/bff/ics-feedback/{caseReference}/attendance': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get referral first name, appointment date and time for the ICS feedback attendance page */
-    get: operations['getIcsFeedbackAttendance']
     put?: never
     post?: never
     delete?: never
@@ -2402,6 +2402,12 @@ export interface components {
     IcsFeedbackIdentifiedAdditionalNeedsBffDto: {
       referralFirstName: string
     }
+    IcsFeedbackAttendanceBffDto: {
+      referralFirstName: string
+      /** Format: date */
+      date: string
+      time: components['schemas']['AppointmentTimeResponse']
+    }
     IcsFeedbackHowTheyTriedToContactThePersonBffDto: {
       referralFirstName: string
     }
@@ -2412,12 +2418,6 @@ export interface components {
       referralFirstName: string
       /** Format: uuid */
       appointmentIcsId: string
-    }
-    IcsFeedbackAttendanceBffDto: {
-      referralFirstName: string
-      /** Format: date */
-      date: string
-      time: components['schemas']['AppointmentTimeResponse']
     }
     AreaConfirmationBffResponseDto: {
       contractArea: string
@@ -4909,6 +4909,38 @@ export interface operations {
       }
     }
   }
+  getIcsFeedbackAttendance: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        caseReference: string
+        icsId: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Attendance page details found */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['IcsFeedbackAttendanceBffDto']
+        }
+      }
+      /** @description Referral or ICS appointment not found */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': unknown
+        }
+      }
+    }
+  }
   getIcsFeedbackHowTheyTriedToContactThePerson: {
     parameters: {
       query?: never
@@ -4989,37 +5021,6 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['IcsFeedbackCheckAnswersBffDto']
-        }
-      }
-      /** @description Referral or ICS appointment not found */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': unknown
-        }
-      }
-    }
-  }
-  getIcsFeedbackAttendance: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        caseReference: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Attendance page details found */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['IcsFeedbackAttendanceBffDto']
         }
       }
       /** @description Referral or ICS appointment not found */
