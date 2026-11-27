@@ -108,7 +108,7 @@ describe('NotesCheckYourAnswersPresenter', () => {
     const viewModel = new NotesCheckYourAnswersPresenter(caseReference, caseNote, pathwaysResponse).buildViewModel()
 
     expect(viewModel.pageHeader).toBe(content.pageHeader)
-    expect(viewModel.detailsSubHeader).toBe(content.detailsSubHeader)
+    expect(viewModel.caseNoteDetailsSubHeader).toBe(content.caseNoteDetailsSubHeader)
   })
 
   it('uses the non-contact sub header for a non-contact activity note', () => {
@@ -118,7 +118,7 @@ describe('NotesCheckYourAnswersPresenter', () => {
       pathwaysResponse,
     ).buildViewModel()
 
-    expect(viewModel.detailsSubHeader).toBe('Details of the non-contact activity')
+    expect(viewModel.caseNoteDetailsSubHeader).toBe('Details of the non-contact activity')
     expect(viewModel.submitButton.text).toBe(content.submitButtonText)
     expect(viewModel.submitHref).toBe(`/referral/${caseReference}/notes/check-your-answers`)
   })

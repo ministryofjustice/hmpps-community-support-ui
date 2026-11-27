@@ -4,7 +4,7 @@ import { GlobalContent } from '../../../assets/content/GlobalContent'
 export type NotesCheckYourAnswersViewModel = {
   pageTitle: string
   pageHeader: string
-  detailsSubHeader: string
+  caseNoteDetailsSubHeader: string
   backLink: GovukFrontendBackLink
   summaryList: GovukFrontendSummaryList
   submitButton: GovukFrontendButton

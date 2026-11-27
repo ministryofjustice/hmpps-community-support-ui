@@ -116,8 +116,8 @@ export default class NotesCheckYourAnswersPresenter extends ReferralLayoutPresen
     return {
       pageTitle: content.pageTitle,
       pageHeader: content.pageHeader,
-      detailsSubHeader:
-        this.sessionData.noteType === 'CASE_NOTE' ? content.detailsSubHeader : content.nonContactDetailsSubHeader,
+      caseNoteDetailsSubHeader:
+        this.sessionData.noteType === 'CASE_NOTE' ? content.caseNoteDetailsSubHeader : content.nonContactcaseNoteDetailsSubHeader,
       backLink: {
         href: `/referral/${this.caseReference}/notes/${
           this.sessionData.noteType === 'CASE_NOTE' ? 'case-note-details' : 'non-contact-session-details'

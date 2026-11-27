@@ -581,8 +581,8 @@
         "check-your-answers": {
           "pageTitle": "Check your answers - Case note",
           "pageHeader": "Check your answers",
-          "detailsSubHeader": "Details of the case note",
-          "nonContactDetailsSubHeader": "Details of the non-contact activity",
+          "caseNoteDetailsSubHeader": "Details of the case note",
+          "nonContactcaseNoteDetailsSubHeader": "Details of the non-contact activity",
           "noteTypeLabel": "Note type",
           "caseNoteType": "Case note",
           "nonContactNoteType": "Non-contact activity note",
