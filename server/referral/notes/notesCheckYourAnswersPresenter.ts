@@ -52,6 +52,7 @@ export default class NotesCheckYourAnswersPresenter extends ReferralLayoutPresen
 
   private buildSummaryRows(content: NotesCheckYourAnswersContent): GovukFrontendSummaryListRow[] {
     const isCaseNote = this.sessionData.noteType === 'CASE_NOTE'
+    const detailsHref = isCaseNote ? '/notes/case-note-details' : '/notes/non-contact-session-details'
     return [
       this.buildRow(
         content.noteTypeLabel,
@@ -60,16 +61,22 @@ export default class NotesCheckYourAnswersPresenter extends ReferralLayoutPresen
         content,
       ),
       this.buildRow(content.pathwayLabel, this.buildPathwaysValue(content), '/notes/pathways', content),
+      ...(isCaseNote
+        ? []
+        : [
+            this.buildRow(content.nonContactDateLabel, { text: this.buildDateText() }, detailsHref, content),
+            this.buildRow(content.nonContactDurationLabel, { text: this.buildDurationText() }, detailsHref, content),
+          ]),
       this.buildRow(
         isCaseNote ? content.caseNoteTitleLabel : content.nonContactTitleLabel,
         { text: this.sessionData.title ?? '' },
-        '/notes/case-note-details',
+        detailsHref,
         content,
       ),
       this.buildRow(
         isCaseNote ? content.caseNoteDetailsLabel : content.nonContactDetailsLabel,
         { html: escapeSpecialHtmlCharacters(this.sessionData.details ?? '').replace(/\r?\n/g, '<br>') },
-        '/notes/case-note-details',
+        detailsHref,
         content,
       ),
       ...(isCaseNote
@@ -77,12 +84,30 @@ export default class NotesCheckYourAnswersPresenter extends ReferralLayoutPresen
             this.buildRow(
               content.shouldNotifyLabel,
               { text: this.sessionData.shouldNotify ? content.yesText : content.noText },
-              '/notes/case-note-details',
+              detailsHref,
               content,
             ),
           ]
         : []),
     ]
+  }
+
+  private buildDateText(): string {
+    if (!this.sessionData.startDate) {
+      return ''
+    }
+    return new Date(this.sessionData.startDate).toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    })
+  }
+
+  private buildDurationText(): string {
+    const pluralise = (count: number, unit: string) => `${count} ${unit}${count === 1 ? '' : 's'}`
+    const hours = this.sessionData.durationHours ?? 0
+    const minutes = this.sessionData.durationMinutes ?? 0
+    return `${pluralise(hours, 'hour')} ${pluralise(minutes, 'minute')}`
   }
 
   buildViewModel(): NotesCheckYourAnswersViewModel {
@@ -91,7 +116,8 @@ export default class NotesCheckYourAnswersPresenter extends ReferralLayoutPresen
     return {
       pageTitle: content.pageTitle,
       pageHeader: content.pageHeader,
-      detailsSubHeader: content.detailsSubHeader,
+      detailsSubHeader:
+        this.sessionData.noteType === 'CASE_NOTE' ? content.detailsSubHeader : content.nonContactDetailsSubHeader,
       backLink: {
         href: `/referral/${this.caseReference}/notes/${
           this.sessionData.noteType === 'CASE_NOTE' ? 'case-note-details' : 'non-contact-session-details'

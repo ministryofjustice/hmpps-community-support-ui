@@ -72,6 +72,7 @@ import type {
   IcsFeedbackIdentifiedAdditionalSupportNeedsBffResponseDto,
   ReferenceDataReferralPathwaysDto,
   SubmitCaseNoteRequest,
+  SubmitNonContactSessionRequest,
   SuccessMessageResponse,
 } from '@community-support-api'
 import config from '../config'
@@ -264,6 +265,17 @@ export default class CommunitySupportApiClient extends RestClient {
     username: string,
   ): Promise<SuccessMessageResponse> {
     return this.post({ path: `/referral/${caseReference}/case-note`, data: caseNote }, asSystem(username))
+  }
+
+  submitNonContactSession(
+    caseReference: string,
+    nonContactSession: SubmitNonContactSessionRequest,
+    username: string,
+  ): Promise<SuccessMessageResponse> {
+    return this.post(
+      { path: `/referral/${caseReference}/non-contact-session`, data: nonContactSession },
+      asSystem(username),
+    )
   }
 
   getReferralInformation(caseReference: string, username: string): Promise<ReferralInformation> {

@@ -317,6 +317,7 @@ describe('NotesController', () => {
       res.locals.user = { username: 'user1' } as never
       referralService.getPathways = jest.fn().mockResolvedValue({ pathways: [] })
       referralService.submitCaseNote = jest.fn().mockResolvedValue({ success: true, message: 'ok' })
+      referralService.submitNonContactSession = jest.fn().mockResolvedValue({ success: true, message: 'ok' })
     })
 
     it('redirects to the note type page when there is no note session data', async () => {
@@ -383,12 +384,44 @@ describe('NotesController', () => {
       expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/notes/type')
     })
 
-    it('does not submit a non-contact activity note', async () => {
+    it('does not submit an incomplete non-contact activity note', async () => {
       req.session.note = { ...completeCaseNote, noteType: 'NON_CONTACT_SESSION' }
       await controller.submitCheckYourAnswers(req, res)
 
       expect(referralService.submitCaseNote).not.toHaveBeenCalled()
+      expect(referralService.submitNonContactSession).not.toHaveBeenCalled()
       expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/notes/type')
+    })
+
+    it('submits a complete non-contact activity to the API, clears the session and redirects to the notes list', async () => {
+      referralService.submitNonContactSession = jest.fn().mockResolvedValue({ success: true, message: 'ok' })
+      req.session.note = {
+        noteType: 'NON_CONTACT_SESSION',
+        pathways: ['NONE', '8f0d6a2e-1b7c-4c4e-9a53-3c1f2b9e0a11'],
+        title: 'Activity title',
+        details: 'Activity details',
+        startDate: new Date('2025-07-10T00:00:00.000Z'),
+        durationHours: 1,
+        durationMinutes: 30,
+      }
+      await controller.submitCheckYourAnswers(req, res)
+
+      expect(referralService.submitNonContactSession).toHaveBeenCalledWith(
+        caseReference,
+        {
+          title: 'Activity title',
+          details: 'Activity details',
+          startDate: '2025-07-10T00:00:00.000Z',
+          durationHours: 1,
+          durationMinutes: 30,
+          pathways: ['8f0d6a2e-1b7c-4c4e-9a53-3c1f2b9e0a11'],
+        },
+        'user1',
+      )
+      expect(referralService.submitCaseNote).not.toHaveBeenCalled()
+      expect(req.session.note).toBeUndefined()
+      expect(req.session.noteAlertType).toBe('ADD_NON_CONTACT_SESSION')
+      expect(res.redirect).toHaveBeenCalledWith('/referral/AB1234CD/notes')
     })
   })
 })

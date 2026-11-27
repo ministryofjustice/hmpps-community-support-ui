@@ -548,6 +548,7 @@
           "addNoteButtonText": "Add note",
           "addedNotesSubheading": "Added notes",
           "caseNoteSubmittedBannerText": "You added a case note",
+          "nonContactSubmittedBannerText": "You added a non-contact activity note",
           "resultsSummaryText": "Showing {{ from }} to {{ to }} of {{ count }} total results"
         },
         "type": {
@@ -576,6 +577,28 @@
           "shouldNotifyLabel": "Do you want to send an email to the probation practitioner about this case note?",
           "shouldNotifyHint": "Only send an email if there's important information in this case note that the probation practitioner needs to know.",
           "continueText": "Continue"
+        },
+        "check-your-answers": {
+          "pageTitle": "Check your answers - Case note",
+          "pageHeader": "Check your answers",
+          "detailsSubHeader": "Details of the case note",
+          "nonContactDetailsSubHeader": "Details of the non-contact activity",
+          "noteTypeLabel": "Note type",
+          "caseNoteType": "Case note",
+          "nonContactNoteType": "Non-contact activity note",
+          "pathwayLabel": "Pathway",
+          "noPathwayText": "It does not relate to a pathway",
+          "caseNoteTitleLabel": "Case note title",
+          "caseNoteDetailsLabel": "Case note details",
+          "nonContactTitleLabel": "Activity title",
+          "nonContactDetailsLabel": "Activity details",
+          "nonContactDateLabel": "Date",
+          "nonContactDurationLabel": "How long it took",
+          "shouldNotifyLabel": "Send an email to the probation practitioner",
+          "yesText": "Yes",
+          "noText": "No",
+          "changeLinkText": "Change",
+          "submitButtonText": "Submit"
         },
         "non-contact-session-details": {
           "backLink": "/referral/{{ id }}/notes/pathways",

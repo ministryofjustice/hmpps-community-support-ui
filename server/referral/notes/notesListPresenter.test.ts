@@ -69,6 +69,19 @@ describe('NotesListPresenter', () => {
     expect(withoutAlert.alert).toBeUndefined()
   })
 
+  it('shows the non-contact activity added alert when requested', () => {
+    const withAlert = new NotesListPresenter(
+      pagedResponse({}),
+      caseReference,
+      'ADD_NON_CONTACT_SESSION',
+    ).buildViewModel()
+    expect(withAlert.alert).toEqual({
+      variant: 'success',
+      title: 'You added a non-contact activity note',
+      dismissible: true,
+    })
+  })
+
   it('shows the results summary for a single page', () => {
     const viewModel = new NotesListPresenter(pagedResponse({}), caseReference).buildViewModel()
 

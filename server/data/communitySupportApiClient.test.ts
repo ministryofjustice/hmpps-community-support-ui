@@ -26,6 +26,7 @@ import type {
   OffenceSentenceRequest,
   WithdrawReferralRequest,
   SubmitCaseNoteRequest,
+  SubmitNonContactSessionRequest,
 } from '@community-support-api'
 import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import { AgentConfig, ApiConfig } from '@ministryofjustice/hmpps-rest-client'
@@ -453,6 +454,26 @@ describe('CommunitySupportApiClient tests', () => {
       nock('http://localhost:8080').post(`/referral/${caseReference}/case-note`).reply(200, response)
 
       const result = communitySupportApiClient.submitCaseNote(caseReference, request, 'user1')
+
+      return expect(result).resolves.toEqual(response)
+    })
+  })
+  describe('submitNonContactSession tests', () => {
+    it('should POST the non-contact session to the referral non-contact-session endpoint', () => {
+      const caseReference = 'AB1234CD'
+      const request: SubmitNonContactSessionRequest = {
+        title: 'Activity title',
+        details: 'Activity details',
+        startDate: '2025-07-10T00:00:00.000Z',
+        durationHours: 1,
+        durationMinutes: 30,
+        pathways: ['pathway-id-1'],
+      }
+      const response = { success: true, message: 'Non-contact session submitted successfully' }
+
+      nock('http://localhost:8080').post(`/referral/${caseReference}/non-contact-session`, request).reply(200, response)
+
+      const result = communitySupportApiClient.submitNonContactSession(caseReference, request, 'user1')
 
       return expect(result).resolves.toEqual(response)
     })

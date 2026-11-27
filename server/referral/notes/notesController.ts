@@ -18,6 +18,14 @@ const NOTES_PAGE_SIZE = 25
 const isCaseNoteComplete = (note?: NoteData): boolean =>
   !!note.pathways?.length && note.title !== undefined && note.details !== undefined && note.shouldNotify !== undefined
 
+const isNonContactSessionComplete = (note?: NoteData): boolean =>
+  !!note.pathways?.length &&
+  note.title !== undefined &&
+  note.details !== undefined &&
+  note.startDate !== undefined &&
+  note.durationHours !== undefined &&
+  note.durationMinutes !== undefined
+
 export default class NotesController {
   constructor(private readonly referralService: ReferralService) {}
 
@@ -128,6 +136,7 @@ export default class NotesController {
       return res.redirect(`/referral/${caseReference}/notes/check-your-answers`)
     })
   }
+
   async showCheckYourAnswers(req: Request, res: Response) {
     const { caseReference } = req.params as { caseReference: string }
     const { username } = res.locals.user
@@ -158,6 +167,23 @@ export default class NotesController {
       )
       delete req.session.note
       req.session.noteAlertType = 'ADD_CASE_NOTE'
+      return res.redirect(`/referral/${caseReference}/notes`)
+    }
+    if (noteSessionData?.noteType === 'NON_CONTACT_SESSION' && isNonContactSessionComplete(noteSessionData)) {
+      await this.referralService.submitNonContactSession(
+        caseReference,
+        {
+          title: noteSessionData.title,
+          details: noteSessionData.details,
+          startDate: new Date(noteSessionData.startDate).toISOString(),
+          durationHours: noteSessionData.durationHours,
+          durationMinutes: noteSessionData.durationMinutes,
+          pathways: noteSessionData.pathways.filter(pathway => pathway !== NO_PATHWAY_VALUE),
+        },
+        username,
+      )
+      delete req.session.note
+      req.session.noteAlertType = 'ADD_NON_CONTACT_SESSION'
       return res.redirect(`/referral/${caseReference}/notes`)
     }
     return res.redirect(`/referral/${caseReference}/notes/type`)
