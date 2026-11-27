@@ -96,11 +96,10 @@ export default class NotesCheckYourAnswersPresenter extends ReferralLayoutPresen
     if (!this.sessionData.startDate) {
       return ''
     }
-    return new Date(this.sessionData.startDate).toLocaleDateString('en-GB', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    })
+    const date = new Date(this.sessionData.startDate)
+    const weekday = date.toLocaleDateString('en-GB', { weekday: 'long' })
+    const dayMonthYear = date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+    return `${weekday} ${dayMonthYear}`
   }
 
   private buildDurationText(): string {
@@ -117,7 +116,9 @@ export default class NotesCheckYourAnswersPresenter extends ReferralLayoutPresen
       pageTitle: content.pageTitle,
       pageHeader: content.pageHeader,
       caseNoteDetailsSubHeader:
-        this.sessionData.noteType === 'CASE_NOTE' ? content.caseNoteDetailsSubHeader : content.nonContactcaseNoteDetailsSubHeader,
+        this.sessionData.noteType === 'CASE_NOTE'
+          ? content.caseNoteDetailsSubHeader
+          : content.nonContactcaseNoteDetailsSubHeader,
       backLink: {
         href: `/referral/${this.caseReference}/notes/${
           this.sessionData.noteType === 'CASE_NOTE' ? 'case-note-details' : 'non-contact-session-details'

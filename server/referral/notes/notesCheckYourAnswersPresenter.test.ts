@@ -65,7 +65,7 @@ describe('NotesCheckYourAnswersPresenter', () => {
   })
 
   it('shows the type, pathway, title, details, date and duration rows for a non-contact activity note', () => {
-    const rows = buildRows({
+    const nonContactNote: NoteData = {
       noteType: 'NON_CONTACT_SESSION',
       pathways: [employmentId],
       title: 'Activity title',
@@ -73,13 +73,22 @@ describe('NotesCheckYourAnswersPresenter', () => {
       startDate: new Date(2025, 6, 10),
       durationHours: 1,
       durationMinutes: 1,
-    })
+    }
+    const viewModel = new NotesCheckYourAnswersPresenter(
+      caseReference,
+      nonContactNote,
+      pathwaysResponse,
+    ).buildViewModel()
+    const { rows } = viewModel.summaryList
 
+    expect(viewModel.caseNoteDetailsSubHeader).toBe('Details of the non-contact activity')
+    expect(viewModel.submitButton.text).toBe(content.submitButtonText)
+    expect(viewModel.submitHref).toBe(`/referral/${caseReference}/notes/check-your-answers`)
     expect(rows).toHaveLength(6)
     expect(rows[0].value).toEqual({ text: content.nonContactNoteType })
     expect(rows[1].value).toEqual({ html: 'Employment' })
     expect(rows[2].key).toEqual({ text: content.nonContactDateLabel })
-    expect(rows[2].value).toEqual({ text: '10 July 2025' })
+    expect(rows[2].value).toEqual({ text: 'Thursday 10 July 2025' })
     expect(rows[3].key).toEqual({ text: content.nonContactDurationLabel })
     expect(rows[3].value).toEqual({ text: '1 hour 1 minute' })
     expect(rows[4].key).toEqual({ text: content.nonContactTitleLabel })
@@ -109,18 +118,6 @@ describe('NotesCheckYourAnswersPresenter', () => {
 
     expect(viewModel.pageHeader).toBe(content.pageHeader)
     expect(viewModel.caseNoteDetailsSubHeader).toBe(content.caseNoteDetailsSubHeader)
-  })
-
-  it('uses the non-contact sub header for a non-contact activity note', () => {
-    const viewModel = new NotesCheckYourAnswersPresenter(
-      caseReference,
-      { ...caseNote, noteType: 'NON_CONTACT_SESSION' },
-      pathwaysResponse,
-    ).buildViewModel()
-
-    expect(viewModel.caseNoteDetailsSubHeader).toBe('Details of the non-contact activity')
-    expect(viewModel.submitButton.text).toBe(content.submitButtonText)
-    expect(viewModel.submitHref).toBe(`/referral/${caseReference}/notes/check-your-answers`)
   })
 
   it('links back to case note details for a case note', () => {
