@@ -51,12 +51,15 @@ export const NonContactSessionDetailsSchema = z
     date: DateSchema,
     'time-Hour': hourStringSchema,
     'time-Minute': minuteStringSchema,
-    title: z.string().min(1, { error: errors.title.empty }).max(title.maxLength, { error: errors.title.max }),
+    title: z
+      .string()
+      .min(1, { error: errors.title.empty })
+      .max(title.maxLength, { error: errors.title.max.replace('{{ size }}', title.maxLength.toString()) }),
     activity: z
       .string()
       .trim()
       .min(1, { error: errors.activity.empty })
-      .max(activity.maxLength, { error: errors.activity.max }),
+      .max(activity.maxLength, { error: errors.activity.max.replace('{{ size }}', errors.activity.max) }),
   })
   .refine(data => !(data['time-Hour'] === 0 && data['time-Minute'] === 0), {
     error: errors.time.empty,

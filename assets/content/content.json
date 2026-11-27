@@ -617,12 +617,12 @@
               "empty": "empty duration"
             },
             "title": {
-              "empty": "empty title",
-              "max": "too large"
+              "empty": "Enter a title for the activity",
+              "max": "Activity title must be {{ size }} characters or less"
             },
             "activity": {
               "empty": "empty title",
-              "max": "too large"
+              "max": "Activity details must be {{ size }} characters or less"
             }
           }
         }
