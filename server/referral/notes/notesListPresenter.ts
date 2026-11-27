@@ -8,7 +8,7 @@ export default class NotesListPresenter extends ReferralLayoutPresenter<Referral
   constructor(
     private readonly notesResponse: PagedResponse<ReferralNoteOrNonContactSessionBffDto>,
     private readonly caseReference: string,
-    private readonly alertType?: 'ADD_CASE_NOTE',
+    private readonly alertType?: 'ADD_CASE_NOTE' | 'ADD_NON_CONTACT_SESSION',
   ) {
     super(ReferralNavigationValues.notesTab, caseReference)
   }
@@ -18,12 +18,12 @@ export default class NotesListPresenter extends ReferralLayoutPresenter<Referral
   }
 
   private getAlert(): MojAlert | undefined {
+    const { notes } = this.globalContent().referral.id
     if (this.alertType === 'ADD_CASE_NOTE') {
-      return {
-        variant: 'success',
-        title: this.globalContent().referral.id.notes.page.caseNoteSubmittedBannerText,
-        dismissible: true,
-      }
+      return { variant: 'success', title: notes.page.caseNoteSubmittedBannerText, dismissible: true }
+    }
+    if (this.alertType === 'ADD_NON_CONTACT_SESSION') {
+      return { variant: 'success', title: notes.page.nonContactSubmittedBannerText, dismissible: true }
     }
     return undefined
   }

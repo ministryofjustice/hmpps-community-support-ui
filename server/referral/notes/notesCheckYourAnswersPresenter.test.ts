@@ -64,30 +64,60 @@ describe('NotesCheckYourAnswersPresenter', () => {
     expect(rows[3].value).toEqual({ html: '&lt;script&gt;x&lt;/script&gt;' })
   })
 
-  it('shows the type, pathway, title and details rows with activity labels for a non-contact activity note', () => {
+  it('shows the type, pathway, title, details, date and duration rows for a non-contact activity note', () => {
+    const nonContactNote: NoteData = {
+      noteType: 'NON_CONTACT_SESSION',
+      pathways: [employmentId],
+      title: 'Activity title',
+      details: 'Activity details',
+      startDate: new Date(2025, 6, 10),
+      durationHours: 1,
+      durationMinutes: 1,
+    }
+    const viewModel = new NotesCheckYourAnswersPresenter(
+      caseReference,
+      nonContactNote,
+      pathwaysResponse,
+    ).buildViewModel()
+    const { rows } = viewModel.summaryList
+
+    expect(viewModel.caseNoteDetailsSubHeader).toBe('Details of the non-contact activity')
+    expect(viewModel.submitButton.text).toBe(content.submitButtonText)
+    expect(viewModel.submitHref).toBe(`/referral/${caseReference}/notes/check-your-answers`)
+    expect(rows).toHaveLength(6)
+    expect(rows[0].value).toEqual({ text: content.nonContactNoteType })
+    expect(rows[1].value).toEqual({ html: 'Employment' })
+    expect(rows[2].key).toEqual({ text: content.nonContactDateLabel })
+    expect(rows[2].value).toEqual({ text: 'Thursday 10 July 2025' })
+    expect(rows[3].key).toEqual({ text: content.nonContactDurationLabel })
+    expect(rows[3].value).toEqual({ text: '1 hour 1 minute' })
+    expect(rows[4].key).toEqual({ text: content.nonContactTitleLabel })
+    expect(rows[4].value).toEqual({ text: 'Activity title' })
+    expect(rows[5].key).toEqual({ text: content.nonContactDetailsLabel })
+    expect(rows[5].value).toEqual({ html: 'Activity details' })
+  })
+
+  it('pluralises the duration units and links non-contact rows to non-contact session details', () => {
     const rows = buildRows({
       noteType: 'NON_CONTACT_SESSION',
       pathways: [employmentId],
       title: 'Activity title',
       details: 'Activity details',
+      startDate: new Date(2025, 6, 10),
+      durationHours: 0,
+      durationMinutes: 45,
     })
 
-    expect(rows).toHaveLength(4)
-    expect(rows[0].value).toEqual({ text: content.nonContactNoteType })
-    expect(rows[1].value).toEqual({ html: 'Employment' })
-    expect(rows[2].key).toEqual({ text: content.nonContactTitleLabel })
-    expect(rows[2].value).toEqual({ text: 'Activity title' })
-    expect(rows[3].key).toEqual({ text: content.nonContactDetailsLabel })
-    expect(rows[3].value).toEqual({ html: 'Activity details' })
+    expect(rows[3].value).toEqual({ text: '0 hours 45 minutes' })
+    expect(rows[4].actions.items[0].href).toBe(`/referral/${caseReference}/notes/non-contact-session-details`)
+    expect(rows[5].actions.items[0].href).toBe(`/referral/${caseReference}/notes/non-contact-session-details`)
   })
 
   it('builds the page header and submit button', () => {
     const viewModel = new NotesCheckYourAnswersPresenter(caseReference, caseNote, pathwaysResponse).buildViewModel()
 
     expect(viewModel.pageHeader).toBe(content.pageHeader)
-    expect(viewModel.detailsSubHeader).toBe(content.detailsSubHeader)
-    expect(viewModel.submitButton.text).toBe(content.submitButtonText)
-    expect(viewModel.submitHref).toBe(`/referral/${caseReference}/notes/check-your-answers`)
+    expect(viewModel.caseNoteDetailsSubHeader).toBe(content.caseNoteDetailsSubHeader)
   })
 
   it('links back to case note details for a case note', () => {

@@ -5,7 +5,7 @@ import {
   GovukFrontendInputFormGroup,
 } from '@govuk-frontend'
 
-export interface ComponenstsTimeInputItem {
+export interface ComponentsTimeInputItem {
   name: string
   label?: string
   value: string
@@ -23,8 +23,17 @@ export interface ComponentsTimeInput {
   namePrefix: string
   errorMessage: GovukFrontendErrorMessage
   hint: GovukFrontendHint
-  items: ComponenstsTimeInputItem[]
+  items: ComponentsTimeInputItem[]
   meridiemParams: ComponentsTimeMeridiem
   formGroup?: GovukFrontendInputFormGroup
   fieldset?: GovukFrontendFieldset
+}
+
+interface ComponentsTimeInputNoMeridiem {
+  id: string
+  errorMessages: GovukFrontendErrorMessage[]
+  fieldset: GovukFrontendFieldset
+  attributes: Record<string, unknown>
+  namePrefix: string
+  items: GovukFrontendInput[]
 }

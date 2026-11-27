@@ -8,6 +8,7 @@ import {
   ReferralNoteOrNonContactSessionBffDto,
   ReferenceDataReferralPathwaysDto,
   SubmitCaseNoteRequest,
+  SubmitNonContactSessionRequest,
   SuccessMessageResponse,
   PagedRequest,
   AdditionalSupportNeedsDto,
@@ -117,6 +118,14 @@ export default class ReferralService {
     username: string,
   ): Promise<SuccessMessageResponse> {
     return this.communitySupportApiClient.submitCaseNote(caseReference, caseNote, username)
+  }
+
+  submitNonContactSession(
+    caseReference: string,
+    nonContactSession: SubmitNonContactSessionRequest,
+    username: string,
+  ): Promise<SuccessMessageResponse> {
+    return this.communitySupportApiClient.submitNonContactSession(caseReference, nonContactSession, username)
   }
 
   getReferralInformation(caseIdentifier: string, username: string): Promise<ReferralInformation> {

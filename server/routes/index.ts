@@ -134,6 +134,13 @@ export default function routes({
     notesController.submitCaseNoteDetails(req, res),
   )
 
+  get('/referral/:caseReference/notes/non-contact-session-details', (req, res) =>
+    notesController.showNonContactSessionDetails(req, res),
+  )
+
+  post('/referral/:caseReference/notes/non-contact-session-details', (req, res) =>
+    notesController.submitNonContactSessionDetails(req, res),
+  )
   get('/referral/:caseReference/notes/check-your-answers', (req, res) => notesController.showCheckYourAnswers(req, res))
 
   post('/referral/:caseReference/notes/check-your-answers', (req, res) =>
